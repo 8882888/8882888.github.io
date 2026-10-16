@@ -1,0 +1,4008 @@
+{
+  "schema_version": 1,
+  "brand": "스마트번개대리운전",
+  "note": "검색어 타깃 목록. 검색어를 숨겨 넣지 말고 실제 서비스 안내와 지역별 콘텐츠에 자연스럽게 분산 적용합니다.",
+  "total": 1000,
+  "keywords": [
+    {
+      "keyword": "전국대리",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "전국대리운전",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "전국탁송",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "24시탁송",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "외곽대리운전",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "외곽탁송",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "전국자전거길종주탁송",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "설악산탁송",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "지리산탁송",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "장거리탁송",
+      "cluster": "핵심"
+    },
+    {
+      "keyword": "서울대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서울외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "인천외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대구외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "대전외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "울산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "세종외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "수원외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "성남외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "고양외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "용인외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "부천외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안양외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "남양주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "화성외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평택외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "의정부외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김포외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "시흥외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광명외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "하남외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구리외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "오산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "이천외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "춘천외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "원주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강릉외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "속초외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "동해외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "삼척외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "홍천외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "평창외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "정선외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "태백외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "횡성외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "청주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "충주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제천외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "천안외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "아산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "공주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "논산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "전주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "군산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "익산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "목포외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "여수외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "순천외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "광양외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "포항외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "경주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "구미외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "안동외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "영주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "상주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김천외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "창원외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "김해외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "양산외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "진주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "거제외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "통영외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "제주외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "서귀포외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화차량이동",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화차량탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화전국탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화외곽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "강화외곽탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정자동차탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정장거리탁송",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정24시대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정심야대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정새벽대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정법인대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정골프대리운전",
+      "cluster": "지역서비스"
+    },
+    {
+      "keyword": "파주운정차량이동",
+      "cluster": "지역서비스"
+    }
+  ]
+}
