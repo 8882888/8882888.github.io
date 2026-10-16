@@ -204,9 +204,47 @@ def main():
     directory_url = f"{SITE_URL}/region/"
     directory_body = f"""<p class="muted">전국 지역별 서비스 안내</p>
 <h1>전국 대리운전·자동차탁송 지역 찾기</h1>
-<p>시·도를 선택한 뒤 시·군·구, 읍·면·동 등 세부 지역 페이지로 이동할 수 있습니다. 실제 운행 사례와 요금은 확인된 정보만 별도로 안내합니다.</p>
+<p>시·도를 선택하거나 아래 검색창에 시·군·구, 읍·면·동, 리 이름을 입력해 원하는 지역을 바로 찾아보세요. 실제 운행 사례와 요금은 확인된 정보만 별도로 안내합니다.</p>
+<div class="card">
+<label for="region-search"><strong>전국 행정구역 검색</strong></label>
+<p><input id="region-search" type="search" placeholder="예: 강남구, 역삼동, 속초시" autocomplete="off" style="width:100%;padding:13px;border:1px solid #b8c5d4;border-radius:8px;font-size:16px"></p>
+<p id="region-search-status" class="muted">지역명을 두 글자 이상 입력하세요.</p>
+<ul id="region-search-results" aria-live="polite"></ul>
+</div>
 <div class="cards">{''.join(province_cards)}</div>
-<p class="muted">지역 데이터 출처: 국토교통부 전국 법정동 데이터. 지역별 배차 가능 여부와 요금은 상담을 통해 확인해 주세요.</p>"""
+<p class="muted">지역 데이터 출처: 국토교통부 전국 법정동 데이터. 지역별 배차 가능 여부와 요금은 상담을 통해 확인해 주세요.</p>
+<script>
+(function() {{
+  var input = document.getElementById('region-search');
+  var results = document.getElementById('region-search-results');
+  var status = document.getElementById('region-search-status');
+  var regions = [];
+  fetch('/data/regions.json')
+    .then(function(response) {{ if (!response.ok) throw new Error('지역 데이터를 불러오지 못했습니다.'); return response.json(); }})
+    .then(function(data) {{ regions = Array.isArray(data.regions) ? data.regions : []; }})
+    .catch(function() {{ status.textContent = '지역 검색 데이터를 불러오지 못했습니다. 시·도 목록에서 찾아주세요.'; }});
+  input.addEventListener('input', function() {{
+    var query = input.value.trim().toLocaleLowerCase('ko-KR');
+    results.replaceChildren();
+    if (query.length < 2) {{ status.textContent = '지역명을 두 글자 이상 입력하세요.'; return; }}
+    if (!regions.length) {{ status.textContent = '지역 데이터를 불러오는 중입니다. 잠시 후 다시 입력해 주세요.'; return; }}
+    var matches = regions.filter(function(region) {{
+      var label = ((region.parent_name || '') + ' ' + (region.name || '')).toLocaleLowerCase('ko-KR');
+      return label.indexOf(query) !== -1;
+    }}).slice(0, 40);
+    if (!matches.length) {{ status.textContent = '일치하는 지역이 없습니다. 다른 지역명으로 검색해 주세요.'; return; }}
+    status.textContent = '검색 결과 ' + matches.length + '개 표시 (최대 40개)';
+    matches.forEach(function(region) {{
+      var item = document.createElement('li');
+      var link = document.createElement('a');
+      link.href = '/region/' + String(region.slug || '').replace(/^\\/+|\\/+$/g, '') + '/';
+      link.textContent = ((region.parent_name || '') + ' ' + (region.name || '')).trim() + ' (' + (region.level || '지역') + ')';
+      item.appendChild(link);
+      results.appendChild(item);
+    }});
+  }});
+}})();
+</script>"""
     directory_path = region_root / "index.html"
     directory_path.write_text(page("전국 대리운전·자동차탁송 지역 안내 | " + BRAND, "전국 시·도별 대리운전·자동차탁송·장거리탁송 지역 안내. 대표 전화 " + PHONE + ".", directory_body, directory_url), encoding="utf-8")
     urls.add(directory_url)
