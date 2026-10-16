@@ -89,6 +89,8 @@ th{background:#f5f6f8}
 
   <section class="panel hidden" id="records-panel">
     <h2>저장된 기록</h2>
+    <p class="note">저장된 운행 기록을 개인정보 없이 엑셀 파일로 내려받을 수 있습니다.</p>
+    <div class="actions"><button type="button" class="secondary" id="export-records-btn">저장된 기록 엑셀 다운로드</button></div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>날짜</th><th>시간</th><th>출발지</th><th>도착지</th><th>금액</th><th>관리</th></tr></thead>
@@ -113,6 +115,7 @@ const recordsPanel = document.getElementById('records-panel');
 const recordForm = document.getElementById('record-form');
 const recordsBody = document.getElementById('records');
 let currentUser = null;
+let loadedRecords = [];
 
 function showStatus(message) { statusBox.textContent = message; }
 function showManager(show) {
@@ -142,6 +145,7 @@ async function loadRecords() {
     showStatus('기록을 불러오지 못했습니다. Supabase 테이블과 권한 정책을 확인해 주세요. (' + error.message + ')');
     return;
   }
+  loadedRecords = data || [];
   recordsBody.replaceChildren();
   if (!data || data.length === 0) {
     const tr = document.createElement('tr');
@@ -214,6 +218,27 @@ recordForm.addEventListener('submit', async (event) => {
   await loadRecords();
 });
 document.getElementById('clear-btn').addEventListener('click', clearForm);
+document.getElementById('export-records-btn').addEventListener('click', () => {
+  if (!loadedRecords.length) {
+    showStatus('다운로드할 운행 기록이 없습니다.');
+    return;
+  }
+  const rows = [['날짜','출발시간','출발지','도착지','금액']];
+  for (const record of loadedRecords) {
+    rows.push([
+      record.ride_date || '',
+      record.departure_time || '',
+      record.departure || '',
+      record.destination || '',
+      record.fare || ''
+    ]);
+  }
+  const sheet = XLSX.utils.aoa_to_sheet(rows);
+  sheet['!cols'] = [{wch:14},{wch:12},{wch:24},{wch:24},{wch:14}];
+  const book = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(book, sheet, '운행기록');
+  XLSX.writeFile(book, '스마트번개대리운전_저장된운행기록.xlsx');
+});
 
 // Excel import: only the five approved fields are read and sent to Supabase.
 let excelRows = [];
