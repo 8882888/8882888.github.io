@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>관리자 로그인 | 스마트번개대리운전</title>
+<style>
+:root{--black:#171717;--yellow:#FFD400;--line:#d9dee7}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f8;color:#202633;font-family:Arial,"Malgun Gothic",sans-serif;line-height:1.55}
+header{background:var(--black);color:white;padding:20px;text-align:center;border-bottom:4px solid var(--yellow)}
+header strong{font-size:24px}
+main{max-width:1000px;margin:28px auto;padding:0 16px}
+.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 3px 12px #0000000a}
+h1,h2{margin-top:0}
+label{display:block;font-weight:800;margin:10px 0 5px}
+input{width:100%;padding:11px;border:1px solid #bbc3cf;border-radius:8px;font:inherit}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+button,.button{border:0;border-radius:8px;padding:11px 16px;background:var(--yellow);color:#171717;font-weight:900;font-size:15px;cursor:pointer;text-decoration:none;display:inline-block}
+button.secondary{background:#e8edf3}
+button.danger{background:#b42318;color:white}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.note{color:#596273;font-size:14px}
+#status{padding:11px;border-radius:8px;background:#fff8cc;margin-bottom:16px;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse;min-width:700px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid #e5e8ed;vertical-align:top}
+th{background:#f5f6f8}
+.table-wrap{overflow-x:auto}
+.hidden{display:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.panel{padding:16px}header strong{font-size:21px}}
+</style>
+</head>
+<body>
+<header><strong>스마트번개대리운전 · 관리자</strong></header>
+<main>
+  <div id="status" role="status">관리자 로그인을 준비하고 있습니다.</div>
+  <section class="panel" id="login-panel">
+    <h1>관리자 로그인</h1>
+    <p class="note">Supabase에 등록된 관리자 이메일과 비밀번호로 로그인하세요. 비밀번호는 이 페이지에 저장되지 않습니다.</p>
+    <form id="login-form">
+      <label for="email">관리자 이메일</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="password">비밀번호</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <div class="actions"><button type="submit">로그인</button><a class="button" href="./">홈페이지로</a></div>
+    </form>
+  </section>
+
+  <section class="panel hidden" id="manager-panel">
+    <div class="actions" style="justify-content:space-between;align-items:center;margin-top:0">
+      <h1 style="margin:0">운행 기록 관리</h1>
+      <button class="secondary" id="logout-btn" type="button">로그아웃</button>
+    </div>
+    <p class="note">날짜, 출발 시간, 출발지, 도착지, 금액만 관리합니다. 이름·전화번호·주민등록번호 등 개인정보는 입력하지 마세요. 공개 기록은 홈페이지에 표시됩니다.</p>
+    <form id="record-form">
+      <input type="hidden" id="record-id">
+      <div class="grid">
+        <div><label for="ride-date">날짜</label><input id="ride-date" type="date" required></div>
+        <div><label for="departure-time">출발 시간</label><input id="departure-time" type="time" required></div>
+        <div><label for="departure">출발지</label><input id="departure" maxlength="120" required></div>
+        <div><label for="destination">도착지</label><input id="destination" maxlength="120" required></div>
+        <div><label for="fare">금액 (원)</label><input id="fare" maxlength="40" placeholder="예: 50000원" required></div>
+      </div>
+      <div class="actions">
+        <button type="submit" id="save-btn">운행 기록 저장</button>
+        <button type="button" class="secondary" id="clear-btn">입력 초기화</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel hidden" id="records-panel">
+    <h2>저장된 기록</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>날짜</th><th>시간</th><th>출발지</th><th>도착지</th><th>금액</th><th>관리</th></tr></thead>
+        <tbody id="records"><tr><td colspan="6">기록을 불러오는 중입니다.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://xgdijyiotsemfnsuwwoi.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_QjNQmNLe9NWRQtBjTu1QqQ_w-cmKGui';
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+const statusBox = document.getElementById('status');
+const loginPanel = document.getElementById('login-panel');
+const managerPanel = document.getElementById('manager-panel');
+const recordsPanel = document.getElementById('records-panel');
+const recordForm = document.getElementById('record-form');
+const recordsBody = document.getElementById('records');
+let currentUser = null;
+
+function showStatus(message) { statusBox.textContent = message; }
+function showManager(show) {
+  loginPanel.classList.toggle('hidden', show);
+  managerPanel.classList.toggle('hidden', show);
+  recordsPanel.classList.toggle('hidden', show);
+}
+function clearForm() {
+  recordForm.reset();
+  document.getElementById('record-id').value = '';
+  document.getElementById('save-btn').textContent = '운행 기록 저장';
+}
+function safeCell(value) {
+  const td = document.createElement('td');
+  td.textContent = String(value ?? '');
+  return td;
+}
+async function loadRecords() {
+  const { data, error } = await supabase.from('ride_history')
+    .select('id,ride_date,departure_time,departure,destination,fare')
+    .order('ride_date', { ascending: false });
+  if (error) {
+    showStatus('기록을 불러오지 못했습니다. Supabase 테이블과 권한 정책을 확인해 주세요. (' + error.message + ')');
+    return;
+  }
+  recordsBody.replaceChildren();
+  if (!data || data.length === 0) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 6; td.textContent = '저장된 기록이 없습니다.';
+    tr.appendChild(td); recordsBody.appendChild(tr); return;
+  }
+  for (const row of data) {
+    const tr = document.createElement('tr');
+    tr.append(safeCell(row.ride_date), safeCell(row.departure_time), safeCell(row.departure), safeCell(row.destination), safeCell(row.fare));
+    const actions = document.createElement('td');
+    const edit = document.createElement('button');
+    edit.type = 'button'; edit.textContent = '수정';
+    edit.addEventListener('click', () => {
+      document.getElementById('record-id').value = row.id;
+      document.getElementById('ride-date').value = row.ride_date || '';
+      document.getElementById('departure-time').value = row.departure_time || '';
+      document.getElementById('departure').value = row.departure || '';
+      document.getElementById('destination').value = row.destination || '';
+      document.getElementById('fare').value = row.fare || '';
+      document.getElementById('save-btn').textContent = '수정 내용 저장';
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+    const del = document.createElement('button');
+    del.type = 'button'; del.textContent = '삭제'; del.className = 'danger'; del.style.marginLeft = '6px';
+    del.addEventListener('click', async () => {
+      if (!window.confirm('이 운행 기록을 삭제할까요?')) return;
+      const { error } = await supabase.from('ride_history').delete().eq('id', row.id);
+      if (error) { showStatus('삭제하지 못했습니다. 관리자 권한 정책을 확인해 주세요. (' + error.message + ')'); return; }
+      showStatus('운행 기록을 삭제했습니다.'); await loadRecords();
+    });
+    actions.append(edit, del); tr.appendChild(actions); recordsBody.appendChild(tr);
+  }
+}
+document.getElementById('login-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  showStatus('로그인 중입니다.');
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  document.getElementById('password').value = '';
+  if (error) { showStatus('로그인에 실패했습니다. Supabase에 등록된 관리자 이메일과 비밀번호를 확인해 주세요.'); return; }
+  currentUser = data.user;
+  showManager(true);
+  showStatus('로그인했습니다. 저장/수정/삭제는 Supabase 관리자 권한 정책으로 보호됩니다.');
+  await loadRecords();
+});
+recordForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!currentUser) { showStatus('먼저 관리자 로그인을 해주세요.'); return; }
+  const record = {
+    ride_date: document.getElementById('ride-date').value,
+    departure_time: document.getElementById('departure-time').value,
+    departure: document.getElementById('departure').value.trim(),
+    destination: document.getElementById('destination').value.trim(),
+    fare: document.getElementById('fare').value.trim()
+  };
+  if (Object.values(record).some(v => !v)) { showStatus('모든 항목을 입력해 주세요.'); return; }
+  const id = document.getElementById('record-id').value;
+  showStatus('저장 중입니다.');
+  const result = id
+    ? await supabase.from('ride_history').update(record).eq('id', id).select('id')
+    : await supabase.from('ride_history').insert(record).select('id');
+  if (result.error) {
+    showStatus('저장하지 못했습니다. 관리자 UID와 Supabase RLS 등록/수정 정책을 확인해 주세요. (' + result.error.message + ')');
+    return;
+  }
+  clearForm();
+  showStatus('운행 기록을 저장했습니다. 홈페이지에 반영되는지 확인해 주세요.');
+  await loadRecords();
+});
+document.getElementById('clear-btn').addEventListener('click', clearForm);
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await supabase.auth.signOut(); currentUser = null; showManager(false); clearForm(); showStatus('로그아웃했습니다.');
+});
+const { data: sessionData } = await supabase.auth.getSession();
+if (sessionData.session) {
+  currentUser = sessionData.session.user;
+  showManager(true);
+  showStatus('로그인 상태입니다.');
+  await loadRecords();
+} else {
+  showManager(false);
+  showStatus('관리자 이메일과 비밀번호로 로그인해 주세요.');
+}
+supabase.auth.onAuthStateChange((_event, session) => {
+  currentUser = session?.user ?? null;
+  if (!currentUser) showManager(false);
+});
+</script>
+</body>
+</html>
