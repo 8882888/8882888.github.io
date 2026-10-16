@@ -96,9 +96,13 @@ let currentUser = null;
 
 function showStatus(message) { statusBox.textContent = message; }
 function showManager(show) {
+  // Use explicit inline visibility as well as the CSS class to avoid stale/overridden styles.
   loginPanel.classList.toggle('hidden', show);
-  managerPanel.classList.toggle('hidden', show);
-  recordsPanel.classList.toggle('hidden', show);
+  managerPanel.classList.toggle('hidden', !show);
+  recordsPanel.classList.toggle('hidden', !show);
+  loginPanel.style.display = show ? 'none' : 'block';
+  managerPanel.style.display = show ? 'block' : 'none';
+  recordsPanel.style.display = show ? 'block' : 'none';
 }
 function clearForm() {
   recordForm.reset();
