@@ -18,6 +18,14 @@ h1{font-size:clamp(36px,5.5vw,58px);line-height:1.25;letter-spacing:-.8px}
 .btn{display:inline-block;background:#ffd166;color:#102544;padding:13px 22px;border-radius:8px;text-decoration:none;font-size:18px;font-weight:800;margin:8px 8px 0 0}
 section{padding:44px 7%}
 @media(max-width:600px){header{padding:18px 5%;gap:8px}header strong{font-size:22px}header a{font-size:19px}.hero{padding:42px 6%}.title-last{gap:12px}.hero-phone{font-size:21px;padding:10px 13px}h1{font-size:clamp(34px,8vw,44px)}.btn{font-size:17px}}
+.top-nav{background:#f1f6fc;padding:14px 5%;border-bottom:1px solid #d4dfed}
+.top-nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
+.top-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 19px;border-radius:9px;background:#1769aa;color:#fff;text-decoration:none;font-weight:900;font-size:17px;box-shadow:0 3px 0 #0d4778;transition:background .15s,transform .15s}
+.top-nav a:hover,.top-nav a:focus{background:#0d4778;transform:translateY(-1px);outline:3px solid #ffd166;outline-offset:2px}
+.top-nav .kakao-link{background:#fee500;color:#191919;box-shadow:0 3px 0 #d0bd00}
+.top-nav .kakao-link:hover,.top-nav .kakao-link:focus{background:#f3d900}
+.kakao-hours{width:100%;text-align:center;font-size:14px;font-weight:800;color:#24364b;margin-top:2px}
+@media(max-width:600px){.top-nav{padding:12px 4%}.top-nav-inner{gap:9px}.top-nav a{flex:1 1 40%;font-size:15px;padding:10px 8px}.top-nav .kakao-link{flex-basis:90%}.kakao-hours{font-size:13px}}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
 .card{border:1px solid #ddd;border-radius:12px;padding:20px}
 .gray{background:#f3f7fb}
@@ -28,6 +36,16 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </head>
 <body>
 <header><strong>스마트번개대리운전</strong><a href="tel:18773015">대표 상담 1877-3015</a></header>
+<nav class="top-nav" aria-label="주요 서비스 메뉴">
+  <div class="top-nav-inner">
+    <a href="#services">대리운전</a>
+    <a href="#special-transport">탁송</a>
+    <a href="#corporate">법인대리운전</a>
+    <a href="#golf">골프대리운전</a>
+    <a class="kakao-link" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">💬 카카오톡 상담</a>
+    <div class="kakao-hours">카카오톡 상담시간 08:00~20:00</div>
+  </div>
+</nav>
 <div class="hero">
 <p>전국 대리운전 · 자동차 탁송 상담</p>
 <h1>필요한 순간,<br>편리하게 연결하는 <span class="title-last">이동 서비스 <a class="hero-phone" href="tel:18773015" aria-label="대표 상담 전화 1877-3015">☎ 1877-3015</a></span></h1>
@@ -70,7 +88,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 <div class="card"><h3>대리운전</h3><p>모임, 회식, 골프장 이용 후 귀가 등 필요한 운행을 상담합니다.</p></div>
 <div class="card"><h3>전국 자동차 탁송</h3><p>차량을 출발지에서 목적지까지 이동해야 할 때 문의하세요.</p></div>
 <div class="card"><h3>장거리 운행</h3><p>지역 간 이동은 출발지와 도착지를 바탕으로 상담합니다.</p></div>
-<div class="card"><h3>법인 차량 상담</h3><p>업무용 차량 이동에 관한 상담을 안내합니다.</p></div>
+<div class="card" id="corporate"><h3>법인대리운전</h3><p>법인 차량과 업무 일정에 맞춘 대리운전 상담을 안내합니다.</p></div><div class="card" id="golf"><h3>골프대리운전</h3><p>골프장 라운딩 전후 이동이 필요할 때 상담하세요.</p></div>
 </div>
 </section>
 <section class="gray"><h2>이용 방법</h2><p>1. 대표 전화로 연락해 주세요.</p><p>2. 출발지와 도착지, 차량 종류, 희망 시간을 알려주세요.</p><p>3. 요금과 배차 가능 여부를 확인한 후 진행 여부를 결정하세요.</p><p>※ 요금과 배차 가능 여부는 거리와 시간, 차량 및 현장 상황에 따라 달라질 수 있습니다.</p></section>
