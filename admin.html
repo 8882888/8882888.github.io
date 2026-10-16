@@ -150,7 +150,10 @@ function safeCell(value) {
   return td;
 }
 function fareNumber(value) {
-  const digits = String(value ?? '').replace(/[^0-9]/g, '');
+  const textValue = String(value ?? '').replace(/,/g, '').trim();
+  const tenThousands = textValue.match(/(\\d+(?:\\.\\d+)?)\\s*만\\s*원?/);
+  if (tenThousands) return Math.round(Number(tenThousands[1]) * 10000);
+  const digits = textValue.replace(/[^0-9]/g, '');
   return digits ? Number(digits) : 0;
 }
 function won(value) {
@@ -230,6 +233,11 @@ document.getElementById('reset-filter-btn').addEventListener('click', () => {
   renderRecords();
 });
 document.getElementById('summary-month').addEventListener('change', renderMonthlySummary);
+const monthInput = document.getElementById('summary-month');
+if (!monthInput.value) {
+  const now = new Date();
+  monthInput.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+}
 document.getElementById('login-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   showStatus('로그인 중입니다.');
