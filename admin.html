@@ -66,6 +66,25 @@ th{background:#f5f6f8}
         <button type="button" class="secondary" id="clear-btn">입력 초기화</button>
       </div>
     </form>
+    <hr style="border:0;border-top:1px solid #e5e8ed;margin:24px 0">
+    <h2>엑셀 일괄등록</h2>
+    <p class="note">엑셀 양식에 날짜, 출발시간, 출발지, 도착지, 금액을 입력한 뒤 파일을 선택하세요. .xlsx, .xls, .csv 파일을 지원합니다. 이름·전화번호·주민등록번호 등 다른 열은 등록하지 않습니다.</p>
+    <div class="actions">
+      <button type="button" class="secondary" id="download-template-btn">엑셀 양식 다운로드</button>
+    </div>
+    <label for="excel-file">엑셀 파일 선택</label>
+    <input id="excel-file" type="file" accept=".xlsx,.xls,.csv">
+    <div class="actions">
+      <button type="button" id="preview-excel-btn">파일 확인</button>
+      <button type="button" id="import-excel-btn" disabled>확인한 기록 일괄등록</button>
+    </div>
+    <p id="excel-status" class="note" role="status">먼저 엑셀 파일을 선택해 주세요.</p>
+    <div class="table-wrap">
+      <table style="min-width:650px">
+        <thead><tr><th>날짜</th><th>시간</th><th>출발지</th><th>도착지</th><th>금액</th></tr></thead>
+        <tbody id="excel-preview"><tr><td colspan="5">미리보기 내용이 여기에 표시됩니다.</td></tr></tbody>
+      </table>
+    </div>
   </section>
 
   <section class="panel hidden" id="records-panel">
@@ -80,6 +99,7 @@ th{background:#f5f6f8}
 </main>
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import * as XLSX from 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm';
 
 const SUPABASE_URL = 'https://xgdijyiotsemfnsuwwoi.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_QjNQmNLe9NWRQtBjTu1QqQ_w-cmKGui';
@@ -194,6 +214,145 @@ recordForm.addEventListener('submit', async (event) => {
   await loadRecords();
 });
 document.getElementById('clear-btn').addEventListener('click', clearForm);
+
+// Excel import: only the five approved fields are read and sent to Supabase.
+let excelRows = [];
+const excelFile = document.getElementById('excel-file');
+const excelStatus = document.getElementById('excel-status');
+const excelPreview = document.getElementById('excel-preview');
+const importExcelBtn = document.getElementById('import-excel-btn');
+function excelMessage(message) { excelStatus.textContent = message; }
+function drawExcelPreview(rows) {
+  excelPreview.replaceChildren();
+  const shown = rows.slice(0, 10);
+  if (!shown.length) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td'); td.colSpan = 5;
+    td.textContent = '등록할 수 있는 기록이 없습니다.';
+    tr.appendChild(td); excelPreview.appendChild(tr); return;
+  }
+  for (const row of shown) {
+    const tr = document.createElement('tr');
+    tr.append(safeCell(row.ride_date), safeCell(row.departure_time), safeCell(row.departure), safeCell(row.destination), safeCell(row.fare));
+    excelPreview.appendChild(tr);
+  }
+}
+function excelDate(value) {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.getFullYear() + '-' + String(value.getMonth()+1).padStart(2,'0') + '-' + String(value.getDate()).padStart(2,'0');
+  }
+  if (typeof value === 'number' && value > 20000 && value < 80000) {
+    const d = XLSX.SSF.parse_date_code(value);
+    if (d) return String(d.y).padStart(4,'0') + '-' + String(d.m).padStart(2,'0') + '-' + String(d.d).padStart(2,'0');
+  }
+  const s = String(value ?? '').trim();
+  const m = s.match(/^(\\d{4})[.\\/-](\\d{1,2})[.\\/-](\\d{1,2})\\.?$/);
+  if (m) return m[1] + '-' + m[2].padStart(2,'0') + '-' + m[3].padStart(2,'0');
+  return '';
+}
+function excelTime(value) {
+  if (typeof value === 'number' && value >= 0 && value < 1) {
+    const mins = Math.round(value * 24 * 60);
+    return String(Math.floor(mins/60)%24).padStart(2,'0') + ':' + String(mins%60).padStart(2,'0');
+  }
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return String(value.getHours()).padStart(2,'0') + ':' + String(value.getMinutes()).padStart(2,'0');
+  }
+  const s = String(value ?? '').trim();
+  const m = s.match(/^(\\d{1,2}):([0-5]\\d)(?::[0-5]\\d)?$/);
+  if (m && Number(m[1]) < 24) return m[1].padStart(2,'0') + ':' + m[2];
+  return '';
+}
+function normalizeHeader(value) {
+  return String(value ?? '').toLowerCase().replace(/[\\s_()-]/g, '');
+}
+document.getElementById('download-template-btn').addEventListener('click', () => {
+  const sheet = XLSX.utils.aoa_to_sheet([
+    ['날짜','출발시간','출발지','도착지','금액'],
+    ['2026-10-16','08:30','서울역','인천공항','60000원']
+  ]);
+  sheet['!cols'] = [{wch:14},{wch:12},{wch:22},{wch:22},{wch:14}];
+  const book = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(book, sheet, '운행기록');
+  XLSX.writeFile(book, '스마트번개대리운전_운행기록_양식.xlsx');
+});
+document.getElementById('preview-excel-btn').addEventListener('click', async () => {
+  excelRows = [];
+  importExcelBtn.disabled = true;
+  const file = excelFile.files?.[0];
+  if (!file) { excelMessage('먼저 엑셀 파일을 선택해 주세요.'); return; }
+  try {
+    const bytes = await file.arrayBuffer();
+    const workbook = XLSX.read(bytes, {type:'array', cellDates:true});
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, {header:1, raw:true, defval:''});
+    if (rows.length < 2) throw new Error('첫 번째 시트에 제목 행과 데이터 행을 넣어 주세요.');
+    const headers = rows[0].map(normalizeHeader);
+    const findColumn = names => headers.findIndex(h => names.includes(h));
+    const ix = {
+      date: findColumn(['날짜','운행일','운행날짜','ridedate','date']),
+      time: findColumn(['출발시간','시간','departuretime','time']),
+      from: findColumn(['출발지','출발','departure','from']),
+      to: findColumn(['도착지','도착','destination','to']),
+      fare: findColumn(['금액','요금','운행금액','fare','price'])
+    };
+    const missing = Object.entries({날짜:ix.date,출발시간:ix.time,출발지:ix.from,도착지:ix.to,금액:ix.fare}).filter(([,v]) => v < 0).map(([k]) => k);
+    if (missing.length) throw new Error('필수 열을 찾지 못했습니다: ' + missing.join(', ') + '. 양식을 다운로드해 사용해 주세요.');
+    let skipped = 0;
+    for (let i=1; i<rows.length; i++) {
+      const row = rows[i];
+      if (!row.some(v => String(v ?? '').trim() !== '')) continue;
+      const record = {
+        ride_date: excelDate(row[ix.date]),
+        departure_time: excelTime(row[ix.time]),
+        departure: String(row[ix.from] ?? '').trim(),
+        destination: String(row[ix.to] ?? '').trim(),
+        fare: String(row[ix.fare] ?? '').trim()
+      };
+      if (!record.ride_date || !record.departure_time || !record.departure || !record.destination || !record.fare) { skipped++; continue; }
+      if (record.departure.length > 120 || record.destination.length > 120 || record.fare.length > 40) { skipped++; continue; }
+      excelRows.push(record);
+    }
+    drawExcelPreview(excelRows);
+    if (!excelRows.length) {
+      excelMessage('유효한 기록이 없습니다. 날짜는 YYYY-MM-DD, 시간은 HH:MM 형식으로 확인해 주세요.');
+    } else {
+      excelMessage('등록 가능한 기록 ' + excelRows.length + '건' + (skipped ? ', 형식 오류로 제외한 행 ' + skipped + '건' : '') + '입니다. 아래 미리보기를 확인한 뒤 일괄등록을 누르세요. 미리보기는 최대 10건만 표시됩니다.');
+      importExcelBtn.disabled = false;
+    }
+  } catch (error) {
+    excelRows = [];
+    drawExcelPreview([]);
+    excelMessage('엑셀 파일을 읽지 못했습니다: ' + (error?.message || '파일 형식을 확인해 주세요.'));
+  }
+});
+importExcelBtn.addEventListener('click', async () => {
+  if (!currentUser) { excelMessage('먼저 관리자 로그인을 해주세요.'); return; }
+  if (!excelRows.length) { excelMessage('먼저 파일 확인을 눌러 주세요.'); return; }
+  if (!window.confirm('개인정보 없이 확인된 운행 기록 ' + excelRows.length + '건을 등록할까요?')) return;
+  importExcelBtn.disabled = true;
+  document.getElementById('preview-excel-btn').disabled = true;
+  let inserted = 0;
+  try {
+    for (let i=0; i<excelRows.length; i+=100) {
+      const batch = excelRows.slice(i, i+100);
+      const { error } = await supabase.from('ride_history').insert(batch);
+      if (error) throw new Error(error.message);
+      inserted += batch.length;
+    }
+    excelMessage('일괄등록 완료: ' + inserted + '건이 저장되었습니다.');
+    showStatus('엑셀에서 운행 기록 ' + inserted + '건을 등록했습니다.');
+    excelRows = [];
+    excelFile.value = '';
+    drawExcelPreview([]);
+    await loadRecords();
+  } catch (error) {
+    excelMessage('등록 중 오류가 발생했습니다. ' + inserted + '건 저장 후 중단되었습니다. (' + (error?.message || '오류') + ')');
+  } finally {
+    importExcelBtn.disabled = excelRows.length === 0;
+    document.getElementById('preview-excel-btn').disabled = false;
+  }
+});
 document.getElementById('logout-btn').addEventListener('click', async () => {
   await supabase.auth.signOut(); currentUser = null; showManager(false); clearForm(); showStatus('로그아웃했습니다.');
 });
