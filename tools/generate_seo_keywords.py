@@ -56,8 +56,8 @@ def main():
 
     # Interleave venue types across locations so 100k entries don't stop at a few cities.
     # Each combination is meaningful as a content-planning target, not a claim of service coverage.
-    for place in PLACES:
-        for venue in VENUES:
+    for venue in VENUES:
+        for place in PLACES:
             add(place + venue + "대리운전", "지역·장소·대리운전")
             add(place + venue + "대리", "지역·장소·대리")
             if len(rows) >= 100000:
