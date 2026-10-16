@@ -91,6 +91,18 @@ th{background:#f5f6f8}
     <h2>저장된 기록</h2>
     <p class="note">저장된 운행 기록을 개인정보 없이 엑셀 파일로 내려받을 수 있습니다.</p>
     <div class="actions"><button type="button" class="secondary" id="export-records-btn">저장된 기록 엑셀 다운로드</button></div>
+    <hr style="border:0;border-top:1px solid #e5e8ed;margin:20px 0">
+    <h3>날짜별 기록 검색</h3>
+    <div class="grid">
+      <div><label for="filter-from">시작 날짜</label><input id="filter-from" type="date"></div>
+      <div><label for="filter-to">종료 날짜</label><input id="filter-to" type="date"></div>
+    </div>
+    <div class="actions"><button type="button" id="apply-filter-btn">기간 검색</button><button type="button" class="secondary" id="reset-filter-btn">전체 기록 보기</button></div>
+    <p id="filter-summary" class="note" role="status">전체 기록을 표시합니다.</p>
+    <hr style="border:0;border-top:1px solid #e5e8ed;margin:20px 0">
+    <h3>월별 운행 합계</h3>
+    <div class="grid"><div><label for="summary-month">확인할 월</label><input id="summary-month" type="month"></div></div>
+    <p id="monthly-summary" class="note" role="status">월별 합계를 계산합니다.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>날짜</th><th>시간</th><th>출발지</th><th>도착지</th><th>금액</th><th>관리</th></tr></thead>
@@ -137,20 +149,31 @@ function safeCell(value) {
   td.textContent = String(value ?? '');
   return td;
 }
-async function loadRecords() {
-  const { data, error } = await supabase.from('ride_history')
-    .select('id,ride_date,departure_time,departure,destination,fare')
-    .order('ride_date', { ascending: false });
-  if (error) {
-    showStatus('기록을 불러오지 못했습니다. Supabase 테이블과 권한 정책을 확인해 주세요. (' + error.message + ')');
-    return;
-  }
-  loadedRecords = data || [];
+function fareNumber(value) {
+  const digits = String(value ?? '').replace(/[^0-9]/g, '');
+  return digits ? Number(digits) : 0;
+}
+function won(value) {
+  return Math.round(value).toLocaleString('ko-KR') + '원';
+}
+function renderMonthlySummary() {
+  const month = document.getElementById('summary-month').value;
+  const target = loadedRecords.filter(row => month && String(row.ride_date || '').startsWith(month));
+  const total = target.reduce((sum, row) => sum + fareNumber(row.fare), 0);
+  document.getElementById('monthly-summary').textContent = month
+    ? month + ' 운행 ' + target.length + '건 · 금액 합계 ' + won(total) + ' (금액에서 숫자만 계산)'
+    : '월을 선택하면 해당 월의 운행 건수와 금액 합계를 보여드립니다.';
+}
+function renderRecords() {
+  const from = document.getElementById('filter-from').value;
+  const to = document.getElementById('filter-to').value;
+  const data = loadedRecords.filter(row => (!from || String(row.ride_date || '') >= from) && (!to || String(row.ride_date || '') <= to));
   recordsBody.replaceChildren();
-  if (!data || data.length === 0) {
+  document.getElementById('filter-summary').textContent = '검색 결과 ' + data.length + '건 / 전체 ' + loadedRecords.length + '건';
+  if (!data.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 6; td.textContent = '저장된 기록이 없습니다.';
+    td.colSpan = 6; td.textContent = '조건에 맞는 기록이 없습니다.';
     tr.appendChild(td); recordsBody.appendChild(tr); return;
   }
   for (const row of data) {
@@ -180,6 +203,33 @@ async function loadRecords() {
     actions.append(edit, del); tr.appendChild(actions); recordsBody.appendChild(tr);
   }
 }
+async function loadRecords() {
+  const { data, error } = await supabase.from('ride_history')
+    .select('id,ride_date,departure_time,departure,destination,fare')
+    .order('ride_date', { ascending: false });
+  if (error) {
+    showStatus('기록을 불러오지 못했습니다. Supabase 테이블과 권한 정책을 확인해 주세요. (' + error.message + ')');
+    return;
+  }
+  loadedRecords = data || [];
+  renderRecords();
+  renderMonthlySummary();
+}
+document.getElementById('apply-filter-btn').addEventListener('click', () => {
+  const from = document.getElementById('filter-from').value;
+  const to = document.getElementById('filter-to').value;
+  if (from && to && from > to) {
+    showStatus('시작 날짜가 종료 날짜보다 늦습니다. 날짜를 다시 확인해 주세요.');
+    return;
+  }
+  renderRecords();
+});
+document.getElementById('reset-filter-btn').addEventListener('click', () => {
+  document.getElementById('filter-from').value = '';
+  document.getElementById('filter-to').value = '';
+  renderRecords();
+});
+document.getElementById('summary-month').addEventListener('change', renderMonthlySummary);
 document.getElementById('login-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   showStatus('로그인 중입니다.');
