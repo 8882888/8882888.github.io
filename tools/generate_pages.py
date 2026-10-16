@@ -154,6 +154,83 @@ def generate_service_pages(urls):
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(page(item["title"] + " | " + BRAND, description, body, url), encoding="utf-8")
 
+
+def generate_quote_page(urls):
+    """Create a client-side quote-preparation page; it does not submit to a server."""
+    url = f"{SITE_URL}/quote/"
+    urls.add(url)
+    body = """
+<p class="muted">스마트번개대리운전 · 빠른 상담 준비</p>
+<h1>빠른 상담 정보 작성</h1>
+<p>상담에 필요한 이동 정보만 입력하면 문의 내용을 정리할 수 있습니다. 이 양식은 서버로 전송되지 않으며, 이름·전화번호 등 개인정보는 입력하지 마세요.</p>
+<div class="card">
+<form id="quote-form">
+<label for="service"><strong>서비스 종류</strong></label>
+<select id="service" required style="display:block;width:100%;padding:12px;margin:8px 0 16px">
+<option value="대리운전">대리운전</option><option value="자동차탁송">자동차탁송</option><option value="장거리탁송">장거리탁송</option><option value="법인대리운전">법인대리운전</option><option value="골프대리운전">골프대리운전</option>
+</select>
+<label for="departure"><strong>출발지</strong></label>
+<input id="departure" required maxlength="120" placeholder="예: 서울역 또는 상세 주소" style="display:block;width:100%;padding:12px;margin:8px 0 16px">
+<label for="destination"><strong>도착지</strong></label>
+<input id="destination" required maxlength="120" placeholder="예: 인천 송도" style="display:block;width:100%;padding:12px;margin:8px 0 16px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+<div><label for="date"><strong>이용 날짜</strong></label><input id="date" type="date" style="display:block;width:100%;padding:12px;margin:8px 0 16px"></div>
+<div><label for="time"><strong>희망 시간</strong></label><input id="time" type="time" style="display:block;width:100%;padding:12px;margin:8px 0 16px"></div>
+</div>
+<label for="vehicle"><strong>차량 종류 (선택)</strong></label>
+<input id="vehicle" maxlength="80" placeholder="예: 승용차, SUV" style="display:block;width:100%;padding:12px;margin:8px 0 16px">
+<label for="memo"><strong>추가 요청 (선택)</strong></label>
+<textarea id="memo" maxlength="300" rows="3" placeholder="예: 주차 위치, 차량 인수 관련 안내" style="display:block;width:100%;padding:12px;margin:8px 0 16px"></textarea>
+<button class="btn" type="submit">상담 내용 만들기</button>
+</form>
+</div>
+<div id="quote-result" class="card" hidden>
+<h2>상담 내용 확인</h2><pre id="quote-text" style="white-space:pre-wrap;overflow-wrap:anywhere;font:inherit"></pre>
+<button class="btn" id="copy-quote" type="button">내용 복사</button>
+<a class="btn" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 상담 열기</a>
+<a class="btn" href="tel:18773015">전화 상담 1877-3015</a>
+<p class="muted">복사한 내용을 카카오톡 상담창에 붙여넣어 보내세요. 이 페이지에서 상담이 자동 접수되지는 않습니다.</p>
+</div>
+<script>
+(function() {
+  var form = document.getElementById('quote-form');
+  var result = document.getElementById('quote-result');
+  var text = document.getElementById('quote-text');
+  var copy = document.getElementById('copy-quote');
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    var fields = [
+      ['서비스', document.getElementById('service').value],
+      ['출발지', document.getElementById('departure').value.trim()],
+      ['도착지', document.getElementById('destination').value.trim()],
+      ['이용 날짜', document.getElementById('date').value || '미정'],
+      ['희망 시간', document.getElementById('time').value || '미정'],
+      ['차량 종류', document.getElementById('vehicle').value.trim() || '미기재'],
+      ['추가 요청', document.getElementById('memo').value.trim() || '없음']
+    ];
+    text.textContent = '스마트번개대리운전 상담 요청\n' + fields.map(function(item) { return item[0] + ': ' + item[1]; }).join('\n');
+    result.hidden = false;
+    result.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  copy.addEventListener('click', function() {
+    var content = text.textContent;
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(content).then(function() {
+        copy.textContent = '복사 완료'; 
+      }).catch(function() { window.prompt('아래 내용을 복사해 주세요.', content); });
+    } else {
+      window.prompt('아래 내용을 복사해 주세요.', content);
+    }
+  });
+})();
+</script>
+<p><a href="/">홈페이지 첫 화면으로</a> · <a href="/region/">전국 지역별 안내</a></p>
+"""
+    description = "대리운전·자동차탁송 상담에 필요한 출발지, 도착지, 날짜와 시간을 정리하는 빠른 상담 작성 페이지."
+    out = ROOT / "quote" / "index.html"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(page("빠른 상담 작성 | " + BRAND, description, body, url), encoding="utf-8")
+
 def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
     regions = data.get("regions", [])
@@ -161,6 +238,7 @@ def main():
         raise SystemExit("data/regions.json에 지역을 입력해야 합니다.")
     urls = {SITE_URL + "/"}
     generate_service_pages(urls)
+    generate_quote_page(urls)
     # Keep hand-authored specialist transport landing pages in the sitemap.
     special_root = ROOT / "special"
     if special_root.exists():
