@@ -203,9 +203,15 @@ if (sessionData.session) {
   showManager(false);
   showStatus('관리자 이메일과 비밀번호로 로그인해 주세요.');
 }
-supabase.auth.onAuthStateChange((_event, session) => {
-  currentUser = session?.user ?? null;
-  if (!currentUser) showManager(false);
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.user) {
+    currentUser = session.user;
+    showManager(true);
+  } else if (event === 'SIGNED_OUT') {
+    currentUser = null;
+    showManager(false);
+    showStatus('로그아웃했습니다. 관리자 이메일과 비밀번호로 다시 로그인해 주세요.');
+  }
 });
 </script>
 </body>
