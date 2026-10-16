@@ -30,7 +30,8 @@ jobs:
       - name: Download official nationwide legal-dong CSV
         run: |
           mkdir -p data
-          curl --fail --location --retry 3 --retry-delay 2 \
+          curl --fail --location --connect-timeout 20 --max-time 180 \
+            --retry 5 --retry-delay 3 --retry-all-errors \
             'https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000003687312&fileDetailSn=1' \
             --output data/official_legal_dong.csv
           test "$(wc -c < data/official_legal_dong.csv)" -gt 100000
