@@ -1,0 +1,52 @@
+name: Deploy Smart Bunny root website to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Download official nationwide legal-dong CSV
+        run: |
+          mkdir -p data
+          curl --fail --location --retry 3 --retry-delay 2 \
+            'https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000003687312&fileDetailSn=1' \
+            --output data/official_legal_dong.csv
+          test "$(wc -c < data/official_legal_dong.csv)" -gt 100000
+          head -n 1 data/official_legal_dong.csv
+      - name: Import nationwide regions
+        run: python tools/import_official_regions.py
+      - name: Generate regional pages
+        run: python tools/generate_pages.py
+      - name: Validate generated pages and sitemap
+        run: python tools/validate_site.py
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
