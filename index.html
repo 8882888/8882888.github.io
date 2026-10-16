@@ -118,8 +118,8 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 
   function renderRecords(records) {
     const allowed = ['date','time','departure','destination','fare'];
-    const phonePattern = /(?:\\b(?:01[016789]|02|0[3-9][0-9])[- .]?\\d{3,4}[- .]?\\d{4}\\b)/;
-    const rrnPattern = /\\b\\d{6}[- ]?[1-8]\\d{6}\\b/;
+    const phonePattern = /(?:\b(?:01[016789]|02|0[3-9][0-9])[- .]?\d{3,4}[- .]?\d{4}\b)/;
+    const rrnPattern = /\b\d{6}[- ]?[1-8]\d{6}\b/;
     const clean = Array.isArray(records) ? records.filter(r =>
       r && allowed.every(k => String(r[k] ?? '').trim()) &&
       !allowed.some(k => phonePattern.test(String(r[k] ?? '')) || rrnPattern.test(String(r[k] ?? '')))
