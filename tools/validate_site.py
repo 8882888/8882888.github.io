@@ -5,7 +5,7 @@ from urllib.parse import unquote, urlsplit
 import xml.etree.ElementTree as ET
 
 ROOT = Path(".")
-SITE_PREFIX = "/smart-bunny-homepage"
+SITE_PREFIX = ""
 REQUIRED = [
     ROOT / "index.html",
     ROOT / "robots.txt",
