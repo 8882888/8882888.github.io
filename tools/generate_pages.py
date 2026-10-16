@@ -86,12 +86,81 @@ def service_body(location, level, service, region):
 <div class="card"><h2>실제 이용 후기 안내</h2><p>이 페이지는 지역 서비스 이용을 돕기 위한 안내입니다. 실제 운행 후기와 운행 경로, 요금은 확인된 사례가 있을 때에만 추가합니다. 확인되지 않은 고객 경험이나 운행 실적을 임의로 작성하지 않습니다.</p></div>
 <p class="muted">지역 정보: {esc(location)} · 안내 업데이트: {date.today().isoformat()}</p>"""
 
+
+def generate_service_pages(urls):
+    """Create standalone service landing pages and include them in the sitemap."""
+    pages = [
+        {
+            "slug": "daeri", "name": "대리운전",
+            "title": "전국 대리운전 이용 안내",
+            "intro": "회식, 모임, 업무, 골프장 이용 후 차량을 안전하게 귀가시키기 위한 대리운전 상담 안내입니다.",
+            "sections": [
+                ("상담 전에 준비할 내용", ["차량이 있는 정확한 출발 위치", "도착할 주소 또는 건물명", "희망 출발 시간", "차량 종류와 현장 상황"]),
+                ("이용 절차", ["출발지와 도착지 확인", "요금 및 배차 가능 여부 상담", "안내 내용을 확인한 뒤 이용 결정"]),
+                ("예약 및 배차", ["특정 시간이나 심야 이용은 미리 문의해 주세요.", "지역과 시간대에 따라 배차 가능 여부가 달라질 수 있습니다."])
+            ]
+        },
+        {
+            "slug": "taksong", "name": "자동차탁송",
+            "title": "전국 자동차탁송 이용 안내",
+            "intro": "차량 매매, 정비, 출장, 이사 및 개인 일정에 맞춰 자동차를 출발지에서 목적지까지 이동하는 탁송 상담 안내입니다.",
+            "sections": [
+                ("탁송 문의 시 확인할 내용", ["차량 인수 장소와 도착 주소", "차종 및 차량 상태", "희망 인수 날짜와 시간", "인수·인계 방법"]),
+                ("진행 절차", ["출발지·도착지와 차종 확인", "일정·요금 및 배차 가능 여부 확인", "조건을 확인한 뒤 진행 결정"]),
+                ("장거리 탁송", ["장거리 이동은 일정과 지역별 배차 여건을 고려해 사전 상담을 권장합니다.", "확정 요금은 실제 출발지와 도착지를 확인한 뒤 안내합니다."])
+            ]
+        },
+        {
+            "slug": "corporate", "name": "법인대리운전",
+            "title": "법인대리운전 상담 안내",
+            "intro": "기업 임직원 이동, 업무 일정, 법인 차량 이용에 필요한 대리운전 상담 정보를 안내합니다.",
+            "sections": [
+                ("기업 상담 시 확인할 내용", ["이용 빈도와 예상 시간대", "주요 출발지와 도착지", "정산 및 이용 절차에 필요한 조건", "담당 부서에서 원하는 연락 방법"]),
+                ("운영 방식 협의", ["반복 이용이나 일정한 업무 패턴은 상담 시 미리 알려주세요.", "정산 방식과 계약 조건은 별도 확인 후 안내합니다."]),
+                ("이용 전 확인", ["서비스 범위와 요금, 배차 조건을 확인한 뒤 이용을 결정해 주세요."])
+            ]
+        },
+        {
+            "slug": "golf", "name": "골프대리운전",
+            "title": "골프대리운전 이용 안내",
+            "intro": "골프 라운딩 전후 차량 이동이 필요한 고객을 위한 골프장 출발·도착 대리운전 상담 안내입니다.",
+            "sections": [
+                ("골프장 이용 전 준비", ["골프장 이름과 차량 주차 위치", "라운딩 종료 예상 시간", "귀가 목적지", "동반자와 차량 인수 장소"]),
+                ("예약 상담 팁", ["주말이나 공휴일, 라운딩 종료가 몰리는 시간대는 미리 상담하는 편이 좋습니다.", "현장 위치와 종료 예정 시간을 구체적으로 알려주시면 상담에 도움이 됩니다."]),
+                ("배차 확인", ["요금과 배차 가능 여부는 실제 일정과 이동 구간을 확인한 뒤 안내합니다."])
+            ]
+        }
+    ]
+    for item in pages:
+        slug = item["slug"]
+        url = f"{SITE_URL}/service/{slug}/"
+        urls.add(url)
+        section_html = []
+        for heading, bullets in item["sections"]:
+            section_html.append("<h2>" + esc(heading) + "</h2><ul>" + "".join("<li>" + esc(b) + "</li>" for b in bullets) + "</ul>")
+        body = (
+            '<p class="muted">스마트번개대리운전 · 서비스 안내</p>'
+            + "<h1>" + esc(item["title"]) + "</h1>"
+            + "<p>" + esc(item["intro"]) + "</p>"
+            + "".join(section_html)
+            + '<div class="card"><h2>상담 안내</h2><p>출발지, 도착지, 차량 종류와 희망 시간을 알려주시면 상담이 더 정확해집니다.</p>'
+            + '<p><strong>' + esc(PHONE) + '</strong></p><a class="btn" href="tel:18773015">전화 상담하기</a>'
+            + '<a class="btn" href="https://open.kakao.com/o/sGV88r7h">카카오톡 상담</a>'
+            + '<p class="muted">요금과 배차 가능 여부는 거리, 시간, 차량 및 현장 상황에 따라 달라질 수 있습니다.</p></div>'
+            + '<p><a href="/">홈페이지 첫 화면으로</a> · <a href="/region/">전국 지역별 안내</a></p>'
+        )
+        description = item["title"] + " 및 이용 절차, 상담 전 확인사항 안내. 대표 전화 " + PHONE + "."
+        out = ROOT / "service" / slug / "index.html"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(page(item["title"] + " | " + BRAND, description, body, url), encoding="utf-8")
+
 def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
     regions = data.get("regions", [])
     if not regions:
         raise SystemExit("data/regions.json에 지역을 입력해야 합니다.")
     urls = {SITE_URL + "/"}
+    generate_service_pages(urls)
     # Keep hand-authored specialist transport landing pages in the sitemap.
     special_root = ROOT / "special"
     if special_root.exists():
