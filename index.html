@@ -85,8 +85,8 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </section>
 
 <section id="ride-history">
-<h2>실제 운행 완료 내역</h2>
-<p>운행이 종료된 기록 중 공개 가능한 정보만 표시합니다. 개인정보와 내부 접수정보는 공개하지 않습니다.</p>
+<h2>운행 기록</h2>
+<p>접수된 운행 관련 기록을 날짜·시간·출발지·도착지·금액으로 정리했습니다. 개인정보는 공개하지 않습니다.</p>
 <div style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;min-width:620px">
 <thead><tr><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">날짜</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발 시간</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발지</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">도착지</th><th style="text-align:right;padding:12px;border-bottom:2px solid #ccd5e0">금액</th></tr></thead>
@@ -107,7 +107,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
       !allowed.some(k => /\b(?:01[016789]|02|0[3-9][0-9])[- .]?\d{3,4}[- .]?\d{4}\b/.test(String(r[k] ?? '')))
     ) : [];
     if (!clean.length) {
-      body.innerHTML = '<tr><td colspan="5" style="padding:14px">현재 공개 가능한 운행 완료 내역이 없습니다.</td></tr>';
+      body.innerHTML = '<tr><td colspan="5" style="padding:14px">공개 가능한 운행 기록이 없습니다.</td></tr>';
       return;
     }
     body.replaceChildren();
@@ -135,13 +135,19 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
     });
     if (!response.ok) throw new Error('Supabase history unavailable');
     const rows = await response.json();
-    renderRecords(rows.map(r => ({
-      date: String(r.ride_date ?? ''),
-      time: String(r.departure_time ?? ''),
-      departure: String(r.departure ?? ''),
-      destination: String(r.destination ?? ''),
-      fare: String(r.fare ?? '')
-    })));
+    if (rows.length) {
+      renderRecords(rows.map(r => ({
+        date: String(r.ride_date ?? ''),
+        time: String(r.departure_time ?? ''),
+        departure: String(r.departure ?? ''),
+        destination: String(r.destination ?? ''),
+        fare: String(r.fare ?? '')
+      })));
+    } else {
+      const fallback = await fetch('./data/ride-history.json', {cache:'no-store'});
+      if (!fallback.ok) throw new Error('history unavailable');
+      renderRecords(await fallback.json());
+    }
   } catch (_) {
     try {
       const response = await fetch('./data/ride-history.json', {cache:'no-store'});
