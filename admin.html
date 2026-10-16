@@ -151,7 +151,7 @@ function safeCell(value) {
 }
 function fareNumber(value) {
   const textValue = String(value ?? '').replace(/,/g, '').trim();
-  const tenThousands = textValue.match(/(\\d+(?:\\.\\d+)?)\\s*만\\s*원?/);
+  const tenThousands = textValue.match(/(\d+(?:\.\d+)?)\s*만\s*원?/);
   if (tenThousands) return Math.round(Number(tenThousands[1]) * 10000);
   const digits = textValue.replace(/[^0-9]/g, '');
   return digits ? Number(digits) : 0;
@@ -329,7 +329,7 @@ function excelDate(value) {
     if (d) return String(d.y).padStart(4,'0') + '-' + String(d.m).padStart(2,'0') + '-' + String(d.d).padStart(2,'0');
   }
   const s = String(value ?? '').trim();
-  const m = s.match(/^(\\d{4})[.\\/-](\\d{1,2})[.\\/-](\\d{1,2})\\.?$/);
+  const m = s.match(/^(\d{4})[.\/-](\d{1,2})[.\/-](\d{1,2})\.?$/);
   if (m) return m[1] + '-' + m[2].padStart(2,'0') + '-' + m[3].padStart(2,'0');
   return '';
 }
@@ -342,7 +342,7 @@ function excelTime(value) {
     return String(value.getHours()).padStart(2,'0') + ':' + String(value.getMinutes()).padStart(2,'0');
   }
   const s = String(value ?? '').trim();
-  const m = s.match(/^(\\d{1,2}):([0-5]\\d)(?::[0-5]\\d)?$/);
+  const m = s.match(/^(\d{1,2}):([0-5]\d)(?::[0-5]\d)?$/);
   if (m && Number(m[1]) < 24) return m[1].padStart(2,'0') + ':' + m[2];
   return '';
 }
