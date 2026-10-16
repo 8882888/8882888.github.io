@@ -83,6 +83,52 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </div>
 <p>지역별 요금과 배차 가능 여부는 실제 출발지·도착지와 이용 시간을 확인한 뒤 안내합니다. 확인되지 않은 후기나 운행 실적은 게시하지 않습니다.</p>
 </section>
+
+<section id="ride-history">
+<h2>실제 운행 완료 내역</h2>
+<p>운행이 종료된 기록 중 공개 가능한 정보만 표시합니다. 개인정보와 내부 접수정보는 공개하지 않습니다.</p>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;min-width:620px">
+<thead><tr><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">날짜</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발 시간</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발지</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">도착지</th><th style="text-align:right;padding:12px;border-bottom:2px solid #ccd5e0">금액</th></tr></thead>
+<tbody id="ride-history-rows"><tr><td colspan="5" style="padding:14px">확인된 운행 완료 내역을 준비하고 있습니다.</td></tr></tbody>
+</table>
+</div>
+</section>
+<script>
+(async function(){
+  const body = document.getElementById('ride-history-rows');
+  try {
+    const response = await fetch('./data/ride-history.json', {cache:'no-store'});
+    if (!response.ok) throw new Error('history unavailable');
+    const records = await response.json();
+    const allowed = ['date','time','departure','destination','fare'];
+    const clean = Array.isArray(records) ? records.filter(r =>
+      r && allowed.every(k => typeof r[k] === 'string' && r[k].trim()) &&
+      !allowed.some(k => /\b(?:01[016789]|02|0[3-9][0-9])[- .]?\d{3,4}[- .]?\d{4}\b/.test(r[k]))
+    ) : [];
+    if (!clean.length) {
+      body.innerHTML = '<tr><td colspan="5" style="padding:14px">현재 공개 가능한 운행 완료 내역이 없습니다.</td></tr>';
+      return;
+    }
+    body.replaceChildren();
+    clean.forEach(record => {
+      const tr = document.createElement('tr');
+      [record.date, record.time, record.departure, record.destination, record.fare].forEach((value, index) => {
+        const td = document.createElement('td');
+        td.textContent = value;
+        td.style.padding = '12px';
+        td.style.borderBottom = '1px solid #e2e8f0';
+        if (index === 4) td.style.textAlign = 'right';
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+  } catch (_) {
+    body.innerHTML = '<tr><td colspan="5" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
+  }
+})();
+</script>
+
 <section class="contact"><h2>전화 상담</h2><div class="phone">1877-3015</div><a class="btn" href="tel:18773015">지금 전화하기</a><a class="btn" href="https://open.kakao.com/o/sGV88r7h">카카오톡 오픈채팅</a></section>
 <footer>스마트번개대리운전<br>대표 상담 전화: 1877-3015<br>전국 지역별 서비스 안내를 단계적으로 확장하고 있습니다.</footer>
 </body>
