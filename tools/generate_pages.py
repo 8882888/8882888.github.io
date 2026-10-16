@@ -118,13 +118,13 @@ def main():
         urls.add(region_url)
         child_items = sorted(children_by_parent.get(location, []), key=lambda x: (x.get("level", ""), x.get("name", "")))
         child_links = "".join(
-            f'<li><a href="/smart-bunny-homepage/region/{esc(item["slug"].strip("/"))}/">{esc(item["name"])} ({esc(item.get("level", "지역"))})</a></li>'
+            f'<li><a href="/region/{esc(item["slug"].strip("/"))}/">{esc(item["name"])} ({esc(item.get("level", "지역"))})</a></li>'
             for item in child_items
         )
         child_section = f'<h2>하위 행정구역</h2><ul>{child_links}</ul>' if child_items else ""
         parent_item = location_by_name.get(parent)
         parent_section = (
-            f'<p><a href="/smart-bunny-homepage/region/{esc(parent_item["slug"].strip("/"))}/">← {esc(parent)} 상위 지역으로</a></p>'
+            f'<p><a href="/region/{esc(parent_item["slug"].strip("/"))}/">← {esc(parent)} 상위 지역으로</a></p>'
             if parent_item and parent_item.get("slug", "").strip("/") != slug else ""
         )
         local_services = r.get("services", [s["slug"] for s in SERVICES])
@@ -132,7 +132,7 @@ def main():
         for s in SERVICES:
             if s["slug"] not in local_services:
                 continue
-            href = f"/smart-bunny-homepage/region/{slug}/{s['slug']}/"
+            href = f"/region/{slug}/{s['slug']}/"
             links.append(f'<div class="card"><h3><a href="{href}">{esc(location)} {esc(s["keyword"])}</a></h3><p>{esc(location)} 지역의 이용 상황, 상담 전 확인사항과 진행 순서를 안내합니다.</p></div>')
             service_url = f"{SITE_URL}/region/{slug}/{s['slug']}/"
             urls.add(service_url)
@@ -190,13 +190,13 @@ def main():
                 continue
             seen.add(item_url)
             label = " ".join(part for part in [item.get("parent_name", ""), item["name"]] if part)
-            district_links.append(f'<li><a href="/smart-bunny-homepage/region/{esc(item_slug)}/">{esc(label)}</a></li>')
+            district_links.append(f'<li><a href="/region/{esc(item_slug)}/">{esc(label)}</a></li>')
         province_body = f"""<p class="muted">전국 지역별 서비스 안내</p>
 <h1>{esc(province_name)} 대리운전·자동차탁송 지역 안내</h1>
 <p>{esc(province_name)}의 법정동 데이터를 바탕으로 지역별 서비스 페이지를 구성했습니다. 원하는 시·군·구를 선택한 뒤 세부 지역과 서비스를 확인하세요.</p>
 <h2>시·군·구 찾아보기</h2>
 <ul>{''.join(district_links) if district_links else '<li>세부 지역 정보는 데이터 갱신 후 표시됩니다.</li>'}</ul>
-<p><a href="/smart-bunny-homepage/region/">전국 지역 안내로 돌아가기</a></p>"""
+<p><a href="/region/">전국 지역 안내로 돌아가기</a></p>"""
         out = region_root / province_slug / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(page(f"{province_name} 대리운전·탁송 지역 안내 | {BRAND}", f"{province_name} 대리운전, 자동차탁송, 장거리탁송 지역별 안내. 대표 전화 {PHONE}.", province_body, province_url), encoding="utf-8")
