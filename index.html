@@ -115,17 +115,17 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 <script>
 (async function(){
   const body = document.getElementById('ride-history-rows');
-  const SUPABASE_URL = 'https://xgdijyiotsemfnsuwwoi.supabase.co';
-  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_QjNQmNLe9NWRQtBjTu1QqQ_w-cmKGui';
 
   function renderRecords(records) {
     const allowed = ['date','time','departure','destination','fare'];
+    const phonePattern = /(?:\\b(?:01[016789]|02|0[3-9][0-9])[- .]?\\d{3,4}[- .]?\\d{4}\\b)/;
+    const rrnPattern = /\\b\\d{6}[- ]?[1-8]\\d{6}\\b/;
     const clean = Array.isArray(records) ? records.filter(r =>
-      r && allowed.every(k => typeof String(r[k] ?? '').trim() === 'string' && String(r[k] ?? '').trim()) &&
-      !allowed.some(k => /\b(?:01[016789]|02|0[3-9][0-9])[- .]?\d{3,4}[- .]?\d{4}\b/.test(String(r[k] ?? '')))
+      r && allowed.every(k => String(r[k] ?? '').trim()) &&
+      !allowed.some(k => phonePattern.test(String(r[k] ?? '')) || rrnPattern.test(String(r[k] ?? '')))
     ) : [];
     if (!clean.length) {
-      body.innerHTML = '<tr><td colspan="5" style="padding:14px">공개 가능한 운행 기록이 없습니다.</td></tr>';
+      body.innerHTML = '<tr><td colspan="5" style="padding:14px">공개 가능한 완료 운행 기록이 없습니다.</td></tr>';
       return;
     }
     body.replaceChildren();
@@ -144,36 +144,11 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
   }
 
   try {
-    const response = await fetch(SUPABASE_URL + '/rest/v1/ride_history?select=ride_date,departure_time,departure,destination,fare&order=ride_date.desc', {
-      headers: {
-        apikey: SUPABASE_PUBLISHABLE_KEY,
-        Authorization: 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
-      },
-      cache: 'no-store'
-    });
-    if (!response.ok) throw new Error('Supabase history unavailable');
-    const rows = await response.json();
-    if (rows.length) {
-      renderRecords(rows.map(r => ({
-        date: String(r.ride_date ?? ''),
-        time: String(r.departure_time ?? ''),
-        departure: String(r.departure ?? ''),
-        destination: String(r.destination ?? ''),
-        fare: String(r.fare ?? '')
-      })));
-    } else {
-      const fallback = await fetch('./data/ride-history.json', {cache:'no-store'});
-      if (!fallback.ok) throw new Error('history unavailable');
-      renderRecords(await fallback.json());
-    }
+    const response = await fetch('./data/ride-history.json', {cache:'no-store'});
+    if (!response.ok) throw new Error('history unavailable');
+    renderRecords(await response.json());
   } catch (_) {
-    try {
-      const response = await fetch('./data/ride-history.json', {cache:'no-store'});
-      if (!response.ok) throw new Error('history unavailable');
-      renderRecords(await response.json());
-    } catch (_) {
-      body.innerHTML = '<tr><td colspan="5" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
-    }
+    body.innerHTML = '<tr><td colspan="5" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
   }
 })();
 </script>
