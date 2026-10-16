@@ -264,7 +264,7 @@ function excelTime(value) {
   return '';
 }
 function normalizeHeader(value) {
-  return String(value ?? '').toLowerCase().replace(/[\\s_()-]/g, '');
+  return String(value ?? '').toLowerCase().replace(/[\s_()-]/g, '');
 }
 document.getElementById('download-template-btn').addEventListener('click', () => {
   const sheet = XLSX.utils.aoa_to_sheet([
