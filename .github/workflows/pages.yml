@@ -27,14 +27,33 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+      - name: Restore official legal-dong CSV cache
+        uses: actions/cache@v4
+        with:
+          path: data/official_legal_dong.csv
+          key: official-legal-dong-v1-${{ runner.os }}
       - name: Download official nationwide legal-dong CSV
+        shell: bash
         run: |
           mkdir -p data
-          curl --fail --location --connect-timeout 20 --max-time 180 \
-            --retry 5 --retry-delay 3 --retry-all-errors \
-            'https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000003687312&fileDetailSn=1' \
-            --output data/official_legal_dong.csv
-          test "$(wc -c < data/official_legal_dong.csv)" -gt 100000
+          URL='https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000003687312&fileDetailSn=1'
+          TMP_FILE="$(mktemp)"
+          echo "Attempting to download the latest official legal-dong CSV..."
+          if curl --fail --location --connect-timeout 15 --max-time 60 \
+            --retry 2 --retry-delay 3 --retry-all-errors \
+            "$URL" --output "$TMP_FILE" && [ "$(wc -c < "$TMP_FILE")" -gt 100000 ]; then
+            mv "$TMP_FILE" data/official_legal_dong.csv
+            echo "Downloaded official CSV successfully."
+          else
+            rm -f "$TMP_FILE"
+            if [ -f data/official_legal_dong.csv ] && [ "$(wc -c < data/official_legal_dong.csv)" -gt 100000 ]; then
+              echo "::warning::Official download failed; using the previously cached official CSV."
+            else
+              echo "::error::Official CSV download failed and no valid cached copy is available."
+              echo "Please retry the workflow later. No outdated sample region data will be deployed."
+              exit 1
+            fi
+          fi
           head -n 1 data/official_legal_dong.csv
       - name: Import nationwide regions
         run: python tools/import_official_regions.py
