@@ -37,6 +37,9 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 .muted{{color:#536276;font-size:.95rem}}ul{{padding-left:22px}}
 </style></head><body>
 <header><strong>{BRAND}</strong> · <a href="tel:18773015">대표 상담 {PHONE}</a></header>
+<nav aria-label="주요 메뉴" style="padding:12px 5%;border-bottom:1px solid #d9e1ea;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+<a href="/">홈</a><a href="/service/daeri/">대리운전</a><a href="/service/taksong/">자동차탁송</a><a href="/service/long-distance-taksong/">장거리탁송</a><a href="/service/corporate/">법인대리운전</a><a href="/service/golf/">골프대리운전</a><a href="/quote/">빠른 상담 작성</a><a href="/region/">전국 지역 찾기</a>
+</nav>
 <main>{body}
 <div class="card"><h2>전화 상담</h2><p>출발지와 도착지, 차량 종류, 이용 날짜와 희망 시간을 알려주시면 상담이 더 정확해집니다.</p>
 <p><strong>{PHONE}</strong></p><a class="btn" href="tel:18773015">전화 상담하기</a>
