@@ -57,6 +57,8 @@ jobs:
           head -n 1 data/official_legal_dong.csv
       - name: Import nationwide regions
         run: python tools/import_official_regions.py
+      - name: Generate 100,000 SEO keyword targets
+        run: python tools/generate_seo_keywords.py
       - name: Generate regional pages
         run: python tools/generate_pages.py
       - name: Validate generated pages and sitemap
