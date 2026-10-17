@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Validate generated static pages and sitemap targets before GitHub Pages deployment."""
+import os
+import re
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 import xml.etree.ElementTree as ET
 
 ROOT = Path(".")
 SITE_PREFIX = ""
+SITE_URL = os.environ.get("SITE_URL", "https://8882888.github.io").rstrip("/")
+EXPECTED_HOST = urlsplit(SITE_URL).netloc
 REQUIRED = [
     ROOT / "index.html",
     ROOT / "robots.txt",
@@ -30,6 +34,9 @@ def main():
 
     broken = []
     for url in urls:
+        if urlsplit(url).netloc != EXPECTED_HOST:
+            broken.append((url, "사이트맵 호스트가 SITE_URL과 다름"))
+            continue
         parsed = urlsplit(url)
         path = unquote(parsed.path)
         if path == SITE_PREFIX or path == SITE_PREFIX + "/":
@@ -44,6 +51,17 @@ def main():
             continue
         if not local.is_file():
             broken.append((url, str(local)))
+
+    canonical_errors = []
+    canonical_pattern = re.compile(r'<link\\s+rel=["\\']canonical["\\']\\s+href=["\\']([^"\\']+)["\\']', re.I)
+    for html_path in html_files:
+        html_text = html_path.read_text(encoding="utf-8")
+        match = canonical_pattern.search(html_text)
+        if match and urlsplit(match.group(1)).netloc != EXPECTED_HOST:
+            canonical_errors.append((str(html_path), match.group(1)))
+    if canonical_errors:
+        preview = "\\n".join(f"- {path}: {url}" for path, url in canonical_errors[:20])
+        raise SystemExit(f"정규 URL 호스트 오류 {len(canonical_errors)}건 (기대 호스트: {EXPECTED_HOST}):\\n{preview}")
 
     if broken:
         preview = "\n".join(f"- {url} -> {target}" for url, target in broken[:20])
