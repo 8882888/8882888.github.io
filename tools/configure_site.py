@@ -28,7 +28,7 @@ for path in ROOT.rglob("*.html"):
 robots = ROOT / "robots.txt"
 if robots.exists():
     lines = robots.read_text(encoding="utf-8").splitlines()
-    lines = [re.sub(r"^Sitemap:\\s*.*$", f"Sitemap: {SITE_URL}/sitemap.xml", line, flags=re.I) for line in lines]
+    lines = [re.sub(r"^Sitemap:\s*.*$", f"Sitemap: {SITE_URL}/sitemap.xml", line, flags=re.I) for line in lines]
     robots.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 # A CNAME file is only added for a custom host; GitHub's default host needs none.
