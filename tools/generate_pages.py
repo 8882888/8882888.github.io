@@ -2,13 +2,14 @@
 """Generate useful local service pages for Smart Bunny Driver Service."""
 import json
 import html
+import os
 from pathlib import Path
 from datetime import date
 from urllib.parse import quote, urlsplit, urlunsplit
 
 ROOT = Path(".")
 DATA = ROOT / "data" / "regions.json"
-SITE_URL = "https://8882888.github.io"
+SITE_URL = os.environ.get("SITE_URL", "https://8882888.github.io").rstrip("/")
 BRAND = "스마트전국대리운전 스마트24탁송"
 PHONE = "1877-3015"
 SERVICES = [
@@ -390,7 +391,7 @@ def generate_topic_pages(urls):
             sections.append("<h2>" + esc(heading) + "</h2><ul>" + "".join("<li>" + esc(b) + "</li>" for b in bullets) + "</ul>")
         links = "".join('<div class="card"><a href="' + esc(href) + '">' + esc(label) + '</a></div>' for href, label in item["links"])
         body = (
-            '<p class="muted">스마트번개대리운전 · 서비스별 상세 안내</p>'
+            '<p class="muted">스마트전국대리운전 스마트24탁송 · 서비스별 상세 안내</p>'
             + "<h1>" + esc(item["title"]) + "</h1>"
             + "<p>" + esc(item["intro"]) + "</p>"
             + "".join(sections)
