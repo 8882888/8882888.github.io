@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>관리자 로그인 | 스마트번개대리운전</title>
+<title>관리자 로그인 | 스마트전국대리운전 스마트24탁송</title>
 <style>
 :root{--black:#171717;--yellow:#FFD400;--line:#d9dee7}
 *{box-sizing:border-box}
@@ -31,7 +31,7 @@ th{background:#f5f6f8}
 </style>
 </head>
 <body>
-<header><strong>스마트번개대리운전 · 관리자</strong></header>
+<header><strong>스마트전국대리운전 스마트24탁송 · 관리자</strong></header>
 <main>
   <div id="status" role="status">관리자 로그인을 준비하고 있습니다.</div>
   <section class="panel" id="login-panel">
@@ -295,7 +295,7 @@ document.getElementById('export-records-btn').addEventListener('click', () => {
   sheet['!cols'] = [{wch:14},{wch:12},{wch:24},{wch:24},{wch:14}];
   const book = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(book, sheet, '운행기록');
-  XLSX.writeFile(book, '스마트번개대리운전_저장된운행기록.xlsx');
+  XLSX.writeFile(book, '스마트전국대리운전 스마트24탁송_저장된운행기록.xlsx');
 });
 
 // Excel import: only the five approved fields are read and sent to Supabase.
@@ -357,7 +357,7 @@ document.getElementById('download-template-btn').addEventListener('click', () =>
   sheet['!cols'] = [{wch:14},{wch:12},{wch:22},{wch:22},{wch:14}];
   const book = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(book, sheet, '운행기록');
-  XLSX.writeFile(book, '스마트번개대리운전_운행기록_양식.xlsx');
+  XLSX.writeFile(book, '스마트전국대리운전 스마트24탁송_운행기록_양식.xlsx');
 });
 document.getElementById('preview-excel-btn').addEventListener('click', async () => {
   excelRows = [];
