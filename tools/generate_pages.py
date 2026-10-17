@@ -583,16 +583,15 @@ def main():
     for offset in range(0, len(sorted_urls), chunk_size):
         chunk = sorted_urls[offset:offset + chunk_size]
         sitemap_name = f"sitemap-{len(sitemap_files) + 1}.xml"
-        entries = "\\n".join(f"  <url><loc>{esc(url)}</loc></url>" for url in chunk)
-        content = '<?xml version="1.0" encoding="UTF-8"?>\\n<urlset xmlns="' + namespace + '">\\n' + entries + "\\n</urlset>\\n"
+        entries = "\n".join(f"  <url><loc>{esc(url)}</loc></url>" for url in chunk)
+        content = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="' + namespace + '">\n' + entries + "\n</urlset>\n"
         (ROOT / sitemap_name).write_text(content, encoding="utf-8")
         sitemap_files.append(f"{SITE_URL}/{sitemap_name}")
-    index_entries = "\\n".join(f"  <sitemap><loc>{esc(url)}</loc></sitemap>" for url in sitemap_files)
-    index_content = '<?xml version="1.0" encoding="UTF-8"?>\\n<sitemapindex xmlns="' + namespace + '">\\n' + index_entries + "\\n</sitemapindex>\\n"
+    index_entries = "\n".join(f"  <sitemap><loc>{esc(url)}</loc></sitemap>" for url in sitemap_files)
+    index_content = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="' + namespace + '">\n' + index_entries + "\n</sitemapindex>\n"
     (ROOT / "sitemap.xml").write_text(index_content, encoding="utf-8")
     print(f"Generated {count} pages from {len(regions)} region records.")
     print(f"Created sitemap index with {len(sitemap_files)} sitemap file(s), at most {chunk_size} URLs each.")
-    print(f"Generated {count} pages from {len(regions)} region records.")
     print("Nationwide expansion requires verified administrative-area data and useful region-specific details.")
 
 if __name__ == "__main__":
