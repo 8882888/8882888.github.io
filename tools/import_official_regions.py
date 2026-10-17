@@ -97,7 +97,7 @@ def main():
     ordered = sorted(regions.values(), key=lambda r: (r["slug"], r["legal_dong_code"]))
     output = {
         "schema_version": 2,
-        "brand": "스마트번개대리운전",
+        "brand": "스마트전국대리운전 스마트24탁송",
         "phone": "1877-3015",
         "source": "국토교통부_전국 법정동 (공공데이터포털)",
         "source_url": "https://www.data.go.kr/data/15063424/fileData.do",
