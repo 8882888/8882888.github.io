@@ -26,11 +26,38 @@ def main():
     if len(html_files) > 100000:
         raise SystemExit(f"GitHub Pages 정적 파일 수 제한을 넘을 수 있습니다: HTML {len(html_files)}개")
 
-    tree = ET.parse(ROOT / "sitemap.xml")
     namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-    urls = [node.text for node in tree.findall(".//sm:loc", namespace) if node.text]
+    root = ET.parse(ROOT / "sitemap.xml").getroot()
+    root_kind = root.tag.rsplit("}", 1)[-1]
+    urls = []
+    if root_kind == "sitemapindex":
+        sitemap_locs = [node.text for node in root.findall(".//sm:sitemap/sm:loc", namespace) if node.text]
+        if not sitemap_locs:
+            raise SystemExit("사이트맵 인덱스에 하위 사이트맵이 없습니다.")
+        if len(sitemap_locs) > 50000:
+            raise SystemExit("사이트맵 인덱스가 허용 URL 수를 초과했습니다.")
+        for sitemap_url in sitemap_locs:
+            parsed_sitemap = urlsplit(sitemap_url)
+            if parsed_sitemap.netloc != EXPECTED_HOST:
+                raise SystemExit(f"하위 사이트맵 호스트 오류: {sitemap_url}")
+            sitemap_path = ROOT / unquote(parsed_sitemap.path.lstrip("/"))
+            if not sitemap_path.is_file():
+                raise SystemExit(f"하위 사이트맵 파일이 없습니다: {sitemap_path}")
+            sitemap_root = ET.parse(sitemap_path).getroot()
+            if sitemap_root.tag.rsplit("}", 1)[-1] != "urlset":
+                raise SystemExit(f"하위 사이트맵 형식 오류: {sitemap_path}")
+            child_urls = [node.text for node in sitemap_root.findall(".//sm:url/sm:loc", namespace) if node.text]
+            if len(child_urls) > 50000:
+                raise SystemExit(f"하위 사이트맵 URL이 50,000개를 초과했습니다: {sitemap_path}")
+            urls.extend(child_urls)
+    elif root_kind == "urlset":
+        urls = [node.text for node in root.findall(".//sm:url/sm:loc", namespace) if node.text]
+        if len(urls) > 50000:
+            raise SystemExit("단일 사이트맵이 50,000 URL 제한을 초과했습니다. 인덱스로 분리하세요.")
+    else:
+        raise SystemExit("sitemap.xml은 urlset 또는 sitemapindex 형식이어야 합니다.")
     if not urls:
-        raise SystemExit("sitemap.xml에 URL이 없습니다.")
+        raise SystemExit("사이트맵에 URL이 없습니다.")
 
     broken = []
     for url in urls:
@@ -51,7 +78,7 @@ def main():
             continue
         if not local.is_file():
             broken.append((url, str(local)))
-
+            
     canonical_errors = []
     canonical_pattern = re.compile(r"""<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']""", re.I)
     for html_path in html_files:
