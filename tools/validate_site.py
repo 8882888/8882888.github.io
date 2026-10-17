@@ -53,7 +53,7 @@ def main():
             broken.append((url, str(local)))
 
     canonical_errors = []
-    canonical_pattern = re.compile(r"<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']", re.I)
+    canonical_pattern = re.compile(r"""<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']""", re.I)
     for html_path in html_files:
         html_text = html_path.read_text(encoding="utf-8")
         match = canonical_pattern.search(html_text)
