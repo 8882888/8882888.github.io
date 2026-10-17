@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>스마트번개대리운전 | 전국 대리운전·탁송</title>
+<title>스마트전국대리운전 스마트24탁송 | 전국 대리운전·탁송</title>
 <style>
 body{margin:0;font-family:Arial,"Malgun Gothic",sans-serif;color:#172235;line-height:1.7}
 header{background:#102544;color:white;padding:22px 6%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
@@ -35,7 +35,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </style>
 </head>
 <body>
-<header><strong>스마트번개대리운전</strong><a href="tel:18773015">대표 상담 1877-3015</a></header>
+<header><strong>스마트전국대리운전 스마트24탁송</strong><a href="tel:18773015">대표 상담 1877-3015</a></header>
 <nav class="top-nav" aria-label="주요 서비스 메뉴">
   <div class="top-nav-inner">
     <a href="./service/daeri/">대리운전</a>
@@ -126,7 +126,9 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 
 <section id="ride-history">
 <h2>운행 기록</h2>
-<p>접수된 운행 관련 기록을 날짜·시간·출발지·도착지·금액으로 정리했습니다. 개인정보는 공개하지 않습니다.</p>
+<p>완료된 운행 기록을 날짜·시간·출발지·도착지·요금으로 확인할 수 있습니다. 개인정보는 공개하지 않습니다.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0"><label for="ride-search" style="font-weight:700;align-self:center">운행 기록 검색</label><input id="ride-search" type="search" placeholder="출발지·도착지·날짜 검색" style="flex:1;min-width:220px;padding:12px;border:1px solid #ccd5e0;border-radius:8px"><button id="ride-search-clear" type="button" class="btn" style="border:0;cursor:pointer">검색 초기화</button></div>
+<p id="ride-search-status" aria-live="polite">전체 기록을 표시합니다.</p>
 <div style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;min-width:620px">
 <thead><tr><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">날짜</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발 시간</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발지</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">도착지</th><th style="text-align:right;padding:12px;border-bottom:2px solid #ccd5e0">금액</th></tr></thead>
@@ -138,7 +140,9 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 (async function(){
   const body = document.getElementById('ride-history-rows');
 
+  let allRecords = [];
   function renderRecords(records) {
+    allRecords = records;
     const allowed = ['date','time','departure','destination','fare'];
     const phonePattern = /(?:\b(?:01[016789]|02|0[3-9][0-9])[- .]?\d{3,4}[- .]?\d{4}\b)/;
     const rrnPattern = /\b\d{6}[- ]?[1-8]\d{6}\b/;
@@ -146,12 +150,16 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
       r && allowed.every(k => String(r[k] ?? '').trim()) &&
       !allowed.some(k => phonePattern.test(String(r[k] ?? '')) || rrnPattern.test(String(r[k] ?? '')))
     ) : [];
-    if (!clean.length) {
+    const query = (document.getElementById('ride-search')?.value || '').trim().toLocaleLowerCase('ko-KR');
+    const filtered = clean.filter(r => !query || [r.date,r.time,r.departure,r.destination,r.fare].some(v => String(v ?? '').toLocaleLowerCase('ko-KR').includes(query)));
+    const searchStatus = document.getElementById('ride-search-status');
+    if (searchStatus) searchStatus.textContent = `검색 결과 ${filtered.length}건 / 전체 공개 가능 기록 ${clean.length}건`;
+    if (!filtered.length) {
       body.innerHTML = '<tr><td colspan="5" style="padding:14px">공개 가능한 완료 운행 기록이 없습니다.</td></tr>';
       return;
     }
     body.replaceChildren();
-    clean.forEach(record => {
+    filtered.forEach(record => {
       const tr = document.createElement('tr');
       [record.date, record.time, record.departure, record.destination, record.fare].forEach((value, index) => {
         const td = document.createElement('td');
@@ -165,6 +173,8 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
     });
   }
 
+  document.getElementById('ride-search')?.addEventListener('input', () => renderRecords(allRecords));
+  document.getElementById('ride-search-clear')?.addEventListener('click', () => { document.getElementById('ride-search').value=''; renderRecords(allRecords); });
   try {
     const response = await fetch('./data/ride-history.json', {cache:'no-store'});
     if (!response.ok) throw new Error('history unavailable');
@@ -176,7 +186,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </script>
 
 <section class="contact"><h2>전화 상담</h2><div class="phone">1877-3015</div><a class="btn" href="tel:18773015">지금 전화하기</a><a class="btn" href="https://open.kakao.com/o/sGV88r7h">카카오톡 오픈채팅</a></section>
-<footer>스마트번개대리운전<br>대표 상담 전화: 1877-3015<br>전국 지역별 서비스 안내를 단계적으로 확장하고 있습니다.</footer>
+<footer>스마트전국대리운전 스마트24탁송<br>대표 상담 전화: 1877-3015<br>전국 지역별 서비스 안내를 단계적으로 확장하고 있습니다.</footer>
 </body>
 </html>
 
