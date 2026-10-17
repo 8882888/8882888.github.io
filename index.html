@@ -163,8 +163,12 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
     const allowed = ['date','time','departure','destination','fare'];
     const phonePattern = /(?:\b(?:01[016789]|02|0[3-9][0-9])[- .]?\d{3,4}[- .]?\d{4}\b)/;
     const rrnPattern = /\b\d{6}[- ]?[1-8]\d{6}\b/;
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - 6);
+    const cutoff = [cutoffDate.getFullYear(), String(cutoffDate.getMonth() + 1).padStart(2, '0'), String(cutoffDate.getDate()).padStart(2, '0')].join('-');
     const clean = Array.isArray(records) ? records.filter(r =>
       r && allowed.every(k => String(r[k] ?? '').trim()) &&
+      String(r.date) >= cutoff &&
       !allowed.some(k => phonePattern.test(String(r[k] ?? '')) || rrnPattern.test(String(r[k] ?? '')))
     ) : [];
     const query = (document.getElementById('ride-search')?.value || '').trim().toLocaleLowerCase('ko-KR');
@@ -192,12 +196,43 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 
   document.getElementById('ride-search')?.addEventListener('input', () => renderRecords(allRecords));
   document.getElementById('ride-search-clear')?.addEventListener('click', () => { document.getElementById('ride-search').value=''; renderRecords(allRecords); });
+  const SUPABASE_URL = 'https://xgdijyiotsemfnsuwwoi.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_QjNQmNLe9NWRQtBjTu1QqQ_w-cmKGui';
   try {
-    const response = await fetch('./data/ride-history.json', {cache:'no-store'});
-    if (!response.ok) throw new Error('history unavailable');
-    renderRecords(await response.json());
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - 6);
+    const cutoff = [cutoffDate.getFullYear(), String(cutoffDate.getMonth() + 1).padStart(2, '0'), String(cutoffDate.getDate()).padStart(2, '0')].join('-');
+    const params = new URLSearchParams({
+      select: 'ride_date,departure_time,departure,destination,fare',
+      ride_date: 'gte.' + cutoff,
+      order: 'ride_date.desc,departure_time.desc',
+      limit: '5000'
+    });
+    const response = await fetch(SUPABASE_URL + '/rest/v1/ride_history?' + params.toString(), {
+      cache: 'no-store',
+      headers: {
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        Authorization: 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
+      }
+    });
+    if (!response.ok) throw new Error('public ride history query unavailable');
+    const rows = await response.json();
+    renderRecords(rows.map(row => ({
+      date: row.ride_date,
+      time: row.departure_time,
+      departure: row.departure,
+      destination: row.destination,
+      fare: row.fare
+    })));
   } catch (_) {
-    body.innerHTML = '<tr><td colspan="5" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
+    // Keep the public site usable while Supabase's public read policy is being configured.
+    try {
+      const response = await fetch('./data/ride-history.json', {cache:'no-store'});
+      if (!response.ok) throw new Error('history unavailable');
+      renderRecords(await response.json());
+    } catch (fallbackError) {
+      body.innerHTML = '<tr><td colspan="5" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
+    }
   }
 })();
 </script>
