@@ -1,0 +1,1 @@
+import FareForm from './FareForm';export const metadata={title:'전국 대리운전·탁송 참고요금 계산'};export default function Quote(){return <main><h1>전국 참고요금 계산</h1><p>실제 운행 요금은 출발지·도착지·차량 종류·기사 수급에 따라 달라집니다.</p><FareForm/></main>}
