@@ -60,6 +60,21 @@ jobs:
           else
             echo "::warning::Skipping region import because official CSV is unavailable."
           fi
+      - name: Report region import coverage
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path('data/regions.json').read_text(encoding='utf-8'))
+          regions = data.get('regions', [])
+          provinces = {r.get('slug', '').split('/')[0] for r in regions if r.get('slug')}
+          print(f"Region records: {len(regions)}; province groups: {len(provinces)}")
+          if len(regions) < 1000 or len(provinces) < 15:
+              print("::warning::Nationwide region generation is NOT complete. Deploying the verified pilot only.")
+          else:
+              print("Official region coverage threshold met; site build and sitemap validation still required.")
+          PY
       - name: Generate 100,000 SEO keyword targets
         run: python tools/generate_seo_keywords.py
       - name: Generate regional pages if verified region data exists
