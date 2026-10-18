@@ -58,6 +58,22 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
  input,select,textarea{{max-width:100%;font-size:16px}}
 }}
 
+
+/* Daylight legibility for generated regional and service pages. */
+@media(max-width:650px){{
+ body{{background:#fff;color:#111827}}
+ main{{background:#fff}}
+ h1,h2,h3{{color:#111827}}
+ .card{{background:#fff;color:#111827;border:2px solid #cbd5e1;box-shadow:0 1px 3px #00000012}}
+ .muted{{color:#374151}}
+ .btn,.quick-jump a{{background:#ffdf55;color:#102544;font-weight:900}}
+ .service-fixed-nav{{background:#101820;border-bottom-color:#ffdf55}}
+ .service-nav-inner a{{color:#fff}}
+ .service-nav-inner .kakao-link{{color:#ffe15a}}
+ .service-nav-inner span{{color:#f3f4f6}}
+ a:focus-visible,button:focus-visible{{outline:3px solid #006fd6;outline-offset:3px}}
+}}
+
 </style></head><body>
 <header><strong>{BRAND}</strong> · <a href="tel:18114294">대표 상담 {PHONE}</a></header>
 <nav class="service-fixed-nav" aria-label="주요 서비스 메뉴"><div class="service-nav-inner"><a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/golf/">골프대리운전</a><a href="/service/daily-driver/">일일기사</a><a class="kakao-link" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">💬 카카오톡 상담</a><span>상담시간 08:00~20:00</span></div></nav>
