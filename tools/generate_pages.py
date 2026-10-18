@@ -623,7 +623,7 @@ def main():
     matches.forEach(function(region) {{
       var item = document.createElement('li');
       var link = document.createElement('a');
-      link.href = '/region/' + String(region.slug || '').replace(/^\\/+|\\/+$/g, '') + '/';
+      link.href = '/region/' + String(region.slug || '').replace(/^\/+|\/+$/g, '') + '/';
       link.textContent = ((region.parent_name || '') + ' ' + (region.name || '')).trim() + ' (' + (region.level || '지역') + ')';
       item.appendChild(link);
       results.appendChild(item);
