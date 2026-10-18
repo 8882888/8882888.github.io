@@ -28,7 +28,18 @@ for path in ROOT.rglob("*.html"):
 robots = ROOT / "robots.txt"
 if robots.exists():
     lines = robots.read_text(encoding="utf-8").splitlines()
-    lines = [re.sub(r"^Sitemap:\s*.*$", f"Sitemap: {SITE_URL}/sitemap.xml", line, flags=re.I) for line in lines]
+    # Preserve each sitemap path, including the separately deployed project site.
+    # Replacing all directives with /sitemap.xml hides those additional maps.
+    def rewrite_sitemap(line):
+        match = re.match(r"^Sitemap:\s*(.+)$", line, flags=re.I)
+        if not match:
+            return line
+        sitemap_url = urlsplit(match.group(1).strip())
+        if sitemap_url.netloc.lower() == "8882888.github.io":
+            return "Sitemap: " + SITE_URL + (sitemap_url.path or "/sitemap.xml")
+        return line
+
+    lines = [rewrite_sitemap(line) for line in lines]
     robots.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 # A CNAME file is only added for a custom host; GitHub's default host needs none.
