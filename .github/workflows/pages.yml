@@ -41,7 +41,12 @@ jobs:
           URL='https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000003687312&fileDetailSn=1'
           TMP_FILE="$(mktemp)"
           if curl --fail --location --connect-timeout 10 --max-time 35 --retry 1 "$URL" --output "$TMP_FILE" && [ "$(wc -c < "$TMP_FILE")" -gt 100000 ]; then
-            mv "$TMP_FILE" data/official_legal_dong.csv
+            if head -c 300 "$TMP_FILE" | grep -Eiq '<!doctype html|<html|<error|<?xml'; then
+              rm -f "$TMP_FILE"
+              echo "::warning::Region download returned markup instead of a CSV; preserving cached official data."
+            else
+              mv "$TMP_FILE" data/official_legal_dong.csv
+            fi
           else
             rm -f "$TMP_FILE"
             echo "::warning::Official region download unavailable; keeping existing verified pages and homepage."
