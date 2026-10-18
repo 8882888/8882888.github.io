@@ -1,0 +1,1 @@
+export const metadata={title:'운행기록 관리 안내',robots:{index:false,follow:false}};export default function Admin(){return <main><h1>운행기록 관리자</h1><p>운행기록은 완료 상태 검증, 중복 검사, 개인정보 제거 후에만 공개해야 합니다.</p><section><h2>현재 관리자 접속</h2><p>관리자 인증 및 업로드 기능은 아직 배포되지 않았습니다. 보안 검증 전에는 공개 입력 화면을 제공하지 않습니다.</p><p>Supabase 인증·권한 설정과 비공개 서버 업로드 API를 연결한 뒤 활성화합니다.</p></section></main>}
