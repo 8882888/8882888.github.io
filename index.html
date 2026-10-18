@@ -58,7 +58,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </style>
 </head>
 <body>
-<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><span class="call-count" id="phone-click-count" aria-live="polite" title="이 브라우저에서 전화 연결 버튼을 누른 횟수">전화 버튼 클릭 <strong id="phone-click-number">0</strong>회</span></div></header>
+<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><span class="call-count" id="phone-click-count" aria-live="polite" title="이 브라우저에서 집계한 클릭 수 (전체 방문자 합산 아님)">총 클릭수 <strong id="total-click-number">0</strong>회 · 당일 클릭수 <strong id="today-click-number">0</strong>회 · 전화 클릭수 <strong id="phone-click-number">0</strong>회</span></div></header>
 <nav class="top-nav" aria-label="주요 서비스 메뉴">
   <div class="top-nav-inner">
     <a href="./special/nationwide-daeri/">전국대리운전</a>
@@ -276,20 +276,41 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </script>
 <script>
 (function(){
-  var key='smart24-phone-button-clicks-v1';
-  var output=document.getElementById('phone-click-number');
-  if(!output)return;
-  var count=0;
-  try{count=Math.max(0,parseInt(localStorage.getItem(key)||'0',10)||0)}catch(_){}
-  output.textContent=count.toLocaleString('ko-KR');
+  // Browser-local counters only. Do not represent these as site-wide conversions.
+  var key='smart24-click-stats-v1';
+  var legacy='smart24-phone-button-clicks-v1';
+  var totalEl=document.getElementById('total-click-number');
+  var todayEl=document.getElementById('today-click-number');
+  var phoneEl=document.getElementById('phone-click-number');
+  if(!totalEl||!todayEl||!phoneEl)return;
+  function localDay(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  var stats={total:0,today:0,phone:0,day:localDay()};
+  try{
+    var saved=JSON.parse(localStorage.getItem(key)||'null');
+    if(saved&&typeof saved==='object'){
+      stats.total=Math.max(0,Number(saved.total)||0);
+      stats.phone=Math.max(0,Number(saved.phone)||0);
+      if(saved.day===localDay())stats.today=Math.max(0,Number(saved.today)||0);
+    }else{
+      stats.phone=Math.max(0,parseInt(localStorage.getItem(legacy)||'0',10)||0);
+      stats.total=stats.phone;
+    }
+  }catch(_){}
+  function render(){
+    if(stats.day!==localDay()){stats.day=localDay();stats.today=0;}
+    totalEl.textContent=stats.total.toLocaleString('ko-KR');
+    todayEl.textContent=stats.today.toLocaleString('ko-KR');
+    phoneEl.textContent=stats.phone.toLocaleString('ko-KR');
+  }
+  function save(){try{localStorage.setItem(key,JSON.stringify(stats));}catch(_){}}
+  render();
   document.addEventListener('click',function(event){
-    var anchor=event.target.closest('a[href^="tel:"]');
-    if(!anchor)return;
-    var number=(anchor.getAttribute('href')||'').replace(/\D/g,'');
-    if(number!=='18114294')return;
-    count+=1;
-    output.textContent=count.toLocaleString('ko-KR');
-    try{localStorage.setItem(key,String(count))}catch(_){}
+    var target=event.target.closest('a,button');
+    if(!target)return;
+    if(stats.day!==localDay()){stats.day=localDay();stats.today=0;}
+    stats.total++;stats.today++;
+    if(target.matches('a[href^="tel:"]')&&(target.getAttribute('href')||'').replace(/\\D/g,'')==='18114294')stats.phone++;
+    render();save();
   });
 })();
 </script>
