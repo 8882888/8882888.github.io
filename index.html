@@ -53,10 +53,12 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 @keyframes horizontal-flow{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.service-flow-track,.trip-flow-track{animation:none;flex-wrap:wrap;width:auto}}
 .back-to-top{position:fixed;right:18px;bottom:22px;z-index:9999;display:flex;align-items:center;justify-content:center;width:56px;height:56px;border:0;border-radius:50%;background:#ffd166;color:#102544;box-shadow:0 4px 18px #0005;font-size:17px;font-weight:900;cursor:pointer;text-decoration:none;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .2s,transform .2s,visibility .2s}.back-to-top.visible{opacity:1;visibility:visible;transform:translateY(0)}.back-to-top:focus-visible{outline:3px solid #1769aa;outline-offset:3px}@media(max-width:600px){.back-to-top{right:12px;bottom:16px;width:52px;height:52px}}
+.section-jump{position:sticky;top:0;z-index:90;display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;padding:10px 5%;background:#102544;box-shadow:0 2px 8px #0003}.section-jump a{flex:0 0 auto;padding:8px 12px;border:1px solid #ffd166;border-radius:7px;color:#ffd166;text-decoration:none;font-weight:800;white-space:nowrap;font-size:14px}.section-jump a:hover,.section-jump a:focus-visible{background:#ffd166;color:#102544}html{scroll-behavior:smooth;scroll-padding-top:85px}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media(max-width:600px){.section-jump{padding:8px 3%}.section-jump a{font-size:13px;padding:7px 10px}}
 </style>
 </head>
 <body>
 <header><strong>스마트전국대리운전 스마트24탁송</strong><a href="tel:18773015">대표 상담 1877-3015</a></header>
+<div class="section-jump" role="navigation" aria-label="홈페이지 항목 바로 이동"><a href="#categories">서비스 분류</a><a href="#special-transport">전문 탁송</a><a href="#keyword-topics">서비스 안내</a><a href="#services">대리·탁송</a><a href="#regions">전국 지역</a><a href="#ride-history">실제 운행후기</a><a href="#contact">전화 상담</a></div>
 <nav class="top-nav" aria-label="주요 서비스 메뉴">
   <div class="top-nav-inner">
     <a href="./special/nationwide-daeri/">전국대리운전</a>
@@ -256,7 +258,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 })();
 </script>
 
-<section class="contact"><h2>전화 상담</h2><div class="phone">1877-3015</div><a class="btn" href="tel:18773015">지금 전화하기</a><a class="btn" href="https://open.kakao.com/o/sGV88r7h">카카오톡 오픈채팅</a></section>
+<section class="contact" id="contact"><h2>전화 상담</h2><div class="phone">1877-3015</div><a class="btn" href="tel:18773015">지금 전화하기</a><a class="btn" href="https://open.kakao.com/o/sGV88r7h">카카오톡 오픈채팅</a></section>
 <footer>스마트전국대리운전 스마트24탁송<br>대표 상담 전화: 1877-3015<br>전국 지역별 서비스 안내를 단계적으로 확장하고 있습니다.</footer>
 
 <script>
