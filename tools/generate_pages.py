@@ -31,7 +31,7 @@ def page(title, description, body, canonical):
 <style>
 *{{box-sizing:border-box}}body{{margin:0;font-family:Arial,'Malgun Gothic',sans-serif;line-height:1.85;color:#172235}}
 header,footer{{background:#102544;color:white;padding:18px max(5%,calc((100% - 1000px)/2))}}
-header a,footer a{{color:#ffd166}}main{{max-width:1000px;margin:auto;padding:28px 5% 50px}}
+header a,footer a{{color:#ffd166}}body{{padding-top:100px}}@media(max-width:650px){{body{{padding-top:160px}}}}main{{max-width:1000px;margin:auto;padding:28px 5% 50px}}
 h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 .card{{border:1px solid #d9e1ea;border-radius:12px;padding:16px;margin:12px 0}}
 .btn{{display:inline-block;background:#ffd166;color:#102544;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:bold;margin:6px 8px 6px 0}}
@@ -39,7 +39,7 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 .quick-jump{{position:sticky;top:0;z-index:50;display:flex;gap:8px;overflow-x:auto;padding:10px 5%;background:#102544}}.quick-jump a{{flex-shrink:0;color:#102544;background:#ffd166;text-decoration:none;padding:8px 12px;border-radius:7px;font-weight:bold;white-space:nowrap}}.back-to-top{{position:fixed;right:16px;bottom:18px;z-index:100;background:#ffd166;color:#102544;border:0;border-radius:50%;width:54px;height:54px;font-weight:900;box-shadow:0 3px 12px #0004;cursor:pointer}}.back-to-top[hidden]{{display:none}}html{{scroll-behavior:smooth;scroll-padding-top:75px}}
 </style></head><body>
 <header><strong>{BRAND}</strong> · <a href="tel:18773015">대표 상담 {PHONE}</a></header>
-<nav aria-label="주요 메뉴" style="position:sticky;top:0;z-index:90;background:#fff;padding:12px 5%;border-bottom:1px solid #d9e1ea;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+<nav aria-label="주요 메뉴" style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#fff;padding:12px 5%;border-bottom:1px solid #d9e1ea;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;box-shadow:0 2px 8px #0002">
 <a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/golf/">골프대리운전</a><a href="/service/daily-driver/">일일기사</a><a href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">💬 카카오톡 상담 (08:00~20:00)</a>
 </nav>
 
