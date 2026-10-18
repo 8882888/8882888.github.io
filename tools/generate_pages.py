@@ -290,7 +290,7 @@ def generate_topic_pages(urls):
                 ("24시·심야·새벽 대리운전", ["늦은 밤이나 새벽 이용은 지역별 기사 배차 여건이 다를 수 있어 사전 상담을 권장합니다.", "특정 시간 예약은 이용 날짜와 희망 시간을 함께 알려주세요."]),
                 ("상담 진행 순서", ["출발지·도착지 확인", "요금과 배차 가능 여부 문의", "안내된 조건 확인 후 진행 결정"])
             ],
-            "links": [("/service/daeri/", "대리운전 서비스"), ("/service/corporate/", "법인대리운전"), ("/service/golf/", "골프대리운전"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/daeri/", "대리운전 서비스"), ("/service/corporate/", "법인대리운전"), ("/service/golf/", "골프대리운전"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "24-hour-service",
@@ -302,7 +302,7 @@ def generate_topic_pages(urls):
                 ("24시탁송과 자동차탁송", ["24시탁송, 심야탁송, 새벽탁송은 이용 날짜와 출발·도착 위치를 기준으로 상담합니다.", "장거리 이동이나 정해진 시간의 차량 인수는 미리 상담해 주세요.", "확정 요금은 실제 이동 구간과 차량 조건을 확인한 뒤 안내합니다."]),
                 ("24시탁송 검색 안내", ["주요 검색어: 24시탁송, 24시간탁송, 심야탁송, 새벽탁송, 24시 대리운전.", "상담 시 차량 이동 서비스 종류와 이동 구간을 알려주세요."])
             ],
-            "links": [("/service/daeri/", "대리운전"), ("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/daeri/", "대리운전"), ("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "outskirts-service",
@@ -314,7 +314,7 @@ def generate_topic_pages(urls):
                 ("수도권 외곽 및 장거리 이동", ["서울·경기·인천 외곽에서 출발하는 경우 목적지와 시간대에 따라 배차 확인이 필요할 수 있습니다.", "장거리 차량 이동은 차량 상태와 인수·인계 일정도 함께 알려주세요."]),
                 ("요금 확인", ["외곽이라는 이유만으로 고정 요금을 단정하지 않으며, 실제 구간과 시간, 차량 조건을 확인한 뒤 안내합니다."])
             ],
-            "links": [("/service/daeri/", "대리운전"), ("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/daeri/", "대리운전"), ("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "nationwide-transport",
@@ -326,7 +326,7 @@ def generate_topic_pages(urls):
                 ("장거리탁송과 당일 일정", ["장거리 운행이나 지정 시간 인수는 일정 조율이 필요할 수 있습니다.", "요금은 실제 이동 구간과 차량 조건을 확인한 뒤 안내합니다."]),
                 ("진행 순서", ["이동 구간과 차종 확인", "일정·요금·배차 가능 여부 확인", "조건 확인 후 진행 결정"])
             ],
-            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "cycling-trail-transport",
@@ -338,7 +338,7 @@ def generate_topic_pages(urls):
                 ("주요 자전거길 관련 상담 키워드", ["국토종주탁송", "한강자전거길탁송", "낙동강자전거길탁송", "금강자전거길탁송", "영산강자전거길탁송", "섬진강자전거길탁송", "동해안자전거길탁송", "제주환상자전거길탁송"]),
                 ("일정 확인", ["종주 종료 시간이 달라질 수 있으므로 예상 도착 시간과 대기 여부를 상담 시 알려주세요.", "확정된 코스별 요금이나 실제 운행 사례는 확인된 경우에만 안내합니다."])
             ],
-            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "seoraksan-transport",
@@ -350,7 +350,7 @@ def generate_topic_pages(urls):
                 ("예약 시 확인할 내용", ["산행 날짜와 예상 하산 시간", "출발지와 도착지의 정확한 장소", "차량 인수·인계 방법", "주말 및 성수기 사전 예약 필요 여부"]),
                 ("경로와 요금", ["경로와 요금은 실제 출발·도착 지점과 일정에 따라 달라지며, 확인되지 않은 운행 사례를 임의로 게시하지 않습니다."])
             ],
-            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "jirisan-transport",
@@ -362,7 +362,7 @@ def generate_topic_pages(urls):
                 ("산행 전 예약 체크리스트", ["산행 날짜와 예상 하산 시간", "차량 출발지와 도착지", "주차 위치 및 차량 인수·인계 방식", "일정 변동 시 연락 방법"]),
                 ("이용 전 확인", ["산행 시간은 날씨와 현장 상황에 따라 달라질 수 있습니다. 요금과 배차 가능 여부는 실제 이동 지점과 날짜를 확인한 뒤 안내합니다."])
             ],
-            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "pension-daeri",
@@ -374,7 +374,7 @@ def generate_topic_pages(urls):
                 ("펜션탁송 상담", ["차량을 인수할 장소와 최종 도착지", "차종과 차량 상태", "인수·인계 날짜와 시간"]),
                 ("상담 안내", ["요금과 배차 가능 여부는 실제 구간과 시간대에 따라 확인합니다."])
             ],
-            "links": [("/service/daeri/", "대리운전"), ("/service/taksong/", "자동차탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/daeri/", "대리운전"), ("/service/taksong/", "자동차탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "valley-daeri",
@@ -386,7 +386,7 @@ def generate_topic_pages(urls):
                 ("계곡탁송·차량 이동", ["차량 인수 장소와 도착 주소", "차량 종류와 인수·인계 방식", "필요한 날짜와 예상 시간"]),
                 ("안전한 일정 확인", ["현장 진입 가능 여부와 배차는 지역·시간대별로 확인합니다."])
             ],
-            "links": [("/service/daeri/", "대리운전"), ("/service/taksong/", "자동차탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/daeri/", "대리운전"), ("/service/taksong/", "자동차탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "camping-car-transport",
@@ -398,7 +398,7 @@ def generate_topic_pages(urls):
                 ("차량 조건과 배차", ["특수한 크기나 중량의 차량은 운행 가능 조건을 사전에 확인해야 합니다.", "차량 상태와 이동 구간을 확인한 뒤 요금과 진행 가능 여부를 안내합니다."]),
                 ("카라반·트레일러", ["견인 방식과 연결 상태, 관련 법규 및 운행 조건을 확인한 후 상담을 진행합니다."])
             ],
-            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/#contact", "전화 상담")]
         },
         {
             "slug": "truck-transport",
@@ -410,7 +410,7 @@ def generate_topic_pages(urls):
                 ("탁송 전 준비 정보", ["차량의 정확한 제원과 운행 가능 상태", "적재물 유무와 차량 인수 장소", "출발지·도착지와 희망 일정"]),
                 ("운행 가능 여부 확인", ["차량 크기와 종류, 면허·운행 조건, 적재 상태에 따라 가능 여부가 달라질 수 있습니다.", "실제 조건을 확인한 뒤 요금과 배차 여부를 안내합니다."])
             ],
-            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/quote/", "빠른 상담 작성")]
+            "links": [("/service/taksong/", "자동차탁송"), ("/service/long-distance-taksong/", "장거리탁송"), ("/#contact", "전화 상담")]
         }
     ]
     for item in topics:
@@ -440,7 +440,7 @@ def main():
         raise SystemExit("data/regions.json에 지역을 입력해야 합니다.")
     urls = {SITE_URL + "/"}
     generate_service_pages(urls)
-    generate_quote_page(urls)
+    # Disabled: the draft-only quote form sends no notification to operators.
     generate_topic_pages(urls)
     # Keep hand-authored specialist transport landing pages in the sitemap.
     special_root = ROOT / "special"
