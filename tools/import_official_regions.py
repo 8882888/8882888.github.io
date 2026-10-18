@@ -104,6 +104,13 @@ def main():
         "note": "공식 법정동 CSV에서 정리한 지역 목록입니다. 지역별 실제 후기·운행실적은 확인된 사실만 추가해야 합니다.",
         "regions": ordered
     }
+    # A truncated or incorrectly parsed download must never replace the verified
+    # region index with a tiny list during an automated deployment.
+    if len(ordered) < 1000 or len({r["slug"].split("/")[0] for r in ordered}) < 15:
+        raise SystemExit(
+            f"공식 행정구역 자료 검증 실패: {len(ordered)}개 지역. "
+            "전국 자료가 충분하지 않아 기존 지역 데이터와 홈페이지를 유지합니다."
+        )
     TARGET.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"변환 완료: CSV {len(rows)}행 → 지역 경로 {len(ordered)}개")
     print("배포 전 중복·누락·URL 충돌을 확인하고, 검색 가치가 낮은 페이지는 생성 범위를 조정하세요.")
