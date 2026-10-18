@@ -290,14 +290,14 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
     if(saved&&typeof saved==='object'){
       stats.total=Math.max(0,Number(saved.total)||0);
       stats.phone=Math.max(0,Number(saved.phone)||0);
-      if(saved.day===localDay())stats.today=Math.max(0,Number(saved.today)||0);
+      if(saved.day===localDay()){stats.today=Math.max(0,Number(saved.today)||0);stats.phone=Math.max(0,Number(saved.phone)||0);}else{stats.phone=0;}
     }else{
-      stats.phone=Math.max(0,parseInt(localStorage.getItem(legacy)||'0',10)||0);
-      stats.total=stats.phone;
+      stats.phone=0;
+      stats.total=Math.max(0,parseInt(localStorage.getItem(legacy)||'0',10)||0);
     }
   }catch(_){}
   function render(){
-    if(stats.day!==localDay()){stats.day=localDay();stats.today=0;}
+    if(stats.day!==localDay()){stats.day=localDay();stats.today=0;stats.phone=0;}
     totalEl.textContent=stats.total.toLocaleString('ko-KR');
     todayEl.textContent=stats.today.toLocaleString('ko-KR');
     phoneEl.textContent=stats.phone.toLocaleString('ko-KR');
