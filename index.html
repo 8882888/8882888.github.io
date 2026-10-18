@@ -41,6 +41,17 @@ section{padding:44px 7%}
 .contact{background:#102544;color:white}
 .phone{font-size:40px;font-weight:bold;color:#ffd166}
 footer{background:#09172b;color:#ddd;padding:24px 7%}
+
+/* Unified horizontal service and completed-trip tickers */
+.service-flow,.trip-flow{overflow:hidden;padding:12px 0;background:#fff7df;border-bottom:2px solid #e6ca78}
+.service-flow-track,.trip-flow-track{display:flex;width:max-content;animation:horizontal-flow 38s linear infinite;gap:16px;align-items:center}
+.service-flow-track a{color:#102544;font-weight:800;text-decoration:none;white-space:nowrap;padding:5px 12px}
+.trip-flow{background:#f3f7fb;padding:15px 0}.trip-flow-track{animation-duration:95s;gap:12px}
+.trip-flow-card{display:flex;flex-direction:column;min-width:250px;max-width:330px;padding:12px 17px;background:white;border:1px solid #d6e0eb;border-radius:10px;color:#172235;text-decoration:none;white-space:nowrap;font-size:14px}
+.trip-flow-card strong{font-size:16px}.trip-flow-title{padding:0 7%;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.trip-flow-title a{color:#1769aa}
+.service-flow:hover .service-flow-track,.trip-flow:hover .trip-flow-track{animation-play-state:paused}
+@keyframes horizontal-flow{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.service-flow-track,.trip-flow-track{animation:none;flex-wrap:wrap;width:auto}}
 </style>
 </head>
 <body>
@@ -59,6 +70,12 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
     <div class="kakao-hours">카카오톡 상담시간 08:00~20:00</div>
   </div>
 </nav>
+
+<div class="service-flow" aria-label="전국 서비스 가로 이동 안내"><div class="service-flow-track">
+<div class="service-flow-items"><a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/taksong/">전국자동차탁송</a><a href="/service/long-distance-taksong/">장거리탁송</a><a href="/service/corporate/">법인대리운전</a><a href="/service/golf/">골프대리운전</a><a href="/region/">전국 지역별 서비스</a><a href="tel:18773015">☎ 1877-3015</a></div>
+<div class="service-flow-items" aria-hidden="true"><a href="/special/nationwide-daeri/" tabindex="-1">전국대리운전</a><a href="/special/24-hour-service/" tabindex="-1">24시탁송</a><a href="/service/taksong/" tabindex="-1">전국자동차탁송</a><a href="/service/long-distance-taksong/" tabindex="-1">장거리탁송</a><a href="/service/corporate/" tabindex="-1">법인대리운전</a><a href="/service/golf/" tabindex="-1">골프대리운전</a><a href="/region/" tabindex="-1">전국 지역별 서비스</a><a href="tel:18773015" tabindex="-1">☎ 1877-3015</a></div>
+</div></div>
+<div class="trip-flow" aria-label="완료 운행기록 가로 이동"><div class="trip-flow-title"><strong>전국 실제 완료 운행 기록 · 출발지 → 도착지 · 기록 요금</strong><a href="#ride-history">전체 운행 기록 보기 →</a></div><div class="trip-flow-track" id="trip-flow-track"><span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span></div></div>
 <div class="hero">
 <p>전국대리운전 · 24시탁송 전문 상담</p>
 <h1>전국대리운전 · 24시탁송<br><span style="font-size:.62em;font-weight:700">필요한 순간, 편리하게 연결하는 이동 서비스</span> <span class="title-last"> <a class="hero-phone" href="tel:18773015" aria-label="대표 상담 전화 1877-3015">☎ 1877-3015</a></span></h1>
@@ -240,6 +257,16 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 
 <section class="contact"><h2>전화 상담</h2><div class="phone">1877-3015</div><a class="btn" href="tel:18773015">지금 전화하기</a><a class="btn" href="https://open.kakao.com/o/sGV88r7h">카카오톡 오픈채팅</a></section>
 <footer>스마트전국대리운전 스마트24탁송<br>대표 상담 전화: 1877-3015<br>전국 지역별 서비스 안내를 단계적으로 확장하고 있습니다.</footer>
+
+<script>
+(function(){
+ const target=document.getElementById('trip-flow-track');if(!target)return;
+ const body=document.getElementById('ride-history-rows');
+ const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function render(){if(!body)return;const rows=[...body.querySelectorAll('tr')].filter(tr=>tr.cells.length>=5&&!tr.querySelector('[colspan]')).slice(0,24);if(!rows.length)return;const cards=rows.map(tr=>{const v=[...tr.cells].map(c=>c.textContent.trim());return '<a class="trip-flow-card" href="#ride-history"><span>'+esc(v[0])+'</span><strong>'+esc(v[2])+' → '+esc(v[3])+'</strong><span>기록 요금 '+esc(v[4])+'</span></a>';}).join('');target.innerHTML=cards+cards;}
+ const obs=new MutationObserver(render);if(body){obs.observe(body,{childList:true});render();setTimeout(()=>{if(!target.querySelector('a'))target.innerHTML='<a class="trip-flow-card" href="#ride-history">공개 가능한 완료 운행 기록 확인하기</a>';},12000)}
+})();
+</script>
 </body>
 </html>
 
