@@ -1,0 +1,3 @@
+export type FareInput={baseFare:number;time:'day'|'night'|'dawn';vehicle:'car'|'suv'|'truck';remote:boolean};
+export function roundToFiveThousand(value:number){if(!Number.isFinite(value)||value<0)throw new Error('invalid fare');return Math.ceil(value/5000)*5000}
+export function estimateFare(input:FareInput){const {baseFare,time,vehicle,remote}=input;if(!Number.isFinite(baseFare)||baseFare<5000||baseFare>2000000)throw new Error('기준요금을 확인해주세요.');const timeFactor=time==='day'?1:time==='night'?1.15:1.25;const vehicleFactor=vehicle==='car'?1:vehicle==='suv'?1.1:1.2;const remoteFactor=remote?1.15:1;return roundToFiveThousand(baseFare*timeFactor*vehicleFactor*remoteFactor)}
