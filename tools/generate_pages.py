@@ -176,7 +176,8 @@ def generate_service_pages(urls):
         description = item["title"] + " 및 이용 절차, 상담 전 확인사항 안내. 대표 전화 " + PHONE + "."
         out = ROOT / "service" / slug / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(page(item["title"] + " | " + BRAND, description, body, url), encoding="utf-8")
+        if slug not in {"golf", "daily-driver"} or not out.exists():
+            out.write_text(page(item["title"] + " | " + BRAND, description, body, url), encoding="utf-8")
 
 
 def generate_quote_page(urls):
@@ -410,7 +411,8 @@ def generate_topic_pages(urls):
         )
         out = ROOT / "special" / item["slug"] / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(page(item["title"] + " | " + BRAND, item["description"], body, url), encoding="utf-8")
+        if item["slug"] not in {"nationwide-daeri", "24-hour-service"} or not out.exists():
+            out.write_text(page(item["title"] + " | " + BRAND, item["description"], body, url), encoding="utf-8")
 
 def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
