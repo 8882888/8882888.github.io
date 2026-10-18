@@ -37,7 +37,28 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 .btn{{display:inline-block;background:#ffd166;color:#102544;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:bold;margin:6px 8px 6px 0}}
 .muted{{color:#536276;font-size:.95rem}}ul{{padding-left:22px}}
 .quick-jump{{position:sticky;top:0;z-index:50;display:flex;gap:8px;overflow-x:auto;padding:10px 5%;background:#102544}}.quick-jump a{{flex-shrink:0;color:#102544;background:#ffd166;text-decoration:none;padding:8px 12px;border-radius:7px;font-weight:bold;white-space:nowrap}}.back-to-top{{position:fixed;right:16px;bottom:18px;z-index:100;background:#ffd166;color:#102544;border:0;border-radius:50%;width:54px;height:54px;font-weight:900;box-shadow:0 3px 12px #0004;cursor:pointer}}.back-to-top[hidden]{{display:none}}html{{scroll-behavior:smooth;scroll-padding-top:75px}}
-.service-fixed-nav{{position:fixed;top:0;left:0;right:0;z-index:9999;background:#171717;border-bottom:3px solid #ffd400;box-shadow:0 3px 12px #0003}}.service-nav-inner{{max-width:1200px;margin:auto;display:flex;align-items:center;gap:14px;overflow-x:auto;white-space:nowrap;padding:13px 4%}}.service-nav-inner a{{color:#fff;text-decoration:none;font-weight:700;flex-shrink:0}}.service-nav-inner .kakao-link{{color:#ffd400}}.service-nav-inner span{{color:#ddd;font-size:13px;flex-shrink:0}}body{{padding-top:65px!important}}html{{scroll-padding-top:75px}}</style></head><body>
+.service-fixed-nav{{position:fixed;top:0;left:0;right:0;z-index:9999;background:#171717;border-bottom:3px solid #ffd400;box-shadow:0 3px 12px #0003}}.service-nav-inner{{max-width:1200px;margin:auto;display:flex;align-items:center;gap:14px;overflow-x:auto;white-space:nowrap;padding:13px 4%}}.service-nav-inner a{{color:#fff;text-decoration:none;font-weight:700;flex-shrink:0}}.service-nav-inner .kakao-link{{color:#ffd400}}.service-nav-inner span{{color:#ddd;font-size:13px;flex-shrink:0}}body{{padding-top:65px!important}}html{{scroll-padding-top:75px}}
+/* Clear and touch-friendly local pages on narrow screens. */
+*{{box-sizing:border-box}}
+@media(max-width:650px){{
+ html{{-webkit-text-size-adjust:100%}}
+ body{{font-size:16px;line-height:1.8;overflow-wrap:break-word;padding-top:70px!important}}
+ header{{padding:14px 5%;font-size:16px;line-height:1.5}}
+ main{{padding:22px 5% 45px}}
+ h1{{font-size:clamp(27px,7.3vw,36px);line-height:1.35;overflow-wrap:break-word}}
+ h2{{font-size:clamp(21px,5.5vw,26px);line-height:1.4}}
+ p,li{{line-height:1.8}}
+ .card{{padding:16px;border-radius:12px}}
+ .btn{{min-height:48px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;line-height:1.4;max-width:100%}}
+ .service-nav-inner{{gap:14px;padding:12px 4%;scrollbar-width:thin}}
+ .service-nav-inner a{{font-size:15px;min-height:42px;display:inline-flex;align-items:center}}
+ .service-nav-inner span{{font-size:13px}}
+ .back-to-top{{width:50px;height:50px;right:12px;bottom:14px}}
+ img{{max-width:100%;height:auto}}
+ input,select,textarea{{max-width:100%;font-size:16px}}
+}}
+
+</style></head><body>
 <header><strong>{BRAND}</strong> · <a href="tel:18114294">대표 상담 {PHONE}</a></header>
 <nav class="service-fixed-nav" aria-label="주요 서비스 메뉴"><div class="service-nav-inner"><a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/golf/">골프대리운전</a><a href="/service/daily-driver/">일일기사</a><a class="kakao-link" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">💬 카카오톡 상담</a><span>상담시간 08:00~20:00</span></div></nav>
 
