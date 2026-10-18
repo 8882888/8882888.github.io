@@ -11,7 +11,7 @@ ROOT = Path(".")
 DATA = ROOT / "data" / "regions.json"
 SITE_URL = os.environ.get("SITE_URL", "https://8882888.github.io").rstrip("/")
 BRAND = "스마트전국대리운전 스마트24탁송"
-PHONE = "1877-3015"
+PHONE = "1811-4294"
 SERVICES = [
     {"name": "대리운전", "slug": "daeri", "keyword": "대리운전"},
     {"name": "자동차탁송", "slug": "taksong", "keyword": "자동차탁송"},
@@ -38,12 +38,12 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 .muted{{color:#536276;font-size:.95rem}}ul{{padding-left:22px}}
 .quick-jump{{position:sticky;top:0;z-index:50;display:flex;gap:8px;overflow-x:auto;padding:10px 5%;background:#102544}}.quick-jump a{{flex-shrink:0;color:#102544;background:#ffd166;text-decoration:none;padding:8px 12px;border-radius:7px;font-weight:bold;white-space:nowrap}}.back-to-top{{position:fixed;right:16px;bottom:18px;z-index:100;background:#ffd166;color:#102544;border:0;border-radius:50%;width:54px;height:54px;font-weight:900;box-shadow:0 3px 12px #0004;cursor:pointer}}.back-to-top[hidden]{{display:none}}html{{scroll-behavior:smooth;scroll-padding-top:75px}}
 .service-fixed-nav{{position:fixed;top:0;left:0;right:0;z-index:9999;background:#171717;border-bottom:3px solid #ffd400;box-shadow:0 3px 12px #0003}}.service-nav-inner{{max-width:1200px;margin:auto;display:flex;align-items:center;gap:14px;overflow-x:auto;white-space:nowrap;padding:13px 4%}}.service-nav-inner a{{color:#fff;text-decoration:none;font-weight:700;flex-shrink:0}}.service-nav-inner .kakao-link{{color:#ffd400}}.service-nav-inner span{{color:#ddd;font-size:13px;flex-shrink:0}}body{{padding-top:65px!important}}html{{scroll-padding-top:75px}}</style></head><body>
-<header><strong>{BRAND}</strong> · <a href="tel:18773015">대표 상담 {PHONE}</a></header>
+<header><strong>{BRAND}</strong> · <a href="tel:18114294">대표 상담 {PHONE}</a></header>
 <nav class="service-fixed-nav" aria-label="주요 서비스 메뉴"><div class="service-nav-inner"><a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/golf/">골프대리운전</a><a href="/service/daily-driver/">일일기사</a><a class="kakao-link" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">💬 카카오톡 상담</a><span>상담시간 08:00~20:00</span></div></nav>
 
 <main id="page-start">{body}
 <div class="card" id="consultation"><h2>전화 상담</h2><p>출발지와 도착지, 차량 종류, 이용 날짜와 희망 시간을 알려주시면 상담이 더 정확해집니다.</p>
-<p><strong>{PHONE}</strong></p><a class="btn" href="tel:18773015">전화 상담하기</a>
+<p><strong>{PHONE}</strong></p><a class="btn" href="tel:18114294">전화 상담하기</a>
 <a class="btn" href="https://open.kakao.com/o/sGV88r7h">카카오톡 오픈채팅</a>
 <p class="muted">요금과 배차 가능 여부는 거리, 시간, 차량 및 현장 상황에 따라 달라질 수 있습니다.</p></div>
 </main><button type="button" class="back-to-top" id="back-to-top" aria-label="맨 위로 이동">↑ TOP</button><script>(function(){{var b=document.getElementById('back-to-top');b.addEventListener('click',function(){{window.scrollTo({{top:0,behavior:'smooth'}})}})}})();</script><footer>{BRAND}<br>대표 상담 전화: {PHONE}<br><a href="/">홈페이지 첫 화면</a></footer>
@@ -168,7 +168,7 @@ def generate_service_pages(urls):
             + "<p>" + esc(item["intro"]) + "</p>"
             + "".join(section_html)
             + '<div class="card"><h2>상담 안내</h2><p>출발지, 도착지, 차량 종류와 희망 시간을 알려주시면 상담이 더 정확해집니다.</p>'
-            + '<p><strong>' + esc(PHONE) + '</strong></p><a class="btn" href="tel:18773015">전화 상담하기</a>'
+            + '<p><strong>' + esc(PHONE) + '</strong></p><a class="btn" href="tel:18114294">전화 상담하기</a>'
             + '<a class="btn" href="https://open.kakao.com/o/sGV88r7h">카카오톡 상담</a>'
             + '<p class="muted">요금과 배차 가능 여부는 거리, 시간, 차량 및 현장 상황에 따라 달라질 수 있습니다.</p></div>'
             + '<p><a href="/">홈페이지 첫 화면으로</a> · <a href="/region/">전국 지역별 안내</a></p>'
@@ -213,7 +213,7 @@ def generate_quote_page(urls):
 <h2>상담 내용 확인</h2><pre id="quote-text" style="white-space:pre-wrap;overflow-wrap:anywhere;font:inherit"></pre>
 <button class="btn" id="copy-quote" type="button">내용 복사</button>
 <a class="btn" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 상담 열기</a>
-<a class="btn" href="tel:18773015">전화 상담 1877-3015</a>
+<a class="btn" href="tel:18114294">전화 상담 1811-4294</a>
 <p class="muted">복사한 내용을 카카오톡 상담창에 붙여넣어 보내세요. 이 페이지에서 상담이 자동 접수되지는 않습니다.</p>
 </div>
 <script>
@@ -263,7 +263,7 @@ def generate_topic_pages(urls):
         {
             "slug": "nationwide-daeri",
             "title": "전국대리운전 | 전국 대리운전 이용 안내",
-            "description": "전국대리운전·전국대리 상담 안내. 출발지와 목적지, 희망 시간, 예약 여부를 확인하고 대표전화 1877-3015로 문의하세요.",
+            "description": "전국대리운전·전국대리 상담 안내. 출발지와 목적지, 희망 시간, 예약 여부를 확인하고 대표전화 1811-4294로 문의하세요.",
             "intro": "전국대리운전 상담은 차량이 있는 정확한 위치와 도착할 곳, 희망 출발 시간을 준비하면 편리합니다. 스마트전국대리운전 스마트24탁송은 지역과 시간대별 배차 가능 여부를 확인해 안내합니다. 실제 배차 가능 여부는 현장 상황에 따라 달라질 수 있습니다.",
             "sections": [
                 ("전국대리운전 상담 준비", ["차량이 있는 주소나 건물·주차장 이름", "도착지 주소 또는 정확한 목적지", "희망 출발 시간과 대기 필요 여부", "차량 종류와 현장 상황"]),
@@ -276,7 +276,7 @@ def generate_topic_pages(urls):
         {
             "slug": "24-hour-service",
             "title": "24시탁송 · 24시 대리운전 상담 안내",
-            "description": "24시탁송·24시 대리운전·심야탁송 상담 안내. 출발지, 도착지, 이용 날짜와 희망 시간을 확인하고 대표전화 1877-3015로 문의하세요.",
+            "description": "24시탁송·24시 대리운전·심야탁송 상담 안내. 출발지, 도착지, 이용 날짜와 희망 시간을 확인하고 대표전화 1811-4294로 문의하세요.",
             "intro": "24시탁송 및 24시 대리운전은 야간·심야·새벽 시간대의 차량 이동을 상담하는 서비스입니다. 지역과 당일 배차 상황에 따라 가능 여부가 달라지므로 이용 날짜, 출발지, 도착지와 희망 시간을 구체적으로 알려주세요.",
             "sections": [
                 ("야간 상담에 필요한 정보", ["출발지와 도착지의 정확한 위치", "오늘 또는 예약 이용 날짜", "희망 시간과 현장 대기 여부", "탁송이라면 차종과 차량 인수·인계 방법"]),
