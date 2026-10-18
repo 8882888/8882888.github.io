@@ -1,0 +1,21 @@
+name: Validate dynamic Next.js app
+on:
+  push:
+    branches: [dynamic-nextjs]
+    paths:
+      - 'dynamic-app/**'
+      - '.github/workflows/dynamic-nextjs.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dynamic-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
