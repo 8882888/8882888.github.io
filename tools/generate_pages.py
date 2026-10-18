@@ -40,7 +40,7 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 </style></head><body>
 <header><strong>{BRAND}</strong> · <a href="tel:18773015">대표 상담 {PHONE}</a></header>
 <nav aria-label="주요 메뉴" style="padding:12px 5%;border-bottom:1px solid #d9e1ea;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
-<a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/golf/">골프대리운전</a><a href="/service/daily-driver/">일일기사</a>
+<a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/golf/">골프대리운전</a><a href="/service/daily-driver/">일일기사</a><a href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">💬 카카오톡 상담 (08:00~20:00)</a>
 </nav>
 <div class="quick-jump" aria-label="페이지 항목 바로 이동"><a href="#page-start">본문 안내</a><a href="#consultation">상담 안내</a><a href="/">홈</a><a href="/region/">전국 지역</a><a href="/service/daily-driver/">일일기사</a></div>
 <main id="page-start">{body}
