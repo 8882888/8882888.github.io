@@ -85,6 +85,28 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 }
 @media(prefers-reduced-motion:reduce){.service-flow-track,.trip-flow-track{animation:none}}
 
+
+/* Daylight legibility on mobile: high contrast, opaque surfaces and clear controls. */
+@media(max-width:600px){
+ body{background:#fff;color:#111827}
+ .hero{background:#102d50;color:#fff}
+ .hero p,.hero h1{color:#fff;text-shadow:none}
+ .top-nav{background:#101820}
+ .top-nav a,.top-nav .kakao-link{background:#ffe15a;color:#101820;border-color:#ffe15a;box-shadow:none}
+ .top-nav .kakao-link{background:#fee500;border-color:#fee500}
+ .kakao-hours{color:#ffe15a}
+ .card{background:#fff;color:#111827;border:2px solid #cbd5e1;box-shadow:0 1px 3px #00000012}
+ .gray{background:#f1f5f9;color:#111827}
+ .btn,.hero-phone{background:#ffdf55;color:#102544;box-shadow:none;font-weight:900}
+ .service-flow{background:#fff6d8}
+ .trip-flow{background:#eef3f9}
+ .trip-flow-card{background:#fff;color:#111827;border:2px solid #b8c7d9}
+ .trip-flow-title a{color:#084c8d;text-decoration:underline}
+ .contact{background:#102544;color:#fff}
+ .contact .phone{color:#ffdf55}
+ a:focus-visible,button:focus-visible{outline:3px solid #006fd6;outline-offset:3px}
+}
+
 </style>
 </head>
 <body>
