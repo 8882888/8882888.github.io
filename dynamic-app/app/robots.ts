@@ -1,1 +1,1 @@
-import type {MetadataRoute} from 'next';export default function robots():MetadataRoute.Robots{const origin=process.env.NEXT_PUBLIC_SITE_URL||'https://8882888.github.io';return {rules:[{userAgent:'*',allow:'/',disallow:'/api/'}],sitemap:origin+'/sitemap.xml'}}
+import type {MetadataRoute} from 'next';export default function robots():MetadataRoute.Robots{const origin=process.env.NEXT_PUBLIC_SITE_URL||'https://8882888.github.io';return {rules:[{userAgent:'*',allow:'/',disallow:['/api/','/admin/']}],sitemap:origin+'/sitemap.xml'}}
