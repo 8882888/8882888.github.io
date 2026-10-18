@@ -54,10 +54,11 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 @media(prefers-reduced-motion:reduce){.service-flow-track,.trip-flow-track{animation:none;flex-wrap:wrap;width:auto}}
 .back-to-top{position:fixed;right:18px;bottom:22px;z-index:9999;display:flex;align-items:center;justify-content:center;width:56px;height:56px;border:0;border-radius:50%;background:#ffd166;color:#102544;box-shadow:0 4px 18px #0005;font-size:17px;font-weight:900;cursor:pointer;text-decoration:none;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .2s,transform .2s,visibility .2s}.back-to-top.visible{opacity:1;visibility:visible;transform:translateY(0)}.back-to-top:focus-visible{outline:3px solid #1769aa;outline-offset:3px}@media(max-width:600px){.back-to-top{right:12px;bottom:16px;width:52px;height:52px}}
 .section-jump{position:sticky;top:0;z-index:90;display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;padding:10px 5%;background:#102544;box-shadow:0 2px 8px #0003}.section-jump a{flex:0 0 auto;padding:8px 12px;border:1px solid #ffd166;border-radius:7px;color:#ffd166;text-decoration:none;font-weight:800;white-space:nowrap;font-size:14px}.section-jump a:hover,.section-jump a:focus-visible{background:#ffd166;color:#102544}html{scroll-behavior:smooth;scroll-padding-top:85px}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media(max-width:600px){.section-jump{padding:8px 3%}.section-jump a{font-size:13px;padding:7px 10px}}
+.header-phone-actions{display:flex;flex-direction:column;align-items:flex-end;gap:3px}.call-count{color:#dbeafe;font-size:12px;line-height:1.5}.call-count strong{font-size:14px;color:#ffd166}@media(max-width:600px){.header-phone-actions{align-items:flex-start}.call-count{font-size:11px}}
 </style>
 </head>
 <body>
-<header><strong>스마트전국대리운전 스마트24탁송</strong><a href="tel:18114294">대표 상담 1811-4294</a></header>
+<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><span class="call-count" id="phone-click-count" aria-live="polite" title="이 브라우저에서 전화 연결 버튼을 누른 횟수">전화 버튼 클릭 <strong id="phone-click-number">0</strong>회</span></div></header>
 <nav class="top-nav" aria-label="주요 서비스 메뉴">
   <div class="top-nav-inner">
     <a href="./special/nationwide-daeri/">전국대리운전</a>
@@ -271,6 +272,25 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
  const body=document.getElementById('ride-history-rows');if(!body){target.innerHTML='<a class="trip-flow-card" href="#ride-history">운행 기록을 확인해 주세요.</a>';return;}
  const render=()=>{const rows=[...body.querySelectorAll('tr')].filter(tr=>tr.cells.length>=5&&!tr.querySelector('[colspan]')).map(tr=>[...tr.cells].slice(0,5).map(c=>c.textContent.trim()));if(!draw(rows)&&!body.textContent.includes('불러오는 중'))target.innerHTML='<a class="trip-flow-card" href="#ride-history">완료 운행 기록 보기</a>';};
  new MutationObserver(render).observe(body,{childList:true});render();
+})();
+</script>
+<script>
+(function(){
+  var key='smart24-phone-button-clicks-v1';
+  var output=document.getElementById('phone-click-number');
+  if(!output)return;
+  var count=0;
+  try{count=Math.max(0,parseInt(localStorage.getItem(key)||'0',10)||0)}catch(_){}
+  output.textContent=count.toLocaleString('ko-KR');
+  document.addEventListener('click',function(event){
+    var anchor=event.target.closest('a[href^="tel:"]');
+    if(!anchor)return;
+    var number=(anchor.getAttribute('href')||'').replace(/\D/g,'');
+    if(number!=='18114294')return;
+    count+=1;
+    output.textContent=count.toLocaleString('ko-KR');
+    try{localStorage.setItem(key,String(count))}catch(_){}
+  });
 })();
 </script>
 <button class="back-to-top" id="back-to-top" type="button" aria-label="페이지 맨 위로 이동" title="맨 위로">↑ TOP</button>
