@@ -491,6 +491,14 @@ def main():
         raise SystemExit("data/regions.json에 지역을 입력해야 합니다.")
     urls = {SITE_URL + "/"}
     generate_service_pages(urls)
+    # Never deploy an unmonitored consultation form from an older build.
+    # Its contents were only assembled locally, with no operator notification.
+    stale_quote = ROOT / "quote" / "index.html"
+    if stale_quote.exists():
+        stale_quote.unlink()
+    stale_quote_dir = ROOT / "quote"
+    if stale_quote_dir.exists() and not any(stale_quote_dir.iterdir()):
+        stale_quote_dir.rmdir()
     # Disabled: the draft-only quote form sends no notification to operators.
     generate_topic_pages(urls)
     # Keep hand-authored specialist transport landing pages in the sitemap.
