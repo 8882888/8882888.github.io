@@ -276,42 +276,43 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </script>
 <script>
 (function(){
-  // Browser-local counters only. Do not represent these as site-wide conversions.
-  var key='smart24-click-stats-v1';
-  var legacy='smart24-phone-button-clicks-v1';
+  var url='https://xgdijyiotsemfnsuwwoi.supabase.co/rest/v1/rpc/site_click_stats';
+  var apiKey='sb_publishable_QjNQmNLe9NWRQtBjTu1QqQ_w-cmKGui';
   var totalEl=document.getElementById('total-click-number');
   var todayEl=document.getElementById('today-click-number');
   var phoneEl=document.getElementById('phone-click-number');
+  var label=document.getElementById('phone-click-count');
   if(!totalEl||!todayEl||!phoneEl)return;
-  function localDay(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-  var stats={total:0,today:0,phone:0,day:localDay()};
-  try{
-    var saved=JSON.parse(localStorage.getItem(key)||'null');
-    if(saved&&typeof saved==='object'){
-      stats.total=Math.max(0,Number(saved.total)||0);
-      stats.phone=Math.max(0,Number(saved.phone)||0);
-      if(saved.day===localDay()){stats.today=Math.max(0,Number(saved.today)||0);stats.phone=Math.max(0,Number(saved.phone)||0);}else{stats.phone=0;}
-    }else{
-      stats.phone=0;
-      stats.total=Math.max(0,parseInt(localStorage.getItem(legacy)||'0',10)||0);
-    }
-  }catch(_){}
-  function render(){
-    if(stats.day!==localDay()){stats.day=localDay();stats.today=0;stats.phone=0;}
-    totalEl.textContent=stats.total.toLocaleString('ko-KR');
-    todayEl.textContent=stats.today.toLocaleString('ko-KR');
-    phoneEl.textContent=stats.phone.toLocaleString('ko-KR');
+  var key='smart24-click-stats-v1';
+  var local={total:0,today:0,phone:0,day:''};
+  function day(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+  try{var saved=JSON.parse(localStorage.getItem(key)||'null');if(saved){local=Object.assign(local,saved);}}catch(_){}
+  function reset(){if(local.day!==day()){local.day=day();local.today=0;local.phone=0;}}
+  function show(stats){totalEl.textContent=Number(stats.total||0).toLocaleString('ko-KR');todayEl.textContent=Number(stats.today||0).toLocaleString('ko-KR');phoneEl.textContent=Number(stats.phone||0).toLocaleString('ko-KR');}
+  function showLocal(){reset();show(local);if(label)label.title='공용 통계 연결 전: 이 브라우저에서 집계한 클릭수';}
+  function persist(){try{localStorage.setItem(key,JSON.stringify(local));}catch(_){}}
+  async function rpc(phone){
+    var response=await fetch(url,{method:'POST',headers:{'apikey':apiKey,'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({p_phone:phone}),cache:'no-store'});
+    if(!response.ok)throw Error('Supabase counter RPC unavailable');
+    var result=await response.json();
+    var row=Array.isArray(result)?result[0]:result;
+    if(!row||row.total_clicks===undefined)throw Error('Invalid counter response');
+    return {total:row.total_clicks,today:row.today_clicks,phone:row.today_phone_clicks};
   }
-  function save(){try{localStorage.setItem(key,JSON.stringify(stats));}catch(_){}}
-  render();
+  var shared=false;
+  async function refresh(){try{var stats=await rpc(null);shared=true;show(stats);if(label)label.title='Supabase 전체 방문자 합산 클릭수 (실제 통화 건수 아님)';}catch(_){shared=false;showLocal();}}
+  reset();showLocal();refresh();
   document.addEventListener('click',function(event){
     var target=event.target.closest('a,button');
     if(!target)return;
-    if(stats.day!==localDay()){stats.day=localDay();stats.today=0;}
-    stats.total++;stats.today++;
-    if(target.matches('a[href^="tel:"]')&&(target.getAttribute('href')||'').replace(/\\D/g,'')==='18114294')stats.phone++;
-    render();save();
+    var isPhone=target.matches('a[href^="tel:"]')&&(target.getAttribute('href')||'').replace(/\\D/g,'')==='18114294';
+    reset();local.total++;local.today++;if(isPhone)local.phone++;persist();
+    if(!shared){showLocal();refresh();return;}
+    // Non-blocking: do not delay the telephone dialer or link navigation.
+    rpc(isPhone).then(function(stats){shared=true;show(stats);}).catch(function(){shared=false;showLocal();});
   });
+  window.addEventListener('focus',refresh);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)refresh();});
 })();
 </script>
 <button class="back-to-top" id="back-to-top" type="button" aria-label="페이지 맨 위로 이동" title="맨 위로">↑ TOP</button>
