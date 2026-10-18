@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server';import {getRides} from '../../../lib/records';export async function GET(){return NextResponse.json({records:await getRides(100),source:'verified-public-ride-history'},{headers:{'Cache-Control':'public, s-maxage=300, stale-while-revalidate=600'}})}
