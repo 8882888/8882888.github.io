@@ -40,7 +40,7 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 </style></head><body>
 <header><strong>{BRAND}</strong> · <a href="tel:18773015">대표 상담 {PHONE}</a></header>
 <nav aria-label="주요 메뉴" style="padding:12px 5%;border-bottom:1px solid #d9e1ea;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
-<a href="/">홈</a><a href="/service/daeri/">대리운전</a><a href="/service/taksong/">자동차탁송</a><a href="/service/long-distance-taksong/">장거리탁송</a><a href="/service/corporate/">법인대리운전</a><a href="/service/golf/">골프대리운전</a><a href="/quote/">빠른 상담 작성</a><a href="/region/">전국 지역 찾기</a>
+<a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/golf/">골프대리운전</a><a href="/service/daily-driver/">일일기사</a>
 </nav>
 <div class="quick-jump" aria-label="페이지 항목 바로 이동"><a href="#page-start">본문 안내</a><a href="#consultation">상담 안내</a><a href="/">홈</a><a href="/region/">전국 지역</a><a href="/quote/">빠른 상담</a></div>
 <main id="page-start">{body}
@@ -134,6 +134,16 @@ def generate_service_pages(urls):
                 ("기업 상담 시 확인할 내용", ["이용 빈도와 예상 시간대", "주요 출발지와 도착지", "정산 및 이용 절차에 필요한 조건", "담당 부서에서 원하는 연락 방법"]),
                 ("운영 방식 협의", ["반복 이용이나 일정한 업무 패턴은 상담 시 미리 알려주세요.", "정산 방식과 계약 조건은 별도 확인 후 안내합니다."]),
                 ("이용 전 확인", ["서비스 범위와 요금, 배차 조건을 확인한 뒤 이용을 결정해 주세요."])
+            ]
+        },
+        {
+            "slug": "daily-driver", "name": "일일기사",
+            "title": "전국 일일기사·일일대리운전 상담 안내",
+            "intro": "출장, 장거리 이동, 일정이 정해진 차량 운행 등 하루 단위로 기사가 필요한 경우 이용 시간과 이동 경로를 확인해 상담합니다. 기사 배정과 비용은 사전 확인이 필요합니다.",
+            "sections": [
+                ("일일기사 이용 전 준비사항", ["출발지와 도착지, 방문 예정 장소", "기사 이용 날짜와 시작·종료 예정 시간", "차종과 운행 조건", "대기·경유·복귀 여부"]),
+                ("일일기사와 편도 대리운전", ["하루 동안 여러 장소를 이동하는 일정인지, 한 번의 편도 이동인지 구분해 알려주세요.", "편도 장거리 대리운전과 일일기사 이용 조건은 다를 수 있습니다."]),
+                ("요금 및 배차 확인", ["일정, 운행 거리, 대기 시간, 지역별 기사 수급을 확인한 뒤 안내합니다.", "상담 전에는 확정 요금이나 배차 가능 여부를 보장하지 않습니다."])
             ]
         },
         {
