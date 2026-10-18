@@ -233,7 +233,7 @@ def generate_quote_page(urls):
       ['차량 종류', document.getElementById('vehicle').value.trim() || '미기재'],
       ['추가 요청', document.getElementById('memo').value.trim() || '없음']
     ];
-    text.textContent = '스마트번개대리운전 상담 요청\n' + fields.map(function(item) { return item[0] + ': ' + item[1]; }).join('\n');
+    text.textContent = '스마트전국대리운전 스마트24탁송 상담 요청\n' + fields.map(function(item) { return item[0] + ': ' + item[1]; }).join('\n');
     result.hidden = false;
     result.scrollIntoView({behavior:'smooth', block:'start'});
   });
