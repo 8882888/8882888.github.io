@@ -305,8 +305,9 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
   document.addEventListener('click',function(event){
     var target=event.target.closest('a,button');
     if(!target)return;
-    var isPhone=target.matches('a[href^="tel:"]')&&(target.getAttribute('href')||'').replace(/\\D/g,'')==='18114294';
+    var isPhone=target.matches('a[href^="tel:"]')&&(target.getAttribute('href')||'').replace(/\D/g,'')==='18114294';
     reset();local.total++;local.today++;if(isPhone)local.phone++;persist();
+    showLocal();
     if(!shared){showLocal();refresh();return;}
     // Non-blocking: do not delay the telephone dialer or link navigation.
     rpc(isPhone).then(function(stats){shared=true;show(stats);}).catch(function(){shared=false;showLocal();});
