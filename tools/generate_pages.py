@@ -486,7 +486,35 @@ def main():
 <h2>{esc(location)} 지역별 이용 안내와 사례 예시</h2>
 <p>{esc(location)}에서 대리운전이나 자동차탁송을 알아볼 때는 출발 위치, 도착지, 이용 날짜와 희망 시간을 먼저 정리하면 상담에 도움이 됩니다. 아래 내용은 공개된 지역 정보와 일반적인 서비스 절차를 바탕으로 만든 안내 예시이며, 특정 고객의 실제 후기나 실제 완료 운행을 의미하지 않습니다.</p>
 <ul><li>{esc(location)} 대리운전: 주차 위치와 도착 주소를 확인한 뒤 요금 및 배차 가능 여부를 문의합니다.</li><li>{esc(location)} 자동차탁송: 차량 인수 장소, 도착 주소, 차종과 희망 일정을 준비합니다.</li><li>{esc(location)} 장거리탁송: 정확한 이동 구간과 차량 조건을 전달하고 일정과 요금을 확인합니다.</li></ul>
-<p>실제 운행 이력이 추후 확인되면 개인정보를 제외한 출발지·도착지·날짜·시간·요금 등 확인 가능한 항목만 별도로 추가할 수 있습니다.</p>
+<h2>{esc(location)} 관련 실제 완료 운행기록</h2>
+<p>공개된 완료 운행기록의 출발지 또는 도착지에 지역명이 포함된 사례만 표시합니다. 일치하는 기록이 없으면 임의의 후기를 생성하지 않습니다. 지역명이 같더라도 다른 행정구역일 수 있으므로 상세 위치는 상담 시 확인해 주세요.</p>
+<div id="verified-local-rides" class="card" data-locality="{esc(name)}">공개된 완료 운행기록을 확인하는 중입니다.</div>
+<p><a href="/#ride-history">전체 실제 완료 운행후기 보기 →</a></p>
+<script>
+(function() {{
+  const el=document.getElementById('verified-local-rides');
+  if(!el)return;
+  const locality=el.dataset.locality.trim();
+  if(locality.length<3){{el.textContent='동명이인 지역 혼동을 피하기 위해 전체 운행후기에서 확인해 주세요.';return;}}
+  fetch('/smart-bunny-homepage/data/completed_trips.json',{{cache:'no-store'}})
+    .then(r=>{{if(!r.ok)throw Error('unavailable');return r.json();}})
+    .then(data=>{{
+      const trips=Array.isArray(data.trips)?data.trips:[];
+      const matched=trips.filter(t=>String(t['출발지']||'').includes(locality)||String(t['도착지']||'').includes(locality)).slice(0,8);
+      el.replaceChildren();
+      if(!matched.length){{el.textContent='현재 공개된 완료 운행기록 중 해당 지역명과 일치하는 사례가 없습니다.';return;}}
+      const ul=document.createElement('ul');
+      matched.forEach(t=>{{
+        const li=document.createElement('li');
+        const fare=Number(t['금액']);
+        li.textContent=[t['운행일'],t['출발시간'],String(t['출발지']||'')+' → '+String(t['도착지']||''),Number.isFinite(fare)?fare.toLocaleString('ko-KR')+'원':'요금 확인 필요'].filter(Boolean).join(' · ');
+        ul.appendChild(li);
+      }});
+      el.appendChild(ul);
+    }})
+    .catch(()=>{{el.textContent='현재 운행기록을 불러올 수 없습니다. 전체 운행후기를 확인해 주세요.';}});
+}})();
+</script>
 <p class="muted">지역 정보: {esc(location)} · 안내 업데이트: {date.today().isoformat()}</p>"""
         out = ROOT / "region" / slug / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
