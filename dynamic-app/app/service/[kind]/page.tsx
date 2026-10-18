@@ -1,0 +1,4 @@
+import {notFound} from 'next/navigation';import Link from 'next/link';
+const services:{[key:string]:{title:string;description:string}}={daeri:{title:'전국대리운전',description:'전국 일반·장거리·심야 대리운전 상담. 출발지, 도착지, 출발 희망 시간을 확인해 기사 배차 가능 여부를 안내합니다.'},taksong:{title:'24시 자동차탁송',description:'전국 자동차탁송, 장거리탁송, 렌터카탁송과 차량 이동 상담. 차량 종류와 운행 구간에 따라 배차 조건과 요금이 달라집니다.'}};
+export async function generateMetadata({params}:{params:Promise<{kind:string}>}){const {kind}=await params;return {title:services[kind]?.title??'서비스 안내'}}
+export default async function Service({params}:{params:Promise<{kind:string}>}){const {kind}=await params;const service=services[kind];if(!service)notFound();return <main><h1>{service.title}</h1><p>{service.description}</p><section><h2>이용 상담 안내</h2><p>출발지·도착지·희망 시간·차종을 알려주시면 배차 가능 여부와 요금을 안내합니다. 야간 및 외곽지역은 기사 수급에 따라 대기시간과 요금이 달라질 수 있습니다.</p><a className="button" href="tel:18773015">1877-3015 전화 상담</a></section><p><Link href="/regions">전국 지역별 안내 확인 →</Link></p></main>}
