@@ -1,0 +1,3 @@
+import {getRides} from '../../lib/records';
+export const metadata={title:'실제 완료 운행후기'};export const revalidate=300;
+export default async function Reviews(){const rides=await getRides(300);return <main><h1>전국 실제 완료 운행후기</h1><p>개인정보를 제외한 완료 운행기록만 공개합니다. 기록 요금은 현재 견적이 아닙니다.</p>{rides.length?<div style={{overflowX:'auto'}}><table><thead><tr><th>날짜</th><th>시간</th><th>출발지</th><th>도착지</th><th>기록 요금</th></tr></thead><tbody>{rides.map((r,i)=><tr key={i}><td>{r.date}</td><td>{r.time}</td><td>{r.departure}</td><td>{r.destination}</td><td>{r.fare}원</td></tr>)}</tbody></table></div>:<p>공개 가능한 완료 운행기록이 없습니다. 데이터베이스 연결 및 공개 설정을 확인해주세요.</p>}</main>}
