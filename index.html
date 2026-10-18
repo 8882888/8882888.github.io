@@ -259,12 +259,14 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 <footer>스마트전국대리운전 스마트24탁송<br>대표 상담 전화: 1877-3015<br>전국 지역별 서비스 안내를 단계적으로 확장하고 있습니다.</footer>
 
 <script>
-(function(){
+(async function(){
  const target=document.getElementById('trip-flow-track');if(!target)return;
- const body=document.getElementById('ride-history-rows');
- const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- function render(){if(!body)return;const rows=[...body.querySelectorAll('tr')].filter(tr=>tr.cells.length>=5&&!tr.querySelector('[colspan]')).slice(0,24);if(!rows.length)return;const cards=rows.map(tr=>{const v=[...tr.cells].map(c=>c.textContent.trim());return '<a class="trip-flow-card" href="#ride-history"><span>'+esc(v[0])+'</span><strong>'+esc(v[2])+' → '+esc(v[3])+'</strong><span>기록 요금 '+esc(v[4])+'</span></a>';}).join('');target.innerHTML=cards+cards;}
- const obs=new MutationObserver(render);if(body){obs.observe(body,{childList:true});render();setTimeout(()=>{if(!target.querySelector('a'))target.innerHTML='<a class="trip-flow-card" href="#ride-history">공개 가능한 완료 운행 기록 확인하기</a>';},12000)}
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const draw=rows=>{if(!rows.length)return false;const cards=rows.slice(0,60).map(v=>'<a class="trip-flow-card" href="/smart-bunny-homepage/reviews/"><span>'+esc(v[0])+' · '+esc(v[1])+'</span><strong>'+esc(v[2])+' → '+esc(v[3])+'</strong><span>기록 요금 '+esc(v[4])+'</span></a>').join('');target.innerHTML=cards+cards;return true;};
+ try{const response=await fetch('/smart-bunny-homepage/reviews/',{cache:'no-cache'});if(!response.ok)throw Error('reviews unavailable');const doc=new DOMParser().parseFromString(await response.text(),'text/html');const rows=[...doc.querySelectorAll('#trip-table tbody tr')].filter(tr=>tr.cells.length>=5).map(tr=>[...tr.cells].slice(0,5).map(c=>c.textContent.trim()));if(draw(rows))return;}catch(e){console.warn('Published reviews unavailable',e)}
+ const body=document.getElementById('ride-history-rows');if(!body){target.textContent='확인된 공개 운행기록을 확인해 주세요.';return;}
+ const render=()=>{const rows=[...body.querySelectorAll('tr')].filter(tr=>tr.cells.length>=5&&!tr.querySelector('[colspan]')).map(tr=>[...tr.cells].slice(0,5).map(c=>c.textContent.trim()));if(!draw(rows)&&!body.textContent.includes('불러오는 중'))target.innerHTML='<a class="trip-flow-card" href="#ride-history">현재 공개 가능한 완료 운행 기록을 확인해 주세요.</a>';};
+ new MutationObserver(render).observe(body,{childList:true});render();
 })();
 </script>
 </body>
