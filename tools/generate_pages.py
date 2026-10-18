@@ -42,7 +42,7 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 <nav aria-label="주요 메뉴" style="padding:12px 5%;border-bottom:1px solid #d9e1ea;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
 <a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/golf/">골프대리운전</a><a href="/service/daily-driver/">일일기사</a>
 </nav>
-<div class="quick-jump" aria-label="페이지 항목 바로 이동"><a href="#page-start">본문 안내</a><a href="#consultation">상담 안내</a><a href="/">홈</a><a href="/region/">전국 지역</a><a href="/quote/">빠른 상담</a></div>
+<div class="quick-jump" aria-label="페이지 항목 바로 이동"><a href="#page-start">본문 안내</a><a href="#consultation">상담 안내</a><a href="/">홈</a><a href="/region/">전국 지역</a><a href="/service/daily-driver/">일일기사</a></div>
 <main id="page-start">{body}
 <div class="card" id="consultation"><h2>전화 상담</h2><p>출발지와 도착지, 차량 종류, 이용 날짜와 희망 시간을 알려주시면 상담이 더 정확해집니다.</p>
 <p><strong>{PHONE}</strong></p><a class="btn" href="tel:18773015">전화 상담하기</a>
