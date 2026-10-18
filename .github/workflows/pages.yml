@@ -47,7 +47,11 @@ jobs:
             echo "::warning::Official region download unavailable; keeping existing verified pages and homepage."
           fi
           if [ -f data/official_legal_dong.csv ] && [ "$(wc -c < data/official_legal_dong.csv)" -gt 100000 ]; then
-            python tools/import_official_regions.py
+            if python tools/import_official_regions.py; then
+              echo "Official nationwide region data imported successfully."
+            else
+              echo "::warning::Official region import failed validation; retaining existing region data and continuing deployment."
+            fi
           else
             echo "::warning::Skipping region import because official CSV is unavailable."
           fi
