@@ -98,7 +98,7 @@ def main():
     output = {
         "schema_version": 2,
         "brand": "스마트전국대리운전 스마트24탁송",
-        "phone": "1877-3015",
+        "phone": "1811-4294",
         "source": "국토교통부_전국 법정동 (공공데이터포털)",
         "source_url": "https://www.data.go.kr/data/15063424/fileData.do",
         "note": "공식 법정동 CSV에서 정리한 지역 목록입니다. 지역별 실제 후기·운행실적은 확인된 사실만 추가해야 합니다.",
