@@ -50,6 +50,13 @@ ${children.length?'<section><h2>하위 지역 살펴보기</h2><ul>'+children.ma
 return layout(full+' 대리운전·탁송·일일기사',intro,body,link(r.slug));}
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
+if(pathname==='/region/'||pathname==='/region'){
+ const q=clean(u.searchParams.get('q')||'');
+ const matches=q?regions.filter(r=>r.full_name.includes(q)).slice(0,100):regions.filter(r=>r.level==='시도');
+ const links='<ul>'+matches.map(r=>'<li><a href="'+canonical(r.slug)+'">'+esc(r.full_name)+' 대리운전·탁송</a></li>').join('')+'</ul>';
+ const form='<form method="get" action="/region/"><label for="q">전국 지역 검색</label> <input id="q" name="q" value="'+esc(q)+'" placeholder="시·군·구·읍·면·동·리" style="padding:12px;max-width:80%;font-size:17px"> <button style="padding:12px">검색</button></form>';
+ return respond(res,200,layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<section><h2>전국 지역 찾기</h2>'+form+'<p>전체 '+regions.length+'개 지역 중 '+(q?'검색 일치 최대 100개':'시·도 목록')+' 표시</p>'+links+'</section>','https://'+(process.env.PUBLIC_HOST||'8882888.github.io')+'/region/'));
+}
 if(pathname==='/health')return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy'}), 'application/json; charset=utf-8');
 if(pathname==='/sitemap.xml'){const base='https://'+(process.env.PUBLIC_HOST||'8882888.github.io');const urls=['/', '/region/',...regions.map(r=>canonical(r.slug))];return respond(res,200,'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(x=>'<url><loc>'+esc(base+x)+'</loc></url>').join('')+'</urlset>','application/xml; charset=utf-8')}
 const match=pathname.match(/^\/region\/([^/]+)\/?$/);if(match){const r=bySlug.get(match[1]);return r?respond(res,200,regionPage(r)):respond(res,404,'지역 정보를 찾을 수 없습니다.')}
