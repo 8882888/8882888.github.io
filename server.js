@@ -32,27 +32,38 @@ for(const r of regions){if(!r.parent_slug)continue;const a=childrenByParent.get(
 const rides=load('data/ride-history.json');
 const verifiedRides=Array.isArray(rides)?rides.filter(x=>x.status==='completed'&&x.verified===true):[];
 const clean=s=>String(s||'').trim().slice(0,80);
+const compact=s=>String(s||'').replace(/\s+/g,'').toLowerCase();
+const regionAncestors=r=>{const a=[];let cur=r;while(cur){a.unshift(cur);cur=cur.parent_slug?bySlug.get(cur.parent_slug):null}return a};
+const regionContext=r=>({읍:'읍내·인접 마을',면:'면 소재지·인접 마을',리:'마을·인접 읍면',동:'주거지·상업시설',구:'구내 주요 생활권',군:'읍·면·리 지역',시:'시내·외곽 지역',시도:'시·군·구별 지역'})[r.level]||'해당 지역';
 const canonical=(slug)=>'/region/'+encodeURIComponent(slug)+'/';
 const link=(slug)=>'https://'+(process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app')+canonical(slug);
 const layout=(title,desc,body,canonicalUrl)=>`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="naver-site-verification" content="8446ba47770e9410dd00b9382acf43e8287320cb"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} | ${BRAND}</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${esc(canonicalUrl)}"><style>*{box-sizing:border-box}body{margin:0;background:#f4f7fc;color:#15243a;font:17px/1.8 system-ui,'Malgun Gothic',sans-serif}header,footer{background:#102544;color:#fff;padding:20px 5%}header a,footer a{color:#ffdc50}main{max-width:940px;margin:auto;padding:14px}section{background:#fff;padding:20px;border-radius:12px;margin:15px 0;border:1px solid #d6e0ee}h1{font-size:clamp(25px,5vw,38px)}h2{font-size:23px}a{color:#07539c}.cta{display:inline-block;background:#ffe05d;color:#15243a;padding:12px 20px;border-radius:10px;font-weight:800;text-decoration:none}li{margin:7px 0}@media(max-width:600px){section{padding:15px}}</style></head><body><header><a href="/">홈</a> · <a href="/region/">전국 지역 검색</a><h1>${esc(title)}</h1><p>${BRAND}</p></header><main>${body}</main><footer>상담 ${PHONE} · 실제 배차·요금은 상담 후 확인</footer></body></html>`;
-function regionPage(r){const n=esc(r.name),full=esc(r.full_name||[r.parent_name==='대한민국'?'':r.parent_name,r.name].filter(Boolean).join(' '));
-const intro=`${full} 지역에서 이용할 수 있는 대리운전, 자동차탁송, 장거리탁송, 일일기사 서비스와 예약 시 확인할 사항을 안내합니다.`;
-const matches=verifiedRides.filter(x=>[x.departure,x.destination].some(v=>String(v||'').includes(r.name))).slice(0,12);
-const records=matches.length?'<ul>'+matches.map(x=>'<li>'+esc([x.date,x.time,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':'<p>현재 이 지역명과 일치하는 공개 운행정보가 없습니다. 운행후기가 없어도 서비스 이용 안내와 상담은 가능합니다.</p>';
-const children=(childrenByParent.get(r.slug)||[]).slice(0,150);
-const body=`<section><h2>${full} 운전 서비스</h2><p>${intro}</p><p>지역 안내는 기사 상주나 배차 확정을 의미하지 않습니다.</p><a class="cta" href="tel:18114294">전화 상담 ${PHONE}</a></section>
-<section><h2>${full} 대리운전 안내</h2><p>식당, 숙박시설, 주거지, 업무시설 등 실제 출발지의 상세 위치와 도착지, 출발 예정 시각을 확인합니다. 야간·주말·외곽 출발은 기사 이동 거리와 복귀 교통편에 따라 배차가 지연될 수 있으므로 미리 예약 조건을 확인하는 것이 좋습니다.</p><p>단거리뿐 아니라 다른 시·군·구로 이동하는 장거리 대리운전도 출발지, 목적지, 희망 시각을 기준으로 상담합니다.</p></section>
-<section><h2>${full} 자동차탁송·장거리탁송 안내</h2><p>차량 인수 장소와 인계 장소가 다른 경우, 차량 이동이 필요한 경우에 탁송 상담을 이용할 수 있습니다. 차종, 수동변속기 여부, 운행 가능 상태, 인수·인계 시간, 경유지, 통행료 조건을 확인해야 정확한 운행 가능 여부를 안내할 수 있습니다.</p><p>심야·장거리·외곽 탁송은 이동 거리 외에도 기사 수급과 복귀 조건이 참고요금에 영향을 줄 수 있습니다. 확정 요금은 상담 후 안내합니다.</p></section>
-<section><h2>${full} 일일기사·골프장·출장</h2><p>일일기사는 편도 이동과 달리 운행 시작·종료 시각, 대기 시간, 경유지와 복귀 일정을 확인합니다. 골프장 방문은 티오프 시각과 예상 라운딩 종료 시각, 지방출장은 일정과 목적지를 함께 전달하면 상담이 원활합니다.</p></section>
-<section><h2>예약 전에 확인할 내용</h2><p>이용 날짜와 시간, 정확한 출발·도착 주소, 차량 종류, 경유·대기 여부, 인수·인계 조건을 알려주세요. 특정 지역의 기사 상주나 즉시 배차를 보장하지 않습니다.</p></section>
-<section><h2>${full} 관련 공개 운행정보</h2><p>아래 기록은 완료 상태와 검증 여부가 모두 확인된 공개용 운행정보만 표시합니다. 검증되지 않은 기록은 표시하지 않습니다.</p>${records}</section>
-${children.length?'<section><h2>하위 지역 살펴보기</h2><ul>'+children.map(x=>'<li><a href="'+canonical(x.slug)+'">'+esc(x.name)+' 대리운전·탁송</a></li>').join('')+'</ul></section>':''}`;
-return layout(full+' 대리운전·탁송·일일기사',intro,body,link(r.slug));}
+function regionPage(r){
+ const fullName=r.full_name||[r.parent_name==='대한민국'?'':r.parent_name,r.name].filter(Boolean).join(' ');
+ const full=esc(fullName),short=esc(r.name),context=esc(regionContext(r));
+ const ancestors=regionAncestors(r);
+ const breadcrumb='<nav aria-label="지역 경로"><a href="/region/">전국 지역</a> / '+ancestors.map((x,i)=>i===ancestors.length-1?'<strong>'+esc(x.name)+'</strong>':'<a href="'+canonical(x.slug)+'">'+esc(x.name)+'</a>').join(' / ')+'</nav>';
+ const title=fullName+' 대리운전·자동차탁송 안내';
+ const intro=fullName+' 대리운전, '+fullName+' 탁송 상담 안내. '+r.name+'대리운전·'+r.name+'탁송 검색 시 지역과 출발·도착 위치를 확인하고 장거리 운행 및 일일기사 상담 항목을 안내합니다.';
+ const matches=verifiedRides.filter(x=>[x.departure,x.destination].some(v=>String(v||'').includes(fullName))).slice(0,12);
+ const records=matches.length?'<ul>'+matches.map(x=>'<li>'+esc([x.date,x.time,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':'<p>이 지역의 검증된 공개 운행 사례는 아직 등록되지 않았습니다. 실제 운행 실적이나 기사 상주 여부를 추정하여 표시하지 않습니다.</p>';
+ const children=childrenByParent.get(r.slug)||[];
+ const parent=r.parent_slug?bySlug.get(r.parent_slug):null;
+ const body=`${breadcrumb}<section><h2>${full} 대리운전·탁송 상담</h2><p>${esc(intro)}</p><p>${context}의 실제 출발 위치에 따라 기사 접근 경로와 배차 조건이 달라질 수 있습니다. 해당 지역의 상주 기사 또는 즉시 배차를 보장하지 않습니다.</p><a class="cta" href="tel:18114294">전화 상담 ${PHONE}</a></section>
+ <section><h2>${short}대리운전 · ${full} 장거리대리운전</h2><p>대리운전 상담 시 정확한 출발지, 목적지, 출발 예정 시각을 알려주세요. 야간·주말 또는 외곽 출발은 기사 이동과 복귀 교통편을 고려해야 합니다. 다른 시·군·구로 이동하는 장거리 운행은 편도 여부와 예상 출발 시간을 함께 확인합니다.</p></section>
+ <section><h2>${short}탁송 · ${full} 자동차탁송</h2><p>차량 인수·인계 장소, 차종, 수동변속기 여부, 차량 운행 가능 상태, 희망 시간, 경유지와 통행료 조건을 확인합니다. 서비스센터 입출고나 장거리 차량 이동 등 구체적인 목적에 따라 상담 조건이 달라집니다. 확정 요금은 상담 후 안내합니다.</p></section>
+ <section><h2>${full} 일일기사·골프장 이동</h2><p>일일기사 이용 시 출발·종료 시각, 대기 시간, 경유지와 왕복 여부를 알려주세요. 골프장 방문이나 지방출장 일정은 도착 희망 시각과 복귀 계획까지 함께 확인하면 좋습니다.</p></section>
+ <section><h2>${short} 지역 예약 전 확인사항</h2><p>정확한 도로명주소 또는 인근 위치, 이용 날짜와 시간, 차량 종류, 출발지·도착지, 경유 및 대기 여부를 준비해 주세요. 실제 배차 가능 여부와 요금은 상담 후 확정됩니다.</p></section>
+ <section><h2>${full} 실제 공개 운행정보</h2>${records}</section>
+ ${parent?'<section><h2>상위 지역 안내</h2><p><a href="'+canonical(parent.slug)+'">'+esc(parent.full_name)+' 대리운전·탁송</a></p></section>':''}
+ ${children.length?'<section><h2>인접 행정 단계의 하위 지역 찾기</h2><ul>'+children.map(x=>'<li><a href="'+canonical(x.slug)+'">'+esc(x.name)+' 대리운전·탁송</a></li>').join('')+'</ul></section>':''}`;
+ return layout(title,intro,body,link(r.slug));
+}
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 if(pathname==='/region/'||pathname==='/region'){
  const q=clean(u.searchParams.get('q')||'');
- const matches=q?regions.filter(r=>r.full_name.includes(q)).slice(0,100):regions.filter(r=>r.level==='시도');
+ const matches=q?regions.filter(r=>compact(r.full_name).includes(compact(q))).slice(0,100):regions.filter(r=>r.level==='시도');
  const links='<ul>'+matches.map(r=>'<li><a href="'+canonical(r.slug)+'">'+esc(r.full_name)+' 대리운전·탁송</a></li>').join('')+'</ul>';
  const form='<form method="get" action="/region/"><label for="q">전국 지역 검색</label> <input id="q" name="q" value="'+esc(q)+'" placeholder="시·군·구·읍·면·동·리" style="padding:12px;max-width:80%;font-size:17px"> <button style="padding:12px">검색</button></form>';
  return respond(res,200,layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<section><h2>전국 지역 찾기</h2>'+form+'<p>전체 '+regions.length+'개 지역 중 '+(q?'검색 일치 최대 100개':'시·도 목록')+' 표시</p>'+links+'</section>','https://'+(process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app')+'/region/'));
