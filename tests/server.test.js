@@ -18,6 +18,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const r of samples){const res=await get('/region/'+r.slug+'/');assert.equal(res.status,200,r.slug);const html=await res.text();assert.ok(html.includes(r.name));assert.ok(html.includes('대리운전 안내'));assert.ok(html.includes('자동차탁송'));assert.ok(html.includes('1811-4294'));assert.ok(html.includes('일일기사'))}
   const missing=await get('/region/not-a-real-region/');assert.equal(missing.status,404);
   const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();assert.equal((xml.match(/<loc>/g)||[]).length,regions.length+2);assert.ok(xml.includes('example.com'));
+  const secret=await get('/server.js');assert.equal(secret.status,403,'server source must not be exposed');
+  const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
   const root=await get('/');assert.equal(root.status,200);
   const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
