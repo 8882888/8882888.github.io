@@ -42,7 +42,7 @@ th{background:#f5f6f8}
       <input id="email" type="email" autocomplete="username" required>
       <label for="password">비밀번호</label>
       <input id="password" type="password" autocomplete="current-password" required>
-      <div class="actions"><button type="submit">로그인</button><a class="button" href="./">홈페이지로</a></div>
+      <div class="actions"><button type="submit">로그인</button><button type="button" class="secondary" id="magic-link-btn">이메일로 로그인 링크 받기</button><a class="button" href="./">홈페이지로</a></div>
     </form>
   </section>
 
@@ -238,6 +238,26 @@ if (!monthInput.value) {
   const now = new Date();
   monthInput.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
 }
+document.getElementById('magic-link-btn').addEventListener('click', async () => {
+  const email = document.getElementById('email').value.trim();
+  if (!email || !document.getElementById('email').checkValidity()) {
+    showStatus('관리자 이메일을 먼저 입력해 주세요.');
+    document.getElementById('email').focus();
+    return;
+  }
+  const button = document.getElementById('magic-link-btn');
+  button.disabled = true;
+  showStatus('로그인 링크를 요청하고 있습니다.');
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: false, emailRedirectTo: new URL('admin.html', window.location.href).href }
+    });
+    showStatus(error ? '로그인 링크 요청 실패: ' + error.message : '등록된 관리자 계정이라면 이메일로 로그인 링크가 발송됩니다. 메일에서 링크를 눌러 로그인하세요.');
+  } finally {
+    button.disabled = false;
+  }
+});
 document.getElementById('login-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   showStatus('로그인 중입니다.');
