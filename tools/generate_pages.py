@@ -490,6 +490,8 @@ def main():
     if not regions:
         raise SystemExit("data/regions.json에 지역을 입력해야 합니다.")
     urls = {SITE_URL + "/"}
+    if (ROOT / "fare" / "index.html").is_file():
+        urls.add(SITE_URL + "/fare/")
     generate_service_pages(urls)
     # Never deploy an unmonitored consultation form from an older build.
     # Its contents were only assembled locally, with no operator notification.
@@ -570,8 +572,8 @@ def main():
 <p class="muted">이는 일반적인 서비스 안내입니다. 해당 지역에서 실제 기사 부족이나 특정 배차요금이 확인됐다는 뜻은 아닙니다.</p>
 <h2>{esc(location)} 예약과 긴급 호출의 요금 차이</h2>
 <p>대리운전과 탁송 모두 사전 예약으로 기사 일정이 정리되면 요금 변동을 줄이는 데 도움이 됩니다. 반면 즉시 출발하는 긴급 요청은 빠른 기사 확보가 필요해 요금이 높아질 수 있습니다. 대리운전은 약 10분 이내 도착처럼 빠른 배차를 원하는 경우가 많지만 실제 도착 시간은 보장되지 않습니다. 탁송은 차량 인수 시간에 여유가 있다면 긴급 대리운전보다 다소 저렴하게 조율될 수도 있습니다. 확정 요금은 상담으로 확인해 주세요.</p>
-<h2>{esc(location)} 관련 실제 완료 운행기록</h2>
-<p>공개된 완료 운행기록의 출발지 또는 도착지에 지역명이 포함된 사례만 표시합니다. 일치하는 기록이 없으면 임의의 후기를 생성하지 않습니다. 지역명이 같더라도 다른 행정구역일 수 있으므로 상세 위치는 상담 시 확인해 주세요.</p>
+<h2>{esc(location)} 관련 공개 운행기록</h2>
+<p>공개 운행기록 중 완료 여부가 별도로 검증된 사례만 표시합니다. 일치하는 기록이 없으면 임의의 후기를 생성하지 않습니다. 지역명이 같더라도 다른 행정구역일 수 있으므로 상세 위치는 상담 시 확인해 주세요.</p>
 <div id="verified-local-rides" class="card" data-locality="{esc(name)}">공개된 완료 운행기록을 확인하는 중입니다.</div>
 <p><a href="/#ride-history">전체 실제 완료 운행후기 보기 →</a></p>
 <script>
