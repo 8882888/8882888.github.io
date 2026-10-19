@@ -36,13 +36,11 @@ th{background:#f5f6f8}
   <div id="status" role="status">관리자 로그인을 준비하고 있습니다.</div>
   <section class="panel" id="login-panel">
     <h1>관리자 로그인</h1>
-    <p class="note">Supabase에 등록된 관리자 이메일과 비밀번호로 로그인하세요. 비밀번호는 이 페이지에 저장되지 않습니다.</p>
+    <p class="note">관리자 이메일로 인증 링크를 받아 비밀번호 없이 로그인하세요.</p>
     <form id="login-form">
       <label for="email">관리자 이메일</label>
       <input id="email" type="email" autocomplete="username" required>
-      <label for="password">비밀번호</label>
-      <input id="password" type="password" autocomplete="current-password" required>
-      <div class="actions"><button type="submit">로그인</button><button type="button" class="secondary" id="magic-link-btn">이메일로 로그인 링크 받기</button><a class="button" href="./">홈페이지로</a></div>
+      <div class="actions"><button type="submit" id="magic-link-btn">비밀번호 없이 로그인 링크 받기</button><a class="button" href="./">홈페이지로</a></div>
     </form>
   </section>
 
@@ -238,38 +236,22 @@ if (!monthInput.value) {
   const now = new Date();
   monthInput.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
 }
-document.getElementById('magic-link-btn').addEventListener('click', async () => {
-  const email = document.getElementById('email').value.trim();
-  if (!email || !document.getElementById('email').checkValidity()) {
-    showStatus('관리자 이메일을 먼저 입력해 주세요.');
-    document.getElementById('email').focus();
-    return;
-  }
-  const button = document.getElementById('magic-link-btn');
-  button.disabled = true;
-  showStatus('로그인 링크를 요청하고 있습니다.');
-  try {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: false, emailRedirectTo: new URL('admin.html', window.location.href).href }
-    });
-    showStatus(error ? '로그인 링크 요청 실패: ' + error.message : '등록된 관리자 계정이라면 이메일로 로그인 링크가 발송됩니다. 메일에서 링크를 눌러 로그인하세요.');
-  } finally {
-    button.disabled = false;
-  }
-});
 document.getElementById('login-form').addEventListener('submit', async (event) => {
   event.preventDefault();
-  showStatus('로그인 중입니다.');
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  document.getElementById('password').value = '';
-  if (error) { showStatus('로그인에 실패했습니다. Supabase에 등록된 관리자 이메일과 비밀번호를 확인해 주세요.'); return; }
-  currentUser = data.user;
-  showManager(true);
-  showStatus('로그인했습니다. 저장/수정/삭제는 Supabase 관리자 권한 정책으로 보호됩니다.');
-  await loadRecords();
+  const emailInput = document.getElementById('email');
+  if (!emailInput.reportValidity()) return;
+  const button = document.getElementById('magic-link-btn');
+  button.disabled = true;
+  showStatus('인증 링크를 요청하고 있습니다.');
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: emailInput.value.trim(),
+      options: { shouldCreateUser: false, emailRedirectTo: new URL('./admin.html', window.location.href).href }
+    });
+    showStatus(error ? '인증 링크 요청 실패: ' + error.message : '등록된 관리자 이메일로 인증 링크를 요청했습니다. 메일을 확인해 주세요.');
+  } catch (error) {
+    showStatus('인증 링크 요청 중 오류: ' + (error?.message || '네트워크 상태를 확인해 주세요.'));
+  } finally { button.disabled = false; }
 });
 recordForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -467,7 +449,7 @@ if (sessionData.session) {
   await loadRecords();
 } else {
   showManager(false);
-  showStatus('관리자 이메일과 비밀번호로 로그인해 주세요.');
+  showStatus('관리자 이메일로 인증 링크를 받아 로그인해 주세요.');
 }
 supabase.auth.onAuthStateChange((event, session) => {
   if (session?.user) {
@@ -476,7 +458,7 @@ supabase.auth.onAuthStateChange((event, session) => {
   } else if (event === 'SIGNED_OUT') {
     currentUser = null;
     showManager(false);
-    showStatus('로그아웃했습니다. 관리자 이메일과 비밀번호로 다시 로그인해 주세요.');
+    showStatus('로그아웃했습니다. 관리자 이메일로 인증 링크를 받아 다시 로그인해 주세요.');
   }
 });
 </script>
