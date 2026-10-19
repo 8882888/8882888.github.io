@@ -7,7 +7,7 @@ const baseRegions=load('data/regions.json').regions||[];
 function loadLegalRegions(){
  const folder=path.join(ROOT,'data/legal-regions');
  if(!fs.existsSync(folder))return baseRegions;
- const files=fs.readdirSync(folder).filter(n=>/^\\d{2}\\.json$/.test(n)).sort();
+ const files=fs.readdirSync(folder).filter(n=>/^\d{2}\.json$/.test(n)).sort();
  if(files.length!==17)throw Error('Incomplete nationwide region files: '+files.length+'/17');
  const regions=[],byFull=new Map();
  for(const file of files){
