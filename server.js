@@ -33,6 +33,21 @@ const rides=load('data/ride-history.json');
 const verifiedRides=Array.isArray(rides)?rides.filter(x=>x.status==='completed'&&x.verified===true):[];
 const clean=s=>String(s||'').trim().slice(0,80);
 const compact=s=>String(s||'').replace(/\s+/g,'').toLowerCase();
+const shortPlace=s=>String(s||'').replace(/(특별자치시|특별시|광역시|특별자치도|자치시|시|군|구|읍|면|동|리)$/,'');
+const placeNames=r=>[r.full_name,r.name,shortPlace(r.name),regionAncestors(r).map(x=>shortPlace(x.name)).join(' ')].filter(Boolean);
+const landmarks=[
+ ['충북혁신도시',['진천군','음성군','덕산읍','맹동면']],
+ ['강원혁신도시',['원주시']],['전북혁신도시',['전주시','완주군']],
+ ['광주전남혁신도시',['나주시']],['경북혁신도시',['김천시']],
+ ['경남혁신도시',['진주시']],['대구혁신도시',['동구']],
+ ['부산혁신도시',['부산광역시']],['울산혁신도시',['중구']],['제주혁신도시',['서귀포시']],
+ ['서울역',['서울특별시']],['광명역',['광명시']],['수서역',['강남구']],
+ ['천안아산역',['아산시','천안시']],['강남역',['강남구','서초구']],
+ ['역삼역',['역삼동']],['태백역',['태백시']],['정선역',['정선군']],
+ ['부평역',['부평구']],['인천역',['중구','인천광역시']]
+];
+const landmarkMatches=(r,query)=>landmarks.some(([name,areas])=>compact(name).includes(compact(query))&&areas.some(a=>regionAncestors(r).some(x=>x.name===a)));
+const regionMatches=(r,q)=>placeNames(r).some(n=>compact(n).includes(compact(q)))||landmarkMatches(r,q);
 const regionAncestors=r=>{const a=[];let cur=r;while(cur){a.unshift(cur);cur=cur.parent_slug?bySlug.get(cur.parent_slug):null}return a};
 const regionContext=r=>({읍:'읍내·인접 마을',면:'면 소재지·인접 마을',리:'마을·인접 읍면',동:'주거지·상업시설',구:'구내 주요 생활권',군:'읍·면·리 지역',시:'시내·외곽 지역',시도:'시·군·구별 지역'})[r.level]||'해당 지역';
 const cardSvg=(label)=>{const title=esc(String(label||'전국자동차탁송').slice(0,48));return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="${title} 명함"><rect width="1200" height="630" rx="28" fill="#102544"/><rect x="22" y="22" width="1156" height="586" rx="25" fill="none" stroke="#ffd34e" stroke-width="9"/><text x="70" y="112" fill="#ffffff" font-family="sans-serif" font-weight="800" font-size="57">스마트전국대리운전</text><text x="70" y="179" fill="#ffd34e" font-family="sans-serif" font-weight="800" font-size="61">스마트24탁송</text><path d="M70 211H1130" stroke="#ffd34e" stroke-width="4"/><text x="600" y="344" fill="#ffffff" font-family="sans-serif" font-weight="900" font-size="${title.length>20?37:title.length>13?46:60}" text-anchor="middle" ${title.length>18?'textLength="1040" lengthAdjust="spacingAndGlyphs"':''}>${title} 대리운전 · 탁송</text><text x="600" y="410" fill="#cce7ff" font-family="sans-serif" font-size="32" text-anchor="middle">전국 대리운전 · 자동차탁송 · 장거리탁송</text><rect x="60" y="450" width="1080" height="123" rx="24" fill="#e02528"/><text x="600" y="539" fill="#ffffff" font-family="sans-serif" font-size="84" font-weight="900" text-anchor="middle">1811-4294</text></svg>`;};
@@ -45,11 +60,11 @@ function regionPage(r){
  const full=esc(fullName),short=esc(r.name),context=esc(regionContext(r));
  const ancestors=regionAncestors(r);
  const breadcrumb='<nav aria-label="지역 경로"><a href="/region/">전국 지역</a> / '+ancestors.map((x,i)=>i===ancestors.length-1?'<strong>'+esc(x.name)+'</strong>':'<a href="'+canonical(x.slug)+'">'+esc(x.name)+'</a>').join(' / ')+'</nav>';
- const title=fullName+' 자동차탁송·탁송요금·배차 안내';
+ const title=fullName+' 대리운전·탁송 | '+shortPlace(r.name)+' 대리운전·탁송 상담';
  const shortDaeri=r.name.replace(/(특별자치시|특별시|광역시|특별자치도|자치시|시|군|구)$/,'')+'대리';
  const localDaeri=r.name+'대리';
  const qualifiedDaeri=fullName+' 대리';
- const intro=fullName+' 자동차탁송·'+r.name+'탁송요금·장거리탁송 상담 안내. 출발지와 도착지, 차종, 예약 시간에 따라 탁송요금과 기사 배차 조건이 달라집니다. '+fullName+' 대리운전과 일일기사도 상담합니다.';
+ const intro=fullName+' 대리운전·탁송, '+shortPlace(r.name)+' 대리운전·탁송 상담 안내. 정식 행정구역명과 간략 지역명을 함께 안내합니다. 출발지와 도착지, 차종, 예약 시간에 따라 기사 배차 가능 여부와 요금이 달라집니다. 전국대리운전·24시탁송·장거리 서비스도 상담합니다.';
  const matches=verifiedRides.filter(x=>[x.departure,x.destination].some(v=>String(v||'').includes(fullName))).slice(0,12);
  const records=matches.length?'<ul>'+matches.map(x=>'<li>'+esc([x.date,x.time,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':'<p>이 지역의 검증된 공개 운행 사례는 아직 등록되지 않았습니다. 실제 운행 실적이나 기사 상주 여부를 추정하여 표시하지 않습니다.</p>';
  const children=childrenByParent.get(r.slug)||[];
@@ -87,9 +102,9 @@ function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 if(pathname==='/region/'||pathname==='/region'){
  const q=clean(u.searchParams.get('q')||'');
- const matches=q?regions.filter(r=>compact(r.full_name).includes(compact(q))).slice(0,100):regions.filter(r=>r.level==='시도');
+ const matches=q?regions.filter(r=>regionMatches(r,q)).slice(0,100):regions.filter(r=>r.level==='시도');
  const links='<ul>'+matches.map(r=>'<li><a href="'+canonical(r.slug)+'">'+esc(r.full_name)+' 대리운전·탁송</a></li>').join('')+'</ul>';
- const form='<form method="get" action="/region/"><label for="q">전국 지역 검색</label> <input id="q" name="q" value="'+esc(q)+'" placeholder="시·군·구·읍·면·동·리" style="padding:12px;max-width:80%;font-size:17px"> <button style="padding:12px">검색</button></form>';
+ const form='<form method="get" action="/region/"><label for="q">전국 지역 검색</label> <input id="q" name="q" value="'+esc(q)+'" placeholder="속초·속초시·역삼·역삼동·충북혁신도시·광명역" style="padding:12px;max-width:80%;font-size:17px"> <button style="padding:12px">검색</button></form>';
  return respond(res,200,layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<section><h2>전국 지역 찾기</h2>'+form+'<p>전체 '+regions.length+'개 지역 중 '+(q?'검색 일치 최대 100개':'시·도 목록')+' 표시</p>'+links+'</section>','https://'+(process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app')+'/region/'));
 }
  const cardMatch=pathname.match(new RegExp('^[/]card[/](area-[0-9]+)[.]svg$'));if(cardMatch){const r=bySlug.get(cardMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');res.writeHead(200,{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});return res.end(cardSvg(r.full_name));}
