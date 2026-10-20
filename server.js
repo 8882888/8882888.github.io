@@ -69,12 +69,22 @@ const layout=(title,desc,body,canonicalUrl,cardUrl)=>`<!doctype html><html lang=
 const localAreaGuides={
  '속초시':{nearby:['양양군','고성군','인제군'],places:['설악동','대포항','속초해수욕장','청호동','조양동'],description:'속초 시내와 관광·숙박 지역에서 출발하는 대리운전, 설악산 산행 후 차량 회수 탁송, 양양·고성·인제 방면 및 수도권 장거리 운행은 출발 장소와 기사 접근·복귀 동선을 함께 확인해야 합니다. 외곽이나 야간에는 예약 시간과 정확한 주차 위치를 미리 알려주세요.'}
 };
+function servicePage(r,kind){
+ const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app';
+ const intro=kind==='taksong'?'차량을 목적지까지 이동시키는 탁송 서비스입니다. 차종·거리·시간대·기사 이동 여건·통행료에 따라 요금이 달라집니다.':'고객 차량을 대신 운전하는 대리운전 서비스입니다. 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
+ const matches=verifiedRides.filter(x=>[x.departure,x.destination].some(v=>String(v||'').includes(name))).slice(0,8);
+ const history=matches.length?'<ul>'+matches.map(x=>'<li>'+esc([x.date,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':'<p>현재 공개 가능한 이 지역의 검증된 완료 운행 기록이 없습니다. 임의 후기는 게시하지 않습니다.</p>';
+ const near=(childrenByParent.get(r.parent_slug)||[]).filter(x=>x.slug!==r.slug).slice(0,8).map(x=>'<li><a href="/service/'+x.slug+'/'+kind+'/">'+esc(x.full_name)+' '+service+'</a></li>').join('');
+ const body='<section><nav><a href="/region/">전국 지역</a> / <a href="'+canonical(r.slug)+'">'+esc(name)+'</a> / '+service+'</nav><h2>'+esc(name)+' '+service+' 안내</h2><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p></section><section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(BRAND)+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/">요금계산기와 예약 안내</a></p></section><section><h2>실제 완료 운행후기</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section><section><h2>관련 서비스</h2><a href="/service/'+r.slug+'/'+(kind==='taksong'?'daeri':'taksong')+'/">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
+ return layout(name+' '+service+' | 예약·요금·배차 안내',name+' '+service+' 상담, 예약·요금·배차 및 완료 운행기록. '+PHONE,body,'https://'+host+'/service/'+r.slug+'/'+kind+'/',null);
+}
 function regionPage(r){
  const fullName=r.full_name||[r.parent_name==='대한민국'?'':r.parent_name,r.name].filter(Boolean).join(' ');
  const full=esc(fullName),short=esc(r.name),context=esc(regionContext(r));
  const ancestors=regionAncestors(r);
  const breadcrumb='<nav aria-label="지역 경로"><a href="/region/">전국 지역</a> / '+ancestors.map((x,i)=>i===ancestors.length-1?'<strong>'+esc(x.name)+'</strong>':'<a href="'+canonical(x.slug)+'">'+esc(x.name)+'</a>').join(' / ')+'</nav>';
  const title=fullName+' 대리운전·탁송 | '+shortPlace(r.name)+' 대리운전·탁송 상담';
+ const serviceLinks='<section><h2>지역별 서비스 상세 안내</h2><p><a href="/service/'+r.slug+'/daeri/">'+full+' 대리운전</a> · <a href="/service/'+r.slug+'/taksong/">'+full+' 탁송</a></p></section>';
  const shortDaeri=r.name.replace(/(특별자치시|특별시|광역시|특별자치도|자치시|시|군|구)$/,'')+'대리';
  const localDaeri=r.name+'대리';
  const qualifiedDaeri=fullName+' 대리';
@@ -113,7 +123,7 @@ function regionPage(r){
  ${children.length?'<section><h2>인접 행정 단계의 하위 지역 찾기</h2><ul>'+children.map(x=>'<li><a href="'+canonical(x.slug)+'">'+esc(x.name)+' 대리운전·탁송</a></li>').join('')+'</ul></section>':''}`;
  const imageUrl="https://"+(process.env.PUBLIC_HOST||"8882888githubio-production.up.railway.app")+cardPath(r.slug);
  const imageData=JSON.stringify({"@context":"https://schema.org","@type":"ImageObject",contentUrl:imageUrl,url:imageUrl,name:fullName+" 대리운전·자동차탁송 지역 명함",description:fullName+" 스마트전국대리운전 스마트24탁송 상담 명함 1811-4294",width:1200,height:630,encodingFormat:"image/svg+xml",representativeOfPage:true}).replace(/</g,"\\u003c");
- return layout(title,intro,`<script type="application/ld+json">${imageData}</script><figure style="margin:15px 0"><img src="${cardPath(r.slug)}" loading="lazy" alt="${full} 스마트전국대리운전 스마트24탁송 지역 명함 1811-4294" width="1200" height="630" style="width:100%;height:auto;border-radius:12px"></figure>`+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app')+cardPath(r.slug));
+ return layout(title,intro,`<script type="application/ld+json">${imageData}</script><figure style="margin:15px 0"><img src="${cardPath(r.slug)}" loading="lazy" alt="${full} 스마트전국대리운전 스마트24탁송 지역 명함 1811-4294" width="1200" height="630" style="width:100%;height:auto;border-radius:12px"></figure>`+serviceLinks+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app')+cardPath(r.slug));
 }
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
@@ -130,6 +140,7 @@ if(pathname==='/region/'||pathname==='/region'){
  const cardMatch=pathname.match(new RegExp('^[/]card[/](area-[0-9]+)[.]svg$'));if(cardMatch){const r=bySlug.get(cardMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');res.writeHead(200,{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});return res.end(cardSvg(r.full_name));}
 if(pathname==='/health')return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy'}), 'application/json; charset=utf-8');
 if(pathname==='/sitemap.xml'){const base='https://'+(process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app');const urls=['/', '/region/'];const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'+urls.map(x=>'<url><loc>'+esc(base+x)+'</loc></url>').join('')+regions.map(r=>'<url><loc>'+esc(base+canonical(r.slug))+'</loc><image:image><image:loc>'+esc(base+cardPath(r.slug))+'</image:loc></image:image></url>').join('')+landmarks.map(item=>'<url><loc>'+esc(base+'/place/'+landmarkSlug(item[0])+'/')+'</loc></url>').join('')+'</urlset>';return respond(res,200,xml,'application/xml; charset=utf-8')}
+const serviceMatch=pathname.match(/^\/service\/(area-[0-9]+)\/(daeri|taksong)\/?$/);if(serviceMatch){const r=bySlug.get(serviceMatch[1]);return r?respond(res,200,servicePage(r,serviceMatch[2])):respond(res,404,'지역 정보를 찾을 수 없습니다.')}
 const match=pathname.match(/^\/region\/([^/]+)\/?$/);if(match){const r=bySlug.get(match[1]);return r?respond(res,200,regionPage(r)):respond(res,404,'지역 정보를 찾을 수 없습니다.')}
 if(/^\/(?:server\.js|package(?:-lock)?\.json|HOSTING_SETUP\.md|tests\/|\.github\/|node_modules\/|\.env)/i.test(pathname))return respond(res,403,'접근 불가');
 let p=path.resolve(ROOT,'.'+pathname);if(!p.startsWith(ROOT+path.sep)&&p!==ROOT)return respond(res,403,'접근 불가');try{if(fs.statSync(p).isDirectory())p=path.join(p,'index.html');const ext=path.extname(p).toLowerCase();const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.ico':'image/x-icon'};if(!types[ext])return respond(res,403,'허용되지 않는 형식');return respond(res,200,fs.readFileSync(p),types[ext])}catch{return respond(res,404,'페이지를 찾을 수 없습니다')}
