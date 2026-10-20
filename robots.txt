@@ -4,3 +4,5 @@ Allow: /
 Sitemap: https://8882888.github.io/sitemap.xml
 Sitemap: https://8882888.github.io/smart-bunny-homepage/sitemap.xml
 Sitemap: https://8882888githubio-production.up.railway.app/sitemap.xml
+Sitemap: https://8882888githubio-production.up.railway.app/sitemap-daeri.xml
+Sitemap: https://8882888githubio-production.up.railway.app/sitemap-taksong.xml
