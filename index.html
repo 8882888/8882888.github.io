@@ -304,19 +304,22 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
     });
     if (!response.ok) throw new Error('public ride history query unavailable');
     const rows = await response.json();
-    renderRecords(rows.map(row => ({
+    const recent=await fetch('./data/ride-history-upload-202610.json',{cache:'no-store'}).then(r=>r.ok?r.json():[]).catch(()=>[]);
+    renderRecords([...recent,...rows.map(row => ({
       date: row.ride_date,
       time: row.departure_time,
       departure: row.departure,
       destination: row.destination,
       fare: row.fare
-    })));
+    }))]);
   } catch (_) {
     // Keep the public site usable while Supabase's public read policy is being configured.
     try {
       const response = await fetch('./data/ride-history.json', {cache:'no-store'});
       if (!response.ok) throw new Error('history unavailable');
-      renderRecords(await response.json());
+      const baseRecords=await response.json();
+      const recent=await fetch('./data/ride-history-upload-202610.json',{cache:'no-store'}).then(r=>r.ok?r.json():[]).catch(()=>[]);
+      renderRecords([...recent,...baseRecords]);
     } catch (fallbackError) {
       body.innerHTML = '<tr><td colspan="5" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
     }
