@@ -322,7 +322,15 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
  const phone=/(?:01[016789]|02|0[3-9][0-9])[- .]?\\d{3,4}[- .]?\\d{4}/;
  const personal=/\\d{6}[- ]?[1-8]\\d{6}/;
  function draw(rows){const safe=rows.filter(v=>v.length===5&&v.every(x=>String(x??'').trim())&&!v.some(x=>phone.test(String(x))||personal.test(String(x)))).slice(0,65);if(!safe.length)return false;const cards=safe.map(v=>'<a class="trip-flow-card" href="#ride-history"><span>'+esc(v[0])+' · '+esc(v[1])+'</span><strong>'+esc(v[2])+' → '+esc(v[3])+'</strong><span>'+esc(v[4])+'</span></a>').join('');target.innerHTML=cards+cards;return true;}
- try{const response=await fetch('/smart-bunny-homepage/data/completed_trips.json',{cache:'no-store'});if(!response.ok)throw Error('trip data unavailable');const data=await response.json();const trips=Array.isArray(data.trips)?data.trips:[];const rows=trips.map(t=>[t['운행일'],t['출발시간'],t['출발지'],t['도착지'],Number(t['금액']).toLocaleString('ko-KR')+'원']);if(draw(rows))return;}catch(e){console.warn('Verified published trips unavailable',e)}
+ try {
+   const response=await fetch('/data/ride-history.json',{cache:'no-store'});
+   if(!response.ok)throw Error('Public history unavailable');
+   const records=await response.json();
+   const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-6);
+   const minDate=[cutoff.getFullYear(),String(cutoff.getMonth()+1).padStart(2,'0'),String(cutoff.getDate()).padStart(2,'0')].join('-');
+   const rows=(Array.isArray(records)?records:[]).filter(r=>r&&r.date>=minDate&&['date','time','departure','destination','fare'].every(k=>String(r[k]??'').trim())).map(r=>[r.date,r.time,r.departure,r.destination,r.fare]);
+   if(draw(rows))return;
+ }catch(e){console.warn('Public trip ticker data unavailable',e)}
  const body=document.getElementById('ride-history-rows');if(!body){target.innerHTML='<a class="trip-flow-card" href="#ride-history">운행 기록을 확인해 주세요.</a>';return;}
  const render=()=>{const rows=[...body.querySelectorAll('tr')].filter(tr=>tr.cells.length>=5&&!tr.querySelector('[colspan]')).map(tr=>[...tr.cells].slice(0,5).map(c=>c.textContent.trim()));if(!draw(rows)&&!body.textContent.includes('불러오는 중'))target.innerHTML='<a class="trip-flow-card" href="#ride-history">완료 운행 기록 보기</a>';};
  new MutationObserver(render).observe(body,{childList:true});render();
