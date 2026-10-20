@@ -47,13 +47,15 @@ function regionPage(r){
  const breadcrumb='<nav aria-label="지역 경로"><a href="/region/">전국 지역</a> / '+ancestors.map((x,i)=>i===ancestors.length-1?'<strong>'+esc(x.name)+'</strong>':'<a href="'+canonical(x.slug)+'">'+esc(x.name)+'</a>').join(' / ')+'</nav>';
  const title=fullName+' 대리운전·자동차탁송 안내';
  const shortDaeri=r.name.replace(/(특별자치시|특별시|광역시|특별자치도|자치시|시|군|구)$/,'')+'대리';
- const intro=fullName+' 대리운전, '+fullName+' 탁송 상담 안내. '+r.name+'대리운전·'+r.name+'탁송 및 '+shortDaeri+' 검색 시 지역과 출발·도착 위치를 확인하고 장거리 운행 및 일일기사 상담 항목을 안내합니다.';
+ const localDaeri=r.name+'대리';
+ const qualifiedDaeri=fullName+' 대리';
+ const intro=fullName+' 대리운전, '+fullName+' 탁송 상담 안내. '+localDaeri+'·'+r.name+'대리운전·'+r.name+'탁송 검색 시 상위 행정구역과 출발·도착 위치를 함께 확인합니다. '+qualifiedDaeri+' 상담은 장거리 운행과 일일기사 이용 조건도 안내합니다.';
  const matches=verifiedRides.filter(x=>[x.departure,x.destination].some(v=>String(v||'').includes(fullName))).slice(0,12);
  const records=matches.length?'<ul>'+matches.map(x=>'<li>'+esc([x.date,x.time,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':'<p>이 지역의 검증된 공개 운행 사례는 아직 등록되지 않았습니다. 실제 운행 실적이나 기사 상주 여부를 추정하여 표시하지 않습니다.</p>';
  const children=childrenByParent.get(r.slug)||[];
  const parent=r.parent_slug?bySlug.get(r.parent_slug):null;
  const body=`${breadcrumb}<section><h2>${full} 대리운전·탁송 상담</h2><p>${esc(intro)}</p><p>${context}의 실제 출발 위치에 따라 기사 접근 경로와 배차 조건이 달라질 수 있습니다. 해당 지역의 상주 기사 또는 즉시 배차를 보장하지 않습니다.</p><a class="cta" href="tel:18114294">전화 상담 ${PHONE}</a></section>
- <section><h2>${esc(shortDaeri)} · ${short}대리운전 · ${full} 장거리대리운전</h2><p>대리운전 상담 시 정확한 출발지, 목적지, 출발 예정 시각을 알려주세요. 야간·주말 또는 외곽 출발은 기사 이동과 복귀 교통편을 고려해야 합니다. 다른 시·군·구로 이동하는 장거리 운행은 편도 여부와 예상 출발 시간을 함께 확인합니다.</p></section>
+ <section><h2>${esc(localDaeri)} · ${esc(qualifiedDaeri)} · ${short}대리운전</h2><p>${esc(localDaeri)}는 다른 시·군·구에 같은 지명이 있을 수 있으므로 ${full} 지역을 확인해 상담합니다.</p><h3>${full} 장거리대리운전</h3><p>대리운전 상담 시 정확한 출발지, 목적지, 출발 예정 시각을 알려주세요. 야간·주말 또는 외곽 출발은 기사 이동과 복귀 교통편을 고려해야 합니다. 다른 시·군·구로 이동하는 장거리 운행은 편도 여부와 예상 출발 시간을 함께 확인합니다.</p></section>
  <section><h2>${short}탁송 · ${full} 자동차탁송</h2><p>차량 인수·인계 장소, 차종, 수동변속기 여부, 차량 운행 가능 상태, 희망 시간, 경유지와 통행료 조건을 확인합니다. 서비스센터 입출고나 장거리 차량 이동 등 구체적인 목적에 따라 상담 조건이 달라집니다. 확정 요금은 상담 후 안내합니다.</p></section>
  <section><h2>${full} 일일기사·골프장 이동</h2><p>일일기사 이용 시 출발·종료 시각, 대기 시간, 경유지와 왕복 여부를 알려주세요. 골프장 방문이나 지방출장 일정은 도착 희망 시각과 복귀 계획까지 함께 확인하면 좋습니다.</p></section>
  <section><h2>${short} 지역 예약 전 확인사항</h2><p>정확한 도로명주소 또는 인근 위치, 이용 날짜와 시간, 차량 종류, 출발지·도착지, 경유 및 대기 여부를 준비해 주세요. 실제 배차 가능 여부와 요금은 상담 후 확정됩니다.</p></section>
