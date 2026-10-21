@@ -214,7 +214,7 @@ http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}ca
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');return respond(res,200,home.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()))}
 if(pathname==='/taksong/'||pathname==='/taksong')return respond(res,200,serviceHub('taksong'));
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
-const vehicleMatch=pathname.match(/^\\/taksong\\/type\\/([a-f0-9]+)\\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
+const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
 if(pathname==='/daeri/'||pathname==='/daeri')return respond(res,200,serviceHub('daeri'));
 if(pathname==='/region/'||pathname==='/region'){
  const q=clean(u.searchParams.get('q')||'');
