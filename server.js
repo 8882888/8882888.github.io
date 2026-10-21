@@ -85,13 +85,16 @@ const localAreaGuides={
 };
 function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app';
+ const keyword=shortPlace(r.name)+service;
+ const focusedTitle=keyword+' | '+(kind==='taksong'?'자동차 차량탁송·장거리탁송 예약':'장거리·지역 대리운전 예약');
+ const focusedDesc=keyword+' 서비스 안내. '+(kind==='taksong'?'차량 인수·인계, 출발지와 도착지, 기사 접근 및 복귀 동선을 확인합니다.':'고객 차량 대리운전, 이용 시간과 출발지·도착지, 기사 배차 여건을 확인합니다.')+' 대표 상담 '+PHONE+'.';
  const aliasTerms=regionAliases(r).map(x=>x+service).filter(x=>x!==name+' '+service);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
- const intro=kind==='taksong'?'차량을 목적지까지 이동시키는 탁송 서비스입니다. 차종·거리·시간대·기사 이동 여건·통행료에 따라 요금이 달라집니다.':'고객 차량을 대신 운전하는 대리운전 서비스입니다. 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
+ const intro=kind==='taksong'?'자동차탁송은 고객이 지정한 출발지에서 차량을 인수해 목적지로 이동시키는 서비스입니다. 차량 인수·인계 장소와 차종, 도로거리, 시간대, 기사 접근·복귀 동선, 통행료에 따라 요금이 달라집니다.':'대리운전은 고객 차량을 기사에게 맡겨 목적지까지 이동하는 서비스입니다. 고객의 동승 여부와 이용 조건을 상담 시 확인하며, 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
  const matches=verifiedRides.filter(x=>[x.departure,x.destination].some(v=>String(v||'').includes(name))).slice(0,8);
  const history=matches.length?'<ul>'+matches.map(x=>'<li>'+esc([x.date,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':'<p>현재 공개 가능한 이 지역의 검증된 완료 운행 기록이 없습니다. 임의 후기는 게시하지 않습니다.</p>';
  const near=(childrenByParent.get(r.parent_slug)||[]).filter(x=>x.slug!==r.slug).slice(0,8).map(x=>'<li><a href="/service/'+x.slug+'/'+kind+'/">'+esc(x.full_name)+' '+service+'</a></li>').join('');
- const body='<section><nav><a href="/region/">전국 지역</a> / <a href="'+canonical(r.slug)+'">'+esc(name)+'</a> / '+service+'</nav><h2>'+esc(name)+' '+service+' 안내</h2><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p></section>'+remoteRegionGuidance(r)+aliasSection+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(BRAND)+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/">출발지·도착지로 대리운전·탁송 예상요금 확인하기</a></p></section><section><h2>실제 완료 운행후기</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section><section><h2>관련 서비스</h2><a href="/service/'+r.slug+'/'+(kind==='taksong'?'daeri':'taksong')+'/">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
- return layout(name+' '+service+' | 예약·요금·배차 안내',name+' '+service+' 상담, 예약·요금·배차 및 완료 운행기록. '+PHONE,body,'https://'+host+'/service/'+r.slug+'/'+kind+'/',null);
+ const body='<section><nav><a href="/region/">전국 지역</a> / <a href="'+canonical(r.slug)+'">'+esc(name)+'</a> / '+service+'</nav><h1>'+esc(keyword)+'</h1><h2>'+esc(name)+' '+service+' 전문 안내</h2><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p></section>'+remoteRegionGuidance(r)+aliasSection+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(BRAND)+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/">출발지·도착지로 대리운전·탁송 예상요금 확인하기</a></p></section><section><h2>실제 완료 운행후기</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section><section><h2>관련 서비스</h2><a href="/service/'+r.slug+'/'+(kind==='taksong'?'daeri':'taksong')+'/">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
+ return layout(focusedTitle,focusedDesc,body,'https://'+host+'/service/'+r.slug+'/'+kind+'/',null);
 }
 function remoteRegionGuidance(r){
  const full=r.full_name||'',names=[
