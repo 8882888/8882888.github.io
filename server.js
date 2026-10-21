@@ -34,6 +34,20 @@ const verifiedRides=Array.isArray(rides)?rides.filter(x=>x.status==='completed'&
 const clean=s=>String(s||'').trim().slice(0,80);
 const compact=s=>String(s||'').replace(/\s+/g,'').toLowerCase();
 const shortPlace=s=>String(s||'').replace(/(특별자치시|특별시|광역시|특별자치도|자치시|시|군|구|읍|면|동|리)$/,'');
+const regionAliases=r=>{
+ const n=r.name,short=shortPlace(n),a=new Set([n,short]);
+ if(r.level==='시도'){
+  if(/광역시$/.test(n))a.add(short+'시');
+  if(n==='서울특별시')a.add('서울시');
+  if(n==='세종특별자치시')a.add('세종시');
+  if(n==='강원특별자치도')a.add('강원도');
+  if(n==='전북특별자치도'){a.add('전라북도');a.add('전북');}
+  if(n==='제주특별자치도')a.add('제주도');
+  const abbr={'경기도':'경기','충청북도':'충북','충청남도':'충남','전라남도':'전남','경상북도':'경북','경상남도':'경남'};
+  if(abbr[n])a.add(abbr[n]);
+ }
+ return [...a].filter(Boolean);
+};
 const placeNames=r=>[r.full_name,r.name,shortPlace(r.name),regionAncestors(r).map(x=>shortPlace(x.name)).join(' ')].filter(Boolean);
 const landmarks=[
  ['충북혁신도시',['진천군','음성군','덕산읍','맹동면']],
@@ -71,11 +85,12 @@ const localAreaGuides={
 };
 function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'8882888githubio-production.up.railway.app';
+ const aliasTerms=regionAliases(r).map(x=>x+service).filter(x=>x!==name+' '+service);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
  const intro=kind==='taksong'?'차량을 목적지까지 이동시키는 탁송 서비스입니다. 차종·거리·시간대·기사 이동 여건·통행료에 따라 요금이 달라집니다.':'고객 차량을 대신 운전하는 대리운전 서비스입니다. 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
  const matches=verifiedRides.filter(x=>[x.departure,x.destination].some(v=>String(v||'').includes(name))).slice(0,8);
  const history=matches.length?'<ul>'+matches.map(x=>'<li>'+esc([x.date,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':'<p>현재 공개 가능한 이 지역의 검증된 완료 운행 기록이 없습니다. 임의 후기는 게시하지 않습니다.</p>';
  const near=(childrenByParent.get(r.parent_slug)||[]).filter(x=>x.slug!==r.slug).slice(0,8).map(x=>'<li><a href="/service/'+x.slug+'/'+kind+'/">'+esc(x.full_name)+' '+service+'</a></li>').join('');
- const body='<section><nav><a href="/region/">전국 지역</a> / <a href="'+canonical(r.slug)+'">'+esc(name)+'</a> / '+service+'</nav><h2>'+esc(name)+' '+service+' 안내</h2><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p></section><section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(BRAND)+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/">요금계산기와 예약 안내</a></p></section><section><h2>실제 완료 운행후기</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section><section><h2>관련 서비스</h2><a href="/service/'+r.slug+'/'+(kind==='taksong'?'daeri':'taksong')+'/">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
+ const body='<section><nav><a href="/region/">전국 지역</a> / <a href="'+canonical(r.slug)+'">'+esc(name)+'</a> / '+service+'</nav><h2>'+esc(name)+' '+service+' 안내</h2><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p></section>'+aliasSection+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(BRAND)+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/">요금계산기와 예약 안내</a></p></section><section><h2>실제 완료 운행후기</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section><section><h2>관련 서비스</h2><a href="/service/'+r.slug+'/'+(kind==='taksong'?'daeri':'taksong')+'/">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
  return layout(name+' '+service+' | 예약·요금·배차 안내',name+' '+service+' 상담, 예약·요금·배차 및 완료 운행기록. '+PHONE,body,'https://'+host+'/service/'+r.slug+'/'+kind+'/',null);
 }
 function regionPage(r){
