@@ -1,8 +1,6 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://8882888.github.io/sitemap.xml
-Sitemap: https://8882888.github.io/smart-bunny-homepage/sitemap.xml
-Sitemap: https://8882888githubio-production.up.railway.app/sitemap.xml
-Sitemap: https://8882888githubio-production.up.railway.app/sitemap-daeri.xml
-Sitemap: https://8882888githubio-production.up.railway.app/sitemap-taksong.xml
+Sitemap: https://jeongukdaeri.kr/sitemap.xml
+Sitemap: https://jeongukdaeri.kr/sitemap-daeri.xml
+Sitemap: https://jeongukdaeri.kr/sitemap-taksong.xml
