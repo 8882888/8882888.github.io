@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(".")
 SITE_PREFIX = ""
-SITE_URL = os.environ.get("SITE_URL", "https://8882888.github.io").rstrip("/")
+SITE_URL = os.environ.get("SITE_URL", "https://jeongukdaeri.kr").rstrip("/")
 EXPECTED_HOST = urlsplit(SITE_URL).netloc
 REQUIRED = [
     ROOT / "index.html",
@@ -87,6 +87,8 @@ def main():
     if f"{SITE_URL}/region/gangneung-taksong/" not in urls:
         raise SystemExit("강릉시 탁송 페이지가 생성 사이트맵에서 누락되었습니다.")
     # Verify each sitemap entry resolves to a real generated HTML or static file.
+    if (ROOT / "CNAME").is_file() and (ROOT / "CNAME").read_text(encoding="utf-8").strip() != EXPECTED_HOST:
+        raise SystemExit("CNAME host does not match SITE_URL")
     canonical_errors = []
     canonical_pattern = re.compile(r"""<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']""", re.I)
     for html_path in html_files:
