@@ -7,7 +7,7 @@ from urllib.parse import urlsplit
 
 ROOT = Path(".")
 DEFAULT_URL = "https://8882888.github.io"
-SITE_URL = os.environ.get("SITE_URL", DEFAULT_URL).strip().rstrip("/")
+SITE_URL = os.environ.get("SITE_URL", "https://jeongukdaeri.kr").strip().rstrip("/")
 if not SITE_URL.startswith("https://"):
     raise SystemExit("SITE_URL must be an https:// URL.")
 parts = urlsplit(SITE_URL)
