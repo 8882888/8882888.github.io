@@ -1,0 +1,36 @@
+name: Cloudtype production health check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 0,6,12,18 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  production-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Cloudtype production routes independently of GitHub Pages
+        shell: bash
+        env:
+          PRODUCTION_URL: ${{ vars.CLOUDTYPE_PRODUCTION_URL }}
+        run: |
+          set -uo pipefail
+          if [ -z "$PRODUCTION_URL" ]; then
+            echo "::warning::Set repository variable CLOUDTYPE_PRODUCTION_URL to the verified Cloudtype production URL. No Cloudtype health status can be asserted."
+            exit 0
+          fi
+          base="${PRODUCTION_URL%/}"
+          failed=0
+          for route in / /assets/smart24-business-card.svg /region/ /sitemap.xml /robots.txt; do
+            url="$base$route"
+            code=$(curl -L -sS -o /tmp/smart24-response -w '%{http_code}' --connect-timeout 10 --max-time 25 "$url") || code=000
+            echo "$code $url"
+            if [ "$code" != 200 ]; then
+              echo "::error::Production route unavailable: $url ($code)"
+              failed=1
+            fi
+          done
+          exit "$failed"
