@@ -27,7 +27,7 @@ def page(title, description, body, canonical):
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(title)}</title><meta name="description" content="{esc(description)}">
 <link rel="canonical" href="{esc(canonical)}">
-<meta name="robots" content="index,follow">
+<meta name="robots" content="index,follow">\n<meta property="og:type" content="website"><meta property="og:title" content="{esc(title)}">\n<meta property="og:description" content="{esc(description)}"><meta property="og:url" content="{esc(canonical)}">\n<meta property="og:image" content="{SITE_URL}/assets/smart24-business-card.svg">\n<meta property="og:image:alt" content="{esc(BRAND)} 대표전화 {PHONE}">
 <style>
 *{{box-sizing:border-box}}body{{margin:0;font-family:Arial,'Malgun Gothic',sans-serif;line-height:1.85;color:#172235}}
 header,footer{{background:#102544;color:white;padding:18px max(5%,calc((100% - 1000px)/2))}}
