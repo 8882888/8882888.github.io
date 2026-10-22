@@ -19,12 +19,12 @@ jobs:
         run: |
           set -uo pipefail
           if [ -z "$PRODUCTION_URL" ]; then
-            echo "::warning::Set repository variable CLOUDTYPE_PRODUCTION_URL to the verified Cloudtype production URL. No Cloudtype health status can be asserted."
-            exit 0
+            echo "::error::CLOUDTYPE_PRODUCTION_URL is missing. Cloudtype production status was NOT checked."
+            exit 1
           fi
           base="${PRODUCTION_URL%/}"
           failed=0
-          for route in / /assets/smart24-business-card.svg /region/ /sitemap.xml /robots.txt; do
+          for route in / /health /assets/smart24-business-card.svg /region/ /places/ /taksong/types/ /sitemap.xml /sitemap-daeri.xml /sitemap-taksong.xml /robots.txt; do
             url="$base$route"
             code=$(curl -L -sS -o /tmp/smart24-response -w '%{http_code}' --connect-timeout 10 --max-time 25 "$url") || code=000
             echo "$code $url"
