@@ -171,7 +171,7 @@ function regionPage(r){
 }
 // Service-specific, human-readable category pages: no invented dispatch or completion claims.
 const vehicleTons=['1톤','1.2톤','2.5톤','3.5톤','4톤','5톤','8.5톤','11톤','25톤'];
-const truckTypes=['카고','화물차','메가트럭','윙바디','추레라','추레라헤드'];
+const truckTypes=['카고','화물차','메가트럭','윙바디','추레라','추레라헤드','렉카','렉카차','견인차','암롤','암롤트럭','탑차','냉동탑차','덤프트럭','믹서트럭','집게차','크레인','특장차'];
 const importBrands=['벤츠','BMW','포르쉐','아우디','폭스바겐','볼보','렉서스','토요타','도요타','테슬라','랜드로버','재규어','포드','링컨','혼다','닛산','미니','캐딜락','마세라티','벤틀리','롤스로이스'];
 const domesticBrands=['현대','기아','제네시스','르노코리아','KG모빌리티','쉐보레'];
 const vehicleTopics=[
@@ -188,7 +188,7 @@ const vehicleTopics=[
 const vehicleTopicMap=new Map(vehicleTopics.map(([name,category])=>[name,{name,category,slug:Buffer.from(name,'utf8').toString('hex')}]));
 function vehicleTopicPath(name){return '/taksong/type/'+vehicleTopicMap.get(name).slug+'/'}
 function vehicleTopicPage(topic){
- const name=topic.name,heavy=/톤|카고|화물차|메가트럭|윙바디|추레라/.test(name),center=/서비스센터|블루핸즈|오토큐/.test(name);
+ const name=topic.name,heavy=/톤|카고|화물차|메가트럭|윙바디|추레라|렉카|견인차|암롤|탑차|덤프|믹서|집게차|크레인|특장차/.test(name),center=/서비스센터|블루핸즈|오토큐/.test(name);
  const detail=heavy?'차량의 정확한 톤급, 전장·전고, 적재함·윙바디 형태, 공차·적재 상태, 운행 가능 여부와 운전자 자격 요건을 확인합니다.':'차종과 차량 상태, 출발지·도착지, 보험 적용 범위 및 차량 인수·인계 방법을 확인합니다.';
  const extra=center?'서비스센터 입고·출고 예약 시간과 접수·인계 담당자, 차량 열쇠 및 서류 전달 방법을 확인해야 합니다. 해당 브랜드 또는 센터와 공식 제휴를 의미하지 않습니다.':heavy?'특수 차량은 면허·보험·차량 제원 및 실제 배차 가능 여부를 사전에 확인해야 합니다.':'전기차의 경우 배터리 잔량과 주행 가능 거리 등 차량 상태를 확인할 수 있습니다.';
  const desc=name+' 예약 상담. '+topic.category+' 관련 차량 조건과 출발지·도착지, 기사 배차 및 보험 적용 여부를 확인합니다. '+PHONE;
