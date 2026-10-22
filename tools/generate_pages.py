@@ -575,25 +575,25 @@ def main():
 <h2>{esc(location)} 관련 공개 운행기록</h2>
 <p>공개 운행기록 중 완료 여부가 별도로 검증된 사례만 표시합니다. 일치하는 기록이 없으면 임의의 후기를 생성하지 않습니다. 지역명이 같더라도 다른 행정구역일 수 있으므로 상세 위치는 상담 시 확인해 주세요.</p>
 <div id="verified-local-rides" class="card" data-locality="{esc(name)}">공개된 완료 운행기록을 확인하는 중입니다.</div>
-<p><a href="/#ride-history">전체 실제 완료 운행후기 보기 →</a></p>
+<p><a href="/#ride-history">전체 공개 운행기록 보기 →</a></p>
 <script>
 (function() {{
   const el=document.getElementById('verified-local-rides');
   if(!el)return;
   const locality=el.dataset.locality.trim();
   if(locality.length<3){{el.textContent='동명이인 지역 혼동을 피하기 위해 전체 운행후기에서 확인해 주세요.';return;}}
-  fetch('/smart-bunny-homepage/data/completed_trips.json',{{cache:'no-store'}})
+  fetch('/data/verified-trips.json',{{cache:'no-store'}})
     .then(r=>{{if(!r.ok)throw Error('unavailable');return r.json();}})
     .then(data=>{{
-      const trips=Array.isArray(data.trips)?data.trips:[];
-      const matched=trips.filter(t=>String(t['출발지']||'').includes(locality)||String(t['도착지']||'').includes(locality)).slice(0,8);
+      const trips=Array.isArray(data.trips)?data.trips.filter(t=>t.verified===true):[];
+      const matched=trips.filter(t=>String(t.departure||'').includes(locality)||String(t.destination||'').includes(locality)).slice(0,8);
       el.replaceChildren();
       if(!matched.length){{el.textContent='현재 공개된 완료 운행기록 중 해당 지역명과 일치하는 사례가 없습니다.';return;}}
       const ul=document.createElement('ul');
       matched.forEach(t=>{{
         const li=document.createElement('li');
-        const fare=Number(t['금액']);
-        li.textContent=[t['운행일'],t['출발시간'],String(t['출발지']||'')+' → '+String(t['도착지']||''),Number.isFinite(fare)?fare.toLocaleString('ko-KR')+'원':'요금 확인 필요'].filter(Boolean).join(' · ');
+        const fare=Number(t.fare);
+        li.textContent=[t.date,t.time,String(t.departure||'')+' → '+String(t.destination||''),Number.isFinite(fare)?fare.toLocaleString('ko-KR')+'원':'요금 확인 필요'].filter(Boolean).join(' · ');
         ul.appendChild(li);
       }});
       el.appendChild(ul);
