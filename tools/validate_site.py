@@ -79,6 +79,13 @@ def main():
         if not local.is_file():
             broken.append((url, str(local)))
             
+    required_region_page = ROOT / "region/gangneung-taksong/index.html"
+    required_region_card = ROOT / "assets/regions/gangneung-taksong-card.svg"
+    for required_path in (required_region_page, required_region_card):
+        if not required_path.is_file():
+            raise SystemExit(f"지역 확장 필수 파일 누락: {required_path}")
+    if f"{SITE_URL}/region/gangneung-taksong/" not in urls:
+        raise SystemExit("강릉시 탁송 페이지가 생성 사이트맵에서 누락되었습니다.")
     canonical_errors = []
     canonical_pattern = re.compile(r"""<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']""", re.I)
     for html_path in html_files:
