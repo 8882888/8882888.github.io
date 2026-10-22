@@ -97,7 +97,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import xml.etree.ElementTree as ET
-          for path in ['index.html', 'region/index.html', 'region/gangneung-taksong/index.html', 'assets/regions/gangneung-taksong-card.svg', 'CNAME']:
+          for path in ['index.html', 'region/index.html', 'region/gangneung-taksong/index.html', 'assets/regions/gangneung-taksong-card.svg', 'assets/smart24-business-card.svg', 'CNAME']:
               if not Path(path).is_file():
                   raise SystemExit('Missing required deployment file: ' + path)
           assert Path('CNAME').read_text().strip() == 'jeongukdaeri.kr'
@@ -135,7 +135,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for route in / /region/ /region/gangneung-taksong/ /assets/regions/gangneung-taksong-card.svg /sitemap.xml; do
+          for route in / /region/ /region/gangneung-taksong/ /assets/regions/gangneung-taksong-card.svg /assets/smart24-business-card.svg /sitemap.xml; do
             echo "Checking https://jeongukdaeri.kr${route}"
             curl --fail --location --silent --show-error --retry 5 --retry-delay 8 --retry-all-errors --max-time 25 "https://jeongukdaeri.kr${route}" -o /dev/null
           done
