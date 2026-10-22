@@ -122,6 +122,40 @@ jobs:
           if len(regions) < 1000:
               print('::warning::Nationwide official legal-dong import incomplete; regional coverage is partial')
           PY
+      - name: Audit nationwide generation before deploy
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from urllib.parse import urlsplit, unquote
+          import xml.etree.ElementTree as ET
+          data=json.loads(Path('data/regions.json').read_text(encoding='utf-8'))
+          regions=data.get('regions', [])
+          slugs=[r['slug'].strip('/') for r in regions]
+          if len(slugs)!=len(set(slugs)):
+              raise SystemExit('Duplicate region slugs')
+          if not regions:
+              raise SystemExit('No regions found')
+          missing=[slug for slug in slugs if not (Path('region')/slug/'index.html').exists()]
+          if missing:
+              raise SystemExit('Missing region pages: '+', '.join(missing[:10]))
+          provinces={slug.split('/')[0] for slug in slugs}
+          sitemap_files=sorted(Path('.').glob('sitemap-*.xml'))
+          indexed=set()
+          for sitemap in sitemap_files:
+              for el in ET.parse(sitemap).iter():
+                  if el.tag.endswith('loc') and el.text:
+                      indexed.add(unquote(urlsplit(el.text).path).rstrip('/')+'/')
+          unindexed=[slug for slug in slugs if '/region/'+slug+'/' not in indexed]
+          if unindexed:
+              raise SystemExit('Region pages absent from sitemaps: '+', '.join(unindexed[:10]))
+          report={'region_records':len(regions),'province_groups':len(provinces),'region_pages_checked':len(slugs),'sitemap_files':len(sitemap_files),'source':data.get('source','partial local dataset'),'full_official_coverage':bool(data.get('source')) and len(regions)>=1000 and len(provinces)>=15}
+          Path('deployment-audit.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps(report,ensure_ascii=False))
+          if not report['full_official_coverage']:
+              print('::warning::This build is NOT complete nationwide official legal-dong coverage')
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site files
