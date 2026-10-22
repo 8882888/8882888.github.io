@@ -208,7 +208,31 @@ const quickRegions=regionQuickNames.map(n=>regions.find(r=>r.name===n||r.full_na
 function regionServiceLinks(items,kind){const label=kind==='taksong'?'탁송':'대리운전';return '<ul class="region-service-links">'+items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(r.name+label)+'</a></li>').join('')+'</ul>'}
 function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=childrenByParent.get(r.slug)||[];return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
 function nationwideLinks(){return '<section id="nationwide-service-links" aria-label="전국 지역별 서비스"><h2>전국 지역별 탁송·대리운전 바로가기</h2><p>서비스와 지역을 선택하면 해당 지역의 예약·배차 안내로 이동합니다.</p><h3>전국 탁송</h3>'+regionServiceLinks(quickRegions,'taksong')+'<p><a href="/taksong/types/">차종·톤급·서비스센터별 탁송 안내</a></p><h3>전국 대리운전</h3>'+regionServiceLinks(quickRegions,'daeri')+'<p><a href="/taksong/">전국 탁송 지역 전체 보기</a> · <a href="/daeri/">전국 대리운전 지역 전체 보기</a></p></section>'}
-function serviceHub(kind){const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';const body='<section><h1>전국 '+label+' 지역별 안내</h1><p>'+(kind==='taksong'?'자동차탁송은 차량 인수 장소, 도착지, 차종, 기사 이동 및 복귀 조건을 확인하여 상담합니다.':'대리운전은 출발지, 도착지, 희망 시간, 기사 배차와 복귀 여건을 확인하여 상담합니다.')+' 실제 배차 가능 여부와 요금은 상담 시 확인합니다.</p><p><a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section><section><h2>전국 시·도 '+label+'</h2>'+regionServiceLinks(majorRegions,kind)+'</section><section><h2>주요 지역 '+label+'</h2>'+regionServiceLinks(quickRegions,kind)+'</section><section><h2>전국 지역 검색</h2><form action="/region/" method="get"><input type="hidden" name="service" value="'+kind+'"><label>지역명 <input name="q" placeholder="예: 부산, 태백, 속초"></label><button>지역 찾기</button></form><p>지역 검색 후 '+label+' 전용 페이지를 선택할 수 있습니다.</p></section>';return layout('전국 '+label+' | 지역별 '+label+' 예약·상담','전국 시·도 및 주요 지역 '+label+' 서비스 안내. '+PHONE,body,'https://'+host+'/'+kind+'/',null)}
+function serviceHub(kind){
+ const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
+ const isT=kind==='taksong';
+ const intro=isT?'자동차탁송은 고객이 지정한 장소에서 차량을 인수하여 목적지로 이동시키는 서비스입니다. 장거리 차량 이동, 중고차 인도, 서비스센터 입출고 등 이용 목적에 따라 차량 인수·인계 조건을 먼저 확인합니다.':'대리운전은 고객의 차량을 기사가 운전하는 서비스입니다. 장거리 이동, 골프장 이동, 야간 운전 등 상황에 따라 출발 시간과 기사 배차·복귀 조건을 확인합니다.';
+ const faq=isT?[
+ ['탁송요금은 어떻게 결정되나요?','출발지와 도착지의 실제 도로거리, 차량 종류, 운행 시간대, 기사 접근·복귀 교통편, 통행료 및 인수·인계 조건을 종합하여 상담합니다. 홈페이지 계산 결과는 참고요금이며 확정 금액이 아닙니다.'],
+ ['장거리탁송은 미리 예약해야 하나요?','장거리나 외곽 지역 출발은 기사 이동 및 복귀 조건에 따라 배차가 지연될 수 있습니다. 출발 희망 시각과 인계 가능 시간을 정해 미리 상담하는 것이 좋습니다.'],
+ ['차량 인수할 때 무엇을 준비하나요?','차량 위치, 차종, 키 전달 방법, 인수 담당자 연락처, 목적지 인계 장소를 확인합니다. 주차장 출입이나 출고 마감 시간이 있다면 사전에 알려주세요.'],
+ ['탁송과 대리운전은 어떻게 다른가요?','탁송은 차량을 지정된 목적지로 이동시키는 서비스이며, 대리운전은 고객 차량의 운전을 대신하는 서비스입니다. 고객 동승 여부와 운행 목적에 맞는 서비스로 상담하세요.']
+ ]:[
+ ['대리운전 요금은 어떻게 정해지나요?','출발지·도착지, 이용 시간, 도로거리, 기사 수급과 복귀 여건에 따라 달라집니다. 계산기의 금액은 참고용이며 실제 배차 가능 여부와 최종 요금은 상담으로 확인합니다.'],
+ ['장거리대리운전도 가능한가요?','전국 장거리 이동을 상담할 수 있습니다. 장거리 운행은 기사 복귀 교통편과 출발 시각을 함께 확인해야 하므로 사전 예약을 권합니다.'],
+ ['골프장 출발도 예약할 수 있나요?','골프장 위치와 라운딩 종료 예정 시각, 도착지, 차량 종류를 알려주시면 기사 배차 가능 여부를 확인합니다. 외곽 골프장은 사전 상담이 도움이 됩니다.'],
+ ['야간에 바로 배차되나요?','시간대와 지역의 기사 수급에 따라 달라집니다. 24시 상담 안내가 즉시 배차 보장을 의미하지는 않습니다.']
+ ];
+ const faqHtml='<section><h2>전국 '+label+' 예약 전 자주 묻는 질문</h2>'+faq.map(([q,a])=>'<h3>'+esc(q)+'</h3><p>'+esc(a)+'</p>').join('')+'</section>';
+ const body='<section><h1>전국 '+label+' 예약·요금·지역별 안내</h1><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a href="/fare/">출발지·도착지로 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
+ '<section><h2>'+label+' 예약할 때 필요한 정보</h2><ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치</li><li>도착지 주소와 희망 출발 날짜·시각</li><li>차종과 차량 인수·인계 조건</li><li>경유지, 통행료 및 기타 요청사항</li></ol><p>거리만으로 최종 요금을 확정하지 않으며, 기사 접근·복귀 여건을 확인합니다.</p></section>'+
+ faqHtml+
+ (isT?'<section><h2>차종·서비스별 자동차탁송</h2><p>국산차·수입차·전기차·화물차 및 서비스센터 입출고 등 차량 종류와 이용 목적에 따라 확인할 사항이 다릅니다.</p><p><a href="/taksong/types/">차종별 탁송과 서비스센터탁송 살펴보기</a></p></section>':'<section><h2>장거리·골프장 대리운전</h2><p>일반 시내 이동과 달리 장거리·골프장 출발은 운행 후 기사 복귀 여건이 배차에 영향을 줄 수 있습니다. 출발 예정 시각과 목적지를 함께 알려주세요.</p></section>')+
+ '<section><h2>전국 시·도 '+label+'</h2>'+regionServiceLinks(majorRegions,kind)+'</section>'+
+ '<section><h2>주요 지역 '+label+'</h2>'+regionServiceLinks(quickRegions,kind)+'</section>'+
+ '<section><h2>전국 지역 검색</h2><form action="/region/" method="get"><input type="hidden" name="service" value="'+kind+'"><label>지역명 <input name="q" placeholder="예: 서울, 부산, 인천"></label><button>지역 찾기</button></form><p>지역 검색 후 '+label+' 전용 페이지를 선택할 수 있습니다.</p></section>';
+ return layout('전국 '+label+' 예약·요금 | 스마트24','전국 '+label+' 예약과 예상요금, 장거리 운행 및 지역별 배차 조건 안내. '+PHONE,body,'https://'+host+'/'+kind+'/',null);
+}
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');return respond(res,200,home.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()))}
