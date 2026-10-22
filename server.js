@@ -170,6 +170,27 @@ function regionPage(r){
  return layout(title,intro,`<script type="application/ld+json">${imageData}</script><figure style="margin:15px 0"><img src="${cardPath(r.slug)}" loading="lazy" alt="${full} 스마트전국대리운전 스마트24탁송 지역 명함 1811-4294" width="1200" height="630" style="width:100%;height:auto;border-radius:12px"></figure>`+serviceLinks+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+cardPath(r.slug));
 }
 // Service-specific, human-readable category pages: no invented dispatch or completion claims.
+// Category discovery pages describe service contexts; they do not invent individual Naver Place listings.
+const placeCategories=[
+ ['펜션','펜션·풀빌라·리조트','숙박시설의 정확한 출입구·주차 위치와 야간 배차 조건을 확인합니다.'],
+ ['캠핑장','캠핑장·글램핑장','산간·외곽 진입로와 주차장, 기사 복귀 동선을 확인합니다.'],
+ ['관광지','유원지·관광지·계곡','주차장 위치와 성수기 교통통제, 차량 인수 장소를 확인합니다.'],
+ ['맛집','맛집·횟집·음식점','식사 장소의 실제 주소와 차량 주차 위치, 귀가 목적지를 확인합니다.'],
+ ['골프장','골프장','라운딩 종료 예정 시간과 클럽하우스 픽업 위치를 확인합니다.'],
+ ['산행','산행 출발지·하산지','종주 출발지·하산지, 셔틀·통제·차키 인계 조건을 확인합니다.'],
+ ['자전거','자전거 종주 인증센터','인증센터의 정확한 위치와 라이딩 종료 시각을 확인합니다.'],
+ ['행사','지역 축제·주요 행사·행사장','행사 일정과 차량 진입 제한, 임시 주차장을 확인합니다.'],
+ ['선거행사','선거 관련 행사장','행사장 접근·차량 이동 상담이며 정당·후보와의 제휴를 뜻하지 않습니다.']
+];
+function placeCategoryPage(category){
+ const [slug,name,detail]=category,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
+ const body='<section><h2>'+esc(name)+' 대리운전·탁송</h2><p>'+esc(detail)+'</p><p>개별 장소의 네이버 플레이스 등록 여부나 실시간 영업 상태는 확인되지 않았습니다. 공식 제휴 또는 해당 장소 상주기사를 의미하지 않습니다.</p><p>정확한 장소명·주소, 출발지·도착지, 희망 시간을 알려주시면 배차 가능 여부와 요금을 상담합니다.</p><p><a href="/region/">전국 행정구역별 대리운전·탁송 찾기</a> · <a href="/fare/">참고요금 계산</a> · <a href="tel:18114294">상담 '+PHONE+'</a></p></section><section><h2>다른 장소 유형</h2><ul>'+placeCategories.filter(x=>x[0]!==slug).map(x=>'<li><a href="/places/'+encodeURIComponent(x[0])+'/">'+esc(x[1])+' 대리운전·탁송</a></li>').join('')+'</ul></section>';
+ return layout(name+' 대리운전·탁송 | 장소별 예약 상담',name+' 대리운전·탁송 상담. '+detail,body,'https://'+host+'/places/'+encodeURIComponent(slug)+'/');
+}
+function placeCategoryHub(){
+ const body='<section><h2>전국 주요 장소별 대리운전·탁송</h2><p>전국 행정구역 페이지와 장소 유형별 상담 안내를 연결합니다. 개별 업체나 행사와의 제휴를 의미하지 않습니다.</p><ul>'+placeCategories.map(x=>'<li><a href="/places/'+encodeURIComponent(x[0])+'/">'+esc(x[1])+' 대리운전·탁송</a></li>').join('')+'</ul><p><a href="/region/">전국 지역 찾기</a></p></section>';
+ return layout('전국 장소별 대리운전·탁송','펜션·캠핑장·관광지·맛집·골프장·산행·자전거·행사장 대리운전·탁송',body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/places/');
+}
 const vehicleTons=['1톤','1.2톤','2.5톤','3.5톤','4톤','5톤','8.5톤','11톤','25톤'];
 const truckTypes=['카고','화물차','메가트럭','윙바디','추레라','추레라헤드','렉카','렉카차','견인차','암롤','암롤트럭','탑차','냉동탑차','덤프트럭','믹서트럭','집게차','크레인','특장차'];
 const importBrands=['벤츠','BMW','포르쉐','아우디','폭스바겐','볼보','렉서스','토요타','도요타','테슬라','랜드로버','재규어','포드','링컨','혼다','닛산','미니','캐딜락','마세라티','벤틀리','롤스로이스'];
@@ -236,6 +257,9 @@ function serviceHub(kind){
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');return respond(res,200,home.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()))}
+if(pathname==='/places/'||pathname==='/places')return respond(res,200,placeCategoryHub());
+const placeCategoryMatch=pathname.match(/^\\/places\\/([^/]+)\\/?$/);
+if(placeCategoryMatch){const category=placeCategories.find(x=>x[0]===placeCategoryMatch[1]);return category?respond(res,200,placeCategoryPage(category)):respond(res,404,'장소 분류를 찾을 수 없습니다.')}
 if(pathname==='/taksong/'||pathname==='/taksong')return respond(res,200,serviceHub('taksong'));
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
