@@ -364,7 +364,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
  const personal=/\\d{6}[- ]?[1-8]\\d{6}/;
  function draw(rows){const safe=rows.filter(v=>v.length===5&&v.every(x=>String(x??'').trim())&&!v.some(x=>phone.test(String(x))||personal.test(String(x)))).slice(0,65);if(!safe.length)return false;const cards=safe.map(v=>'<a class="trip-flow-card" href="#ride-history"><span>'+esc(v[0])+' · '+esc(v[1])+'</span><strong>'+esc(v[2])+' → '+esc(v[3])+'</strong><span>'+esc(v[4])+'</span></a>').join('');target.innerHTML=cards+cards;return true;}
  try {
-   const response=await fetch('/data/ride-history.json',{cache:'no-store'});
+   const response=await fetch('/api/public-rides',{cache:'no-store'});
    if(!response.ok)throw Error('Public history unavailable');
    const records=await response.json();
    const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-6);
