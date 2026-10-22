@@ -139,4 +139,5 @@ jobs:
             echo "Checking https://jeongukdaeri.kr${route}"
             curl --fail --location --silent --show-error --retry 5 --retry-delay 8 --retry-all-errors --max-time 25 "https://jeongukdaeri.kr${route}" -o /dev/null
           done
+          curl --fail --location --silent --show-error --retry 5 --retry-delay 8 --retry-all-errors --max-time 25 "https://jeongukdaeri.kr/region/gangneung-taksong/" | grep -q "강릉시" || { echo "::error::Live Gangneung page returned unexpected content"; exit 1; }
           echo 'PASS: public website and region assets reachable'
