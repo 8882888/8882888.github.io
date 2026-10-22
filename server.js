@@ -165,7 +165,7 @@ function regionPage(r){
  ${nearby}
  ${parent?'<section><h2>상위 지역 안내</h2><p><a href="'+canonical(parent.slug)+'">'+esc(parent.full_name)+' 대리운전·탁송</a></p></section>':''}
  ${children.length?'<section><h2>인접 행정 단계의 하위 지역 찾기</h2><ul>'+children.map(x=>'<li><a href="'+canonical(x.slug)+'">'+esc(x.name)+' 지역 안내</a> · <a href="'+servicePath(x,'taksong')+'">'+esc(x.name)+'탁송</a> · <a href="'+servicePath(x,'daeri')+'">'+esc(x.name)+'대리운전</a></li>').join('')+'</ul></section>':''}`;
- const imageUrl="https://"+(process.env.PUBLIC_HOST||"8882888githubio-production.up.railway.app")+cardPath(r.slug);
+ const imageUrl="https://"+(process.env.PUBLIC_HOST||"jeongukdaeri.kr")+cardPath(r.slug);
  const imageData=JSON.stringify({"@context":"https://schema.org","@type":"ImageObject",contentUrl:imageUrl,url:imageUrl,name:fullName+" 대리운전·자동차탁송 지역 명함",description:fullName+" 스마트전국대리운전 스마트24탁송 상담 명함 1811-4294",width:1200,height:630,encodingFormat:"image/svg+xml",representativeOfPage:true}).replace(/</g,"\\u003c");
  return layout(title,intro,`<script type="application/ld+json">${imageData}</script><figure style="margin:15px 0"><img src="${cardPath(r.slug)}" loading="lazy" alt="${full} 스마트전국대리운전 스마트24탁송 지역 명함 1811-4294" width="1200" height="630" style="width:100%;height:auto;border-radius:12px"></figure>`+serviceLinks+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+cardPath(r.slug));
 }
