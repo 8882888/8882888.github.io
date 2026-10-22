@@ -561,6 +561,10 @@ def main():
 {parent_section}
 {child_section}
 {''.join(links)}
+<h2>{esc(location)} 네이버 플레이스 장소 검색과 대리운전·탁송</h2>
+<p>네이버 플레이스에서 식당·맛집·펜션·캠핑장·골프장·행사장 등 실제 장소의 주소와 영업 정보를 확인한 뒤 출발지 또는 도착지로 알려주세요. 아래 링크는 네이버 검색으로 이동하며, 플레이스와의 공식 제휴 또는 장소 데이터 자동 수집을 의미하지 않습니다.</p>
+<ul><li><a href="https://search.naver.com/search.naver?query={quote(location + ' 맛집', safe='')}">{esc(location)} 맛집·식당 장소 검색</a></li><li><a href="https://search.naver.com/search.naver?query={quote(location + ' 펜션 캠핑장', safe='')}">{esc(location)} 펜션·캠핑장 장소 검색</a></li><li><a href="https://search.naver.com/search.naver?query={quote(location + ' 골프장 관광지', safe='')}">{esc(location)} 골프장·관광지 장소 검색</a></li></ul>
+<p>확인한 장소명을 기준으로 <a href="/region/{esc(slug)}/daeri/">{esc(location)} 대리운전</a> 또는 <a href="/region/{esc(slug)}/taksong/">{esc(location)} 탁송</a> 상담 정보를 확인할 수 있습니다.</p>
 <h2>{esc(location)} 장소별 대리운전·탁송 상담</h2>
 <p>펜션·팬션·풀빌라·캠핑장·글램핑장·유원지·관광지·맛집·횟집·골프장·행사장·축제장 등에서 출발하거나 도착하는 경우, 상호명만으로 위치를 판단하지 않고 정확한 주소와 차량 주차 위치를 확인합니다. 행사나 선거 관련 행사 이동도 실제 차량 운행 의뢰에 한해 상담하며 특정 행사 주최 측과의 계약 또는 제휴를 의미하지 않습니다.</p>
 <ul><li><a href="/region/{esc(slug)}/daeri/">{esc(location)} 대리운전: 귀가 목적지, 출발 시각, 주차 위치 확인</a></li><li><a href="/region/{esc(slug)}/taksong/">{esc(location)} 탁송: 차량 인수·인계 장소, 차종 및 이동 일정 확인</a></li></ul>
