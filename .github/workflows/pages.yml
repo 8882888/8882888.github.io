@@ -91,11 +91,7 @@ jobs:
         shell: bash
         run: |
           test -f index.html || exit 1
-          if [ -f sitemap.xml ] && [ -f special/index.html ]; then
-            python tools/validate_site.py
-          else
-            echo "::warning::Skipping sitemap validation for partial fallback deployment."
-          fi
+          python tools/validate_site.py
       - name: Verify region expansion and key landing pages before publishing
         run: |
           python - <<'PY'
@@ -123,6 +119,8 @@ jobs:
           print(f'Region records: {len(regions)}; generated region pages: {pages}; sitemap references: {len(maps)}')
           if pages < len(regions):
               raise SystemExit('Region page coverage lower than source data; refusing incomplete deployment')
+          if len(regions) < 1000:
+              print('::warning::Nationwide official legal-dong import incomplete; regional coverage is partial')
           PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
