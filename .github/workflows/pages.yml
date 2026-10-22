@@ -118,3 +118,12 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify public site after deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for route in / /region/ /region/gangneung-taksong/ /assets/regions/gangneung-taksong-card.svg /sitemap.xml; do
+            echo "Checking https://jeongukdaeri.kr${route}"
+            curl --fail --location --silent --show-error --retry 5 --retry-delay 8 --retry-all-errors --max-time 25 "https://jeongukdaeri.kr${route}" -o /dev/null
+          done
+          echo 'PASS: public website and region assets reachable'
