@@ -9,7 +9,7 @@ from urllib.parse import quote, urlsplit, urlunsplit
 
 ROOT = Path(".")
 DATA = ROOT / "data" / "regions.json"
-SITE_URL = os.environ.get("SITE_URL", "https://8882888.github.io").rstrip("/")
+SITE_URL = os.environ.get("SITE_URL", "https://jeongukdaeri.kr").rstrip("/")
 BRAND = "스마트전국대리운전 스마트24탁송"
 PHONE = "1811-4294"
 SERVICES = [
@@ -648,6 +648,9 @@ def main():
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(page(f"{province_name} 대리운전·탁송 지역 안내 | {BRAND}", f"{province_name} 대리운전, 자동차탁송, 장거리탁송 지역별 안내. 대표 전화 {PHONE}.", province_body, province_url), encoding="utf-8")
 
+    # Keep editorially verified regional landing pages in the generated sitemap.
+    if (ROOT / "region" / "gangneung-taksong" / "index.html").is_file():
+        urls.add(f"{SITE_URL}/region/gangneung-taksong/")
     directory_url = f"{SITE_URL}/region/"
     directory_body = f"""<p class="muted">전국 지역별 서비스 안내</p>
 <h1>전국 대리운전·자동차탁송 지역 찾기</h1>
