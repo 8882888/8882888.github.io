@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 OUT = Path("data/seo-keywords-100k.json")
+PRIORITY_OUT = Path("data/seo-destination-priority.json")
 
 # City/district/neighborhood and trip destinations. Add verified legal-dong data over time.
 PLACES = """
@@ -40,6 +41,8 @@ CORE = [
     "회식대리운전", "단체모임대리운전", "탁송", "자동차탁송", "차량탁송",
     "전국탁송", "장거리탁송", "캠핑카탁송", "카라반탁송", "차량회수탁송"
 ]
+DESTINATION_TYPES = "골프장 골프클럽 골프리조트 유원지 계곡 펜션 팬션 풀빌라 캠핑장 오토캠핑장 글램핑장 관광지 리조트 콘도 휴양림 자연휴양림 워터파크 스키장 해수욕장 카지노 병원".split()
+DESTINATION_SERVICES = ["대리운전", "탁송"]
 MODIFIERS = ["", " 예약", " 요금", " 이용방법", " 빠른배차", " 심야", " 새벽", " 주말"]
 
 def main():
@@ -55,12 +58,27 @@ def main():
         for modifier in MODIFIERS:
             add(service + modifier, "핵심서비스")
 
+    priority = []
+    for place in dict.fromkeys(PLACES):
+        for venue in dict.fromkeys(DESTINATION_TYPES):
+            for service in DESTINATION_SERVICES:
+                keyword = place + venue + service
+                priority.append({"keyword": keyword, "place": place, "venue_type": venue, "service": service, "status": "research_only"})
+                add(keyword, "지역·목적지·" + service)
+    PRIORITY_OUT.parent.mkdir(parents=True, exist_ok=True)
+    PRIORITY_OUT.write_text(json.dumps({
+        "schema_version": 1, "total": len(priority),
+        "note": "지역·장소유형 검색어 기획 목록이며 실제 상호명·운행완료 사실이 아닙니다.",
+        "keywords": priority
+    }, ensure_ascii=False, separators=(",", ":")) + "\\n", encoding="utf-8")
+
     # Interleave venue types across locations so 100k entries don't stop at a few cities.
     # Each combination is meaningful as a content-planning target, not a claim of service coverage.
     for venue in VENUES:
         for place in PLACES:
             add(place + venue + "대리운전", "지역·장소·대리운전")
             add(place + venue + "대리", "지역·장소·대리")
+            add(place + venue + "탁송", "지역·장소·탁송")
             if len(rows) >= 100000:
                 break
         if len(rows) >= 100000:
