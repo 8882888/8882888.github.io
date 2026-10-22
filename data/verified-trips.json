@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "note": "Only explicitly verified completed trips may be added; do not copy unverified raw dispatch logs.",
+  "trips": []
+}
