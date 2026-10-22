@@ -2,5 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://jeongukdaeri.kr/sitemap.xml
-Sitemap: https://jeongukdaeri.kr/sitemap-daeri.xml
-Sitemap: https://jeongukdaeri.kr/sitemap-taksong.xml
