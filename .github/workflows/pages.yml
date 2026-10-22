@@ -109,6 +109,21 @@ jobs:
           assert root.tag.endswith('sitemapindex') or root.tag.endswith('urlset')
           print('PASS: custom domain, regional landing page, business card, sitemap')
           PY
+      - name: Check generated page count and sitemap coverage
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          regions=json.loads(Path('data/regions.json').read_text(encoding='utf-8')).get('regions',[])
+          pages=sum(1 for _ in Path('region').rglob('index.html'))
+          root=ET.parse('sitemap.xml').getroot()
+          maps=[e.text for e in root.iter() if e.tag.endswith('loc') and e.text]
+          print(f'Region records: {len(regions)}; generated region pages: {pages}; sitemap references: {len(maps)}')
+          if pages < len(regions):
+              raise SystemExit('Region page coverage lower than source data; refusing incomplete deployment')
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site files
