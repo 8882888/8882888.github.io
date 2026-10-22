@@ -1,4 +1,4 @@
-name: Deploy Smart Bunny root website to GitHub Pages
+name: Deploy Smart24 nationwide website to GitHub Pages
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     env:
-      SITE_URL: ${{ vars.SITE_URL || 'https://8882888.github.io' }}
+      SITE_URL: https://jeongukdaeri.kr
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -96,6 +96,19 @@ jobs:
           else
             echo "::warning::Skipping sitemap validation for partial fallback deployment."
           fi
+      - name: Verify region expansion and key landing pages before publishing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          for path in ['index.html', 'region/index.html', 'region/gangneung-taksong/index.html', 'assets/regions/gangneung-taksong-card.svg', 'CNAME']:
+              if not Path(path).is_file():
+                  raise SystemExit('Missing required deployment file: ' + path)
+          assert Path('CNAME').read_text().strip() == 'jeongukdaeri.kr'
+          root = ET.parse('sitemap.xml').getroot()
+          assert root.tag.endswith('sitemapindex') or root.tag.endswith('urlset')
+          print('PASS: custom domain, regional landing page, business card, sitemap')
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site files
