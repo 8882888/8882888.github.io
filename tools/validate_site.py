@@ -89,6 +89,9 @@ def main():
     # Verify each sitemap entry resolves to a real generated HTML or static file.
     if (ROOT / "CNAME").is_file() and (ROOT / "CNAME").read_text(encoding="utf-8").strip() != EXPECTED_HOST:
         raise SystemExit("CNAME host does not match SITE_URL")
+    region_pages = list((ROOT / "region").rglob("index.html"))
+    if not region_pages:
+        raise SystemExit("No nationwide region pages were generated")
     canonical_errors = []
     canonical_pattern = re.compile(r"""<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']""", re.I)
     for html_path in html_files:
