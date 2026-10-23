@@ -36,12 +36,12 @@ jobs:
           curl --fail --show-error http://127.0.0.1:3000/health
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/robots.txt
-          curl --fail --show-error --output /dev/null http://127.0.0.1:3000/sitemap.xml
+          curl --fail --show-error --output /tmp/smart24-sitemap.xml http://127.0.0.1:3000/sitemap.xml
           curl --fail --show-error --output /tmp/smart24-home.html http://127.0.0.1:3000/
           curl --fail --show-error --output /tmp/smart24-seoul.html http://127.0.0.1:3000/daeri/seoul/
           grep -q 'tel:18114294' /tmp/smart24-home.html
           grep -q 'tel:18114294' /tmp/smart24-seoul.html
-          png_path=$(curl --fail --silent http://127.0.0.1:3000/sitemap.xml | grep -oEm1 '/card/area-[0-9]+[.]png')
+          png_path=$(node -e "const s=require('fs').readFileSync('/tmp/smart24-sitemap.xml','utf8');const m=s.match(/\\/card\\/area-[0-9]+\\.png/);if(!m)process.exit(1);process.stdout.write(m[0])")
           test -n "$png_path"
           curl --fail --show-error --output /tmp/smart24-region.png "http://127.0.0.1:3000$png_path" || { cat /tmp/smart24-server.log; exit 1; }
           file /tmp/smart24-region.png | grep -q 'PNG image data'
@@ -55,7 +55,7 @@ jobs:
           grep -q 'href="/taksong/' /tmp/smart24-keywords.html
           grep -q '/keywords/taksong/?page=2' /tmp/smart24-keywords.html
           # Check the first dynamic region page and its clickable PNG card.
-          region_path=$(curl --fail --silent http://127.0.0.1:3000/sitemap.xml | grep -oEm1 '/region/area-[0-9]+/')
+          region_path=$(node -e "const s=require('fs').readFileSync('/tmp/smart24-sitemap.xml','utf8');const m=s.match(/\\/region\\/area-[0-9]+\\//);if(!m)process.exit(1);process.stdout.write(m[0])")
           test -n "$region_path"
           curl --fail --show-error --output /tmp/smart24-region.html "http://127.0.0.1:3000$region_path"
           grep -q 'href="tel:18114294"' /tmp/smart24-region.html
