@@ -266,7 +266,8 @@ function featuredTaksongRoutePage(route){
 }
 function serviceHub(kind){
  const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
- const isT=kind==='taksong';\n const featuredLinks='<section><h2>실제 운행 구간별 '+label+' 안내</h2><ul>'+(isT?featuredTaksongRoutes.map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>'):featuredDaeriRoutes.map(x=>'<li><a href="/daeri/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 대리운전')+'</a></li>')).join('')+'</ul></section>';
+ const isT=kind==='taksong';
+ const featuredLinks='<section><h2>실제 운행 구간별 '+label+' 안내</h2><ul>'+(isT?featuredTaksongRoutes.map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>'):featuredDaeriRoutes.map(x=>'<li><a href="/daeri/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 대리운전')+'</a></li>')).join('')+'</ul></section>';
  const intro=isT?'자동차탁송은 고객이 지정한 장소에서 차량을 인수하여 목적지로 이동시키는 서비스입니다. 장거리 차량 이동, 중고차 인도, 서비스센터 입출고 등 이용 목적에 따라 차량 인수·인계 조건을 먼저 확인합니다.':'대리운전은 고객의 차량을 기사가 운전하는 서비스입니다. 장거리 이동, 골프장 이동, 야간 운전 등 상황에 따라 출발 시간과 기사 배차·복귀 조건을 확인합니다.';
  const faq=isT?[
  ['탁송요금은 어떻게 결정되나요?','출발지와 도착지의 실제 도로거리, 차량 종류, 운행 시간대, 기사 접근·복귀 교통편, 통행료 및 인수·인계 조건을 종합하여 상담합니다. 홈페이지 계산 결과는 참고요금이며 확정 금액이 아닙니다.'],
@@ -282,16 +283,33 @@ function serviceHub(kind){
  const faqHtml='<section><h2>전국 '+label+' 예약 전 자주 묻는 질문</h2>'+faq.map(([q,a])=>'<h3>'+esc(q)+'</h3><p>'+esc(a)+'</p>').join('')+'</section>';
  const body='<section><h1>전국 '+label+' 예약·요금·지역별 안내</h1><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a href="/fare/">출발지·도착지로 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
  '<section><h2>'+label+' 예약할 때 필요한 정보</h2><ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치</li><li>도착지 주소와 희망 출발 날짜·시각</li><li>차종과 차량 인수·인계 조건</li><li>경유지, 통행료 및 기타 요청사항</li></ol><p>거리만으로 최종 요금을 확정하지 않으며, 기사 접근·복귀 여건을 확인합니다.</p></section>'+
- faqHtml+featuredLinks+
+ faqHtml+featuredLinks+'<section><h2>출발지·도착지 키워드 자동 검색</h2><p><a href="/route-search/">전국 구간별 '+label+' 검색어 조합 확인</a></p></section>'+
  (isT?'<section><h2>차종·서비스별 자동차탁송</h2><p>국산차·수입차·전기차·화물차 및 서비스센터 입출고 등 차량 종류와 이용 목적에 따라 확인할 사항이 다릅니다.</p><p><a href="/taksong/types/">차종별 탁송과 서비스센터탁송 살펴보기</a></p></section>':'<section><h2>장거리·골프장 대리운전</h2><p>일반 시내 이동과 달리 장거리·골프장 출발은 운행 후 기사 복귀 여건이 배차에 영향을 줄 수 있습니다. 출발 예정 시각과 목적지를 함께 알려주세요.</p></section>')+
  '<section><h2>전국 시·도 '+label+'</h2>'+regionServiceLinks(majorRegions,kind)+'</section>'+
  '<section><h2>주요 지역 '+label+'</h2>'+regionServiceLinks(quickRegions,kind)+'</section>'+
  '<section><h2>전국 지역 검색</h2><form action="/region/" method="get"><input type="hidden" name="service" value="'+kind+'"><label>지역명 <input name="q" placeholder="예: 서울, 부산, 인천"></label><button>지역 찾기</button></form><p>지역 검색 후 '+label+' 전용 페이지를 선택할 수 있습니다.</p></section>';
  return layout('전국 '+label+' 예약·요금 | 스마트24','전국 '+label+' 예약과 예상요금, 장거리 운행 및 지역별 배차 조건 안내. '+PHONE,body,'https://'+host+'/'+kind+'/',null);
 }
+function routeKeywords(from,to,kind){
+ const service=kind==='daeri'?'대리운전':'탁송';
+ const a=String(from||'').trim(),b=String(to||'').trim();
+ if(!a||!b||a.length>80||b.length>80)return [];
+ const compactName=v=>v.replace(/\\s+/g,'');
+ const a1=compactName(a),b1=compactName(b);
+ return [...new Set([a1+b1+service,a1+'에서'+b1+service,a1+b1+(kind==='daeri'?'장거리대리운전':'자동차탁송'),a1+'출발'+b1+'도착'+service])];
+}
+function routeKeywordSearchPage(from,to,kind){
+ const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
+ const keywords=routeKeywords(from,to,kind),service=kind==='daeri'?'대리운전':'탁송';
+ const matches=(kind==='daeri'?featuredDaeriRoutes:featuredTaksongRoutes).filter(r=>r.from===from&&r.to===to);
+ const link=matches.length?'<p>실제 운행 기록 기반 안내: <a href="/'+kind+'/route/'+matches[0].slug+'/">'+esc(from+' → '+to+' '+service)+'</a></p>':'<p>이 구간의 별도 공개 페이지는 아직 없습니다. 지역 안내와 예상요금 조회를 이용할 수 있습니다.</p>';
+ const body='<section><h2>전국 출발지·도착지 검색</h2><form action="/route-search/" method="get"><label>출발지 <input name="from" maxlength="80" required value="'+esc(from)+'"></label> <label>도착지 <input name="to" maxlength="80" required value="'+esc(to)+'"></label> <label>서비스 <select name="service"><option value="taksong"'+(kind==='taksong'?' selected':'')+'>탁송</option><option value="daeri"'+(kind==='daeri'?' selected':'')+'>대리운전</option></select></label> <button type="submit">검색어 조합 확인</button></form></section>'+(keywords.length?'<section><h2>'+esc(from+' → '+to+' '+service)+' 키워드</h2><p>'+esc(keywords.join(' · '))+'</p>'+link+'<p><a href="/fare/?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to)+'&service='+kind+'">예상요금 조회</a> · <a href="/'+kind+'/">전국 '+service+' 안내</a></p></section>':'<section><p>출발지와 도착지를 입력하면 검색어를 자동 조합합니다. 검색어만 생성되며 새 색인 페이지는 만들지 않습니다.</p></section>');
+ return layout('전국 '+service+' 구간 검색','전국 출발지와 도착지별 '+service+' 검색어 조합 및 실제 운행 구간 안내',body,'https://'+host+'/route-search/',null);
+}
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');return respond(res,200,home.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()))}
+if(pathname==='/route-search/'||pathname==='/route-search'){res.setHeader('X-Robots-Tag','noindex, follow');const from=String(u.searchParams.get('from')||''),to=String(u.searchParams.get('to')||''),kind=u.searchParams.get('service')==='daeri'?'daeri':'taksong';return respond(res,200,routeKeywordSearchPage(from,to,kind))}
 if(pathname==='/places/'||pathname==='/places')return respond(res,200,placeCategoryHub());
 const placeCategoryMatch=pathname.match(/^\/places\/([^/]+)\/?$/);
 if(placeCategoryMatch){const category=placeCategories.find(x=>x[0]===placeCategoryMatch[1]);return category?respond(res,200,placeCategoryPage(category)):respond(res,404,'장소 분류를 찾을 수 없습니다.')}
