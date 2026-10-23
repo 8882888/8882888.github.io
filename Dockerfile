@@ -1,6 +1,8 @@
 FROM node:22-alpine
 WORKDIR /app
 ENV NODE_ENV=production
+# Korean fonts are required when rendering the business-card SVG to PNG.
+RUN apk add --no-cache font-noto-cjk fontconfig
 COPY . .
 RUN npm install --omit=dev --no-audit --no-fund
 USER node
