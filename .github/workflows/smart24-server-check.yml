@@ -46,4 +46,15 @@ jobs:
           curl --fail --show-error --output /tmp/smart24-region.png "http://127.0.0.1:3000$png_path" || { cat /tmp/smart24-server.log; exit 1; }
           file /tmp/smart24-region.png | grep -q 'PNG image data'
           grep -q 'og:image' /tmp/smart24-seoul.html
+          # Check the first dynamic region page and its clickable PNG card.
+          region_path=$(curl --fail --silent http://127.0.0.1:3000/sitemap.xml | grep -oEm1 '/region/area-[0-9]+/')
+          test -n "$region_path"
+          curl --fail --show-error --output /tmp/smart24-region.html "http://127.0.0.1:3000$region_path"
+          grep -q 'href="tel:18114294"' /tmp/smart24-region.html
+          grep -q 'encodingFormat":"image/png"' /tmp/smart24-region.html
+          grep -q '/card/area-' /tmp/smart24-region.html
+          # Public ride history must not expose departure times or privacy placeholder labels.
+          curl --fail --show-error --output /tmp/smart24-rides.json http://127.0.0.1:3000/api/public-rides
+          node -e "const fs=require('fs');const rows=JSON.parse(fs.readFileSync('/tmp/smart24-rides.json','utf8'));if(!Array.isArray(rows)||rows.some(r=>('time' in r)||('departure_time' in r)))process.exit(1)"
+          if grep -Eq '시간 비공개|시간 미공개|출발 시간' /tmp/smart24-home.html; then echo 'Public homepage leaks time labels'; exit 1; fi
           echo 'Smart24 local HTTP smoke checks passed'
