@@ -1,0 +1,95 @@
+{
+  "source": "data/ride-history-upload-202610.json",
+  "note": "Source status 종료 is not independent verification of completion. Review before public display.",
+  "service": "탁송",
+  "items": [
+    {
+      "date": "2026-10-19",
+      "departure": "여수시 우두리",
+      "destination": "용인시 양지읍",
+      "fare": "250,000원",
+      "source_status": "종료",
+      "publication_status": "검토필요",
+      "title": "여수시 우두리 → 용인시 양지읍 탁송 운행기록",
+      "summary": "2026-10-19 여수시 우두리에서 용인시 양지읍까지 탁송 운행이 종료된 것으로 기록되어 있습니다. 기록 요금은 250,000원입니다.",
+      "contact": "1811-4294"
+    },
+    {
+      "date": "2026-10-19",
+      "departure": "아산시",
+      "destination": "인천 연수구",
+      "fare": "70,000원",
+      "source_status": "종료",
+      "publication_status": "검토필요",
+      "title": "아산시 → 인천 연수구 탁송 운행기록",
+      "summary": "2026-10-19 아산시에서 인천 연수구까지 탁송 운행이 종료된 것으로 기록되어 있습니다. 기록 요금은 70,000원입니다.",
+      "contact": "1811-4294"
+    },
+    {
+      "date": "2026-10-19",
+      "departure": "포천시 송우리",
+      "destination": "남양주시 호평동",
+      "fare": "40,000원",
+      "source_status": "종료",
+      "publication_status": "검토필요",
+      "title": "포천시 송우리 → 남양주시 호평동 탁송 운행기록",
+      "summary": "2026-10-19 포천시 송우리에서 남양주시 호평동까지 탁송 운행이 종료된 것으로 기록되어 있습니다. 기록 요금은 40,000원입니다.",
+      "contact": "1811-4294"
+    },
+    {
+      "date": "2026-10-19",
+      "departure": "백담사 탐방지원센터",
+      "destination": "설악산 소공원",
+      "fare": "70,000원",
+      "source_status": "종료",
+      "publication_status": "검토필요",
+      "title": "백담사 탐방지원센터 → 설악산 소공원 탁송 운행기록",
+      "summary": "2026-10-19 백담사 탐방지원센터에서 설악산 소공원까지 탁송 운행이 종료된 것으로 기록되어 있습니다. 기록 요금은 70,000원입니다.",
+      "contact": "1811-4294"
+    },
+    {
+      "date": "2026-10-19",
+      "departure": "오산시 경매장",
+      "destination": "인천 연수구",
+      "fare": "50,000원",
+      "source_status": "종료",
+      "publication_status": "검토필요",
+      "title": "오산시 경매장 → 인천 연수구 탁송 운행기록",
+      "summary": "2026-10-19 오산시 경매장에서 인천 연수구까지 탁송 운행이 종료된 것으로 기록되어 있습니다. 기록 요금은 50,000원입니다.",
+      "contact": "1811-4294"
+    },
+    {
+      "date": "2026-10-18",
+      "departure": "인천공항 제1여객터미널",
+      "destination": "평택시",
+      "fare": "70,000원",
+      "source_status": "종료",
+      "publication_status": "검토필요",
+      "title": "인천공항 제1여객터미널 → 평택시 탁송 운행기록",
+      "summary": "2026-10-18 인천공항 제1여객터미널에서 평택시까지 탁송 운행이 종료된 것으로 기록되어 있습니다. 기록 요금은 70,000원입니다.",
+      "contact": "1811-4294"
+    },
+    {
+      "date": "2026-10-18",
+      "departure": "화엄사 주차장",
+      "destination": "대원사 주차장",
+      "fare": "120,000원",
+      "source_status": "종료",
+      "publication_status": "검토필요",
+      "title": "화엄사 주차장 → 대원사 주차장 탁송 운행기록",
+      "summary": "2026-10-18 화엄사 주차장에서 대원사 주차장까지 탁송 운행이 종료된 것으로 기록되어 있습니다. 기록 요금은 120,000원입니다.",
+      "contact": "1811-4294"
+    },
+    {
+      "date": "2026-10-18",
+      "departure": "영덕해맞이공원",
+      "destination": "정선읍",
+      "fare": "150,000원",
+      "source_status": "종료",
+      "publication_status": "검토필요",
+      "title": "영덕해맞이공원 → 정선읍 탁송 운행기록",
+      "summary": "2026-10-18 영덕해맞이공원에서 정선읍까지 탁송 운행이 종료된 것으로 기록되어 있습니다. 기록 요금은 150,000원입니다.",
+      "contact": "1811-4294"
+    }
+  ]
+}
