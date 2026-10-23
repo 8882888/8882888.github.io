@@ -1,0 +1,39 @@
+name: Smart24 server checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'package.json'
+      - 'Dockerfile'
+      - '.github/workflows/smart24-server-check.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: node --check server.js
+      - name: Install production dependencies
+        run: npm install --omit=dev --no-audit --no-fund
+      - name: Start and smoke-test HTTP service
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3000 node server.js > /tmp/smart24-server.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3000/health > /tmp/smart24-health.json; then break; fi
+            sleep 2
+          done
+          curl --fail --show-error http://127.0.0.1:3000/health
+          curl --fail --show-error --output /dev/null http://127.0.0.1:3000/
+          curl --fail --show-error --output /dev/null http://127.0.0.1:3000/robots.txt
+          curl --fail --show-error --output /dev/null http://127.0.0.1:3000/sitemap.xml
+          curl --fail --show-error --output /dev/null http://127.0.0.1:3000/daeri/seoul/
+          echo 'Smart24 local HTTP smoke checks passed'
