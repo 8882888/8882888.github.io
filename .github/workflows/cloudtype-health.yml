@@ -49,3 +49,40 @@ jobs:
             fi
           done
           exit "$failed"
+
+      - name: Verify real driving-distance API response
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from urllib.parse import urlencode
+          from urllib.request import Request, urlopen
+          endpoint = 'https://white-voice-6eab.k337711.workers.dev/route'
+          query = urlencode({'from': '서울역', 'to': '부산역'})
+          url = endpoint + '?' + query
+          try:
+              with urlopen(Request(url, headers={'User-Agent': 'Smart24-Production-Health/1.0'}), timeout=20) as response:
+                  status = response.status
+                  content_type = response.headers.get('Content-Type', '')
+                  payload = response.read(50000).decode('utf-8', errors='replace')
+              print('Distance API HTTP status:', status)
+              print('Distance API content type:', content_type)
+              try:
+                  data = json.loads(payload)
+              except ValueError:
+                  print('Distance API returned non-JSON body (first 200 chars):', payload[:200])
+                  raise SystemExit('Distance API JSON validation failed')
+              distance = data.get('distanceKm')
+              duration = data.get('durationMinutes')
+              print('Distance API distanceKm:', distance)
+              print('Distance API durationMinutes:', duration)
+              if not isinstance(distance, (int, float)) or distance <= 0:
+                  print('Distance API response fields:', sorted(data.keys()))
+                  raise SystemExit('Distance API missing positive distanceKm')
+              if not isinstance(duration, (int, float)) or duration <= 0:
+                  raise SystemExit('Distance API missing positive durationMinutes')
+              print('PASS: Live driving-distance API returned valid distance and duration')
+          except Exception as exc:
+              print('Distance API verification failed:', type(exc).__name__, str(exc)[:300])
+              raise
+          PY
