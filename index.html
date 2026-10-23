@@ -260,13 +260,13 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </section>
 <section id="ride-history">
 <h2>운행 기록</h2>
-<p>완료된 운행 기록을 날짜·시간·출발지·도착지·요금으로 확인할 수 있습니다. 개인정보는 공개하지 않습니다.</p>
+<p>완료된 운행 기록을 날짜·출발지·도착지·요금으로 확인할 수 있습니다. 개인정보는 공개하지 않습니다.</p>
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0"><label for="ride-search" style="font-weight:700;align-self:center">운행 기록 검색</label><input id="ride-search" type="search" placeholder="출발지·도착지·날짜 검색" style="flex:1;min-width:220px;padding:12px;border:1px solid #ccd5e0;border-radius:8px"><button id="ride-search-clear" type="button" class="btn" style="border:0;cursor:pointer">검색 초기화</button></div>
 <p id="ride-search-status" aria-live="polite">전체 기록을 표시합니다.</p>
 <div style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;min-width:620px">
-<thead><tr><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">날짜</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발 시간</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발지</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">도착지</th><th style="text-align:right;padding:12px;border-bottom:2px solid #ccd5e0">금액</th></tr></thead>
-<tbody id="ride-history-rows"><tr><td colspan="5" style="padding:14px">운행 기록을 불러오는 중입니다.</td></tr></tbody>
+<thead><tr><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">날짜</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발지</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">도착지</th><th style="text-align:right;padding:12px;border-bottom:2px solid #ccd5e0">금액</th></tr></thead>
+<tbody id="ride-history-rows"><tr><td colspan="4" style="padding:14px">운행 기록을 불러오는 중입니다.</td></tr></tbody>
 </table>
 </div>
 </section>
@@ -277,7 +277,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
   let allRecords = [];
   function renderRecords(records) {
     allRecords = records;
-    const allowed = ['date','time','departure','destination','fare'];
+    const allowed = ['date','departure','destination','fare'];
     const phonePattern = /(?:\b(?:01[016789]|02|0[3-9][0-9])[- .]?\d{3,4}[- .]?\d{4}\b)/;
     const rrnPattern = /\b\d{6}[- ]?[1-8]\d{6}\b/;
     const cutoffDate = new Date();
@@ -289,22 +289,22 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
       !allowed.some(k => phonePattern.test(String(r[k] ?? '')) || rrnPattern.test(String(r[k] ?? '')))
     ) : [];
     const query = (document.getElementById('ride-search')?.value || '').trim().toLocaleLowerCase('ko-KR');
-    const filtered = clean.filter(r => !query || [r.date,r.time,r.departure,r.destination,r.fare].some(v => String(v ?? '').toLocaleLowerCase('ko-KR').includes(query)));
+    const filtered = clean.filter(r => !query || [r.date,r.departure,r.destination,r.fare].some(v => String(v ?? '').toLocaleLowerCase('ko-KR').includes(query)));
     const searchStatus = document.getElementById('ride-search-status');
     if (searchStatus) searchStatus.textContent = `검색 결과 ${filtered.length}건 / 전체 공개 가능 기록 ${clean.length}건`;
     if (!filtered.length) {
-      body.innerHTML = '<tr><td colspan="5" style="padding:14px">공개 가능한 완료 운행 기록이 없습니다.</td></tr>';
+      body.innerHTML = '<tr><td colspan="4" style="padding:14px">공개 가능한 완료 운행 기록이 없습니다.</td></tr>';
       return;
     }
     body.replaceChildren();
     filtered.forEach(record => {
       const tr = document.createElement('tr');
-      [record.date, record.time, record.departure, record.destination, record.fare].forEach((value, index) => {
+      [record.date, record.departure, record.destination, record.fare].forEach((value, index) => {
         const td = document.createElement('td');
         td.textContent = String(value ?? '');
         td.style.padding = '12px';
         td.style.borderBottom = '1px solid #e2e8f0';
-        if (index === 4) td.style.textAlign = 'right';
+        if (index === 3) td.style.textAlign = 'right';
         tr.appendChild(td);
       });
       body.appendChild(tr);
@@ -320,9 +320,9 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
     cutoffDate.setMonth(cutoffDate.getMonth() - 6);
     const cutoff = [cutoffDate.getFullYear(), String(cutoffDate.getMonth() + 1).padStart(2, '0'), String(cutoffDate.getDate()).padStart(2, '0')].join('-');
     const params = new URLSearchParams({
-      select: 'ride_date,departure_time,departure,destination,fare',
+      select: 'ride_date,departure,destination,fare',
       ride_date: 'gte.' + cutoff,
-      order: 'ride_date.desc,departure_time.desc',
+      order: 'ride_date.desc',
       limit: '5000'
     });
     const response = await fetch(SUPABASE_URL + '/rest/v1/ride_history?' + params.toString(), {
@@ -337,7 +337,6 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
     const recent=await fetch('./data/ride-history-upload-202610.json',{cache:'no-store'}).then(r=>r.ok?r.json():[]).catch(()=>[]);
     renderRecords([...recent,...rows.map(row => ({
       date: row.ride_date,
-      time: row.departure_time,
       departure: row.departure,
       destination: row.destination,
       fare: row.fare
@@ -351,7 +350,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
       const recent=await fetch('./data/ride-history-upload-202610.json',{cache:'no-store'}).then(r=>r.ok?r.json():[]).catch(()=>[]);
       renderRecords([...recent,...baseRecords]);
     } catch (fallbackError) {
-      body.innerHTML = '<tr><td colspan="5" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
+      body.innerHTML = '<tr><td colspan="4" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
     }
   }
 })();
@@ -385,18 +384,18 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const phone=/(?:01[016789]|02|0[3-9][0-9])[- .]?\\d{3,4}[- .]?\\d{4}/;
  const personal=/\\d{6}[- ]?[1-8]\\d{6}/;
- function draw(rows){const safe=rows.filter(v=>v.length===5&&v.every(x=>String(x??'').trim())&&!v.some(x=>phone.test(String(x))||personal.test(String(x)))).slice(0,65);if(!safe.length)return false;const cards=safe.map(v=>'<a class="trip-flow-card" href="#ride-history"><span>'+esc(v[0])+' · '+esc(v[1])+'</span><strong>'+esc(v[2])+' → '+esc(v[3])+'</strong><span>'+esc(v[4])+'</span></a>').join('');target.innerHTML=cards+cards;return true;}
+ function draw(rows){const safe=rows.filter(v=>v.length===5&&v.every(x=>String(x??'').trim())&&!v.some(x=>phone.test(String(x))||personal.test(String(x)))).slice(0,65);if(!safe.length)return false;const cards=safe.map(v=>'<a class="trip-flow-card" href="#ride-history"><span>'+esc(v[0])+'</span><strong>'+esc(v[1])+' → '+esc(v[2])+'</strong><span>'+esc(v[3])+'</span></a>').join('');target.innerHTML=cards+cards;return true;}
  try {
    const response=await fetch('/api/public-rides',{cache:'no-store'});
    if(!response.ok)throw Error('Public history unavailable');
    const records=await response.json();
    const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-6);
    const minDate=[cutoff.getFullYear(),String(cutoff.getMonth()+1).padStart(2,'0'),String(cutoff.getDate()).padStart(2,'0')].join('-');
-   const rows=(Array.isArray(records)?records:[]).filter(r=>r&&r.date>=minDate&&['date','time','departure','destination','fare'].every(k=>String(r[k]??'').trim())).map(r=>[r.date,r.time,r.departure,r.destination,r.fare]);
+   const rows=(Array.isArray(records)?records:[]).filter(r=>r&&r.date>=minDate&&['date','departure','destination','fare'].every(k=>String(r[k]??'').trim())).map(r=>[r.date,r.departure,r.destination,r.fare]);
    if(draw(rows))return;
  }catch(e){console.warn('Public trip ticker data unavailable',e)}
  const body=document.getElementById('ride-history-rows');if(!body){target.innerHTML='<a class="trip-flow-card" href="#ride-history">운행 기록을 확인해 주세요.</a>';return;}
- const render=()=>{const rows=[...body.querySelectorAll('tr')].filter(tr=>tr.cells.length>=5&&!tr.querySelector('[colspan]')).map(tr=>[...tr.cells].slice(0,5).map(c=>c.textContent.trim()));if(!draw(rows)&&!body.textContent.includes('불러오는 중'))target.innerHTML='<a class="trip-flow-card" href="#ride-history">완료 운행 기록 보기</a>';};
+ const render=()=>{const rows=[...body.querySelectorAll('tr')].filter(tr=>tr.cells.length>=4&&!tr.querySelector('[colspan]')).map(tr=>[...tr.cells].slice(0,4).map(c=>c.textContent.trim()));if(!draw(rows)&&!body.textContent.includes('불러오는 중'))target.innerHTML='<a class="trip-flow-card" href="#ride-history">완료 운행 기록 보기</a>';};
  new MutationObserver(render).observe(body,{childList:true});render();
 })();
 </script>
