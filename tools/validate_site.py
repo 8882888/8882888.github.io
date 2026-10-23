@@ -25,9 +25,9 @@ def main():
     # Search crawler readiness: a public sitemap, canonical home URL and
     # accessible navigation are prerequisites, not proof of Naver indexing.
     robots_text = (ROOT / "robots.txt").read_text(encoding="utf-8")
-    if not re.search(r"(?im)^User-agent:\\s*\\*$", robots_text):
+    if not re.search(r"(?im)^User-agent:\s*\*$", robots_text):
         raise SystemExit("robots.txt must include a general crawler rule")
-    if not re.search(r"(?im)^Allow:\\s*/\\s*$", robots_text):
+    if not re.search(r"(?im)^Allow:\s*/\s*$", robots_text):
         raise SystemExit("robots.txt must allow public crawling")
     if f"Sitemap: {SITE_URL}/sitemap.xml" not in robots_text:
         raise SystemExit("robots.txt sitemap must use the selected canonical host")
