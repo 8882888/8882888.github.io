@@ -238,9 +238,21 @@ const quickRegions=regionQuickNames.map(n=>regions.find(r=>r.name===n||r.full_na
 function regionServiceLinks(items,kind){const label=kind==='taksong'?'탁송':'대리운전';return '<ul class="region-service-links">'+items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(r.name+label)+'</a></li>').join('')+'</ul>'}
 function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=childrenByParent.get(r.slug)||[];return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
 function nationwideLinks(){return '<section id="nationwide-service-links" aria-label="전국 지역별 서비스"><h2>전국 지역별 탁송·대리운전 바로가기</h2><p>서비스와 지역을 선택하면 해당 지역의 예약·배차 안내로 이동합니다.</p><h3>전국 탁송</h3>'+regionServiceLinks(quickRegions,'taksong')+'<p><a href="/taksong/types/">차종·톤급·서비스센터별 탁송 안내</a></p><h3>전국 대리운전</h3>'+regionServiceLinks(quickRegions,'daeri')+'<p><a href="/taksong/">전국 탁송 지역 전체 보기</a> · <a href="/daeri/">전국 대리운전 지역 전체 보기</a></p></section>'}
+const featuredTaksongRoutes=[
+ {slug:'busan-gijang-gyeongsan',from:'부산 기장',to:'경산시',keywords:['부산기장경산탁송','기장경산시탁송','부산에서경산탁송','기장군경산자동차탁송']},
+ {slug:'daegu-daemyeong-busan',from:'대구 대명동',to:'부산',keywords:['대구대명동부산탁송','대명동부산탁송','대구에서부산탁송','남구대명동부산자동차탁송']}
+];
+function featuredTaksongRoutePage(route){
+ const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
+ const title=route.from+'에서 '+route.to+' 탁송 | '+route.keywords[0];
+ const desc=route.from+' 출발 '+route.to+' 도착 차량탁송 안내. 실제 운행 구간을 바탕으로 출발·도착 지역과 차량 인수·인계 및 예상요금을 확인합니다.';
+ const related=featuredTaksongRoutes.filter(x=>x.slug!==route.slug).map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>').join('');
+ const body='<section><h2>'+esc(route.from+' → '+route.to+' 자동차탁송')+'</h2><p>2026년 10월 23일 실제 운행 구간으로 알려주신 '+esc(route.from+'에서 '+route.to)+'까지의 탁송 안내입니다. 운행 요금·차종·소요시간은 제공되지 않아 기재하지 않습니다.</p><p><a href="/fare/?from='+encodeURIComponent(route.from)+'&to='+encodeURIComponent(route.to)+'&service=taksong">이 구간 예상요금 조회</a> · <a href="tel:18114294">전화 상담 1811-4294</a></p></section><section><h2>구간별 검색 안내</h2><p>'+esc(route.keywords.join(' · '))+'</p><p>탁송은 차량을 출발지에서 인수하여 목적지에 인계하는 서비스입니다. 차량 종류와 인수·인계 위치, 운행 일정에 따라 상담 조건이 달라집니다.</p></section><section><h2>다른 실제 구간 안내</h2><ul>'+related+'</ul><p><a href="/taksong/">전국 탁송 지역 안내</a></p></section>';
+ return layout(title,desc,body,'https://'+host+'/taksong/route/'+route.slug+'/',null);
+}
 function serviceHub(kind){
  const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
- const isT=kind==='taksong';
+ const isT=kind==='taksong';\n const featuredLinks=isT?'<section><h2>실제 운행 구간별 탁송 안내</h2><ul>'+featuredTaksongRoutes.map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>').join('')+'</ul></section>':'';
  const intro=isT?'자동차탁송은 고객이 지정한 장소에서 차량을 인수하여 목적지로 이동시키는 서비스입니다. 장거리 차량 이동, 중고차 인도, 서비스센터 입출고 등 이용 목적에 따라 차량 인수·인계 조건을 먼저 확인합니다.':'대리운전은 고객의 차량을 기사가 운전하는 서비스입니다. 장거리 이동, 골프장 이동, 야간 운전 등 상황에 따라 출발 시간과 기사 배차·복귀 조건을 확인합니다.';
  const faq=isT?[
  ['탁송요금은 어떻게 결정되나요?','출발지와 도착지의 실제 도로거리, 차량 종류, 운행 시간대, 기사 접근·복귀 교통편, 통행료 및 인수·인계 조건을 종합하여 상담합니다. 홈페이지 계산 결과는 참고요금이며 확정 금액이 아닙니다.'],
@@ -269,7 +281,7 @@ if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.joi
 if(pathname==='/places/'||pathname==='/places')return respond(res,200,placeCategoryHub());
 const placeCategoryMatch=pathname.match(/^\/places\/([^/]+)\/?$/);
 if(placeCategoryMatch){const category=placeCategories.find(x=>x[0]===placeCategoryMatch[1]);return category?respond(res,200,placeCategoryPage(category)):respond(res,404,'장소 분류를 찾을 수 없습니다.')}
-if(pathname==='/taksong/'||pathname==='/taksong')return respond(res,200,serviceHub('taksong'));
+const featuredRouteMatch=pathname.match(/^\\/taksong\\/route\\/([a-z-]+)\\/?$/);if(featuredRouteMatch){const route=featuredTaksongRoutes.find(x=>x.slug===featuredRouteMatch[1]);return route?respond(res,200,featuredTaksongRoutePage(route)):respond(res,404,'해당 구간을 찾을 수 없습니다.')}\nif(pathname==='/taksong/'||pathname==='/taksong')return respond(res,200,serviceHub('taksong'));
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
 if(pathname==='/daeri/'||pathname==='/daeri')return respond(res,200,serviceHub('daeri'));
