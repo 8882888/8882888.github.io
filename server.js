@@ -327,7 +327,7 @@ function regionKeywordDirectory(kind,page=1){
  const links=items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(regionKeywordLabel(r,kind))+'</a></li>').join('');
  const nav='<p>'+(current>1?'<a href="/keywords/'+kind+'/?page='+(current-1)+'">이전</a> · ':'')+'페이지 '+current+' / '+total+(current<total?' · <a href="/keywords/'+kind+'/?page='+(current+1)+'">다음</a>':'')+'</p>';
  const body='<section><h2>전국 행정구역 '+label+' 키워드</h2><p>지역명과 '+label+'을 조합한 목록입니다. 키워드를 클릭하면 스마트24 홈페이지로 이동합니다. 실제 서비스 가능 여부와 요금은 별도 확인이 필요합니다.</p><p><a href="/keywords/taksong/">탁송 키워드</a> · <a href="/keywords/daeri/">대리운전 키워드</a></p>'+nav+'<ul>'+links+'</ul>'+nav+'</section>';
- return layout('전국 '+label+' 키워드 목록','전국 지역별 '+label+' 키워드 목록',body,'https://'+host+'/keywords/'+kind+'/',null);
+ return layout('전국 '+label+' 키워드 목록','전국 지역별 '+label+' 키워드 목록',body,'https://'+host+'/keywords/'+kind+'/?page='+current,null);
 }
 function routeKeywords(from,to,kind){
  const a=String(from||'').trim().replace(/\s+/g,''),b=String(to||'').trim().replace(/\s+/g,'');
