@@ -35,5 +35,12 @@ jobs:
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/robots.txt
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/sitemap.xml
-          curl --fail --show-error --output /dev/null http://127.0.0.1:3000/daeri/seoul/
+          curl --fail --show-error --output /tmp/smart24-home.html http://127.0.0.1:3000/
+          curl --fail --show-error --output /tmp/smart24-seoul.html http://127.0.0.1:3000/daeri/seoul/
+          grep -q 'tel:18114294' /tmp/smart24-home.html
+          grep -q 'tel:18114294' /tmp/smart24-seoul.html
+          png_path=$(curl --fail --silent http://127.0.0.1:3000/sitemap.xml | grep -oE '/card/area-[0-9]+[.]png' | head -n 1)
+          test -n "$png_path"
+          curl --fail --show-error --output /tmp/smart24-region.png "http://127.0.0.1:3000$png_path" || { cat /tmp/smart24-server.log; exit 1; }
+          file /tmp/smart24-region.png | grep -q 'PNG image data'
           echo 'Smart24 local HTTP smoke checks passed'
