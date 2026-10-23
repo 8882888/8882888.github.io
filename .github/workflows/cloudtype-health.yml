@@ -12,6 +12,16 @@ jobs:
   production-check:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout server source
+        uses: actions/checkout@v4
+      - name: Set up Node.js for server startup test
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify server syntax and local startup
+        run: |
+          node --check server.js
+          node tests/server.test.js
       - name: Check Cloudtype production routes independently of GitHub Pages
         shell: bash
         env:
