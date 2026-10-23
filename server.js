@@ -242,6 +242,20 @@ const featuredTaksongRoutes=[
  {slug:'busan-gijang-gyeongsan',from:'부산 기장',to:'경산시',keywords:['부산기장경산탁송','기장경산시탁송','부산에서경산탁송','기장군경산자동차탁송']},
  {slug:'daegu-daemyeong-busan',from:'대구 대명동',to:'부산',keywords:['대구대명동부산탁송','대명동부산탁송','대구에서부산탁송','남구대명동부산자동차탁송']}
 ];
+const featuredDaeriRoutes=[
+ {slug:'seoul-gangseo-incheon-gyeyang',from:'서울 강서구',to:'인천 계양구',date:'2026-10-19',keywords:['서울강서구인천계양구대리운전','강서구계양구대리운전','서울에서인천대리운전']},
+ {slug:'incheon-samsan-goyang-juyeop',from:'인천 삼산동',to:'고양시 주엽동',date:'2026-10-19',keywords:['인천삼산동고양주엽동대리운전','삼산동주엽동대리운전','인천고양대리운전']},
+ {slug:'changwon-woryeong-busan-busanjin',from:'창원시 월영동',to:'부산 부산진구',date:'2026-10-19',keywords:['창원월영동부산진구대리운전','창원부산대리운전','월영동부산대리운전']},
+ {slug:'gwangju-chowol-gonjiam',from:'경기 광주시 초월읍',to:'경기 광주시 곤지암읍',date:'2026-10-18',keywords:['광주초월읍곤지암읍대리운전','초월곤지암대리운전','경기광주대리운전']}
+];
+function featuredDaeriRoutePage(route){
+ const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
+ const title=route.from+'에서 '+route.to+' 대리운전 | '+route.keywords[0];
+ const desc=route.from+'에서 '+route.to+'까지 실제 완료된 대리운전 구간 안내. 지역별 예약 상담과 예상요금 조회.';
+ const related=featuredDaeriRoutes.filter(x=>x.slug!==route.slug).map(x=>'<li><a href="/daeri/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 대리운전')+'</a></li>').join('');
+ const body='<section><h2>'+esc(route.from+' → '+route.to+' 대리운전')+'</h2><p>'+esc(route.date)+'에 '+esc(route.from)+'에서 '+esc(route.to)+'까지 대리운전 운행을 완료한 구간입니다. 고객 정보와 미제공 운행 조건은 공개하지 않습니다.</p><p><a href="/fare/?from='+encodeURIComponent(route.from)+'&to='+encodeURIComponent(route.to)+'&service=daeri">예상요금 조회</a> · <a href="tel:18114294">전화 상담 1811-4294</a></p></section><section><h2>출발지·도착지 대리운전 검색 안내</h2><p>'+esc(route.keywords.join(' · '))+'</p><p>대리운전은 고객 차량을 기사가 운전하는 서비스입니다. 기사 접근과 복귀 동선, 출발 시간, 운행 거리에 따라 상담 조건이 달라질 수 있습니다.</p></section><section><h2>다른 실제 대리운전 구간</h2><ul>'+related+'</ul><p><a href="/daeri/">전국 대리운전 안내</a></p></section>';
+ return layout(title,desc,body,'https://'+host+'/daeri/route/'+route.slug+'/',null);
+}
 function featuredTaksongRoutePage(route){
  const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const title=route.from+'에서 '+route.to+' 탁송 | '+route.keywords[0];
@@ -252,7 +266,7 @@ function featuredTaksongRoutePage(route){
 }
 function serviceHub(kind){
  const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
- const isT=kind==='taksong';\n const featuredLinks=isT?'<section><h2>실제 운행 구간별 탁송 안내</h2><ul>'+featuredTaksongRoutes.map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>').join('')+'</ul></section>':'';
+ const isT=kind==='taksong';\n const featuredLinks='<section><h2>실제 운행 구간별 '+label+' 안내</h2><ul>'+(isT?featuredTaksongRoutes.map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>'):featuredDaeriRoutes.map(x=>'<li><a href="/daeri/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 대리운전')+'</a></li>')).join('')+'</ul></section>';
  const intro=isT?'자동차탁송은 고객이 지정한 장소에서 차량을 인수하여 목적지로 이동시키는 서비스입니다. 장거리 차량 이동, 중고차 인도, 서비스센터 입출고 등 이용 목적에 따라 차량 인수·인계 조건을 먼저 확인합니다.':'대리운전은 고객의 차량을 기사가 운전하는 서비스입니다. 장거리 이동, 골프장 이동, 야간 운전 등 상황에 따라 출발 시간과 기사 배차·복귀 조건을 확인합니다.';
  const faq=isT?[
  ['탁송요금은 어떻게 결정되나요?','출발지와 도착지의 실제 도로거리, 차량 종류, 운행 시간대, 기사 접근·복귀 교통편, 통행료 및 인수·인계 조건을 종합하여 상담합니다. 홈페이지 계산 결과는 참고요금이며 확정 금액이 아닙니다.'],
@@ -285,6 +299,7 @@ const featuredRouteMatch=pathname.match(/^\/taksong\/route\/([a-z-]+)\/?$/);if(f
 if(pathname==='/taksong/'||pathname==='/taksong')return respond(res,200,serviceHub('taksong'));
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
+const daeriRouteMatch=pathname.match(/^\/daeri\/route\/([a-z-]+)\/?$/);if(daeriRouteMatch){const route=featuredDaeriRoutes.find(x=>x.slug===daeriRouteMatch[1]);return route?respond(res,200,featuredDaeriRoutePage(route)):respond(res,404,'해당 대리운전 구간을 찾을 수 없습니다.')}
 if(pathname==='/daeri/'||pathname==='/daeri')return respond(res,200,serviceHub('daeri'));
 if(pathname==='/region/'||pathname==='/region'){
  const q=clean(u.searchParams.get('q')||'');
