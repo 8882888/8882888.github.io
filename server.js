@@ -294,7 +294,7 @@ function routeKeywords(from,to,kind){
  const service=kind==='daeri'?'대리운전':'탁송';
  const a=String(from||'').trim(),b=String(to||'').trim();
  if(!a||!b||a.length>80||b.length>80)return [];
- const compactName=v=>v.replace(/\\s+/g,'');
+ const compactName=v=>v.replace(/\s+/g,'');
  const a1=compactName(a),b1=compactName(b);
  return [...new Set([a1+b1+service,a1+'에서'+b1+service,a1+b1+(kind==='daeri'?'장거리대리운전':'자동차탁송'),a1+'출발'+b1+'도착'+service])];
 }
