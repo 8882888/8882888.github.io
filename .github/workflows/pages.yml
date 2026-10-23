@@ -87,6 +87,8 @@ jobs:
           fi
       - name: Configure canonical URLs and custom-domain artifact
         run: python tools/configure_site.py
+      - name: Audit duplicate titles and low-information region pages
+        run: python tools/audit_seo_quality.py
       - name: Validate generated pages when sitemap exists
         shell: bash
         run: |
