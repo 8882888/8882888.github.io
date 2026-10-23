@@ -46,6 +46,14 @@ jobs:
           curl --fail --show-error --output /tmp/smart24-region.png "http://127.0.0.1:3000$png_path" || { cat /tmp/smart24-server.log; exit 1; }
           file /tmp/smart24-region.png | grep -q 'PNG image data'
           grep -q 'og:image' /tmp/smart24-seoul.html
+          # Ensure major local service pages are discoverable in their sitemap.
+          curl --fail --show-error --output /tmp/smart24-taksong-sitemap.xml http://127.0.0.1:3000/sitemap-taksong.xml
+          grep -q '/taksong/' /tmp/smart24-taksong-sitemap.xml
+          grep -q 'rel="canonical"' /tmp/smart24-seoul.html
+          # Verify a paginated keyword directory links to real regional destinations.
+          curl --fail --show-error --output /tmp/smart24-keywords.html 'http://127.0.0.1:3000/keywords/taksong/?page=2'
+          grep -q 'href="/taksong/' /tmp/smart24-keywords.html
+          grep -q '/keywords/taksong/?page=2' /tmp/smart24-keywords.html
           # Check the first dynamic region page and its clickable PNG card.
           region_path=$(curl --fail --silent http://127.0.0.1:3000/sitemap.xml | grep -oEm1 '/region/area-[0-9]+/')
           test -n "$region_path"
