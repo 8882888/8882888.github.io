@@ -22,6 +22,24 @@ def main():
     if missing:
         raise SystemExit("필수 파일 누락: " + ", ".join(missing))
 
+    # Search crawler readiness: a public sitemap, canonical home URL and
+    # accessible navigation are prerequisites, not proof of Naver indexing.
+    robots_text = (ROOT / "robots.txt").read_text(encoding="utf-8")
+    if not re.search(r"(?im)^User-agent:\\s*\\*$", robots_text):
+        raise SystemExit("robots.txt must include a general crawler rule")
+    if not re.search(r"(?im)^Allow:\\s*/\\s*$", robots_text):
+        raise SystemExit("robots.txt must allow public crawling")
+    if f"Sitemap: {SITE_URL}/sitemap.xml" not in robots_text:
+        raise SystemExit("robots.txt sitemap must use the selected canonical host")
+    home_text = (ROOT / "index.html").read_text(encoding="utf-8")
+    if f'<link rel="canonical" href="{SITE_URL}/">' not in home_text:
+        raise SystemExit("Homepage canonical URL differs from SITE_URL")
+    for target in ("/fare/", "/region/", "/places/", "/taksong/types/"):
+        if f'href="{target}"' not in home_text:
+            raise SystemExit(f"Homepage missing important navigation: {target}")
+    if "tel:18114294" not in home_text:
+        raise SystemExit("Homepage representative phone link is missing")
+
     html_files = list(ROOT.rglob("*.html"))
     if len(html_files) > 100000:
         raise SystemExit(f"GitHub Pages 정적 파일 수 제한을 넘을 수 있습니다: HTML {len(html_files)}개")
