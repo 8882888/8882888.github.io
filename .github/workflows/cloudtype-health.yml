@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'server.js'
+      - 'tests/server.test.js'
       - 'Dockerfile'
       - 'data/legal-regions/**'
       - '.github/workflows/cloudtype-health.yml'
