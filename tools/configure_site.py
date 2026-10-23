@@ -20,6 +20,13 @@ for path in ROOT.rglob("*.html"):
         continue
     text = path.read_text(encoding="utf-8")
     updated = text.replace(DEFAULT_URL, SITE_URL)
+    # Keep existing external links, but migrate legacy Railway canonical URLs.
+    updated = re.sub(
+        r'(<link[^>]+rel="canonical"[^>]+href=")https://8882888githubio-production[.]up[.]railway[.]app(/[^"]*")',
+        lambda m: m.group(1) + SITE_URL + m.group(2),
+        updated,
+        flags=re.I,
+    )
     updated = updated.replace("스마트번개대리운전", "스마트전국대리운전 스마트24탁송")
     if updated != text:
         path.write_text(updated, encoding="utf-8")
