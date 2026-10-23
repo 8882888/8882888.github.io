@@ -267,7 +267,7 @@ function featuredTaksongRoutePage(route){
 function serviceHub(kind){
  const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const isT=kind==='taksong';
- const featuredLinks='<section><h2>실제 운행 구간별 '+label+' 안내</h2><ul>'+(isT?featuredTaksongRoutes.map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>'):featuredDaeriRoutes.map(x=>'<li><a href="/daeri/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 대리운전')+'</a></li>')).join('')+'</ul></section>';
+ const featuredLinks='<section><h2>전국 행정구역 '+label+' 키워드</h2><p><a href="/keywords/'+kind+'/">전국 시·군·구·읍·면·동·리 '+label+' 키워드 보기</a></p></section><section><h2>실제 운행 구간별 '+label+' 안내</h2><ul>'+(isT?featuredTaksongRoutes.map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>'):featuredDaeriRoutes.map(x=>'<li><a href="/daeri/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 대리운전')+'</a></li>')).join('')+'</ul></section>';
  const intro=isT?'자동차탁송은 고객이 지정한 장소에서 차량을 인수하여 목적지로 이동시키는 서비스입니다. 장거리 차량 이동, 중고차 인도, 서비스센터 입출고 등 이용 목적에 따라 차량 인수·인계 조건을 먼저 확인합니다.':'대리운전은 고객의 차량을 기사가 운전하는 서비스입니다. 장거리 이동, 골프장 이동, 야간 운전 등 상황에 따라 출발 시간과 기사 배차·복귀 조건을 확인합니다.';
  const faq=isT?[
  ['탁송요금은 어떻게 결정되나요?','출발지와 도착지의 실제 도로거리, 차량 종류, 운행 시간대, 기사 접근·복귀 교통편, 통행료 및 인수·인계 조건을 종합하여 상담합니다. 홈페이지 계산 결과는 참고요금이며 확정 금액이 아닙니다.'],
@@ -290,6 +290,20 @@ function serviceHub(kind){
  '<section><h2>전국 지역 검색</h2><form action="/region/" method="get"><input type="hidden" name="service" value="'+kind+'"><label>지역명 <input name="q" placeholder="예: 서울, 부산, 인천"></label><button>지역 찾기</button></form><p>지역 검색 후 '+label+' 전용 페이지를 선택할 수 있습니다.</p></section>';
  return layout('전국 '+label+' 예약·요금 | 스마트24','전국 '+label+' 예약과 예상요금, 장거리 운행 및 지역별 배차 조건 안내. '+PHONE,body,'https://'+host+'/'+kind+'/',null);
 }
+function regionKeywordLabel(r,kind,short=false){
+ const parts=r.full_name.split(' ');
+ const location=short?r.name:parts.length>1?parts.slice(1).join(''):r.name;
+ return location+(kind==='daeri'?'대리운전':'탁송');
+}
+function regionKeywordDirectory(kind,page=1){
+ const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr',label=kind==='daeri'?'대리운전':'탁송';
+ const size=250,total=Math.ceil(regions.length/size),current=Math.min(total,Math.max(1,Number(page)||1));
+ const items=regions.slice((current-1)*size,current*size);
+ const links=items.map(r=>'<li><a href="/">'+esc(regionKeywordLabel(r,kind))+'</a></li>').join('');
+ const nav='<p>'+(current>1?'<a href="/keywords/'+kind+'/?page='+(current-1)+'">이전</a> · ':'')+'페이지 '+current+' / '+total+(current<total?' · <a href="/keywords/'+kind+'/?page='+(current+1)+'">다음</a>':'')+'</p>';
+ const body='<section><h2>전국 행정구역 '+label+' 키워드</h2><p>지역명과 '+label+'을 조합한 목록입니다. 키워드를 클릭하면 스마트24 홈페이지로 이동합니다. 실제 서비스 가능 여부와 요금은 별도 확인이 필요합니다.</p><p><a href="/keywords/taksong/">탁송 키워드</a> · <a href="/keywords/daeri/">대리운전 키워드</a></p>'+nav+'<ul>'+links+'</ul>'+nav+'</section>';
+ return layout('전국 '+label+' 키워드 목록','전국 지역별 '+label+' 키워드 목록',body,'https://'+host+'/keywords/'+kind+'/',null);
+}
 function routeKeywords(from,to,kind){
  const a=String(from||'').trim().replace(/\s+/g,''),b=String(to||'').trim().replace(/\s+/g,'');
  if(!a||!b||a.length>80||b.length>80)return [];
@@ -305,6 +319,7 @@ function routeKeywordSearchPage(from,to,kind){
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');return respond(res,200,home.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()))}
+const keywordMatch=pathname.match(/^\/keywords\/(taksong|daeri)\/?$/);if(keywordMatch){res.setHeader('X-Robots-Tag','noindex, follow');return respond(res,200,regionKeywordDirectory(keywordMatch[1],u.searchParams.get('page')))}
 if(pathname==='/route-search/'||pathname==='/route-search'){res.setHeader('X-Robots-Tag','noindex, follow');const from=String(u.searchParams.get('from')||''),to=String(u.searchParams.get('to')||''),kind=u.searchParams.get('service')==='daeri'?'daeri':'taksong';return respond(res,200,routeKeywordSearchPage(from,to,kind))}
 if(pathname==='/places/'||pathname==='/places')return respond(res,200,placeCategoryHub());
 const placeCategoryMatch=pathname.match(/^\/places\/([^/]+)\/?$/);
