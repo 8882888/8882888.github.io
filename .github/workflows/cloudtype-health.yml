@@ -1,6 +1,13 @@
 name: Cloudtype production health check
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'Dockerfile'
+      - 'data/legal-regions/**'
+      - '.github/workflows/cloudtype-health.yml'
   workflow_dispatch:
   schedule:
     - cron: '17 0,6,12,18 * * *'
