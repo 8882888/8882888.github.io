@@ -65,9 +65,13 @@ jobs:
               with urlopen(Request(url, headers={'User-Agent': 'Smart24-Production-Health/1.0', 'Origin': 'https://jeongukdaeri.kr'}), timeout=20) as response:
                   status = response.status
                   content_type = response.headers.get('Content-Type', '')
+                  allowed_origin = response.headers.get('Access-Control-Allow-Origin', '')
                   payload = response.read(50000).decode('utf-8', errors='replace')
               print('Distance API HTTP status:', status)
               print('Distance API content type:', content_type)
+              print('Distance API allowed origin:', allowed_origin or '(missing)')
+              if allowed_origin not in ('https://jeongukdaeri.kr', '*'):
+                  raise SystemExit('Distance API browser CORS origin not allowed')
               try:
                   data = json.loads(payload)
               except ValueError:
