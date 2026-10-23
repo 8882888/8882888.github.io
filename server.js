@@ -291,20 +291,16 @@ function serviceHub(kind){
  return layout('전국 '+label+' 예약·요금 | 스마트24','전국 '+label+' 예약과 예상요금, 장거리 운행 및 지역별 배차 조건 안내. '+PHONE,body,'https://'+host+'/'+kind+'/',null);
 }
 function routeKeywords(from,to,kind){
- const service=kind==='daeri'?'대리운전':'탁송';
- const a=String(from||'').trim(),b=String(to||'').trim();
+ const a=String(from||'').trim().replace(/\s+/g,''),b=String(to||'').trim().replace(/\s+/g,'');
  if(!a||!b||a.length>80||b.length>80)return [];
- const compactName=v=>v.replace(/\s+/g,'');
- const a1=compactName(a),b1=compactName(b);
- return [...new Set([a1+b1+service,a1+'에서'+b1+service,a1+b1+(kind==='daeri'?'장거리대리운전':'자동차탁송'),a1+'출발'+b1+'도착'+service])];
+ return [a+b+(kind==='daeri'?'대리운전':'탁송')];
 }
 function routeKeywordSearchPage(from,to,kind){
  const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const keywords=routeKeywords(from,to,kind),service=kind==='daeri'?'대리운전':'탁송';
- const matches=(kind==='daeri'?featuredDaeriRoutes:featuredTaksongRoutes).filter(r=>r.from===from&&r.to===to);
- const link=matches.length?'<p>실제 운행 기록 기반 안내: <a href="/'+kind+'/route/'+matches[0].slug+'/">'+esc(from+' → '+to+' '+service)+'</a></p>':'<p>이 구간의 별도 공개 페이지는 아직 없습니다. 지역 안내와 예상요금 조회를 이용할 수 있습니다.</p>';
- const body='<section><h2>전국 출발지·도착지 검색</h2><form action="/route-search/" method="get"><label>출발지 <input name="from" maxlength="80" required value="'+esc(from)+'"></label> <label>도착지 <input name="to" maxlength="80" required value="'+esc(to)+'"></label> <label>서비스 <select name="service"><option value="taksong"'+(kind==='taksong'?' selected':'')+'>탁송</option><option value="daeri"'+(kind==='daeri'?' selected':'')+'>대리운전</option></select></label> <button type="submit">검색어 조합 확인</button></form></section>'+(keywords.length?'<section><h2>'+esc(from+' → '+to+' '+service)+' 키워드</h2><p>'+esc(keywords.join(' · '))+'</p>'+link+'<p><a href="/fare/?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to)+'&service='+kind+'">예상요금 조회</a> · <a href="/'+kind+'/">전국 '+service+' 안내</a></p></section>':'<section><p>출발지와 도착지를 입력하면 검색어를 자동 조합합니다. 검색어만 생성되며 새 색인 페이지는 만들지 않습니다.</p></section>');
- return layout('전국 '+service+' 구간 검색','전국 출발지와 도착지별 '+service+' 검색어 조합 및 실제 운행 구간 안내',body,'https://'+host+'/route-search/',null);
+ const home='https://'+host+'/';
+ const body='<section><h2>전국 출발지·도착지 검색</h2><form action="/route-search/" method="get"><label>출발지 <input name="from" maxlength="80" required value="'+esc(from)+'"></label> <label>도착지 <input name="to" maxlength="80" required value="'+esc(to)+'"></label> <label>서비스 <select name="service"><option value="taksong"'+(kind==='taksong'?' selected':'')+'>탁송</option><option value="daeri"'+(kind==='daeri'?' selected':'')+'>대리운전</option></select></label> <button type="submit">검색어 조합 확인</button></form></section>'+(keywords.length?'<section><h2>생성된 '+service+' 키워드</h2><p><a href="'+home+'">'+esc(keywords[0])+'</a></p><p>키워드를 클릭하면 스마트24 홈페이지 메인으로 이동합니다.</p></section>':'<section><p>출발지와 도착지를 입력하면 대리운전 또는 탁송 키워드 하나가 생성됩니다.</p></section>');
+ return layout('전국 '+service+' 구간 검색','전국 출발지와 도착지별 '+service+' 검색어 자동 조합',body,'https://'+host+'/route-search/',null);
 }
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
