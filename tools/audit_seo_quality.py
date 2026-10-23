@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Report duplicate or low-information HTML pages without inventing SEO claims."""
 import collections
-import hashlib
 import html
 import json
 import re
