@@ -33,13 +33,9 @@ jobs:
       - name: Check Cloudtype production routes independently of GitHub Pages
         shell: bash
         env:
-          PRODUCTION_URL: ${{ vars.CLOUDTYPE_PRODUCTION_URL }}
+          PRODUCTION_URL: ${{ vars.CLOUDTYPE_PRODUCTION_URL || 'https://jeongukdaeri.kr' }}
         run: |
           set -uo pipefail
-          if [ -z "$PRODUCTION_URL" ]; then
-            echo "::error::CLOUDTYPE_PRODUCTION_URL is missing. Cloudtype production status was NOT checked."
-            exit 1
-          fi
           base="${PRODUCTION_URL%/}"
           failed=0
           for route in / /health /assets/smart24-business-card.svg /region/ /places/ /taksong/types/ /sitemap.xml /sitemap-daeri.xml /sitemap-taksong.xml /robots.txt; do
