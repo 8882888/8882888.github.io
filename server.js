@@ -371,7 +371,7 @@ if(pathname==='/region/'||pathname==='/region'){
 const cardMatch=pathname.match(new RegExp('^[/]card[/](area-[0-9]+)[.]svgif(cardMatch){const r=bySlug.get(cardMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');res.writeHead(200,{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});return res.end(cardSvg(r.full_name));}
 if(pathname==='/api/public-rides'){
  const rows=load('data/ride-history-upload-202610.json');
- const safe=Array.isArray(rows)?rows.filter(r=>r.status==='종료'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&[r.departure,r.destination,r.fare].every(v=>typeof v==='string'&&v.length>0&&v.length<100)).map(r=>({date:r.date,time:r.time||'시간 비공개',departure:r.departure,destination:r.destination,fare:r.fare})):[];
+ const safe=Array.isArray(rows)?rows.filter(r=>r.status==='종료'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&[r.departure,r.destination,r.fare].every(v=>typeof v==='string'&&v.length>0&&v.length<100)).map(r=>({date:r.date,time:'비공개',departure:r.departure,destination:r.destination,fare:r.fare})):[];
  return respond(res,200,JSON.stringify(safe),'application/json; charset=utf-8');
 }
 if(pathname==='/health')return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy'}), 'application/json; charset=utf-8');
@@ -388,7 +388,7 @@ let p=path.resolve(ROOT,'.'+pathname);if(!p.startsWith(ROOT+path.sep)&&p!==ROOT)
 ));if(cardMatch){const r=bySlug.get(cardMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');res.writeHead(200,{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});return res.end(cardSvg(r.full_name));}
 if(pathname==='/api/public-rides'){
  const rows=load('data/ride-history-upload-202610.json');
- const safe=Array.isArray(rows)?rows.filter(r=>r.status==='종료'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&[r.departure,r.destination,r.fare].every(v=>typeof v==='string'&&v.length>0&&v.length<100)).map(r=>({date:r.date,time:r.time||'시간 비공개',departure:r.departure,destination:r.destination,fare:r.fare})):[];
+ const safe=Array.isArray(rows)?rows.filter(r=>r.status==='종료'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&[r.departure,r.destination,r.fare].every(v=>typeof v==='string'&&v.length>0&&v.length<100)).map(r=>({date:r.date,time:'비공개',departure:r.departure,destination:r.destination,fare:r.fare})):[];
  return respond(res,200,JSON.stringify(safe),'application/json; charset=utf-8');
 }
 if(pathname==='/health')return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy'}), 'application/json; charset=utf-8');
