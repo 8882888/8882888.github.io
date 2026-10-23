@@ -62,7 +62,7 @@ jobs:
           query = urlencode({'from': '서울역', 'to': '부산역'})
           url = endpoint + '?' + query
           try:
-              with urlopen(Request(url, headers={'User-Agent': 'Smart24-Production-Health/1.0'}), timeout=20) as response:
+              with urlopen(Request(url, headers={'User-Agent': 'Smart24-Production-Health/1.0', 'Origin': 'https://jeongukdaeri.kr'}), timeout=20) as response:
                   status = response.status
                   content_type = response.headers.get('Content-Type', '')
                   payload = response.read(50000).decode('utf-8', errors='replace')
