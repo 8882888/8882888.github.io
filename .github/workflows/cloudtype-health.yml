@@ -57,6 +57,7 @@ jobs:
           import json
           from urllib.parse import urlencode
           from urllib.request import Request, urlopen
+          from urllib.error import HTTPError
           endpoint = 'https://white-voice-6eab.k337711.workers.dev/route'
           query = urlencode({'from': '서울역', 'to': '부산역'})
           url = endpoint + '?' + query
@@ -82,6 +83,12 @@ jobs:
               if not isinstance(duration, (int, float)) or duration <= 0:
                   raise SystemExit('Distance API missing positive durationMinutes')
               print('PASS: Live driving-distance API returned valid distance and duration')
+          except HTTPError as exc:
+              print('Distance API HTTP failure:', exc.code)
+              print('CORS allow origin:', exc.headers.get('Access-Control-Allow-Origin', '(missing)'))
+              print('Response content type:', exc.headers.get('Content-Type', '(missing)'))
+              print('Response preview:', exc.read(500).decode('utf-8', errors='replace')[:300])
+              raise
           except Exception as exc:
               print('Distance API verification failed:', type(exc).__name__, str(exc)[:300])
               raise
