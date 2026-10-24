@@ -38,7 +38,7 @@ jobs:
             context:
               git:
                 url: https://github.com/${{ github.repository }}.git
-                ref: ${{ github.sha }}
+                ref: ${{ github.ref }}
 
       - name: Verify deployed regional service revision
         env:
