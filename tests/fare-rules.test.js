@@ -1,0 +1,14 @@
+'use strict';const assert=require('node:assert/strict'),fs=require('node:fs');const fare=require('../assets/road-fare');
+assert.deepEqual(fare.roadQuote(45,'daeri','군산시청','전주시청').band,[30000,40000]);
+assert.deepEqual(fare.roadQuote(356,'taksong','서울역','목포항국제여객터미널').band,[135000]);
+assert.deepEqual(fare.roadQuote(285,'taksong','대구시청','목포항국제여객터미널').band,[80000,110000]);
+assert.deepEqual(fare.roadQuote(230,'taksong','속초시','인천시').band,[100000,120000]);
+assert.deepEqual(fare.roadQuote(45,'taksong','고성군','부산시').band,[20000,30000]);
+assert.deepEqual(fare.roadQuote(45,'taksong','강원 고성군','속초시').band,[25000,40000]);
+assert.deepEqual(fare.withFerry([135000],135940),{subtotal:[270940],total:[275000]});
+assert.deepEqual(fare.withFerry([80000,110000],135940).total,[220000,250000]);
+assert.deepEqual(fare.withFerry([80000,110000],145280).total,[230000,260000]);
+assert.throws(()=>fare.baseQuote(NaN,'taksong'));assert.throws(()=>fare.withFerry([80000],NaN));
+const rates=require('../assets/jeju-ferry-rates.json');assert.equal(rates.classes.find(c=>c.id==='compact').weekday,135940);assert.ok(rates.classes.every(c=>c.holiday>c.weekday));
+const html=fs.readFileSync(require('node:path').join(__dirname,'../fare/jeju/index.html'),'utf8');assert.ok(html.includes('제주항 이후'));assert.ok(html.includes('tel:18114294'));assert.ok(!html.includes('1877-5245'));
+console.log('PASS: road pricing preserved and ferry components rounded correctly');

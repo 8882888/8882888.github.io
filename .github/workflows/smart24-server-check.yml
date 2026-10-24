@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
     paths:
+      - 'assets/road-fare.js'
+      - 'assets/jeju*'
+      - 'fare/**'
       - 'lib/**'
       - 'tests/**'
       - 'scripts/**'
@@ -26,6 +29,8 @@ jobs:
         run: node --check server.js
       - name: Install production dependencies
         run: npm install --omit=dev --no-audit --no-fund
+      - name: Verify road and ferry quote calculations
+        run: node tests/fare-rules.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
       - name: Start and smoke-test HTTP service
