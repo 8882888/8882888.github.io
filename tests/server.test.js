@@ -26,12 +26,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const service of ['daeri','taksong']){
    const response=await get('/'+service+'/seoul/');assert.equal(response.status,200);
    const html=await response.text();
-   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-inline\.png)"/);
+   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-inline-v2\.png)"/);
    assert.ok(card,'regional '+service+' page must advertise a PNG business card');
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
-   const svg=await (await get(card[1].replace('-inline.png','.svg'))).text();
+   const svg=await (await get(card[1].replace('-inline-v2.png','.svg'))).text();
    assert.ok(svg.includes('서울 스마트전국대리운전')&&svg.includes('서울 스마트24시탁송'),'card puts the local service name and Smart24 brand at the top');
-   assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('x="200" y="10"'),'regional card uses the approved artwork and teal local labels');
+   assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('x="200" y="7"'),'regional card uses the approved artwork and teal local labels');
    assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
    assert.ok(html.indexOf('<figure>')<html.indexOf('class="booking-guide"'),'regional card appears beside the regional introduction');
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
@@ -45,7 +45,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.deepEqual([...bytes.slice(0,8)],[137,80,78,71,13,10,26,10]);
    const dimensions=await require('sharp')(bytes).metadata();assert.equal(dimensions.width,1200);assert.equal(dimensions.height,800,'regional heading is inside the artwork without an outside band');
    const artStats=await require('sharp')(bytes).extract({left:0,top:100,width:1200,height:700}).stats();assert.ok(artStats.channels.some(c=>c.stdev>35),'regional PNG retains the detailed approved artwork instead of a blank background');
-   assert.equal((await get(card[1].replace('-inline.png','-light.png'))).status,200,'previous regional image URLs remain available');
+   assert.equal((await get(card[1].replace('-inline-v2.png','-light.png'))).status,200,'previous regional image URLs remain available');
   }
   for(const service of ['daeri','taksong']){
    const hub=await (await get('/'+service+'/')).text();
