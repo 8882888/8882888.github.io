@@ -385,7 +385,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 
 <script>
 (async function(){
- const target=document.getElementById('trip-flow-track');if(!target)return;
+ const target=document.getElementById('trip-flow-track');if(!target||target.querySelector('a[href^="/reviews/"]'))return;
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const phone=/(?:01[016789]|02|0[3-9][0-9])[- .]?\\d{3,4}[- .]?\\d{4}/;
  const personal=/\\d{6}[- ]?[1-8]\\d{6}/;
