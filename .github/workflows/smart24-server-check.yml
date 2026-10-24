@@ -44,7 +44,7 @@ jobs:
           curl --fail --show-error --output /tmp/smart24-seoul.html http://127.0.0.1:3000/daeri/seoul/
           grep -q 'tel:18114294' /tmp/smart24-home.html
           grep -q 'tel:18114294' /tmp/smart24-seoul.html
-          png_path=$(node -e "const s=require('fs').readFileSync('/tmp/smart24-sitemap.xml','utf8');const m=s.match(/\\/card\\/area-[0-9]+(?:-light|-art(?:-v2)?)?\\.png/);if(!m)process.exit(1);process.stdout.write(m[0])")
+          png_path=$(node -e "const s=require('fs').readFileSync('/tmp/smart24-sitemap.xml','utf8');const m=s.match(/\\/card\\/area-[0-9]+(?:-light|-art(?:-v2)?|-inline)?\\.png/);if(!m)process.exit(1);process.stdout.write(m[0])")
           test -n "$png_path"
           curl --fail --show-error --output /tmp/smart24-region.png "http://127.0.0.1:3000$png_path" || { cat /tmp/smart24-server.log; exit 1; }
           file /tmp/smart24-region.png | grep -q 'PNG image data'
