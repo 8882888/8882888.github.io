@@ -48,6 +48,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(!hub.includes('키워드 자동 검색'),'customer hub prioritizes booking instead of generated search terms');
    const regional=await (await get('/'+service+'/gangwon/gangreung-si/')).text();
    assert.ok(regional.includes('영서·영동'),'Gangwon guidance addresses the regional journey');
+   assert.ok(regional.includes('상황별 이용 안내')&&regional.includes('실제 완료 운행후기가 아닙니다'),'regions without verified rides offer clearly labelled usage guidance');
+   assert.ok(regional.includes('https://open.kakao.com/o/sGV88r7h'),'regional pages link to the existing consultation channel');
    assert.ok(regional.includes('/fare/?service='+service+'&amp;from='+encodeURIComponent('강원특별자치도 강릉시')),'regional calculator retains service and departure');
    assert.ok(regional.includes(service==='taksong'?'면책금':'동승 인원'),'service-specific booking checks are visible');
   }
