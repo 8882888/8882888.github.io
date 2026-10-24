@@ -110,7 +110,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const homeHtml=await (await get('/')).text();
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
   const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();assert.ok((xml.match(/<loc>/g)||[]).length>=regions.length+2,'main sitemap includes all regions and category URLs');assert.ok(xml.includes('example.com'));assert.ok(xml.includes('/places/'),'place category hub appears in sitemap');assert.ok(xml.includes('/places/'+encodeURIComponent('캠핑장')+'/'),'camping category appears in sitemap');assert.ok(xml.includes('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/'),'tow truck delivery category appears in sitemap');
-  const guideUrls=[...xml.matchAll(/<loc>([^<]+\/(?:fare|long-distance|handover)\/)<\/loc>/g)].map(x=>x[1]);
+  const guideUrls=[...xml.matchAll(/<loc>([^<]+\/(?:fare|long-distance|handover)\/)<\/loc>/g)].map(x=>x[1]).filter(url=>!url.endsWith('example.com/fare/'));
   assert.equal(guideUrls.length,health.regionalGuides,'submitted sitemap contains every regional topic guide');
   assert.equal(new Set(guideUrls).size,guideUrls.length,'regional topic canonicals are unique');
   assert.ok(health.regionalGuideAreas>=17,'guides cover every province');
