@@ -1,0 +1,10101 @@
+{
+  "sources": [
+    {
+      "id": "beaches",
+      "url": "https://www.data.go.kr/data/15056087/fileData.do",
+      "date": "2021-05-01",
+      "records": 277
+    },
+    {
+      "id": "national-harbors",
+      "url": "https://www.data.go.kr/data/3083027/fileData.do",
+      "date": "2019-12-31",
+      "records": 113
+    },
+    {
+      "id": "local-harbors",
+      "url": "https://www.data.go.kr/data/15147449/fileData.do",
+      "date": "source survey years vary",
+      "records": 242
+    }
+  ],
+  "coverageNote": "Official source snapshots, not a complete current list of every coastal place. Unmapped entries are withheld. Village harbors without addresses excluded.",
+  "items": [
+    {
+      "id": "a07a6cae32d56cadd7a4",
+      "term": "강릉항",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "강릉항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "f58f8f1d41929c956d8b",
+      "term": "강문해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "강문",
+        "강문해변",
+        "강문해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d54a3b88410301633b07",
+      "term": "경포대해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "경포대",
+        "경포대해변",
+        "경포대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0329da04fd5485e5e0c4",
+      "term": "금진해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "금진",
+        "금진해변",
+        "금진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "9d1746acc1268382ea0b",
+      "term": "남항진해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "남항진",
+        "남항진해변",
+        "남항진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4e83170e82f69193dace",
+      "term": "도직해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "도직",
+        "도직해변",
+        "도직해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "9f26a29a4a424cba04e8",
+      "term": "등명해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "등명",
+        "등명해변",
+        "등명해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "99e737394774732af984",
+      "term": "사근진해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "사근진",
+        "사근진해변",
+        "사근진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ca96f66476b273b179c0",
+      "term": "사천진해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "사천진",
+        "사천진해변",
+        "사천진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "adb9a94d47bb37cdd7e9",
+      "term": "사천해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "사천",
+        "사천해변",
+        "사천해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "206cecd7454cd752bb71",
+      "term": "송정해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "송정",
+        "송정해변",
+        "송정해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "9de30ac0f561f72baa7e",
+      "term": "순긋해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "순긋",
+        "순긋해변",
+        "순긋해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "79ed6fa3d0540ae23581",
+      "term": "안목해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "안목",
+        "안목해변",
+        "안목해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "3c81822248b2f57dcad1",
+      "term": "안인해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "안인",
+        "안인해변",
+        "안인해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "fd0c046d736015f47209",
+      "term": "연곡해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "연곡",
+        "연곡해변",
+        "연곡해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "6cd1e66c160a6c181e5c",
+      "term": "염전해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "염전",
+        "염전해변",
+        "염전해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a39fbb25b70b510b4275",
+      "term": "영진해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "영진",
+        "영진해변",
+        "영진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "418ae36e5c31b434c1f8",
+      "term": "옥계해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "옥계",
+        "옥계해변",
+        "옥계해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "58c11d6af0f0bcccda0a",
+      "term": "정동진해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "정동진",
+        "정동진해변",
+        "정동진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "14d96a724e56db134ac3",
+      "term": "주문진해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "주문진",
+        "주문진해변",
+        "주문진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4792b33bbe9c4a4a542c",
+      "term": "하평해수욕장",
+      "regionFull": "강원특별자치도 강릉시",
+      "regions": [
+        "area-4434"
+      ],
+      "aliases": [
+        "하평",
+        "하평해변",
+        "하평해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7e98c2f67d9b119a025e",
+      "term": "사천진항",
+      "regionFull": "강원특별자치도 강릉시 사천면",
+      "regions": [
+        "area-4527"
+      ],
+      "aliases": [
+        "사천진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "bf844ed811f97d4e0ccd",
+      "term": "영진항",
+      "regionFull": "강원특별자치도 강릉시 연곡면 영진리",
+      "regions": [
+        "area-4539"
+      ],
+      "aliases": [
+        "영진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "118bdb899f3dfb15682d",
+      "term": "금진항",
+      "regionFull": "강원특별자치도 강릉시 옥계면",
+      "regions": [
+        "area-4516"
+      ],
+      "aliases": [
+        "금진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "d16f99702d031a290155",
+      "term": "소돌항",
+      "regionFull": "강원특별자치도 강릉시 주문진읍 주문리",
+      "regions": [
+        "area-4475"
+      ],
+      "aliases": [
+        "소돌항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "74d4ec319e677a70ede0",
+      "term": "가진진해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "가진진",
+        "가진진해변",
+        "가진진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a7a53a2e7d1baa4e7e4d",
+      "term": "거진11리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "거진11리",
+        "거진11리해변",
+        "거진11리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "3d089a5bda4cc989af21",
+      "term": "거진1리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "거진1리",
+        "거진1리해변",
+        "거진1리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "cb8a2f72aff0ec9545d4",
+      "term": "공현진1리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "공현진1리",
+        "공현진1리해변",
+        "공현진1리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "00620f562c3b64ed2a03",
+      "term": "공현진2리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "공현진2리",
+        "공현진2리해변",
+        "공현진2리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a790d2da84e7538ddec6",
+      "term": "교암리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "교암리",
+        "교암리해변",
+        "교암리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "99bc91967a52def479a3",
+      "term": "대진1리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "대진1리",
+        "대진1리해변",
+        "대진1리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c59a79985fdc6ac84bbe",
+      "term": "대진5리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "대진5리",
+        "대진5리해변",
+        "대진5리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5a3810efc9714ff03473",
+      "term": "마차진해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "마차진",
+        "마차진해변",
+        "마차진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "60b1759ced9c9784c18b",
+      "term": "명파리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "명파리",
+        "명파리해변",
+        "명파리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1896d445e16e8aaa511d",
+      "term": "문암진2리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "문암진2리",
+        "문암진2리해변",
+        "문암진2리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0f4707a32e3718c5fd02",
+      "term": "문암캠핑장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "문암캠핑장"
+      ],
+      "category": "해변",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e250c7043e265d0493da",
+      "term": "반암리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "반암리",
+        "반암리해변",
+        "반암리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "613678d85537deac5558",
+      "term": "백도해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "백도",
+        "백도해변",
+        "백도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0c4584f44e350a0afbd4",
+      "term": "봉수대해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "봉수대",
+        "봉수대해변",
+        "봉수대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "820024e2093aaa7671ef",
+      "term": "봉포리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "봉포리",
+        "봉포리해변",
+        "봉포리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8b39854131da5aba1ee8",
+      "term": "삼포2리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "삼포2리",
+        "삼포2리해변",
+        "삼포2리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e6bd4095119d7c5bafed",
+      "term": "삼포해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "삼포",
+        "삼포해변",
+        "삼포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "90c28782a97e085f1d8c",
+      "term": "송지호오토캠핑장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "송지호오토캠핑장"
+      ],
+      "category": "해변",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "944f73f1eb5676e5d118",
+      "term": "송지호해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "송지호",
+        "송지호해변",
+        "송지호해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4fb5a5dd8b5f7fd74fa9",
+      "term": "아야진리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "아야진리",
+        "아야진리해변",
+        "아야진리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "88a8c915d71d3d41d1ea",
+      "term": "자작도해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "자작도",
+        "자작도해변",
+        "자작도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "130b65a16cd640122c9d",
+      "term": "천진리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "천진리",
+        "천진리해변",
+        "천진리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a5b7f95935453e59ae41",
+      "term": "청간리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "청간리",
+        "청간리해변",
+        "청간리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5cd4a98218a7478c0873",
+      "term": "초도리해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "초도리",
+        "초도리해변",
+        "초도리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1f46a6c338fe326bba1d",
+      "term": "켄싱턴리조트",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "켄싱턴리조트"
+      ],
+      "category": "해변",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e60f173bb8dd40827ce0",
+      "term": "화진포 콘도",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "화진포 콘도"
+      ],
+      "category": "해변",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "06c4ceae54e266c9f7ce",
+      "term": "화진포해수욕장",
+      "regionFull": "강원특별자치도 고성군",
+      "regions": [
+        "area-4547"
+      ],
+      "aliases": [
+        "화진포",
+        "화진포해변",
+        "화진포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "46c307a20a33a3a071d4",
+      "term": "거진항",
+      "regionFull": "강원특별자치도 고성군 거진읍",
+      "regions": [
+        "area-4566"
+      ],
+      "aliases": [
+        "거진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "18ad01afbc36c10e708e",
+      "term": "공현진항",
+      "regionFull": "강원특별자치도 고성군 죽왕면",
+      "regions": [
+        "area-4602"
+      ],
+      "aliases": [
+        "공현진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "189b28b27212f45ace5f",
+      "term": "문암1리항",
+      "regionFull": "강원특별자치도 고성군 죽왕면",
+      "regions": [
+        "area-4602"
+      ],
+      "aliases": [
+        "문암1리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "6352084918f5af4bd1be",
+      "term": "문암2리항",
+      "regionFull": "강원특별자치도 고성군 죽왕면",
+      "regions": [
+        "area-4602"
+      ],
+      "aliases": [
+        "문암2리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b562b31721952067004a",
+      "term": "가진항",
+      "regionFull": "강원특별자치도 고성군 죽왕면 가진리",
+      "regions": [
+        "area-4605"
+      ],
+      "aliases": [
+        "가진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "0d2d6a92827cf76c3649",
+      "term": "오호항",
+      "regionFull": "강원특별자치도 고성군 죽왕면 오호리",
+      "regions": [
+        "area-4603"
+      ],
+      "aliases": [
+        "오호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "37f2787dde7d27921e12",
+      "term": "아야진항",
+      "regionFull": "강원특별자치도 고성군 토성면",
+      "regions": [
+        "area-4615"
+      ],
+      "aliases": [
+        "아야진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "6bf2c23a52532599234d",
+      "term": "교암항",
+      "regionFull": "강원특별자치도 고성군 토성면 교암리",
+      "regions": [
+        "area-4619"
+      ],
+      "aliases": [
+        "교암항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "e8f517d91b37dd4eef90",
+      "term": "봉포항",
+      "regionFull": "강원특별자치도 고성군 토성면 봉포리",
+      "regions": [
+        "area-4630"
+      ],
+      "aliases": [
+        "봉포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "68e11b8d8447c9d9ebd3",
+      "term": "천진항",
+      "regionFull": "강원특별자치도 고성군 토성면 천진리",
+      "regions": [
+        "area-4616"
+      ],
+      "aliases": [
+        "천진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3c5f2ee17242261cddb4",
+      "term": "대진항(강원)",
+      "regionFull": "강원특별자치도 고성군 현내면",
+      "regions": [
+        "area-4584"
+      ],
+      "aliases": [
+        "대진항(강원)"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "7a46aeecf6ddc2d4880c",
+      "term": "노봉해수욕장",
+      "regionFull": "강원특별자치도 동해시",
+      "regions": [
+        "area-4642"
+      ],
+      "aliases": [
+        "노봉",
+        "노봉해변",
+        "노봉해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "648ee75e4ae6df75096f",
+      "term": "대진해수욕장",
+      "regionFull": "강원특별자치도 동해시",
+      "regions": [
+        "area-4642"
+      ],
+      "aliases": [
+        "대진",
+        "대진해변",
+        "대진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d4884d81b0241f0790db",
+      "term": "망상리조트",
+      "regionFull": "강원특별자치도 동해시",
+      "regions": [
+        "area-4642"
+      ],
+      "aliases": [
+        "망상리조트"
+      ],
+      "category": "해변",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c7e853a95cf8055246b5",
+      "term": "망상해수욕장",
+      "regionFull": "강원특별자치도 동해시",
+      "regions": [
+        "area-4642"
+      ],
+      "aliases": [
+        "망상",
+        "망상해변",
+        "망상해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "60c64966bb18ddaf79e4",
+      "term": "어달해수욕장",
+      "regionFull": "강원특별자치도 동해시",
+      "regions": [
+        "area-4642"
+      ],
+      "aliases": [
+        "어달",
+        "어달해변",
+        "어달해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "523dc23d21f716d5e0bf",
+      "term": "추암해수욕장",
+      "regionFull": "강원특별자치도 동해시",
+      "regions": [
+        "area-4642"
+      ],
+      "aliases": [
+        "추암",
+        "추암해변",
+        "추암해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8d63f7ec71ea9d946652",
+      "term": "궁촌해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "궁촌",
+        "궁촌해변",
+        "궁촌해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "6476b4adb4d9128011ef",
+      "term": "덕산해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "덕산",
+        "덕산해변",
+        "덕산해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "2518f52ac597c8bc6994",
+      "term": "맹방해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "맹방",
+        "맹방해변",
+        "맹방해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d97fb6c5d7a663894255",
+      "term": "문암해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "문암",
+        "문암해변",
+        "문암해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "2290d0fb6328de209333",
+      "term": "부남해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "부남",
+        "부남해변",
+        "부남해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c73bdd785651577056e6",
+      "term": "삼척해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "삼척",
+        "삼척해변",
+        "삼척해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "afd6248947b13a26f5c5",
+      "term": "상맹방해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "상맹방",
+        "상맹방해변",
+        "상맹방해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "820421be4837cc2b9f22",
+      "term": "오분(간이)해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "오분(간이)",
+        "오분(간이)해변",
+        "오분(간이)해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8b5bf667a392f9123027",
+      "term": "용화해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "용화",
+        "용화해변",
+        "용화해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "fb0db908ae84741beda7",
+      "term": "원평해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "원평",
+        "원평해변",
+        "원평해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7b258b933630e7750c9f",
+      "term": "임원해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "임원",
+        "임원해변",
+        "임원해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5ab5d1cf529a75a42827",
+      "term": "작은후진해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "작은후진",
+        "작은후진해변",
+        "작은후진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5f755c74469a79173acc",
+      "term": "장호해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "장호",
+        "장호해변",
+        "장호해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "f07b5ba60b97ac7f5a7f",
+      "term": "증산해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "증산",
+        "증산해변",
+        "증산해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "54567750e5bde4d01127",
+      "term": "하맹방해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "하맹방",
+        "하맹방해변",
+        "하맹방해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4dc657846659c712a503",
+      "term": "한재밑해수욕장",
+      "regionFull": "강원특별자치도 삼척시",
+      "regions": [
+        "area-4679"
+      ],
+      "aliases": [
+        "한재밑",
+        "한재밑해변",
+        "한재밑해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "117295a8e0bcd114f96b",
+      "term": "궁촌항",
+      "regionFull": "강원특별자치도 삼척시 근덕면",
+      "regions": [
+        "area-4737"
+      ],
+      "aliases": [
+        "궁촌항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "178e527611c0c05c8ce1",
+      "term": "덕산항",
+      "regionFull": "강원특별자치도 삼척시 근덕면",
+      "regions": [
+        "area-4737"
+      ],
+      "aliases": [
+        "덕산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "ae2e95f0ecf0fd3dc0b7",
+      "term": "장호항",
+      "regionFull": "강원특별자치도 삼척시 근덕면",
+      "regions": [
+        "area-4737"
+      ],
+      "aliases": [
+        "장호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "72f99ee494df69583e1e",
+      "term": "초곡항",
+      "regionFull": "강원특별자치도 삼척시 근덕면 초곡리",
+      "regions": [
+        "area-4749"
+      ],
+      "aliases": [
+        "초곡항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "487d1a0af1fc42616781",
+      "term": "임원항",
+      "regionFull": "강원특별자치도 삼척시 원덕읍",
+      "regions": [
+        "area-4725"
+      ],
+      "aliases": [
+        "임원항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "78b895b8f45148c9178d",
+      "term": "신남항",
+      "regionFull": "강원특별자치도 삼척시 원덕읍 갈남리",
+      "regions": [
+        "area-4726"
+      ],
+      "aliases": [
+        "신남항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "6a811f083e861b1eb373",
+      "term": "등대해수욕장",
+      "regionFull": "강원특별자치도 속초시",
+      "regions": [
+        "area-4816"
+      ],
+      "aliases": [
+        "등대",
+        "등대해변",
+        "등대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0a578335441c6833afe2",
+      "term": "속초해수욕장",
+      "regionFull": "강원특별자치도 속초시",
+      "regions": [
+        "area-4816"
+      ],
+      "aliases": [
+        "속초",
+        "속초해변",
+        "속초해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "efb507945b253fe3e457",
+      "term": "외옹치해수욕장",
+      "regionFull": "강원특별자치도 속초시",
+      "regions": [
+        "area-4816"
+      ],
+      "aliases": [
+        "외옹치",
+        "외옹치해변",
+        "외옹치해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "92749705e8725614845b",
+      "term": "대포항",
+      "regionFull": "강원특별자치도 속초시 대포동",
+      "regions": [
+        "area-4826"
+      ],
+      "aliases": [
+        "대포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors",
+        "user-request-verified-region"
+      ]
+    },
+    {
+      "id": "05a6a504685e048081a4",
+      "term": "갯마을해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "갯마을",
+        "갯마을해변",
+        "갯마을해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "81c235c45c7a23a6747c",
+      "term": "광진해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "광진",
+        "광진해변",
+        "광진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "421d5ce575d09fda3d8e",
+      "term": "기사문해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "기사문",
+        "기사문해변",
+        "기사문해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "26060dafc9fe5a0a518d",
+      "term": "낙산해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "낙산",
+        "낙산해변",
+        "낙산해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "2d46b07bd00b93e33b9a",
+      "term": "남애1해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "남애1",
+        "남애1해변",
+        "남애1해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ddb4fe10951bf9ff3d90",
+      "term": "남애3해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "남애3",
+        "남애3해변",
+        "남애3해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "762a4e957da9db0876d2",
+      "term": "동산포해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "동산포",
+        "동산포해변",
+        "동산포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a85be8fdb119d1607aa1",
+      "term": "동산해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "동산",
+        "동산해변",
+        "동산해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "66ba88480664a9ae4d40",
+      "term": "동호해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "동호",
+        "동호해변",
+        "동호해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8eb369375801f7f7c4c2",
+      "term": "물치해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "물치",
+        "물치해변",
+        "물치해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5178d846a82ea7f7ecd8",
+      "term": "북분해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "북분",
+        "북분해변",
+        "북분해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5a755919c44bf8c88782",
+      "term": "설악해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "설악",
+        "설악해변",
+        "설악해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "49f5a8556c92f5fc7173",
+      "term": "송전해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "송전",
+        "송전해변",
+        "송전해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "545390c79f3fa59a94cc",
+      "term": "원포해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "원포",
+        "원포해변",
+        "원포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d8937955928114f2a541",
+      "term": "잔교해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "잔교",
+        "잔교해변",
+        "잔교해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "22266639f3c2f0e839eb",
+      "term": "정암해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "정암",
+        "정암해변",
+        "정암해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d9a63fe7eca4e083e6e6",
+      "term": "죽도해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "죽도",
+        "죽도해변",
+        "죽도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1a6b2b86a2fccdff53f5",
+      "term": "중광정해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "중광정",
+        "중광정해변",
+        "중광정해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1312af52b8a0208ca29b",
+      "term": "지  경해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "지  경",
+        "지  경해변",
+        "지  경해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "99828fba0c62f36361ef",
+      "term": "하조대해수욕장",
+      "regionFull": "강원특별자치도 양양군",
+      "regions": [
+        "area-4896"
+      ],
+      "aliases": [
+        "하조대",
+        "하조대해변",
+        "하조대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4e48d7f8d4fddb38f4a2",
+      "term": "물치항",
+      "regionFull": "강원특별자치도 양양군 강현면 물치리",
+      "regions": [
+        "area-5005"
+      ],
+      "aliases": [
+        "물치항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "247dc210d1d43c1a6560",
+      "term": "수산항",
+      "regionFull": "강원특별자치도 양양군 손양면",
+      "regions": [
+        "area-4938"
+      ],
+      "aliases": [
+        "수산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "0d49b0fd216dc2055607",
+      "term": "남애항",
+      "regionFull": "강원특별자치도 양양군 현남면",
+      "regions": [
+        "area-4978"
+      ],
+      "aliases": [
+        "남애항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "6c49e32f0f31b6cb0180",
+      "term": "동산항",
+      "regionFull": "강원특별자치도 양양군 현남면 동산리",
+      "regions": [
+        "area-4981"
+      ],
+      "aliases": [
+        "동산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f9826b2988833b53a69b",
+      "term": "인구항",
+      "regionFull": "강원특별자치도 양양군 현남면 인구리",
+      "regions": [
+        "area-4979"
+      ],
+      "aliases": [
+        "인구항"
+      ],
+      "category": "항구",
+      "sources": [
+        "user-request-verified-region"
+      ]
+    },
+    {
+      "id": "62bab8c5c1799e740df4",
+      "term": "인구해수욕장",
+      "regionFull": "강원특별자치도 양양군 현남면 인구리",
+      "regions": [
+        "area-4979"
+      ],
+      "aliases": [
+        "인구",
+        "인구해변",
+        "인구해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches",
+        "user-request-verified-region"
+      ]
+    },
+    {
+      "id": "6b9e5968dfc9fc0b1684",
+      "term": "대명항",
+      "regionFull": "경기도 김포시 대곶면 대명리",
+      "regions": [
+        "area-2516"
+      ],
+      "aliases": [
+        "대명항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "73552d3222236468e85d",
+      "term": "탄도항",
+      "regionFull": "경기도 안산시 단원구 선감동",
+      "regions": [
+        "area-2807"
+      ],
+      "aliases": [
+        "탄도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "47eae5c62050cde22a78",
+      "term": "풍도항",
+      "regionFull": "경기도 안산시 단원구 풍도동",
+      "regions": [
+        "area-2808"
+      ],
+      "aliases": [
+        "풍도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "2bdca31db1d2cf5b39d2",
+      "term": "궁평항",
+      "regionFull": "경기도 화성시",
+      "regions": [
+        "area-4220"
+      ],
+      "aliases": [
+        "궁평항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "a22b9385d8f47e33ac79",
+      "term": "전곡항",
+      "regionFull": "경기도 화성시",
+      "regions": [
+        "area-4220"
+      ],
+      "aliases": [
+        "전곡항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "82ec7a1b4b89871c5cb1",
+      "term": "제부항",
+      "regionFull": "경기도 화성시",
+      "regions": [
+        "area-4220"
+      ],
+      "aliases": [
+        "제부항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b78a2eaff9ed4d9eb318",
+      "term": "구영해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "구영",
+        "구영해변",
+        "구영해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1d11668fa1f7363a4680",
+      "term": "구조라해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "구조라",
+        "구조라해변",
+        "구조라해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5f117513ed8841080479",
+      "term": "농소해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "농소",
+        "농소해변",
+        "농소해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "f002b45a80854fbbc6e2",
+      "term": "능포항",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "능포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "fd9dc6097cab92b71815",
+      "term": "덕원해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "덕원",
+        "덕원해변",
+        "덕원해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1035b900afe1a567d7f4",
+      "term": "덕포해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "덕포",
+        "덕포해변",
+        "덕포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ff34323cc68236071831",
+      "term": "망치해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "망치",
+        "망치해변",
+        "망치해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1d5572a4f570a5389748",
+      "term": "명사해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "명사",
+        "명사해변",
+        "명사해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "30c2a0aafe7a697bc86b",
+      "term": "물안해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "물안",
+        "물안해변",
+        "물안해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "bd65554f82f1b9555e11",
+      "term": "사곡해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "사곡",
+        "사곡해변",
+        "사곡해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "f7313a0cc35f0c499fab",
+      "term": "여차해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "여차",
+        "여차해변",
+        "여차해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c2ed628eaa2165f2008c",
+      "term": "옥계해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "옥계",
+        "옥계해변",
+        "옥계해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "063ff279288215422fd5",
+      "term": "와현모래숲해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "와현모래숲",
+        "와현모래숲해변",
+        "와현모래숲해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7cae11fcbf58ad926daa",
+      "term": "죽림해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "죽림",
+        "죽림해변",
+        "죽림해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "496724af757dc63a63d1",
+      "term": "학동흑진주몽돌해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "학동흑진주몽돌",
+        "학동흑진주몽돌해변",
+        "학동흑진주몽돌해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "88428bb3034ec4aedf84",
+      "term": "함목해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "함목",
+        "함목해변",
+        "함목해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "3f523e050b1573e0b135",
+      "term": "황포해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "황포",
+        "황포해변",
+        "황포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "08bb3c0bd5784aa1c770",
+      "term": "흥남해수욕장",
+      "regionFull": "경상남도 거제시",
+      "regions": [
+        "area-17947"
+      ],
+      "aliases": [
+        "흥남",
+        "흥남해변",
+        "흥남해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "edc9309f4e704ed2ca44",
+      "term": "죽림항",
+      "regionFull": "경상남도 거제시 거제면 오수리",
+      "regions": [
+        "area-17993"
+      ],
+      "aliases": [
+        "죽림항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9a673cf2447a089b1736",
+      "term": "다대다포항",
+      "regionFull": "경상남도 거제시 남부면",
+      "regions": [
+        "area-17978"
+      ],
+      "aliases": [
+        "다대다포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "40470943ce84e87093ef",
+      "term": "대포근포항",
+      "regionFull": "경상남도 거제시 남부면",
+      "regions": [
+        "area-17978"
+      ],
+      "aliases": [
+        "대포근포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "10699ade70bb43df8f2f",
+      "term": "도장포항",
+      "regionFull": "경상남도 거제시 남부면 갈곶리",
+      "regions": [
+        "area-17983"
+      ],
+      "aliases": [
+        "도장포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3ec606317a3b6a8f8805",
+      "term": "쌍근항",
+      "regionFull": "경상남도 거제시 남부면 탑포리",
+      "regions": [
+        "area-17979"
+      ],
+      "aliases": [
+        "쌍근항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "53f10cb43f778105650b",
+      "term": "성포항",
+      "regionFull": "경상남도 거제시 사등면 성포리",
+      "regions": [
+        "area-18009"
+      ],
+      "aliases": [
+        "성포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "4b3254717d70aa525bff",
+      "term": "유교항",
+      "regionFull": "경상남도 거제시 사등면 창호리",
+      "regions": [
+        "area-18014"
+      ],
+      "aliases": [
+        "유교항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "6b3217f47502415712fd",
+      "term": "한내항",
+      "regionFull": "경상남도 거제시 연초면 한내리",
+      "regions": [
+        "area-18016"
+      ],
+      "aliases": [
+        "한내항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1f60f80bfeb8a03d94f5",
+      "term": "조라항",
+      "regionFull": "경상남도 거제시 옥포동",
+      "regions": [
+        "area-17953"
+      ],
+      "aliases": [
+        "조라항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c876236b7c543b3caa23",
+      "term": "구조라항",
+      "regionFull": "경상남도 거제시 일운면",
+      "regions": [
+        "area-17962"
+      ],
+      "aliases": [
+        "구조라항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "215429586b6aedb7bd34",
+      "term": "지세포항",
+      "regionFull": "경상남도 거제시 일운면",
+      "regions": [
+        "area-17962"
+      ],
+      "aliases": [
+        "지세포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "198d01bcecbe3efd72d9",
+      "term": "외포항",
+      "regionFull": "경상남도 거제시 장목면",
+      "regions": [
+        "area-18035"
+      ],
+      "aliases": [
+        "외포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "d75b9e306e9eb3844182",
+      "term": "관포항",
+      "regionFull": "경상남도 거제시 장목면 관포리",
+      "regions": [
+        "area-18040"
+      ],
+      "aliases": [
+        "관포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3d35adebf297138cc61a",
+      "term": "시방항",
+      "regionFull": "경상남도 거제시 장목면 시방리",
+      "regions": [
+        "area-18045"
+      ],
+      "aliases": [
+        "시방항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d4336d8b0f58a7cae2aa",
+      "term": "유호항",
+      "regionFull": "경상남도 거제시 장목면 유호리",
+      "regions": [
+        "area-18037"
+      ],
+      "aliases": [
+        "유호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "41e2e125c3980fc9a535",
+      "term": "장목항",
+      "regionFull": "경상남도 거제시 장목면 장목리",
+      "regions": [
+        "area-18041"
+      ],
+      "aliases": [
+        "장목항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "6d954eb995b6dcc995b2",
+      "term": "송포항",
+      "regionFull": "경상남도 거제시 하청면 대곡리",
+      "regions": [
+        "area-18033"
+      ],
+      "aliases": [
+        "송포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "97c94617ce886fc0ad76",
+      "term": "물안항",
+      "regionFull": "경상남도 거제시 하청면 어온리",
+      "regions": [
+        "area-18032"
+      ],
+      "aliases": [
+        "물안항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "bde81209da7f7435cdb1",
+      "term": "하청항",
+      "regionFull": "경상남도 거제시 하청면 하청리",
+      "regions": [
+        "area-18030"
+      ],
+      "aliases": [
+        "하청항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "41871ea8a664988e7612",
+      "term": "당동항",
+      "regionFull": "경상남도 고성군 거류면 당동리",
+      "regions": [
+        "area-18278"
+      ],
+      "aliases": [
+        "당동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "797d85a56351816b491c",
+      "term": "남포항",
+      "regionFull": "경상남도 고성군 고성읍",
+      "regions": [
+        "area-18154"
+      ],
+      "aliases": [
+        "남포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "241b18b71f13f68ab97c",
+      "term": "포교항",
+      "regionFull": "경상남도 고성군 삼산면 두포리",
+      "regions": [
+        "area-18174"
+      ],
+      "aliases": [
+        "포교항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "771b4a4a0cd7187c3984",
+      "term": "맥전포항",
+      "regionFull": "경상남도 고성군 하일면",
+      "regions": [
+        "area-18179"
+      ],
+      "aliases": [
+        "맥전포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "699138f4e1d516091d10",
+      "term": "당항항",
+      "regionFull": "경상남도 고성군 회화면 당항리",
+      "regions": [
+        "area-18252"
+      ],
+      "aliases": [
+        "당항항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "7a59325f06d2eb419a85",
+      "term": "두곡월포해수욕장",
+      "regionFull": "경상남도 남해군",
+      "regions": [
+        "area-18396"
+      ],
+      "aliases": [
+        "두곡월포",
+        "두곡월포해변",
+        "두곡월포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e3725450f3474b9c04c5",
+      "term": "사촌해수욕장",
+      "regionFull": "경상남도 남해군",
+      "regions": [
+        "area-18396"
+      ],
+      "aliases": [
+        "사촌",
+        "사촌해변",
+        "사촌해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "bfa909b42513615d0250",
+      "term": "상주은모래비치해수욕장",
+      "regionFull": "경상남도 남해군",
+      "regions": [
+        "area-18396"
+      ],
+      "aliases": [
+        "상주은모래비치",
+        "상주은모래비치해변",
+        "상주은모래비치해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ce85ce17e8ce3767ff06",
+      "term": "설리해수욕장",
+      "regionFull": "경상남도 남해군",
+      "regions": [
+        "area-18396"
+      ],
+      "aliases": [
+        "설리",
+        "설리해변",
+        "설리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "dfb346fb924d9f8acb8f",
+      "term": "송정솔바람해수욕장",
+      "regionFull": "경상남도 남해군",
+      "regions": [
+        "area-18396"
+      ],
+      "aliases": [
+        "송정솔바람",
+        "송정솔바람해변",
+        "송정솔바람해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c55593f59d999bca9153",
+      "term": "선소항",
+      "regionFull": "경상남도 남해군 남해읍 선소리",
+      "regions": [
+        "area-18402"
+      ],
+      "aliases": [
+        "선소항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d665d2e798d009cbbc4f",
+      "term": "미조항",
+      "regionFull": "경상남도 남해군 미조면",
+      "regions": [
+        "area-18427"
+      ],
+      "aliases": [
+        "미조항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "19e8905c3888dba04536",
+      "term": "물건항",
+      "regionFull": "경상남도 남해군 삼동면",
+      "regions": [
+        "area-18420"
+      ],
+      "aliases": [
+        "물건항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "8154a67c346409508934",
+      "term": "은점항",
+      "regionFull": "경상남도 남해군 삼동면 물건리",
+      "regions": [
+        "area-18426"
+      ],
+      "aliases": [
+        "은점항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3e03ee04f40c1fa853a2",
+      "term": "지족항",
+      "regionFull": "경상남도 남해군 삼동면 지족리",
+      "regions": [
+        "area-18422"
+      ],
+      "aliases": [
+        "지족항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3cb1c06c9728184c8cd1",
+      "term": "유포항",
+      "regionFull": "경상남도 남해군 서면 노구리",
+      "regions": [
+        "area-18447"
+      ],
+      "aliases": [
+        "유포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "6f75903f6f820cb3a776",
+      "term": "서상항",
+      "regionFull": "경상남도 남해군 서면 서상리",
+      "regions": [
+        "area-18444"
+      ],
+      "aliases": [
+        "서상항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d60418b9ffdeb8d23b24",
+      "term": "원천항",
+      "regionFull": "경상남도 남해군 이동면 신전리",
+      "regions": [
+        "area-18413"
+      ],
+      "aliases": [
+        "원천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "4e13162c284eb48e03ab",
+      "term": "냉천항",
+      "regionFull": "경상남도 남해군 창선면 당항리",
+      "regions": [
+        "area-18472"
+      ],
+      "aliases": [
+        "냉천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "361583251199ce29c352",
+      "term": "신흥항",
+      "regionFull": "경상남도 남해군 창선면 지족리",
+      "regions": [
+        "area-18477"
+      ],
+      "aliases": [
+        "신흥항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "58ebb00064073454b2fa",
+      "term": "장포항",
+      "regionFull": "경상남도 남해군 창선면 진동리",
+      "regions": [
+        "area-18485"
+      ],
+      "aliases": [
+        "장포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "982f249f6e94ade4019f",
+      "term": "적량항",
+      "regionFull": "경상남도 남해군 창선면 진동리",
+      "regions": [
+        "area-18485"
+      ],
+      "aliases": [
+        "적량항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "e7720312a46f6b6139d3",
+      "term": "남일대해수욕장",
+      "regionFull": "경상남도 사천시",
+      "regions": [
+        "area-18625"
+      ],
+      "aliases": [
+        "남일대",
+        "남일대해변",
+        "남일대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e974715ce6b9680acf57",
+      "term": "삼천포항",
+      "regionFull": "경상남도 사천시",
+      "regions": [
+        "area-18625"
+      ],
+      "aliases": [
+        "삼천포",
+        "삼천포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "user-request-verified-region"
+      ]
+    },
+    {
+      "id": "3033462b325d4034ffb4",
+      "term": "신수항",
+      "regionFull": "경상남도 사천시",
+      "regions": [
+        "area-18625"
+      ],
+      "aliases": [
+        "신수항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "dac607046ecc41ce23dc",
+      "term": "늑도항",
+      "regionFull": "경상남도 사천시 늑도동",
+      "regions": [
+        "area-18645"
+      ],
+      "aliases": [
+        "늑도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "88ab32711ef042a90c1b",
+      "term": "낙지포항",
+      "regionFull": "경상남도 사천시 서포면 비토리",
+      "regions": [
+        "area-18750"
+      ],
+      "aliases": [
+        "낙지포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f039f6a93708cf44a592",
+      "term": "광암해수욕장",
+      "regionFull": "경상남도 창원시",
+      "regions": [
+        "area-19404"
+      ],
+      "aliases": [
+        "광암",
+        "광암해변",
+        "광암해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e946e474265f6a347804",
+      "term": "원전항",
+      "regionFull": "경상남도 창원시 마산합포구 구산면",
+      "regions": [
+        "area-19466"
+      ],
+      "aliases": [
+        "원전항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "a68db1ec5147660e0331",
+      "term": "옥계항",
+      "regionFull": "경상남도 창원시 마산합포구 구산면 옥계리",
+      "regions": [
+        "area-19472"
+      ],
+      "aliases": [
+        "옥계항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "78f3ba38f2ca8d8b13f1",
+      "term": "광암항",
+      "regionFull": "경상남도 창원시 마산합포구 진동면",
+      "regions": [
+        "area-19477"
+      ],
+      "aliases": [
+        "광암항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "cd3ea24e4696e36b9707",
+      "term": "진동항",
+      "regionFull": "경상남도 창원시 마산합포구 진동면 고현리",
+      "regions": [
+        "area-19478"
+      ],
+      "aliases": [
+        "진동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "ea117798901461406d3b",
+      "term": "수치항",
+      "regionFull": "경상남도 창원시 진해구 원포동",
+      "regions": [
+        "area-19717"
+      ],
+      "aliases": [
+        "수치항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "5827ae18d72020224522",
+      "term": "비진도해수욕장",
+      "regionFull": "경상남도 통영시",
+      "regions": [
+        "area-19727"
+      ],
+      "aliases": [
+        "비진도",
+        "비진도해변",
+        "비진도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c321baa68af2e8abea8e",
+      "term": "사량도 대항해수욕장",
+      "regionFull": "경상남도 통영시",
+      "regions": [
+        "area-19727"
+      ],
+      "aliases": [
+        "사량도 대항",
+        "사량도 대항해변",
+        "사량도 대항해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a457de8214d33c808567",
+      "term": "수륙해수욕장",
+      "regionFull": "경상남도 통영시",
+      "regions": [
+        "area-19727"
+      ],
+      "aliases": [
+        "수륙",
+        "수륙해변",
+        "수륙해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "859c2db314555672440f",
+      "term": "예포항",
+      "regionFull": "경상남도 통영시 광도면 안정리",
+      "regions": [
+        "area-19781"
+      ],
+      "aliases": [
+        "예포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "92d55d780eb3d0d39816",
+      "term": "능양항",
+      "regionFull": "경상남도 통영시 사량면",
+      "regions": [
+        "area-19797"
+      ],
+      "aliases": [
+        "능양항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "8560aec30bb1af19262f",
+      "term": "진촌항",
+      "regionFull": "경상남도 통영시 사량면 금평리",
+      "regions": [
+        "area-19798"
+      ],
+      "aliases": [
+        "진촌항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3a9142a5258227ae9805",
+      "term": "돈지항",
+      "regionFull": "경상남도 통영시 사량면 돈지리",
+      "regions": [
+        "area-19799"
+      ],
+      "aliases": [
+        "돈지항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "146ce283e73a4f4a328f",
+      "term": "삼덕항",
+      "regionFull": "경상남도 통영시 산양읍",
+      "regions": [
+        "area-19745"
+      ],
+      "aliases": [
+        "삼덕항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "6ad61a1ef5726cd1dd37",
+      "term": "곤리항",
+      "regionFull": "경상남도 통영시 산양읍 곤리리",
+      "regions": [
+        "area-19752"
+      ],
+      "aliases": [
+        "곤리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "a14ac5b8b98b4eb00883",
+      "term": "연명항",
+      "regionFull": "경상남도 통영시 산양읍 연화리",
+      "regions": [
+        "area-19749"
+      ],
+      "aliases": [
+        "연명항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f413bb01fa07407760f0",
+      "term": "이운항",
+      "regionFull": "경상남도 통영시 산양읍 영운리",
+      "regions": [
+        "area-19746"
+      ],
+      "aliases": [
+        "이운항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c7472ba8b873bd837953",
+      "term": "학림항",
+      "regionFull": "경상남도 통영시 산양읍 저림리",
+      "regions": [
+        "area-19754"
+      ],
+      "aliases": [
+        "학림항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f3e049e563866eb8edd8",
+      "term": "향촌항",
+      "regionFull": "경상남도 통영시 산양읍 풍화리",
+      "regions": [
+        "area-19751"
+      ],
+      "aliases": [
+        "향촌항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b1adbcfd17baea557f7e",
+      "term": "욕지항",
+      "regionFull": "경상남도 통영시 욕지면",
+      "regions": [
+        "area-19782"
+      ],
+      "aliases": [
+        "욕지항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c93b9e92617c2d89895b",
+      "term": "연화항",
+      "regionFull": "경상남도 통영시 욕지면 연화리",
+      "regions": [
+        "area-19785"
+      ],
+      "aliases": [
+        "연화항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "6a2ccdd3162745105fa6",
+      "term": "동암항",
+      "regionFull": "경상남도 통영시 용남면 동달리",
+      "regions": [
+        "area-19759"
+      ],
+      "aliases": [
+        "동암항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b8d1ec7ce26a60304da3",
+      "term": "견유항",
+      "regionFull": "경상남도 통영시 용남면 장평리",
+      "regions": [
+        "area-19763"
+      ],
+      "aliases": [
+        "견유항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "af8905970a48ffa9b7b5",
+      "term": "평림항",
+      "regionFull": "경상남도 통영시 평림동",
+      "regions": [
+        "area-19739"
+      ],
+      "aliases": [
+        "평림항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "93cc8fd60495fb2c6c75",
+      "term": "매물도항",
+      "regionFull": "경상남도 통영시 한산면",
+      "regions": [
+        "area-19788"
+      ],
+      "aliases": [
+        "매물도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "338db7571d13670c7c32",
+      "term": "하포항",
+      "regionFull": "경상남도 통영시 한산면",
+      "regions": [
+        "area-19788"
+      ],
+      "aliases": [
+        "하포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "bc6082ca01acd5fe30cb",
+      "term": "호두항",
+      "regionFull": "경상남도 통영시 한산면",
+      "regions": [
+        "area-19788"
+      ],
+      "aliases": [
+        "호두항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c63d84934ecfc312cc68",
+      "term": "장작지항",
+      "regionFull": "경상남도 통영시 한산면 두억리",
+      "regions": [
+        "area-19789"
+      ],
+      "aliases": [
+        "장작지항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "04b67ec391e290930bbd",
+      "term": "내항항",
+      "regionFull": "경상남도 통영시 한산면 비진리",
+      "regions": [
+        "area-19795"
+      ],
+      "aliases": [
+        "내항항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "a238239ea32e6d0026d1",
+      "term": "노량항",
+      "regionFull": "경상남도 하동군 금남면",
+      "regions": [
+        "area-19861"
+      ],
+      "aliases": [
+        "노량항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "178d0ac41c6720bc21b9",
+      "term": "중평항",
+      "regionFull": "경상남도 하동군 금남면 중평리",
+      "regions": [
+        "area-19862"
+      ],
+      "aliases": [
+        "중평항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "cd07290d5fe1df2242a0",
+      "term": "관성해수욕장",
+      "regionFull": "경상북도 경주시",
+      "regions": [
+        "area-14879"
+      ],
+      "aliases": [
+        "관성",
+        "관성해변",
+        "관성해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "cc19ee19ecc33bcb1d28",
+      "term": "나정해수욕장",
+      "regionFull": "경상북도 경주시",
+      "regions": [
+        "area-14879"
+      ],
+      "aliases": [
+        "나정",
+        "나정해변",
+        "나정해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "6ce7018ccaec51bfb1f9",
+      "term": "봉길대왕암해수욕장",
+      "regionFull": "경상북도 경주시",
+      "regions": [
+        "area-14879"
+      ],
+      "aliases": [
+        "봉길대왕암",
+        "봉길대왕암해변",
+        "봉길대왕암해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "913b43e49b61b7ee9f72",
+      "term": "오류해수욕장",
+      "regionFull": "경상북도 경주시",
+      "regions": [
+        "area-14879"
+      ],
+      "aliases": [
+        "오류",
+        "오류해변",
+        "오류해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "9e1719072f176c163f60",
+      "term": "전촌해수욕장",
+      "regionFull": "경상북도 경주시",
+      "regions": [
+        "area-14879"
+      ],
+      "aliases": [
+        "전촌",
+        "전촌해변",
+        "전촌해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ff790fb7cce58db91d75",
+      "term": "감포항",
+      "regionFull": "경상북도 경주시 감포읍",
+      "regions": [
+        "area-14924"
+      ],
+      "aliases": [
+        "감포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "7b2d83f8d16760b5f3c5",
+      "term": "나정항",
+      "regionFull": "경상북도 경주시 감포읍 나정리",
+      "regions": [
+        "area-14928"
+      ],
+      "aliases": [
+        "나정항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "79c3a386d56d024b1875",
+      "term": "가곡항",
+      "regionFull": "경상북도 경주시 감포읍 대본리",
+      "regions": [
+        "area-14925"
+      ],
+      "aliases": [
+        "가곡항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "efe9dbb814846f292872",
+      "term": "전촌항",
+      "regionFull": "경상북도 경주시 감포읍 전촌리",
+      "regions": [
+        "area-14927"
+      ],
+      "aliases": [
+        "전촌항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d7b5deeb1e5b72786b0a",
+      "term": "읍천항",
+      "regionFull": "경상북도 경주시 양남면",
+      "regions": [
+        "area-14996"
+      ],
+      "aliases": [
+        "읍천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "8852aeaf586846b66017",
+      "term": "경정해수욕장",
+      "regionFull": "경상북도 영덕군",
+      "regions": [
+        "area-16338"
+      ],
+      "aliases": [
+        "경정",
+        "경정해변",
+        "경정해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7d46efc286648a1deafd",
+      "term": "고래불해수욕장",
+      "regionFull": "경상북도 영덕군",
+      "regions": [
+        "area-16338"
+      ],
+      "aliases": [
+        "고래불",
+        "고래불해변",
+        "고래불해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ebbffd22acf21d39bcfd",
+      "term": "남호해수욕장",
+      "regionFull": "경상북도 영덕군",
+      "regions": [
+        "area-16338"
+      ],
+      "aliases": [
+        "남호",
+        "남호해변",
+        "남호해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "3de5d905feb8fbc1430d",
+      "term": "대진해수욕장",
+      "regionFull": "경상북도 영덕군",
+      "regions": [
+        "area-16338"
+      ],
+      "aliases": [
+        "대진",
+        "대진해변",
+        "대진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4ef888a3419541d5533a",
+      "term": "오보해수욕장",
+      "regionFull": "경상북도 영덕군",
+      "regions": [
+        "area-16338"
+      ],
+      "aliases": [
+        "오보",
+        "오보해변",
+        "오보해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "68e9db7aade59ed482f2",
+      "term": "장사해수욕장",
+      "regionFull": "경상북도 영덕군",
+      "regions": [
+        "area-16338"
+      ],
+      "aliases": [
+        "장사",
+        "장사해변",
+        "장사해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "f356957c53a766f38c49",
+      "term": "하저해수욕장",
+      "regionFull": "경상북도 영덕군",
+      "regions": [
+        "area-16338"
+      ],
+      "aliases": [
+        "하저",
+        "하저해변",
+        "하저해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "b41f55655afe0e95d8b6",
+      "term": "구계항",
+      "regionFull": "경상북도 영덕군 남정면",
+      "regions": [
+        "area-16368"
+      ],
+      "aliases": [
+        "구계항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "fdabfcce7d60b2256295",
+      "term": "부경항",
+      "regionFull": "경상북도 영덕군 남정면 부경리",
+      "regions": [
+        "area-16370"
+      ],
+      "aliases": [
+        "부경항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d2b37535617775239ca7",
+      "term": "백석항",
+      "regionFull": "경상북도 영덕군 병곡면 백석리",
+      "regions": [
+        "area-16440"
+      ],
+      "aliases": [
+        "백석항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "e815d5312e3967fb8131",
+      "term": "병곡항",
+      "regionFull": "경상북도 영덕군 병곡면 병곡리",
+      "regions": [
+        "area-16441"
+      ],
+      "aliases": [
+        "병곡항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c45d146617c75498619f",
+      "term": "노물항",
+      "regionFull": "경상북도 영덕군 영덕읍 노물리",
+      "regions": [
+        "area-16351"
+      ],
+      "aliases": [
+        "노물항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "aa06a38dc7ee88ba0dee",
+      "term": "창포항",
+      "regionFull": "경상북도 영덕군 영덕읍 대부리",
+      "regions": [
+        "area-16354"
+      ],
+      "aliases": [
+        "창포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "adf389a50d0a7568350a",
+      "term": "대진항",
+      "regionFull": "경상북도 영덕군 영해면",
+      "regions": [
+        "area-16427"
+      ],
+      "aliases": [
+        "대진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c0c8ea697505769aa945",
+      "term": "축산항",
+      "regionFull": "경상북도 영덕군 축산면",
+      "regions": [
+        "area-16416"
+      ],
+      "aliases": [
+        "축산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "05968c739d644faf9084",
+      "term": "경정항",
+      "regionFull": "경상북도 영덕군 축산면 경정리",
+      "regions": [
+        "area-16418"
+      ],
+      "aliases": [
+        "경정항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "4a65b98da3eb4adbc31a",
+      "term": "현포항",
+      "regionFull": "경상북도 울릉군 북면",
+      "regions": [
+        "area-17082"
+      ],
+      "aliases": [
+        "현포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "498bee93e6296d47ea87",
+      "term": "천부항",
+      "regionFull": "경상북도 울릉군 북면 천부리",
+      "regions": [
+        "area-17083"
+      ],
+      "aliases": [
+        "천부항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "a7c6acd65bbbdddb3201",
+      "term": "남양항",
+      "regionFull": "경상북도 울릉군 서면",
+      "regions": [
+        "area-17078"
+      ],
+      "aliases": [
+        "남양항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "3833ced7a8fbb4575e52",
+      "term": "통구미항",
+      "regionFull": "경상북도 울릉군 서면 남양리",
+      "regions": [
+        "area-17079"
+      ],
+      "aliases": [
+        "통구미항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c033366f1c33c3288175",
+      "term": "태하항",
+      "regionFull": "경상북도 울릉군 서면 태하리",
+      "regions": [
+        "area-17081"
+      ],
+      "aliases": [
+        "태하항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "823c4796fc2dd21a5edb",
+      "term": "저동항",
+      "regionFull": "경상북도 울릉군 울릉읍",
+      "regions": [
+        "area-17073"
+      ],
+      "aliases": [
+        "저동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "b135a46744c85edb4594",
+      "term": "구산해수욕장",
+      "regionFull": "경상북도 울진군",
+      "regions": [
+        "area-17086"
+      ],
+      "aliases": [
+        "구산",
+        "구산해변",
+        "구산해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "80d8fdb8ffbe1053dbd7",
+      "term": "기성망양해수욕장",
+      "regionFull": "경상북도 울진군",
+      "regions": [
+        "area-17086"
+      ],
+      "aliases": [
+        "기성망양",
+        "기성망양해변",
+        "기성망양해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "9b05ccba06dcf6c23d21",
+      "term": "나곡해수욕장",
+      "regionFull": "경상북도 울진군",
+      "regions": [
+        "area-17086"
+      ],
+      "aliases": [
+        "나곡",
+        "나곡해변",
+        "나곡해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "51e502b42f8e871db7fc",
+      "term": "망양정해수욕장",
+      "regionFull": "경상북도 울진군",
+      "regions": [
+        "area-17086"
+      ],
+      "aliases": [
+        "망양정",
+        "망양정해변",
+        "망양정해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ec4d32afbe8567442948",
+      "term": "봉평해수욕장",
+      "regionFull": "경상북도 울진군",
+      "regions": [
+        "area-17086"
+      ],
+      "aliases": [
+        "봉평",
+        "봉평해변",
+        "봉평해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "133959f0899d9449b991",
+      "term": "오산항",
+      "regionFull": "경상북도 울진군",
+      "regions": [
+        "area-17086"
+      ],
+      "aliases": [
+        "오산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "45548668cf42787762f8",
+      "term": "후정해수욕장",
+      "regionFull": "경상북도 울진군",
+      "regions": [
+        "area-17086"
+      ],
+      "aliases": [
+        "후정",
+        "후정해변",
+        "후정해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "2eb9276d6d9bee206daf",
+      "term": "후포해수욕장",
+      "regionFull": "경상북도 울진군",
+      "regions": [
+        "area-17086"
+      ],
+      "aliases": [
+        "후포",
+        "후포해변",
+        "후포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7dd74b19b344ec241ab2",
+      "term": "구산항",
+      "regionFull": "경상북도 울진군 기성면",
+      "regions": [
+        "area-17128"
+      ],
+      "aliases": [
+        "구산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "be84fd4a62df47d2afd9",
+      "term": "사동항",
+      "regionFull": "경상북도 울진군 기성면",
+      "regions": [
+        "area-17128"
+      ],
+      "aliases": [
+        "사동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "e55b93bade8474d43224",
+      "term": "기성항",
+      "regionFull": "경상북도 울진군 기성면 기성리",
+      "regions": [
+        "area-17130"
+      ],
+      "aliases": [
+        "기성항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9d67888b3c57fdbe754a",
+      "term": "죽변항",
+      "regionFull": "경상북도 울진군 죽변면",
+      "regions": [
+        "area-17151"
+      ],
+      "aliases": [
+        "죽변항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "28e1f79cbb8c935115db",
+      "term": "골장항",
+      "regionFull": "경상북도 울진군 죽변면 봉평리",
+      "regions": [
+        "area-17155"
+      ],
+      "aliases": [
+        "골장항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "865f9a0ef8bac57c28ce",
+      "term": "직산항",
+      "regionFull": "경상북도 울진군 평해읍 직산리",
+      "regions": [
+        "area-17104"
+      ],
+      "aliases": [
+        "직산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "5654464eb5a1b1c9fe77",
+      "term": "구룡포해수욕장",
+      "regionFull": "경상북도 포항시",
+      "regions": [
+        "area-17692"
+      ],
+      "aliases": [
+        "구룡포",
+        "구룡포해변",
+        "구룡포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0c7f4199f4c359276aa1",
+      "term": "도구해수욕장",
+      "regionFull": "경상북도 포항시",
+      "regions": [
+        "area-17692"
+      ],
+      "aliases": [
+        "도구",
+        "도구해변",
+        "도구해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "fe07b5cc18d06b54c2cd",
+      "term": "영일대해수욕장",
+      "regionFull": "경상북도 포항시",
+      "regions": [
+        "area-17692"
+      ],
+      "aliases": [
+        "영일대",
+        "영일대해변",
+        "영일대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4301e6441a0a21dc6eae",
+      "term": "월포해수욕장",
+      "regionFull": "경상북도 포항시",
+      "regions": [
+        "area-17692"
+      ],
+      "aliases": [
+        "월포",
+        "월포해변",
+        "월포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "48aef5bb73dae094be0e",
+      "term": "칠포해수욕장",
+      "regionFull": "경상북도 포항시",
+      "regions": [
+        "area-17692"
+      ],
+      "aliases": [
+        "칠포",
+        "칠포해변",
+        "칠포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "25f2e6bf1e1cd0d7cc48",
+      "term": "화진해수욕장",
+      "regionFull": "경상북도 포항시",
+      "regions": [
+        "area-17692"
+      ],
+      "aliases": [
+        "화진",
+        "화진해변",
+        "화진해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "16ec1027d261a13e3241",
+      "term": "삼정항",
+      "regionFull": "경상북도 포항시 남구 구룡포읍 삼정리",
+      "regions": [
+        "area-17713"
+      ],
+      "aliases": [
+        "삼정항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "297819ff8132e288d8ce",
+      "term": "발산항",
+      "regionFull": "경상북도 포항시 남구 동해면 발산리",
+      "regions": [
+        "area-17769"
+      ],
+      "aliases": [
+        "발산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "e58bf65711c8afd0813e",
+      "term": "양포항",
+      "regionFull": "경상북도 포항시 남구 장기면",
+      "regions": [
+        "area-17773"
+      ],
+      "aliases": [
+        "양포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "d3a641fa830a1f497917",
+      "term": "모포항",
+      "regionFull": "경상북도 포항시 남구 장기면 모포리",
+      "regions": [
+        "area-17789"
+      ],
+      "aliases": [
+        "모포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "57f66a002d8b1c3d2e5c",
+      "term": "대보1리항",
+      "regionFull": "경상북도 포항시 남구 호미곶면",
+      "regions": [
+        "area-17797"
+      ],
+      "aliases": [
+        "대보1리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d22a6180c5dd68d1d892",
+      "term": "대보항",
+      "regionFull": "경상북도 포항시 남구 호미곶면",
+      "regions": [
+        "area-17797"
+      ],
+      "aliases": [
+        "대보항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "9aa4c69611fbff454541",
+      "term": "방석항",
+      "regionFull": "경상북도 포항시 북구 송라면 방석리",
+      "regions": [
+        "area-17897"
+      ],
+      "aliases": [
+        "방석항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "2cae67db175cd67ca671",
+      "term": "지경항",
+      "regionFull": "경상북도 포항시 북구 송라면 지경리",
+      "regions": [
+        "area-17900"
+      ],
+      "aliases": [
+        "지경항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "61dde0e1bd9f321967ef",
+      "term": "이가리항",
+      "regionFull": "경상북도 포항시 북구 청하면 이가리",
+      "regions": [
+        "area-17880"
+      ],
+      "aliases": [
+        "이가리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "50bbac9baa38c75b8796",
+      "term": "죽천항",
+      "regionFull": "경상북도 포항시 북구 흥해읍 죽천리",
+      "regions": [
+        "area-17842"
+      ],
+      "aliases": [
+        "죽천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "a8de1d1a626b44d312ef",
+      "term": "천성항",
+      "regionFull": "부산광역시 강서구",
+      "regions": [
+        "area-495"
+      ],
+      "aliases": [
+        "천성항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "5a5af4e4e1f4f15e8e31",
+      "term": "눌차항",
+      "regionFull": "부산광역시 강서구 눌차동",
+      "regions": [
+        "area-515"
+      ],
+      "aliases": [
+        "눌차항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3a4ba01f9149d2b00d26",
+      "term": "대항항",
+      "regionFull": "부산광역시 강서구 대항동",
+      "regions": [
+        "area-517"
+      ],
+      "aliases": [
+        "대항항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "104ab769a65746837f83",
+      "term": "동백항",
+      "regionFull": "부산광역시 기장군",
+      "regions": [
+        "area-532"
+      ],
+      "aliases": [
+        "동백항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "2823a724fd0a7cd7dc75",
+      "term": "이동항",
+      "regionFull": "부산광역시 기장군",
+      "regions": [
+        "area-532"
+      ],
+      "aliases": [
+        "이동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1a81c5b200f5b499493a",
+      "term": "일광해수욕장",
+      "regionFull": "부산광역시 기장군",
+      "regions": [
+        "area-532"
+      ],
+      "aliases": [
+        "일광",
+        "일광해변",
+        "일광해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0614913df2a8ccb2f9ef",
+      "term": "임랑해수욕장",
+      "regionFull": "부산광역시 기장군",
+      "regions": [
+        "area-532"
+      ],
+      "aliases": [
+        "임랑",
+        "임랑해변",
+        "임랑해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4df183c340ec933f5025",
+      "term": "칠암항",
+      "regionFull": "부산광역시 기장군",
+      "regions": [
+        "area-532"
+      ],
+      "aliases": [
+        "칠암항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "96f6298dfb66eaf383e9",
+      "term": "학리항",
+      "regionFull": "부산광역시 기장군",
+      "regions": [
+        "area-532"
+      ],
+      "aliases": [
+        "학리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "ec930422d9a386366e01",
+      "term": "대변항",
+      "regionFull": "부산광역시 기장군 기장읍",
+      "regions": [
+        "area-533"
+      ],
+      "aliases": [
+        "대변항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "b79fb1ad8af274a0da5a",
+      "term": "신암항",
+      "regionFull": "부산광역시 기장군 기장읍",
+      "regions": [
+        "area-533"
+      ],
+      "aliases": [
+        "신암항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3880559d2324e55dcdd8",
+      "term": "두호항",
+      "regionFull": "부산광역시 기장군 기장읍 죽성리",
+      "regions": [
+        "area-537"
+      ],
+      "aliases": [
+        "두호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "540cb0786256bb400e1e",
+      "term": "월내항",
+      "regionFull": "부산광역시 기장군 장안읍 월내리",
+      "regions": [
+        "area-558"
+      ],
+      "aliases": [
+        "월내항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b72dfaa838a806ba8ff4",
+      "term": "다대포항",
+      "regionFull": "부산광역시 사하구",
+      "regions": [
+        "area-649"
+      ],
+      "aliases": [
+        "다대포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "11105a87e73d8d745823",
+      "term": "다대포해수욕장",
+      "regionFull": "부산광역시 사하구",
+      "regions": [
+        "area-649"
+      ],
+      "aliases": [
+        "다대포",
+        "다대포해변",
+        "다대포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "151c1776433e7994b575",
+      "term": "송도해수욕장",
+      "regionFull": "부산광역시 서구",
+      "regions": [
+        "area-658"
+      ],
+      "aliases": [
+        "송도",
+        "송도해변",
+        "송도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "15e130ba7fdd938fc8af",
+      "term": "광안리해수욕장",
+      "regionFull": "부산광역시 수영구",
+      "regions": [
+        "area-683"
+      ],
+      "aliases": [
+        "광안리",
+        "광안리해변",
+        "광안리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ff7ac6c46bea9ccd6031",
+      "term": "민락항",
+      "regionFull": "부산광역시 수영구 민락동",
+      "regions": [
+        "area-686"
+      ],
+      "aliases": [
+        "민락항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "fb26da6bfd645511b4af",
+      "term": "송정해수욕장",
+      "regionFull": "부산광역시 해운대구",
+      "regions": [
+        "area-756"
+      ],
+      "aliases": [
+        "송정",
+        "송정해변",
+        "송정해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "58e63fc2a740b43b0b7c",
+      "term": "우동항",
+      "regionFull": "부산광역시 해운대구",
+      "regions": [
+        "area-756"
+      ],
+      "aliases": [
+        "우동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "e46bb308bad9ead758e3",
+      "term": "청사포항",
+      "regionFull": "부산광역시 해운대구",
+      "regions": [
+        "area-756"
+      ],
+      "aliases": [
+        "청사포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d75519b3107fc9f2e8f9",
+      "term": "해운대해수욕장",
+      "regionFull": "부산광역시 해운대구",
+      "regions": [
+        "area-756"
+      ],
+      "aliases": [
+        "해운대",
+        "해운대해변",
+        "해운대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "906e15eb97bd57ee767f",
+      "term": "송정항",
+      "regionFull": "부산광역시 해운대구 송정동",
+      "regions": [
+        "area-764"
+      ],
+      "aliases": [
+        "송정항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "669a2bb7ddacc6793da4",
+      "term": "방어진항",
+      "regionFull": "울산광역시 동구",
+      "regions": [
+        "area-1876"
+      ],
+      "aliases": [
+        "방어진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "7dcb31f337f1f649ecec",
+      "term": "일산해수욕장",
+      "regionFull": "울산광역시 동구",
+      "regions": [
+        "area-1876"
+      ],
+      "aliases": [
+        "일산",
+        "일산해변",
+        "일산해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e0784c383573072fa17a",
+      "term": "주전항",
+      "regionFull": "울산광역시 동구 주전동",
+      "regions": [
+        "area-1882"
+      ],
+      "aliases": [
+        "주전항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "07babe9101b24637c59a",
+      "term": "정자항",
+      "regionFull": "울산광역시 북구",
+      "regions": [
+        "area-1885"
+      ],
+      "aliases": [
+        "정자항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c2b1d6bb1464801dbaf6",
+      "term": "당사항",
+      "regionFull": "울산광역시 북구 당사동",
+      "regions": [
+        "area-1901"
+      ],
+      "aliases": [
+        "당사항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f9bbca5b0fca4709300d",
+      "term": "진하해수욕장",
+      "regionFull": "울산광역시 울주군",
+      "regions": [
+        "area-1913"
+      ],
+      "aliases": [
+        "진하",
+        "진하해변",
+        "진하해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d2c69a8275b5422acd89",
+      "term": "나사항",
+      "regionFull": "울산광역시 울주군 서생면 나사리",
+      "regions": [
+        "area-1985"
+      ],
+      "aliases": [
+        "나사항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "bfa0b3c298f3b935f777",
+      "term": "신암항",
+      "regionFull": "울산광역시 울주군 서생면 신암리",
+      "regions": [
+        "area-1983"
+      ],
+      "aliases": [
+        "신암항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "53e656b4ff6e7ca26e10",
+      "term": "선두항",
+      "regionFull": "인천광역시 강화군 길상면 선두리",
+      "regions": [
+        "area-1205"
+      ],
+      "aliases": [
+        "선두항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b63d8f9ebb1f6738479e",
+      "term": "창후항",
+      "regionFull": "인천광역시 강화군 내가면",
+      "regions": [
+        "area-1229"
+      ],
+      "aliases": [
+        "창후항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b0b16836abac929dc294",
+      "term": "외포항",
+      "regionFull": "인천광역시 강화군 내가면 외포리",
+      "regions": [
+        "area-1232"
+      ],
+      "aliases": [
+        "외포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1da42250cae29ac0d1e8",
+      "term": "어유정항",
+      "regionFull": "인천광역시 강화군 삼산면",
+      "regions": [
+        "area-1272"
+      ],
+      "aliases": [
+        "어유정항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "6286cf092e42c55cfc40",
+      "term": "장곶항",
+      "regionFull": "인천광역시 강화군 삼산면 매음리",
+      "regions": [
+        "area-1277"
+      ],
+      "aliases": [
+        "장곶항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "47dfa9f1d03b5700f17c",
+      "term": "주문항",
+      "regionFull": "인천광역시 강화군 서도면 주문도리",
+      "regions": [
+        "area-1281"
+      ],
+      "aliases": [
+        "주문항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "8816fdaf76984d5d6272",
+      "term": "후포항",
+      "regionFull": "인천광역시 강화군 화도면 내리",
+      "regions": [
+        "area-1211"
+      ],
+      "aliases": [
+        "후포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "355a718f9be48e1e3589",
+      "term": "소래포구항",
+      "regionFull": "인천광역시 남동구",
+      "regions": [
+        "area-1320"
+      ],
+      "aliases": [
+        "소래포구항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "ee594bc25f8e06177736",
+      "term": "소래포구",
+      "regionFull": "인천광역시 남동구 논현동",
+      "regions": [
+        "area-1330"
+      ],
+      "aliases": [
+        "소래포구"
+      ],
+      "category": "포구",
+      "sources": [
+        "user-request-verified-region"
+      ]
+    },
+    {
+      "id": "da4ff80bc2fedbe94058",
+      "term": "왕산해수욕장",
+      "regionFull": "인천광역시 영종구",
+      "regions": [
+        "area-1369"
+      ],
+      "aliases": [
+        "왕산",
+        "왕산해변",
+        "왕산해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4ff8744b5dbd182feaf9",
+      "term": "하나개해수욕장",
+      "regionFull": "인천광역시 영종구",
+      "regions": [
+        "area-1369"
+      ],
+      "aliases": [
+        "하나개",
+        "하나개해변",
+        "하나개해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d2e3c65946840c1c2d6a",
+      "term": "광명항",
+      "regionFull": "인천광역시 영종구 무의동",
+      "regions": [
+        "area-1377"
+      ],
+      "aliases": [
+        "광명항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "082c23bd6fd7f10c5471",
+      "term": "대무의항",
+      "regionFull": "인천광역시 영종구 무의동",
+      "regions": [
+        "area-1377"
+      ],
+      "aliases": [
+        "대무의항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "75b120a2887b77d18f77",
+      "term": "을왕리해수욕장",
+      "regionFull": "인천광역시 영종구 을왕동",
+      "regions": [
+        "area-1374"
+      ],
+      "aliases": [
+        "을왕리",
+        "을왕리해변",
+        "을왕리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches",
+        "user-request-verified-region"
+      ]
+    },
+    {
+      "id": "02791faf6d7a152ed445",
+      "term": "떼뿌루해수욕장",
+      "regionFull": "인천광역시 옹진군",
+      "regions": [
+        "area-1378"
+      ],
+      "aliases": [
+        "떼뿌루",
+        "떼뿌루해변",
+        "떼뿌루해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "72dd10c76ce3441df439",
+      "term": "서포리해수욕장",
+      "regionFull": "인천광역시 옹진군",
+      "regions": [
+        "area-1378"
+      ],
+      "aliases": [
+        "서포리",
+        "서포리해변",
+        "서포리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5e8975bab9e22279023b",
+      "term": "수기해수욕장",
+      "regionFull": "인천광역시 옹진군",
+      "regions": [
+        "area-1378"
+      ],
+      "aliases": [
+        "수기",
+        "수기해변",
+        "수기해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "55ba56a9bcf755c5a398",
+      "term": "십리포해수욕장",
+      "regionFull": "인천광역시 옹진군",
+      "regions": [
+        "area-1378"
+      ],
+      "aliases": [
+        "십리포",
+        "십리포해변",
+        "십리포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a3eba7605c2f6f7395db",
+      "term": "옹암해수욕장",
+      "regionFull": "인천광역시 옹진군",
+      "regions": [
+        "area-1378"
+      ],
+      "aliases": [
+        "옹암",
+        "옹암해변",
+        "옹암해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "165a99e2584ae858d702",
+      "term": "이일레해수욕장",
+      "regionFull": "인천광역시 옹진군",
+      "regions": [
+        "area-1378"
+      ],
+      "aliases": [
+        "이일레",
+        "이일레해변",
+        "이일레해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7904f6bc47df60225459",
+      "term": "장경리해수욕장",
+      "regionFull": "인천광역시 옹진군",
+      "regions": [
+        "area-1378"
+      ],
+      "aliases": [
+        "장경리",
+        "장경리해변",
+        "장경리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "b6f4107efe6b5231b9d8",
+      "term": "장골해수욕장",
+      "regionFull": "인천광역시 옹진군",
+      "regions": [
+        "area-1378"
+      ],
+      "aliases": [
+        "장골",
+        "장골해변",
+        "장골해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "335cb092a3f2df174e04",
+      "term": "선진포항",
+      "regionFull": "인천광역시 옹진군 대청면",
+      "regions": [
+        "area-1390"
+      ],
+      "aliases": [
+        "선진포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "cc2a61e65c57620f8b37",
+      "term": "덕적도항",
+      "regionFull": "인천광역시 옹진군 덕적면",
+      "regions": [
+        "area-1393"
+      ],
+      "aliases": [
+        "덕적도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "1f283917928a88f294c1",
+      "term": "울도항",
+      "regionFull": "인천광역시 옹진군 덕적면 울도리",
+      "regions": [
+        "area-1398"
+      ],
+      "aliases": [
+        "울도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "40860bcc8547a1a61ec1",
+      "term": "진리항",
+      "regionFull": "인천광역시 옹진군 덕적면 진리",
+      "regions": [
+        "area-1395"
+      ],
+      "aliases": [
+        "진리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b702e054c00971895d4a",
+      "term": "장봉항",
+      "regionFull": "인천광역시 옹진군 북도면 장봉리",
+      "regions": [
+        "area-1383"
+      ],
+      "aliases": [
+        "장봉항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "e75259b0bded1ad1009f",
+      "term": "소연평항",
+      "regionFull": "인천광역시 옹진군 연평면",
+      "regions": [
+        "area-1410"
+      ],
+      "aliases": [
+        "소연평항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "e1c944664d759dfe84ea",
+      "term": "진두항",
+      "regionFull": "인천광역시 옹진군 영흥면 내리",
+      "regions": [
+        "area-1404"
+      ],
+      "aliases": [
+        "진두항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c6ab60cca81ad48d7316",
+      "term": "자월1리항",
+      "regionFull": "인천광역시 옹진군 자월면",
+      "regions": [
+        "area-1406"
+      ],
+      "aliases": [
+        "자월1리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1e3f3ea509a1b2cec23b",
+      "term": "마량항",
+      "regionFull": "전라남도 강진군 마량면",
+      "regions": [
+        "area-11826"
+      ],
+      "aliases": [
+        "마량항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "28948c8f8291967eef4b",
+      "term": "사초항",
+      "regionFull": "전라남도 강진군 신전면 사초리",
+      "regions": [
+        "area-11776"
+      ],
+      "aliases": [
+        "사초항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "85471d43aa6e24e65380",
+      "term": "금장해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "금장",
+        "금장해변",
+        "금장해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c79b7658819658a42886",
+      "term": "나로우주해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "나로우주",
+        "나로우주해변",
+        "나로우주해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "df8eb3a8c16179ed86a5",
+      "term": "남열해돋이해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "남열해돋이",
+        "남열해돋이해변",
+        "남열해돋이해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "f91a94f2ba88df3e69c5",
+      "term": "대전해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "대전",
+        "대전해변",
+        "대전해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "75bf20188754102c0d3c",
+      "term": "덕흥해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "덕흥",
+        "덕흥해변",
+        "덕흥해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "576995e47964a4093a01",
+      "term": "발포해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "발포",
+        "발포해변",
+        "발포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "77fe46bfcbf2927d8446",
+      "term": "연소해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "연소",
+        "연소해변",
+        "연소해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "332982e1185db5e4d3bf",
+      "term": "염포해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "염포",
+        "염포해변",
+        "염포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c09022fb4fb9d4dfe8e9",
+      "term": "용동해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "용동",
+        "용동해변",
+        "용동해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e2f2f447c6054789d0ca",
+      "term": "익금해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "익금",
+        "익금해변",
+        "익금해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c181493625b271749b2b",
+      "term": "풍류해수욕장",
+      "regionFull": "전라남도 고흥군",
+      "regions": [
+        "area-11832"
+      ],
+      "aliases": [
+        "풍류",
+        "풍류해변",
+        "풍류해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ab9c23cc67c1f5cac545",
+      "term": "금진항",
+      "regionFull": "전라남도 고흥군 금산면 신촌리",
+      "regions": [
+        "area-11875"
+      ],
+      "aliases": [
+        "금진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "a049c63cb852fa5c3670",
+      "term": "명천항",
+      "regionFull": "전라남도 고흥군 금산면 신평리",
+      "regions": [
+        "area-11877"
+      ],
+      "aliases": [
+        "명천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b04e4211dd27d172fa17",
+      "term": "오천항",
+      "regionFull": "전라남도 고흥군 금산면 오천리",
+      "regions": [
+        "area-11878"
+      ],
+      "aliases": [
+        "오천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "845692977379e4524c46",
+      "term": "녹동항",
+      "regionFull": "전라남도 고흥군 도양읍",
+      "regions": [
+        "area-11843"
+      ],
+      "aliases": [
+        "녹동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "82b7833b5ed94f7f31e1",
+      "term": "시산항",
+      "regionFull": "전라남도 고흥군 도양읍",
+      "regions": [
+        "area-11843"
+      ],
+      "aliases": [
+        "시산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c9ad176fede47fffaf5f",
+      "term": "장수항",
+      "regionFull": "전라남도 고흥군 도양읍 장계리",
+      "regions": [
+        "area-11844"
+      ],
+      "aliases": [
+        "장수항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "2be45570e9fc9eba163a",
+      "term": "발포항",
+      "regionFull": "전라남도 고흥군 도화면",
+      "regions": [
+        "area-11879"
+      ],
+      "aliases": [
+        "발포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "e22ccfd3213e1b05e9d8",
+      "term": "하동항",
+      "regionFull": "전라남도 고흥군 도화면 구암리",
+      "regions": [
+        "area-11881"
+      ],
+      "aliases": [
+        "하동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "849a759e08c064873247",
+      "term": "죽도항",
+      "regionFull": "전라남도 고흥군 도화면 지죽리",
+      "regions": [
+        "area-11888"
+      ],
+      "aliases": [
+        "죽도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "dc0297f33b14f5acf986",
+      "term": "덕흥항",
+      "regionFull": "전라남도 고흥군 동일면 덕흥리",
+      "regions": [
+        "area-11979"
+      ],
+      "aliases": [
+        "덕흥항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1e80fe04c962bf3cbf7e",
+      "term": "봉남항",
+      "regionFull": "전라남도 고흥군 동일면 봉영리",
+      "regions": [
+        "area-11977"
+      ],
+      "aliases": [
+        "봉남항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d3f7221e1c36e441432f",
+      "term": "염포항",
+      "regionFull": "전라남도 고흥군 봉래면 외초리",
+      "regions": [
+        "area-11904"
+      ],
+      "aliases": [
+        "염포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d2b4924299d3c4ffe161",
+      "term": "여호항",
+      "regionFull": "전라남도 고흥군 점암면",
+      "regions": [
+        "area-11908"
+      ],
+      "aliases": [
+        "여호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "ebb89d552ed4a7b55e48",
+      "term": "남성항",
+      "regionFull": "전라남도 고흥군 포두면 남성리",
+      "regions": [
+        "area-11891"
+      ],
+      "aliases": [
+        "남성항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9f0b54d72b9cbcdbee25",
+      "term": "풍남항",
+      "regionFull": "전라남도 고흥군 풍양면",
+      "regions": [
+        "area-11851"
+      ],
+      "aliases": [
+        "풍남항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "5b4cd00d55f037c56288",
+      "term": "외달도해수욕장",
+      "regionFull": "전라남도 목포시",
+      "regions": [
+        "area-12627"
+      ],
+      "aliases": [
+        "외달도",
+        "외달도해변",
+        "외달도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8385198081c3f47f9fec",
+      "term": "톱머리해수욕장",
+      "regionFull": "전라남도 무안군",
+      "regions": [
+        "area-12692"
+      ],
+      "aliases": [
+        "톱머리",
+        "톱머리해변",
+        "톱머리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "218f9816e18f2af3fe02",
+      "term": "홀통해수욕장",
+      "regionFull": "전라남도 무안군",
+      "regions": [
+        "area-12692"
+      ],
+      "aliases": [
+        "홀통",
+        "홀통해변",
+        "홀통해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ff1142c3944f5a25b3e3",
+      "term": "톱머리항",
+      "regionFull": "전라남도 무안군 망운면 피서리",
+      "regions": [
+        "area-12780"
+      ],
+      "aliases": [
+        "톱머리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "2e2cf908402991e407a2",
+      "term": "도리포항",
+      "regionFull": "전라남도 무안군 해제면 송석리",
+      "regions": [
+        "area-12787"
+      ],
+      "aliases": [
+        "도리포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f152001b82c168f5e3d9",
+      "term": "율포솔밭해수욕장",
+      "regionFull": "전라남도 보성군",
+      "regions": [
+        "area-12806"
+      ],
+      "aliases": [
+        "율포솔밭",
+        "율포솔밭해변",
+        "율포솔밭해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "6ac1b2dbad6bdd9a8123",
+      "term": "상진항",
+      "regionFull": "전라남도 보성군 벌교읍 장암리",
+      "regions": [
+        "area-12831"
+      ],
+      "aliases": [
+        "상진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "8c80eb7cad47dfcf91be",
+      "term": "대광해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "대광",
+        "대광해변",
+        "대광해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "20935c948abd7caaad58",
+      "term": "돈목해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "돈목",
+        "돈목해변",
+        "돈목해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "59f97f4614dcb9bdfa7e",
+      "term": "배낭기미해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "배낭기미",
+        "배낭기미해변",
+        "배낭기미해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "b92510a7790fbc8dbcc7",
+      "term": "백길해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "백길",
+        "백길해변",
+        "백길해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a8fa425b70c0121aef73",
+      "term": "분계해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "분계",
+        "분계해변",
+        "분계해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "b38f03018cb8f6380c22",
+      "term": "설레미해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "설레미",
+        "설레미해변",
+        "설레미해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "32e053cf05004c07c29c",
+      "term": "시목해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "시목",
+        "시목해변",
+        "시목해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c031cf3dabf11fec37b8",
+      "term": "신도해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "신도",
+        "신도해변",
+        "신도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e436db347dc0018a18f9",
+      "term": "우전해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "우전",
+        "우전해변",
+        "우전해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "018e9479a305cd7d4557",
+      "term": "원평해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "원평",
+        "원평해변",
+        "원평해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d7410034b99b955069a5",
+      "term": "짱뚱어해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "짱뚱어",
+        "짱뚱어해변",
+        "짱뚱어해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7f8ab5c2a5c53bcca4f5",
+      "term": "추포해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "추포",
+        "추포해변",
+        "추포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "745ca081c9678f47e462",
+      "term": "하트해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "하트",
+        "하트해변",
+        "하트해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0fbdef9f532de312ca54",
+      "term": "홍도해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "홍도",
+        "홍도해변",
+        "홍도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d1ecdeabbf7753866cea",
+      "term": "황성금리해수욕장",
+      "regionFull": "전라남도 신안군",
+      "regions": [
+        "area-13153"
+      ],
+      "aliases": [
+        "황성금리",
+        "황성금리해변",
+        "황성금리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c8bc734b781cb2319383",
+      "term": "우이도항",
+      "regionFull": "전라남도 신안군 도초면",
+      "regions": [
+        "area-13219"
+      ],
+      "aliases": [
+        "우이도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "82fef1657655a1bf302c",
+      "term": "화도항",
+      "regionFull": "전라남도 신안군 도초면 발매리",
+      "regions": [
+        "area-13220"
+      ],
+      "aliases": [
+        "화도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "77428e50994a13670afb",
+      "term": "소우이도항",
+      "regionFull": "전라남도 신안군 도초면 우이도리",
+      "regions": [
+        "area-13230"
+      ],
+      "aliases": [
+        "소우이도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "ac3e1b1b51315534a600",
+      "term": "수대항",
+      "regionFull": "전라남도 신안군 비금면 수대리",
+      "regions": [
+        "area-13217"
+      ],
+      "aliases": [
+        "수대항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "6b6e7bdf39aee662c870",
+      "term": "원평항",
+      "regionFull": "전라남도 신안군 비금면 신원리",
+      "regions": [
+        "area-13213"
+      ],
+      "aliases": [
+        "원평항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "a759a9b92034cdb40c11",
+      "term": "추포항",
+      "regionFull": "전라남도 신안군 암태면 수곡리",
+      "regions": [
+        "area-13303"
+      ],
+      "aliases": [
+        "추포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "bd32c60c7a6f69d6b968",
+      "term": "전장포항",
+      "regionFull": "전라남도 신안군 임자면",
+      "regions": [
+        "area-13186"
+      ],
+      "aliases": [
+        "전장포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "63861efd79b29a7bad3d",
+      "term": "재원항",
+      "regionFull": "전라남도 신안군 임자면 재원리",
+      "regions": [
+        "area-13190"
+      ],
+      "aliases": [
+        "재원항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1248e3c8b060d3c6337e",
+      "term": "다수항",
+      "regionFull": "전라남도 신안군 장산면 다수리",
+      "regions": [
+        "area-13265"
+      ],
+      "aliases": [
+        "다수항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c109630f1c67cd835f29",
+      "term": "검산항",
+      "regionFull": "전라남도 신안군 증도면 방축리",
+      "regions": [
+        "area-13182"
+      ],
+      "aliases": [
+        "검산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b34d4c4c4b31c9c4e0cb",
+      "term": "송도항",
+      "regionFull": "전라남도 신안군 지도읍 읍내리",
+      "regions": [
+        "area-13159"
+      ],
+      "aliases": [
+        "송도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "bdf907d1dd4ef2e82fcb",
+      "term": "가거도항",
+      "regionFull": "전라남도 신안군 흑산면",
+      "regions": [
+        "area-13231"
+      ],
+      "aliases": [
+        "가거도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "11a5f1b4daa03e5a7d54",
+      "term": "만재항",
+      "regionFull": "전라남도 신안군 흑산면 만재도리",
+      "regions": [
+        "area-13243"
+      ],
+      "aliases": [
+        "만재항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "842988fd7fb5515fe7ad",
+      "term": "사리항",
+      "regionFull": "전라남도 신안군 흑산면 사리",
+      "regions": [
+        "area-13235"
+      ],
+      "aliases": [
+        "사리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9a5e18d2167365562df5",
+      "term": "심리항",
+      "regionFull": "전라남도 신안군 흑산면 심리",
+      "regions": [
+        "area-13236"
+      ],
+      "aliases": [
+        "심리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "ce57f301cd76c2c9e09f",
+      "term": "영산항",
+      "regionFull": "전라남도 신안군 흑산면 영산리",
+      "regions": [
+        "area-13237"
+      ],
+      "aliases": [
+        "영산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "786ebb862f3757afb589",
+      "term": "하태항",
+      "regionFull": "전라남도 신안군 흑산면 태도리",
+      "regions": [
+        "area-13240"
+      ],
+      "aliases": [
+        "하태항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "38295cb1a7e0b788cef9",
+      "term": "국동항",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "국동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "fe7b7e424da17e728f6b",
+      "term": "만성리해수욕장",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "만성리",
+        "만성리해변",
+        "만성리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5f55bc44dbf190427b28",
+      "term": "모사금해수욕장",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "모사금",
+        "모사금해변",
+        "모사금해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "bc712a6734037e290187",
+      "term": "무슬목해수욕장",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "무슬목",
+        "무슬목해변",
+        "무슬목해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1e38e8ea2ade3ce2ddf4",
+      "term": "방죽포해수욕장",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "방죽포",
+        "방죽포해변",
+        "방죽포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "032aec8eaaa1cd387cb1",
+      "term": "안도해수욕장",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "안도",
+        "안도해변",
+        "안도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4a5e9c1aa9ff5dc22264",
+      "term": "웅천해수욕장",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "웅천",
+        "웅천해변",
+        "웅천해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "6717770c6802256f341d",
+      "term": "유림(거문도)해수욕장",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "유림(거문도)",
+        "유림(거문도)해변",
+        "유림(거문도)해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a29dc1bdb1740de0259d",
+      "term": "장등해수욕장",
+      "regionFull": "전라남도 여수시",
+      "regions": [
+        "area-13311"
+      ],
+      "aliases": [
+        "장등",
+        "장등해변",
+        "장등해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1fec25f1c2742784f528",
+      "term": "안도항",
+      "regionFull": "전라남도 여수시 남면",
+      "regions": [
+        "area-13405"
+      ],
+      "aliases": [
+        "안도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "5ba3e76e78ed94ba809c",
+      "term": "연도항(전남)",
+      "regionFull": "전라남도 여수시 남면",
+      "regions": [
+        "area-13405"
+      ],
+      "aliases": [
+        "연도항(전남)"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "21d19e8a34a8ff9ff20a",
+      "term": "심포항",
+      "regionFull": "전라남도 여수시 남면 심장리",
+      "regions": [
+        "area-13407"
+      ],
+      "aliases": [
+        "심포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "81927b9e1e88bdef69b9",
+      "term": "우학항",
+      "regionFull": "전라남도 여수시 남면 우학리",
+      "regions": [
+        "area-13406"
+      ],
+      "aliases": [
+        "우학항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "0e4b627a1f78b2cde872",
+      "term": "함구미항",
+      "regionFull": "전라남도 여수시 남면 유송리",
+      "regions": [
+        "area-13409"
+      ],
+      "aliases": [
+        "함구미항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "772836f0058194648154",
+      "term": "횡간도항",
+      "regionFull": "전라남도 여수시 남면 횡간리",
+      "regions": [
+        "area-13414"
+      ],
+      "aliases": [
+        "횡간도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d9bca8ac4b319c7fc2a8",
+      "term": "돌산항",
+      "regionFull": "전라남도 여수시 돌산읍",
+      "regions": [
+        "area-13363"
+      ],
+      "aliases": [
+        "돌산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "8b17e3c4d154f97f411b",
+      "term": "성두항",
+      "regionFull": "전라남도 여수시 돌산읍 금성리",
+      "regions": [
+        "area-13366"
+      ],
+      "aliases": [
+        "성두항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c78cba33f22026021f8a",
+      "term": "소율항",
+      "regionFull": "전라남도 여수시 돌산읍 율림리",
+      "regions": [
+        "area-13367"
+      ],
+      "aliases": [
+        "소율항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9d862b662fcc1ae02dbf",
+      "term": "죽포항",
+      "regionFull": "전라남도 여수시 돌산읍 죽포리",
+      "regions": [
+        "area-13368"
+      ],
+      "aliases": [
+        "죽포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c5fa3625d5da71317706",
+      "term": "계동항",
+      "regionFull": "전라남도 여수시 돌산읍 평사리",
+      "regions": [
+        "area-13372"
+      ],
+      "aliases": [
+        "계동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "44b15429e2300b8f1115",
+      "term": "초도항",
+      "regionFull": "전라남도 여수시 삼산면",
+      "regions": [
+        "area-13426"
+      ],
+      "aliases": [
+        "초도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "d1c2f831e33abda30b49",
+      "term": "서도항",
+      "regionFull": "전라남도 여수시 삼산면 서도리",
+      "regions": [
+        "area-13429"
+      ],
+      "aliases": [
+        "서도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1f3d68bf25d46a747f54",
+      "term": "세포항",
+      "regionFull": "전라남도 여수시 화양면 안포리",
+      "regions": [
+        "area-13404"
+      ],
+      "aliases": [
+        "세포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d8f6832fe71a44c296ed",
+      "term": "낭도항",
+      "regionFull": "전라남도 여수시 화정면",
+      "regions": [
+        "area-13415"
+      ],
+      "aliases": [
+        "낭도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "ce760109184bdbfe11bb",
+      "term": "가마미해수욕장",
+      "regionFull": "전라남도 영광군",
+      "regions": [
+        "area-13433"
+      ],
+      "aliases": [
+        "가마미",
+        "가마미해변",
+        "가마미해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ad0b94bf4a737c2f1ec8",
+      "term": "송이도해수욕장",
+      "regionFull": "전라남도 영광군",
+      "regions": [
+        "area-13433"
+      ],
+      "aliases": [
+        "송이도",
+        "송이도해변",
+        "송이도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "513b24bd04ca07ea1641",
+      "term": "안마항",
+      "regionFull": "전라남도 영광군 낙월면",
+      "regions": [
+        "area-13560"
+      ],
+      "aliases": [
+        "안마항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "f4cfffcd8d222b4de534",
+      "term": "법성항",
+      "regionFull": "전라남도 영광군 법성면 법성리",
+      "regions": [
+        "area-13550"
+      ],
+      "aliases": [
+        "법성항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "cdfc966d93adcde2ba58",
+      "term": "설도항",
+      "regionFull": "전라남도 영광군 염산면 봉남리",
+      "regions": [
+        "area-13541"
+      ],
+      "aliases": [
+        "설도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f1825547c46138304d97",
+      "term": "계마항",
+      "regionFull": "전라남도 영광군 홍농읍",
+      "regions": [
+        "area-13472"
+      ],
+      "aliases": [
+        "계마항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "19aa34b3324382af646e",
+      "term": "금일 명사십리해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "금일 명사십리",
+        "금일 명사십리해변",
+        "금일 명사십리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0ff2ba36583c29f96c0d",
+      "term": "보길 예송해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "보길 예송",
+        "보길 예송해변",
+        "보길 예송해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "302819d23de3e6ffb046",
+      "term": "보길 중리해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "보길 중리",
+        "보길 중리해변",
+        "보길 중리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "24768d2c4b08c99a81a6",
+      "term": "보길 통리해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "보길 통리",
+        "보길 통리해변",
+        "보길 통리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ef718d78fa72c06e85dd",
+      "term": "생일 금곡해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "생일 금곡",
+        "생일 금곡해변",
+        "생일 금곡해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "09c0c31c65807f311818",
+      "term": "신지 동고해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "신지 동고",
+        "신지 동고해변",
+        "신지 동고해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "6d2f2be70a90934f3d36",
+      "term": "신지명사십리해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "신지명사십리",
+        "신지명사십리해변",
+        "신지명사십리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "9c4fd9d905b95c1f5e9a",
+      "term": "약산 가사해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "약산 가사",
+        "약산 가사해변",
+        "약산 가사해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "b0434a982268be4d4ac7",
+      "term": "청산 신흥해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "청산 신흥",
+        "청산 신흥해변",
+        "청산 신흥해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "02976736c7298dcfed76",
+      "term": "청산 지리해수욕장",
+      "regionFull": "전라남도 완도군",
+      "regions": [
+        "area-13705"
+      ],
+      "aliases": [
+        "청산 지리",
+        "청산 지리해변",
+        "청산 지리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a6f657386b17fd1ff815",
+      "term": "연동항",
+      "regionFull": "전라남도 완도군 고금면",
+      "regions": [
+        "area-13754"
+      ],
+      "aliases": [
+        "연동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "2aad8dfe5df06e6b9c46",
+      "term": "가교항",
+      "regionFull": "전라남도 완도군 고금면 가교리",
+      "regions": [
+        "area-13763"
+      ],
+      "aliases": [
+        "가교항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b25c1bd0f68a9e63d516",
+      "term": "울포항",
+      "regionFull": "전라남도 완도군 금당면 차우리",
+      "regions": [
+        "area-13795"
+      ],
+      "aliases": [
+        "울포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f4c3ffcc25d6d495fe61",
+      "term": "도장항",
+      "regionFull": "전라남도 완도군 금일읍",
+      "regions": [
+        "area-13717"
+      ],
+      "aliases": [
+        "도장항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "971fafc16f56afd48792",
+      "term": "사동항(전남)",
+      "regionFull": "전라남도 완도군 금일읍",
+      "regions": [
+        "area-13717"
+      ],
+      "aliases": [
+        "사동항(전남)"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "be18131eba5a378e04ff",
+      "term": "소안항",
+      "regionFull": "전라남도 완도군 금일읍",
+      "regions": [
+        "area-13717"
+      ],
+      "aliases": [
+        "소안항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "6683b07ecefc3a691887",
+      "term": "동백항",
+      "regionFull": "전라남도 완도군 금일읍 동백리",
+      "regions": [
+        "area-13724"
+      ],
+      "aliases": [
+        "동백항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "aa411733f2bf34136108",
+      "term": "이목항",
+      "regionFull": "전라남도 완도군 노화읍",
+      "regions": [
+        "area-13727"
+      ],
+      "aliases": [
+        "이목항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c34697bac9952e342f2e",
+      "term": "동천항",
+      "regionFull": "전라남도 완도군 노화읍 동천리",
+      "regions": [
+        "area-13734"
+      ],
+      "aliases": [
+        "동천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "2d71a11d27b0c6db5235",
+      "term": "방축항",
+      "regionFull": "전라남도 완도군 노화읍 방서리",
+      "regions": [
+        "area-13737"
+      ],
+      "aliases": [
+        "방축항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9550eca38cf76c9fd47f",
+      "term": "보옥항",
+      "regionFull": "전라남도 완도군 보길면",
+      "regions": [
+        "area-13798"
+      ],
+      "aliases": [
+        "보옥항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "3d1bd53b1b913b8a03dc",
+      "term": "서성항",
+      "regionFull": "전라남도 완도군 생일면 유서리",
+      "regions": [
+        "area-13804"
+      ],
+      "aliases": [
+        "서성항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d19dd67797e7b663b1d0",
+      "term": "미라항",
+      "regionFull": "전라남도 완도군 소안면 미라리",
+      "regions": [
+        "area-13791"
+      ],
+      "aliases": [
+        "미라항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c5fa616ad736cec0bc4b",
+      "term": "진산항",
+      "regionFull": "전라남도 완도군 소안면 진산리",
+      "regions": [
+        "area-13790"
+      ],
+      "aliases": [
+        "진산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "7b950a2810ed3d5354e5",
+      "term": "월양항",
+      "regionFull": "전라남도 완도군 신지면",
+      "regions": [
+        "area-13747"
+      ],
+      "aliases": [
+        "월양항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "ad6f7e19284de062ffb5",
+      "term": "동고항",
+      "regionFull": "전라남도 완도군 신지면 동고리",
+      "regions": [
+        "area-13753"
+      ],
+      "aliases": [
+        "동고항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "8b982c55d95bd48d0fcc",
+      "term": "득암항",
+      "regionFull": "전라남도 완도군 약산면",
+      "regions": [
+        "area-13765"
+      ],
+      "aliases": [
+        "득암항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "3a2e2a1e745a06be6342",
+      "term": "장용항",
+      "regionFull": "전라남도 완도군 약산면 장용리",
+      "regions": [
+        "area-13766"
+      ],
+      "aliases": [
+        "장용항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "47ff1eb8b1f13042d0f7",
+      "term": "여서항",
+      "regionFull": "전라남도 완도군 청산면",
+      "regions": [
+        "area-13771"
+      ],
+      "aliases": [
+        "여서항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "94e0c2dcc308e622ff1e",
+      "term": "청산도항",
+      "regionFull": "전라남도 완도군 청산면",
+      "regions": [
+        "area-13771"
+      ],
+      "aliases": [
+        "청산도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "e088ea35bc7608487687",
+      "term": "모서항",
+      "regionFull": "전라남도 완도군 청산면 모도리",
+      "regions": [
+        "area-13783"
+      ],
+      "aliases": [
+        "모서항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "f940db884d10932956c4",
+      "term": "수문해수욕장",
+      "regionFull": "전라남도 장흥군",
+      "regions": [
+        "area-13942"
+      ],
+      "aliases": [
+        "수문",
+        "수문해변",
+        "수문해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a2bcf90d853d7dce02f4",
+      "term": "장환항",
+      "regionFull": "전라남도 장흥군 관산읍 고마리",
+      "regions": [
+        "area-13987"
+      ],
+      "aliases": [
+        "장환항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "93098aa00ff938b5cf96",
+      "term": "옹암항",
+      "regionFull": "전라남도 장흥군 대덕읍 옹암리",
+      "regions": [
+        "area-13996"
+      ],
+      "aliases": [
+        "옹암항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "0d27682efc0dde073a25",
+      "term": "수문항",
+      "regionFull": "전라남도 장흥군 안양면 수문리",
+      "regions": [
+        "area-14024"
+      ],
+      "aliases": [
+        "수문항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "ff454b23e1a994e9202f",
+      "term": "회진항",
+      "regionFull": "전라남도 장흥군 회진면",
+      "regions": [
+        "area-14083"
+      ],
+      "aliases": [
+        "회진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "0fa6489170d9dd9e2bab",
+      "term": "가계해수욕장",
+      "regionFull": "전라남도 진도군",
+      "regions": [
+        "area-14089"
+      ],
+      "aliases": [
+        "가계",
+        "가계해변",
+        "가계해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "9b95f43bb1fd180d4f28",
+      "term": "관매도해수욕장",
+      "regionFull": "전라남도 진도군",
+      "regions": [
+        "area-14089"
+      ],
+      "aliases": [
+        "관매도",
+        "관매도해변",
+        "관매도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "3788b2bfbb482dea36e2",
+      "term": "금갑해수욕장",
+      "regionFull": "전라남도 진도군",
+      "regions": [
+        "area-14089"
+      ],
+      "aliases": [
+        "금갑",
+        "금갑해변",
+        "금갑해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "08b844282d51129c87d5",
+      "term": "신전해수욕장",
+      "regionFull": "전라남도 진도군",
+      "regions": [
+        "area-14089"
+      ],
+      "aliases": [
+        "신전",
+        "신전해변",
+        "신전해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "2e2f63483d1381c8a1e7",
+      "term": "용호항",
+      "regionFull": "전라남도 진도군 고군면 금계리",
+      "regions": [
+        "area-14124"
+      ],
+      "aliases": [
+        "용호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "997525ae79166567cfe9",
+      "term": "벌포항",
+      "regionFull": "전라남도 진도군 고군면 지막리",
+      "regions": [
+        "area-14121"
+      ],
+      "aliases": [
+        "벌포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "66f112c0652a0eed4969",
+      "term": "수품항",
+      "regionFull": "전라남도 진도군 의신면",
+      "regions": [
+        "area-14125"
+      ],
+      "aliases": [
+        "수품항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c04384dd7e97d20e4d0f",
+      "term": "초평항",
+      "regionFull": "전라남도 진도군 의신면 초사리",
+      "regions": [
+        "area-14134"
+      ],
+      "aliases": [
+        "초평항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "e4be6e5ffa5b71f6384f",
+      "term": "서망항",
+      "regionFull": "전라남도 진도군 임회면",
+      "regions": [
+        "area-14141"
+      ],
+      "aliases": [
+        "서망항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "f3ee9d7b227544c2c890",
+      "term": "굴포항",
+      "regionFull": "전라남도 진도군 임회면 굴포리",
+      "regions": [
+        "area-14152"
+      ],
+      "aliases": [
+        "굴포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "6e09d36a3c842b42f575",
+      "term": "관호항",
+      "regionFull": "전라남도 진도군 조도면 관매도리",
+      "regions": [
+        "area-14172"
+      ],
+      "aliases": [
+        "관호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "7c515862cb6c925badf8",
+      "term": "서거차항",
+      "regionFull": "전라남도 진도군 조도면 서거차도리",
+      "regions": [
+        "area-14174"
+      ],
+      "aliases": [
+        "서거차항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c39c96ff85158c9e5905",
+      "term": "성등포항",
+      "regionFull": "전라남도 진도군 조도면 여미리",
+      "regions": [
+        "area-14182"
+      ],
+      "aliases": [
+        "성등포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "cf26ffbb99224d78f97c",
+      "term": "창유항",
+      "regionFull": "전라남도 진도군 조도면 창유리",
+      "regions": [
+        "area-14176"
+      ],
+      "aliases": [
+        "창유항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "17c1b642dad4c44b605e",
+      "term": "돌머리해수욕장",
+      "regionFull": "전라남도 함평군",
+      "regions": [
+        "area-14195"
+      ],
+      "aliases": [
+        "돌머리",
+        "돌머리해변",
+        "돌머리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "85e1f483b74821c756b1",
+      "term": "사구미해수욕장",
+      "regionFull": "전라남도 해남군",
+      "regions": [
+        "area-14309"
+      ],
+      "aliases": [
+        "사구미",
+        "사구미해변",
+        "사구미해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7949d32b957f088d74fe",
+      "term": "송호해수욕장",
+      "regionFull": "전라남도 해남군",
+      "regions": [
+        "area-14309"
+      ],
+      "aliases": [
+        "송호",
+        "송호해변",
+        "송호해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5b343b489326809e2f23",
+      "term": "우수영항",
+      "regionFull": "전라남도 해남군 문내면 선두리",
+      "regions": [
+        "area-14476"
+      ],
+      "aliases": [
+        "우수영항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b5a5b457896b91782898",
+      "term": "내동항",
+      "regionFull": "전라남도 해남군 북일면 내동리",
+      "regions": [
+        "area-14400"
+      ],
+      "aliases": [
+        "내동항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "87fe53de7a208d04cfcb",
+      "term": "영전항",
+      "regionFull": "전라남도 해남군 북평면 영전리",
+      "regions": [
+        "area-14388"
+      ],
+      "aliases": [
+        "영전항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "65f6d4b4b55aa034b547",
+      "term": "어란진항",
+      "regionFull": "전라남도 해남군 송지면",
+      "regions": [
+        "area-14368"
+      ],
+      "aliases": [
+        "어란진항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "7ba54144f565dac37e44",
+      "term": "송호항",
+      "regionFull": "전라남도 해남군 송지면 송호리",
+      "regions": [
+        "area-14378"
+      ],
+      "aliases": [
+        "송호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "423dc5ed8a298518fd4a",
+      "term": "어불항",
+      "regionFull": "전라남도 해남군 송지면 어란리",
+      "regions": [
+        "area-14376"
+      ],
+      "aliases": [
+        "어불항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1eab901d663c432b7836",
+      "term": "학가항",
+      "regionFull": "전라남도 해남군 송지면 학가리",
+      "regions": [
+        "area-14372"
+      ],
+      "aliases": [
+        "학가항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "340ae820e2edeb60cdca",
+      "term": "송평항",
+      "regionFull": "전라남도 해남군 화산면 평호리",
+      "regions": [
+        "area-14353"
+      ],
+      "aliases": [
+        "송평항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "cd4c6ce10c5253a495b2",
+      "term": "징의항",
+      "regionFull": "전라남도 해남군 황산면 한자리",
+      "regions": [
+        "area-14451"
+      ],
+      "aliases": [
+        "징의항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "df3ed30c821050ccbe55",
+      "term": "구시포해수욕장",
+      "regionFull": "전북특별자치도 고창군",
+      "regions": [
+        "area-9817"
+      ],
+      "aliases": [
+        "구시포",
+        "구시포해변",
+        "구시포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8276c0faa9eee891cc36",
+      "term": "동호해수욕장",
+      "regionFull": "전북특별자치도 고창군",
+      "regions": [
+        "area-9817"
+      ],
+      "aliases": [
+        "동호",
+        "동호해변",
+        "동호해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "fa25101879d8b6765306",
+      "term": "구시포항",
+      "regionFull": "전북특별자치도 고창군 상하면",
+      "regions": [
+        "area-9899"
+      ],
+      "aliases": [
+        "구시포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "830e1832130ab5e62201",
+      "term": "동호항",
+      "regionFull": "전북특별자치도 고창군 해리면 동호리",
+      "regions": [
+        "area-9921"
+      ],
+      "aliases": [
+        "동호항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b175817a461d4e0a87ad",
+      "term": "선유도해수욕장",
+      "regionFull": "전북특별자치도 군산시",
+      "regions": [
+        "area-10021"
+      ],
+      "aliases": [
+        "선유도",
+        "선유도해변",
+        "선유도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "d4e808108e8f90d5b7af",
+      "term": "말도항",
+      "regionFull": "전북특별자치도 군산시 옥도면",
+      "regions": [
+        "area-10143"
+      ],
+      "aliases": [
+        "말도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "38155aa0d5953b8fd34e",
+      "term": "무녀도항",
+      "regionFull": "전북특별자치도 군산시 옥도면",
+      "regions": [
+        "area-10143"
+      ],
+      "aliases": [
+        "무녀도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "30ab3b65f01c8f080c00",
+      "term": "방축도항",
+      "regionFull": "전북특별자치도 군산시 옥도면",
+      "regions": [
+        "area-10143"
+      ],
+      "aliases": [
+        "방축도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "5db7500c87f4d36c4611",
+      "term": "어청도항",
+      "regionFull": "전북특별자치도 군산시 옥도면",
+      "regions": [
+        "area-10143"
+      ],
+      "aliases": [
+        "어청도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "ce13d5121b02be776ee3",
+      "term": "연도항(전북)",
+      "regionFull": "전북특별자치도 군산시 옥도면",
+      "regions": [
+        "area-10143"
+      ],
+      "aliases": [
+        "연도항(전북)"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "02e742fea3cdec89d740",
+      "term": "개야도항",
+      "regionFull": "전북특별자치도 군산시 옥도면 개야도리",
+      "regions": [
+        "area-10144"
+      ],
+      "aliases": [
+        "개야도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "530aad83753cc2f50e6b",
+      "term": "비안도항",
+      "regionFull": "전북특별자치도 군산시 옥도면 비안도리",
+      "regions": [
+        "area-10154"
+      ],
+      "aliases": [
+        "비안도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d995d4d91263d7a77aae",
+      "term": "선유도항",
+      "regionFull": "전북특별자치도 군산시 옥도면 선유도리",
+      "regions": [
+        "area-10147"
+      ],
+      "aliases": [
+        "선유도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "144b51693e011a508afb",
+      "term": "격포해수욕장",
+      "regionFull": "전북특별자치도 부안군",
+      "regions": [
+        "area-10580"
+      ],
+      "aliases": [
+        "격포",
+        "격포해변",
+        "격포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0f8286657d9341ca64dc",
+      "term": "고사포해수욕장",
+      "regionFull": "전북특별자치도 부안군",
+      "regions": [
+        "area-10580"
+      ],
+      "aliases": [
+        "고사포",
+        "고사포해변",
+        "고사포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "702485156a01063e4e32",
+      "term": "모항해수욕장",
+      "regionFull": "전북특별자치도 부안군",
+      "regions": [
+        "area-10580"
+      ],
+      "aliases": [
+        "모항",
+        "모항해변",
+        "모항해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "14e9d201fbdf3d22c39b",
+      "term": "변산해수욕장",
+      "regionFull": "전북특별자치도 부안군",
+      "regions": [
+        "area-10580"
+      ],
+      "aliases": [
+        "변산",
+        "변산해변",
+        "변산해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a1e3af4613045f350f4e",
+      "term": "위도해수욕장",
+      "regionFull": "전북특별자치도 부안군",
+      "regions": [
+        "area-10580"
+      ],
+      "aliases": [
+        "위도",
+        "위도해변",
+        "위도해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a67d2b69bbbff561ef46",
+      "term": "격포항",
+      "regionFull": "전북특별자치도 부안군 변산면",
+      "regions": [
+        "area-10636"
+      ],
+      "aliases": [
+        "격포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "00c411eb55f7a4d39942",
+      "term": "궁항항",
+      "regionFull": "전북특별자치도 부안군 변산면 격포리",
+      "regions": [
+        "area-10638"
+      ],
+      "aliases": [
+        "궁항항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "fa738c29ca1e8357a17c",
+      "term": "송포항",
+      "regionFull": "전북특별자치도 부안군 변산면 대항리",
+      "regions": [
+        "area-10642"
+      ],
+      "aliases": [
+        "송포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9824045db9432c044f87",
+      "term": "성천항",
+      "regionFull": "전북특별자치도 부안군 변산면 운산리",
+      "regions": [
+        "area-10640"
+      ],
+      "aliases": [
+        "성천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "5fc413bf9145dfa1e173",
+      "term": "위도항",
+      "regionFull": "전북특별자치도 부안군 위도면",
+      "regions": [
+        "area-10684"
+      ],
+      "aliases": [
+        "위도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "38d20b3ed1a58c2a7f6d",
+      "term": "식도항",
+      "regionFull": "전북특별자치도 부안군 위도면 식도리",
+      "regions": [
+        "area-10690"
+      ],
+      "aliases": [
+        "식도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "417be1ed3920a1ea9a4e",
+      "term": "곰소항",
+      "regionFull": "전북특별자치도 부안군 진서면 진서리",
+      "regions": [
+        "area-10645"
+      ],
+      "aliases": [
+        "곰소항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "5fb4c8a3db92382d217c",
+      "term": "신양섭지해수욕장",
+      "regionFull": "제주특별자치도 서귀포시",
+      "regions": [
+        "area-20349"
+      ],
+      "aliases": [
+        "신양섭지",
+        "신양섭지해변",
+        "신양섭지해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "876f3435aafbc6f5576e",
+      "term": "중문색달해수욕장",
+      "regionFull": "제주특별자치도 서귀포시",
+      "regions": [
+        "area-20349"
+      ],
+      "aliases": [
+        "중문색달",
+        "중문색달해변",
+        "중문색달해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e2ef6ddaef25b16ad136",
+      "term": "표선해수욕장",
+      "regionFull": "제주특별자치도 서귀포시",
+      "regions": [
+        "area-20349"
+      ],
+      "aliases": [
+        "표선",
+        "표선해변",
+        "표선해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "80ac2ff79948b85948fb",
+      "term": "화순금모래해수욕장",
+      "regionFull": "제주특별자치도 서귀포시",
+      "regions": [
+        "area-20349"
+      ],
+      "aliases": [
+        "화순금모래",
+        "화순금모래해변",
+        "화순금모래해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "2b26d864233cbfbd69a4",
+      "term": "위미항",
+      "regionFull": "제주특별자치도 서귀포시 남원읍",
+      "regions": [
+        "area-20386"
+      ],
+      "aliases": [
+        "위미항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "1cfba59acf37103faba3",
+      "term": "태흥2리항",
+      "regionFull": "제주특별자치도 서귀포시 남원읍 태흥리",
+      "regions": [
+        "area-20388"
+      ],
+      "aliases": [
+        "태흥2리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c4ae97c0b7760748608d",
+      "term": "모슬포항",
+      "regionFull": "제주특별자치도 서귀포시 대정읍",
+      "regions": [
+        "area-20372"
+      ],
+      "aliases": [
+        "모슬포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "35e53b430306c4f87830",
+      "term": "가파항",
+      "regionFull": "제주특별자치도 서귀포시 대정읍 가파리",
+      "regions": [
+        "area-20378"
+      ],
+      "aliases": [
+        "가파항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "5cb9d29eb3ce456f672e",
+      "term": "대포항",
+      "regionFull": "제주특별자치도 서귀포시 대포동",
+      "regions": [
+        "area-20363"
+      ],
+      "aliases": [
+        "대포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "b27475dce963e0f7d840",
+      "term": "법환항",
+      "regionFull": "제주특별자치도 서귀포시 법환동",
+      "regions": [
+        "area-20351"
+      ],
+      "aliases": [
+        "법환항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "649453906c30645beebd",
+      "term": "신양항",
+      "regionFull": "제주특별자치도 서귀포시 성산읍 신양리",
+      "regions": [
+        "area-20397"
+      ],
+      "aliases": [
+        "신양항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "73b8fb45431baf03b33b",
+      "term": "신천항",
+      "regionFull": "제주특별자치도 서귀포시 성산읍 신천리",
+      "regions": [
+        "area-20407"
+      ],
+      "aliases": [
+        "신천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "076b07855bca6729eeb7",
+      "term": "사계항",
+      "regionFull": "제주특별자치도 서귀포시 안덕면 사계리",
+      "regions": [
+        "area-20415"
+      ],
+      "aliases": [
+        "사계항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "306ff973b5d322eb4871",
+      "term": "표선항",
+      "regionFull": "제주특별자치도 서귀포시 표선면 표선리",
+      "regions": [
+        "area-20422"
+      ],
+      "aliases": [
+        "표선항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "8f7afcde191dc5f3bdc4",
+      "term": "하효항",
+      "regionFull": "제주특별자치도 서귀포시 하효동",
+      "regions": [
+        "area-20357"
+      ],
+      "aliases": [
+        "하효항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9f36bed8a35b17040609",
+      "term": "고산항",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "고산항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "31ca9b0911c8239ec590",
+      "term": "곽지해수욕장",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "곽지",
+        "곽지해변",
+        "곽지해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0d9911ca7821a2a462ee",
+      "term": "금능해수욕장",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "금능",
+        "금능해변",
+        "금능해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8d206cac101a84ef8982",
+      "term": "김녕해수욕장",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "김녕",
+        "김녕해변",
+        "김녕해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "08543785aeac2d8a5fac",
+      "term": "도두항",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "도두항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "b34f5c00b4edaf7791da",
+      "term": "삼양해수욕장",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "삼양",
+        "삼양해변",
+        "삼양해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "3779a76f4b921c1fce11",
+      "term": "신창항",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "신창항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "827085c8241e8bafba1b",
+      "term": "월정해수욕장",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "월정",
+        "월정해변",
+        "월정해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "b57064c40b3130b579e7",
+      "term": "이호해수욕장",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "이호",
+        "이호해변",
+        "이호해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "2c76b6c0e53d2395fd8c",
+      "term": "함덕해수욕장",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "함덕",
+        "함덕해변",
+        "함덕해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "7ae91e0ca4fb59172247",
+      "term": "협재해수욕장",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "협재",
+        "협재해변",
+        "협재해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "c0726892cb7a72444fc2",
+      "term": "화북항",
+      "regionFull": "제주특별자치도 제주시",
+      "regions": [
+        "area-20428"
+      ],
+      "aliases": [
+        "화북항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "218e88942ee0f0dbf7f0",
+      "term": "김녕항",
+      "regionFull": "제주특별자치도 제주시 구좌읍",
+      "regions": [
+        "area-20513"
+      ],
+      "aliases": [
+        "김녕항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "9c8240b403c49c7047ac",
+      "term": "세화항",
+      "regionFull": "제주특별자치도 제주시 구좌읍",
+      "regions": [
+        "area-20513"
+      ],
+      "aliases": [
+        "세화항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "ee6a0416a55ad4899a28",
+      "term": "종달항",
+      "regionFull": "제주특별자치도 제주시 구좌읍 종달리",
+      "regions": [
+        "area-20523"
+      ],
+      "aliases": [
+        "종달항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "fdbfcf0f385f61b7afa8",
+      "term": "하귀1리항",
+      "regionFull": "제주특별자치도 제주시 애월읍 하귀1리",
+      "regions": [
+        "area-20507"
+      ],
+      "aliases": [
+        "하귀1리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "3679861bb5e254c0b610",
+      "term": "우도항",
+      "regionFull": "제주특별자치도 제주시 우도면 연평리",
+      "regions": [
+        "area-20558"
+      ],
+      "aliases": [
+        "우도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "bc362dd459e2fa4c77df",
+      "term": "조천항",
+      "regionFull": "제주특별자치도 제주시 조천읍 조천리",
+      "regions": [
+        "area-20529"
+      ],
+      "aliases": [
+        "조천항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "e2665aaa949ac661cde0",
+      "term": "신양항",
+      "regionFull": "제주특별자치도 제주시 추자면",
+      "regions": [
+        "area-20551"
+      ],
+      "aliases": [
+        "신양항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "738158ec8f8ca43e9825",
+      "term": "귀덕1리항",
+      "regionFull": "제주특별자치도 제주시 한림읍 귀덕리",
+      "regions": [
+        "area-20470"
+      ],
+      "aliases": [
+        "귀덕1리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "678c7ed1a0bb3c913048",
+      "term": "난지섬해수욕장",
+      "regionFull": "충청남도 당진시",
+      "regions": [
+        "area-8076"
+      ],
+      "aliases": [
+        "난지섬",
+        "난지섬해변",
+        "난지섬해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "abc315d03da994f525a8",
+      "term": "왜목마을해수욕장",
+      "regionFull": "충청남도 당진시",
+      "regions": [
+        "area-8076"
+      ],
+      "aliases": [
+        "왜목마을",
+        "왜목마을해변",
+        "왜목마을해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0634d70ac416fe470d4b",
+      "term": "장고항",
+      "regionFull": "충청남도 당진시 석문면",
+      "regions": [
+        "area-8136"
+      ],
+      "aliases": [
+        "장고항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "acd20bcda2aebf9c6d85",
+      "term": "난지도항",
+      "regionFull": "충청남도 당진시 석문면 난지도리",
+      "regions": [
+        "area-8142"
+      ],
+      "aliases": [
+        "난지도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "6e8cb800fbdfc86151ce",
+      "term": "대천해수욕장",
+      "regionFull": "충청남도 보령시",
+      "regions": [
+        "area-8237"
+      ],
+      "aliases": [
+        "대천",
+        "대천해변",
+        "대천해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4f6a0affba72882ac4bd",
+      "term": "무창포해수욕장",
+      "regionFull": "충청남도 보령시",
+      "regions": [
+        "area-8237"
+      ],
+      "aliases": [
+        "무창포",
+        "무창포해변",
+        "무창포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "38a38b14cc59d875b587",
+      "term": "녹도항",
+      "regionFull": "충청남도 보령시 오천면 녹도리",
+      "regions": [
+        "area-8277"
+      ],
+      "aliases": [
+        "녹도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "dc1cfc8b42bc77f7e8a6",
+      "term": "호도항",
+      "regionFull": "충청남도 보령시 오천면 녹도리",
+      "regions": [
+        "area-8277"
+      ],
+      "aliases": [
+        "호도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c346950d1db6e56404ec",
+      "term": "고대도항",
+      "regionFull": "충청남도 보령시 오천면 삽시도리",
+      "regions": [
+        "area-8276"
+      ],
+      "aliases": [
+        "고대도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "594363036cb3d2b37660",
+      "term": "삽시도항",
+      "regionFull": "충청남도 보령시 오천면 삽시도리",
+      "regions": [
+        "area-8276"
+      ],
+      "aliases": [
+        "삽시도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "72480e152ebcab710c39",
+      "term": "장고도항",
+      "regionFull": "충청남도 보령시 오천면 삽시도리",
+      "regions": [
+        "area-8276"
+      ],
+      "aliases": [
+        "장고도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "be55eb5706ba79ec27f3",
+      "term": "오천항(충남)",
+      "regionFull": "충청남도 보령시 오천면 소성리",
+      "regions": [
+        "area-8269"
+      ],
+      "aliases": [
+        "오천항(충남)"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "9508c7735a4417ccfa1c",
+      "term": "외연도항",
+      "regionFull": "충청남도 보령시 오천면 외연도리",
+      "regions": [
+        "area-8278"
+      ],
+      "aliases": [
+        "외연도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c97e2420d5726983adca",
+      "term": "원산도항",
+      "regionFull": "충청남도 보령시 오천면 원산도리",
+      "regions": [
+        "area-8275"
+      ],
+      "aliases": [
+        "원산도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "738ebaf6daa819f95453",
+      "term": "효자도항",
+      "regionFull": "충청남도 보령시 오천면 효자도리",
+      "regions": [
+        "area-8274"
+      ],
+      "aliases": [
+        "효자도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "5bb5b96d83bcd4c3549f",
+      "term": "무창포항",
+      "regionFull": "충청남도 보령시 웅천읍",
+      "regions": [
+        "area-8248"
+      ],
+      "aliases": [
+        "무창포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "147c510eb023ece659fa",
+      "term": "삼길포항",
+      "regionFull": "충청남도 서산시 대산읍 화곡리",
+      "regions": [
+        "area-8590"
+      ],
+      "aliases": [
+        "삼길포",
+        "삼길포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors",
+        "user-request-verified-region"
+      ]
+    },
+    {
+      "id": "2da5ba07f03ee4004d0b",
+      "term": "간월도항",
+      "regionFull": "충청남도 서산시 부석면 간월도리",
+      "regions": [
+        "area-8619"
+      ],
+      "aliases": [
+        "간월도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "15851a0ea0d11babe2c1",
+      "term": "구도항",
+      "regionFull": "충청남도 서산시 팔봉면 호리",
+      "regions": [
+        "area-8626"
+      ],
+      "aliases": [
+        "구도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "912c00aefaf984674784",
+      "term": "춘장대해수욕장",
+      "regionFull": "충청남도 서천군",
+      "regions": [
+        "area-8718"
+      ],
+      "aliases": [
+        "춘장대",
+        "춘장대해변",
+        "춘장대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "1d3658f75ef35c047304",
+      "term": "송석항",
+      "regionFull": "충청남도 서천군 마서면 송석리",
+      "regions": [
+        "area-8749"
+      ],
+      "aliases": [
+        "송석항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "0470ee26c44843f9789c",
+      "term": "다사항",
+      "regionFull": "충청남도 서천군 비인면 다사리",
+      "regions": [
+        "area-8892"
+      ],
+      "aliases": [
+        "다사항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "9c5c7bad02aa533c1107",
+      "term": "홍원항",
+      "regionFull": "충청남도 서천군 서면",
+      "regions": [
+        "area-8894"
+      ],
+      "aliases": [
+        "홍원항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "e53be9b7563e14997245",
+      "term": "월하성항",
+      "regionFull": "충청남도 서천군 서면 월호리",
+      "regions": [
+        "area-8901"
+      ],
+      "aliases": [
+        "월하성항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "da8a783691be310a58a1",
+      "term": "갈음이해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "갈음이",
+        "갈음이해변",
+        "갈음이해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4af9b813e116c942e188",
+      "term": "곰섬해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "곰섬",
+        "곰섬해변",
+        "곰섬해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "75ddf04ff836addac881",
+      "term": "구례포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "구례포",
+        "구례포해변",
+        "구례포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "500abc2b0cdc1d1b8961",
+      "term": "구름포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "구름포",
+        "구름포해변",
+        "구름포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e90e651bd94960d4707f",
+      "term": "기지포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "기지포",
+        "기지포해변",
+        "기지포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8d931c7e19a61a96136e",
+      "term": "꽃지해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "꽃지",
+        "꽃지해변",
+        "꽃지해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "39c08939de24da1e24fc",
+      "term": "꾸지나무골해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "꾸지나무골",
+        "꾸지나무골해변",
+        "꾸지나무골해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "f11417123b03f91cc83a",
+      "term": "달산포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "달산포",
+        "달산포해변",
+        "달산포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "3b82cb22cf11e56b419c",
+      "term": "마검포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "마검포",
+        "마검포해변",
+        "마검포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ce05a1a636ed452ff9c0",
+      "term": "만리포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "만리포",
+        "만리포해변",
+        "만리포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e9cefd071194bfae1975",
+      "term": "몽산포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "몽산포",
+        "몽산포해변",
+        "몽산포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "f06ff6a02dcf79f8b7d7",
+      "term": "바람아래해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "바람아래",
+        "바람아래해변",
+        "바람아래해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "eb68a82a6fb2e4705c09",
+      "term": "밧개해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "밧개",
+        "밧개해변",
+        "밧개해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "975f6beee197a6ca8d93",
+      "term": "방주골(백리포)해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "방주골(백리포)",
+        "방주골(백리포)해변",
+        "방주골(백리포)해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "ff5d7517d35007c7957f",
+      "term": "방포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "방포",
+        "방포해변",
+        "방포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "fb807081721b1a49a63f",
+      "term": "백사장해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "백사장",
+        "백사장해변",
+        "백사장해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "38a0d19074487096f9d0",
+      "term": "삼봉해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "삼봉",
+        "삼봉해변",
+        "삼봉해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "0233ddc63e5cb27fc420",
+      "term": "샛별해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "샛별",
+        "샛별해변",
+        "샛별해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "3d30beb49a734f6f6a7e",
+      "term": "신두리해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "신두리",
+        "신두리해변",
+        "신두리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "4c1bc73459d6e76c58fb",
+      "term": "안면해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "안면",
+        "안면해변",
+        "안면해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "155dc5467b7b438eb945",
+      "term": "어은돌해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "어은돌",
+        "어은돌해변",
+        "어은돌해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "8cb979ae309024119f53",
+      "term": "연포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "연포",
+        "연포해변",
+        "연포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "72a3bdc1d4342e15f117",
+      "term": "의항해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "의항",
+        "의항해변",
+        "의항해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "76a0e38eb3cb63dea97e",
+      "term": "장삼포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "장삼포",
+        "장삼포해변",
+        "장삼포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "a929f13f98d1a47976f2",
+      "term": "천리포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "천리포",
+        "천리포해변",
+        "천리포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "66bd6e4f8d17e385ade6",
+      "term": "청포대해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "청포대",
+        "청포대해변",
+        "청포대해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "5ff0b43039581d618aff",
+      "term": "파도리해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "파도리",
+        "파도리해변",
+        "파도리해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "e212a4540545b73ed6f6",
+      "term": "학암포해수욕장",
+      "regionFull": "충청남도 태안군",
+      "regions": [
+        "area-9589"
+      ],
+      "aliases": [
+        "학암포",
+        "학암포해변",
+        "학암포해수욕장"
+      ],
+      "category": "해수욕장",
+      "sources": [
+        "beaches"
+      ]
+    },
+    {
+      "id": "da5e91dbecac09b1771c",
+      "term": "영목항",
+      "regionFull": "충청남도 태안군 고남면 고남리",
+      "regions": [
+        "area-9614"
+      ],
+      "aliases": [
+        "영목항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "1461d2f6345011720fbd",
+      "term": "안흥항",
+      "regionFull": "충청남도 태안군 근흥면",
+      "regions": [
+        "area-9625"
+      ],
+      "aliases": [
+        "안흥항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "98b25c5237ab8674f2cc",
+      "term": "가의도항",
+      "regionFull": "충청남도 태안군 근흥면 가의도리",
+      "regions": [
+        "area-9634"
+      ],
+      "aliases": [
+        "가의도항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c6d9c153eb4713df4154",
+      "term": "채석포항",
+      "regionFull": "충청남도 태안군 근흥면 도황리",
+      "regions": [
+        "area-9631"
+      ],
+      "aliases": [
+        "채석포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d3cb0b2276ce5b72725f",
+      "term": "몽산포항",
+      "regionFull": "충청남도 태안군 남면 몽산리",
+      "regions": [
+        "area-9617"
+      ],
+      "aliases": [
+        "몽산포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "60c7e688d7fd1fd1f4aa",
+      "term": "마검포항",
+      "regionFull": "충청남도 태안군 남면 신온리",
+      "regions": [
+        "area-9623"
+      ],
+      "aliases": [
+        "마검포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "98fabf25016f77486dab",
+      "term": "모항항",
+      "regionFull": "충청남도 태안군 소원면",
+      "regions": [
+        "area-9635"
+      ],
+      "aliases": [
+        "모항항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "c999f0404dfb8a93aeff",
+      "term": "만리포항",
+      "regionFull": "충청남도 태안군 소원면 모항리",
+      "regions": [
+        "area-9642"
+      ],
+      "aliases": [
+        "만리포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "7259fa1b9f1f2c9bc15a",
+      "term": "어은돌항",
+      "regionFull": "충청남도 태안군 소원면 모항리",
+      "regions": [
+        "area-9642"
+      ],
+      "aliases": [
+        "어은돌항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "7e2818e9ba44883d89c9",
+      "term": "천리포항",
+      "regionFull": "충청남도 태안군 소원면 의항리",
+      "regions": [
+        "area-9641"
+      ],
+      "aliases": [
+        "천리포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "297ed85b4477020a2dc3",
+      "term": "통개항",
+      "regionFull": "충청남도 태안군 소원면 파도리",
+      "regions": [
+        "area-9643"
+      ],
+      "aliases": [
+        "통개항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "32b996a1cb5f7aabdf29",
+      "term": "방포항",
+      "regionFull": "충청남도 태안군 안면읍 승언리",
+      "regions": [
+        "area-9605"
+      ],
+      "aliases": [
+        "방포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "18d81ca6662400cb1e24",
+      "term": "백사장항",
+      "regionFull": "충청남도 태안군 안면읍 창기리",
+      "regions": [
+        "area-9607"
+      ],
+      "aliases": [
+        "백사장항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "2b82ab4b9f3e84eaf9ed",
+      "term": "학암포항",
+      "regionFull": "충청남도 태안군 원북면 방갈리",
+      "regions": [
+        "area-9649"
+      ],
+      "aliases": [
+        "학암포항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "46198c9616b9b09bfab5",
+      "term": "만대항",
+      "regionFull": "충청남도 태안군 이원면 내리",
+      "regions": [
+        "area-9658"
+      ],
+      "aliases": [
+        "만대항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "c2702e5cdceb78119e0d",
+      "term": "남당항",
+      "regionFull": "충청남도 홍성군 서부면",
+      "regions": [
+        "area-9773"
+      ],
+      "aliases": [
+        "남당항"
+      ],
+      "category": "항구",
+      "sources": [
+        "national-harbors"
+      ]
+    },
+    {
+      "id": "0df7a008c0dceb5830d6",
+      "term": "궁리항",
+      "regionFull": "충청남도 홍성군 서부면 궁리",
+      "regions": [
+        "area-9776"
+      ],
+      "aliases": [
+        "궁리항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    },
+    {
+      "id": "d473ac664b77b588fb9b",
+      "term": "어사항",
+      "regionFull": "충청남도 홍성군 서부면 어사리",
+      "regions": [
+        "area-9779"
+      ],
+      "aliases": [
+        "어사항"
+      ],
+      "category": "항구",
+      "sources": [
+        "local-harbors"
+      ]
+    }
+  ],
+  "unresolved": []
+}

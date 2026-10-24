@@ -476,6 +476,10 @@ if((pathname==='/assets/smart24-business-card.png'||pathname==='/assets/smart24-
  if(!mainCardPngPromise)mainCardPngPromise=renderCardArtwork(null).catch(err=>{mainCardPngPromise=undefined;throw err});
  return mainCardPngPromise.then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'));
 }
+const coastalMatch=pathname.match(/^\/(daeri|taksong)\/coast\/([a-f0-9]{20})\/?$/);
+if(coastalMatch){const [,kind,id]=coastalMatch,item=keywordEngine.coastal.byId.get(id);if(!item)return respond(res,404,'해변·항구 정보를 찾을 수 없습니다.');const target=keywordEngine.coastal.url(item,kind);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,keywordEngine.coastal.page(item,kind))}
+const coastDirectory=pathname.match(/^\/coast(?:\/([^/]+))?\/?$/);
+if(coastDirectory){const page=keywordEngine.coastal.directory(coastDirectory[1]);return page?respond(res,200,page):respond(res,404,'해변·항구 지역을 찾을 수 없습니다.')}
 if(pathname==='/api/keyword-status'){res.setHeader('X-Robots-Tag','noindex');return respond(res,200,JSON.stringify(keywordEngine.summary),'application/json; charset=utf-8')}
 if(pathname==='/activities/'||pathname==='/activities')return respond(res,200,keywordEngine.activityHub());
 const activityMatch=pathname.match(/^\/activities\/([a-z-]+)\/?$/);if(activityMatch){const topic=keywordEngine.topicFromSlug(activityMatch[1]);return topic?respond(res,200,keywordEngine.topicPage(topic)):respond(res,404,'이용 안내를 찾을 수 없습니다.')}
