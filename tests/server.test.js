@@ -26,9 +26,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const service of ['daeri','taksong']){
    const response=await get('/'+service+'/seoul/');assert.equal(response.status,200);
    const html=await response.text();
-   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+\.png)"/);
+   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-light\.png)"/);
    assert.ok(card,'regional '+service+' page must advertise a PNG business card');
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
+   const svg=await (await get(card[1].replace('-light.png','.svg'))).text();
+   assert.ok(svg.includes('서울대리운전')&&svg.includes('서울탁송'),'card displays short local service labels');
+   assert.ok(svg.includes('#f0f9ff')&&!svg.includes('#e02528'),'regional card uses the bright palette without the old red banner');
    assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
    assert.ok(html.indexOf('<figure>')<html.indexOf('class="booking-guide"'),'regional card appears beside the regional introduction');
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
