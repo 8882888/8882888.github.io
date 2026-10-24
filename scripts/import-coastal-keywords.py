@@ -63,6 +63,10 @@ for k,x in list(items.items()):
   for kk,xx in matches:
    keep['aliases']=sorted(set(keep['aliases']+xx['aliases']));keep['sources']=sorted(set(keep['sources']+xx['sources']))
    if xx is not keep:items.pop(kk)
+# Explicit short geographical spellings reuse the same stable place ID and service URLs.
+for x in items.values():
+ short=re.sub(r'(해수욕장|해변|포구|항)$','',x['term']).strip()
+ if len(short)>=2:x['aliases']=sorted(set(x['aliases']+[short]))
 doc={'sources':sources,'coverageNote':'Official source snapshots, not a complete current list of every coastal place. Unmapped entries are withheld. Village harbors without addresses excluded.','items':sorted(items.values(),key=lambda x:(x['regionFull'],x['term'])),'unresolved':unresolved}
 (root/'data/coastal/places.json').write_text(json.dumps(doc,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps({'places':len(items),'unresolved':unresolved,'aliases':sum(len(x['aliases']) for x in items.values())},ensure_ascii=False))
