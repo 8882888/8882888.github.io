@@ -7,7 +7,7 @@ async function main(){
  const changed=(process.env.CHANGED_FILES||'').split(/\s+/).filter(Boolean);
  const manually=(process.env.INDEXNOW_URLS||'').split(/[\s,]+/).filter(Boolean);
  let paths=manually.length?manually:(changed.includes('server.js')?base:[]);
- if(!manually.length&&changed.some(x=>x.includes('ride-history')||x.includes('review-drafts'))){
+ if(!manually.length&&changed.some(x=>x.includes('ride-history')||x.includes('review-drafts')||x.includes('public-reviewed-rides'))){
    const xmlResponse=await fetch(origin+'/sitemap.xml',{signal:AbortSignal.timeout(20000)});
    if(!xmlResponse.ok)throw Error('Sitemap unavailable: '+xmlResponse.status);
    const xml=await xmlResponse.text();
