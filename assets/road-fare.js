@@ -1,0 +1,8 @@
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.RoadFare=api})(typeof globalThis!=='undefined'?globalThis:this,function(){
+'use strict';
+const round=n=>Math.ceil(n/5000)*5000;
+function baseQuote(km,service){if(!Number.isFinite(km)||km<=0)throw Error('invalid distance');const bands=km<=20?[12000,20000]:km<=50?[20000,30000]:km<=100?[30000,50000]:km<=200?[50000,80000]:km<=300?[80000,110000]:[110000+Math.max(0,km-300)*400];return bands.map(n=>round(n*(service==='daeri'?1.3:1)))}
+function roadQuote(km,service,from,to){let band=baseQuote(km,service);const norm=x=>String(x).replace(/\s+/g,'').toLowerCase(),isSokcho=norm(from).includes('속초'),isIncheon=norm(to).includes('인천'),remoteRegions=['울진','영덕','고성','거제','완도','해남'];const remoteMatch=remoteRegions.some(n=>norm(from).includes(n)||norm(to).includes(n));const isGangwonGoseong=x=>norm(x).includes('고성')&&['강원','간성','거진','토성','현내'].some(n=>norm(x).includes(n));const ambiguousGoseong=(norm(from).includes('고성')&&!isGangwonGoseong(from))||(norm(to).includes('고성')&&!isGangwonGoseong(to));const remoteApplied=remoteMatch&&!ambiguousGoseong;if(remoteApplied)band=band.map(n=>round(n*1.2));if(isSokcho&&isIncheon)band=service==='daeri'?[100000,120000].map(n=>round(n*1.3)):[100000,120000];return {band,isSokcho,isIncheon,remoteApplied}}
+function withFerry(band,ferry){if(!Array.isArray(band)||!band.length||band.some(n=>!Number.isFinite(n)||n<0)||!Number.isFinite(ferry)||ferry<0)throw Error('invalid fare');return {subtotal:band.map(n=>n+ferry),total:band.map(n=>round(n+ferry))}}
+return {baseQuote,roadQuote,withFerry};
+});
