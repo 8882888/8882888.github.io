@@ -30,6 +30,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(card,'regional '+service+' page must advertise a PNG business card');
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
    assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
+   assert.ok(html.indexOf('<figure>')<html.indexOf('class="booking-guide"'),'regional card appears beside the regional introduction');
+   const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
+   assert.ok(metadata.some(x=>x['@graph']?.some(y=>y['@type']==='WebPage'&&y.primaryImageOfPage)),'regional service page identifies its primary image');
+   const imageMap=await (await get('/sitemap-'+service+'.xml')).text();
+   assert.equal((imageMap.match(/<image:image>/g)||[]).length,regions.length,'every regional service URL includes its existing card in the image sitemap');
+   assert.ok(imageMap.includes('https://example.com'+card[1]),'sitemap and visible card use the same image URL');
    const image=await get(card[1]);assert.equal(image.status,200);
    assert.equal(image.headers.get('content-type'),'image/png');
    const bytes=new Uint8Array(await image.arrayBuffer());
