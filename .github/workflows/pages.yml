@@ -158,6 +158,8 @@ jobs:
           if not report['full_official_coverage']:
               print('::warning::This build is NOT complete nationwide official legal-dong coverage')
           PY
+      - name: Protect Smart24 branding and core files
+        run: python tools/check_smart24_invariants.py
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site files
