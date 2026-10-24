@@ -4,11 +4,16 @@ on:
     branches:
       - main
   workflow_dispatch:
+  workflow_run:
+    workflows: [Keyword automation]
+    types: [completed]
+    branches: [main]
 concurrency:
   group: cloudtype-production
   cancel-in-progress: false
 jobs:
   verify:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     uses: ./.github/workflows/smart24-server-check.yml
   deploy:
     needs: verify

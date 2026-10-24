@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
     paths:
+      - 'lib/**'
+      - 'tests/**'
+      - 'scripts/**'
       - 'server.js'
       - 'package.json'
       - 'Dockerfile'

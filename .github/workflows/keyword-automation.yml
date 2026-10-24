@@ -1,0 +1,42 @@
+name: Keyword automation
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/collect-keywords.py
+      - data/keywords/taxonomy.json
+      - .github/workflows/keyword-automation.yml
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: smart24-keyword-collector
+  cancel-in-progress: false
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Collect and classify keyword strings
+        run: python scripts/collect-keywords.py
+      - name: Verify stored keyword inventory
+        run: python -m unittest discover -s tests -p 'test_keyword*.py'
+      - name: Persist generated inventory and collection status
+        run: |
+          set -euo pipefail
+          git config user.name 'smart24-keyword-bot'
+          git config user.email 'smart24-keyword-bot@users.noreply.github.com'
+          git add data/keywords/catalog.json data/keywords/summary.json data/keywords/inventory.jsonl.gz
+          if ! git diff --cached --quiet; then
+            git commit -m 'Refresh keyword inventory and automatic region links'
+            git push origin HEAD:main
+          fi
