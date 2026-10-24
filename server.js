@@ -45,14 +45,14 @@ const rides=load('data/ride-history.json');
 const excelReviewFiles=['data/daeri-review-drafts-202610.json','data/taksong-review-drafts-202610.json'];
 const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);return (doc.items||[]).filter(x=>x.publication_status==='사용자 확인 운행완료').map(x=>({...x,service:doc.service,status:'completed',verified:true,verification_source:'user-confirmed Excel'}))}catch{return []}});
 const verifiedRides=[...(Array.isArray(rides)?rides.filter(x=>x.status==='completed'&&x.verified===true):[]),...excelCompleted];
-const publicRides=verifiedRides.filter(x=>/^\\d{4}-\\d{2}-\\d{2}$/.test(String(x.date||''))&&String(x.departure||'').trim()&&String(x.destination||'').trim()&&['taksong','daeri'].includes(x.service)).map(x=>({...x,publicId:require('node:crypto').createHash('sha256').update([x.date,x.service,x.departure,x.destination].join('|')).digest('hex').slice(0,16)}));
+const publicRides=verifiedRides.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))&&String(x.departure||'').trim()&&String(x.destination||'').trim()&&['taksong','daeri'].includes(x.service)).map(x=>({...x,publicId:require('node:crypto').createHash('sha256').update([x.date,x.service,x.departure,x.destination].join('|')).digest('hex').slice(0,16)}));
 const publicRideById=new Map(publicRides.map(x=>[x.publicId,x]));
 const rideUrl=x=>'/reviews/'+x.publicId+'/';
 function ridePage(x){
  const service=x.service==='taksong'?'탁송':'대리운전',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const title=x.date+' '+service+' 실제 완료 운행 안내';
  const desc=x.date+' '+service+' 완료 운행 기록. 출발·도착 지역과 운행 요금은 확인된 기록을 기준으로 안내합니다.';
- const safePlace=v=>String(v||'').replace(/\\d{1,5}(?:-\\d{1,5})?/g,'(상세주소 비공개)').slice(0,100);
+ const safePlace=v=>String(v||'').replace(/\d{1,5}(?:-\d{1,5})?/g,'(상세주소 비공개)').slice(0,100);
  const body='<article><h1>'+esc(title)+'</h1><p>사용자 확인 완료 기록에 근거한 실제 운행 안내입니다. 개인정보 보호를 위해 상세 주소는 일부 생략합니다.</p><section><h2>운행 정보</h2><dl><dt>날짜</dt><dd>'+esc(x.date)+'</dd><dt>서비스</dt><dd>'+service+'</dd><dt>출발</dt><dd>'+esc(safePlace(x.departure))+'</dd><dt>도착</dt><dd>'+esc(safePlace(x.destination))+'</dd>'+(x.fare?'<dt>기록 요금</dt><dd>'+esc(x.fare)+'</dd>':'')+'</dl></section><section><h2>예약·요금 상담</h2><p>위 금액은 해당 운행 기록이며 다른 운행의 확정요금이 아닙니다. 출발지·도착지·시간대 및 기사 이동 여건에 따라 달라집니다.</p><p><a href="tel:18114294">상담 1811-4294</a></p></section><p><a href="/reviews/">완료 운행 기록 목록</a> · <a href="/'+x.service+'/">'+service+' 서비스 안내</a></p></article>';
  return layout(title,desc,body,base+rideUrl(x),base+'/assets/smart24-business-card-inline-v2.png');
 }
