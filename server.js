@@ -494,7 +494,7 @@ let mainCardPngPromise;
 const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layout,servicePath,canonical,landmarks});
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 if(pathname==='/reviews/'||pathname==='/reviews')return respond(res,200,ridesIndex());
-const rideMatch=pathname.match(/^\\/reviews\\/([a-f0-9]{16})\\/?$/);
+const rideMatch=pathname.match(/^\/reviews\/([a-f0-9]{16})\/?$/);
 if(rideMatch){const x=publicRideById.get(rideMatch[1]);return x?respond(res,200,ridePage(x)):respond(res,404,'확인된 운행 기록이 없습니다.')}
 const recruitmentMatch=pathname.match(/^\/recruit\/(taksong|daeri)(?:\/([a-z0-9-]+))?\/?$/);
 if(recruitmentMatch){const region=recruitmentMatch[2]?bySlug.get(recruitmentMatch[2]):null;if(recruitmentMatch[2]&&(!region||region.level!=='시도'))return respond(res,404,'모집 지역을 찾을 수 없습니다.');return respond(res,200,recruitmentPage(recruitmentMatch[1],region))}
