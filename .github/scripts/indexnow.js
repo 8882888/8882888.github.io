@@ -4,8 +4,8 @@ const key='e8b417d6a2034fc79d8e6b150ac29f43';
 const origin='https://jeongukdaeri.kr';
 const base=['/','/daeri/','/taksong/','/recruit/taksong/','/recruit/daeri/'];
 async function main(){
- const changed=(process.env.CHANGED_FILES||'').split(/\\s+/).filter(Boolean);
- const manually=(process.env.INDEXNOW_URLS||'').split(/[\\s,]+/).filter(Boolean);
+ const changed=(process.env.CHANGED_FILES||'').split(/\s+/).filter(Boolean);
+ const manually=(process.env.INDEXNOW_URLS||'').split(/[\s,]+/).filter(Boolean);
  const paths=manually.length?manually:(changed.includes('server.js')?base:[]);
  if(!paths.length){console.log('No eligible changed URLs; skipping IndexNow');return}
  const urls=[...new Set(paths.map(x=>new URL(x,origin).href))].filter(x=>{const u=new URL(x);return u.origin===origin&&u.pathname.endsWith('/')&&u.search===''&&u.hash===''}).slice(0,25);
