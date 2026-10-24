@@ -15,7 +15,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 (async()=>{
  try{
   for(let i=0;i<50;i++){try{const r=await get('/health');if(r.ok)break}catch{}await delay(100)}
-  const h=await get('/health');assert.equal(h.status,200);assert.equal((await h.json()).regions,regions.length);
+  const h=await get('/health');assert.equal(h.status,200);const health=await h.json();assert.equal(health.regions,regions.length);
   const slugs=new Set(regions.map(r=>r.slug));assert.equal(slugs.size,regions.length,'duplicate slugs');
   assert.equal(regions.filter(r=>r.level==='시도').length,17,'17 provinces expected');
   const fullNames=new Set(regions.map(r=>r.full_name));assert.equal(fullNames.size,regions.length,'duplicate full region paths');
@@ -66,6 +66,28 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const homeHtml=await (await get('/')).text();
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
   const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();assert.ok((xml.match(/<loc>/g)||[]).length>=regions.length+2,'main sitemap includes all regions and category URLs');assert.ok(xml.includes('example.com'));assert.ok(xml.includes('/places/'),'place category hub appears in sitemap');assert.ok(xml.includes('/places/'+encodeURIComponent('캠핑장')+'/'),'camping category appears in sitemap');assert.ok(xml.includes('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/'),'tow truck delivery category appears in sitemap');
+  const guideUrls=[...xml.matchAll(/<loc>([^<]+\/(?:fare|long-distance|handover)\/)<\/loc>/g)].map(x=>x[1]);
+  assert.equal(guideUrls.length,health.regionalGuides,'submitted sitemap contains every regional topic guide');
+  assert.equal(new Set(guideUrls).size,guideUrls.length,'regional topic canonicals are unique');
+  assert.ok(health.regionalGuideAreas>=17,'guides cover every province');
+  const guideImages=new Set();
+  for(const [kind,topic,title] of [['daeri','fare','강릉대리운전요금'],['daeri','long-distance','강릉 장거리대리운전'],['taksong','fare','강릉탁송요금'],['taksong','handover','강릉 자동차탁송 예약·인계']]){
+   const pathname='/'+kind+'/gangwon/gangreung-si/'+topic+'/';
+   const response=await get(pathname);assert.equal(response.status,200);const html=await response.text();
+   assert.ok(html.includes(title),'guide answers its own service intent');
+   assert.ok(html.includes('rel="canonical" href="https://example.com'+pathname+'"'),'topic guide uses its own canonical');
+   assert.equal((html.match(/<h1[ >]/g)||[]).length,1);
+   assert.ok(html.includes('href="tel:18114294"'));
+   assert.ok(html.includes('/'+kind+'/gangwon/gangreung-si/'),'guide connects back to its regional service');
+   const image=html.match(/property="og:image" content="https:\/\/example.com([^"]+)"/)[1];guideImages.add(image);
+   assert.ok(xml.includes('https://example.com'+image),'topic card is included in image sitemap');
+  }
+  assert.equal(guideImages.size,4,'each search purpose has a distinct regional card URL');
+  const topicImage=await get([...guideImages][0]);assert.equal(topicImage.status,200);
+  const topicBytes=new Uint8Array(await topicImage.arrayBuffer());const topicMeta=await require('sharp')(topicBytes).metadata();assert.equal(topicMeta.width,1200);assert.equal(topicMeta.height,800);
+  const topicStats=await require('sharp')(topicBytes).extract({left:0,top:100,width:1200,height:700}).stats();assert.ok(topicStats.channels.some(c=>c.stdev>35),'topic cards retain approved detailed artwork');
+  assert.equal((await get('/daeri/gangwon/gangreung-si/handover/')).status,404,'unsupported service/topic combination is not indexed');
+  assert.equal((await get('/taksong/gangwon/not-a-city/fare/')).status,404,'unknown regions do not create topic guides');
   const secret=await get('/server.js');assert.equal(secret.status,403,'server source must not be exposed');
   const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
   const root=await get('/');assert.equal(root.status,200);
