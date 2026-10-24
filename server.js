@@ -44,7 +44,7 @@ function servicePath(r,kind){return '/'+kind+'/'+pathBySlug.get(r.slug)+'/'}
 const rides=load('data/ride-history.json');
 const excelReviewFiles=['data/daeri-review-drafts-202610.json','data/taksong-review-drafts-202610.json'];
 const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);return (doc.items||[]).filter(x=>x.publication_status==='사용자 확인 운행완료').map(x=>({...x,service:doc.service,status:'completed',verified:true,verification_source:'user-confirmed Excel'}))}catch{return []}});
-const verifiedRides=[...(Array.isArray(rides)?rides.filter(x=>x.status==='completed'&&x.verified===true):[]),...excelCompleted];
+const verifiedRides=[...(Array.isArray(rides)?rides.filter(x=>x.verified===true&&['completed','종료','운행종료'].includes(String(x.status||'').trim())):[]),...excelCompleted];
 const publicRides=verifiedRides.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))&&String(x.departure||'').trim()&&String(x.destination||'').trim()&&['taksong','daeri'].includes(x.service)).map(x=>({...x,publicId:require('node:crypto').createHash('sha256').update([x.date,x.service,x.departure,x.destination].join('|')).digest('hex').slice(0,16)}));
 const publicRideById=new Map(publicRides.map(x=>[x.publicId,x]));
 const rideUrl=x=>'/reviews/'+x.publicId+'/';
