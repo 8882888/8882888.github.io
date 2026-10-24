@@ -32,6 +32,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const svg=await (await get(card[1].replace('.png','.svg'))).text();
    const expectedBrand=service==='daeri'?'스마트전국대리운전':'스마트24시전국탁송';
    assert.ok(svg.includes('서울 '+expectedBrand),'card uses the requested regional service brand');
+   const caption=html.match(/<figcaption[^>]*>(.*?)<\/figcaption>/)[1];assert.ok(caption.includes(expectedBrand),'caption identifies the same service as the displayed card');
    const visibleLabels=svg.replace(/<image[^>]+\/>/g,'');
    assert.ok(!visibleLabels.includes(service==='daeri'?'스마트24시전국탁송':'스마트전국대리운전'),'card headings do not mix the two service brands');
    assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('x="200" y="7"'),'regional card uses the approved artwork and teal local labels');
