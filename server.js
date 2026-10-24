@@ -156,7 +156,9 @@ function regionalUsage(r,kind){
  ['장거리 편도 운전이 필요할 때','출발 주소와 목적지, 원하는 출발 시간을 알려주세요. 운행 후 기사 복귀 교통편에 따라 배차 조건이 달라질 수 있으므로 일정이 정해지면 미리 상담하세요.'],
  ['골프장·출장 왕복 운전이 필요할 때','왕복 구간과 출발·복귀 예상 시각, 현장 대기 시간을 전달해주세요. 편도 대리운전과 대기를 포함하는 일일기사는 이용 조건이 다르므로 일정에 맞춰 상담합니다.']
  ];
- return '<p>'+name+'에서 '+(isT?'차량 이동':'대리운전')+'을 준비할 때 참고할 상황별 이용 안내입니다. 아래 설명은 실제 완료 운행후기가 아닙니다.</p>'+examples.map(([q,a])=>'<h3>'+q+'</h3><p>'+a+'</p>').join('')+'<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name||r.name)+'">'+name+' 출발 참고요금 조회</a> · <a href="tel:18114294">상담 '+PHONE+'</a></p>';
+ const example=(r.full_name==='강원특별자치도 강릉시')?'<h3>강릉시 → 서울역 예상요금 계산 예시</h3><p>도로거리 약 227km · 예상 주행시간 239분 · '+(isT?'탁송 80,000~110,000원':'대리운전 105,000~145,000원')+'</p><p>2026년 10월 24일 계산기 조회 기준 참고 예시입니다. 강릉시 대표 위치를 기준으로 계산하므로 실제 차량 주소·경로·시간대에 따라 달라지며 완료 운행 사례나 확정 견적이 아닙니다.</p>':'';
+ const quoteForm='<h3>'+name+' 출발 예상요금은 얼마인가요?</h3>'+example+'<form action="/fare/" method="get"><input type="hidden" name="from" value="'+name+'"><input type="hidden" name="service" value="'+kind+'"><input type="hidden" name="auto" value="1"><label>도착지 주소 <input name="to" maxlength="150" required placeholder="예: 서울역 또는 도로명주소" style="max-width:100%;padding:12px;font:inherit"></label> <button type="submit" class="cta" style="border:0;cursor:pointer;font:inherit">예상요금 바로 계산</button></form><p>정확한 출발 주소는 계산기에서 수정할 수 있습니다. 도로거리·소요시간·5,000원 단위 참고요금을 조회하며 통행료·주차비·대기 등 비용 포함 여부는 상담으로 확인하세요.</p>';
+ return '<p>'+name+'에서 '+(isT?'차량 이동':'대리운전')+'을 준비할 때 참고할 상황별 이용 안내입니다. 아래 설명은 실제 완료 운행후기가 아닙니다.</p>'+quoteForm+examples.map(([q,a])=>'<h3>'+q+'</h3><p>'+a+'</p>').join('')+'<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name||r.name)+'">'+name+' 출발 참고요금 조회</a> · <a href="tel:18114294">상담 '+PHONE+'</a></p>';
 }
 function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
