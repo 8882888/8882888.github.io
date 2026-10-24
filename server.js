@@ -471,6 +471,11 @@ function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(
 let mainCardPngPromise;
 const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layout,servicePath,canonical,landmarks});
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
+if(pathname==='/taksongdaeri/'||pathname==='/taksongdaeri'){res.writeHead(301,{location:'/'});return res.end()}
+if(pathname==='/favicon.ico'){
+ if(!mainCardPngPromise)mainCardPngPromise=renderCardArtwork(null).catch(err=>{mainCardPngPromise=undefined;throw err});
+ return mainCardPngPromise.then(buf=>require('sharp')(buf).resize(64,64,{fit:'contain',background:'#ffffff'}).png().toBuffer()).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'아이콘 생성 오류'));
+}
 const hubCardMatch=pathname.match(/^\/assets\/smart24-(daeri|taksong)-brand\.png$/);
 if(hubCardMatch)return regionalCardPng({slug:'national-'+hubCardMatch[1],full_name:null},hubCardMatch[1]).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'));
 if((pathname==='/assets/smart24-business-card.png'||pathname==='/assets/smart24-business-card-light.png'||pathname==='/assets/smart24-business-card-art.png'||pathname==='/assets/smart24-business-card-inline.png'||pathname==='/assets/smart24-business-card-inline-v2.png')){
