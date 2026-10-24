@@ -6,7 +6,15 @@ const base=['/','/daeri/','/taksong/','/recruit/taksong/','/recruit/daeri/'];
 async function main(){
  const changed=(process.env.CHANGED_FILES||'').split(/\s+/).filter(Boolean);
  const manually=(process.env.INDEXNOW_URLS||'').split(/[\s,]+/).filter(Boolean);
- const paths=manually.length?manually:(changed.includes('server.js')?base:[]);
+ let paths=manually.length?manually:(changed.includes('server.js')?base:[]);
+ if(!manually.length&&changed.some(x=>x.includes('ride-history')||x.includes('review-drafts'))){
+   const xmlResponse=await fetch(origin+'/sitemap.xml',{signal:AbortSignal.timeout(20000)});
+   if(!xmlResponse.ok)throw Error('Sitemap unavailable: '+xmlResponse.status);
+   const xml=await xmlResponse.text();
+   const reviewUrls=[...xml.matchAll(/<loc>(https:\/\/jeongukdaeri\\.kr\/reviews\/[a-f0-9]{16}\/)<\/loc>/g)].map(x=>x[1]);
+   paths=[...paths,'/reviews/',...reviewUrls.slice(-23)];
+ }
+
  if(!paths.length){console.log('No eligible changed URLs; skipping IndexNow');return}
  const urls=[...new Set(paths.map(x=>new URL(x,origin).href))].filter(x=>{const u=new URL(x);return u.origin===origin&&u.pathname.endsWith('/')&&u.search===''&&u.hash===''}).slice(0,25);
  if(!urls.length){console.log('No valid URLs');return}
