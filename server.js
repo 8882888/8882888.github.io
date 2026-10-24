@@ -128,13 +128,14 @@ const cardSvg=(label)=>{
 const regionalCardPngs=new Map();
 function regionalCardPng(r){
  if(regionalCardPngs.has(r.slug))return regionalCardPngs.get(r.slug);
- const promise=require('sharp')(Buffer.from(cardSvg(r.full_name))).png({palette:true,quality:95,effort:3}).toBuffer().catch(err=>{regionalCardPngs.delete(r.slug);throw err});
+ const overlay=cardSvg(r.full_name).replace(/<image[^>]+\/>/,'');
+ const promise=require('sharp')({create:{width:1200,height:950,channels:3,background:'#ffffff'}}).composite([{input:cardArtFile,left:0,top:150},{input:Buffer.from(overlay),left:0,top:0}]).png({palette:true,quality:95,effort:3}).toBuffer().catch(err=>{regionalCardPngs.delete(r.slug);throw err});
  regionalCardPngs.set(r.slug,promise);
  if(regionalCardPngs.size>16)regionalCardPngs.delete(regionalCardPngs.keys().next().value);
  return promise;
 }
 const cardPath=(slug)=>'/card/'+encodeURIComponent(slug)+'.svg';
-const cardPngPath=(slug)=>'/card/'+encodeURIComponent(slug)+'-art.png';
+const cardPngPath=(slug)=>'/card/'+encodeURIComponent(slug)+'-art-v2.png';
 const canonical=(slug)=>'/region/'+encodeURIComponent(slug)+'/';
 const link=(slug)=>'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+canonical(slug);
 const layout=(title,desc,body,canonicalUrl,cardUrl)=>`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="naver-site-verification" content="84fa95fd88543581b31253642e024bcd7afde755"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} | ${BRAND}</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${esc(canonicalUrl)}"><meta name="robots" content="index,follow,max-image-preview:large"><meta property="og:type" content="website"><meta property="og:url" content="${esc(canonicalUrl)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}">${cardUrl?`<meta property="og:image" content="${esc(cardUrl)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="${esc(cardUrl)}">`:``}<style>*{box-sizing:border-box}body{margin:0;background:#f4f7fc;color:#15243a;font:17px/1.8 system-ui,'Malgun Gothic',sans-serif}header,footer{background:#102544;color:#fff;padding:20px 5%}header a,footer a{color:#ffdc50}main{max-width:940px;margin:auto;padding:14px}section{background:#fff;padding:20px;border-radius:12px;margin:15px 0;border:1px solid #d6e0ee}h1{font-size:clamp(25px,5vw,38px)}h2{font-size:23px}a{color:#07539c}.cta{display:inline-block;background:#ffe05d;color:#15243a;padding:12px 20px;border-radius:10px;font-weight:800;text-decoration:none}li{margin:7px 0}@media(max-width:600px){section{padding:15px}}</style></head><body><header><a href="/">홈</a> · <a href="/daeri/">대리운전</a> · <a href="/taksong/">자동차탁송</a> · <a href="/region/">지역 검색</a><h1>${esc(title)}</h1><p>${BRAND}</p></header><main>${body}</main><footer>상담 <a href="tel:18114294" aria-label="1811-4294 전화 상담">${PHONE}</a> · <a href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 상담</a> (08:00~20:00) · 실제 배차·요금은 상담 후 확인</footer></body></html>`;
@@ -426,7 +427,7 @@ if(pathname==='/region/'||pathname==='/region'){
  return respond(res,200,layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<section><h2>전국 지역 찾기</h2>'+form+'<p>전체 '+regions.length+'개 지역 중 '+(q?'검색 일치 최대 100개':'시·도 목록')+' 표시</p>'+links+'</section>'+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/'));
 }
  const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
- const cardPngMatch=pathname.match(/^\/card\/(area-[0-9]+)(?:-light|-art)?\.png$/);if(cardPngMatch){const r=bySlug.get(cardPngMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');return regionalCardPng(r).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'))}
+ const cardPngMatch=pathname.match(/^\/card\/(area-[0-9]+)(?:-light|-art(?:-v2)?)?\.png$/);if(cardPngMatch){const r=bySlug.get(cardPngMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');return regionalCardPng(r).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'))}
 const cardMatch=pathname.match(/^\/card\/(area-[0-9]+)\.svg$/);if(cardMatch){const r=bySlug.get(cardMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');res.writeHead(200,{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});return res.end(cardSvg(r.full_name));}
 if(pathname==='/api/public-rides'){
  const rows=load('data/ride-history-upload-202610.json');
