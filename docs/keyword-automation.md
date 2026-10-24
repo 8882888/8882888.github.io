@@ -23,3 +23,7 @@ Current sources are Google Trends KR RSS and two Google News RSS title feeds. A 
 Keywords cannot force search engines to index or rank the site. Search exposure, clicks, and conversions require independently measured analytics; `searchExposure` intentionally remains `not-measured`.
 
 Verification: `node tests/server.test.js` and `python -m unittest discover -s tests -p 'test_keyword*.py'`.
+
+## Public page correction (2026-10-25)
+
+The public category view does not display inventory or generated-expression counts. `/activities/` and its 13 topic guides contain actual visible approved service cards, explanation, quote links and phone calls. These guides have indexable canonical URLs and are in the root sitemap. Category-only legacy search links redirect to the corresponding guide. Internal search stays noindex and preserves existing query links. Keyword status stays available through the separate JSON endpoint. Named destination guides now show the same actual image as their Open Graph primary image, with service-specific branding. Generated archive expressions are candidates, not observed popular searches or verified search-engine exposure.

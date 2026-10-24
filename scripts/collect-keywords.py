@@ -95,7 +95,7 @@ def main():
  with gzip.GzipFile(filename=str(archive)+'.tmp',mode='wb',mtime=0) as gz:
   for r in rr:
    for topic in THEMES:
-    row={'term':r['full_name']+' '+topic,'region':r['slug'],'category':topic,'origin':'generated','state':'linked'}
+    row={'term':r['full_name']+' '+topic,'region':r['slug'],'category':topic,'origin':'generated','state':'candidate'}
     gz.write((json.dumps(row,ensure_ascii=False,separators=(',',':'))+'\n').encode());count+=1;generated+=1
   for x in sorted(items.values(),key=lambda x:x['id']):
    gz.write((json.dumps(x,ensure_ascii=False,separators=(',',':'))+'\n').encode()); count+=1
