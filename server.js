@@ -122,7 +122,7 @@ const cardArtFile=path.join(ROOT,'assets/smart24-business-card-art.webp');
 const cardArtData=fs.readFileSync(cardArtFile).toString('base64');
 const cardSvg=(label)=>{
  const full=String(label||'전국').trim(),place=shortPlace(full.split(/\s+/).at(-1));
- const title=esc(place),daeriHeading=esc(place+' 스마트24대리운전'),taksongHeading=esc(place+' 스마트24시탁송'),size=Math.min(52,Math.floor(1080/(place.length+10)));
+ const title=esc(place),daeriHeading=esc(place+' 스마트전국대리운전'),taksongHeading=esc(place+' 스마트24시탁송'),size=Math.min(52,Math.floor(1080/(place.length+10)));
  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="950" viewBox="0 0 1200 950" role="img" aria-labelledby="card-title"><title id="card-title">${esc(full)} ${title}대리운전 ${title}탁송 스마트24 1811-4294</title><rect width="1200" height="150" fill="#e4f7ff"/><path d="M0 148H1200" stroke="#40b7d4" stroke-width="4"/><text x="600" y="62" fill="#104b75" font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle">${daeriHeading}</text><text x="600" y="126" fill="#087c9b" font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle">${taksongHeading}</text><image href="data:image/webp;base64,${cardArtData}" x="0" y="150" width="1200" height="800"/></svg>`;
 };
 const regionalCardPngs=new Map();

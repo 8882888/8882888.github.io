@@ -30,7 +30,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(card,'regional '+service+' page must advertise a PNG business card');
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
    const svg=await (await get(card[1].replace('-art.png','.svg'))).text();
-   assert.ok(svg.includes('서울 스마트24대리운전')&&svg.includes('서울 스마트24시탁송'),'card puts the local service name and Smart24 brand at the top');
+   assert.ok(svg.includes('서울 스마트전국대리운전')&&svg.includes('서울 스마트24시탁송'),'card puts the local service name and Smart24 brand at the top');
    assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('y="150"'),'regional card uses the approved artwork and teal local labels');
    assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
    assert.ok(html.indexOf('<figure>')<html.indexOf('class="booking-guide"'),'regional card appears beside the regional introduction');
