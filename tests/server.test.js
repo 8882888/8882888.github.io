@@ -75,6 +75,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const pathname='/'+kind+'/gangwon/gangreung-si/'+topic+'/';
    const response=await get(pathname);assert.equal(response.status,200);const html=await response.text();
    assert.ok(html.includes(title),'guide answers its own service intent');
+   const dispatchPhrase=kind==='daeri'?'대리운전 빠른배차 상담':'탁송 즉시배차 가능 여부 확인';
+   assert.ok(html.includes('aria-label="빠른배차 상담"')&&html.includes(dispatchPhrase),'topic card has visible dispatch consultation information');
+   assert.ok(html.match(/name="description" content="([^"]*)"/)[1].includes(dispatchPhrase),'search description and visible consultation copy agree');
    assert.ok(html.includes('rel="canonical" href="https://example.com'+pathname+'"'),'topic guide uses its own canonical');
    assert.equal((html.match(/<h1[ >]/g)||[]).length,1);
    assert.ok(html.includes('href="tel:18114294"'));
