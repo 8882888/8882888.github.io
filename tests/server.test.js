@@ -35,6 +35,20 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const bytes=new Uint8Array(await image.arrayBuffer());
    assert.deepEqual([...bytes.slice(0,8)],[137,80,78,71,13,10,26,10]);
   }
+  for(const service of ['daeri','taksong']){
+   const hub=await (await get('/'+service+'/')).text();
+   assert.equal((hub.match(/<h1[ >]/g)||[]).length,1,'service hub has a single primary heading');
+   assert.ok(hub.includes('/fare/?service='+service),'hub calculator preserves service choice');
+   assert.ok(!hub.includes('키워드 자동 검색'),'customer hub prioritizes booking instead of generated search terms');
+   const regional=await (await get('/'+service+'/gangwon/gangreung-si/')).text();
+   assert.ok(regional.includes('영서·영동'),'Gangwon guidance addresses the regional journey');
+   assert.ok(regional.includes('/fare/?service='+service+'&amp;from='+encodeURIComponent('강원특별자치도 강릉시')),'regional calculator retains service and departure');
+   assert.ok(regional.includes(service==='taksong'?'면책금':'동승 인원'),'service-specific booking checks are visible');
+  }
+  const fareHtml=await (await get('/fare/')).text();
+  assert.ok(fareHtml.includes('통행료·주유비·주차비'),'estimator discloses costs to confirm');
+  const homeHtml=await (await get('/')).text();
+  assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
   const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();assert.ok((xml.match(/<loc>/g)||[]).length>=regions.length+2,'main sitemap includes all regions and category URLs');assert.ok(xml.includes('example.com'));assert.ok(xml.includes('/places/'),'place category hub appears in sitemap');assert.ok(xml.includes('/places/'+encodeURIComponent('캠핑장')+'/'),'camping category appears in sitemap');assert.ok(xml.includes('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/'),'tow truck delivery category appears in sitemap');
   const secret=await get('/server.js');assert.equal(secret.status,403,'server source must not be exposed');
   const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
