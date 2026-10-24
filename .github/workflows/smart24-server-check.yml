@@ -10,6 +10,7 @@ on:
       - 'data/**'
       - '.github/workflows/smart24-server-check.yml'
   workflow_dispatch:
+  workflow_call:
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -22,6 +23,8 @@ jobs:
         run: node --check server.js
       - name: Install production dependencies
         run: npm install --omit=dev --no-audit --no-fund
+      - name: Verify nationwide dynamic routes
+        run: node tests/server.test.js
       - name: Start and smoke-test HTTP service
         shell: bash
         run: |

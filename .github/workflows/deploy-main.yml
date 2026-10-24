@@ -4,8 +4,14 @@ on:
     branches:
       - main
   workflow_dispatch:
+concurrency:
+  group: cloudtype-production
+  cancel-in-progress: false
 jobs:
+  verify:
+    uses: ./.github/workflows/smart24-server-check.yml
   deploy:
+    needs: verify
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,6 +21,7 @@ jobs:
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           ghtoken: ${{ secrets.GHP_TOKEN }}
+          scope: smart24-taksong
       - name: Deploy
         uses: cloudtype-github-actions/deploy@v1
         with:

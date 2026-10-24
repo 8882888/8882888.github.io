@@ -23,6 +23,18 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const samples=[regions[0],regions.find(r=>r.full_name==='서울특별시 강남구'),regions.at(-1)].filter(Boolean);
   for(const r of samples){const res=await get('/region/'+r.slug+'/');assert.equal(res.status,200,r.slug);const html=await res.text();assert.ok(html.includes(r.name));assert.ok(html.includes('대리운전'));assert.ok(html.includes('자동차탁송'));assert.ok(html.includes('1811-4294'));assert.ok(html.includes('일일기사'))}
   const missing=await get('/region/not-a-real-region/');assert.equal(missing.status,404);
+  for(const service of ['daeri','taksong']){
+   const response=await get('/'+service+'/seoul/');assert.equal(response.status,200);
+   const html=await response.text();
+   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+\.png)"/);
+   assert.ok(card,'regional '+service+' page must advertise a PNG business card');
+   assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
+   assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
+   const image=await get(card[1]);assert.equal(image.status,200);
+   assert.equal(image.headers.get('content-type'),'image/png');
+   const bytes=new Uint8Array(await image.arrayBuffer());
+   assert.deepEqual([...bytes.slice(0,8)],[137,80,78,71,13,10,26,10]);
+  }
   const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();assert.ok((xml.match(/<loc>/g)||[]).length>=regions.length+2,'main sitemap includes all regions and category URLs');assert.ok(xml.includes('example.com'));assert.ok(xml.includes('/places/'),'place category hub appears in sitemap');assert.ok(xml.includes('/places/'+encodeURIComponent('캠핑장')+'/'),'camping category appears in sitemap');assert.ok(xml.includes('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/'),'tow truck delivery category appears in sitemap');
   const secret=await get('/server.js');assert.equal(secret.status,403,'server source must not be exposed');
   const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
