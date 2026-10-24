@@ -41,6 +41,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const q of ['인구대리운전','인구해변탁송','을왕리대리','소래포구대리운전','삼길포항탁송','삼천포탁송','강원도대리운전','속초대리운전','고성대리운전','거진대리운전','간성대리운전','삼척대리운전','동해대리운전','주문진대리운전']){const h=await (await get('/keyword-search/?q='+encodeURIComponent(q))).text();assert.ok(/href="\/(daeri|taksong)\/(coast|gangwon)/.test(h),q);}
   const songjeong=coast.items.filter(x=>x.term==='송정해수욕장');assert.ok(new Set(songjeong.map(x=>x.regionFull)).size>1,'same-name beaches remain region-separated');
   const coastIndex=await (await get('/coast/')).text();assert.ok(coastIndex.includes('해변·항구'));assert.equal((await get('/daeri/coast/00000000000000000000/')).status,404);
+  for(const suffix of ['대리','대리운전','탁송']){
+   const kind=suffix==='탁송'?'taksong':'daeri';
+   for(const term of ['설악산','강남맛집','강화읍','역삼동','서울','맛집','자전거길']){const h=await (await get('/keyword-search/?q='+encodeURIComponent(term+suffix))).text();assert.ok(h.includes('href="/'+kind+'/'),term+suffix);}
+   const fixture=topicCatalogForService();const p='/'+kind+'/visit/'+fixture.id+'/',h=await (await get(p)).text();assert.ok(h.includes('href="https://example.com'+p+'"'));assert.ok(h.includes('-'+kind+'-brand.png'));assert.ok(h.includes('value="'+kind+'" selected'));assert.ok(h.includes('1811-4294'));
+   const topicHtml=await (await get('/'+kind+'/activities/food/')).text();assert.ok(topicHtml.includes('value="'+kind+'" selected'));assert.ok(topicHtml.includes('/assets/smart24-'+kind+'-brand.png'));
+  }
+  function topicCatalogForService(){return require('../data/keywords/catalog.json').items.find(x=>x.term==='설악산'&&x.state==='linked');}
   const unknownKeyword=await get('/visit/00000000000000000000/');assert.equal(unknownKeyword.status,404);
   const topicCatalog=require('../data/keywords/catalog.json');const mountain=topicCatalog.items.find(x=>x.term==='설악산');const mountainRes=await get('/visit/'+mountain.id+'/');assert.equal(mountainRes.status,200);const mountainHtml=await mountainRes.text();assert.ok(mountainHtml.includes('차키'));assert.ok(mountainHtml.includes('tel:18114294'));assert.ok(mountainHtml.includes('name="from"'));assert.ok(mountainHtml.includes('name="to"'));const mountainImage=mountainHtml.match(/property="og:image" content="([^"]+)/)[1];assert.ok(mountainHtml.includes('src="'+mountainImage+'"'),'guide primary image must actually be visible');
   const eupHtml=await (await get('/daeri/incheon/ganghwa-gun/ganghwa-eup/')).text();assert.ok(eupHtml.includes('<title>강화읍대리운전'));assert.ok(eupHtml.includes('href="/daeri/incheon/"'));assert.ok(eupHtml.includes('href="/daeri/incheon/ganghwa-gun/"'));
