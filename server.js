@@ -212,16 +212,48 @@ function neighborhoodStorySection(r,kind){
  if(!matches.length)return '';
  return '<section><h2>'+esc(shortPlace(r.name))+' 유명 거리·계절별 대리운전 이야기</h2><p>비 오는 날의 파전, 눈 내리는 골목, 여름 해변의 저녁처럼 지역의 분위기를 담은 이용 안내입니다. 아래 내용은 실제 배차 완료 후기가 아닌 지역별 예약 가이드입니다.</p>'+matches.map(x=>'<article><h3>'+esc(x.title)+'</h3><p><strong>'+esc(x.name)+'</strong> · '+esc(x.text)+'</p><p>대리운전 예약 시 출발지·도착지·희망 시각을 알려주세요. <a href="/fare/?service=daeri&amp;from='+encodeURIComponent(x.area+' '+x.name)+'">해당 거리 출발 예상요금 계산</a> · <a href="tel:18114294">배차 상담 '+PHONE+'</a></p></article>').join('')+'</section>';
 }
-function regionalQuoteLinks(r,kind){
- const label=kind==='taksong'?'탁송':'대리운전';
- const origin=r.full_name||r.name;
- const city=shortPlace(r.name);
- const destinations=['대구역','서울역','인천시청','대전역','광주송정역','부산역','강릉역'].filter(x=>!x.startsWith(city)).slice(0,5);
- const routes=destinations.map(to=>({from:origin,to,service:kind}));
- const rows=routes.map(x=>'<tr><td>'+esc(x.from)+'</td><td>'+esc(x.to)+'</td><td class="quote-amount">자동 산출 중</td><td><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(x.from)+'&amp;to='+encodeURIComponent(x.to)+'&amp;auto=1">상세 조회</a></td></tr>').join('');
- const js='(async()=>{const table=document.currentScript.previousElementSibling;const routes='+JSON.stringify(routes)+';const cells=[...table.querySelectorAll(".quote-amount")];try{const script=document.createElement("script");script.src="/assets/road-fare.js";await new Promise((resolve,reject)=>{script.onload=resolve;script.onerror=reject;document.head.append(script)});await Promise.all(routes.map(async(x,i)=>{try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);let response;try{response=await fetch("https://white-voice-6eab.k337711.workers.dev/route?"+new URLSearchParams({from:x.from,to:x.to}),{signal:controller.signal})}finally{clearTimeout(timer)}if(!response.ok)throw Error("route");const data=await response.json();const km=Number(data.distanceKm);if(!Number.isFinite(km)||km<=0)throw Error("distance");const band=RoadFare.roadQuote(km,x.service,x.from,x.to).band;cells[i].textContent=band.map(n=>n.toLocaleString("ko-KR")+"원").join(" ~ ")+" (예상)"}catch{cells[i].textContent="조회 버튼으로 확인"}}))}catch{cells.forEach(x=>x.textContent="조회 버튼으로 확인")}})();';
- return '<section><h2>'+esc(city+label)+' 출발·도착지별 예상요금 및 배차 안내</h2><p>출발지와 도착지를 기준으로 기존 도로거리 요금계산기를 이용해 예상요금을 자동 산출합니다. 실제 운행 완료 내역이나 확정 배차요금이 아닙니다.</p><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left"><thead><tr><th>출발</th><th>도착</th><th>자동계산 예상요금</th><th>조회</th></tr></thead><tbody>'+rows+'</tbody></table></div><script>'+js+'</script>'+(kind==='daeri'?'<h3>대리운전도 사전 예약하면 탁송요금 수준으로 저렴하게 이용할 수 있습니다</h3><p>출발지·도착지와 출발 시간을 미리 알려주시면 기사 이동·복귀 동선을 고려해 장거리 대리운전 요금을 조정할 수 있습니다. 조건이 맞으면 탁송요금과 비슷한 수준의 예약 견적도 가능하므로 먼저 상담해 주세요. 단, 모든 구간에서 탁송요금과 동일하거나 더 저렴한 가격을 보장하는 것은 아니며 최종요금은 배차 확인 후 안내합니다.</p><p><a href="/fare/?service=taksong&amp;from='+encodeURIComponent(origin)+'">같은 구간의 탁송 예상요금 비교하기</a></p>':'')+'<h3>'+esc(city+label)+' 예약·기사 배차 안내</h3><p>출발지·도착지·희망 출발 시간·차종을 알려주시면 기사 접근 및 복귀 동선, 배차 가능 여부와 최종요금을 확인합니다. 장거리·야간·새벽 운행은 사전 예약을 권합니다. 통행료·주차비·경유·대기 비용 포함 여부는 상담 시 확인하세요.</p><p><a class="cta" href="tel:18114294">배차 상담 '+PHONE+'</a></p></section>';
+const RoadFareServer=require('./assets/road-fare.js');
+const roadRouteCache=new Map();
+let roadRouteActive=0;
+async function cachedRoadDistance(from,to){
+ const key=from+'|'+to,now=Date.now(),old=roadRouteCache.get(key);
+ if(old&&old.expires>now)return old.km;
+ // Bound server-side routing lookups so a crawler cannot flood the external route provider.
+ if(roadRouteActive>=4)return null;
+ roadRouteActive++;
+ try{
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),2500);
+  let km=null;
+  try{
+   const url='https://white-voice-6eab.k337711.workers.dev/route?'+new URLSearchParams({from,to});
+   const response=await fetch(url,{signal:controller.signal});
+   if(response.ok){const data=await response.json();const n=Number(data.distanceKm);if(Number.isFinite(n)&&n>0&&n<2000)km=n}
+  }finally{clearTimeout(timer)}
+  roadRouteCache.set(key,{km,expires:now+(km?24*3600*1000:5*60*1000)});
+  if(roadRouteCache.size>300)roadRouteCache.delete(roadRouteCache.keys().next().value);
+  return km;
+ }catch{return null}finally{roadRouteActive--}
 }
+function regionalRouteDestinations(r){
+ const city=shortPlace(r.name);
+ return ['대구역','서울역','인천시청','대전역','광주송정역','부산역','강릉역'].filter(x=>!x.startsWith(city)).slice(0,5);
+}
+async function regionalQuoteLinks(r,kind){
+ const label=kind==='taksong'?'탁송':'대리운전',origin=r.full_name||r.name,city=shortPlace(r.name);
+ const routes=regionalRouteDestinations(r).map(to=>({from:origin,to,service:kind}));
+ // Only fetch server-side on province/city/county/district pages. Smaller subdivisions retain
+ // the interactive calculator without sending a new route request for every crawler hit.
+ const serverLookup=['시도','시','군','구'].includes(r.level);
+ const distances=serverLookup?await Promise.all(routes.map(x=>cachedRoadDistance(x.from,x.to))):routes.map(()=>null);
+ const rows=routes.map((x,i)=>{
+  const km=distances[i],band=km?RoadFareServer.roadQuote(km,kind,x.from,x.to).band:null;
+  const value=band?band.map(n=>n.toLocaleString('ko-KR')+'원').join(' ~ ')+' (예상)':'거리 확인 후 예상요금 조회';
+  const distance=km?Math.round(km*10)/10+'km':'조회 필요';
+  return '<tr><td>'+esc(x.from)+'</td><td>'+esc(x.to)+'</td><td>'+esc(distance)+'</td><td class="quote-amount">'+esc(value)+'</td><td><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(x.from)+'&amp;to='+encodeURIComponent(x.to)+'&amp;auto=1">상세 조회</a></td></tr>';
+ }).join('');
+ return '<section><h2>'+esc(city+label)+' 출발·도착지별 도로거리·예상요금 및 배차 안내</h2><p>도로거리 조회에 성공한 구간은 서버가 계산한 예상요금을 HTML에 표시합니다. 거리를 확인하지 못한 구간은 금액을 임의로 표시하지 않고 상세 조회로 연결합니다. 실제 운행 완료 내역이나 확정 배차요금이 아닙니다.</p><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left"><thead><tr><th>출발</th><th>도착</th><th>도로거리</th><th>자동계산 예상요금</th><th>조회</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+(kind==='daeri'?'<h3>대리운전 사전 예약 시 탁송요금 수준의 견적 상담</h3><p>출발지·도착지와 출발 시간을 미리 알려주시면 기사 이동·복귀 동선을 고려해 장거리 대리운전 요금을 조정할 수 있습니다. 조건에 따라 탁송요금과 비슷한 수준의 예약 견적이 가능할 수 있으나 동일·할인 요금을 보장하지 않습니다. 최종요금은 배차 확인 후 안내합니다.</p><p><a href="/fare/?service=taksong&amp;from='+encodeURIComponent(origin)+'">같은 구간의 탁송 예상요금 비교하기</a></p>':'')+'<h3>'+esc(city+label)+' 예약·기사 배차 안내</h3><p>장거리·야간·새벽 운행은 사전 예약을 권합니다. 출발지·도착지·출발 시간·차종을 알려주세요. 기사 접근 및 복귀 동선, 통행료·주차비·경유·대기 비용 포함 여부는 상담 시 확인합니다.</p><p><a class="cta" href="tel:18114294">배차 상담 '+PHONE+'</a></p></section>';
+}
+
 function regionalUsage(r,kind){
  const name=esc(r.full_name||r.name),isT=kind==='taksong';
  const examples=isT?[
@@ -290,7 +322,7 @@ function regionalIntentPage(r,kind,topic){
  return layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+content+remoteRegionGuidance(r)+local+regionalIntentNav(r,pathname),base+pathname,base+image);
 }
 
-function servicePage(r,kind){
+async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const keyword=(['읍','면','동','리'].includes(r.level)?r.name:shortPlace(r.name))+service;
  const qualifiedKeyword=name+' '+service;
@@ -303,7 +335,7 @@ function servicePage(r,kind){
  const matches=verifiedRides.filter(x=>{const raw=String(x.departure||'')+' '+String(x.destination||'');const type=String(x.service||x.service_type||x.kind||'').toLowerCase();return tripMatchesRegion(x,r)&&(kind==='taksong'?/탁송|taksong/.test(type)||(!type&&/탁\//.test(raw)):/대리|daeri/.test(type)||(!type&&!/탁\//.test(raw)))}).slice(0,8);
  const history=matches.length?'<p>아래는 확인된 실제 완료 운행 기록입니다. 기록 요금은 당시 운행 조건에 따른 금액이며 현재 예상요금과 다를 수 있습니다.</p><ul>'+matches.map(x=>'<li><a href="'+rideUrl(x)+'">'+esc([x.departure+' → '+x.destination,service+' 운행완료',x.fare?'요금 '+x.fare:'',x.date].filter(Boolean).join(' · '))+'</a></li>').join('')+'</ul><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 출발·도착지 입력해 현재 예상요금 조회</a></p>':regionalUsage(r,kind);
  const near=(childrenByParent.get(r.parent_slug)||[]).filter(x=>x.slug!==r.slug).slice(0,8).map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.full_name)+' '+service+'</a></li>').join('');
- const body='<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(a.name)+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+regionalIntentNav(r)+remoteRegionGuidance(r)+regionalQuoteLinks(r,kind)+neighborhoodStorySection(r,kind)+bookingGuide(kind,r)+aliasSection+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(serviceBrand(kind))+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 출발지·도착지 예상요금 확인하기</a></p></section><section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
+ const body='<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(a.name)+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+neighborhoodStorySection(r,kind)+bookingGuide(kind,r)+aliasSection+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(serviceBrand(kind))+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 출발지·도착지 예상요금 확인하기</a></p></section><section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
  const imageUrl='https://'+host+cardPngPath(r.slug,kind);
  const card='<figure><a href="tel:18114294" aria-label="'+esc(name)+' '+service+' 1811-4294 전화 상담"><img src="'+cardPngPath(r.slug,kind)+'" alt="'+esc(name)+' '+serviceBrand(kind)+' 명함 1811-4294" width="1200" height="800" loading="lazy" style="width:100%;height:auto"></a></figure>';
  const pageUrl='https://'+host+servicePath(r,kind);
@@ -608,7 +640,7 @@ if(pathname==='/sitemap.xml'){const base='https://'+(process.env.PUBLIC_HOST||'j
 const intentMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/(fare|long-distance|handover)\/?$/);
 if(intentMatch){const [,kind,regionPath,topic]=intentMatch,r=byPath.get(regionPath);if(!r||!regionalIntentSlugs.has(r.slug)||!regionalIntentTypes[kind].includes(topic))return respond(res,404,'지역별 이용 안내를 찾을 수 없습니다.');const target=regionalIntentPath(r,kind,topic);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,regionalIntentPage(r,kind,topic))}
 const hierarchicalMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/?$/);
-if(hierarchicalMatch){const r=byPath.get(hierarchicalMatch[2]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');const target=servicePath(r,hierarchicalMatch[1]);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,servicePage(r,hierarchicalMatch[1]))}
+if(hierarchicalMatch){const r=byPath.get(hierarchicalMatch[2]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');const target=servicePath(r,hierarchicalMatch[1]);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return servicePage(r,hierarchicalMatch[1]).then(html=>respond(res,200,html)).catch(err=>{console.error('regional page error',err);respond(res,500,'페이지 생성 오류')})}
 const serviceMatch=pathname.match(/^\/service\/(area-[0-9]+)\/(daeri|taksong)\/?$/);if(serviceMatch){const r=bySlug.get(serviceMatch[1]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');res.writeHead(301,{location:servicePath(r,serviceMatch[2])});return res.end()}
 const match=pathname.match(/^\/region\/([^/]+)\/?$/);if(match){const r=bySlug.get(match[1]);return r?respond(res,200,regionPage(r)):respond(res,404,'지역 정보를 찾을 수 없습니다.')}
 if(/^\/(?:data(?:\/|$)|server\.js|package(?:-lock)?\.json|HOSTING_SETUP\.md|tests\/|\.github\/|node_modules\/|\.env)/i.test(pathname))return respond(res,403,'접근 불가');
