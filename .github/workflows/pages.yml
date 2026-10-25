@@ -87,6 +87,39 @@ jobs:
           fi
       - name: Configure canonical URLs and custom-domain artifact
         run: python tools/configure_site.py
+      - name: Guard official Smart24 canonical domain before publishing
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          from urllib.parse import urlsplit
+          class CanonicalParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.urls = []
+              def handle_starttag(self, tag, attrs):
+                  if tag != 'link':
+                      return
+                  data = dict(attrs)
+                  if 'canonical' in data.get('rel', '').lower().split():
+                      self.urls.append(data.get('href', ''))
+          paths = [Path('index.html'), Path('region/index.html')]
+          paths += sorted(Path('region').rglob('index.html'))
+          failures = []
+          for path in paths:
+              parser = CanonicalParser()
+              parser.feed(path.read_text(encoding='utf-8'))
+              if len(parser.urls) != 1:
+                  failures.append(f'{path}: expected one canonical, got {len(parser.urls)}')
+                  continue
+              url = urlsplit(parser.urls[0])
+              if url.scheme != 'https' or url.netloc != 'jeongukdaeri.kr':
+                  failures.append(f'{path}: nonofficial canonical {parser.urls[0]}')
+          if failures:
+              raise SystemExit('Canonical host check failed:\\n' + '\\n'.join(failures[:20]))
+          print(f'PASS: {len(paths)} pages canonicalize to https://jeongukdaeri.kr')
+          PY
       - name: Audit duplicate titles and low-information region pages
         run: python tools/audit_seo_quality.py
       - name: Validate generated pages when sitemap exists
