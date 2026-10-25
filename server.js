@@ -491,7 +491,7 @@ function recruitmentPage(kind,region){
  return layout(title,desc,body,base+url,base+'/assets/smart24-business-card-inline-v2.png');
 }
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
-let mainCardPngPromise;
+let mainCardPngPromise, faviconPngPromise;
 const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layout,servicePath,canonical,landmarks});
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 if(pathname==='/reviews/'||pathname==='/reviews')return respond(res,200,ridesIndex());
@@ -501,8 +501,11 @@ const recruitmentMatch=pathname.match(/^\/recruit\/(taksong|daeri)(?:\/([a-z0-9-
 if(recruitmentMatch){const region=recruitmentMatch[2]?bySlug.get(recruitmentMatch[2]):null;if(recruitmentMatch[2]&&(!region||region.level!=='시도'))return respond(res,404,'모집 지역을 찾을 수 없습니다.');return respond(res,200,recruitmentPage(recruitmentMatch[1],region))}
 if(pathname==='/taksongdaeri/'||pathname==='/taksongdaeri'){res.writeHead(301,{location:'/'});return res.end()}
 if(pathname==='/favicon.ico'){
- if(!mainCardPngPromise)mainCardPngPromise=renderCardArtwork(null).catch(err=>{mainCardPngPromise=undefined;throw err});
- return mainCardPngPromise.then(buf=>require('sharp')(buf).resize(64,64,{fit:'contain',background:'#ffffff'}).png().toBuffer()).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'아이콘 생성 오류'));
+ if(!faviconPngPromise){
+  if(!mainCardPngPromise)mainCardPngPromise=renderCardArtwork(null).catch(err=>{mainCardPngPromise=undefined;throw err});
+  faviconPngPromise=mainCardPngPromise.then(buf=>require('sharp')(buf).resize(64,64,{fit:'contain',background:'#ffffff'}).png().toBuffer()).catch(err=>{faviconPngPromise=undefined;throw err});
+ }
+ return faviconPngPromise.then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'아이콘 생성 오류'));
 }
 const hubCardMatch=pathname.match(/^\/assets\/smart24-(daeri|taksong)-brand\.png$/);
 if(hubCardMatch)return regionalCardPng({slug:'national-'+hubCardMatch[1],full_name:null},hubCardMatch[1]).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'));
