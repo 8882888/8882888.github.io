@@ -222,11 +222,11 @@ async function cachedRoadDistance(from,to){
  if(roadRouteActive>=4)return null;
  roadRouteActive++;
  try{
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),2500);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
   let km=null;
   try{
    const url='https://white-voice-6eab.k337711.workers.dev/route?'+new URLSearchParams({from,to});
-   const response=await fetch(url,{signal:controller.signal});
+   const response=await fetch(url,{signal:controller.signal,headers:{Origin:'https://jeongukdaeri.kr'}});
    if(response.ok){const data=await response.json();const n=Number(data.distanceKm);if(Number.isFinite(n)&&n>0&&n<2000)km=n}
   }finally{clearTimeout(timer)}
   roadRouteCache.set(key,{km,expires:now+(km?24*3600*1000:5*60*1000)});
@@ -236,7 +236,7 @@ async function cachedRoadDistance(from,to){
 }
 function regionalRouteDestinations(r){
  const city=shortPlace(r.name);
- return ['대구역','서울역','인천시청','대전역','광주송정역','부산역','강릉역'].filter(x=>!x.startsWith(city)).slice(0,5);
+ return ['서울역','인천시청','대구역','대전역','부산역','광주송정역','강릉역'].filter(x=>!x.startsWith(city)).slice(0,5);
 }
 async function regionalQuoteLinks(r,kind){
  const label=kind==='taksong'?'탁송':'대리운전',origin=r.full_name||r.name,city=shortPlace(r.name);
@@ -244,7 +244,12 @@ async function regionalQuoteLinks(r,kind){
  // Only fetch server-side on province/city/county/district pages. Smaller subdivisions retain
  // the interactive calculator without sending a new route request for every crawler hit.
  const serverLookup=true; // All nationwide administrative levels; lookup failures remain unpriced.
- const distances=serverLookup?await Promise.all(routes.map(x=>cachedRoadDistance(x.from,x.to))):routes.map(()=>null);
+ const distances=[];
+  if(serverLookup){
+   for(let i=0;i<routes.length;i+=4){
+    distances.push(...await Promise.all(routes.slice(i,i+4).map(x=>cachedRoadDistance(x.from,x.to))));
+   }
+  }else distances.push(...routes.map(()=>null));
  const rows=routes.map((x,i)=>{
   const km=distances[i],band=km?RoadFareServer.roadQuote(km,kind,x.from,x.to).band:null;
   const value=band?band.map(n=>n.toLocaleString('ko-KR')+'원').join(' ~ ')+' (예상)':'거리 확인 후 예상요금 조회';
