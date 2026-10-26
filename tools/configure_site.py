@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Apply the selected canonical host to the GitHub Pages deployment artifact."""
 import os
+import html
 import re
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -28,6 +29,18 @@ for path in ROOT.rglob("*.html"):
         flags=re.I,
     )
     updated = updated.replace("스마트번개대리운전", "스마트전국대리운전 스마트24탁송")
+    # Only the Pages CI artifact moves verified entry URLs to the live origin.
+    # Keep source HTML and legacy regional pages intact; Cloudtype serves source.
+    entry_paths = {
+        Path("index.html"): "/",
+        Path("special/nationwide-daeri/index.html"): "/special/nationwide-daeri/",
+        Path("taksongdaeri/index.html"): "/taksongdaeri/",
+    }
+    if os.environ.get("GITHUB_ACTIONS") == "true" and path in entry_paths and parts.netloc == "jeongukdaeri.kr":
+        target = html.escape(SITE_URL + entry_paths[path], quote=True)
+        marker = '<!-- official-domain-migration -->'
+        if marker not in updated:
+            updated = updated.replace('</head>', marker + '<meta http-equiv="refresh" content="0;url=' + target + '"></head>', 1)
     if updated != text:
         path.write_text(updated, encoding="utf-8")
         changed += 1
