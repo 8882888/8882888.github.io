@@ -41,7 +41,7 @@ jobs:
           set -uo pipefail
           base="${PRODUCTION_URL%/}"
           failed=0
-          for route in / /health /assets/smart24-business-card.svg /region/ /places/ /places/%EC%BA%A0%ED%95%91%EC%9E%A5/ /taksong/types/ /fare/ /sitemap.xml /sitemap-daeri.xml /sitemap-taksong.xml /robots.txt; do
+          for route in / /health /assets/smart24-business-card.svg /region/ /places/ /places/%EC%BA%A0%ED%95%91%EC%9E%A5/ /taksong/types/ /fare/ /sitemap.xml /sitemap-daeri.xml /sitemap-taksong.xml /robots.txt /taksongdaeri/ /favicon.ico /blog/; do
             url="$base$route"
             code=$(curl -L -sS -o /tmp/smart24-response -w '%{http_code}' --connect-timeout 10 --max-time 25 "$url") || code=000
             echo "$code $url"
@@ -51,6 +51,19 @@ jobs:
             fi
           done
           exit "$failed"
+
+      - name: Check Naver crawler access to previously restricted URLs
+        shell: bash
+        env:
+          PRODUCTION_URL: ${{ vars.CLOUDTYPE_PRODUCTION_URL || 'https://jeongukdaeri.kr' }}
+        run: |
+          set -euo pipefail
+          base="${PRODUCTION_URL%/}"
+          for route in /taksongdaeri/ /favicon.ico /blog/ /robots.txt; do
+            code=$(curl -L -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 25 -A 'Yeti/1.1 (NHN Corp.; http://help.naver.com/robots/)' "$base$route")
+            echo "Naver Yeti user agent: $code $base$route"
+            test "$code" = 200
+          done
 
       - name: Verify real driving-distance API response
         shell: bash
