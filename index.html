@@ -144,7 +144,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </div></div>
 <div class="trip-flow" aria-label="완료 운행기록 가로 이동"><div class="trip-flow-title"><strong>전국 실제 완료 운행 기록 · 출발지 → 도착지</strong><a href="#ride-history">전체 운행 기록 보기 →</a></div><div class="trip-flow-track" id="trip-flow-track"><span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span></div></div>
 <section class="quick-booking" aria-label="빠른 요금 조회와 지역별 예약 안내" style="max-width:1120px;margin:18px auto;padding:20px;border:1px solid #d6e2ed;border-radius:16px;background:#f6faff">
-<h2 style="margin:0 0 8px">대리운전·탁송 빠른 이용 안내</h2>
+<h2 style="margin:0 0 8px">전국자동차탁송 요금조회·기사배차 상담</h2>
 <p style="margin:0 0 14px">출발지와 도착지 주소를 확인한 뒤 예상요금을 조회하거나 상담을 요청하세요. 실제 요금은 차종·시간·기사 수급에 따라 달라집니다.</p>
 <form action="/fare/" method="get" aria-label="출발지와 도착지로 요금조회" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0 18px"><label>출발지<input name="from" placeholder="예: 서울역" required style="display:block;width:100%;padding:12px;border:1px solid #aab9ca;border-radius:8px;font:inherit"></label><label>도착지<input name="to" placeholder="예: 부산역" required style="display:block;width:100%;padding:12px;border:1px solid #aab9ca;border-radius:8px;font:inherit"></label><label>서비스<select name="service" style="display:block;width:100%;padding:12px;border:1px solid #aab9ca;border-radius:8px;font:inherit"><option value="taksong">자동차탁송</option><option value="daeri">대리운전</option></select></label><button class="btn" type="submit" style="border:0;cursor:pointer;align-self:end;margin:0;min-height:51px">예상요금 조회하기</button></form>
 <div style="display:flex;flex-wrap:wrap;gap:10px">
@@ -158,7 +158,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </section>
 <div class="hero">
 <p>전국 자동차탁송 · 장거리탁송 · 대리운전 | 24시간 365일 상담</p>
-<h1>24시간 365일 전국탁송 빠른배차<br><span style="font-size:.62em;font-weight:700">대리운전 · 탁송 · 전국대리운전 · 장거리탁송</span> <span class="title-last"><a class="hero-phone" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 1811-4294</a></span></h1>
+<h1>전국자동차탁송 · 장거리 차량탁송<br><span style="font-size:.62em;font-weight:700">대리운전 · 탁송 · 전국대리운전 · 장거리탁송</span> <span class="title-last"><a class="hero-phone" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 1811-4294</a></span></h1>
 <p>탁송 비용 안내부터 예약·배차 상담까지. 스마트전국대리운전 스마트24탁송은 전국 자동차탁송과 대리운전을 안내합니다. 출발지·도착지·이용 시간 및 기사 수급에 따라 실제 요금과 배차 가능 여부가 달라질 수 있습니다.</p>
 <a class="btn" href="tel:18114294">전화 상담하기</a>
 <a class="btn" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 오픈채팅 상담</a>
@@ -166,6 +166,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 </div>
 <section><strong>상담 시 출발지 · 도착지 · 차량 종류 · 희망 시간을 알려주세요.</strong></section>
 
+<section id="taksong-direct" style="max-width:1120px;margin:20px auto;padding:22px;background:#0755bb;color:white;border-radius:16px"><h2 style="color:white">전국자동차탁송, 전화 한 통으로 접수부터 차량 인계까지</h2><p>서울·경기·인천·부산·대구·강원 등 전국 지역 간 자동차탁송을 상담합니다. 출발지와 목적지를 알려주시면 차량 인수 방법, 기사 이동 조건과 예상요금을 확인합니다.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="tel:18114294" style="background:white;color:#0755bb">☎ 1811-4294 바로 상담</a><a class="btn" href="/fare/?service=taksong" style="background:white;color:#0755bb">자동차탁송 예상요금</a><a class="btn" href="/blog/" style="background:white;color:#0755bb">실제 운행정보 보기</a></div><h3 style="color:white">지역별 탁송 안내</h3><p><a style="color:white" href="/region/incheon-daeri-taksong/">인천탁송</a> · <a style="color:white" href="/region/seoul-daeri-taksong/">서울탁송</a> · <a style="color:white" href="/region/gyeonggi-daeri-taksong/">경기도탁송</a> · <a style="color:white" href="/region/busan-daeri-taksong/">부산탁송</a> · <a style="color:white" href="/region/daegu-daeri-taksong/">대구탁송</a> · <a style="color:white" href="/region/gangwon-daeri-taksong/">강원도탁송</a></p></section>
 <section aria-labelledby="taksong-expert" style="background:#eef5ff;padding:24px;border:2px solid #0755bb;border-radius:12px;margin:24px 0"><h2 id="taksong-expert">전국자동차탁송 전문 상담 · 지역별 차량탁송 안내</h2><p>자동차탁송은 운전기사가 고객 차량을 직접 운행해 지정한 장소로 이동하는 서비스입니다. 차량 인수지와 목적지, 차종, 희망 시간을 확인한 후 기사 이동 가능 여부와 예상요금을 안내합니다. 중고차 인도, 서비스센터 입출고, 장거리 차량 이동, 골프장·공항·항만 관련 차량 이동을 상담합니다.</p><h3>자동차탁송 신청 방법</h3><ol><li>차량을 인수할 주소와 목적지 주소를 알려주세요.</li><li>차종, 희망 시간, 주차 위치와 차량 인계 담당자를 확인합니다.</li><li>이동 거리와 기사 접근 조건에 따른 예상요금 및 배차 가능 여부를 안내합니다.</li><li>배정된 기사가 차량을 인수하고 목적지에서 인계합니다.</li></ol><p>산간·오지·섬 지역은 차량 진입 도로, 선박 운항, 기사 복귀 교통편 등을 확인해 가능한 방법을 안내합니다.</p><p><a class="btn" href="/service/taksong/">전국자동차탁송 자세히 보기</a> <a class="btn" href="/service/long-distance-taksong/">장거리탁송 안내</a> <a class="btn" href="/region/">지역별 탁송 안내</a> <a class="btn" href="/fare/?service=taksong">탁송 예상요금 계산</a></p><p><a href="tel:18114294">탁송 상담 1811-4294</a></p></section>
 <section aria-labelledby="service-choice"><h2 id="service-choice">필요한 서비스를 선택하세요</h2><div class="cards"><div class="card"><h3>자동차탁송</h3><p>중고차 인도·서비스센터 입출고·장거리 차량 이동. 차량 인수 장소와 도착지 인계 조건부터 확인합니다.</p><a class="btn" href="/fare/?service=taksong">탁송 예상요금 조회</a><p><a href="/taksong/">탁송 이용 절차·업체 선택 기준 →</a></p></div><div class="card"><h3>대리운전</h3><p>귀가·장거리·골프장 이동. 이용 시간과 차량 위치, 동승 인원·경유지를 알려주세요.</p><a class="btn" href="/fare/?service=daeri">대리운전 예상요금 조회</a><p><a href="/daeri/">대리운전 예약·지역별 안내 →</a></p></div></div><p>자동 조회 금액은 참고용입니다. 통행료·주차비·대기비 등 포함 여부와 최종 금액은 배차 상담에서 확인하세요.</p></section>
 
@@ -173,7 +174,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 <h2 id="taksong-guide-title">탁송, 요금만 확인하면 놓치기 쉬운 4가지</h2>
 <p>차량을 다른 지역으로 보내는 탁송은 같은 거리라도 출발 위치와 시간대에 따라 실제 기사 배차 조건이 달라집니다. 아래 항목을 확인하면 요금 상담과 차량 인수 일정을 더 구체적으로 조율할 수 있습니다.</p>
 <div class="cards">
-<div class="card"><h3>탁송요금은 왜 다를까요?</h3><p>실제 주행거리, 차종, 통행료 부담, 야간 시간대, 출발지까지의 기사 이동 및 운행 후 복귀 교통편이 요금에 영향을 줍니다. 확인되지 않은 최저가를 확정요금처럼 안내하지 않습니다.</p></div>
+<div class="card"><h3>탁송요금은 왜 다를까요?</h3><p>실제 주행거리, 차종, 통행료 부담, 야간 시간대, 출발지까지의 기사 이동 및 운행 후 복귀 교통편이 요금에 영향을 줍니다. 정확한 출발지와 도착지를 입력해 예상요금을 확인하고 상담으로 운행 조건을 조율하세요.</p></div>
 <div class="card"><h3>탁송기사 배차가 늦어지는 경우</h3><p>읍·면·리 외곽, 산간 지역, 늦은 저녁에는 가까운 기사가 없거나 복귀 이동이 어려울 수 있습니다. 원하는 인수 시간과 정확한 주차 위치를 함께 알려주세요.</p></div>
 <div class="card"><h3>서비스센터·경매장 탁송</h3><p>입고·출고 마감 시각과 차량 인계 담당자를 확인해야 합니다. 도착지만 정하기보다 인수 가능한 시간부터 확인하는 것이 중요합니다.</p></div>
 <div class="card"><h3>산행·자전거 종주 차량 회수</h3><p>설악산·지리산 종주, 자전거 국토종주는 출발지와 종료 지점이 달라 차량 회수 계획이 필요합니다. 주차 위치, 인계 방법, 하산·라이딩 종료 예상 시간을 함께 협의합니다.</p></div>
@@ -253,7 +254,7 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
 <div class="card"><h3><a href="./region/">전국 지역 안내 바로가기</a></h3><p>시·도별 지역 목록에서 원하는 행정구역을 찾아보세요.</p></div>
 <div class="card"><h3><a href="./special/">전문 탁송 안내</a></h3><p>산행 종주탁송과 전국 자전거길 탁송은 전문 탁송 메뉴에서 확인할 수 있습니다.</p></div>
 </div>
-<p>지역별 요금과 배차 가능 여부는 실제 출발지·도착지와 이용 시간을 확인한 뒤 안내합니다. 확인되지 않은 후기나 운행 실적은 게시하지 않습니다.</p>
+<p>지역별 요금과 배차 가능 여부는 실제 출발지·도착지와 이용 시간을 확인한 뒤 안내합니다. 지역별 실제 운행 기록과 상세 이용 안내는 연결된 공개 자료에서 확인할 수 있습니다.</p>
 </section>
 
 <section id="regional-route-guide" aria-labelledby="regional-route-title">
