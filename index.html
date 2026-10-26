@@ -148,6 +148,29 @@ section{box-sizing:border-box}section h2{letter-spacing:-.6px;line-height:1.3}
 input,select{box-sizing:border-box}input:focus,select:focus{outline:2px solid #3a83e5;outline-offset:2px}
 #taksong-direct{box-shadow:0 16px 34px #0757bb25;border-radius:18px!important}
 @media(max-width:600px){header{padding:14px 5%!important}.hero{padding:38px 6%!important}.hero h1{font-size:30px!important}.hero .btn{display:inline-flex;margin:5px 3px 5px 0}.top-nav{padding:10px 4%!important}.top-nav-inner>a:not(.kakao-link){font-size:12px!important;white-space:normal!important;line-height:1.25}.quick-booking{margin:12px!important;padding:17px!important}.card{padding:17px!important}}
+
+/* SMART24 bright, uncluttered mobile-first home, Oct 2026 */
+body{background:#fff!important;color:#18314f!important}
+header{background:#fff!important;box-shadow:0 1px 10px #1a4d8120;position:relative;z-index:3}
+.call-count,.service-flow,.trip-flow,.nav-fare,.kakao-hours{display:none!important}
+.top-nav{background:#fff!important;border:0!important;padding:10px 4%!important}
+.top-nav-inner{max-width:1120px!important;gap:10px!important}
+.top-nav-inner>a:not(.kakao-link){background:#edf5ff!important;color:#0755bb!important;border:1px solid #d8e9ff!important;border-radius:12px!important;font-weight:800!important}
+.top-nav .kakao-link{background:#fee500!important;color:#222!important;border-color:#fee500!important;flex:0 1 auto!important}
+.hero{background:linear-gradient(110deg,#f3f9ff,#dfeeff)!important;color:#103c72!important;padding:62px max(6%,calc((100vw - 1120px)/2))!important;border-bottom:1px solid #dcecff}
+.hero h1{color:#083e87!important;max-width:900px!important;font-size:clamp(30px,4.4vw,52px)!important}
+.hero p{color:#325a83!important;max-width:760px!important}.hero>p:first-child{color:#0865c8!important;font-size:14px!important;letter-spacing:1px}
+.hero .btn{background:#0755bb!important;color:#fff!important;border:1px solid #0755bb!important;box-shadow:none!important}
+.hero .btn:nth-of-type(2){background:#fff!important;color:#0755bb!important}
+.hero-phone{background:#fff!important;color:#0755bb!important;border:1px solid #b9d8fa!important}
+.quick-booking{background:#fff!important;box-shadow:0 14px 36px #135da01c!important;border:1px solid #d8e7f5!important;border-radius:20px!important;margin:26px auto!important;padding:26px!important}
+.quick-booking h2{color:#104a91!important}.quick-booking .btn{background:#eef5ff!important;color:#0755bb!important;border:1px solid #d3e5fa!important}
+.quick-booking button{background:#0755bb!important;color:#fff!important}
+#taksong-direct{background:#eaf4ff!important;color:#123c6d!important;box-shadow:none!important;border:1px solid #cfe4fb!important}
+#taksong-direct h2,#taksong-direct h3{color:#0c4b94!important}
+#taksong-direct a:not(.btn){color:#0755bb!important}
+#taksong-direct .btn{background:#0755bb!important;color:#fff!important}
+@media(max-width:600px){.top-nav-inner{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}.top-nav .kakao-link{grid-column:1/-1!important;width:100%!important}.hero{padding:42px 6%!important}.hero h1{font-size:32px!important}.hero .title-last{display:flex;margin-top:12px}.hero .btn{font-size:15px!important;padding:12px 16px!important}.quick-booking{margin:14px 4%!important;padding:18px!important}.quick-booking form{grid-template-columns:1fr!important}.quick-booking .btn{margin:4px 0!important}}
 </style>
 </head>
 <body>
@@ -166,27 +189,27 @@ input,select{box-sizing:border-box}input:focus,select:focus{outline:2px solid #3
 <div class="service-flow-items" aria-hidden="true"><a href="/special/nationwide-daeri/" tabindex="-1">전국대리운전</a><a href="/special/24-hour-service/" tabindex="-1">24시탁송</a><a href="/service/taksong/" tabindex="-1">전국자동차탁송</a><a href="/service/long-distance-taksong/" tabindex="-1">장거리탁송</a><a href="/service/corporate/" tabindex="-1">법인대리운전</a><a href="/service/golf/" tabindex="-1">골프대리운전</a><a href="/region/" tabindex="-1">전국 지역별 서비스</a><a href="tel:18114294" tabindex="-1">☎ 1811-4294</a></div>
 </div></div>
 <div class="trip-flow" aria-label="완료 운행기록 가로 이동"><div class="trip-flow-title"><strong>전국 실제 완료 운행 기록 · 출발지 → 도착지</strong><a href="#ride-history">전체 운행 기록 보기 →</a></div><div class="trip-flow-track" id="trip-flow-track"><span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span></div></div>
+<div class="hero">
+<p>SMART24 · NATIONWIDE VEHICLE DELIVERY</p>
+<h1>전국 어디든, 자동차탁송을 편리하게<br><span style="font-size:.62em;font-weight:700">장거리탁송 · 차량탁송 · 지역별 탁송</span> <span class="title-last"><a class="hero-phone" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 1811-4294</a></span></h1>
+<p>출발지와 도착지만 알려주세요. 차량 인수부터 목적지 인계까지, 전국자동차탁송 상담을 한 번에 연결합니다. 대리운전도 함께 운영합니다.</p>
+<a class="btn" href="tel:18114294">전화 상담하기</a>
+<a class="btn" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 오픈채팅 상담</a>
+<a class="btn" href="#services">탁송 이용 방법</a>
+</div>
 <section class="quick-booking" aria-label="빠른 요금 조회와 지역별 예약 안내" style="max-width:1120px;margin:18px auto;padding:20px;border:1px solid #d6e2ed;border-radius:16px;background:#f6faff">
-<h2 style="margin:0 0 8px">전국자동차탁송 요금조회·기사배차 상담</h2>
+<h2 style="margin:0 0 8px">출발지·도착지 입력하고 탁송요금 확인</h2>
 <p style="margin:0 0 14px">출발지와 도착지 주소를 확인한 뒤 예상요금을 조회하거나 상담을 요청하세요. 실제 요금은 차종·시간·기사 수급에 따라 달라집니다.</p>
 <form action="/fare/" method="get" aria-label="출발지와 도착지로 요금조회" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0 18px"><label>출발지<input name="from" placeholder="예: 서울역" required style="display:block;width:100%;padding:12px;border:1px solid #aab9ca;border-radius:8px;font:inherit"></label><label>도착지<input name="to" placeholder="예: 부산역" required style="display:block;width:100%;padding:12px;border:1px solid #aab9ca;border-radius:8px;font:inherit"></label><label>서비스<select name="service" style="display:block;width:100%;padding:12px;border:1px solid #aab9ca;border-radius:8px;font:inherit"><option value="taksong">자동차탁송</option><option value="daeri">대리운전</option></select></label><button class="btn" type="submit" style="border:0;cursor:pointer;align-self:end;margin:0;min-height:51px">예상요금 조회하기</button></form>
 <div style="display:flex;flex-wrap:wrap;gap:10px">
 <a class="btn" href="/fare/">출발·도착지 요금조회</a>
 <a class="btn" href="/region/">전국 지역별 검색</a>
-<a class="btn" href="/places/">골프장·펜션·캠핑장 등 장소별 안내</a>
-<a class="btn" href="/taksong/types/">렉카·암롤·윙바디 등 차종별 안내</a>
+<a class="btn" href="/places/">장소별 탁송 안내</a>
+<a class="btn" href="/taksong/types/">차종별 탁송 안내</a>
 <a class="btn" href="tel:18114294">전화 예약 1811-4294</a>
 </div>
 <p style="font-size:.9rem;margin:12px 0 0">요금조회는 참고용이며 기사 배정·예약 확정은 상담 후 안내합니다. 장소별 안내는 실제 업체와의 제휴 또는 배차 보장을 의미하지 않습니다.</p>
 </section>
-<div class="hero">
-<p>전국 자동차탁송 · 장거리탁송 · 대리운전 | 24시간 365일 상담</p>
-<h1>전국자동차탁송 · 장거리 차량탁송<br><span style="font-size:.62em;font-weight:700">대리운전 · 탁송 · 전국대리운전 · 장거리탁송</span> <span class="title-last"><a class="hero-phone" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 1811-4294</a></span></h1>
-<p>탁송 비용 안내부터 예약·배차 상담까지. 스마트전국대리운전 스마트24탁송은 전국 자동차탁송과 대리운전을 안내합니다. 출발지·도착지·이용 시간 및 기사 수급에 따라 실제 요금과 배차 가능 여부가 달라질 수 있습니다.</p>
-<a class="btn" href="tel:18114294">전화 상담하기</a>
-<a class="btn" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 오픈채팅 상담</a>
-<a class="btn" href="#services">서비스 알아보기</a>
-</div>
 <section><strong>상담 시 출발지 · 도착지 · 차량 종류 · 희망 시간을 알려주세요.</strong></section>
 
 <section id="taksong-direct" style="max-width:1120px;margin:20px auto;padding:22px;background:#0755bb;color:white;border-radius:16px"><h2 style="color:white">전국자동차탁송, 전화 한 통으로 접수부터 차량 인계까지</h2><p>서울·경기·인천·부산·대구·강원 등 전국 지역 간 자동차탁송을 상담합니다. 출발지와 목적지를 알려주시면 차량 인수 방법, 기사 이동 조건과 예상요금을 확인합니다.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="tel:18114294" style="background:white;color:#0755bb">☎ 1811-4294 바로 상담</a><a class="btn" href="/fare/?service=taksong" style="background:white;color:#0755bb">자동차탁송 예상요금</a><a class="btn" href="/blog/" style="background:white;color:#0755bb">실제 운행정보 보기</a></div><h3 style="color:white">지역별 탁송 안내</h3><p><a style="color:white" href="/region/incheon-daeri-taksong/">인천탁송</a> · <a style="color:white" href="/region/seoul-daeri-taksong/">서울탁송</a> · <a style="color:white" href="/region/gyeonggi-daeri-taksong/">경기도탁송</a> · <a style="color:white" href="/region/busan-daeri-taksong/">부산탁송</a> · <a style="color:white" href="/region/daegu-daeri-taksong/">대구탁송</a> · <a style="color:white" href="/region/gangwon-daeri-taksong/">강원도탁송</a></p></section>
