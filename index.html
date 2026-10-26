@@ -112,25 +112,21 @@ footer{background:#09172b;color:#ddd;padding:24px 7%}
  a:focus-visible,button:focus-visible{outline:3px solid #006fd6;outline-offset:3px}
 }
 
+
+/* Simple mobile menu and immediate fare calculator */
+.top-nav-inner{max-width:1000px}.top-nav-inner>a:not(.kakao-link){flex:1 1 190px}.top-nav .kakao-link{flex:1 1 100%;max-width:100%}.nav-fare{width:100%;background:#fff;border-radius:12px;padding:16px;color:#102544;margin-top:8px}.nav-fare>strong{display:block;font-size:20px;margin-bottom:8px}.nav-fare form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}.nav-fare label{display:flex;flex-direction:column;font-size:14px;font-weight:800;gap:4px}.nav-fare input{width:100%;min-width:0;padding:12px;border:1px solid #a8b4c5;border-radius:8px;font:inherit}.nav-fare button{border:0;border-radius:8px;padding:12px 16px;background:#ffd400;font-weight:900;font-size:16px;cursor:pointer;min-height:49px}.nav-fare p{font-size:13px;margin:8px 0 0;line-height:1.5}@media(max-width:600px){.top-nav-inner{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.top-nav-inner>a:not(.kakao-link){font-size:13px;padding:9px 2px;min-height:48px;white-space:nowrap}.top-nav .kakao-link,.kakao-hours,.nav-fare{grid-column:1/-1}.top-nav .kakao-link{width:100%;font-size:16px}.nav-fare form{grid-template-columns:1fr}.nav-fare{padding:14px}.nav-fare>strong{font-size:18px}}
 </style>
 </head>
 <body>
 <header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><span class="call-count" id="phone-click-count" aria-live="polite" title="공용 집계 확인 중">오늘 방문수 <strong id="today-visit-number">0회</strong> · 오늘 전화호출 클릭수 <strong id="phone-click-number">0회</strong> · 누적 방문수 <strong id="total-visit-number">0회</strong></span></div></header>
-<nav class="top-nav" aria-label="주요 서비스 메뉴">
-  <div class="top-nav-inner">
-    <a href="./service/daeri/">대리운전</a>
-    <a href="./service/taksong/">탁송</a>
-    <a href="./special/nationwide-daeri/">전국대리운전</a>
-    <a href="./special/24-hour-service/">24시탁송</a>
-    <a href="./service/long-distance-taksong/">장거리탁송</a>
-    <a href="./service/corporate/">법인대리운전</a>
-    <a href="./service/golf/">골프대리운전</a>
-    <a href="./service/daily-driver/">전국일일기사</a>
-    <a href="./blog/">지역별 블로그 자료실</a>
-    <a class="kakao-link" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">💬 카카오톡 상담</a>
-    <div class="kakao-hours">카카오톡 상담시간 08:00~20:00</div>
-  </div>
-</nav>
+<nav class="top-nav" aria-label="주요 서비스 메뉴"><div class="top-nav-inner">
+<a href="/special/nationwide-daeri/">전국대리운전</a>
+<a href="/special/24-hour-service/">24시탁송</a>
+<a href="/service/corporate/">법인대리운전</a>
+<a class="kakao-link" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">💬 카카오톡 상담</a>
+<div class="kakao-hours">카카오톡 상담시간 08:00~20:00</div>
+<div class="nav-fare" aria-label="요금계산기 바로가기"><strong>대리운전·탁송 예상요금 계산기</strong><form action="/fare/" method="get"><label>출발지<input name="from" placeholder="출발 주소 입력" autocomplete="street-address" required></label><label>도착지<input name="to" placeholder="도착 주소 입력" required></label><button type="submit">예상요금 확인</button></form><p>출발지와 도착지를 입력하면 요금계산기로 이동합니다. 실제 배차 및 최종요금은 상담 시 확인합니다.</p></div>
+</div></nav>
 
 <div class="service-flow" aria-label="전국 서비스 가로 이동 안내"><div class="service-flow-track">
 <div class="service-flow-items"><a href="/special/nationwide-daeri/">전국대리운전</a><a href="/special/24-hour-service/">24시탁송</a><a href="/service/taksong/">전국자동차탁송</a><a href="/service/long-distance-taksong/">장거리탁송</a><a href="/service/corporate/">법인대리운전</a><a href="/service/golf/">골프대리운전</a><a href="/region/">전국 지역별 서비스</a><a href="tel:18114294">☎ 1811-4294</a></div>
