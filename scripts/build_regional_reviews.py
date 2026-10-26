@@ -42,6 +42,20 @@ def build(name, matches):
             result.append('<article><h4><a href="' + html.escape(url, quote=True) + '" rel="noopener noreferrer">' + title +
                           '</a></h4><p>공개 글 제목: ' + title + '. 지역별 ' + label +
                           ' 관련 정보이며, 상세 운행 조건은 원문에서 확인할 수 있습니다.</p></article>')
+    result.append('<h3>' + name + ' 출발 주요 구간 예상요금 조회</h3>')
+    result.append('<p>실제 후기가 없는 구간도 출발지와 도착지를 입력해 도로거리 기반 예상요금을 조회할 수 있습니다. 아래 링크는 금액을 미리 정한 견적이 아니며, 조회 시 계산기가 실제 도로거리를 확인합니다.</p>')
+    destinations = [("서울 강남역", "서울 강남"), ("인천시청", "인천"), ("부산역", "부산"), ("대구역", "대구")]
+    origins = {"incheon": "인천시청", "seoul": "서울시청", "gyeonggi": "수원시청", "busan": "부산시청", "daegu": "대구시청", "gangwon": "강릉시청"}
+    origin = origins.get(next((slug for slug, info in REGIONS.items() if info[0] == name), ""), name)
+    from urllib.parse import urlencode
+    result.append("<ul>")
+    for dest, dest_label in destinations:
+        if dest == origin:
+            continue
+        for service, label in (("daeri", "대리운전"), ("taksong", "자동차탁송")):
+            query = urlencode({"service": service, "from": origin, "to": dest, "auto": "1"})
+            result.append('<li><a href="/fare/?' + html.escape(query, quote=True) + '">' + html.escape(name + ' → ' + dest_label + ' ' + label + ' 예상요금 조회') + '</a> · 도로거리 기반 참고요금, 실제 배차 전 확인 필요</li>')
+    result.append("</ul>")
     result.append('<p><a href="/blog/">전체 공개 운행정보 자료실</a></p></section>')
     return "\n".join(result)
 
