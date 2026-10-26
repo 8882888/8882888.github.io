@@ -52,7 +52,7 @@ const publicRideById=new Map(publicRides.map(x=>[x.publicId,x]));
 // Display a privacy-preserving summary; raw address and customer notes are never published.
 const historicalRides=(Array.isArray(rides)?rides:[]).map((x,i)=>{
  const dep=String(x.departure||''),dest=String(x.destination||'');
- const service=/(^|[\/\s])탁(?:\/|\b)/.test(dep)||/톨포/.test(dest)?'taksong':'daeri';
+ const service=/탁/.test(dep)||/톨포/.test(dest)?'taksong':'daeri';
  const place=s=>{const v=String(s||'');const match=v.match(/(서울|부산|인천|대구|광주|대전|울산|세종|제주|강릉|속초|원주|춘천|수원|성남|용인|화성|평택|안산|고양|파주|김포|포천|양양|청주|천안|아산|당진|서산|전주|군산|익산|목포|여수|순천|광양|포항|경주|구미|안동|창원|진주|김해|양산|거제|통영|밀양|경산|문경|함안|울진|영덕|삼척|태백|인제|무주|구례)(?:특별시|광역시|특별자치시|시|군|구)?/);return match?match[0]:'지역 비공개'};
  return {id:'excel-'+String(i+1).padStart(4,'0'),date:x.date,service,departure:place(dep),destination:place(dest),fare:x.fare||'',rawDeparture:dep,rawDestination:dest};
 });
