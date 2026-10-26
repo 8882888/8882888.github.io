@@ -1,14 +1,6 @@
 name: Notify Naver of updated pages
 on:
-  push:
-    branches: [main]
-    paths:
-      - server.js
-      - data/public-reviewed-rides-202610.json
-      - data/ride-history.json
-      - data/daeri-review-drafts-202610.json
-      - data/taksong-review-drafts-202610.json
-      - .github/scripts/indexnow.js
+  # Manual only: avoid repeated crawl notifications during maintenance.
   workflow_dispatch:
     inputs:
       urls:

@@ -15,6 +15,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 (async()=>{
  try{
   for(let i=0;i<50;i++){try{const r=await get('/health');if(r.ok)break}catch{}await delay(100)}
+  // Shared layout must preserve exactly one page heading with and without a body H1.
+  for(const route of ['/taksongdaeri/','/reviews/','/recruit/taksong/','/taksong/busan/']){
+   const response=await get(route);assert.equal(response.status,200);
+   assert.equal(((await response.text()).match(/<h1(?:\s|>)/gi)||[]).length,1,route+' must have exactly one H1');
+  }
   const h=await get('/health');assert.equal(h.status,200);const health=await h.json();assert.equal(health.regions,regions.length);
   const keywordStatus=await (await get('/api/keyword-status')).json();assert.ok(keywordStatus.stored>200000);assert.equal(keywordStatus.searchExposure,'not-measured');
   for(const query of ['강화도맛집','강남맛집','설악산','영덕해맞이공원']){

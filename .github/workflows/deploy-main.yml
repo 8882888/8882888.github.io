@@ -51,7 +51,13 @@ jobs:
               try:
                   with urllib.request.urlopen(url,timeout=10) as response:
                       page=response.read().decode('utf-8')
-                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page:
+                  with urllib.request.urlopen('https://jeongukdaeri.kr/taksongdaeri/',timeout=10) as response:
+                      guide=response.read().decode('utf-8')
+                  with urllib.request.urlopen('https://jeongukdaeri.kr/',timeout=10) as response:
+                      home=response.read().decode('utf-8')
+                  with urllib.request.urlopen('https://jeongukdaeri.kr/favicon.ico',timeout=10) as response:
+                      icon_ok=response.status==200 and response.headers.get('Content-Type','').startswith('image/')
+                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok:
                       print('PASS: live regional service revision and hierarchy verified')
                       break
               except Exception:
