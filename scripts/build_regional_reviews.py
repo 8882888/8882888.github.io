@@ -37,13 +37,13 @@ def build(name, matches):
         for post in group:
             title = html.escape(post.get("title", "공개 글"))
             url = post.get("url", "")
-            if not re.fullmatch(r"https://blog\\.naver\\.com/[A-Za-z0-9_-]+/[0-9]+", url):
+            if not re.fullmatch(r"https://blog\.naver\.com/[A-Za-z0-9_-]+/[0-9]+", url):
                 continue
             result.append('<article><h4><a href="' + html.escape(url, quote=True) + '" rel="noopener noreferrer">' + title +
                           '</a></h4><p>공개 글 제목: ' + title + '. 지역별 ' + label +
                           ' 관련 정보이며, 상세 운행 조건은 원문에서 확인할 수 있습니다.</p></article>')
     result.append('<p><a href="/blog/">전체 공개 운행정보 자료실</a></p></section>')
-    return "\\n".join(result)
+    return "\n".join(result)
 
 def main():
     posts = json.loads(POSTS.read_text(encoding="utf-8"))
@@ -51,9 +51,9 @@ def main():
         page = ROOT / "region" / (slug + "-daeri-taksong") / "index.html"
         original = page.read_text(encoding="utf-8")
         matches = [p for p in posts if any(term in (p.get("title", "") + " " + p.get("category", "")) for term in terms)]
-        block = START + "\\n" + build(name, matches) + "\\n" + END
+        block = START + "\n" + build(name, matches) + "\n" + END
         if START in original and END in original:
-            updated = re.sub(re.escape(START) + r"[\\s\\S]*?" + re.escape(END), lambda _: block, original, count=1)
+            updated = re.sub(re.escape(START) + r"[\s\S]*?" + re.escape(END), lambda _: block, original, count=1)
         else:
             updated = original.replace("</main>", block + "</main>", 1)
         if updated != original:
