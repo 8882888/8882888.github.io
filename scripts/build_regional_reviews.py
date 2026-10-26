@@ -4,10 +4,12 @@ import html
 import json
 import pathlib
 import re
+from urllib.parse import urlencode
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 POSTS = ROOT / "blog/posts.json"
 QUOTES = ROOT / "data/verified_fare_quotes.json"
+REGION_DATA = ROOT / "data/regions.json"
 REGIONS = {
     "incheon": ("인천", ["인천", "송도", "청라", "부평", "계양", "동춘", "주안", "검단"]),
     "seoul": ("서울", ["서울", "강남", "서초", "송파", "마포", "용산", "성수", "영등포", "구로", "강서", "노원"]),
@@ -27,7 +29,7 @@ def category(post):
         return "daeri"
     return None
 
-def build(name, matches, quotes):
+def build(name, matches, quotes, districts):
     result = ['<section aria-label="' + name + ' 실제 공개 운행정보 자동 요약">', '<h2>' + name + ' 대리운전·자동차탁송 최신 공개 글</h2>',
               '<p>아래 요약은 공개된 블로그 제목을 기반으로 자동 구성했습니다. 실제 운행 내용과 완료 여부는 원문을 확인해 주세요. 확인되지 않은 운행 사실은 추가하지 않습니다.</p>']
     for kind, label in (("daeri", "대리운전"), ("taksong", "자동차탁송")):
@@ -73,6 +75,7 @@ def build(name, matches, quotes):
 def main():
     posts = json.loads(POSTS.read_text(encoding="utf-8"))
     raw = json.loads(QUOTES.read_text(encoding="utf-8")) if QUOTES.exists() else []
+    region_data = json.loads(REGION_DATA.read_text(encoding="utf-8")).get("regions", [])
     quotes = []
     for q in raw:
         if not isinstance(q, dict) or q.get("source") != "road-fare-calculator-verified":
@@ -90,7 +93,10 @@ def main():
         page = ROOT / "region" / (slug + "-daeri-taksong") / "index.html"
         original = page.read_text(encoding="utf-8")
         matches = [p for p in posts if any(term in (p.get("title", "") + " " + p.get("category", "")) for term in terms)]
-        block = START + "\n" + build(name, matches, quotes) + "\n" + END
+        aliases = {"인천": ["인천광역시"], "서울": ["서울특별시"], "경기": ["경기도"], "부산": ["부산광역시"], "대구": ["대구광역시"], "강원": ["강원특별자치도", "강원도"]}
+        parents = aliases.get(name, [name])
+        districts = list(dict.fromkeys(r.get("name", "") for r in region_data if r.get("parent_name") in parents and r.get("level") in ("시", "군", "구", "시군구")))
+        block = START + "\n" + build(name, matches, quotes, districts) + "\n" + END
         if START in original and END in original:
             updated = re.sub(re.escape(START) + r"[\s\S]*?" + re.escape(END), lambda _: block, original, count=1)
         else:
