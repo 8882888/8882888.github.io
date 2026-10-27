@@ -27,7 +27,7 @@ async function inspect(route){
    if(desc.length!==1||!desc[0])issues.push('Expected one description');
    if(h1.length!==1||!h1[0])issues.push('Expected one H1');
    if(canon.length!==1)issues.push('Expected one canonical');
-   else try{const c=new URL(canon[0]);if(c.origin!==url.origin||c.pathname!==url.pathname)issues.push('Canonical mismatch')}catch{issues.push('Invalid canonical')}
+   else try{const c=new URL(canon[0]);if(c.origin!==new URL(config.site).origin||c.pathname!==url.pathname)issues.push('Canonical mismatch')}catch{issues.push('Invalid canonical')}
    if(robots.some(x=>/\bnoindex\b/i.test(x)))issues.push('noindex');
    if(!ld.length)issues.push('Missing JSON-LD');
    ld.forEach((x,i)=>{try{JSON.parse(x)}catch{issues.push('Invalid JSON-LD '+i)}});
