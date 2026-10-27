@@ -26,7 +26,9 @@ jobs:
           node --check scripts/seo-audit.js
           node -e "const c=require('./data/seo-pages.json'); if(!Array.isArray(c.pages)||!c.pages.length) process.exit(1)"
       - name: Run SEO audit against public Smart24 website
-        run: node scripts/seo-audit.js https://jeongukdaeri.kr/ | tee seo-audit-result.json
+        run: |
+          set -o pipefail
+          node scripts/seo-audit.js https://jeongukdaeri.kr/ | tee seo-audit-result.json
       - name: Upload SEO audit report
         if: always()
         uses: actions/upload-artifact@v4
