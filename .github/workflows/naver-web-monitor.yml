@@ -1,0 +1,46 @@
+name: Smart24 production SEO and Naver web monitoring
+on:
+  schedule:
+    - cron: '35 1 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test search result matching
+        run: node tests/naver-web-monitor.test.js
+      - name: Check production SEO pages
+        id: seo
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node scripts/seo-audit.js https://jeongukdaeri.kr/ | tee production-seo-result.json
+      - name: Measure Naver web document results
+        id: rank
+        continue-on-error: true
+        env:
+          NAVER_SEARCH_CLIENT_ID: ${{ secrets.NAVER_SEARCH_CLIENT_ID }}
+          NAVER_SEARCH_CLIENT_SECRET: ${{ secrets.NAVER_SEARCH_CLIENT_SECRET }}
+        run: node scripts/naver-web-monitor.js
+      - name: Save results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-production-search-monitor
+          path: |
+            production-seo-result.json
+            naver-web-monitor-result.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Report failures
+        if: always() && (steps.seo.outcome == 'failure' || steps.rank.outcome == 'failure')
+        run: |
+          echo '::error::Production SEO audit or Naver API monitoring failed; inspect earlier steps. Search API credentials are required.'
+          exit 1

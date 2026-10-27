@@ -1,0 +1,8 @@
+'use strict';
+const assert = require('node:assert/strict');
+const {inspect} = require('../scripts/naver-web-monitor');
+const items = [{link:'https://example.com/',title:'other'},{link:'https://jeongukdaeri.kr/daeri/',title:'<b>전국</b> 대리운전'},{link:'https://jeongukdaeri.kr.evil.example/',title:'wrong'},{link:'bad url'},{link:'https://www.jeongukdaeri.kr/',title:'home'}];
+assert.deepEqual(inspect(items).map(x => x.position), [2,5]);
+assert.equal(inspect(items)[0].title, '전국 대리운전');
+assert.deepEqual(inspect([]), []);
+console.log('Naver web result matching passed');
