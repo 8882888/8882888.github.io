@@ -4,6 +4,11 @@ on:
   pull_request:
     paths:
       - 'scripts/seo-audit.js'
+      - 'scripts/regional-sitemap-audit.js'
+      - 'scripts/regional-content-duplicates.js'
+      - 'lib/keyword-engine.js'
+      - 'lib/route-guides.js'
+      - 'data/legal-regions/**'
       - 'data/seo-pages.json'
       - '.github/workflows/seo-audit.yml'
       - 'server.js'
@@ -24,6 +29,8 @@ jobs:
       - name: Validate audit script and configuration
         run: |
           node --check scripts/seo-audit.js
+          node --check scripts/regional-sitemap-audit.js
+          node --check scripts/regional-content-duplicates.js
           node -e "const c=require('./data/seo-pages.json'); if(!Array.isArray(c.pages)||!c.pages.length) process.exit(1)"
       - name: Install dependencies
         run: npm install --no-save --no-package-lock --ignore-scripts
@@ -40,11 +47,22 @@ jobs:
         run: |
           set -o pipefail
           node scripts/seo-audit.js http://localhost:3000/ | tee seo-audit-result.json
+      - name: Audit full sitemap inventory and regional samples
+        run: |
+          set -o pipefail
+          SEO_REPORT_PATH=regional-sitemap-result.json node scripts/regional-sitemap-audit.js http://localhost:3000/
+      - name: Report regional content similarity
+        run: |
+          SEO_DUP_REPORT_PATH=regional-content-duplicates.json node scripts/regional-content-duplicates.js http://localhost:3000/ > /tmp/regional-duplicates.log
+          node -e "const r=require('./regional-content-duplicates.json'); console.log(JSON.stringify({pagesChecked:r.pagesChecked,identicalBodies:r.identicalBodyClusters.length,titlePatterns:r.similarTitlePatternClusters.length,descriptionPatterns:r.similarDescriptionPatternClusters.length,errors:r.errors.length},null,2))"
       - name: Upload SEO audit report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: smart24-seo-audit
-          path: seo-audit-result.json
+          path: |
+            seo-audit-result.json
+            regional-sitemap-result.json
+            regional-content-duplicates.json
           if-no-files-found: ignore
           retention-days: 30
