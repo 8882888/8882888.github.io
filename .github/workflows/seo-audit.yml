@@ -1,0 +1,37 @@
+name: Smart24 SEO audit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/seo-audit.js'
+      - 'data/seo-pages.json'
+      - '.github/workflows/seo-audit.yml'
+      - 'server.js'
+      - 'index.html'
+  schedule:
+    - cron: '15 1 * * *'
+permissions:
+  contents: read
+jobs:
+  seo-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate audit script and configuration
+        run: |
+          node --check scripts/seo-audit.js
+          node -e "const c=require('./data/seo-pages.json'); if(!Array.isArray(c.pages)||!c.pages.length) process.exit(1)"
+      - name: Run SEO audit against public Smart24 website
+        run: node scripts/seo-audit.js https://jeongukdaeri.kr/ | tee seo-audit-result.json
+      - name: Upload SEO audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-seo-audit
+          path: seo-audit-result.json
+          if-no-files-found: ignore
+          retention-days: 30
