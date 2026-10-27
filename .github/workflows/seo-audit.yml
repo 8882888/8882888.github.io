@@ -25,10 +25,21 @@ jobs:
         run: |
           node --check scripts/seo-audit.js
           node -e "const c=require('./data/seo-pages.json'); if(!Array.isArray(c.pages)||!c.pages.length) process.exit(1)"
-      - name: Run SEO audit against public Smart24 website
+      - name: Install dependencies
+        run: npm ci
+      - name: Start preview server
+        run: |
+          PORT=3000 node server.js > /tmp/smart24-preview.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://localhost:3000/health >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/smart24-preview.log
+          exit 1
+      - name: Run SEO audit against proposed code
         run: |
           set -o pipefail
-          node scripts/seo-audit.js https://jeongukdaeri.kr/ | tee seo-audit-result.json
+          node scripts/seo-audit.js http://localhost:3000/ | tee seo-audit-result.json
       - name: Upload SEO audit report
         if: always()
         uses: actions/upload-artifact@v4
