@@ -26,12 +26,12 @@ jobs:
           node --check scripts/seo-audit.js
           node -e "const c=require('./data/seo-pages.json'); if(!Array.isArray(c.pages)||!c.pages.length) process.exit(1)"
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-save --no-package-lock --ignore-scripts
       - name: Start preview server
         run: |
           PORT=3000 node server.js > /tmp/smart24-preview.log 2>&1 &
           for i in $(seq 1 40); do
-            if curl -fsS http://localhost:3000/health >/dev/null; then exit 0; fi
+            if curl -fsS http://localhost:3000/ >/dev/null; then exit 0; fi
             sleep 2
           done
           cat /tmp/smart24-preview.log
