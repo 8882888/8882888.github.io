@@ -606,6 +606,18 @@ function applySeo(html,route){
   html=replaceTag(html,/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i,'<meta name="description" content="'+esc(rule.description)+'">');
   html=replaceTag(html,/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i,'<meta property="og:description" content="'+esc(rule.description)+'">');
  }
+ if(['/daeri/','/taksong/','/reviews/'].includes(route)){
+  const host='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+  const name=route==='/daeri/'?'전국 대리운전':route==='/taksong/'?'전국 자동차탁송':'실제 완료 운행 기록';
+  const schema={
+   '@context':'https://schema.org','@type':'WebPage',
+   name, url:host+route,
+   description:rule.description||'스마트24 대리운전·자동차탁송 안내',
+   isPartOf:{'@type':'WebSite',name:'스마트24',url:host+'/'}
+  };
+  const safe=JSON.stringify(schema).replace(/</g,'\u005c\u0075'+'003c');
+  html=html.replace('</head>','<script type="application/ld+json">'+safe+'</script></head>');
+ }
  return html;
 }
 
