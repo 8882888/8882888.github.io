@@ -5,6 +5,8 @@
 const base = new URL(process.argv[2] || 'http://localhost:3000/');
 const routes = ['/', '/daeri/', '/taksong/', '/reviews/', '/sitemap.xml', '/robots.txt'];
 const timeout = 12000;
+const config = require('../data/seo-pages.json');
+const expectations = new Map(config.pages.map(p=>[p.path,p]));
 function textContent(html, tag) {
   const m = html.match(new RegExp('<'+tag+'\\b[^>]*>([\\s\\S]*?)<\\/'+tag+'>', 'gi')) || [];
   return m.map(x=>x.replace(/<[^>]*>/g,' ').replace(/\\s+/g,' ').trim());
@@ -40,6 +42,13 @@ async function inspect(route) {
       if(canon.length!==1)issues.push('Expected exactly one canonical; found '+canon.length);
       else {try{const c=new URL(canon[0]);if(c.origin!==url.origin)issues.push('Canonical origin differs from audited host');if(c.pathname!==url.pathname)issues.push('Canonical path differs from page path');}catch{issues.push('Invalid canonical URL')}}
       if(robots.some(v=>/noindex/i.test(v)))issues.push('Page has noindex');
+      const expected=expectations.get(route);
+      if(expected){
+        if(expected.title && titles[0]!==expected.title)issues.push('Title differs from configured value');
+        if(expected.description && descs[0]!==expected.description)issues.push('Description differs from configured value');
+        if(expected.titleContains && !String(titles[0]||'').includes(expected.titleContains))issues.push('Title missing required keyword: '+expected.titleContains);
+        if(expected.descriptionContains && !String(descs[0]||'').includes(expected.descriptionContains))issues.push('Description missing required keyword: '+expected.descriptionContains);
+      }
       if(!schema.length)issues.push('No JSON-LD structured data');
       for(let i=0;i<schema.length;i++)try{JSON.parse(schema[i])}catch{issues.push('Invalid JSON-LD block '+(i+1))}
     }
