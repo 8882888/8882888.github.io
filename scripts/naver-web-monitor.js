@@ -14,9 +14,9 @@ function inspect(items) {
 async function main() {
   const id = process.env.NAVER_SEARCH_CLIENT_ID, secret = process.env.NAVER_SEARCH_CLIENT_SECRET;
   if (!id || !secret) throw new Error('NAVER_SEARCH_CLIENT_ID and NAVER_SEARCH_CLIENT_SECRET are required');
-  const endpoint = new URL('https://openapi.naver.com/v1/search/webkr.json');
+  const endpoint = new URL('https://naverapihub.apigw.ntruss.com/search/v1/webkr');
   endpoint.search = new URLSearchParams({ query: QUERY, display: '100', start: '1' }).toString();
-  const response = await fetch(endpoint, {headers: {'X-Naver-Client-Id': id, 'X-Naver-Client-Secret': secret}, signal: AbortSignal.timeout(20000)});
+  const response = await fetch(endpoint, {headers: {'X-NCP-APIGW-API-KEY-ID': id, 'X-NCP-APIGW-API-KEY': secret}, signal: AbortSignal.timeout(20000)});
   if (!response.ok) throw new Error(`Naver Search API returned HTTP ${response.status}`);
   const data = await response.json();
   if (!Array.isArray(data.items)) throw new Error('Invalid Naver Search API response: items missing');
