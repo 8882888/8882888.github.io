@@ -591,6 +591,36 @@ function recruitmentPage(kind,region){
  const body='<h1>'+esc(area)+' '+label+' 모집</h1><figure><a href="tel:18114294"><img src="/assets/smart24-business-card-inline-v2.png" alt="스마트24탁송 전국 탁송 대리운전 기사 모집 상담 명함 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" style="width:100%;height:auto;max-width:720px"></a><figcaption>기사 모집 상담 1811-4294</figcaption></figure><p>'+esc(desc)+'</p><section><h2>지원 및 상담</h2><p>전국에서 '+label+' 지원 상담을 받고 있습니다. 실제 배차 가능 지역, 운행 시간, 기사 등록 절차 및 필요한 확인 사항은 전화로 안내합니다. 특정 지역의 상시 배차나 수입을 보장하지 않습니다.</p><p><a href="tel:18114294">기사 지원 상담 1811-4294</a></p></section><section><h2>지원 전 확인할 사항</h2><p>주로 운행할 지역, 운행 가능한 요일과 시간, 장거리 이동 가능 여부, 운전 경력 등을 상담 시 알려주세요. 보험·등록 및 업무 조건은 상담 과정에서 확인합니다.</p></section>'+regionLinks+'<section><h2>관련 안내</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a> · <a href="/'+kind+'/">'+(isT?'탁송':'대리운전')+' 서비스 안내</a></p></section>';
  return layout(title,desc,body,base+url,base+'/assets/smart24-business-card-inline-v2.png');
 }
+
+// Central SEO overrides: edit data/seo-pages.json; changes apply on next deployment.
+const seoRules=new Map(load('data/seo-pages.json').pages.map(p=>[p.path,p]));
+function applySeo(html,route){
+ const rule=seoRules.get(route);
+ if(!rule||typeof html!=='string')return html;
+ const replaceTag=(input,regex,value)=>input.replace(regex,()=>value);
+ if(rule.title){
+  html=replaceTag(html,/<title>[\s\S]*?<\/title>/i,'<title>'+esc(rule.title)+'</title>');
+  html=replaceTag(html,/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i,'<meta property="og:title" content="'+esc(rule.title)+'">');
+ }
+ if(rule.description){
+  html=replaceTag(html,/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i,'<meta name="description" content="'+esc(rule.description)+'">');
+  html=replaceTag(html,/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i,'<meta property="og:description" content="'+esc(rule.description)+'">');
+ }
+ if(['/daeri/','/taksong/','/reviews/'].includes(route)){
+  const host='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+  const name=route==='/daeri/'?'전국 대리운전':route==='/taksong/'?'전국 자동차탁송':'실제 완료 운행 기록';
+  const schema={
+   '@context':'https://schema.org','@type':'WebPage',
+   name, url:host+route,
+   description:rule.description||'스마트24 대리운전·자동차탁송 안내',
+   isPartOf:{'@type':'WebSite',name:'스마트24',url:host+'/'}
+  };
+  const safe=JSON.stringify(schema).replace(/</g,'\u005c\u0075'+'003c');
+  html=html.replace('</head>','<script type="application/ld+json">'+safe+'</script></head>');
+ }
+ return html;
+}
+
 function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
 let mainCardPngPromise, faviconPngPromise;
 const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layout,servicePath,canonical,landmarks});
@@ -603,7 +633,7 @@ if(fareRouteMatch){if(!pathname.endsWith('/')){res.writeHead(301,{location:pathn
 const historicalDetail=pathname.match(new RegExp('^/reviews/history/(excel-[0-9]{4})/?$'));if(historicalDetail){const x=historicalRides.find(v=>v.id===historicalDetail[1]);return x?respond(res,200,historyDetailPage(x)):respond(res,404,'운행기록을 찾을 수 없습니다.');}
 if(pathname==='/blog/'||pathname==='/blog')return blogLatestPage().then(html=>respond(res,200,html)).catch(err=>{console.error('blog feed error',err);respond(res,503,'블로그 목록을 불러올 수 없습니다.');});
 if(pathname==='/reviews/history/'||pathname==='/reviews/history'){const page=Math.max(1,Math.min(1000,Number(u.searchParams.get('page'))||1)),kind=['daeri','taksong'].includes(u.searchParams.get('kind'))?u.searchParams.get('kind'):'all';return respond(res,200,historyIndexPage(page,kind));}
-if(pathname==='/reviews/'||pathname==='/reviews')return respond(res,200,ridesIndex());
+if(pathname==='/reviews/'||pathname==='/reviews')return respond(res,200,applySeo(ridesIndex(),'/reviews/'));
 const rideMatch=pathname.match(/^\/reviews\/([a-f0-9]{16})\/?$/);
 if(rideMatch){const x=publicRideById.get(rideMatch[1]);return x?respond(res,200,ridePage(x)):respond(res,404,'확인된 운행 기록이 없습니다.')}
 const recruitmentMatch=pathname.match(/^\/recruit\/(taksong|daeri)(?:\/([a-z0-9-]+))?\/?$/);
@@ -638,18 +668,18 @@ if(pathname==='/keyword-search/'||pathname==='/keyword-search'){const q=u.search
 const serviceVisit=pathname.match(/^\/(daeri|taksong)\/visit\/([a-f0-9]{20})\/?$/);
 if(serviceVisit){const [,kind,id]=serviceVisit,item=keywordEngine.byId.get(id);if(!item)return respond(res,404,'연결된 키워드를 찾을 수 없습니다.');const target=keywordEngine.url(item,kind);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,keywordEngine.itemPage(item,kind))}
 const visitKeyword=pathname.match(/^\/visit\/([a-f0-9]{20})\/?$/);if(visitKeyword){const item=keywordEngine.byId.get(visitKeyword[1]);if(!item)return respond(res,404,'연결된 키워드를 찾을 수 없습니다.');const target=keywordEngine.url(item);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,keywordEngine.itemPage(item))}
-if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');return respond(res,200,homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'))}
+if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');return respond(res,200,applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/'))}
 const keywordMatch=pathname.match(/^\/keywords\/(taksong|daeri)\/?$/);if(keywordMatch){res.setHeader('X-Robots-Tag','noindex, follow');return respond(res,200,regionKeywordDirectory(keywordMatch[1],u.searchParams.get('page')))}
 if(pathname==='/route-search/'||pathname==='/route-search'){res.setHeader('X-Robots-Tag','noindex, follow');const from=String(u.searchParams.get('from')||''),to=String(u.searchParams.get('to')||''),kind=u.searchParams.get('service')==='daeri'?'daeri':'taksong';return respond(res,200,routeKeywordSearchPage(from,to,kind))}
 if(pathname==='/places/'||pathname==='/places')return respond(res,200,placeCategoryHub());
 const placeCategoryMatch=pathname.match(/^\/places\/([^/]+)\/?$/);
 if(placeCategoryMatch){const category=placeCategories.find(x=>x[0]===placeCategoryMatch[1]);return category?respond(res,200,placeCategoryPage(category)):respond(res,404,'장소 분류를 찾을 수 없습니다.')}
 const featuredRouteMatch=pathname.match(/^\/taksong\/route\/([a-z-]+)\/?$/);if(featuredRouteMatch){const route=featuredTaksongRoutes.find(x=>x.slug===featuredRouteMatch[1]);return route?respond(res,200,featuredTaksongRoutePage(route)):respond(res,404,'해당 구간을 찾을 수 없습니다.')}
-if(pathname==='/taksong/'||pathname==='/taksong')return respond(res,200,serviceHub('taksong'));
+if(pathname==='/taksong/'||pathname==='/taksong')return respond(res,200,applySeo(serviceHub('taksong'),'/taksong/'));
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
 const daeriRouteMatch=pathname.match(/^\/daeri\/route\/([a-z-]+)\/?$/);if(daeriRouteMatch){const route=featuredDaeriRoutes.find(x=>x.slug===daeriRouteMatch[1]);return route?respond(res,200,featuredDaeriRoutePage(route)):respond(res,404,'해당 대리운전 구간을 찾을 수 없습니다.')}
-if(pathname==='/daeri/'||pathname==='/daeri')return respond(res,200,serviceHub('daeri'));
+if(pathname==='/daeri/'||pathname==='/daeri')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
 if(pathname==='/region/'||pathname==='/region'){
  const q=clean(u.searchParams.get('q')||'');
  const requestedService=u.searchParams.get('service');

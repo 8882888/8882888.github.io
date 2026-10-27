@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "site": "https://jeongukdaeri.kr",
+  "phone": "1811-4294",
+  "pages": [
+    {
+      "path": "/",
+      "title": "전국대리운전·전국자동차탁송·24시탁송 | 스마트24 1811-4294",
+      "description": "전국대리운전·24시자동차탁송 상담 스마트24. 서울·인천·경기·부산·대구·강원 등 전국 대리운전과 차량탁송, 장거리탁송, 골프장 이동 및 서비스센터 입출고. 예상요금 조회·기사 배차 상담 1811-4294."
+    },
+    {
+      "path": "/daeri/",
+      "titleContains": "대리운전",
+      "descriptionContains": "대리운전"
+    },
+    {
+      "path": "/taksong/",
+      "titleContains": "탁송",
+      "descriptionContains": "탁송"
+    },
+    {
+      "path": "/reviews/",
+      "titleContains": "운행",
+      "descriptionContains": "운행"
+    }
+  ]
+}
