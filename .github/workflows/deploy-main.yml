@@ -69,7 +69,7 @@ jobs:
                     and 'id="top-fare-calculator"' in home
                     and '/routes/taksong/area-494/area-1174/' in home
                     and '20261028-conversion' in home
-                    and '기존 클릭' in tracker and 'acquisition();' in tracker)
+                    and '유입 경로 미확인' in tracker and 'acquisition();' in tracker)
                   if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok:
                       print('PASS: live regional service revision and hierarchy verified')
                       break
