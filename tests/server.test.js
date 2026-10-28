@@ -406,8 +406,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((statsHome.match(/class="quick-booking"/g)||[]).length,1,'fare form must not be duplicated');
   assert.ok(statsHome.includes('name="from"')&&statsHome.includes('name="to"')&&statsHome.includes('action="/fare/"'),
     'top fare calculator still submits the real fare lookup');
-  assert.ok(statsHome.includes('background:#071c35;color:#fff')&&statsHome.includes('.traffic-stats-grid strong{display:block;font-size:19px'),
-    'phone number and white high-contrast traffic labels must be readable');
+  assert.ok(statsHome.includes('background:transparent;color:#fff;text-align:right') &&
+    statsHome.includes('.traffic-label-compact{display:inline}'),
+    'plain white-text counters show compact mobile labels without a box');
+  assert.ok(statsHome.includes('<details class="traffic-sources">') &&
+    !statsHome.includes('<details class="traffic-sources" open>'),
+    'referrer list is collapsed by default to save mobile screen space');
+  assert.ok(!statsHome.includes('traffic-stats-grid') &&
+    !statsHome.includes('background:#071c35;color:#fff'),
+    'remove bulky previous counters panel styling');
   const headerPhonePos=statsHome.indexOf('class="header-call"');
   const dashboardPos=statsHome.indexOf('id="traffic-stats-panel"');
   assert.ok(headerPhonePos>=0&&headerPhonePos<dashboardPos&&dashboardPos<statsNavPos,
