@@ -36,6 +36,30 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(busanDaeri.includes('골프장대리운전'),'golf designated-driver intent');
   assert.ok(busanDaeri.includes('법인대리운전'),'corporate designated-driver intent');
   assert.ok(!busanDaeri.includes('공업사탁송'),'no transport keyword leakage');
+  // Same-name regions should have different natural search titles, descriptions and canonicals.
+  const headValue=(html,tag)=>html.match(tag)?.[1]||'';
+  for(const [first,second] of [
+    ['/daeri/seoul/jung-gu/','/daeri/daegu/jung-gu/'],
+    ['/taksong/gangwon/goseong-gun/','/taksong/gyeongnam/goseong-gun/'],
+    ['/daeri/gwangju/','/daeri/gyeonggi/gwangju-si/'],
+    ['/daeri/seoul/jung-gu/fare/','/daeri/daegu/jung-gu/fare/']
+  ]){
+    const ha=await (await get(first)).text(),hb=await (await get(second)).text();
+    assert.ok(ha.includes('rel="canonical" href="https://example.com'+first+'"'),first+' canonical');
+    assert.ok(hb.includes('rel="canonical" href="https://example.com'+second+'"'),second+' canonical');
+    const aTitle=headValue(ha,/<title>([^<]+)<\/title>/),bTitle=headValue(hb,/<title>([^<]+)<\/title>/);
+    const aDesc=headValue(ha,/<meta name="description" content="([^"]+)"/),bDesc=headValue(hb,/<meta name="description" content="([^"]+)"/);
+    assert.ok(aTitle&&bTitle&&aTitle!==bTitle,first+' and '+second+' must not have duplicated titles');
+    assert.ok(aDesc&&bDesc&&aDesc!==bDesc,first+' and '+second+' must not have duplicated descriptions');
+  }
+  const busanDistrict=await (await get('/taksong/busan/sasang-gu/')).text();
+  assert.ok(busanDistrict.includes('공업사탁송'),'city-borough service transport keeps relevant business intent');
+  assert.ok(!busanDistrict.includes('폐차산업탁송'),'broad province-only keyword not stuffed into every borough');
+  for(const [source,destination] of [['/daeri?from=naver','/daeri/?from=naver'],['/taksong','/taksong/']]){
+   const redirect=await fetch('http://127.0.0.1:'+port+source,{redirect:'manual'});
+   assert.equal(redirect.status,301,'noncanonical nationwide hub must redirect');
+   assert.equal(redirect.headers.get('location'),destination);
+  }
   // Place-verified scrapyard names must appear only on matching transport pages.
   const incheonTaksong=await (await get('/taksong/incheon/')).text();
   assert.ok(incheonTaksong.includes('인천폐차사업소탁송'),'exact Naver Place name used for scrap transport');
@@ -129,7 +153,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const p of ['/activities/','/activities/food/','/activities/hiking/','/activities/cycling/']){const r=await get(p);assert.equal(r.status,200);const h=await r.text();assert.ok(h.includes('index,follow,max-image-preview:large'));assert.ok(h.includes('property="og:image"'));const activityImage=h.match(/property="og:image" content="https:\/\/example.com([^"]+)/)[1];assert.ok(h.includes('src="'+activityImage+'"'),'advertised card must be visible on category page');assert.ok(h.includes('tel:18114294'));assert.ok(!h.includes('자동 갱신 현황'));assert.ok(!h.includes('20,562'));assert.ok(h.includes('href="https://example.com'+p+'"'));}
   const oldCategory=await fetch('http://127.0.0.1:'+port+'/keyword-search/?category='+encodeURIComponent('맛집'),{redirect:'manual'});assert.equal(oldCategory.status,301);assert.equal(oldCategory.headers.get('location'),'/activities/food/');
   assert.equal((await get('/activities/unknown/')).status,404);
-  const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 | 지역별 자동차탁송·장거리탁송 요금·예약'));
+  const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 | 자동차탁송·장거리 요금·예약'));
   assert.ok(busanHtml.includes('class="province-service-guide"'));
   assert.ok(busanHtml.includes('부산 출발 지역 선택'));
   assert.ok(busanHtml.includes('공항 주차장이나 항만 시설'));
@@ -192,6 +216,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(metadata.some(x=>x['@graph']?.some(y=>y['@type']==='WebPage'&&y.primaryImageOfPage)),'regional service page identifies its primary image');
    const imageMap=await (await get('/sitemap-'+service+'.xml')).text();
    assert.equal((imageMap.match(/<image:image>/g)||[]).length,regions.length,'every regional service URL includes its existing card in the image sitemap');
+   if(service==='taksong'){
+    const villages=[...imageMap.matchAll(/<loc>https:\/\/example\.com(\/taksong\/[^<]*\/yongsan-ri\/)<\/loc>/g)].map(m=>m[1]);
+    assert.ok(villages.length>=2,'same-named villages have distinct regional URLs');
+    const firstVillage=await (await get(villages[0])).text(),secondVillage=await (await get(villages[1])).text();
+    const firstTitle=firstVillage.match(/<title>([^<]+)<\/title>/)?.[1];
+    const secondTitle=secondVillage.match(/<title>([^<]+)<\/title>/)?.[1];
+    assert.ok(firstTitle&&secondTitle&&firstTitle!==secondTitle,'two YongSan villages do not share a search title');
+    assert.ok(firstVillage.includes('차량인수탁송')&&!firstVillage.includes('폐차산업탁송'),'village has handover intent rather than nationwide industry keyword stuffing');
+   }
+
    assert.ok(imageMap.includes('https://example.com'+card[1]),'sitemap and visible card use the same image URL');
    const image=await get(card[1]);assert.equal(image.status,200);
    assert.equal(image.headers.get('content-type'),'image/png');
