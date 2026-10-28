@@ -218,20 +218,39 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 @media(prefers-reduced-motion:reduce){.smart24-graphic *{animation:none!important}}
 
 .smart24-service-visuals{max-width:1120px;margin:24px auto 34px;padding:0 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.smart24-service-visual{display:block;overflow:hidden;border-radius:22px;background:#fff;box-shadow:0 12px 30px #0c519a20;border:1px solid #d6e8fa;text-decoration:none!important;transition:transform .2s,box-shadow .2s}.smart24-service-visual:hover{transform:translateY(-4px);box-shadow:0 20px 38px #0c519a33}.smart24-service-visual img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}.smart24-service-visual span{display:flex;align-items:center;justify-content:space-between;padding:17px 21px;color:#064c9f!important;font-weight:900;font-size:18px}.smart24-service-visual b{font-size:24px}@media(max-width:650px){.smart24-service-visuals{grid-template-columns:1fr;gap:14px;margin:14px auto 24px}.smart24-service-visual span{font-size:16px;padding:14px 16px}}
-/* Header-right visitor / phone-click dashboard */
-.traffic-stats{width:min(340px,100%);max-width:100%;background:#19395d;border:1px solid #4c6486;border-radius:12px;padding:10px 12px;box-shadow:0 3px 13px #071a3066;color:#fff;text-align:left;line-height:1.35}
-.traffic-stats-title{font-size:13px;font-weight:800;color:#ffe680;margin:0 0 7px}
-.traffic-stats-title small{font-size:11px;color:#d6e4f5;font-weight:500}
-.traffic-stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.traffic-stats-grid>div{font-size:11px;border:1px solid #3a5776;border-radius:7px;background:#102a48;padding:6px 8px;min-width:0}
-.traffic-stats-grid strong{display:block;font-size:17px;line-height:1.4;color:#ffe680;font-weight:800;white-space:nowrap}
-.traffic-sources{margin-top:7px;border-top:1px solid #56718f;padding-top:6px}
-.traffic-sources summary{font-size:12px;cursor:pointer;font-weight:700}
-.traffic-sources ol{padding-left:18px;margin:5px 0 2px;max-height:110px;overflow-y:auto;overflow-wrap:anywhere}
-.traffic-sources li{font-size:11px;color:#e8f1fa;line-height:1.5;margin:3px 0}
-.traffic-stats-note{display:block;font-size:10px;color:#bfd1e3;margin-top:7px;line-height:1.4}
-@media(min-width:851px){.header-phone-actions{width:min(370px,38vw);flex-shrink:0}.header-phone-actions .traffic-stats{width:100%}}
-@media(max-width:850px){.header-phone-actions{width:100%;align-items:flex-start}.traffic-stats{width:100%;max-width:460px}}
+/* Header statistics: always directly under the representative phone at upper right. */
+.header-phone-actions{display:flex;flex-direction:column;align-items:flex-end;gap:7px;margin-left:auto;text-align:right;max-width:100%}
+.header-phone-actions>.header-call{display:inline-block;color:#ffe680;font-weight:900;text-align:right}
+.header-phone-actions .traffic-stats{
+  width:100%;max-width:370px;box-sizing:border-box;
+  background:#071c35;color:#fff;border:1px solid #8fafcf;
+  border-radius:10px;padding:12px 14px;
+  box-shadow:0 3px 10px rgba(0,0,0,.28);
+  text-align:left;line-height:1.5
+}
+.traffic-stats-title{margin:0 0 8px;font-size:14px;font-weight:900;color:#fff}
+.traffic-stats-title small{font-size:12px;color:#dceafc;font-weight:600}
+.traffic-stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.traffic-stats-grid>div{min-width:0;background:#143557;border:1px solid #6683a3;border-radius:6px;padding:7px 8px;font-size:13px;font-weight:700;color:#fff}
+.traffic-stats-grid strong{display:block;font-size:19px;line-height:1.4;font-weight:900;color:#fff;letter-spacing:0;white-space:nowrap}
+.traffic-sources{margin-top:9px;padding-top:8px;border-top:1px solid #8ba2bf;color:#fff}
+.traffic-sources summary{font-size:13px;font-weight:800;cursor:pointer;color:#fff}
+.traffic-sources ol{margin:6px 0 2px;padding-left:20px;max-height:118px;overflow-y:auto;overflow-wrap:anywhere}
+.traffic-sources li{font-size:12px;line-height:1.55;color:#fff;margin:3px 0}
+.traffic-stats-note{display:block;font-size:11px;line-height:1.5;color:#e1edfb;margin-top:8px}
+@media(min-width:851px){
+ .header-phone-actions{width:370px;flex-shrink:0}
+ .header-phone-actions .traffic-stats{width:100%}
+}
+@media(max-width:850px){
+ .header-phone-actions{width:100%;align-items:flex-end;margin-left:auto}
+ .header-phone-actions .traffic-stats{width:min(100%,370px)}
+}
+@media(max-width:380px){
+ .header-phone-actions .traffic-stats{padding:10px 9px}
+ .traffic-stats-grid>div{font-size:12px;padding:6px}
+ .traffic-stats-grid strong{font-size:17px}
+}
 </style>
 <style>
 .smart24-split{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:24px 6%;background:#071d40}
