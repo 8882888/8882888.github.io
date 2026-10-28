@@ -31,6 +31,8 @@ jobs:
         run: npm install --omit=dev --no-audit --no-fund
       - name: Verify road and ferry quote calculations
         run: node tests/fare-rules.test.js
+      - name: Verify phone conversion tracking and referral toggles (no live DB writes)
+        run: node tests/traffic-analytics.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
       - name: Start and smoke-test HTTP service
