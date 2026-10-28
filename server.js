@@ -729,7 +729,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  const rss='<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>'+esc(BRAND+' 실제 완료 운행기록')+'</title><link>'+base+'/reviews/</link><description>'+esc('공개 운행기록 '+all.length+'건 중 최근 '+recent.length+'건'+(latest?' · 최신 운행일 '+latest:'')+'. 운행일 기준 정렬이며 게시·수정 시각을 뜻하지 않습니다.')+'</description><language>ko</language>'+recent.map(x=>{
   const url=base+rideUrl(x),label=x.service==='taksong'?'자동차탁송':'대리운전';
   const title=x.date+' '+x.departure+' → '+x.destination+' '+label+' 운행완료'+(x.fare?' · 당시 요금 '+x.fare:'');
-  const full=ridePage(x).match(/<main>([\\s\\S]*?)<\\/main>/)?.[1]||'';
+  const full=ridePage(x).split('<main>')[1]?.split('</main>')[0]||'';
   // Publication timestamps are emitted only when explicitly recorded; trip dates are not publication dates.
   const published=typeof x.publishedAt==='string'?new Date(x.publishedAt):null;
   const pubDate=published&&Number.isFinite(published.getTime())?'<pubDate>'+published.toUTCString()+'</pubDate>':'';
