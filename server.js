@@ -437,13 +437,13 @@ async function servicePage(r,kind){
  const hierarchyNote='행정구역 경로: '+regionAncestors(r).map(a=>a.name).join(' → ')+'. '+(r.level==='리'?'마을 단위 상세 위치와 차량 인수 지점을 확인합니다.':r.level==='동'?'건물 출입구와 주차 위치를 확인합니다.':r.level==='면'?'면 소재지와 외곽의 기사 이동 여건을 확인합니다.':'지역별 출발지와 목적지의 이동 조건을 확인합니다.');
  const aliasTerms=[...new Set(regionAliases(r).map(x=>x+service))].filter(x=>x!==name+' '+service&&x!==keyword);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
  const intro=kind==='taksong'?'자동차탁송은 고객이 지정한 출발지에서 차량을 인수해 목적지로 이동시키는 서비스입니다. 차량 인수·인계 장소와 차종, 도로거리, 시간대, 기사 접근·복귀 동선, 통행료에 따라 요금이 달라집니다.':'대리운전은 고객 차량을 기사에게 맡겨 목적지까지 이동하는 서비스입니다. 고객의 동승 여부와 이용 조건을 상담 시 확인하며, 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
+ const unambiguousHistoricalRegion=String(r.name||'').length>=3&&regions.filter(z=>z.name===r.name).length===1;
  const historicalMatches=historicalRides.filter(x=>{
   if(x.service!==kind)return false;
   const raw=String(x.rawDeparture||'')+' '+String(x.rawDestination||'');
   if(raw.includes(r.full_name))return true;
   if(r.level==='시도'&&provinceSeoLabels[r.name]&&raw.includes(provinceSeoLabels[r.name]))return true;
-  const unambiguous=String(r.name||'').length>=3&&regions.filter(z=>z.name===r.name).length===1;
-  return unambiguous&&raw.includes(r.name);
+  return unambiguousHistoricalRegion&&raw.includes(r.name);
  }).slice(0,6);
  const historicalCards=historicalMatches.length?'<section><h2>'+esc(name)+' 실제 완료 운행내역에서 작성한 후기</h2><p>기존 운행기록 중 이 지역명이 실제 출발·도착 내용에 포함된 기록을 정리했습니다. 아래 금액은 각 운행 당시 요금으로 새로운 예약 견적이 아닙니다. 원본에 예약 여부나 배차 시간 정보가 없는 건은 추측하지 않습니다.</p>'+historicalMatches.map(x=>'<article style="border-top:1px solid #d6e0ee;padding:14px 0"><h3><a href="/reviews/history/'+x.id+'/">'+esc(x.departure+' → '+x.destination+' '+service+' 완료 후기')+'</a></h3><p>운행일 '+esc(x.date)+' · 당시 배차요금 <strong>'+esc(x.fare)+'</strong></p><p>기사 수급이 어려운 피크타임이나 지방·오지 지역에서 급히 호출하면 배차가 지연되거나 요금이 크게 오를 수 있으므로 미리 가능 여부를 확인하는 것이 중요합니다.</p></article>').join('')+'</section>':'';
  const matches=publicRides.filter(x=>{const raw=String(x.departure||'')+' '+String(x.destination||'');const type=String(x.service||x.service_type||x.kind||'').toLowerCase();return tripMatchesRegion(x,r)&&(kind==='taksong'?/탁송|taksong/.test(type)||(!type&&/탁\//.test(raw)):/대리|daeri/.test(type)||(!type&&!/탁\//.test(raw)))}).slice(0,8);
