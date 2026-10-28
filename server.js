@@ -25,6 +25,14 @@ function loadLegalRegions(){
  return regions;
 }
 const regions=loadLegalRegions();
+const priorityRegionalPages=load('data/priority-regions.json').pages;
+const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]));
+if(priorityRegionalPages.length!==25||priorityByKey.size!==25)throw Error('Expected 25 unique priority regional pages');
+for(const guide of priorityRegionalPages){
+ if(!['daeri','taksong'].includes(guide.kind)||!regions.some(r=>r.full_name===guide.region)||!guide.topic||!guide.detail)
+  throw Error('Invalid priority region entry: '+JSON.stringify([guide.kind,guide.region]));
+}
+
 const bySlug=new Map(regions.map(r=>[r.slug,r]));
 const childrenByParent=new Map();
 for(const r of regions){if(!r.parent_slug)continue;const a=childrenByParent.get(r.parent_slug)||[];a.push(r);childrenByParent.set(r.parent_slug,a)}
@@ -409,6 +417,12 @@ function verifiedRepairShopSection(r,kind){
  if(!shops.length)return '';
  return '<section><h2>'+esc(r.name)+' 실제 등록 정비업체 주변 차량탁송 안내</h2><p>공개 자동차정비업체 자료에서 확인한 지역 업체의 위치를 참고한 차량 이동 상담 예시입니다. 업체와의 제휴·예약·입고 허가·운행 완료를 의미하지 않으며, 업체명 검색어는 차량탁송을 찾는 데 도움을 주기 위한 안내입니다.</p><ul>'+shops.map(shop=>'<li><strong>'+esc(shop.name)+'</strong> ('+esc(shop.address)+') · '+esc(shop.keywords.join(' · '))+' — 정비 입고·출고 차량 이동은 업체와 사전 협의 후 상담</li>').join('')+'</ul><p><a href="https://www.data.go.kr/data/15028204/standard.do" target="_blank" rel="noopener noreferrer">자동차정비업체 공공데이터 출처</a> · <a href="/fare/?service=taksong">탁송 예상요금 조회</a></p></section>';
 }
+function priorityLocalGuide(r,kind){
+ const info=priorityByKey.get(kind+'|'+r.full_name);
+ if(!info)return '';
+ const label=kind==='daeri'?'대리운전':'자동차탁송';
+ return '<section id="priority-region-guide"><h2>'+esc(r.name)+' '+label+' 상세 준비사항: '+esc(info.topic)+'</h2><p>'+esc(info.detail)+'</p><p>이 내용은 지역별 예약 준비 안내이며 해당 구간의 운행을 완료했다는 주장이 아닙니다. 실제 운행내역은 출발지와 도착지가 확인된 자료만 별도로 연결합니다.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">이 지역 출발 예상요금 조회</a> · <a href="tel:18114294">예약 상담 '+PHONE+'</a></p></section>';
+}
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const keyword=seoRegionLabel(r)+service;
@@ -452,7 +466,7 @@ async function servicePage(r,kind){
  const history=matches.length?'<p>아래는 확인된 실제 완료 운행 기록입니다. 기록 요금은 당시 운행 조건에 따른 금액이며 현재 예상요금과 다를 수 있습니다.</p><ul>'+matches.map(x=>'<li><a href="'+rideUrl(x)+'">'+esc([x.departure+' → '+x.destination,service+' 운행완료',x.fare?'요금 '+x.fare:'',x.date].filter(Boolean).join(' · '))+'</a></li>').join('')+'</ul><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 출발·도착지 입력해 현재 예상요금 조회</a></p>':regionalUsage(r,kind);
  const taebaekGuide=(r.name==='태백시'&&kind==='taksong')?'<section><h2>태백시탁송 지역별 차량 인수·인계 안내</h2><p>태백시 황지동·황연동·상장동·삼수동·장성동·철암동 등에서는 차량 위치와 기사 접근 경로를 구체적으로 확인해야 합니다. 아래 지역은 서비스 상담 가능 지역 안내이며, 기사 상주나 실제 운행완료를 의미하지 않습니다.</p><h3>황지동·황연동·상장동 출발 차량탁송</h3><p>출발 건물의 주차 위치와 차량 열쇠 인계 방식, 목적지의 차량 수령 가능 시간을 상담 시 확인합니다.</p><h3>삼수동·장성동·철암동 차량탁송</h3><p>외곽 출발지의 정확한 위치와 기사 접근·복귀 여건에 따라 배차 가능 여부와 요금이 달라질 수 있습니다. 장거리 운행은 사전 예약을 권장합니다.</p><h3>태백에서 삼척·정선·원주·강릉 및 수도권 방향</h3><p>이동 방향은 상담 가능한 예시 구간입니다. 차종·이동 거리·통행료·시간대 등을 확인한 후 요금을 안내합니다.</p><p><a href="/fare/?service=taksong&amp;from=%ED%83%9C%EB%B0%B1%EC%8B%9C">태백시 출발 탁송 예상요금 조회</a> · <a href="tel:18114294">스마트24탁송 1811-4294 상담</a></p></section>':'';
  const near=(childrenByParent.get(r.parent_slug)||[]).filter(x=>x.slug!==r.slug).slice(0,8).map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.full_name)+' '+service+'</a></li>').join('');
- const body=routeKeywordPages.links(r,kind)+reviewCards+vehicleGuideLink(kind)+localIntentLinks+'<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(seoRegionLabel(a))+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+provinceServiceGuide(r,kind)+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+routeGuides.regionSection(r)+neighborhoodStorySection(r,kind)+taebaekGuide+bookingGuide(kind,r)+aliasSection+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(serviceBrand(kind))+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 출발지·도착지 예상요금 확인하기</a></p></section><section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
+ const body=routeKeywordPages.links(r,kind)+priorityLocalGuide(r,kind)+reviewCards+vehicleGuideLink(kind)+localIntentLinks+'<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(seoRegionLabel(a))+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+provinceServiceGuide(r,kind)+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+routeGuides.regionSection(r)+neighborhoodStorySection(r,kind)+taebaekGuide+bookingGuide(kind,r)+aliasSection+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(serviceBrand(kind))+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 출발지·도착지 예상요금 확인하기</a></p></section><section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+history+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
  const imageUrl='https://'+host+cardPngPath(r.slug,kind);
  const card='<figure><a href="tel:18114294" aria-label="'+esc(name)+' '+service+' 1811-4294 전화 상담"><img src="'+cardPngPath(r.slug,kind)+'" alt="'+esc(name)+' '+serviceBrand(kind)+' 명함 1811-4294" width="1200" height="800" loading="lazy" style="width:100%;height:auto"></a></figure>';
  const pageUrl='https://'+host+servicePath(r,kind);
@@ -610,6 +624,14 @@ function featuredTaksongRoutePage(route){
  const body='<section><h2>'+esc(route.from+' → '+route.to+' 자동차탁송')+'</h2><p>실제 운행 구간으로 알려주신 '+esc(route.from+'에서 '+route.to)+'까지의 탁송 안내입니다. 운행 요금·차종·소요시간은 제공되지 않아 기재하지 않습니다.</p><p><a href="/fare/?from='+encodeURIComponent(route.from)+'&to='+encodeURIComponent(route.to)+'&service=taksong">이 구간 예상요금 조회</a> · <a href="tel:18114294">전화 상담 1811-4294</a></p></section><section><h2>구간별 검색 안내</h2><p>'+esc(route.keywords.join(' · '))+'</p><p>탁송은 차량을 출발지에서 인수하여 목적지에 인계하는 서비스입니다. 차량 종류와 인수·인계 위치, 운행 일정에 따라 상담 조건이 달라집니다.</p></section><section><h2>다른 실제 구간 안내</h2><ul>'+related+'</ul><p><a href="/taksong/">전국 탁송 지역 안내</a></p></section>';
  return layout(title,desc,body,'https://'+host+'/taksong/route/'+route.slug+'/',null);
 }
+function priorityRegionLinks(kind){
+ const label=kind==='daeri'?'대리운전':'탁송';
+ const items=priorityRegionalPages.filter(p=>p.kind===kind).map(p=>{
+  const region=regions.find(r=>r.full_name===p.region);
+  return '<li><a href="'+servicePath(region,kind)+'" data-region="'+esc(p.region)+'">'+esc(p.region+' '+label)+'</a> · '+esc(p.topic)+'</li>';
+ }).join('');
+ return '<section id="priority-regions"><h2>실제 지역 정보 중심 '+label+' 우선 안내</h2><p>지역별 차량 인수·인계 또는 대리운전 출발 조건을 구분해 안내합니다. 실제 완료 운행은 확인된 기록만 게시하며 모든 지역에 기사가 상주하는 것은 아닙니다.</p><ul>'+items+'</ul></section>';
+}
 function serviceHub(kind){
  const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const isT=kind==='taksong';
@@ -628,7 +650,7 @@ function serviceHub(kind){
  ];
  const faqHtml='<section><h2>전국 '+label+' 예약 전 자주 묻는 질문</h2>'+faq.map(([q,a])=>'<h3>'+esc(q)+'</h3><p>'+esc(a)+'</p>').join('')+'</section>';
  const customerJourney=isT?'':'<section aria-label="전국대리운전 빠른 안내"><h2>필요한 대리운전 서비스를 선택하세요</h2><p>장거리 귀가, 골프장 이동, 일일기사와 법인 이용 목적에 맞춰 안내합니다. 출발지와 도착지, 희망 시간을 알려주시면 요금과 배차 가능 여부를 확인합니다.</p><p><a href="/service/daeri/">일반·장거리 대리운전</a> · <a href="/service/golf/">골프장 대리운전</a> · <a href="/service/daily-driver/">일일기사</a> · <a href="/service/corporate/">법인 대리운전</a></p><p><a class="cta" href="/fare/?service=daeri">대리운전 예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a> · <a href="/reviews/">실제 운행기록 보기</a></p><p>예상요금은 참고용입니다. 날짜·시간, 기사 접근과 복귀 여건에 따라 실제 요금과 배차 가능 여부가 달라집니다.</p></section><section><h2>전국대리운전 예약 방법</h2><ol><li>출발지와 도착지, 이용 날짜와 시간을 정합니다.</li><li>예상요금을 조회하고 차종과 경유지 등 필요한 내용을 준비합니다.</li><li>1811-4294로 상담해 최종 요금과 기사 배차 가능 여부를 확인한 후 예약합니다.</li></ol><p>장거리나 외곽 골프장은 미리 예약하면 배차 조건을 확인하는 데 도움이 됩니다. 긴급 호출은 지역과 시간에 따라 요금이 높아지거나 배차가 늦어질 수 있습니다.</p></section>';
- const body='<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
+ const body=priorityRegionLinks(kind)+'<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
  '<section id="reservation-guide"><h2>'+label+' 예약할 때 필요한 정보</h2><ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치</li><li>도착지 주소와 희망 출발 날짜·시각</li><li>차종과 차량 인수·인계 조건</li><li>경유지, 통행료 및 기타 요청사항</li></ol><p>거리만으로 최종 요금을 확정하지 않으며, 기사 접근·복귀 여건을 확인합니다.</p></section>'+
  bookingGuide(kind)+faqHtml+featuredLinks+
  (isT?'<section><h2>차종·서비스별 자동차탁송</h2><p>국산차·수입차·전기차·화물차 및 서비스센터 입출고 등 차량 종류와 이용 목적에 따라 확인할 사항이 다릅니다.</p><p><a href="/taksong/types/">차종별 탁송과 서비스센터탁송 살펴보기</a></p></section>':'<section><h2>장거리·골프장 대리운전</h2><p>일반 시내 이동과 달리 장거리·골프장 출발은 운행 후 기사 복귀 여건이 배차에 영향을 줄 수 있습니다. 출발 예정 시각과 목적지를 함께 알려주세요.</p></section>')+

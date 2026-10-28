@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/seo-audit.js'
       - 'data/seo-pages.json'
+      - 'data/priority-regions.json'
       - '.github/workflows/seo-audit.yml'
       - 'server.js'
       - 'index.html'
