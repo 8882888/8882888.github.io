@@ -409,9 +409,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(statsHome.includes('background:transparent;color:#fff;text-align:right') &&
     statsHome.includes('.traffic-label-compact{display:inline}'),
     'plain white-text counters show compact mobile labels without a box');
-  assert.ok(statsHome.includes('<details class="traffic-sources">') &&
-    !statsHome.includes('<details class="traffic-sources" open>'),
-    'referrer list is collapsed by default to save mobile screen space');
+  assert.ok(statsHome.includes('id="traffic-sources-detail" hidden') &&
+    statsHome.includes('id="traffic-call-trigger"') &&
+    !statsHome.includes('id="traffic-today-trigger"'),
+    'phone click source details stay hidden until the phone clicks counter is pressed');
+  assert.ok(/<button[^>]*id="traffic-call-trigger"[^>]*>[\\s\\S]*?id="phone-click-number"[\\s\\S]*?<\\/button>/.test(statsHome),
+    'the phone-click count, not visitor count, is the interactive trigger');
+  assert.ok(/<span class="traffic-stat">[\\s\\S]*?id="today-visit-number"[\\s\\S]*?<\\/span>/.test(statsHome),
+    'visitor count is a regular non-clickable label');
   assert.ok(!statsHome.includes('traffic-stats-grid') &&
     !statsHome.includes('background:#071c35;color:#fff'),
     'remove bulky previous counters panel styling');
@@ -436,6 +441,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(tracker.status,200);
   const trackerBody=await tracker.text();
   assert.ok(trackerBody.includes("site_phone_event")&&trackerBody.includes("site_traffic_dashboard"));
+  assert.ok(trackerBody.includes("el('traffic-call-trigger')") && !trackerBody.includes("traffic-today-trigger"),
+    'click-source visibility is controlled only by the phone-click count');
   assert.ok(trackerBody.includes('p_page:location.pathname')&&trackerBody.includes('p_source:acquisition()'));
   assert.ok(!trackerBody.includes('event.preventDefault()'),'phone navigation is never blocked');
   assert.ok(trackerBody.includes('response.status===204'),'Supabase void phone-event response must not cause retry or double count');
