@@ -242,6 +242,20 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  .header-phone-actions .traffic-stat,.header-phone-actions .traffic-stat strong{font-size:10px!important}
  .header-phone-actions .traffic-stats-lines{gap:1px 6px}
 }
+/* Put the count immediately next to the actual telephone number, not on a stats row. */
+.header-phone-actions .header-phone-line{display:flex;align-items:baseline;justify-content:flex-end;flex-wrap:wrap;gap:3px 7px;width:100%}
+.header-phone-actions .header-phone-line .header-call{color:#ffe680;font-weight:900;white-space:nowrap}
+.header-phone-actions .header-phone-count{display:inline-flex!important;align-items:baseline;gap:3px;white-space:nowrap;color:#fff!important;font-size:12px!important;font-weight:600!important}
+.header-phone-actions .header-phone-count strong{display:inline;color:#fff;font-size:12px!important;font-weight:800}
+@media(max-width:850px){
+  .header-phone-actions .header-phone-line{gap:2px 6px}
+  .header-phone-actions .header-phone-count,.header-phone-actions .header-phone-count strong{font-size:11px!important}
+  .header-phone-actions .header-phone-line .header-call{font-size:17px!important}
+}
+@media(max-width:400px){
+  .header-phone-actions .header-phone-count,.header-phone-actions .header-phone-count strong{font-size:10px!important}
+  .header-phone-actions .header-phone-line .header-call{font-size:16px!important}
+}
 /* Today's phone-click count is the only control that reveals the phone source detail. */
 .header-phone-actions .traffic-call-trigger{
   display:inline-flex;align-items:center;gap:3px;border:0;background:transparent;
@@ -313,11 +327,10 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 </head>
 <body>
 
-<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 방문 및 전화 클릭 통계">
+<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><button type="button" class="traffic-call-trigger header-phone-count" id="traffic-call-trigger" aria-expanded="false" aria-controls="traffic-sources-detail" title="누적 전화 버튼 클릭수 · 클릭하면 오늘 유입 경로 표시">클릭 <strong id="phone-click-number">확인 중</strong></button></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 방문 및 전화 클릭 통계">
   <div class="traffic-stats-lines" aria-live="polite">
     <span class="traffic-stat">오늘 방문 <strong id="today-visit-number">확인 중</strong></span>
     <span class="traffic-stat">누적 방문 <strong id="total-visit-number">확인 중</strong></span>
-    <button type="button" class="traffic-stat traffic-call-trigger" id="traffic-call-trigger" aria-expanded="false" aria-controls="traffic-sources-detail" title="오늘 전화 클릭수와 유입 경로 보기">전화 클릭 <strong id="phone-click-number">확인 중</strong></button>
   </div>
   <div class="traffic-sources" id="traffic-sources-detail" hidden aria-label="오늘 전화 클릭 유입 경로와 클릭한 페이지">
     <span class="traffic-sources-heading">오늘 전화 클릭 유입 경로 · 클릭한 페이지</span>
