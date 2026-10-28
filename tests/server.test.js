@@ -45,7 +45,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const route of ['/daeri/incheon/','/daeri/busan/','/daeri/seoul/','/taksong/busan/']){
    const regionalHtml=await (await get(route)).text();
    assert.ok(!regionalHtml.includes('/reviews/undefined/'),route+' must not link to undefined');
-   const reviewLinks=[...new Set([...regionalHtml.matchAll(/href="(\\/reviews\\/[a-f0-9]{16}\\/)"/g)].map(m=>m[1]))];
+   const reviewLinks=[...new Set([...regionalHtml.matchAll(new RegExp('href="(/reviews/[a-f0-9]{16}/)"','g'))].map(m=>m[1]))];
    regionalReviewCount+=reviewLinks.length;
    for(const target of reviewLinks.slice(0,2))assert.equal((await get(target)).status,200,route+' -> '+target);
   }
