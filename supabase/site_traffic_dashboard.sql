@@ -103,24 +103,45 @@ $$;
 create or replace function public.site_traffic_dashboard()
 returns table(today_visits bigint,yesterday_visits bigint,today_phone_clicks bigint,total_phone_clicks bigint,phone_sources jsonb)
 language sql stable security definer set search_path=public
-as $$
- select
-  coalesce((select v.visits from public.site_daily_visits v
-    where v.visit_date=(now() at time zone 'Asia/Seoul')::date),0)::bigint,
-  coalesce((select v.visits from public.site_daily_visits v
-    where v.visit_date=(now() at time zone 'Asia/Seoul')::date-1),0)::bigint,
-  coalesce((select sum(c.phone_clicks) from public.site_click_counters c
-    where c.day=(now() at time zone 'Asia/Seoul')::date),0)::bigint,
-  coalesce((select sum(c.phone_clicks) from public.site_click_counters c),0)::bigint,
-  coalesce((select jsonb_agg(jsonb_build_object(
-    'source',s.source,'page',s.source_page,'clicks',s.clicks
-  ) order by s.clicks desc,s.source,s.source_page)
-    from (select p.source,p.source_page,p.clicks
-      from public.site_phone_click_sources p
-      where p.day=(now() at time zone 'Asia/Seoul')::date
-      order by p.clicks desc,p.source,p.source_page
-      limit 12) s),'[]'::jsonb);
-$$;
+as $
+with
+ kst as (select (now() at time zone 'Asia/Seoul')::date as day),
+ counts as (
+  select coalesce(sum(c.phone_clicks),0)::bigint as all_phone
+  from public.site_click_counters c
+ ),
+ attributed as (
+  select coalesce(sum(s.clicks),0)::bigint as all_attributed
+  from public.site_phone_click_sources s
+ ),
+ recent as (
+  select s.day,s.source,s.source_page,s.clicks
+  from public.site_phone_click_sources s
+  order by s.day desc,s.clicks desc
+  limit 12
+ )
+select
+ coalesce((select v.visits from public.site_daily_visits v,kst where v.visit_date=kst.day),0)::bigint,
+ coalesce((select v.visits from public.site_daily_visits v,kst where v.visit_date=kst.day-1),0)::bigint,
+ coalesce((select sum(c.phone_clicks) from public.site_click_counters c,kst where c.day=kst.day),0)::bigint,
+ (select all_phone from counts),
+ coalesce((
+  select jsonb_agg(r.item order by r.priority,r.day desc)
+  from (
+    select 0 priority,z.day,jsonb_build_object(
+      'day',z.day::text,'source',z.source,'page',z.source_page,'clicks',z.clicks
+    ) as item
+    from recent z
+    union all
+    select 1,null::date,jsonb_build_object(
+      'day','','source','기존 클릭 · 유입 경로 미확인','page','',
+      'clicks',greatest(c.all_phone-a.all_attributed,0)
+    )
+    from counts c cross join attributed a
+    where c.all_phone>a.all_attributed
+  ) r
+ ),'[]'::jsonb)
+$;
 revoke all on function public.site_visit_stats(boolean) from public;
 revoke all on function public.site_click_stats(boolean) from public;
 revoke all on function public.site_phone_event(text,text) from public;
