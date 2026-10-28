@@ -55,7 +55,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const researchQueue=require('../data/scrapyard-place-audit-queue.json').candidates;
   assert.equal(verifiedShops.length,2,'two separately cross-checked Naver Place-linked scrapyards');
   assert.equal(researchQueue.length,69,'69 nationwide association leads awaiting individual Place checks');
-  assert.equal(new Set(verifiedShops.map(x=>x.placeUrl.match(/\\/place\\/(\\d+)\\//)?.[1])).size,verifiedShops.length,'unique Naver Place IDs');
+  assert.equal(new Set(verifiedShops.map(x=>x.placeUrl.split('/place/')[1]?.split('/')[0])).size,verifiedShops.length,'unique Naver Place IDs');
   assert.ok(verifiedShops.every(x=>x.placeVerified===true&&x.verificationMethod&&x.verificationSourceUrl&&x.regionFullNames.length),'every published place has evidence and precise area');
   assert.ok(researchQueue.every(x=>x.placeStatus==='pending'&&x.placeUrl===null&&x.placeName===null),'unverified candidates must never be published');
   const gyeonggiScrap=await (await get('/taksong/gyeonggi/')).text();
