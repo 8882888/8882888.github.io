@@ -37,6 +37,8 @@ jobs:
           done
           cat /tmp/smart24-preview.log
           exit 1
+      - name: Verify live-equivalent IndexNow key and regional sitemap without external requests
+        run: node scripts/indexnow-notify.js --dry-run http://localhost:3000/
       - name: Run SEO audit against proposed code
         run: |
           set -o pipefail

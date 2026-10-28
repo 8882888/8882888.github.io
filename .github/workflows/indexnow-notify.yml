@@ -1,0 +1,27 @@
+name: Notify Naver IndexNow (updated priority regions)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/indexnow-notify.js'
+      - '770f921af32e749f64c1d447c607ea42.txt'
+      - '.github/workflows/indexnow-notify.yml'
+permissions:
+  contents: read
+concurrency:
+  group: smart24-indexnow-priority
+  cancel-in-progress: false
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate notifier
+        run: node --check scripts/indexnow-notify.js
+      - name: Wait for Cloudtype live key and notify Naver once
+        run: node scripts/indexnow-notify.js
