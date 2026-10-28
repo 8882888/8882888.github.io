@@ -80,6 +80,23 @@ async function inspect(route){
   if(hubIssues.length)pages.push({route:hubRoute+'#priority-regions',passed:false,issues:hubIssues});
  }
  if(found.size!==priority.length)pages.push({route:'priority-regions',passed:false,issues:['Expected '+priority.length+' unique URLs, got '+found.size]});
+ const priorityRoute='/sitemap-priority.xml';
+ const priorityResponse=await fetch(new URL(priorityRoute,base),{signal:AbortSignal.timeout(15000)});
+ const priorityXml=await priorityResponse.text();
+ const priorityUrls=[...priorityXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
+ const expectedPriorityUrls=['/','/daeri/','/taksong/',...found].map(p=>new URL(p,new URL(config.site)).href);
+ const priorityIssues=[];
+ if(priorityResponse.status!==200)priorityIssues.push('Priority sitemap HTTP '+priorityResponse.status);
+ if(!String(priorityResponse.headers.get('content-type')).includes('application/xml'))priorityIssues.push('Wrong sitemap content-type');
+ if(!priorityXml.includes('<urlset'))priorityIssues.push('Missing XML urlset');
+ if(priorityUrls.length!==expectedPriorityUrls.length)priorityIssues.push('Wrong priority sitemap count '+priorityUrls.length+'/'+expectedPriorityUrls.length);
+ if(new Set(priorityUrls).size!==priorityUrls.length)priorityIssues.push('Duplicate priority sitemap URLs');
+ for(const url of expectedPriorityUrls){if(!priorityUrls.includes(url))priorityIssues.push('Missing priority URL '+url)}
+ const robotsResponse=await fetch(new URL('/robots.txt',base),{signal:AbortSignal.timeout(15000)});
+ const robotsText=await robotsResponse.text();
+ if(!robotsText.includes('Sitemap: '+config.site+priorityRoute))priorityIssues.push('Priority sitemap missing from robots.txt');
+ if(!priorityXml||Buffer.byteLength(priorityXml)>10000000)priorityIssues.push('Invalid sitemap size');
+ pages.push({route:priorityRoute,status:priorityResponse.status,url:priorityResponse.url,urlCount:priorityUrls.length,issues:priorityIssues,passed:priorityIssues.length===0});
  const sitemapCache=new Map();
  for(const kind of ['daeri','taksong']){
   const route='/sitemap-'+kind+'.xml';
