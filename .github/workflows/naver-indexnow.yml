@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - 'server.js'
+      - 'index.html'
+      - 'data/seo-pages.json'
+      - 'tests/traffic-analytics.test.js'
       - 'lib/route-keyword-pages.js'
       - 'lib/verified-route-index.js'
       - 'data/ride-history.json'
