@@ -40,6 +40,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=daeri"'));
   const recordHtml=await (await get('/reviews/history/excel-0001/')).text();
   assert.ok(recordHtml.includes('class="service-journey"'));
+  // Regional review links must point to published records with real IDs.
+  let regionalReviewCount=0;
+  for(const route of ['/daeri/incheon/','/daeri/busan/','/daeri/seoul/','/taksong/busan/']){
+   const regionalHtml=await (await get(route)).text();
+   assert.ok(!regionalHtml.includes('/reviews/undefined/'),route+' must not link to undefined');
+   const reviewLinks=[...new Set([...regionalHtml.matchAll(new RegExp('href="(/reviews/[a-f0-9]{16}/)"','g'))].map(m=>m[1]))];
+   regionalReviewCount+=reviewLinks.length;
+   for(const target of reviewLinks.slice(0,2))assert.equal((await get(target)).status,200,route+' -> '+target);
+  }
+  assert.ok(regionalReviewCount>0,'known regional samples must link to published reviews');
   const h=await get('/health');assert.equal(h.status,200);const health=await h.json();assert.equal(health.regions,regions.length);
   const keywordStatus=await (await get('/api/keyword-status')).json();assert.ok(keywordStatus.stored>200000);assert.equal(keywordStatus.searchExposure,'not-measured');
   for(const query of ['강화도맛집','강남맛집','설악산','영덕해맞이공원']){
