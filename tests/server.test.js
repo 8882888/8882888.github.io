@@ -413,9 +413,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     statsHome.includes('id="traffic-call-trigger"') &&
     !statsHome.includes('id="traffic-today-trigger"'),
     'phone click source details stay hidden until the phone clicks counter is pressed');
-  assert.ok(/<button[^>]*id="traffic-call-trigger"[^>]*>[\\s\\S]*?id="phone-click-number"[\\s\\S]*?<\\/button>/.test(statsHome),
+  const callTriggerAt=statsHome.indexOf('id="traffic-call-trigger"');
+  const callTriggerEnd=statsHome.indexOf('</button>',callTriggerAt);
+  assert.ok(callTriggerAt>=0 && callTriggerEnd>callTriggerAt &&
+    statsHome.slice(callTriggerAt,callTriggerEnd).includes('id="phone-click-number"'),
     'the phone-click count, not visitor count, is the interactive trigger');
-  assert.ok(/<span class="traffic-stat">[\\s\\S]*?id="today-visit-number"[\\s\\S]*?<\\/span>/.test(statsHome),
+  const visitCounterAt=statsHome.indexOf('id="today-visit-number"');
+  const visitLabelStart=statsHome.lastIndexOf('<span class="traffic-stat">',visitCounterAt);
+  assert.ok(visitLabelStart>=0 && visitLabelStart<visitCounterAt &&
+    !statsHome.slice(visitLabelStart,visitCounterAt).includes('<button'),
     'visitor count is a regular non-clickable label');
   assert.ok(!statsHome.includes('traffic-stats-grid') &&
     !statsHome.includes('background:#071c35;color:#fff'),
