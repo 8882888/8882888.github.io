@@ -228,6 +228,21 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 @media(max-width:650px){.smart24-split{grid-template-columns:1fr;padding:14px 4%;gap:12px}}
  .smart24-split{grid-template-columns:minmax(0,720px);justify-content:center}.smart24-split>a{width:100%}
 </style>
+
+<style id="supplied-vehicle-photos">
+.hero.hero-with-photo{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;align-items:center}
+.hero.hero-with-photo h1{font-size:clamp(28px,3.3vw,44px)!important}
+.hero-copy{min-width:0}.hero-copy>p:first-child{font-weight:800;color:#0755bb!important}
+.hero-vehicle{margin:0;min-width:0;background:white;border:1px solid #b9d8fa;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px #0755bb20}
+.hero-vehicle img{display:block;width:100%;height:auto}
+.hero-vehicle figcaption{padding:10px 14px;color:#254b70;font-size:14px;text-align:center}
+.vehicle-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.vehicle-photo-grid figure{margin:0;min-width:0;border:1px solid #d6e2ed;border-radius:12px;overflow:hidden;background:#fff}
+.vehicle-photo-grid img{display:block;width:100%;height:auto}
+.vehicle-photo-grid figcaption{padding:10px 14px;font-weight:700}
+@media(max-width:850px){.hero.hero-with-photo{grid-template-columns:1fr;gap:24px}.hero-vehicle{max-width:600px;width:100%;margin:auto}.vehicle-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.vehicle-photo-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
@@ -243,8 +258,8 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 
 </div></nav>
 
-<div class="hero">
-<div class="smart24-graphic" aria-hidden="true"><div class="graphic-glow"></div><div class="graphic-orbit"></div><div class="graphic-route"></div><div class="graphic-pin start">📍</div><div class="graphic-car"><svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" role="presentation"><path d="M31 67L46 39Q51 30 66 30H134Q148 30 155 41L171 67V78H29V67Z" fill="#1275d6"/><path d="M58 41H133Q140 41 145 50L152 59H48L58 41Z" fill="#eaf8ff"/><path d="M101 40V60" stroke="#1275d6" stroke-width="5"/><rect x="26" y="64" width="150" height="17" rx="7" fill="#0b4d9c"/><circle cx="59" cy="79" r="13" fill="#213f65"/><circle cx="145" cy="79" r="13" fill="#213f65"/><circle cx="59" cy="79" r="6" fill="#c6eaff"/><circle cx="145" cy="79" r="6" fill="#c6eaff"/><rect x="166" y="67" width="9" height="6" rx="2" fill="#ffdf69"/></svg></div><div class="graphic-pin end">✓</div></div>
+<div class="hero hero-with-photo"><div class="hero-copy">
+
 <p>SMART24 · 대리운전 · 자동차탁송</p>
 <h1>전국대리운전·자동차탁송<br><span style="font-size:.62em;font-weight:700">예상요금부터 예약·배차 상담까지</span> <span class="title-last"><a class="hero-phone" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 1811-4294</a></span></h1>
 <p>고객님이 함께 이동하는 대리운전과 차량을 목적지로 보내는 자동차탁송을 안내합니다. 출발지·도착지·희망 시간을 기준으로 이용 조건과 예상요금을 확인하세요.</p>
@@ -252,7 +267,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <a class="btn" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 오픈채팅 상담</a>
 <a class="btn" href="/daeri/">전국대리운전 안내</a>
 <a class="btn" href="/taksong/">전국자동차탁송 안내</a>
-</div>
+</div><figure class="hero-vehicle"><img src="/assets/vehicles/santafe-1811.webp" width="1448" height="1086" alt="산타페 차량 이미지, 스마트24 상담 1811-4294" fetchpriority="high" decoding="async"><figcaption>승용차·SUV·화물차 이동 상담 1811-4294</figcaption></figure></div>
 <section aria-labelledby="service-choice"><h2 id="service-choice">어떤 서비스가 필요하세요?</h2><div class="cards"><div class="card"><h3>전국대리운전</h3><p>고객 차량으로 귀가·장거리 이동이 필요할 때 이용합니다. 이용 예정 시각, 동승 인원과 경유지를 함께 알려주세요.</p><a class="btn" href="/daeri/">대리운전 이용 안내</a><p><a href="/fare/?service=daeri">대리운전 예상요금</a> · <a href="/reviews/history/?kind=daeri">실제 대리운전 기록</a></p><p><a href="/service/golf/">골프장 대리운전</a> · <a href="/service/daily-driver/">일일기사</a> · <a href="/service/corporate/">법인대리운전</a></p></div><div class="card"><h3>전국자동차탁송</h3><p>중고차 인도, 서비스센터 입출고, 장거리 차량 이동을 상담합니다. 차량 인수 장소와 목적지 인계 조건을 먼저 확인합니다.</p><a class="btn" href="/taksong/">자동차탁송 이용 안내</a><p><a href="/fare/?service=taksong">자동차탁송 예상요금</a> · <a href="/reviews/history/?kind=taksong">실제 자동차탁송 기록</a></p><p><a href="/taksong/types/">차종·서비스센터별 탁송</a> · <a href="/service/long-distance-taksong/">장거리탁송</a></p></div></div></section>
 <section class="quick-booking" aria-label="빠른 요금 조회와 지역별 예약 안내" style="max-width:1120px;margin:18px auto;padding:20px;border:1px solid #d6e2ed;border-radius:16px;background:#f6faff">
 <h2 style="margin:0 0 8px">출발지·도착지로 대리운전·탁송 예상요금 조회</h2>
@@ -362,6 +377,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 </div>
 </section>
 <section class="gray"><h2>이용 방법</h2><p>1. 대표 전화로 연락해 주세요.</p><p>2. 출발지와 도착지, 차량 종류, 희망 시간을 알려주세요.</p><p>3. 요금과 배차 가능 여부를 확인한 후 진행 여부를 결정하세요.</p><p>※ 요금과 배차 가능 여부는 거리와 시간, 차량 및 현장 상황에 따라 달라질 수 있습니다.</p></section>
+<section id="vehicle-photos" aria-labelledby="vehicle-photos-title"><h2 id="vehicle-photos-title">차량별 대리운전·탁송 상담</h2><p>승용차·SUV·화물차 등 차량 종류와 이용 목적에 맞는 서비스를 확인하세요. 요금과 기사 배정은 차종, 출발지·도착지 및 일정에 따라 상담 후 안내합니다.</p><div class="vehicle-photo-grid"><figure><a href="tel:18114294" aria-label="1톤 윙바디 차량 상담 1811-4294"><img src="/assets/vehicles/wingbody-1t-1811.webp" alt="1톤 윙바디 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>1톤 윙바디 · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure><figure><a href="tel:18114294" aria-label="1톤 카고 차량 상담 1811-4294"><img src="/assets/vehicles/cargo-1t-1811.webp" alt="1톤 카고 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>1톤 카고 · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure><figure><a href="tel:18114294" aria-label="25톤 윙바디 차량 상담 1811-4294"><img src="/assets/vehicles/wingbody-25t-1811.webp" alt="25톤 윙바디 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>25톤 윙바디 · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure><figure><a href="tel:18114294" aria-label="BMW 차량 상담 1811-4294"><img src="/assets/vehicles/bmw-1811.webp" alt="BMW 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>BMW · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure><figure><a href="tel:18114294" aria-label="그랜저 차량 상담 1811-4294"><img src="/assets/vehicles/grandeur-1811.webp" alt="그랜저 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>그랜저 · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure><figure><a href="tel:18114294" aria-label="산타페 차량 상담 1811-4294"><img src="/assets/vehicles/santafe-1811.webp" alt="산타페 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>산타페 · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure><figure><a href="tel:18114294" aria-label="K7 차량 상담 1811-4294"><img src="/assets/vehicles/k7-1811.webp" alt="K7 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>K7 · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure><figure><a href="tel:18114294" aria-label="벤츠 S500 차량 상담 1811-4294"><img src="/assets/vehicles/mercedes-s500-1811.webp" alt="벤츠 S500 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>벤츠 S500 · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure><figure><a href="tel:18114294" aria-label="아반떼 차량 상담 1811-4294"><img src="/assets/vehicles/avante-1811.webp" alt="아반떼 차량 이미지, 상담 1811-4294" loading="lazy" decoding="async"></a><figcaption>아반떼 · <a href="tel:18114294">1811-4294 상담</a></figcaption></figure></div><p><a href="/taksong/types/">차종별 탁송 이용 조건</a> · <a href="/daeri/">대리운전 예약 안내</a></p></section>
 <section class="gray" id="regions">
 <h2>전국 지역별 대리운전 · 탁송 안내</h2>
 <p>시·도부터 시·군·구, 읍·면·동과 리 단위까지 지역을 선택해 대리운전·자동차탁송·장거리탁송 안내를 찾을 수 있도록 지역별 페이지를 확장하고 있습니다.</p>
