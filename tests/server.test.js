@@ -47,7 +47,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     const ha=await (await get(first)).text(),hb=await (await get(second)).text();
     assert.ok(ha.includes('rel="canonical" href="https://example.com'+first+'"'),first+' canonical');
     assert.ok(hb.includes('rel="canonical" href="https://example.com'+second+'"'),second+' canonical');
-    const aTitle=headValue(ha,/<title>([^<]+)<\\/title>/),bTitle=headValue(hb,/<title>([^<]+)<\\/title>/);
+    const aTitle=headValue(ha,/<title>([^<]+)<\/title>/),bTitle=headValue(hb,/<title>([^<]+)<\/title>/);
     const aDesc=headValue(ha,/<meta name="description" content="([^"]+)"/),bDesc=headValue(hb,/<meta name="description" content="([^"]+)"/);
     assert.ok(aTitle&&bTitle&&aTitle!==bTitle,first+' and '+second+' must not have duplicated titles');
     assert.ok(aDesc&&bDesc&&aDesc!==bDesc,first+' and '+second+' must not have duplicated descriptions');
@@ -217,11 +217,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const imageMap=await (await get('/sitemap-'+service+'.xml')).text();
    assert.equal((imageMap.match(/<image:image>/g)||[]).length,regions.length,'every regional service URL includes its existing card in the image sitemap');
    if(service==='taksong'){
-    const villages=[...imageMap.matchAll(/<loc>https:\\/\\/example\\.com(\\/taksong\\/[^<]*\\/yongsan-ri\\/)<\\/loc>/g)].map(m=>m[1]);
+    const villages=[...imageMap.matchAll(/<loc>https:\/\/example\.com(\/taksong\/[^<]*\/yongsan-ri\/)<\/loc>/g)].map(m=>m[1]);
     assert.ok(villages.length>=2,'same-named villages have distinct regional URLs');
     const firstVillage=await (await get(villages[0])).text(),secondVillage=await (await get(villages[1])).text();
-    const firstTitle=firstVillage.match(/<title>([^<]+)<\\/title>/)?.[1];
-    const secondTitle=secondVillage.match(/<title>([^<]+)<\\/title>/)?.[1];
+    const firstTitle=firstVillage.match(/<title>([^<]+)<\/title>/)?.[1];
+    const secondTitle=secondVillage.match(/<title>([^<]+)<\/title>/)?.[1];
     assert.ok(firstTitle&&secondTitle&&firstTitle!==secondTitle,'two YongSan villages do not share a search title');
     assert.ok(firstVillage.includes('차량인수탁송')&&!firstVillage.includes('폐차산업탁송'),'village has handover intent rather than nationwide industry keyword stuffing');
    }
