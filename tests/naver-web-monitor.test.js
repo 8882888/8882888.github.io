@@ -5,4 +5,6 @@ const items = [{link:'https://example.com/',title:'other'},{link:'https://jeongu
 assert.deepEqual(inspect(items).map(x => x.position), [2,5]);
 assert.equal(inspect(items)[0].title, '전국 대리운전');
 assert.deepEqual(inspect([]), []);
+assert.deepEqual(inspect([{link:'https://gosudaeri.com/'},{link:'https://gosudaeri.com.evil.test/'}], 'gosudaeri.com').map(x=>x.position),[1]);
+assert.equal(require('../scripts/naver-web-monitor').QUERIES.length,6);
 console.log('Naver web result matching passed');

@@ -20,6 +20,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const response=await get(route);assert.equal(response.status,200);
    assert.equal(((await response.text()).match(/<h1(?:\s|>)/gi)||[]).length,1,route+' must have exactly one H1');
   }
+  for(const [source,target] of [['/index.html','/'],['/daeri/index.html?ref=a','/daeri/?ref=a'],['/taksong/index.html','/taksong/']]){
+   const response=await fetch('http://127.0.0.1:'+port+source,{redirect:'manual'});assert.equal(response.status,301);assert.equal(response.headers.get('location'),target);
+  }
   const h=await get('/health');assert.equal(h.status,200);const health=await h.json();assert.equal(health.regions,regions.length);
   const keywordStatus=await (await get('/api/keyword-status')).json();assert.ok(keywordStatus.stored>200000);assert.equal(keywordStatus.searchExposure,'not-measured');
   for(const query of ['강화도맛집','강남맛집','설악산','영덕해맞이공원']){

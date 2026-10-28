@@ -3,6 +3,12 @@ on:
   schedule:
     - cron: '35 1 * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/naver-web-monitor.js
+      - tests/naver-web-monitor.test.js
+      - .github/workflows/naver-web-monitor.yml
 permissions:
   contents: read
 jobs:
