@@ -6,7 +6,7 @@ assert.deepEqual(inspect(items).map(x => x.position), [2,5]);
 assert.equal(inspect(items)[0].title, '전국 대리운전');
 assert.deepEqual(inspect([]), []);
 assert.deepEqual(inspect([{link:'https://gosudaeri.com/'},{link:'https://gosudaeri.com.evil.test/'}], 'gosudaeri.com').map(x=>x.position),[1]);
-assert.equal(require('../scripts/naver-web-monitor').QUERIES.length,14);
+assert.equal(require('../scripts/naver-web-monitor').QUERIES.length,18);
 const {pageEvidence} = require('../scripts/naver-web-monitor');
 const evidence = pageEvidence([{query:'domain',matches:[{url:'https://jeongukdaeri.kr/daeri?ref=a',position:6,title:'old title'},{url:'https://jeongukdaeri.kr/service/daeri/',position:3,title:'different page'}]}]);
 assert.equal(evidence.find(p=>p.path==='/daeri/').status,'observed-in-api-results');
