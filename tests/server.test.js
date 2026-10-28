@@ -46,12 +46,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.equal(response.status,200);assert.ok(!/noindex/.test(response.headers.get('x-robots-tag')||''));
    assert.ok(html.includes('부산에서 인천'));assert.ok(html.includes('https://example.com'+url));
    assert.ok(!html.includes('content="noindex'));assert.ok(html.includes('auto=1'));
+   assert.ok(html.includes('부산인천'+(kind==='daeri'?'대리운전':'탁송')),'joined route keywords must be rendered');
    assert.equal((await get('/routes/'+kind+'/'+busanId+'/'+busanId+'/')).status,404);
    const map=await (await get('/sitemap-route-'+kind+'.xml')).text();
    const urls=[...map.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
    assert.ok(urls.length<50000&&urls.length>41000);assert.equal(new Set(urls).size,urls.length);
    assert.ok(urls.includes('https://example.com'+url));
    const list=await (await get('/routes/'+kind+'/'+daeguId+'/?page=2')).text();assert.ok(list.includes('2 /'));assert.ok(list.includes('?page=2'));
+   assert.ok(list.includes('content="noindex,nofollow"'),'massive route directories must not consume crawler budget');
   }
   // Nationwide local-intent SEO must distinguish transport and designated-driver services.
   const busanTaksong=await (await get('/taksong/busan/')).text();
