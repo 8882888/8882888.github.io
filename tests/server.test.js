@@ -396,6 +396,23 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
   // Homepage statistics show KST today/yesterday visits and phone click provenance.
   const statsHome=await (await get('/')).text();
+  // Top navigation -> functional calculator -> vehicle imagery, on every viewport.
+  const statsNavPos=statsHome.indexOf('</nav>');
+  const statsFarePos=statsHome.indexOf('id="top-fare-calculator"');
+  const statsHeroPos=statsHome.indexOf('class="hero hero-with-photo"');
+  const statsImagePos=statsHome.indexOf('src="/assets/vehicles/santafe-1811.webp"');
+  assert.ok(statsNavPos>=0&&statsNavPos<statsFarePos&&statsFarePos<statsHeroPos&&statsHeroPos<statsImagePos,
+    'calculator must be immediately after navigation and above vehicle photo');
+  assert.equal((statsHome.match(/class="quick-booking"/g)||[]).length,1,'fare form must not be duplicated');
+  assert.ok(statsHome.includes('name="from"')&&statsHome.includes('name="to"')&&statsHome.includes('action="/fare/"'),
+    'top fare calculator still submits the real fare lookup');
+  assert.ok(statsHome.includes('background:#071c35;color:#fff')&&statsHome.includes('.traffic-stats-grid strong{display:block;font-size:19px'),
+    'phone number and white high-contrast traffic labels must be readable');
+  const headerPhonePos=statsHome.indexOf('class="header-call"');
+  const dashboardPos=statsHome.indexOf('id="traffic-stats-panel"');
+  assert.ok(headerPhonePos>=0&&headerPhonePos<dashboardPos&&dashboardPos<statsNavPos,
+    'dashboard should stay immediately below top-right phone');
+
   for(const id of ['traffic-stats-panel','today-visit-number','yesterday-visit-number',
                    'phone-click-number','total-phone-click-number','phone-source-list']){
     assert.ok(statsHome.includes('id="'+id+'"'),'home header dashboard missing '+id);
