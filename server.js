@@ -724,8 +724,17 @@ if(pathname==='/api/public-rides'){
 if(pathname==='/health')return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy',release:'smart24-regional-guides-20261024',regionalGuideAreas:regionalIntentAreas.length,regionalGuides:regionalIntentAreas.length*4,keywordAutomation:{stored:keywordEngine.summary.stored,collected:keywordEngine.summary.collected,updatedAt:keywordEngine.summary.updatedAt},features:{keywordAutoLinking:true,pngBusinessCards:true,cardClickToCall:true,publicRideHistory:true,hideDepartureTime:true}}), 'application/json; charset=utf-8');
 if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const items=[...featuredTaksongRoutes.map(x=>({kind:'taksong',x})),...featuredDaeriRoutes.map(x=>({kind:'daeri',x}))];
- const rss='<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>'+esc(BRAND+' 실제 운행 구간 안내')+'</title><link>'+base+'/</link><description>확인된 탁송·대리운전 운행 구간과 상담 안내</description><language>ko</language>'+items.map(({kind,x})=>{const url=base+'/'+kind+'/route/'+x.slug+'/';const label=kind==='taksong'?'탁송':'대리운전';const title=x.from+' → '+x.to+' '+label;const description=title+'. 출발지와 도착지, 기사 이동 및 복귀 조건, 예약 가능 여부는 전화 상담으로 확인하세요.';return '<item><title>'+esc(title)+'</title><link>'+esc(url)+'</link><guid isPermaLink="true">'+esc(url)+'</guid><description>'+esc(description)+'</description></item>'}).join('') +publicRides.slice(-100).map(x=>{const url=base+rideUrl(x),label=x.service==='taksong'?'자동차탁송':'대리운전',title=x.departure+' → '+x.destination+' '+label+' 운행완료 | '+x.date+(x.fare?' · 요금 '+x.fare:''),description=x.date+' 실제 '+label+' 완료 운행. 출발지 '+x.departure+', 도착지 '+x.destination+(x.fare?', 당시 운행요금 '+x.fare:'')+'. 예약·배차 세부 정보는 확인된 범위에서만 안내합니다. 현재 요금은 이용 조건에 따라 달라집니다.';return '<item><title>'+esc(title)+'</title><link>'+esc(url)+'</link><guid isPermaLink="true">'+esc(url)+'</guid><description>'+esc(description)+'</description><pubDate>'+new Date(x.date+'T00:00:00+09:00').toUTCString()+'</pubDate></item>'}).join('')+'</channel></rss>';
+ const all=[...publicRideById.values()].sort((a,b)=>b.date.localeCompare(a.date)||a.publicId.localeCompare(b.publicId));
+ const recent=all.slice(0,20),latest=all[0]?.date;
+ const rss='<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>'+esc(BRAND+' 실제 완료 운행기록')+'</title><link>'+base+'/reviews/</link><description>'+esc('공개 운행기록 '+all.length+'건 중 최근 '+recent.length+'건'+(latest?' · 최신 운행일 '+latest:'')+'. 운행일 기준 정렬이며 게시·수정 시각을 뜻하지 않습니다.')+'</description><language>ko</language>'+recent.map(x=>{
+  const url=base+rideUrl(x),label=x.service==='taksong'?'자동차탁송':'대리운전';
+  const title=x.date+' '+x.departure+' → '+x.destination+' '+label+' 운행완료'+(x.fare?' · 당시 요금 '+x.fare:'');
+  const full=ridePage(x).split('<main>')[1]?.split('</main>')[0]||'';
+  // Publication timestamps are emitted only when explicitly recorded; trip dates are not publication dates.
+  const published=typeof x.publishedAt==='string'?new Date(x.publishedAt):null;
+  const pubDate=published&&Number.isFinite(published.getTime())?'<pubDate>'+published.toUTCString()+'</pubDate>':'';
+  return '<item><title>'+esc(title)+'</title><link>'+esc(url)+'</link><guid isPermaLink="true">'+esc(url)+'</guid><description>'+esc(full)+'</description>'+pubDate+'</item>';
+ }).join('')+'</channel></rss>';
  return respond(res,200,rss,'application/rss+xml; charset=utf-8');
 }
 if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-taksong.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
