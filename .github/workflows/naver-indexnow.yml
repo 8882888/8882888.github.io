@@ -1,6 +1,11 @@
 name: Notify Naver of updated pages
 on:
-  # Manual only: avoid repeated crawl notifications during maintenance.
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'lib/route-keyword-pages.js'
+      - '.github/scripts/indexnow.js'
   workflow_dispatch:
     inputs:
       urls:
