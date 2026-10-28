@@ -33,6 +33,19 @@ function priorityRoutePaths(){
   '/routes/taksong/'+ids.get('경상남도 김해시')+'/'+ids.get('서울특별시')+'/'
  ];
 }
+function priorityReviewedPaths(){
+ const filenames=fs.readdirSync('data/legal-regions').filter(x=>/^\d{2}\.json$/.test(x)).sort();
+ const regions=[];
+ for(const file of filenames)for(const full_name of JSON.parse(fs.readFileSync('data/legal-regions/'+file,'utf8')).full_names){
+  const name=full_name.split(' ').at(-1);
+  const level=full_name.split(' ').length===1?'시도':/(시|군)$/.test(name)?name.slice(-1):'other';
+  regions.push({full_name,name,level,slug:'area-'+(regions.length+1)});
+ }
+ const raw=JSON.parse(fs.readFileSync('data/ride-history.json','utf8'));
+ const historicalRides=raw.map((x,i)=>({id:'excel-'+String(i+1).padStart(4,'0'),date:x.date,rawDeparture:x.departure,rawDestination:x.destination,fare:x.fare,service:/탁/.test(x.departure)||/톨포/.test(x.destination)?'taksong':'daeri'}));
+ const reviewed=require('../../lib/verified-route-index')({regions,historicalRides});
+ return reviewed.entries.slice(0,8).map(e=>reviewed.routePath(e));
+}
 async function main(){
  const changed=(process.env.CHANGED_FILES||'').split(/\s+/).filter(Boolean);
  const manually=(process.env.INDEXNOW_URLS||'').split(/[\s,]+/).filter(Boolean);
@@ -45,7 +58,7 @@ async function main(){
    paths=[...paths,'/reviews/',...reviewUrls.slice(-23)];
  }
 
- if(!manually.length&&changed.some(x=>x==='server.js'||x==='lib/route-keyword-pages.js'))paths=[...paths,...priorityRoutePaths()];
+ if(!manually.length&&changed.some(x=>x==='server.js'||x==='lib/route-keyword-pages.js'||x==='lib/verified-route-index.js'||x==='data/ride-history.json'))paths=[...paths,'/routes/reviewed/',...priorityReviewedPaths(),...priorityRoutePaths()];
  if(!paths.length){console.log('No eligible changed URLs; skipping IndexNow');return}
  const urls=[...new Set(paths.map(x=>new URL(x,origin).href))].filter(x=>{const u=new URL(x);return u.origin===origin&&u.pathname.endsWith('/')&&u.search===''&&u.hash===''}).slice(0,25);
  if(!urls.length){console.log('No valid URLs');return}

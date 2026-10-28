@@ -5,6 +5,8 @@ on:
     paths:
       - 'server.js'
       - 'lib/route-keyword-pages.js'
+      - 'lib/verified-route-index.js'
+      - 'data/ride-history.json'
       - '.github/scripts/indexnow.js'
   workflow_dispatch:
     inputs:

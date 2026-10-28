@@ -9,3 +9,4 @@ Sitemap: https://jeongukdaeri.kr/sitemap-route-daeri.xml
 Sitemap: https://jeongukdaeri.kr/sitemap-route-taksong.xml
 Sitemap: https://jeongukdaeri.kr/sitemap-nationwide-route-daeri.xml
 Sitemap: https://jeongukdaeri.kr/sitemap-nationwide-route-taksong.xml
+Sitemap: https://jeongukdaeri.kr/sitemap-reviewed-routes.xml
