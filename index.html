@@ -243,6 +243,17 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 @media(max-width:850px){.hero.hero-with-photo{grid-template-columns:1fr;gap:24px}.hero-vehicle{max-width:600px;width:100%;margin:auto}.vehicle-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:540px){.vehicle-photo-grid{grid-template-columns:1fr}}
 </style>
+<style id="service-fare-layout">
+.service-fare-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.9fr);gap:28px;max-width:1120px;margin:32px auto;align-items:start;padding:0 24px;box-sizing:content-box}
+.service-fare-layout>section{min-width:0;padding:0}
+.service-fare-layout .quick-booking{width:100%;max-width:none!important;margin:0!important;padding:24px!important;box-sizing:border-box}
+.service-fare-layout .quick-booking h2{font-size:25px}
+.service-fare-layout .quick-booking form{grid-template-columns:1fr!important}
+.service-fare-layout .quick-booking form input,.service-fare-layout .quick-booking form select{min-width:0}
+.service-fare-layout .cards{grid-template-columns:1fr!important}
+.service-fare-layout .quick-booking .btn{font-size:15px}
+@media(max-width:850px){.service-fare-layout{grid-template-columns:1fr;padding:0 5%;margin:24px auto;gap:24px}}
+</style>
 </head>
 <body>
 
@@ -268,6 +279,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <a class="btn" href="/daeri/">전국대리운전 안내</a>
 <a class="btn" href="/taksong/">전국자동차탁송 안내</a>
 </div><figure class="hero-vehicle"><img src="/assets/vehicles/santafe-1811.webp" width="1448" height="1086" alt="산타페 차량 이미지, 스마트24 상담 1811-4294" fetchpriority="high" decoding="async"><figcaption>승용차·SUV·화물차 이동 상담 1811-4294</figcaption></figure></div>
+<div class="service-fare-layout">
 <section aria-labelledby="service-choice"><h2 id="service-choice">어떤 서비스가 필요하세요?</h2><div class="cards"><div class="card"><h3>전국대리운전</h3><p>고객 차량으로 귀가·장거리 이동이 필요할 때 이용합니다. 이용 예정 시각, 동승 인원과 경유지를 함께 알려주세요.</p><a class="btn" href="/daeri/">대리운전 이용 안내</a><p><a href="/fare/?service=daeri">대리운전 예상요금</a> · <a href="/reviews/history/?kind=daeri">실제 대리운전 기록</a></p><p><a href="/service/golf/">골프장 대리운전</a> · <a href="/service/daily-driver/">일일기사</a> · <a href="/service/corporate/">법인대리운전</a></p></div><div class="card"><h3>전국자동차탁송</h3><p>중고차 인도, 서비스센터 입출고, 장거리 차량 이동을 상담합니다. 차량 인수 장소와 목적지 인계 조건을 먼저 확인합니다.</p><a class="btn" href="/taksong/">자동차탁송 이용 안내</a><p><a href="/fare/?service=taksong">자동차탁송 예상요금</a> · <a href="/reviews/history/?kind=taksong">실제 자동차탁송 기록</a></p><p><a href="/taksong/types/">차종·서비스센터별 탁송</a> · <a href="/service/long-distance-taksong/">장거리탁송</a></p></div></div></section>
 <section class="quick-booking" aria-label="빠른 요금 조회와 지역별 예약 안내" style="max-width:1120px;margin:18px auto;padding:20px;border:1px solid #d6e2ed;border-radius:16px;background:#f6faff">
 <h2 style="margin:0 0 8px">출발지·도착지로 대리운전·탁송 예상요금 조회</h2>
@@ -282,6 +294,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 </div>
 <p style="font-size:.9rem;margin:12px 0 0">요금조회는 참고용이며 기사 배정·예약 확정은 상담 후 안내합니다. 장소별 안내는 실제 업체와의 제휴 또는 배차 보장을 의미하지 않습니다.</p>
 </section>
+</div>
 <section id="booking-process" aria-labelledby="booking-process-title"><h2 id="booking-process-title">예상요금 확인 후 이렇게 예약하세요</h2><ol><li><strong>이용 조건 준비:</strong> 서비스 종류, 출발지·도착지, 날짜와 시간, 차종을 확인합니다.</li><li><strong>요금과 배차 상담:</strong> 1811-4294로 경유·대기·통행료 등 포함 여부와 기사 배차 가능 여부를 확인합니다.</li><li><strong>예약 내용 확인:</strong> 최종 요금과 만날 장소, 차량 인수·인계 방법을 확인한 뒤 예약을 확정합니다.</li></ol><p>장거리·외곽 골프장·이른 아침 이용은 일정이 정해지면 미리 상담해 주세요. 사전 예약은 운행 조건을 조율하는 데 도움이 되며, 긴급 호출은 기사 수급에 따라 요금이 높아지거나 배차가 늦어질 수 있습니다.</p><p><a class="btn" href="tel:18114294">예약 상담 1811-4294</a> <a href="/daeri/">대리운전 예약 상세</a> · <a href="/taksong/">자동차탁송 인수·인계 안내</a></p></section>
 <section style="max-width:1120px;margin:14px auto;padding:20px;background:#eef5ff;border:1px solid #d6e2ed;border-radius:14px"><h2>실제 완료 운행 후기</h2><p>출발지·도착지·운행일·요금을 확인할 수 있는 운행 기록을 살펴보세요.</p><a class="btn" href="/reviews/">최근 운행 후기 보기 →</a> <a class="btn" href="/reviews/history/">운행 기록 전체 보기 →</a></section>
 <div class="service-flow" aria-label="전국 서비스 가로 이동 안내"><div class="service-flow-track">
