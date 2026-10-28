@@ -40,6 +40,22 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   const routeArea=n=>regions.find(r=>r.full_name===n).slug;
   const busanId=routeArea('부산광역시'),incheonId=routeArea('인천광역시'),daeguId=routeArea('대구광역시');
+  const qualityRoutes=[
+    {from:busanId,to:incheonId,heading:'부산에서 인천 탁송: 인수 지역에 따라 준비할 내용'},
+    {from:routeArea('서울특별시'),to:busanId,heading:'서울에서 부산 탁송: 장거리 인계 준비'},
+    {from:routeArea('부산광역시 기장군'),to:daeguId,heading:'기장군에서 대구 탁송: 읍별 인수 위치와 기사 접근'},
+    {from:'airport-gimhae',to:incheonId,heading:'김해공항에서 인천 탁송: 공항 차량 인수 안내'}
+  ];
+  for(const r of qualityRoutes){
+    const url='/routes/taksong/'+r.from+'/'+r.to+'/';
+    const res=await get(url),body=await res.text();
+    assert.equal(res.status,200,'priority route returns HTTP 200 '+url);
+    assert.ok(body.includes(r.heading),'priority route must have unique helpful local guidance '+url);
+    assert.ok(body.includes('/routes/reviewed/'),'priority guidance distinguishes verified ride history '+url);
+    assert.ok(body.includes('rel="canonical" href="https://example.com'+url+'"'),'route has own canonical');
+    assert.equal((body.match(/<h1(?:\\s|>)/g)||[]).length,1,'route should have one H1');
+  }
+
   for(const kind of ['daeri','taksong']){
    const url='/routes/'+kind+'/'+busanId+'/'+incheonId+'/';
    const response=await get(url),html=await response.text();
