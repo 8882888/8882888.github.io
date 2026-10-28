@@ -13,12 +13,25 @@
 <script>
 const form=document.getElementById('quote-form'),result=document.getElementById('result'),submit=document.getElementById('submit');
 const worker='https://white-voice-6eab.k337711.workers.dev/route';
+const roadCache=new Map(); // Reuse successful road-distance results while the calculator tab stays open.
+function lookupKey(from,to){return [from,to].map(s=>s.replace(/\s+/g,' ').trim().toLowerCase()).join('|')}
+async function lookupRoad(from,to,signal){
+ const key=lookupKey(from,to),now=Date.now(),old=roadCache.get(key);
+ if(old&&old.expires>now)return old.data;
+ const res=await fetch(worker+'?'+new URLSearchParams({from,to}),{signal});
+ if(!res.ok)throw Error('route unavailable');
+ const data=await res.json(),km=Number(data.distanceKm);
+ if(!Number.isFinite(km)||km<=0||km>=2000)throw Error('invalid distance');
+ roadCache.set(key,{data,expires:now+24*60*60*1000});
+ if(roadCache.size>100)roadCache.delete(roadCache.keys().next().value);
+ return data;
+}
 const preset=new URLSearchParams(location.search);for(const id of ['from','to']){const value=preset.get(id);if(value&&value.length<=150)document.getElementById(id).value=value}if(['daeri','taksong'].includes(preset.get('service')))document.getElementById('service').value=preset.get('service');
 
 form.addEventListener('submit',async e=>{e.preventDefault();result.hidden=false;result.textContent='실제 도로거리를 조회하고 있습니다…';submit.disabled=true;
 const from=document.getElementById('from').value.trim(),to=document.getElementById('to').value.trim(),service=document.getElementById('service').value;
 const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
-try{const res=await fetch(worker+'?'+new URLSearchParams({from,to}),{signal:controller.signal});if(!res.ok)throw Error('route unavailable');const data=await res.json();const km=Number(data.distanceKm),mins=Number(data.durationMinutes);if(!Number.isFinite(km)||km<=0)throw Error('invalid distance');const {band,isSokcho,isIncheon,remoteApplied}=RoadFare.roadQuote(km,service,from,to);result.replaceChildren();const heading=document.createElement('strong');heading.textContent=from+' → '+to;result.append(heading,document.createElement('br'));result.append('도로거리 약 '+Math.round(km).toLocaleString('ko-KR')+'km');if(Number.isFinite(mins)&&mins>0)result.append(' · 예상 '+Math.round(mins)+'분');result.append(document.createElement('br'));const price=document.createElement('div');price.className='price';price.textContent=(service==='daeri'?'대리운전':'자동차탁송')+' 예상 참고요금 '+band.map(n=>n.toLocaleString('ko-KR')+'원').join(' ~ ');result.append(price);const note=document.createElement('small');note.textContent=isSokcho&&isIncheon?'속초 출발·인천 도착 지역 참고 사례를 우선 적용했습니다. 실제 배차요금은 조건에 따라 달라집니다.':remoteApplied?'기사 수급이 어려울 수 있는 지역으로 기본 참고요금에 20%를 가산한 추정치입니다. 실제 배차 가능 여부와 최종요금은 상담 후 확인해 주세요.':service==='daeri'?'대리운전 참고요금은 탁송 기준 대비 약 30% 가산한 추정치입니다. 시간대·기사 수급·복귀 조건에 따라 달라집니다.':'탁송 참고요금은 거리별 추정치입니다.';result.append(note);
-}catch(err){result.textContent='현재 자동 거리 조회가 연결되지 않습니다. 주소를 확인해 다시 조회하거나 1811-4294로 문의해 주세요. 거리와 요금을 임의로 표시하지 않습니다.'}finally{clearTimeout(timer);submit.disabled=false}});
-if(preset.get('auto')==='1'&&document.getElementById('from').value.trim()&&document.getElementById('to').value.trim())form.requestSubmit();
+try{const data=await lookupRoad(from,to,controller.signal);const km=Number(data.distanceKm),mins=Number(data.durationMinutes);const {band,isSokcho,isIncheon,remoteApplied}=RoadFare.roadQuote(km,service,from,to);result.replaceChildren();const heading=document.createElement('strong');heading.textContent=from+' → '+to;result.append(heading,document.createElement('br'));result.append('도로거리 약 '+Math.round(km).toLocaleString('ko-KR')+'km');if(Number.isFinite(mins)&&mins>0)result.append(' · 예상 '+Math.round(mins)+'분');result.append(document.createElement('br'));const price=document.createElement('div');price.className='price';price.textContent=(service==='daeri'?'대리운전':'자동차탁송')+' 예상 참고요금 '+band.map(n=>n.toLocaleString('ko-KR')+'원').join(' ~ ');result.append(price);const note=document.createElement('small');note.textContent=isSokcho&&isIncheon?'속초 출발·인천 도착 지역 참고 사례를 우선 적용했습니다. 실제 배차요금은 조건에 따라 달라집니다.':remoteApplied?'기사 수급이 어려울 수 있는 지역으로 기본 참고요금에 20%를 가산한 추정치입니다. 실제 배차 가능 여부와 최종요금은 상담 후 확인해 주세요.':service==='daeri'?'대리운전 참고요금은 탁송 기준 대비 약 30% 가산한 추정치입니다. 시간대·기사 수급·복귀 조건에 따라 달라집니다.':'탁송 참고요금은 거리별 추정치입니다.';result.append(note);
+}catch(err){result.replaceChildren();result.append('현재 자동 도로거리 조회를 이용할 수 없습니다. API 사용량 제한 또는 일시적인 연결 오류일 수 있습니다. 거리와 예상요금을 임의로 표시하지 않습니다. ',document.createElement('br'));const contact=document.createElement('a');contact.href='tel:18114294';contact.textContent='☎ 1811-4294로 요금·배차 상담하기';result.append(contact)}finally{clearTimeout(timer);submit.disabled=false}});
+// URL presets only fill the form. Never auto-call paid routing APIs on page load.
 </script></body></html>
