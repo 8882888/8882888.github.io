@@ -376,6 +376,14 @@ function provinceServiceGuide(r,kind){
  return '<section class="province-service-guide"><h2>'+esc(shortPlace(r.name))+' '+label+' · '+esc(profile[0])+'</h2><p>'+esc(profile[1])+'</p><p>'+(kind==='taksong'?'차량만 보내는 경우 인수·인계 담당자와 차량 운행 가능 상태를 확인합니다.':'고객 차량으로 이동하며 골프 왕복·일일기사 일정은 편도 이동과 구분해 상담합니다.')+'</p><h3>'+esc(shortPlace(r.name))+' 출발 지역 선택</h3><ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 16px">'+links+'</ul><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.name)+'">출발·도착지 예상요금 조회</a> · <a href="/'+kind+'/#reservation-guide">예약 준비사항</a> · <a href="/reviews/history/?kind='+kind+'">서비스별 완료 운행기록</a></p></section>';
 }
 const verifiedRepairShops=load('data/verified-repair-shops.json').shops;
+const verifiedScrapyards=load('data/verified-scrapyards.json').shops;
+function verifiedScrapyardSection(r,kind){
+ if(kind!=='taksong')return '';
+ const shops=verifiedScrapyards.filter(shop=>shop.placeVerified===true&&shop.placeUrl&&shop.name&&shop.address&&(shop.region===r.name||String(shop.address).includes(r.full_name||'__none__')));
+ if(!shops.length)return '';
+ return '<section><h2>'+esc(r.name)+' 폐차업체 명칭 확인 및 차량탁송</h2><p>확인된 네이버 플레이스 업체 표기명을 기준으로 차량 이동 상담 키워드를 안내합니다. 업체와 제휴하거나 폐차·견인·말소 업무를 직접 수행한다는 의미가 아닙니다. 운행 불가능한 차량은 견인·특수 운송을 별도로 확인해야 합니다.</p><ul>'+shops.map(shop=>'<li><strong>'+esc(shop.name)+'</strong> · '+esc(shop.address)+' · '+esc(shop.name+'탁송')+' · <a href="'+esc(shop.placeUrl)+'" rel="noopener noreferrer" target="_blank">업체 정보 확인</a></li>').join('')+'</ul></section>';
+}
+
 function verifiedRepairShopSection(r,kind){
  if(kind!=='taksong')return '';
  const shops=verifiedRepairShops.filter(shop=>shop.region===r.name||String(shop.address||'').includes(r.full_name||'__unknown__'));
@@ -388,7 +396,7 @@ async function servicePage(r,kind){
  const parentRegion=r.parent_slug?bySlug.get(r.parent_slug):null;
  const preciseLocality=r.level==='리'&&parentRegion?parentRegion.name+' '+r.name:r.name;
  const qualifiedKeyword=name+' '+service;
- const locationIntent=kind==='taksong'?['공업사탁송','정비소탁송','자동차검사소탁송','서비스센터탁송','중고차탁송','썬팅탁송','블랙박스탁송','디테일링탁송']:['장거리대리운전','골프장대리운전','법인대리운전','예약대리운전'];
+ const locationIntent=kind==='taksong'?['공업사탁송','정비소탁송','자동차검사소탁송','서비스센터탁송','중고차탁송','폐차장탁송','폐차탁송','폐차산업탁송','폐차장입고탁송','썬팅탁송','블랙박스탁송','디테일링탁송']:['장거리대리운전','골프장대리운전','법인대리운전','예약대리운전'];
  const localIntentLinks='<section><h2>'+esc(preciseLocality)+' '+(kind==='taksong'?'차량탁송 이용 목적':'대리운전 이용 목적')+'</h2><p>'+locationIntent.map(term=>esc(preciseLocality+term)).join(' · ')+' 등은 '+esc(name)+' 출발·도착지와 실제 이용 조건을 확인해 상담합니다. 해당 업종과 제휴하거나 해당 지역에 기사가 상주한다는 뜻은 아닙니다.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역별 예상요금 조회</a> · <a href="tel:18114294">1811-4294 전화 상담</a></p></section>';
  const crumbItems=[{name:'홈',item:'https://'+host+'/'},{name:'전국 '+service,item:'https://'+host+'/'+kind+'/'},...regionAncestors(r).map(a=>({name:((['읍','면','동','리','구'].includes(a.level))?a.name:shortPlace(a.name))+service,item:'https://'+host+servicePath(a,kind)}))].map((a,i)=>({'@type':'ListItem',position:i+1,...a}));
  const focusedTitle=(r.level==='리'?preciseLocality+service:keyword)+' | '+(r.level==='리'?(kind==='taksong'?'리·읍면 자동차탁송 요금·예약':'리·읍면 대리운전 요금·예약'):(kind==='taksong'?'지역별 자동차탁송·장거리탁송 요금·예약':'지역별 대리운전·장거리대리운전 요금·예약'));
@@ -411,7 +419,7 @@ async function servicePage(r,kind){
  const imageData=JSON.stringify({'@context':'https://schema.org','@graph':[{'@type':'WebPage','@id':pageUrl,url:pageUrl,name:focusedTitle,breadcrumb:{'@id':pageUrl+'#breadcrumb'},primaryImageOfPage:{'@id':imageId}},{'@type':'ImageObject','@id':imageId,contentUrl:imageUrl,url:imageUrl,name:name+' '+serviceBrand(kind)+' 상담 명함',caption:name+' '+serviceBrand(kind)+' 대표전화 '+PHONE,width:1200,height:800,encodingFormat:'image/png'},{'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}]}).replace(/</g,'\\u003c');
  const caption='<figcaption style="text-align:center">'+esc(name)+' '+serviceBrand(kind)+' 상담 명함 · <a href="tel:18114294">'+PHONE+'</a>'+dispatchNotice(kind)+'</figcaption>';
  const visibleCard=card.replace('</figure>',caption+'</figure>');
- return layout(focusedTitle,focusedDesc,'<script type="application/ld+json">'+imageData+'</script>'+body.replace('</section>','</section>'+visibleCard)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
+ return layout(focusedTitle,focusedDesc,'<script type="application/ld+json">'+imageData+'</script>'+body.replace('</section>','</section>'+visibleCard)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
 }
 function remoteRegionGuidance(r){
  const full=r.full_name||'',names=[
