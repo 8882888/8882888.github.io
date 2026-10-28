@@ -301,7 +301,7 @@ async function regionalQuoteLinks(r,kind){
  const routes=regionalRouteDestinations(r).map(to=>({from:origin,to,service:kind}));
  // Only fetch server-side on province/city/county/district pages. Smaller subdivisions retain
  // the interactive calculator without sending a new route request for every crawler hit.
- const serverLookup=['시도','시','군','구'].includes(r.level); // Small locality pages must not wait for external routing services.
+ const serverLookup=false; // Never call paid routing providers while rendering indexable regional pages. Exact quotes remain available from the interactive fare calculator. // Small locality pages must not wait for external routing services.
  const distances=[];
   if(serverLookup){
    for(let i=0;i<routes.length;i+=4){
