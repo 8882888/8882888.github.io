@@ -75,15 +75,17 @@
     channelList.replaceChildren();
     if(!Array.isArray(rows)||!rows.length){
       const item=document.createElement('li');
-      item.textContent='오늘 기록된 전화 클릭 경로가 없습니다.';
+      item.textContent='전화클릭 전환 경로가 아직 기록되지 않았습니다. 전화 버튼을 누른 시점부터 수집됩니다.';
       channelList.appendChild(item);
       return;
     }
     for(const row of rows.slice(0,12)){
       const item=document.createElement('li');
-      const source=String(row.source||'직접 방문');
-      const page=String(row.page||'/');
-      item.textContent=source+' · '+page+' · '+format(row.clicks);
+      const source=String(row.source||'유입 경로 미확인');
+      const page=String(row.page||'');
+      const day=String(row.day||'');
+      // Old click totals predate source tracking. Do not mislabel them as direct traffic.
+      item.textContent=[day,source,page].filter(Boolean).join(' · ')+' · '+format(row.clicks);
       channelList.appendChild(item);
     }
   }
@@ -110,6 +112,9 @@
     }
     if(panel)panel.title='방문수는 브라우저 세션 기준 · 전화 클릭은 연결 여부와 무관한 누적 클릭 수';
   }
+  // Remember the *landing-page* referrer before later internal navigations
+  // replace it with the site's own URL. Only a coarse category is retained.
+  acquisition();
   // At most once per tab/session and KST calendar day, not once per page view.
   // Client-side analytics cannot precisely measure unique individuals or bots.
   const visitKey='smart24_visit_'+kstDay();
