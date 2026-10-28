@@ -14,13 +14,13 @@
     todayCall:el('phone-click-number'),
     allCall:el('total-phone-click-number')
   };
-  const todayTrigger=el('traffic-today-trigger');
+  const phoneClickTrigger=el('traffic-call-trigger');
   const sourceDetails=el('traffic-sources-detail');
-  if(todayTrigger&&sourceDetails){
-    todayTrigger.addEventListener('click',function(){
+  if(phoneClickTrigger&&sourceDetails){
+    phoneClickTrigger.addEventListener('click',function(){
       const show=sourceDetails.hidden;
       sourceDetails.hidden=!show;
-      todayTrigger.setAttribute('aria-expanded',String(show));
+      phoneClickTrigger.setAttribute('aria-expanded',String(show));
     });
   }
   const channelList=el('phone-source-list');
