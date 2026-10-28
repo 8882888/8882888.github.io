@@ -49,7 +49,15 @@ function priorityReviewedPaths(){
 async function main(){
  const changed=(process.env.CHANGED_FILES||'').split(/\s+/).filter(Boolean);
  const manually=(process.env.INDEXNOW_URLS||'').split(/[\s,]+/).filter(Boolean);
- let paths=manually.length?manually:(changed.includes('server.js')?base:[]);
+ let paths=manually.length?manually:(changed.some(x=>['server.js','index.html','data/seo-pages.json'].includes(x))?base:[]);
+ // Internal links on the updated homepage point to these concrete search-intent
+ // pages. Submit a small curated set; never flood Naver with speculative pairs.
+ if(!manually.length&&changed.some(x=>x==='index.html'||x==='data/seo-pages.json')){
+   paths=[...paths,'/routes/reviewed/','/routes/gimhae-airport/',
+     '/routes/taksong/area-494/area-1174/',
+     '/routes/taksong/area-1/area-494/',
+     '/routes/taksong/area-532/area-765/'];
+ }
  if(!manually.length&&changed.some(x=>x.includes('ride-history')||x.includes('review-drafts')||x.includes('public-reviewed-rides'))){
    const xmlResponse=await fetch(origin+'/sitemap.xml',{signal:AbortSignal.timeout(20000)});
    if(!xmlResponse.ok)throw Error('Sitemap unavailable: '+xmlResponse.status);
