@@ -242,6 +242,14 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  .header-phone-actions .traffic-stat,.header-phone-actions .traffic-stat strong{font-size:10px!important}
  .header-phone-actions .traffic-stats-lines{gap:1px 6px}
 }
+/* Conversion label stays inline with phone number on desktop/mobile. */
+.header-phone-actions .header-phone-count{white-space:nowrap;font-size:11px!important}
+.header-phone-actions .header-phone-count strong{font-size:11px!important}
+.header-phone-actions .traffic-source-note{display:block;font-size:10px;color:#ecf4ff;margin-top:3px}
+@media(max-width:450px){
+ .header-phone-actions .header-phone-line{flex-wrap:wrap;justify-content:flex-end}
+ .header-phone-actions .header-phone-count,.header-phone-actions .header-phone-count strong{font-size:10px!important}
+}
 /* Put the count immediately next to the actual telephone number, not on a stats row. */
 .header-phone-actions .header-phone-line{display:flex;align-items:baseline;justify-content:flex-end;flex-wrap:wrap;gap:3px 7px;width:100%}
 .header-phone-actions .header-phone-line .header-call{color:#ffe680;font-weight:900;white-space:nowrap}
@@ -327,14 +335,14 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 </head>
 <body>
 
-<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><button type="button" class="traffic-call-trigger header-phone-count" id="traffic-call-trigger" aria-expanded="false" aria-controls="traffic-sources-detail" title="누적 전화 버튼 클릭수 · 클릭하면 오늘 유입 경로 표시">클릭 <strong id="phone-click-number">확인 중</strong></button></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 방문 및 전화 클릭 통계">
+<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><button type="button" class="traffic-call-trigger header-phone-count" id="traffic-call-trigger" aria-expanded="false" aria-controls="traffic-sources-detail" title="누적 전화클릭 전환 수 · 클릭하면 유입 경로 및 클릭 페이지 표시 (통화 연결 여부는 확인되지 않음)">전화클릭 전환 <strong id="phone-click-number">확인 중</strong></button></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 방문 및 전화 클릭 통계">
   <div class="traffic-stats-lines" aria-live="polite">
     <span class="traffic-stat">오늘 방문 <strong id="today-visit-number">확인 중</strong></span>
     <span class="traffic-stat">누적 방문 <strong id="total-visit-number">확인 중</strong></span>
   </div>
-  <div class="traffic-sources" id="traffic-sources-detail" hidden aria-label="오늘 전화 클릭 유입 경로와 클릭한 페이지">
-    <span class="traffic-sources-heading">오늘 전화 클릭 유입 경로 · 클릭한 페이지</span>
-    <ol id="phone-source-list" aria-live="polite"><li>집계 확인 중입니다.</li></ol>
+  <div class="traffic-sources" id="traffic-sources-detail" hidden aria-label="전화클릭 전환 유입 경로와 클릭한 페이지">
+    <span class="traffic-sources-heading">전화클릭 전환 유입 경로 · 클릭한 페이지 (기록된 기간)</span>
+    <ol id="phone-source-list" aria-live="polite"><li>집계 확인 중입니다.</li></ol><small class="traffic-source-note">전환 수는 실제 전화 연결이 아니라 전화 버튼 클릭 기준입니다.</small>
   </div>
 </aside></div></header>
 <nav class="top-nav" aria-label="주요 서비스 메뉴"><div class="top-nav-inner">
@@ -373,6 +381,12 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <a class="btn" href="/daeri/">전국대리운전 안내</a>
 <a class="btn" href="/taksong/">전국자동차탁송 안내</a>
 </div><figure class="hero-vehicle"><img src="/assets/vehicles/santafe-1811.webp" width="1448" height="1086" alt="산타페 차량 이미지, 스마트24 상담 1811-4294" fetchpriority="high" decoding="async"><figcaption>승용차·SUV·화물차 이동 상담 1811-4294</figcaption></figure></div>
+<section id="priority-verified-routes" aria-labelledby="priority-route-heading" style="max-width:1120px;margin:18px auto;padding:18px 5%;background:#fff;border:1px solid #cbdcf0;border-radius:12px">
+<h2 id="priority-route-heading" style="font-size:clamp(20px,3vw,26px);margin:0 0 8px">전국 장거리 자동차탁송 · 주요 출발지에서 도착지까지</h2>
+<p>부산에서 인천, 서울에서 부산, 기장군에서 대구처럼 <strong>출발 지역과 도착 지역을 함께 검색</strong>할 수 있습니다. 아래 구간은 예약 상담·예상요금 확인을 위한 안내이며, 해당 구간의 운행 완료나 배차를 보장하는 글이 아닙니다.</p>
+<p><a href="/routes/taksong/area-494/area-1174/">부산에서 인천 자동차탁송</a> · <a href="/routes/taksong/area-1/area-494/">서울에서 부산 탁송</a> · <a href="/routes/taksong/area-532/area-765/">기장군에서 대구 탁송</a> · <a href="/routes/gimhae-airport/">김해공항 탁송·대리운전</a></p>
+<p>실제 완료 운행 여부와 기록된 당시 요금은 <a href="/routes/reviewed/">실제 운행구간 후기 모음</a>에서 별도로 확인하세요. 거리뿐 아니라 출발 시간·기사 접근·운행 후 복귀 조건을 확인해야 최종 요금과 배차 가능 여부를 상담할 수 있습니다.</p>
+</section>
 <div class="service-fare-layout">
 <section aria-labelledby="service-choice"><h2 id="service-choice">어떤 서비스가 필요하세요?</h2><div class="cards"><div class="card"><h3>전국대리운전</h3><p>고객 차량으로 귀가·장거리 이동이 필요할 때 이용합니다. 이용 예정 시각, 동승 인원과 경유지를 함께 알려주세요.</p><a class="btn" href="/daeri/">대리운전 이용 안내</a><p><a href="/fare/?service=daeri">대리운전 예상요금</a> · <a href="/reviews/history/?kind=daeri">실제 대리운전 기록</a></p><p><a href="/service/golf/">골프장 대리운전</a> · <a href="/service/daily-driver/">일일기사</a> · <a href="/service/corporate/">법인대리운전</a></p></div><div class="card"><h3>전국자동차탁송</h3><p>중고차 인도, 서비스센터 입출고, 장거리 차량 이동을 상담합니다. 차량 인수 장소와 목적지 인계 조건을 먼저 확인합니다.</p><a class="btn" href="/taksong/">자동차탁송 이용 안내</a><p><a href="/fare/?service=taksong">자동차탁송 예상요금</a> · <a href="/reviews/history/?kind=taksong">실제 자동차탁송 기록</a></p><p><a href="/taksong/types/">차종·서비스센터별 탁송</a> · <a href="/service/long-distance-taksong/">장거리탁송</a></p></div></div></section>
 
