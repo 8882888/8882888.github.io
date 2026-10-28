@@ -10,9 +10,8 @@
   const el=id=>document.getElementById(id);
   const figures={
     today:el('today-visit-number'),
-    yesterday:el('yesterday-visit-number'),
-    todayCall:el('phone-click-number'),
-    allCall:el('total-phone-click-number')
+    total:el('total-visit-number'),
+    phoneClicks:el('phone-click-number')
   };
   const phoneClickTrigger=el('traffic-call-trigger');
   const sourceDetails=el('traffic-sources-detail');
@@ -89,43 +88,27 @@
     }
   }
   async function refresh(){
-    if(!panel)return;
-    try{
-      const result=await rpc('site_traffic_dashboard');
-      if(result&&result.today_visits!=null&&result.yesterday_visits!=null&&
-          result.today_phone_clicks!=null&&result.total_phone_clicks!=null){
-        put('today',result.today_visits);
-        put('yesterday',result.yesterday_visits);
-        put('todayCall',result.today_phone_clicks);
-        put('allCall',result.total_phone_clicks);
-        drawSources(result.phone_sources);
-        panel.title='한국시간 기준 집계 · 전화 연결 여부가 아닌 클릭 수';
-        return;
-      }
-      throw Error('incomplete dashboard');
-    }catch(_){
-      // Existing counters are still useful until the new SQL migration is run.
-      try{
-        const [visits,calls]=await Promise.all([
-          rpc('site_visit_stats',{p_record:false}),
-          rpc('site_click_stats',{p_phone:null})
-        ]);
-        put('today',visits.today_visits);
-        put('todayCall',calls.today_phone_clicks);
-      }catch(_){
-        put('today',null);
-        put('todayCall',null);
-      }
-      put('yesterday',null);
-      put('allCall',null);
-      if(channelList){
-        channelList.replaceChildren();
-        const item=document.createElement('li');
-        item.textContent='전일·누적·유입 경로 집계는 데이터베이스 설정 확인이 필요합니다.';
-        channelList.appendChild(item);
-      }
-      panel.title='일부 통계 서버 설정이 확인되지 않았습니다.';
+    // The phone count beside the top-right number is lifetime clicks.
+    // The two small counters below it are KST today and lifetime visits.
+    const [visits,phone]=await Promise.allSettled([
+      rpc('site_visit_stats',{p_record:false}),
+      rpc('site_traffic_dashboard')
+    ]);
+    if(visits.status==='fulfilled'&&visits.value){
+      put('today',visits.value.today_visits);
+      put('total',visits.value.total_visits);
+    }else{put('today',null);put('total',null);}
+    if(phone.status==='fulfilled'&&phone.value&&phone.value.total_phone_clicks!=null){
+      put('phoneClicks',phone.value.total_phone_clicks);
+      drawSources(phone.value.phone_sources);
+    }else{
+      try {
+        const legacy=await rpc('site_click_stats',{p_phone:null});
+        put('phoneClicks',legacy?.total_clicks);
+      }catch(_){put('phoneClicks',null);}
+      drawSources(null);
     }
+    if(panel)panel.title='방문수는 브라우저 세션 기준 · 전화 클릭은 연결 여부와 무관한 누적 클릭 수';
   }
   // At most once per tab/session and KST calendar day, not once per page view.
   // Client-side analytics cannot precisely measure unique individuals or bots.
