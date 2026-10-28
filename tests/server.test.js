@@ -36,6 +36,23 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(busanDaeri.includes('골프장대리운전'),'golf designated-driver intent');
   assert.ok(busanDaeri.includes('법인대리운전'),'corporate designated-driver intent');
   assert.ok(!busanDaeri.includes('공업사탁송'),'no transport keyword leakage');
+  // Place-verified scrapyard names must appear only on matching transport pages.
+  const incheonTaksong=await (await get('/taksong/incheon/')).text();
+  assert.ok(incheonTaksong.includes('인천폐차사업소탁송'),'exact Naver Place name used for scrap transport');
+  assert.ok(incheonTaksong.includes('m.place.naver.com/place/11785307/home'),'Naver Place business source linked');
+  assert.ok(!(await (await get('/daeri/incheon/')).text()).includes('인천폐차사업소탁송'),'scrapyard intent not on daeri');
+  assert.ok(!busanTaksong.includes('인천폐차사업소탁송'),'scrapyard name not leaked to unrelated province');
+  const namdongTaksong=await (await get('/taksong/incheon/namdong-gu/')).text();
+  assert.ok(namdongTaksong.includes('인천폐차사업소탁송'),'matching borough page includes exact shop name');
+  for(const route of ['/business/','/business/rental-car/','/business/used-car/','/business/auction/','/business/scrapyard/','/business/export-port/']){
+   const response=await get(route);assert.equal(response.status,200,'business landing route '+route);
+   const html=await response.text();
+   assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),'main production canonical for '+route);
+   assert.ok(!html.includes('up.railway.app'),'old auxiliary-host canonical must not persist '+route);
+  }
+  const scrapLanding=await (await get('/business/scrapyard/')).text();
+  assert.ok(scrapLanding.includes('인천폐차사업소탁송'),'scrapyard hub includes verified name');
+  assert.ok(scrapLanding.includes('주행 가능한 차량'),'scrapyard hub distinguishes drivable vehicle transport');
   // Shared layout must preserve exactly one page heading with and without a body H1.
   for(const route of ['/taksongdaeri/','/reviews/','/recruit/taksong/','/taksong/busan/']){
    const response=await get(route);assert.equal(response.status,200);
