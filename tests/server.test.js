@@ -25,6 +25,19 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(asset.headers.get('content-type').includes('image/webp'));
    }
   }
+  for(const kind of ['daeri','taksong']){
+   const route=await get('/route-search/?from='+encodeURIComponent('대구')+'&service='+kind);
+   assert.equal(route.status,200);
+   const html=await route.text();
+   assert.ok(html.includes('대구에서 서울'));
+   assert.ok(html.includes('auto=1'));
+   assert.ok(html.includes('page=2'));
+   const direct=await (await get('/route-search/?from='+encodeURIComponent('부산')+'&to='+encodeURIComponent('인천')+'&service='+kind)).text();
+   assert.ok(direct.includes('부산에서 인천'));
+   assert.ok(direct.includes('부산인천'));
+   const second=await (await get('/route-search/?from='+encodeURIComponent('대구')+'&page=2&service='+kind)).text();
+   assert.notEqual(html,second);
+  }
   // Nationwide local-intent SEO must distinguish transport and designated-driver services.
   const busanTaksong=await (await get('/taksong/busan/')).text();
   assert.ok(busanTaksong.includes('공업사탁송'),'repair-shop transport intent');
