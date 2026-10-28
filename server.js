@@ -766,6 +766,8 @@ const routeGuides=require('./lib/route-guides')({regions,byPath,pathBySlug,cache
 const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});
 const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout,servicePath,label:seoRegionLabel,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',historicalRides});
 http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
+// Publish the public IndexNow ownership key at the root on Cloudtype.
+if(pathname==='/770f921af32e749f64c1d447c607ea42.txt')return respond(res,200,fs.readFileSync(path.join(ROOT,'770f921af32e749f64c1d447c607ea42.txt'),'utf8'),'text/plain; charset=utf-8');
 // Consolidate default-document URLs without changing query parameters.
 if(/\/index\.html$/.test(pathname)){const target=u.pathname.slice(0,-'index.html'.length);res.writeHead(301,{location:target+u.search});return res.end()}
 
