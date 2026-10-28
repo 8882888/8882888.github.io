@@ -55,6 +55,38 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const list=await (await get('/routes/'+kind+'/'+daeguId+'/?page=2')).text();assert.ok(list.includes('2 /'));assert.ok(list.includes('?page=2'));
    assert.ok(list.includes('content="noindex,nofollow"'),'massive route directories must not consume crawler budget');
   }
+  // Nationwide shard coverage, Naver XML limits, airport aliases and on-demand combinations.
+  for(const kind of ['daeri','taksong']){
+   const index=await get('/sitemap-nationwide-route-'+kind+'.xml');
+   const indexXml=await index.text();
+   assert.equal(index.status,200);
+   assert.ok(indexXml.includes('<sitemapindex'));
+   assert.equal((indexXml.match(/<sitemap><loc>/g)||[]).length,17);
+   for(const code of ['02','15']){
+    const response=await get('/sitemap-nationwide-route-'+kind+'-'+code+'.xml');
+    const xml=await response.text();
+    assert.equal(response.status,200,'national sitemap shard '+code);
+    const urls=[...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
+    assert.ok(urls.length>1000 && urls.length<50000,'Naver 50,000 URL limit '+code);
+    assert.ok(Buffer.byteLength(xml)<10000000,'Naver 10 MB limit '+code);
+    assert.equal(new Set(urls).size,urls.length,'no duplicate routes in shard');
+    assert.ok(urls.some(x=>x.includes('/routes/'+kind+'/area-') && x.includes('/area-')),'two-way routes in shard');
+    if(code==='02')assert.ok(urls.some(x=>x.includes('/airport-gimhae/')),'Gimhae airport routes');
+   }
+   const airportSearch=await (await get('/route-search/?from='+encodeURIComponent('김해공항')+'&to='+encodeURIComponent('서울')+'&service='+kind)).text();
+   assert.ok(airportSearch.includes('/routes/'+kind+'/airport-gimhae/'+routeArea('서울특별시')+'/'),'airport searches use SEO route page');
+   const fromAirport=await get('/routes/'+kind+'/airport-gimhae/'+routeArea('서울특별시')+'/');
+   const airportHtml=await fromAirport.text();
+   assert.equal(fromAirport.status,200);
+   assert.ok(airportHtml.includes('김해공항에서 서울'));
+   assert.ok(airportHtml.includes('부산광역시 강서구 공항진입로 108'));
+   assert.ok(airportHtml.includes('auto=1'));
+   assert.ok(airportHtml.includes('index,follow'));
+   const airportHub=await get('/routes/gimhae-airport/');
+   assert.equal(airportHub.status,200);
+   const airportDirectory=await (await get('/routes/'+kind+'/airport-gimhae/')).text();
+   assert.ok(airportDirectory.includes('noindex,nofollow'));
+  }
   // Nationwide local-intent SEO must distinguish transport and designated-driver services.
   const busanTaksong=await (await get('/taksong/busan/')).text();
   assert.ok(busanTaksong.includes('공업사탁송'),'repair-shop transport intent');
