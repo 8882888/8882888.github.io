@@ -15,6 +15,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 (async()=>{
  try{
   for(let i=0;i<50;i++){try{const r=await get('/health');if(r.ok)break}catch{}await delay(100)}
+  for(const kind of ['daeri','taksong']){
+   const hub=await (await get('/'+kind+'/')).text();
+   assert.ok(hub.includes('id="vehicle-guide"'),'national vehicle guide anchor');
+   for(const fleet of ['domestic','imported']){
+    assert.ok(hub.includes('/assets/vehicles/'+fleet+'-fleet-1811.webp'),'fleet image on service hub');
+    const asset=await get('/assets/vehicles/'+fleet+'-fleet-1811.webp');
+    assert.equal(asset.status,200,'fleet asset served');
+    assert.ok(asset.headers.get('content-type').includes('image/webp'));
+   }
+  }
   // Shared layout must preserve exactly one page heading with and without a body H1.
   for(const route of ['/taksongdaeri/','/reviews/','/recruit/taksong/','/taksong/busan/']){
    const response=await get(route);assert.equal(response.status,200);
