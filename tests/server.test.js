@@ -406,20 +406,35 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((statsHome.match(/class="quick-booking"/g)||[]).length,1,'fare form must not be duplicated');
   assert.ok(statsHome.includes('name="from"')&&statsHome.includes('name="to"')&&statsHome.includes('action="/fare/"'),
     'top fare calculator still submits the real fare lookup');
-  assert.ok(statsHome.includes('background:#071c35;color:#fff')&&statsHome.includes('.traffic-stats-grid strong{display:block;font-size:19px'),
-    'phone number and white high-contrast traffic labels must be readable');
+  assert.ok(statsHome.includes('background:transparent;color:#fff;text-align:right'),
+    'visits are compact plain white text without a boxed dashboard');
+  assert.ok(statsHome.includes('id="traffic-sources-detail" hidden') &&
+    statsHome.includes('id="traffic-call-trigger"'),
+    'source details remain hidden until the count beside the phone is clicked');
+  const headerNumberAt=statsHome.indexOf('class="header-phone-line"');
+  const phoneNumberEnd=statsHome.indexOf('</a>',headerNumberAt);
+  const phoneClickAt=statsHome.indexOf('id="traffic-call-trigger"');
+  const phoneClickEnd=statsHome.indexOf('</button>',phoneClickAt);
+  assert.ok(headerNumberAt>=0&&phoneNumberEnd>headerNumberAt&&
+    phoneClickAt>phoneNumberEnd&&phoneClickAt<statsHome.indexOf('</div>',headerNumberAt),
+    'phone click count is immediately beside the representative number');
+  assert.ok(phoneClickEnd>phoneClickAt &&
+    statsHome.slice(phoneClickAt,phoneClickEnd).includes('id="phone-click-number"'),
+    'count beside telephone opens the source details');
   const headerPhonePos=statsHome.indexOf('class="header-call"');
   const dashboardPos=statsHome.indexOf('id="traffic-stats-panel"');
   assert.ok(headerPhonePos>=0&&headerPhonePos<dashboardPos&&dashboardPos<statsNavPos,
-    'dashboard should stay immediately below top-right phone');
-
-  for(const id of ['traffic-stats-panel','today-visit-number','yesterday-visit-number',
-                   'phone-click-number','total-phone-click-number','phone-source-list']){
-    assert.ok(statsHome.includes('id="'+id+'"'),'home header dashboard missing '+id);
+    'small visit counts remain below the top-right phone');
+  assert.ok(!statsHome.includes('id="yesterday-visit-number"')&&
+    !statsHome.includes('id="total-phone-click-number"')&&
+    !statsHome.includes('traffic-stats-grid'),
+    'remove yesterday and duplicate phone count and boxed dashboard');
+  for(const id of ['traffic-stats-panel','today-visit-number','total-visit-number',
+                   'phone-click-number','phone-source-list']){
+    assert.ok(statsHome.includes('id="'+id+'"'),'home header statistic missing '+id);
   }
-  assert.equal((statsHome.match(/src="\/assets\/traffic-analytics\.js"/g)||[]).length,1,
-    'no duplicate site click handlers on homepage');
-  assert.ok(!statsHome.includes('id="total-visit-number"'),'remove obsolete visit metric');
+  assert.equal(statsHome.split('src="/assets/traffic-analytics.js"').length-1,1,
+    'no duplicate click handlers on homepage');
   const statRoute=await (await get('/taksong/')).text();
   assert.equal((statRoute.match(/src="\/assets\/traffic-analytics\.js"/g)||[]).length,1,
     'dynamic transport pages track calls too');
@@ -429,6 +444,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(tracker.status,200);
   const trackerBody=await tracker.text();
   assert.ok(trackerBody.includes("site_phone_event")&&trackerBody.includes("site_traffic_dashboard"));
+  assert.ok(trackerBody.includes("el('traffic-call-trigger')") && !trackerBody.includes("traffic-today-trigger"),
+    'click-source visibility is controlled only by the phone-click count');
   assert.ok(trackerBody.includes('p_page:location.pathname')&&trackerBody.includes('p_source:acquisition()'));
   assert.ok(!trackerBody.includes('event.preventDefault()'),'phone navigation is never blocked');
   assert.ok(trackerBody.includes('response.status===204'),'Supabase void phone-event response must not cause retry or double count');
