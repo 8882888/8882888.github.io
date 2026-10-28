@@ -379,9 +379,9 @@ const verifiedRepairShops=load('data/verified-repair-shops.json').shops;
 const verifiedScrapyards=load('data/verified-scrapyards.json').shops;
 function verifiedScrapyardSection(r,kind){
  if(kind!=='taksong')return '';
- const shops=verifiedScrapyards.filter(shop=>shop.placeVerified===true&&shop.placeUrl&&shop.name&&shop.address&&(shop.region===r.name||String(shop.address).includes(r.full_name||'__none__')));
+ const shops=verifiedScrapyards.filter(shop=>shop.placeVerified===true&&/^https:\/\/m\.place\.naver\.com\/place\/\d+\/home(?:\?.*)?$/.test(String(shop.placeUrl||''))&&typeof shop.name==='string'&&typeof shop.address==='string'&&Array.isArray(shop.regionFullNames)&&shop.regionFullNames.includes(r.full_name));
  if(!shops.length)return '';
- return '<section><h2>'+esc(r.name)+' 폐차업체 명칭 확인 및 차량탁송</h2><p>확인된 네이버 플레이스 업체 표기명을 기준으로 차량 이동 상담 키워드를 안내합니다. 업체와 제휴하거나 폐차·견인·말소 업무를 직접 수행한다는 의미가 아닙니다. 운행 불가능한 차량은 견인·특수 운송을 별도로 확인해야 합니다.</p><ul>'+shops.map(shop=>'<li><strong>'+esc(shop.name)+'</strong> · '+esc(shop.address)+' · '+esc(shop.name+'탁송')+' · <a href="'+esc(shop.placeUrl)+'" rel="noopener noreferrer" target="_blank">업체 정보 확인</a></li>').join('')+'</ul></section>';
+ return '<section><h2>'+esc(r.name)+' 폐차업체 명칭 확인 및 차량탁송</h2><p>네이버 플레이스에서 직접 확인한 업체명과 주소를 기준으로, 해당 업체를 목적지로 지정하는 차량 이동 상담 키워드를 안내합니다. 업체와 제휴하거나 폐차·견인·말소 업무를 직접 수행한다는 의미가 아닙니다. 운행 불가능한 차량은 견인·특수 운송을 별도로 확인해야 합니다.</p><ul>'+shops.map(shop=>'<li><strong>'+esc(shop.name)+'</strong> · '+esc(shop.address)+' · '+esc(shop.name+'탁송')+' · <a href="'+esc(shop.placeUrl)+'" rel="noopener noreferrer" target="_blank">업체 정보 확인</a></li>').join('')+'</ul></section>';
 }
 
 function verifiedRepairShopSection(r,kind){
