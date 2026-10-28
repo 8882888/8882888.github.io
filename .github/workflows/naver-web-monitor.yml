@@ -9,6 +9,11 @@ on:
       - scripts/naver-web-monitor.js
       - tests/naver-web-monitor.test.js
       - .github/workflows/naver-web-monitor.yml
+      - index.html
+      - server.js
+      - lib/route-keyword-pages.js
+      - data/seo-pages.json
+      - .github/scripts/indexnow.js
 permissions:
   contents: read
 jobs:
