@@ -3,6 +3,29 @@ const fs=require('node:fs');
 const key='e8b417d6a2034fc79d8e6b150ac29f43';
 const origin='https://jeongukdaeri.kr';
 const base=['/','/daeri/','/taksong/','/recruit/taksong/','/recruit/daeri/'];
+// Send only newly published priority route URLs; broad discovery is handled by the route sitemaps.
+function priorityRoutePaths(){
+ const files=fs.readdirSync('data/legal-regions').filter(x=>/^\d{2}\.json$/.test(x)).sort();
+ const ids=new Map();
+ for(const file of files){
+  for(const full of JSON.parse(fs.readFileSync('data/legal-regions/'+file,'utf8')).full_names){
+   if(!ids.has(full))ids.set(full,'area-'+(ids.size+1));
+  }
+ }
+ const pairs=[
+  ['부산광역시','인천광역시','taksong'],
+  ['부산광역시 기장군','대구광역시','taksong'],
+  ['대구광역시','서울특별시','taksong'],
+  ['서울특별시','대구광역시','taksong'],
+  ['서울특별시','부산광역시','taksong'],
+  ['인천광역시','부산광역시','taksong'],
+  ['대구광역시','서울특별시','daeri'],
+  ['서울특별시','부산광역시','daeri'],
+  ['부산광역시','인천광역시','daeri'],
+  ['부산광역시 기장군','대구광역시','daeri']
+ ];
+ return pairs.flatMap(([a,b,k])=>ids.has(a)&&ids.has(b)?['/routes/'+k+'/'+ids.get(a)+'/'+ids.get(b)+'/']:[]);
+}
 async function main(){
  const changed=(process.env.CHANGED_FILES||'').split(/\s+/).filter(Boolean);
  const manually=(process.env.INDEXNOW_URLS||'').split(/[\s,]+/).filter(Boolean);
@@ -15,6 +38,7 @@ async function main(){
    paths=[...paths,'/reviews/',...reviewUrls.slice(-23)];
  }
 
+ if(!manually.length&&changed.some(x=>x==='server.js'||x==='lib/route-keyword-pages.js'))paths=[...paths,...priorityRoutePaths()];
  if(!paths.length){console.log('No eligible changed URLs; skipping IndexNow');return}
  const urls=[...new Set(paths.map(x=>new URL(x,origin).href))].filter(x=>{const u=new URL(x);return u.origin===origin&&u.pathname.endsWith('/')&&u.search===''&&u.hash===''}).slice(0,25);
  if(!urls.length){console.log('No valid URLs');return}
