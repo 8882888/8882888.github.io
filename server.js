@@ -612,7 +612,7 @@ function serviceHub(kind){
  ];
  const faqHtml='<section><h2>전국 '+label+' 예약 전 자주 묻는 질문</h2>'+faq.map(([q,a])=>'<h3>'+esc(q)+'</h3><p>'+esc(a)+'</p>').join('')+'</section>';
  const customerJourney=isT?'':'<section aria-label="전국대리운전 빠른 안내"><h2>필요한 대리운전 서비스를 선택하세요</h2><p>장거리 귀가, 골프장 이동, 일일기사와 법인 이용 목적에 맞춰 안내합니다. 출발지와 도착지, 희망 시간을 알려주시면 요금과 배차 가능 여부를 확인합니다.</p><p><a href="/service/daeri/">일반·장거리 대리운전</a> · <a href="/service/golf/">골프장 대리운전</a> · <a href="/service/daily-driver/">일일기사</a> · <a href="/service/corporate/">법인 대리운전</a></p><p><a class="cta" href="/fare/?service=daeri">대리운전 예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a> · <a href="/reviews/">실제 운행기록 보기</a></p><p>예상요금은 참고용입니다. 날짜·시간, 기사 접근과 복귀 여건에 따라 실제 요금과 배차 가능 여부가 달라집니다.</p></section><section><h2>전국대리운전 예약 방법</h2><ol><li>출발지와 도착지, 이용 날짜와 시간을 정합니다.</li><li>예상요금을 조회하고 차종과 경유지 등 필요한 내용을 준비합니다.</li><li>1811-4294로 상담해 최종 요금과 기사 배차 가능 여부를 확인한 후 예약합니다.</li></ol><p>장거리나 외곽 골프장은 미리 예약하면 배차 조건을 확인하는 데 도움이 됩니다. 긴급 호출은 지역과 시간에 따라 요금이 높아지거나 배차가 늦어질 수 있습니다.</p></section>';
- const body=serviceJourneyLinks(kind)+customerJourney+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
+ const body='<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
  '<section id="reservation-guide"><h2>'+label+' 예약할 때 필요한 정보</h2><ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치</li><li>도착지 주소와 희망 출발 날짜·시각</li><li>차종과 차량 인수·인계 조건</li><li>경유지, 통행료 및 기타 요청사항</li></ol><p>거리만으로 최종 요금을 확정하지 않으며, 기사 접근·복귀 여건을 확인합니다.</p></section>'+
  bookingGuide(kind)+faqHtml+featuredLinks+
  (isT?'<section><h2>차종·서비스별 자동차탁송</h2><p>국산차·수입차·전기차·화물차 및 서비스센터 입출고 등 차량 종류와 이용 목적에 따라 확인할 사항이 다릅니다.</p><p><a href="/taksong/types/">차종별 탁송과 서비스센터탁송 살펴보기</a></p></section>':'<section><h2>장거리·골프장 대리운전</h2><p>일반 시내 이동과 달리 장거리·골프장 출발은 운행 후 기사 복귀 여건이 배차에 영향을 줄 수 있습니다. 출발 예정 시각과 목적지를 함께 알려주세요.</p></section>')+
@@ -638,16 +638,30 @@ function regionKeywordDirectory(kind,page=1){
  return layout('전국 '+label+' 키워드 목록','전국 지역별 '+label+' 키워드 목록',body,'https://'+host+'/keywords/'+kind+'/?page='+current,null);
 }
 function routeKeywords(from,to,kind){
- const a=String(from||'').trim().replace(/\s+/g,''),b=String(to||'').trim().replace(/\s+/g,'');
+ const a=String(from||'').trim(),b=String(to||'').trim(),service=kind==='daeri'?'대리운전':'탁송';
  if(!a||!b||a.length>80||b.length>80)return [];
- return [a+b+(kind==='daeri'?'대리운전':'탁송')];
+ return [...new Set([a+'에서 '+b+' '+service,(a+b+service).replace(/\s+/g,''),a+' → '+b+' '+service+' 요금'])];
 }
-function routeKeywordSearchPage(from,to,kind){
- const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
- const keywords=routeKeywords(from,to,kind),service=kind==='daeri'?'대리운전':'탁송';
- const home='https://'+host+'/';
- const body='<section><h2>전국 출발지·도착지 검색</h2><form action="/route-search/" method="get"><label>출발지 <input name="from" maxlength="80" required value="'+esc(from)+'"></label> <label>도착지 <input name="to" maxlength="80" required value="'+esc(to)+'"></label> <label>서비스 <select name="service"><option value="taksong"'+(kind==='taksong'?' selected':'')+'>탁송</option><option value="daeri"'+(kind==='daeri'?' selected':'')+'>대리운전</option></select></label> <button type="submit">검색어 조합 확인</button></form></section>'+(keywords.length?'<section><h2>생성된 '+service+' 키워드</h2><p><a href="'+home+'">'+esc(keywords[0])+'</a></p><p>키워드를 클릭하면 스마트24 홈페이지 메인으로 이동합니다.</p></section>':'<section><p>출발지와 도착지를 입력하면 대리운전 또는 탁송 키워드 하나가 생성됩니다.</p></section>');
- return layout('전국 '+service+' 구간 검색','전국 출발지와 도착지별 '+service+' 검색어 자동 조합',body,'https://'+host+'/route-search/',null);
+function routeKeywordSearchPage(from,to,kind,page=1){
+ const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr',service=kind==='daeri'?'대리운전':'탁송';
+ from=String(from).trim().slice(0,80);to=String(to).trim().slice(0,80);
+ const matches=regions.filter(r=>[r.full_name,r.name,...regionAliases(r)].some(n=>compact(n)===compact(from)));
+ const origin=matches.length===1?matches[0]:null;
+ const originName=origin?origin.full_name:from,originLabel=origin?seoRegionLabel(origin):from;
+ const destinations=from&&!to?regions.filter(r=>!origin||r.slug!==origin.slug):[];
+ const total=Math.max(1,Math.ceil(destinations.length/100)),current=Math.min(total,Math.max(1,parseInt(page,10)||1));
+ const items=to?[{full_name:to,name:to}]:destinations.slice((current-1)*100,current*100);
+ const navUrl=n=>'/route-search/?'+new URLSearchParams({from:originName,service:kind,page:String(n)}).toString();
+ const nav=destinations.length?'<p>'+destinations.length.toLocaleString('ko-KR')+'개 도착지 · '+current+' / '+total+'페이지 '+(current>1?'<a href="'+esc(navUrl(current-1))+'">이전</a> · ':'')+(current<total?'<a href="'+esc(navUrl(current+1))+'">다음</a>':'')+'</p>':'';
+ const choices=matches.length>1?'<section><h2>출발 지역을 구분해 주세요</h2><ul>'+matches.map(r=>'<li><a href="'+esc('/route-search/?'+new URLSearchParams({from:r.full_name,to,service:kind}))+'">'+esc(r.full_name)+'</a></li>').join('')+'</ul></section>':'';
+ const rows=matches.length>1?'':items.map(r=>{
+  const label=r.slug?seoRegionLabel(r):r.name,terms=routeKeywords(originLabel,label,kind);
+  const fare='/fare/?'+new URLSearchParams({from:originName,to:r.full_name,service:kind,auto:'1'}).toString();
+  return '<li><a href="'+esc(fare)+'">'+esc(terms[0]||'')+'</a><p>'+esc(terms.slice(1).join(' · '))+'</p><p>출발: '+esc(originName)+' / 도착: '+esc(r.full_name)+'</p></li>';
+ }).join('');
+ const examples=[['부산','인천'],['기장군','대구'],['대구',''],['서울','']];
+ const body='<section><h2>출발지에서 전국 지역으로 '+service+'</h2><form action="/route-search/" method="get"><label>출발지 <input name="from" maxlength="80" required value="'+esc(from)+'" placeholder="예: 대구, 부산, 기장군"></label> <label>도착지 <input name="to" maxlength="80" value="'+esc(to)+'" placeholder="비우면 전국 지역 전체"></label> <label>서비스 <select name="service"><option value="taksong"'+(kind==='taksong'?' selected':'')+'>탁송</option><option value="daeri"'+(kind==='daeri'?' selected':'')+'>대리운전</option></select></label> <button type="submit">구간 찾기</button></form><p>시·도, 시·군·구, 읍·면·동·리 출발·도착 조합입니다. 구간을 선택하면 해당 주소가 입력된 요금계산기로 이동합니다. 실제 운행 사례나 확정 요금이 아니며 배차 가능 여부는 상담으로 확인합니다.</p><ul>'+examples.map(([a,b])=>'<li><a href="'+esc('/route-search/?'+new URLSearchParams({from:a,to:b,service:kind}))+'">'+esc(a+'에서 '+(b||'전국 지역')+' '+service)+'</a></li>').join('')+'</ul></section>'+choices+nav+(rows?'<section><h2>'+esc(originLabel)+' 출발 '+service+' 구간</h2><ul>'+rows+'</ul></section>':'')+nav;
+ return layout('전국 '+service+' 출발·도착 구간 찾기','지역별 출발지와 도착지를 조합해 예상요금을 조회하세요.',body,'https://'+host+'/route-search/',null);
 }
 function recruitmentPage(kind,region){
  const isT=kind==='taksong',label=isT?'탁송기사':'대리운전기사',area=region?region.full_name:'전국',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
@@ -741,7 +755,7 @@ if(serviceVisit){const [,kind,id]=serviceVisit,item=keywordEngine.byId.get(id);i
 const visitKeyword=pathname.match(/^\/visit\/([a-f0-9]{20})\/?$/);if(visitKeyword){const item=keywordEngine.byId.get(visitKeyword[1]);if(!item)return respond(res,404,'연결된 키워드를 찾을 수 없습니다.');const target=keywordEngine.url(item);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,keywordEngine.itemPage(item))}
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');return respond(res,200,applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/'))}
 const keywordMatch=pathname.match(/^\/keywords\/(taksong|daeri)\/?$/);if(keywordMatch){res.setHeader('X-Robots-Tag','noindex, follow');return respond(res,200,regionKeywordDirectory(keywordMatch[1],u.searchParams.get('page')))}
-if(pathname==='/route-search/'||pathname==='/route-search'){res.setHeader('X-Robots-Tag','noindex, follow');const from=String(u.searchParams.get('from')||''),to=String(u.searchParams.get('to')||''),kind=u.searchParams.get('service')==='daeri'?'daeri':'taksong';return respond(res,200,routeKeywordSearchPage(from,to,kind))}
+if(pathname==='/route-search/'||pathname==='/route-search'){res.setHeader('X-Robots-Tag','noindex, follow');const from=String(u.searchParams.get('from')||''),to=String(u.searchParams.get('to')||''),kind=u.searchParams.get('service')==='daeri'?'daeri':'taksong';return respond(res,200,routeKeywordSearchPage(from,to,kind,u.searchParams.get('page')))}
 if(pathname==='/places/'||pathname==='/places')return respond(res,200,placeCategoryHub());
 const placeCategoryMatch=pathname.match(/^\/places\/([^/]+)\/?$/);
 if(placeCategoryMatch){const category=placeCategories.find(x=>x[0]===placeCategoryMatch[1]);return category?respond(res,200,placeCategoryPage(category)):respond(res,404,'장소 분류를 찾을 수 없습니다.')}
