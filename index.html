@@ -254,21 +254,21 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  .header-phone-actions .traffic-stat,.header-phone-actions .traffic-stat strong{font-size:10px!important}
 }
 
-/* Today's visit count is the only control that reveals the phone source detail. */
-.header-phone-actions .traffic-today-trigger{
+/* Today's phone-click count is the only control that reveals the phone source detail. */
+.header-phone-actions .traffic-call-trigger{
   display:inline-flex;align-items:center;gap:3px;border:0;background:transparent;
   color:#fff!important;padding:0;margin:0;font:inherit;cursor:pointer;
   text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px
 }
-.header-phone-actions .traffic-today-trigger:focus-visible{outline:2px solid #ffe680;outline-offset:3px;border-radius:2px}
-.header-phone-actions .traffic-today-trigger[aria-expanded="true"]{text-decoration-style:solid}
+.header-phone-actions .traffic-call-trigger:focus-visible{outline:2px solid #ffe680;outline-offset:3px;border-radius:2px}
+.header-phone-actions .traffic-call-trigger[aria-expanded="true"]{text-decoration-style:solid}
 .header-phone-actions .traffic-sources[hidden]{display:none!important}
 .header-phone-actions .traffic-sources-heading{display:block;font-size:11px;color:#fff;font-weight:700}
 @media(max-width:850px){
- .header-phone-actions .traffic-today-trigger{font-size:11px}
+ .header-phone-actions .traffic-call-trigger{font-size:11px}
 }
 @media(max-width:400px){
- .header-phone-actions .traffic-today-trigger{font-size:10px}
+ .header-phone-actions .traffic-call-trigger{font-size:10px}
 }
 </style>
 <style>
@@ -328,9 +328,9 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 방문 및 전화 클릭 통계">
   <span class="traffic-stats-title">방문 · 전화 클릭 통계 <small>(한국시간)</small></span>
   <div class="traffic-stats-lines" aria-live="polite">
-    <button type="button" class="traffic-stat traffic-today-trigger" id="traffic-today-trigger" aria-expanded="false" aria-controls="traffic-sources-detail" title="오늘 방문수를 눌러 전화 클릭 유입 경로 보기"><span class="traffic-label-full">오늘 방문</span><span class="traffic-label-compact">오늘</span> <strong id="today-visit-number">확인 중</strong></button>
+    <span class="traffic-stat"><span class="traffic-label-full">오늘 방문</span><span class="traffic-label-compact">오늘</span> <strong id="today-visit-number">확인 중</strong></span>
     <span class="traffic-stat"><span class="traffic-label-full">전일 방문</span><span class="traffic-label-compact">어제</span> <strong id="yesterday-visit-number">확인 중</strong></span>
-    <span class="traffic-stat"><span class="traffic-label-full">오늘 전화 클릭</span><span class="traffic-label-compact">전화</span> <strong id="phone-click-number">확인 중</strong></span>
+    <button type="button" class="traffic-stat traffic-call-trigger" id="traffic-call-trigger" aria-expanded="false" aria-controls="traffic-sources-detail" title="오늘 전화 클릭수를 눌러 유입 경로 보기"><span class="traffic-label-full">오늘 전화 클릭</span><span class="traffic-label-compact">전화</span> <strong id="phone-click-number">확인 중</strong></button>
     <span class="traffic-stat"><span class="traffic-label-full">누적 전화 클릭</span><span class="traffic-label-compact">누적</span> <strong id="total-phone-click-number">확인 중</strong></span>
   </div>
   <div class="traffic-sources" id="traffic-sources-detail" hidden aria-label="오늘 전화 클릭 유입 경로와 클릭한 페이지">
