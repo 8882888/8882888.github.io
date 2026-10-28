@@ -23,6 +23,23 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const [source,target] of [['/index.html','/'],['/daeri/index.html?ref=a','/daeri/?ref=a'],['/taksong/index.html','/taksong/']]){
    const response=await fetch('http://127.0.0.1:'+port+source,{redirect:'manual'});assert.equal(response.status,301);assert.equal(response.headers.get('location'),target);
   }
+  for(const kind of ['daeri','taksong']){
+   const hub=await (await get('/'+kind+'/')).text();
+   assert.ok(hub.includes('id="reservation-guide"'));
+   assert.ok(hub.includes('href="/fare/?service='+kind+'"'));
+   assert.ok(hub.includes('href="/reviews/history/?kind='+kind+'"'));
+  }
+  for(const service of ['golf','daily-driver','corporate','daeri','taksong']){
+   const html=await (await get('/service/'+service+'/')).text();
+   const kind=service==='taksong'?'taksong':'daeri';
+   assert.ok(html.includes('href="/'+kind+'/#reservation-guide"'));
+   assert.ok(html.includes('href="/reviews/history/?kind='+kind+'"'));
+  }
+  const quoteHtml=await (await get('/fare/')).text();
+  assert.ok(quoteHtml.includes('href="/reviews/history/?kind=taksong"'));
+  assert.ok(quoteHtml.includes('href="/reviews/history/?kind=daeri"'));
+  const recordHtml=await (await get('/reviews/history/excel-0001/')).text();
+  assert.ok(recordHtml.includes('class="service-journey"'));
   const h=await get('/health');assert.equal(h.status,200);const health=await h.json();assert.equal(health.regions,regions.length);
   const keywordStatus=await (await get('/api/keyword-status')).json();assert.ok(keywordStatus.stored>200000);assert.equal(keywordStatus.searchExposure,'not-measured');
   for(const query of ['강화도맛집','강남맛집','설악산','영덕해맞이공원']){
