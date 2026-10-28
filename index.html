@@ -218,38 +218,40 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 @media(prefers-reduced-motion:reduce){.smart24-graphic *{animation:none!important}}
 
 .smart24-service-visuals{max-width:1120px;margin:24px auto 34px;padding:0 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.smart24-service-visual{display:block;overflow:hidden;border-radius:22px;background:#fff;box-shadow:0 12px 30px #0c519a20;border:1px solid #d6e8fa;text-decoration:none!important;transition:transform .2s,box-shadow .2s}.smart24-service-visual:hover{transform:translateY(-4px);box-shadow:0 20px 38px #0c519a33}.smart24-service-visual img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}.smart24-service-visual span{display:flex;align-items:center;justify-content:space-between;padding:17px 21px;color:#064c9f!important;font-weight:900;font-size:18px}.smart24-service-visual b{font-size:24px}@media(max-width:650px){.smart24-service-visuals{grid-template-columns:1fr;gap:14px;margin:14px auto 24px}.smart24-service-visual span{font-size:16px;padding:14px 16px}}
-/* Header statistics: always directly under the representative phone at upper right. */
-.header-phone-actions{display:flex;flex-direction:column;align-items:flex-end;gap:7px;margin-left:auto;text-align:right;max-width:100%}
-.header-phone-actions>.header-call{display:inline-block;color:#ffe680;font-weight:900;text-align:right}
-.header-phone-actions .traffic-stats{
-  width:100%;max-width:370px;box-sizing:border-box;
-  background:#071c35;color:#fff;border:1px solid #8fafcf;
-  border-radius:10px;padding:12px 14px;
-  box-shadow:0 3px 10px rgba(0,0,0,.28);
-  text-align:left;line-height:1.5
-}
-.traffic-stats-title{margin:0 0 8px;font-size:14px;font-weight:900;color:#fff}
-.traffic-stats-title small{font-size:12px;color:#dceafc;font-weight:600}
-.traffic-stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.traffic-stats-grid>div{min-width:0;background:#143557;border:1px solid #6683a3;border-radius:6px;padding:7px 8px;font-size:13px;font-weight:700;color:#fff}
-.traffic-stats-grid strong{display:block;font-size:19px;line-height:1.4;font-weight:900;color:#fff;letter-spacing:0;white-space:nowrap}
-.traffic-sources{margin-top:9px;padding-top:8px;border-top:1px solid #8ba2bf;color:#fff}
-.traffic-sources summary{font-size:13px;font-weight:800;cursor:pointer;color:#fff}
-.traffic-sources ol{margin:6px 0 2px;padding-left:20px;max-height:118px;overflow-y:auto;overflow-wrap:anywhere}
-.traffic-sources li{font-size:12px;line-height:1.55;color:#fff;margin:3px 0}
-.traffic-stats-note{display:block;font-size:11px;line-height:1.5;color:#e1edfb;margin-top:8px}
-@media(min-width:851px){
- .header-phone-actions{width:370px;flex-shrink:0}
- .header-phone-actions .traffic-stats{width:100%}
-}
+/* Plain, compact counts below the upper-right phone. No table or shaded cards. */
+.header-phone-actions{display:flex;flex-direction:column;align-items:flex-end;gap:3px;margin-left:auto;max-width:100%;text-align:right}
+.header-phone-actions>.header-call{font-weight:900;color:#ffe680}
+.header-phone-actions .traffic-stats{width:auto;max-width:100%;margin:0;padding:0;border:0;box-shadow:none;background:transparent;color:#fff;text-align:right;line-height:1.45}
+.header-phone-actions .traffic-stats-title{display:block;margin:0 0 2px;font-size:12px;font-weight:700;color:#fff}
+.header-phone-actions .traffic-stats-title small{font-size:11px;color:#fff;font-weight:400}
+.header-phone-actions .traffic-stats-lines{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:2px 10px}
+.header-phone-actions .traffic-stat{display:inline-block;color:#fff;font-size:12px;white-space:nowrap}
+.header-phone-actions .traffic-stat strong{display:inline!important;color:#fff!important;font-size:12px!important;line-height:inherit;font-weight:800;letter-spacing:0;white-space:nowrap}
+.header-phone-actions .traffic-label-compact{display:none}
+.header-phone-actions .traffic-sources{margin:2px 0 0;padding:0;border:0;color:#fff}
+.header-phone-actions .traffic-sources summary{cursor:pointer;color:#fff;font-size:11px;font-weight:500}
+.header-phone-actions .traffic-sources ol{max-height:95px;overflow-y:auto;margin:3px 0;padding-left:18px;color:#fff;overflow-wrap:anywhere;text-align:left}
+.header-phone-actions .traffic-sources li{color:#fff;font-size:11px;line-height:1.45}
+.header-phone-actions .traffic-stats-note{display:block;margin-top:2px;font-size:10px;color:#e2ebf4}
+@media(min-width:851px){.header-phone-actions{max-width:430px}.traffic-stats-lines{max-width:430px}}
 @media(max-width:850px){
- .header-phone-actions{width:100%;align-items:flex-end;margin-left:auto}
- .header-phone-actions .traffic-stats{width:min(100%,370px)}
+ header{padding:10px 4%!important;gap:3px!important}
+ header>strong{font-size:17px!important;line-height:1.3}
+ .header-phone-actions{width:100%;max-width:100%;align-items:flex-end!important;margin-left:auto}
+ .header-phone-actions>.header-call{font-size:17px!important;line-height:1.3}
+ .header-phone-actions .traffic-stats{max-width:100%;font-size:11px;text-align:right}
+ .header-phone-actions .traffic-stats-title,.header-phone-actions .traffic-stats-note{display:none}
+ .header-phone-actions .traffic-stats-lines{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px 9px;max-width:100%}
+ .header-phone-actions .traffic-stat,.header-phone-actions .traffic-stat strong{font-size:11px!important}
+ .header-phone-actions .traffic-label-full{display:none}
+ .header-phone-actions .traffic-label-compact{display:inline}
+ .header-phone-actions .traffic-sources{margin:0}
+ .header-phone-actions .traffic-sources summary{font-size:10px}
 }
-@media(max-width:380px){
- .header-phone-actions .traffic-stats{padding:10px 9px}
- .traffic-stats-grid>div{font-size:12px;padding:6px}
- .traffic-stats-grid strong{font-size:17px}
+@media(max-width:400px){
+ header>strong{font-size:16px!important}
+ .header-phone-actions .traffic-stats-lines{gap:1px 7px}
+ .header-phone-actions .traffic-stat,.header-phone-actions .traffic-stat strong{font-size:10px!important}
 }
 </style>
 <style>
@@ -307,18 +309,18 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <body>
 
 <header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 방문 및 전화 클릭 통계">
-  <div class="traffic-stats-title">실시간 방문 · 전화 클릭 통계 <small>(한국시간)</small></div>
-  <div class="traffic-stats-grid" aria-live="polite">
-    <div>오늘 방문수<strong id="today-visit-number">확인 중</strong></div>
-    <div>전일 방문수<strong id="yesterday-visit-number">확인 중</strong></div>
-    <div>오늘 전화 클릭수<strong id="phone-click-number">확인 중</strong></div>
-    <div>누적 전화 클릭수<strong id="total-phone-click-number">확인 중</strong></div>
+  <span class="traffic-stats-title">방문 · 전화 클릭 통계 <small>(한국시간)</small></span>
+  <div class="traffic-stats-lines" aria-live="polite">
+    <span class="traffic-stat"><span class="traffic-label-full">오늘 방문</span><span class="traffic-label-compact">오늘</span> <strong id="today-visit-number">확인 중</strong></span>
+    <span class="traffic-stat"><span class="traffic-label-full">전일 방문</span><span class="traffic-label-compact">어제</span> <strong id="yesterday-visit-number">확인 중</strong></span>
+    <span class="traffic-stat"><span class="traffic-label-full">오늘 전화 클릭</span><span class="traffic-label-compact">전화</span> <strong id="phone-click-number">확인 중</strong></span>
+    <span class="traffic-stat"><span class="traffic-label-full">누적 전화 클릭</span><span class="traffic-label-compact">누적</span> <strong id="total-phone-click-number">확인 중</strong></span>
   </div>
-  <details class="traffic-sources" open>
-    <summary>오늘 전화 클릭 유입 경로 · 클릭한 페이지</summary>
+  <details class="traffic-sources">
+    <summary>전화 클릭 유입 경로 보기</summary>
     <ol id="phone-source-list" aria-live="polite"><li>집계 확인 중입니다.</li></ol>
   </details>
-  <small class="traffic-stats-note">전화 연결이 아닌 버튼 클릭 수 · 방문은 브라우저 세션 기준</small>
+  <small class="traffic-stats-note">실제 통화 연결 건수가 아닌 버튼 클릭 수</small>
 </aside></div></header>
 <nav class="top-nav" aria-label="주요 서비스 메뉴"><div class="top-nav-inner">
 <a href="/daeri/">전국대리운전</a>
