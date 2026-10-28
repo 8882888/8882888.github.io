@@ -52,12 +52,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(regionalReviewCount>0,'known regional samples must link to published reviews');
   const rssResponse=await get('/rss.xml'),rssXml=await rssResponse.text();
   assert.equal(rssResponse.status,200);
-  const feedItems=[...rssXml.matchAll(/<item>([\\s\\S]*?)<\\/item>/g)].map(m=>m[1]);
+  const feedItems=[...rssXml.matchAll(new RegExp('<item>([^]*?)</item>','g'))].map(m=>m[1]);
   assert.ok(feedItems.length>0&&feedItems.length<=20);
-  const feedUrls=feedItems.map(item=>item.match(/<link>(.*?)<\\/link>/)[1]);
+  const feedUrls=feedItems.map(item=>item.match(new RegExp('<link>(.*?)</link>'))[1]);
   assert.equal(new Set(feedUrls).size,feedUrls.length);
   assert.ok(feedUrls.every(url=>url.startsWith('https://example.com/reviews/')));
-  const feedDates=feedItems.map(item=>item.match(/<title>(\\d{4}-\\d{2}-\\d{2})/)[1]);
+  const feedDates=feedItems.map(item=>item.match(new RegExp('<title>([0-9]{4}-[0-9]{2}-[0-9]{2})'))[1]);
   assert.deepEqual(feedDates,[...feedDates].sort().reverse());
   assert.ok(feedItems.every(item=>item.includes('&lt;article&gt;')),'RSS includes full public record body');
   assert.ok(rssXml.includes('운행일 기준 정렬이며 게시·수정 시각을 뜻하지 않습니다.'));
