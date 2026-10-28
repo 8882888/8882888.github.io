@@ -14,6 +14,15 @@
     todayCall:el('phone-click-number'),
     allCall:el('total-phone-click-number')
   };
+  const todayTrigger=el('traffic-today-trigger');
+  const sourceDetails=el('traffic-sources-detail');
+  if(todayTrigger&&sourceDetails){
+    todayTrigger.addEventListener('click',function(){
+      const show=sourceDetails.hidden;
+      sourceDetails.hidden=!show;
+      todayTrigger.setAttribute('aria-expanded',String(show));
+    });
+  }
   const channelList=el('phone-source-list');
   const panel=el('traffic-stats-panel');
   const kstDay=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
