@@ -96,6 +96,38 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(localityHtml.includes('이 지역에서 운행했다는 뜻이 아니며'));
   assert.ok(/href="\/reviews\/[a-f0-9]{16}\//.test(localityHtml),'fallback must link to verified published reviews');
   assert.ok(!localityHtml.includes('이 지역의 확인된 완료 운행 기록은 아직 없습니다. 확인된 사례가 등록되면'));
+  // Only completed, directional dispatch records should enrich SEO route pages.
+  const verifiedRouteIndex=await get('/routes/reviewed/');
+  const verifiedRouteHtml=await verifiedRouteIndex.text();
+  assert.equal(verifiedRouteIndex.status,200);
+  assert.ok(verifiedRouteHtml.includes('실제 운행완료 내역으로 확인된 전국 출발·도착 구간'));
+  assert.ok(verifiedRouteHtml.includes('2,591건'));
+  assert.ok(verifiedRouteHtml.includes('김해공항에서 인천 자동차탁송'));
+  const reviewedXmlResponse=await get('/sitemap-reviewed-routes.xml');
+  const reviewedXml=await reviewedXmlResponse.text();
+  assert.equal(reviewedXmlResponse.status,200);
+  const reviewedUrls=[...reviewedXml.matchAll(/<loc>(.*?)<\/loc>/g)].map(x=>x[1]);
+  assert.ok(reviewedUrls.length>30&&reviewedUrls.length<2000,'source-backed route sitemap must be curated');
+  assert.equal(reviewedUrls.length,new Set(reviewedUrls).size);
+  const provenAirportRoute='/routes/taksong/airport-gimhae/'+incheonId+'/';
+  assert.ok(reviewedUrls.includes('https://example.com'+provenAirportRoute),'source confirms Gimhae Airport to Incheon transport');
+  const provenAirportHtml=await (await get(provenAirportRoute)).text();
+  assert.ok(provenAirportHtml.includes('실제 운행완료 후기'));
+  assert.ok(provenAirportHtml.includes('150,000원'),'source fare, not a made-up quote');
+  assert.ok(provenAirportHtml.includes('/reviews/history/excel-'),'visible completed-record citation');
+  const originalRecords=require('../data/ride-history.json');
+  const originalIndex=originalRecords.findIndex(x=>x.departure.includes('김해공항')&&x.destination.includes('인천공항')&&x.fare==='150,000원');
+  assert.ok(originalIndex>=0);
+  const referenced='/reviews/history/excel-'+String(originalIndex+1).padStart(4,'0')+'/';
+  assert.ok(provenAirportHtml.includes(referenced));
+  const originalHtml=await (await get(referenced)).text();
+  assert.ok(originalHtml.includes(provenAirportRoute),'completed record links back to its route');
+  const falseGeo=require('../lib/verified-route-index')({
+   regions,
+   historicalRides:[{id:'false',date:'2026-10-01',service:'taksong',fare:'40,000원',rawDeparture:'장성읍',rawDestination:'광주효천1중흥'}]
+  });
+  assert.equal(falseGeo.entries.length,0,'ambiguous Gwangju cannot be assigned to Gyeonggi Gwangju city');
+  assert.ok((await (await get('/robots.txt')).text()).includes('sitemap-reviewed-routes.xml'));
   // Nationwide local-intent SEO must distinguish transport and designated-driver services.
   const busanTaksong=await (await get('/taksong/busan/')).text();
   assert.ok(busanTaksong.includes('공업사탁송'),'repair-shop transport intent');
