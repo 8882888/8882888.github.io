@@ -19,7 +19,7 @@
   const kstDay=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const readSession=(key)=>{try{return sessionStorage.getItem(key)}catch(_){return null}};
   const writeSession=(key,value)=>{try{sessionStorage.setItem(key,value)}catch(_){}};
-  const format=n=>Number.isFinite(Number(n))?Number(n).toLocaleString('ko-KR')+'회':'—';
+  const format=n=>(n===null||n===undefined||n===''||!Number.isFinite(Number(n)))?'—':Number(n).toLocaleString('ko-KR')+'회';
   const put=(field,value)=>{if(figures[field])figures[field].textContent=format(value)};
   async function rpc(name,data,options){
     const response=await fetch(root+name,{
