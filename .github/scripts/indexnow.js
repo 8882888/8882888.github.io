@@ -24,7 +24,14 @@ function priorityRoutePaths(){
   ['부산광역시','인천광역시','daeri'],
   ['부산광역시 기장군','대구광역시','daeri']
  ];
- return pairs.flatMap(([a,b,k])=>ids.has(a)&&ids.has(b)?['/routes/'+k+'/'+ids.get(a)+'/'+ids.get(b)+'/']:[]);
+ return [...pairs.flatMap(([a,b,k])=>ids.has(a)&&ids.has(b)?['/routes/'+k+'/'+ids.get(a)+'/'+ids.get(b)+'/']:[]),
+  '/routes/gimhae-airport/',
+  '/routes/taksong/airport-gimhae/'+ids.get('서울특별시')+'/',
+  '/routes/daeri/airport-gimhae/'+ids.get('서울특별시')+'/',
+  '/routes/taksong/'+ids.get('서울특별시')+'/airport-gimhae/',
+  '/routes/taksong/'+ids.get('부산광역시 강서구')+'/'+ids.get('서울특별시')+'/',
+  '/routes/taksong/'+ids.get('경상남도 김해시')+'/'+ids.get('서울특별시')+'/'
+ ];
 }
 async function main(){
  const changed=(process.env.CHANGED_FILES||'').split(/\s+/).filter(Boolean);
