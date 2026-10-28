@@ -27,7 +27,12 @@
       keepalive:!!(options&&options.keepalive)
     });
     if(!response.ok)throw Error('RPC '+name+' HTTP '+response.status);
-    const result=await response.json();
+    // PostgreSQL functions returning VOID respond with 204 No Content.
+    // A JSON parse error here must NOT trigger the legacy fallback and double-count the click.
+    if(response.status===204)return null;
+    const raw=await response.text();
+    if(!raw.trim())return null;
+    const result=JSON.parse(raw);
     return Array.isArray(result)?result[0]:result;
   }
   function acquisition(){
