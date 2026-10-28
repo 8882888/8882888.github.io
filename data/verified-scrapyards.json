@@ -1,5 +1,5 @@
 {
-  "description": "네이버 플레이스에서 실제 업체명·주소·업체 상세 URL을 확인한 경우에만 추가합니다. 미확인 상호는 절대 자동 생성하지 않습니다.",
+  "description": "업체별 네이버 플레이스 URL을 공개 자료의 업체명·주소와 교차 대조한 명단. 네이버 플레이스 직접 열람 제한 시 검증방식을 기록하며, 링크 확인만으로 제휴나 현재 영업 상태를 보장하지 않습니다.",
   "shops": [
     {
       "name": "인천폐차사업소",
@@ -11,7 +11,27 @@
         "인천광역시",
         "인천광역시 남동구"
       ],
-      "verificationSource": "네이버 플레이스 상세정보에서 업체명·주소 확인 (place 11785307)"
+      "verificationSource": "방송 소개 페이지의 네이버 플레이스 연결 및 한국자동차해체재활용업협회 등록 주소 대조",
+      "verificationSourceUrl": "https://pirin8pirin.tistory.com/category?page=30",
+      "verificationMethod": "third_party_naver_place_link_cross_checked_with_association",
+      "verificationCaveat": "네이버 플레이스 상세페이지 직접 읽기 차단; 공개 페이지의 연결 상호·주소로 대조"
+    },
+    {
+      "name": "굿바이카",
+      "address": "경기 양주시 광적면 삼일로 77-24",
+      "placeUrl": "https://m.place.naver.com/place/36326967/home?entry=pll",
+      "placeVerified": true,
+      "placeVerifiedAt": "2026-10-28",
+      "regionFullNames": [
+        "경기도",
+        "경기도 양주시",
+        "경기도 양주시 광적면"
+      ],
+      "verificationSource": "2026-02-02 방송 소개 페이지의 네이버 플레이스 연결과 폐차장 주소, 회사 기업정보상 자동차해체재활용업·주소 대조",
+      "verificationSourceUrl": "https://pirin8pirin.tistory.com/category/?page=40",
+      "additionalSourceUrl": "https://m.saramin.co.kr/job-search/company-info-view?csn=SDdSM01FK29veWd1TWREb0hzYzNWUT09&searchword=%EA%B5%BF%EB%B0%94%EC%9D%B4%EC%B9%B4",
+      "verificationMethod": "third_party_naver_place_link_cross_checked_with_business_profile",
+      "verificationCaveat": "네이버 플레이스 상세페이지 직접 읽기 차단; 공개 페이지의 연결 상호·주소로 대조"
     }
   ]
 }

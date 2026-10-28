@@ -1,0 +1,700 @@
+{
+  "purpose": "전국 폐차장 네이버 플레이스 검색 대조용 후보 명단. searchCandidate는 협회 공개명칭에서 법인 표기 등을 생략한 검색 편의용 문자열이며, 네이버 플레이스 실제 상호가 아닙니다.",
+  "checkedAt": "2026-10-28",
+  "publicationPolicy": "이 파일의 업체명은 웹사이트의 탁송 키워드나 개별 업체 소개에 절대 자동 노출하지 않습니다. 플레이스 링크·표기명·주소를 대조하고 verified-scrapyards.json으로 승격한 경우만 공개합니다.",
+  "coverage": "협회 14개 광역 지역의 검색 첫 페이지 일부; 전국 업체 전수 명단이 아님. 광주·전남·세종은 아직 조사 대상.",
+  "candidates": [
+    {
+      "address": "경기 김포시 대곶면 율생중앙로205번길 3",
+      "region": "경기",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=01",
+      "searchCandidate": "새론에이알씨",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경기 부천시 오정로 106",
+      "region": "경기",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=01",
+      "searchCandidate": "경남산업 주식회사",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경기도 김포시 월곶면 고정로 79-52",
+      "region": "경기",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=01",
+      "searchCandidate": "월드리싸이클링",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경기도 동두천시 삼육사로 536-27",
+      "region": "경기",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=01",
+      "searchCandidate": "동두천폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경기도 양주시 광적면 광적로392번길 76",
+      "region": "경기",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=01",
+      "searchCandidate": "태광폐차산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "서울 금천구 두산로 23 (독산동)",
+      "region": "서울",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=02",
+      "searchCandidate": "인천폐차사업소서울영업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "서울특별시 성동구 성수이로22길 54",
+      "region": "서울",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=02",
+      "searchCandidate": "제일종합산업 서울영업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "서울특별시 성동구 상원길 73-1",
+      "region": "서울",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=02",
+      "searchCandidate": "문막원주해체산업 성동영업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "서울 도봉구 덕릉로 63길,109(창2동)",
+      "region": "서울",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=02",
+      "searchCandidate": "중앙RDC 서울영업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "서울특별시 동대문구 장안벚꽃로 9 (장안동)",
+      "region": "서울",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=02",
+      "searchCandidate": "신흥에이알 영업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "강원특별자치도 정선군 정선읍 망하길 73-19",
+      "region": "강원",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=03",
+      "searchCandidate": "정선폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "강원 횡성군 횡성읍 조곡리 13-1",
+      "region": "강원",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=03",
+      "searchCandidate": "횡성자동차폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "강원도 강릉시 강변로534번길 84",
+      "region": "강원",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=03",
+      "searchCandidate": "강릉자동차폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "강원도 원주시 흥업면 수루니길 113",
+      "region": "강원",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=03",
+      "searchCandidate": "리카온",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "강원도 원주시 행가리1길 86",
+      "region": "강원",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=03",
+      "searchCandidate": "남원주폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "전북특별자치도 김제시 콩쥐팥쥐로 131-29",
+      "region": "전북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=05",
+      "searchCandidate": "중앙종합폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "전북특별자치도 김제시 공덕면 청공로 772",
+      "region": "전북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=05",
+      "searchCandidate": "남도폐차산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "전북특별자치도 김제시 서흥공단2길 103",
+      "region": "전북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=05",
+      "searchCandidate": "김제폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "전북특별자치도 남원시 대산면 갈랭이길 1",
+      "region": "전북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=05",
+      "searchCandidate": "성신폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "전북특별자치도 김제시 콩쥐팥쥐로 355-5",
+      "region": "전북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=05",
+      "searchCandidate": "신일폐차산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상북도 상주시 삼백로 406",
+      "region": "경북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=06",
+      "searchCandidate": "상주자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상북도 칠곡군 가산면 송신로 567",
+      "region": "경북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=06",
+      "searchCandidate": "장천종합폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상북도 포항시 남구 장기면 장기로 1152",
+      "region": "경북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=06",
+      "searchCandidate": "태경자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상북도 성주군 선남면 도성1길 87",
+      "region": "경북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=06",
+      "searchCandidate": "성주종합자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경북 포항시 북구 흥해읍 용금길 276",
+      "region": "경북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=06",
+      "searchCandidate": "대원오토D&R",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상남도 김해시 진영읍 본산로219번길 97",
+      "region": "경남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=07",
+      "searchCandidate": "대명자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상남도 사천시 축동면 화당산로 198-19",
+      "region": "경남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=07",
+      "searchCandidate": "사천폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상남도 양산시 산막공단남4길 8",
+      "region": "경남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=07",
+      "searchCandidate": "양산부곡자동차해체재활용업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상남도 김해시 김해대로2567번길 38-28",
+      "region": "경남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=07",
+      "searchCandidate": "김해자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "경상남도 창원시 성산구 월림로 25",
+      "region": "경남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=07",
+      "searchCandidate": "창원자동차해체재활용",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청북도 옥천군 군북면 옥천로 933",
+      "region": "충북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=08",
+      "searchCandidate": "삼광종합폐차",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청북도 충주시 대소원면 산정독정길 143",
+      "region": "충북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=08",
+      "searchCandidate": "알비오토폐차장(충주지점)",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청북도 제천시 청풍호로19안길 73",
+      "region": "충북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=08",
+      "searchCandidate": "제천종합자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충북 제천시 고암동 212-1번지",
+      "region": "충북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=08",
+      "searchCandidate": "화신폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청북도 진천군 이월면 장수로 272",
+      "region": "충북",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=08",
+      "searchCandidate": "유파트폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청남도 예산군 예산읍 충서로 1140",
+      "region": "충남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=09",
+      "searchCandidate": "예산제일자동차해체재활용업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청남도 태안군 태안읍 서해로 2006",
+      "region": "충남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=09",
+      "searchCandidate": "태안폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청남도 보령시 원뚝길 115",
+      "region": "충남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=09",
+      "searchCandidate": "대천폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청남도 공주시 의당면 의당로 285",
+      "region": "충남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=09",
+      "searchCandidate": "논산종합폐차장 공주영업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "충청남도 서산시 수석산업로 125",
+      "region": "충남",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=09",
+      "searchCandidate": "태영폐차산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "인천광역시 검단구 봉수대로 1481",
+      "region": "인천",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=11",
+      "searchCandidate": "미래인더스폐차사업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "인천광역시 검단구 원당대로117번길 55",
+      "region": "인천",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=11",
+      "searchCandidate": "도나폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "인천광역시 서해구 중봉대로198번길 17",
+      "region": "인천",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=11",
+      "searchCandidate": "한신폐차",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "인천광역시 검단구 원당대로301번길 46",
+      "region": "인천",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=11",
+      "searchCandidate": "서인천폐차사업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대전광역시 대덕구 대화로 91",
+      "region": "대전",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=12",
+      "searchCandidate": "대덕폐차사업소",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대전광역시 대덕구 방두말4길 43",
+      "region": "대전",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=12",
+      "searchCandidate": "영남폐차산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대전광역시 대덕구 대화로52번길 171",
+      "region": "대전",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=12",
+      "searchCandidate": "삼성폐차",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대전광역시 대덕구 옛신탄진로 246",
+      "region": "대전",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=12",
+      "searchCandidate": "대전종합폐차",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대전광역시 대덕구 아리랑로55번길 151",
+      "region": "대전",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=12",
+      "searchCandidate": "금강폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대구광역시 달성군 하빈면 달구벌대로 8길 132-20",
+      "region": "대구",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=13",
+      "searchCandidate": "달성자동차재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대구 동구 용계동 773-1",
+      "region": "대구",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=13",
+      "searchCandidate": "삼성자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대구광역시 달서구 성서동로 222",
+      "region": "대구",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=13",
+      "searchCandidate": "삼양자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대구광역시 서구 가르뱅이로10길 20",
+      "region": "대구",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=13",
+      "searchCandidate": "광역자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "대구광역시 군위군 군위읍 경북대로 3367",
+      "region": "대구",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=13",
+      "searchCandidate": "영남자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "울산광역시 북구 원연암2길 41",
+      "region": "울산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=14",
+      "searchCandidate": "울산종합폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "울산광역시 남구 산안로 2",
+      "region": "울산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=14",
+      "searchCandidate": "홍익폐차공업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "울산광역시 남구 산업로 148-17",
+      "region": "울산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=14",
+      "searchCandidate": "현대종합폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "울산광역시 울주군 청량면 온산로 740-15",
+      "region": "울산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=14",
+      "searchCandidate": "덕하폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "울산광역시 남구 장생포로19번길 21-11",
+      "region": "울산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=14",
+      "searchCandidate": "삼정폐차공업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "부산광역시 사상구 낙동대로881번길 27-14",
+      "region": "부산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=15",
+      "searchCandidate": "세왕종합폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "부산광역시 금정구 개좌로 227",
+      "region": "부산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=15",
+      "searchCandidate": "동부폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "부산광역시 사상구 감전천로 53",
+      "region": "부산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=15",
+      "searchCandidate": "세기종합폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "부산광역시 사상구 대동로209번길 56 (학장동)",
+      "region": "부산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=15",
+      "searchCandidate": "중앙자동차해체재활용업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "부산광역시 기장군 정관읍 농공길 13-106",
+      "region": "부산",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=15",
+      "searchCandidate": "태창종합폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "제주특별자치도 제주시 선반로2길 5-4",
+      "region": "제주",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=16",
+      "searchCandidate": "제주화북폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "제주특별자치도 제주시 선반로14길 10",
+      "region": "제주",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=16",
+      "searchCandidate": "하나로폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "제주특별자치도 제주시 조천읍 종인내길 285",
+      "region": "제주",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=16",
+      "searchCandidate": "전국자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "제주 제주시 화북1동 2212-1",
+      "region": "제주",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=16",
+      "searchCandidate": "한라폐차장",
+      "sourceCategory": "association_registry_lookup"
+    },
+    {
+      "address": "제주특별자치도 제주시 화남로 27",
+      "region": "제주",
+      "placeStatus": "pending",
+      "placeName": null,
+      "placeUrl": null,
+      "registrySource": "https://www.kadra.or.kr/kadra/contents/sub01/01_01.html?srhCate=16",
+      "searchCandidate": "광주자동차해체재활용산업",
+      "sourceCategory": "association_registry_lookup"
+    }
+  ],
+  "publicExposure": false,
+  "sourceLimitations": "협회 공개 검색 화면 첫 페이지만 일부 수집한 검증 대기 목록으로, 전체 전국 등록업체 명단이나 최신 플레이스 목록을 뜻하지 않습니다. 영업소 항목도 포함될 수 있습니다."
+}

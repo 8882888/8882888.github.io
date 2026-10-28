@@ -50,8 +50,27 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),'main production canonical for '+route);
    assert.ok(!html.includes('up.railway.app'),'old auxiliary-host canonical must not persist '+route);
   }
+  // Place names may be published only with a traceable source; registry leads stay private.
+  const verifiedShops=require('../data/verified-scrapyards.json').shops;
+  const researchQueue=require('../data/scrapyard-place-audit-queue.json').candidates;
+  assert.equal(verifiedShops.length,2,'two separately cross-checked Naver Place-linked scrapyards');
+  assert.equal(researchQueue.length,69,'69 nationwide association leads awaiting individual Place checks');
+  assert.equal(new Set(verifiedShops.map(x=>x.placeUrl.split('/place/')[1]?.split('/')[0])).size,verifiedShops.length,'unique Naver Place IDs');
+  assert.ok(verifiedShops.every(x=>x.placeVerified===true&&x.verificationMethod&&x.verificationSourceUrl&&x.regionFullNames.length),'every published place has evidence and precise area');
+  assert.ok(researchQueue.every(x=>x.placeStatus==='pending'&&x.placeUrl===null&&x.placeName===null),'unverified candidates must never be published');
+  const gyeonggiScrap=await (await get('/taksong/gyeonggi/')).text();
+  assert.ok(gyeonggiScrap.includes('굿바이카탁송'),'verified Yangju business shown in Gyeonggi transport');
+  assert.ok(gyeonggiScrap.includes('36326967/home'),'actual linked Naver Place ID shown');
+  const yangjuScrap=await (await get('/taksong/gyeonggi/yangju-si/')).text();
+  assert.ok(yangjuScrap.includes('굿바이카탁송'),'matching city receives verified shop keyword');
+  assert.ok(!busanTaksong.includes('굿바이카탁송'),'unrelated region must not inherit verified shop name');
+  assert.ok(!(await (await get('/daeri/gyeonggi/')).text()).includes('굿바이카탁송'),'scrapyard intent must not leak to driver service');
+  assert.ok(!gyeonggiScrap.includes('정선폐차장탁송'),'unverified association search leads never render on regional pages');
   const scrapLanding=await (await get('/business/scrapyard/')).text();
   assert.ok(scrapLanding.includes('인천폐차사업소탁송'),'scrapyard hub includes verified name');
+  assert.ok(scrapLanding.includes('굿바이카탁송'),'scrapyard hub includes second Naver Place-linked name');
+  assert.ok(scrapLanding.includes('36326967/home'),'scrapyard hub links independent Naver Place ID');
+  assert.ok(!scrapLanding.includes('삼광종합폐차탁송'),'pending candidates never leak to public hub');
   assert.ok(scrapLanding.includes('주행 가능한 차량'),'scrapyard hub distinguishes drivable vehicle transport');
   // Shared layout must preserve exactly one page heading with and without a body H1.
   for(const route of ['/taksongdaeri/','/reviews/','/recruit/taksong/','/taksong/busan/']){
