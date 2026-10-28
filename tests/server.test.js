@@ -396,6 +396,18 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
   // Homepage statistics show KST today/yesterday visits and phone click provenance.
   const statsHome=await (await get('/')).text();
+  assert.ok(statsHome.includes('전화클릭 전환 <strong id="phone-click-number"'),
+    'conversion counter label must display next to the representative phone');
+  assert.ok(statsHome.includes('id="priority-verified-routes"')&&
+    statsHome.includes('/routes/taksong/area-494/area-1174/')&&
+    statsHome.includes('/routes/taksong/area-1/area-494/')&&
+    statsHome.includes('/routes/taksong/area-532/area-765/')&&
+    statsHome.includes('/routes/reviewed/'),
+    'homepage must link natural-language priority route pages and real ride evidence');
+  const noCacheHome=await get('/');
+  assert.match(noCacheHome.headers.get('cache-control')||'',/no-cache/,
+    'production HTML should revalidate after phone source UI deployments');
+
   // Top navigation -> functional calculator -> vehicle imagery, on every viewport.
   const statsNavPos=statsHome.indexOf('</nav>');
   const statsFarePos=statsHome.indexOf('id="top-fare-calculator"');
@@ -433,17 +445,19 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
                    'phone-click-number','phone-source-list']){
     assert.ok(statsHome.includes('id="'+id+'"'),'home header statistic missing '+id);
   }
-  assert.equal(statsHome.split('src="/assets/traffic-analytics.js"').length-1,1,
-    'no duplicate click handlers on homepage');
+  assert.equal(statsHome.split('src="/assets/traffic-analytics.js?v=20261028-conversion"').length-1,1,
+    'homepage loads new versioned click tracking exactly once');
   const statRoute=await (await get('/taksong/')).text();
-  assert.equal((statRoute.match(/src="\/assets\/traffic-analytics\.js"/g)||[]).length,1,
-    'dynamic transport pages track calls too');
+  assert.equal(statRoute.split('src="/assets/traffic-analytics.js?v=20261028-conversion"').length-1,1,
+    'dynamic transport pages track clicks with current script without duplicates');
   const statOther=await (await get('/service/golf/')).text();
   assert.ok(statOther.includes('traffic-analytics.js'),'static HTML pages track calls too');
   const tracker=await get('/assets/traffic-analytics.js');
   assert.equal(tracker.status,200);
   const trackerBody=await tracker.text();
   assert.ok(trackerBody.includes("site_phone_event")&&trackerBody.includes("site_traffic_dashboard"));
+  assert.ok(trackerBody.includes('acquisition();')&&trackerBody.includes('유입 경로 미확인'),
+    'record first landing source and display existing unattributed conversions');
   assert.ok(trackerBody.includes("el('traffic-call-trigger')") && !trackerBody.includes("traffic-today-trigger"),
     'click-source visibility is controlled only by the phone-click count');
   assert.ok(trackerBody.includes('p_page:location.pathname')&&trackerBody.includes('p_source:acquisition()'));

@@ -723,16 +723,19 @@ function applySeo(html,route){
 }
 
 function respond(res,status,body,type='text/html; charset=utf-8'){
- // Public phone and visit statistics must track calls from ALL HTML pages,
- // not just the static homepage. Never inject scripts into JSON/assets/XML.
- if(status===200&&type.startsWith('text/html;')){
+ // Public conversion tracking works on every Cloudtype HTML route, not just
+ // the homepage. Force HTML revalidation when the production version changes.
+ const isHtml=status===200&&type.startsWith('text/html;');
+ if(isHtml){
   let html=Buffer.isBuffer(body)?body.toString('utf8'):String(body);
-  if(html.includes('</body>')&&!html.includes('src="/assets/traffic-analytics.js"')){
-   html=html.replace('</body>','<script src="/assets/traffic-analytics.js" defer></script></body>');
+  if(html.includes('</body>')&&!/src=["']\/assets\/traffic-analytics\.js(?:\?[^"']*)?["']/.test(html)){
+   html=html.replace('</body>','<script src="/assets/traffic-analytics.js?v=20261028-conversion" defer></script></body>');
   }
   body=html;
  }
- res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});
+ const headers={'content-type':type,'x-content-type-options':'nosniff'};
+ if(isHtml)headers['cache-control']='no-cache, max-age=0, must-revalidate';
+ res.writeHead(status,headers);
  res.end(body);
 }
 let mainCardPngPromise, faviconPngPromise;

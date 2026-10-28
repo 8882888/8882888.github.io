@@ -53,16 +53,29 @@ jobs:
                       page=response.read().decode('utf-8')
                   with urllib.request.urlopen('https://jeongukdaeri.kr/taksongdaeri/',timeout=10) as response:
                       guide=response.read().decode('utf-8')
-                  with urllib.request.urlopen('https://jeongukdaeri.kr/',timeout=10) as response:
+                  with urllib.request.urlopen(urllib.request.Request(
+                      'https://jeongukdaeri.kr/?release-check='+os.environ['DEPLOYED_COMMIT'],
+                      headers={'Cache-Control':'no-cache'}),timeout=10) as response:
                       home=response.read().decode('utf-8')
+                  with urllib.request.urlopen(urllib.request.Request(
+                      'https://jeongukdaeri.kr/assets/traffic-analytics.js?v='+os.environ['DEPLOYED_COMMIT'],
+                      headers={'Cache-Control':'no-cache'}),timeout=10) as response:
+                      tracker=response.read().decode('utf-8')
                   with urllib.request.urlopen('https://jeongukdaeri.kr/favicon.ico',timeout=10) as response:
                       icon_ok=response.status==200 and response.headers.get('Content-Type','').startswith('image/')
-                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok:
+                  stats_ok=('전화클릭 전환' in home
+                    and 'id="traffic-call-trigger"' in home
+                    and 'id="phone-source-list"' in home
+                    and 'id="top-fare-calculator"' in home
+                    and '/routes/taksong/area-494/area-1174/' in home
+                    and '20261028-conversion' in home
+                    and '유입 경로 미확인' in tracker and 'acquisition();' in tracker)
+                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok:
                       print('PASS: live regional service revision and hierarchy verified')
                       break
               except Exception:
                   pass
               if attempt==23:
-                  raise SystemExit('Deployment API accepted the request, but live revision verification did not pass; do not report production rollout as complete.')
+                  raise SystemExit('Deployment accepted, but live HTML/phone-click conversion JS/SEO links did NOT match the commit; investigate production routing/cache before claiming success.')
               time.sleep(5)
           PYVERIFY

@@ -8,6 +8,9 @@ on:
       - 'data/regions.json'
       - 'data/ride-history.json'
       - 'tests/server.test.js'
+      - 'tests/traffic-analytics.test.js'
+      - 'assets/traffic-analytics.js'
+      - 'index.html'
       - '.github/workflows/verify-dynamic-server.yml'
   workflow_dispatch:
 jobs:
@@ -23,5 +26,7 @@ jobs:
         run: node --check server.js
       - name: Install production dependencies
         run: npm install --omit=dev --no-audit --no-fund
+      - name: Verify phone conversion and referral expansion without real clicks
+        run: node tests/traffic-analytics.test.js
       - name: Run real HTTP smoke tests
         run: node tests/server.test.js
