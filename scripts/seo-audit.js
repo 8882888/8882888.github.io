@@ -47,6 +47,7 @@ async function inspect(route){
     if(!html.includes('id="priority-region-guide"'))issues.push('Missing priority region guide');
     if(!html.includes(focus.topic))issues.push('Missing distinct priority topic');
     if(!html.includes(focus.detail))issues.push('Missing distinct priority details');
+    if(focus.region.split(/\s+/).length===1&&!String(desc[0]||'').includes(focus.detail))issues.push('Province meta description lacks service-specific priority details');
     if(!html.includes('href="tel:18114294"'))issues.push('Missing consultation phone link');
    }
 
