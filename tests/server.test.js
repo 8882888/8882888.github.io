@@ -192,6 +192,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=daeri"'));
   const recordHtml=await (await get('/reviews/history/excel-0001/')).text();
   assert.ok(recordHtml.includes('class="service-journey"'));
+  assert.ok(recordHtml.includes('2026-10-16'));
+  assert.ok(recordHtml.includes('70,000원'));
+  assert.ok(recordHtml.includes('2배 이상의 금액'));
+  assert.ok(recordHtml.includes('100% 배차·운행완료'));
+  assert.ok(recordHtml.includes('자료에 예약 여부') ,'do not invent booking status');
+  const gyeongsan=await (await get('/taksong/gyeongbuk/gyeongsan-si/')).text();
+  assert.ok(gyeongsan.includes('실제 완료 운행내역에서 작성한 후기'));
+  assert.ok(gyeongsan.includes('excel-0001/'),'region-specific reviewed historical dispatch linked');
+
   // Regional review links must point to published records with real IDs.
   let regionalReviewCount=0;
   for(const route of ['/daeri/incheon/','/daeri/busan/','/daeri/seoul/','/taksong/busan/']){
