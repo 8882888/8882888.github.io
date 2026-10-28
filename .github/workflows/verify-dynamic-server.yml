@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'server.js'
+      - 'lib/**/*.js'
       - 'package.json'
       - 'data/regions.json'
       - 'data/ride-history.json'

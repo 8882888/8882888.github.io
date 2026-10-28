@@ -30,13 +30,30 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.equal(route.status,200);
    const html=await route.text();
    assert.ok(html.includes('대구에서 서울'));
-   assert.ok(html.includes('auto=1'));
+   assert.ok(html.includes('/routes/'+kind+'/'),'search results now link to indexable route pages');
    assert.ok(html.includes('page=2'));
    const direct=await (await get('/route-search/?from='+encodeURIComponent('부산')+'&to='+encodeURIComponent('인천')+'&service='+kind)).text();
    assert.ok(direct.includes('부산에서 인천'));
    assert.ok(direct.includes('부산인천'));
    const second=await (await get('/route-search/?from='+encodeURIComponent('대구')+'&page=2&service='+kind)).text();
    assert.notEqual(html,second);
+  }
+  const routeArea=n=>regions.find(r=>r.full_name===n).slug;
+  const busanId=routeArea('부산광역시'),incheonId=routeArea('인천광역시'),daeguId=routeArea('대구광역시');
+  for(const kind of ['daeri','taksong']){
+   const url='/routes/'+kind+'/'+busanId+'/'+incheonId+'/';
+   const response=await get(url),html=await response.text();
+   assert.equal(response.status,200);assert.ok(!/noindex/.test(response.headers.get('x-robots-tag')||''));
+   assert.ok(html.includes('부산에서 인천'));assert.ok(html.includes('https://example.com'+url));
+   assert.ok(!html.includes('content="noindex'));assert.ok(html.includes('auto=1'));
+   assert.ok(html.includes('부산인천'+(kind==='daeri'?'대리운전':'탁송')),'joined route keywords must be rendered');
+   assert.equal((await get('/routes/'+kind+'/'+busanId+'/'+busanId+'/')).status,404);
+   const map=await (await get('/sitemap-route-'+kind+'.xml')).text();
+   const urls=[...map.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
+   assert.ok(urls.length<50000&&urls.length>41000);assert.equal(new Set(urls).size,urls.length);
+   assert.ok(urls.includes('https://example.com'+url));
+   const list=await (await get('/routes/'+kind+'/'+daeguId+'/?page=2')).text();assert.ok(list.includes('2 /'));assert.ok(list.includes('?page=2'));
+   assert.ok(list.includes('content="noindex,nofollow"'),'massive route directories must not consume crawler budget');
   }
   // Nationwide local-intent SEO must distinguish transport and designated-driver services.
   const busanTaksong=await (await get('/taksong/busan/')).text();
