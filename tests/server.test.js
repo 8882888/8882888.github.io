@@ -456,7 +456,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(tracker.status,200);
   const trackerBody=await tracker.text();
   assert.ok(trackerBody.includes("site_phone_event")&&trackerBody.includes("site_traffic_dashboard"));
-  assert.ok(trackerBody.includes('acquisition();')&&trackerBody.includes('기존 클릭'),
+  assert.ok(trackerBody.includes('acquisition();')&&trackerBody.includes('유입 경로 미확인'),
     'record first landing source and display existing unattributed conversions');
   assert.ok(trackerBody.includes("el('traffic-call-trigger')") && !trackerBody.includes("traffic-today-trigger"),
     'click-source visibility is controlled only by the phone-click count');
