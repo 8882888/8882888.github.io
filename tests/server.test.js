@@ -87,6 +87,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const airportDirectory=await (await get('/routes/'+kind+'/airport-gimhae/')).text();
    assert.ok(airportDirectory.includes('noindex,nofollow'));
   }
+  // Missing region-specific history must show only verified nationwide reviews, never a fabricated local ride.
+  const localityWithoutRecord=await get('/taksong/busan/gijang-gun/gijang-eup/dongbu-ri/');
+  assert.equal(localityWithoutRecord.status,200,'rural locality must resolve');
+  const localityHtml=await localityWithoutRecord.text();
+  assert.ok(localityHtml.includes('동부리 출발·도착 운행 참고 후기'));
+  assert.ok(localityHtml.includes('다른 지역에서 확인된 탁송 운행후기'));
+  assert.ok(localityHtml.includes('이 지역에서 운행했다는 뜻이 아니며'));
+  assert.ok(/href="\/reviews\/[a-f0-9]{16}\//.test(localityHtml),'fallback must link to verified published reviews');
+  assert.ok(!localityHtml.includes('이 지역의 확인된 완료 운행 기록은 아직 없습니다. 확인된 사례가 등록되면'));
   // Nationwide local-intent SEO must distinguish transport and designated-driver services.
   const busanTaksong=await (await get('/taksong/busan/')).text();
   assert.ok(busanTaksong.includes('공업사탁송'),'repair-shop transport intent');
