@@ -485,6 +485,33 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const root=await get('/');assert.equal(root.status,200);
   const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');assert.equal(daeriMap.status,200);assert.equal(((await daeriMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);assert.equal(((await taksongMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');
   const search=await get('/region/?q='+encodeURIComponent('가평읍'));assert.equal(search.status,200);assert.ok((await search.text()).includes('가평읍'));
+  // The sixteen user-confirmed Excel review drafts use Korean service labels in their source.
+  // They must be normalized before the public verified-ride filter, not silently discarded.
+  const drafts=[
+   ...require('../data/daeri-review-drafts-202610.json').items,
+   ...require('../data/taksong-review-drafts-202610.json').items
+  ].filter(x=>x.publication_status==='사용자 확인 운행완료');
+  assert.equal(drafts.length,16,'only the sixteen user-confirmed Excel draft records are publicly eligible');
+  const verifiedExamples=[
+   {date:'2026-10-19',service:'taksong',departure:'백담사 탐방지원센터',destination:'설악산 소공원',region:'/taksong/gangwon/'},
+   {date:'2026-10-19',service:'daeri',departure:'창원시 월영동',destination:'부산 부산진구',region:'/daeri/busan/'}
+  ];
+  for(const example of verifiedExamples){
+   const matched=drafts.find(x=>x.date===example.date&&x.departure===example.departure&&x.destination===example.destination);
+   assert.ok(matched,'expected user-confirmed source record exists');
+   const id=require('node:crypto').createHash('sha256').update([example.date,example.service,example.departure,example.destination].join('|')).digest('hex').slice(0,16);
+   const published='/reviews/'+id+'/';
+   const detail=await get(published);
+   assert.equal(detail.status,200,'user-confirmed record is published as verified review: '+published);
+   const detailHtml=await detail.text();
+   assert.ok(detailHtml.includes(example.departure)&&detailHtml.includes(example.destination),'published record retains original place evidence');
+   assert.ok(detailHtml.includes(matched.fare),'published record retains actual historic fare');
+   const regionHtml=await (await get(example.region)).text();
+   assert.ok(regionHtml.includes(published),'related priority page directly links to the verified ride');
+   assert.ok(regionHtml.includes(example.departure)&&regionHtml.includes(example.destination),'region page shows concrete verified origin and destination');
+  }
+  const noInferredDaegu=await (await get('/taksong/daegu/')).text();
+  assert.ok(!noInferredDaegu.includes('대명동 → 부산서구 토성동 탁송 운행완료'),'do not infer Daegu from unqualified neighborhood name');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();

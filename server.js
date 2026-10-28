@@ -51,7 +51,7 @@ for(const r of regions){const parentPath=r.parent_slug?pathBySlug.get(r.parent_s
 function servicePath(r,kind){return '/'+kind+'/'+pathBySlug.get(r.slug)+'/'}
 const rides=load('data/ride-history.json');
 const excelReviewFiles=['data/daeri-review-drafts-202610.json','data/taksong-review-drafts-202610.json'];
-const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);return (doc.items||[]).filter(x=>x.publication_status==='사용자 확인 운행완료').map(x=>({...x,service:doc.service,status:'completed',verified:true,verification_source:'user-confirmed Excel'}))}catch{return []}});
+const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);const service=({'대리운전':'daeri','탁송':'taksong','daeri':'daeri','taksong':'taksong'})[String(doc.service||'').trim()];if(!service)return [];return (doc.items||[]).filter(x=>x.publication_status==='사용자 확인 운행완료').map(x=>({...x,service,status:'completed',verified:true,verification_source:'user-confirmed Excel'}))}catch{return []}});
 const reviewedRides=load('data/public-reviewed-rides-202610.json');
 const verifiedRides=[...reviewedRides,...(Array.isArray(rides)?rides.filter(x=>x.verified===true&&['completed','종료','운행종료'].includes(String(x.status||'').trim())):[]),...excelCompleted];
 const publicRides=verifiedRides.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))&&String(x.departure||'').trim()&&String(x.destination||'').trim()&&['taksong','daeri'].includes(x.service)).map(x=>({...x,publicId:require('node:crypto').createHash('sha256').update([x.date,x.service,x.departure,x.destination].join('|')).digest('hex').slice(0,16)}));
@@ -112,9 +112,16 @@ function ridePage(x){
  return layout(title,desc,body+serviceJourneyLinks(x.service),base+rideUrl(x),base+'/assets/smart24-business-card-inline-v2.png');
 }
 function ridesIndex(){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');return layout('실제 완료 운행 기록','확인된 전국 탁송·대리운전 완료 운행 사례', '<section><h1>실제 완료 운행 기록</h1><p>확인된 운행만 공개하며 미확인 기록은 자동 발행하지 않습니다.</p><ul>'+publicRides.slice().reverse().slice(0,100).map(x=>'<li><a href="'+rideUrl(x)+'">'+esc(x.date+' '+(x.service==='taksong'?'탁송':'대리운전')+' 완료 운행'+(x.fare?' · 당시 요금 '+x.fare:''))+'</a></li>').join('')+'</ul></section>'+serviceJourneyLinks('daeri')+serviceJourneyLinks('taksong'),base+'/reviews/');}
+const verifiedProvinceLocalityTokens={
+ '강원특별자치도':['백담사 탐방지원센터','설악산 소공원','정선읍'],
+ '부산광역시':['해운대중동']
+};
 function tripMatchesRegion(x,r){
  const raw=String(x.departure||'')+' '+String(x.destination||'');
  const candidates=[r.full_name,r.name].filter(Boolean);
+ // Map only explicitly named, geographically unambiguous landmarks in separately user-confirmed/public ride records.
+ // Do not infer a city from a generic neighborhood name or raw Excel note.
+ if(r.level==='시도'&&(verifiedProvinceLocalityTokens[r.full_name]||[]).some(x=>raw.includes(x)))return true;
  if(r.level==='동'||r.level==='리')return candidates.some(v=>raw.includes(v));
  return candidates.some(v=>raw.includes(v)) || (r.level==='시도' && ['서울특별시','부산광역시','인천광역시','대구광역시','광주광역시','대전광역시','울산광역시','세종특별자치시'].includes(r.name) && raw.includes(shortPlace(r.name)));
 }
