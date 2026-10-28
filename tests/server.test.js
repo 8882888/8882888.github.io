@@ -406,38 +406,35 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((statsHome.match(/class="quick-booking"/g)||[]).length,1,'fare form must not be duplicated');
   assert.ok(statsHome.includes('name="from"')&&statsHome.includes('name="to"')&&statsHome.includes('action="/fare/"'),
     'top fare calculator still submits the real fare lookup');
-  assert.ok(statsHome.includes('background:transparent;color:#fff;text-align:right') &&
-    statsHome.includes('.traffic-label-compact{display:inline}'),
-    'plain white-text counters show compact mobile labels without a box');
+  assert.ok(statsHome.includes('background:transparent;color:#fff;text-align:right'),
+    'visits are compact plain white text without a boxed dashboard');
   assert.ok(statsHome.includes('id="traffic-sources-detail" hidden') &&
-    statsHome.includes('id="traffic-call-trigger"') &&
-    !statsHome.includes('id="traffic-today-trigger"'),
-    'phone click source details stay hidden until the phone clicks counter is pressed');
-  const callTriggerAt=statsHome.indexOf('id="traffic-call-trigger"');
-  const callTriggerEnd=statsHome.indexOf('</button>',callTriggerAt);
-  assert.ok(callTriggerAt>=0 && callTriggerEnd>callTriggerAt &&
-    statsHome.slice(callTriggerAt,callTriggerEnd).includes('id="phone-click-number"'),
-    'the phone-click count, not visitor count, is the interactive trigger');
-  const visitCounterAt=statsHome.indexOf('id="today-visit-number"');
-  const visitLabelStart=statsHome.lastIndexOf('<span class="traffic-stat">',visitCounterAt);
-  assert.ok(visitLabelStart>=0 && visitLabelStart<visitCounterAt &&
-    !statsHome.slice(visitLabelStart,visitCounterAt).includes('<button'),
-    'visitor count is a regular non-clickable label');
-  assert.ok(!statsHome.includes('traffic-stats-grid') &&
-    !statsHome.includes('background:#071c35;color:#fff'),
-    'remove bulky previous counters panel styling');
+    statsHome.includes('id="traffic-call-trigger"'),
+    'source details remain hidden until the count beside the phone is clicked');
+  const headerNumberAt=statsHome.indexOf('class="header-phone-line"');
+  const phoneNumberEnd=statsHome.indexOf('</a>',headerNumberAt);
+  const phoneClickAt=statsHome.indexOf('id="traffic-call-trigger"');
+  const phoneClickEnd=statsHome.indexOf('</button>',phoneClickAt);
+  assert.ok(headerNumberAt>=0&&phoneNumberEnd>headerNumberAt&&
+    phoneClickAt>phoneNumberEnd&&phoneClickAt<statsHome.indexOf('</div>',headerNumberAt),
+    'phone click count is immediately beside the representative number');
+  assert.ok(phoneClickEnd>phoneClickAt &&
+    statsHome.slice(phoneClickAt,phoneClickEnd).includes('id="phone-click-number"'),
+    'count beside telephone opens the source details');
   const headerPhonePos=statsHome.indexOf('class="header-call"');
   const dashboardPos=statsHome.indexOf('id="traffic-stats-panel"');
   assert.ok(headerPhonePos>=0&&headerPhonePos<dashboardPos&&dashboardPos<statsNavPos,
-    'dashboard should stay immediately below top-right phone');
-
-  for(const id of ['traffic-stats-panel','today-visit-number','yesterday-visit-number',
-                   'phone-click-number','total-phone-click-number','phone-source-list']){
-    assert.ok(statsHome.includes('id="'+id+'"'),'home header dashboard missing '+id);
+    'small visit counts remain below the top-right phone');
+  assert.ok(!statsHome.includes('id="yesterday-visit-number"')&&
+    !statsHome.includes('id="total-phone-click-number"')&&
+    !statsHome.includes('traffic-stats-grid'),
+    'remove yesterday and duplicate phone count and boxed dashboard');
+  for(const id of ['traffic-stats-panel','today-visit-number','total-visit-number',
+                   'phone-click-number','phone-source-list']){
+    assert.ok(statsHome.includes('id="'+id+'"'),'home header statistic missing '+id);
   }
-  assert.equal((statsHome.match(/src="\/assets\/traffic-analytics\.js"/g)||[]).length,1,
-    'no duplicate site click handlers on homepage');
-  assert.ok(!statsHome.includes('id="total-visit-number"'),'remove obsolete visit metric');
+  assert.equal(statsHome.split('src="/assets/traffic-analytics.js"').length-1,1,
+    'no duplicate click handlers on homepage');
   const statRoute=await (await get('/taksong/')).text();
   assert.equal((statRoute.match(/src="\/assets\/traffic-analytics\.js"/g)||[]).length,1,
     'dynamic transport pages track calls too');
