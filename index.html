@@ -218,6 +218,20 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 @media(prefers-reduced-motion:reduce){.smart24-graphic *{animation:none!important}}
 
 .smart24-service-visuals{max-width:1120px;margin:24px auto 34px;padding:0 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.smart24-service-visual{display:block;overflow:hidden;border-radius:22px;background:#fff;box-shadow:0 12px 30px #0c519a20;border:1px solid #d6e8fa;text-decoration:none!important;transition:transform .2s,box-shadow .2s}.smart24-service-visual:hover{transform:translateY(-4px);box-shadow:0 20px 38px #0c519a33}.smart24-service-visual img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}.smart24-service-visual span{display:flex;align-items:center;justify-content:space-between;padding:17px 21px;color:#064c9f!important;font-weight:900;font-size:18px}.smart24-service-visual b{font-size:24px}@media(max-width:650px){.smart24-service-visuals{grid-template-columns:1fr;gap:14px;margin:14px auto 24px}.smart24-service-visual span{font-size:16px;padding:14px 16px}}
+/* Header-right visitor / phone-click dashboard */
+.traffic-stats{width:min(340px,100%);max-width:100%;background:#19395d;border:1px solid #4c6486;border-radius:12px;padding:10px 12px;box-shadow:0 3px 13px #071a3066;color:#fff;text-align:left;line-height:1.35}
+.traffic-stats-title{font-size:13px;font-weight:800;color:#ffe680;margin:0 0 7px}
+.traffic-stats-title small{font-size:11px;color:#d6e4f5;font-weight:500}
+.traffic-stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.traffic-stats-grid>div{font-size:11px;border:1px solid #3a5776;border-radius:7px;background:#102a48;padding:6px 8px;min-width:0}
+.traffic-stats-grid strong{display:block;font-size:17px;line-height:1.4;color:#ffe680;font-weight:800;white-space:nowrap}
+.traffic-sources{margin-top:7px;border-top:1px solid #56718f;padding-top:6px}
+.traffic-sources summary{font-size:12px;cursor:pointer;font-weight:700}
+.traffic-sources ol{padding-left:18px;margin:5px 0 2px;max-height:110px;overflow-y:auto;overflow-wrap:anywhere}
+.traffic-sources li{font-size:11px;color:#e8f1fa;line-height:1.5;margin:3px 0}
+.traffic-stats-note{display:block;font-size:10px;color:#bfd1e3;margin-top:7px;line-height:1.4}
+@media(min-width:851px){.header-phone-actions{width:min(370px,38vw);flex-shrink:0}.header-phone-actions .traffic-stats{width:100%}}
+@media(max-width:850px){.header-phone-actions{width:100%;align-items:flex-start}.traffic-stats{width:100%;max-width:460px}}
 </style>
 <style>
 .smart24-split{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:24px 6%;background:#071d40}
@@ -257,7 +271,20 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 </head>
 <body>
 
-<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><span class="call-count" id="phone-click-count" aria-live="polite" title="공용 집계 확인 중">오늘 방문수 <strong id="today-visit-number">0회</strong> · 오늘 전화호출 클릭수 <strong id="phone-click-number">0회</strong> · 누적 방문수 <strong id="total-visit-number">0회</strong></span></div></header>
+<header><strong>스마트전국대리운전 스마트24탁송</strong><div class="header-phone-actions"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 방문 및 전화 클릭 통계">
+  <div class="traffic-stats-title">실시간 방문 · 전화 클릭 통계 <small>(한국시간)</small></div>
+  <div class="traffic-stats-grid" aria-live="polite">
+    <div>오늘 방문수<strong id="today-visit-number">확인 중</strong></div>
+    <div>전일 방문수<strong id="yesterday-visit-number">확인 중</strong></div>
+    <div>오늘 전화 클릭수<strong id="phone-click-number">확인 중</strong></div>
+    <div>누적 전화 클릭수<strong id="total-phone-click-number">확인 중</strong></div>
+  </div>
+  <details class="traffic-sources" open>
+    <summary>오늘 전화 클릭 유입 경로 · 클릭한 페이지</summary>
+    <ol id="phone-source-list" aria-live="polite"><li>집계 확인 중입니다.</li></ol>
+  </details>
+  <small class="traffic-stats-note">전화 연결이 아닌 버튼 클릭 수 · 방문은 브라우저 세션 기준</small>
+</aside></div></header>
 <nav class="top-nav" aria-label="주요 서비스 메뉴"><div class="top-nav-inner">
 <a href="/daeri/">전국대리운전</a>
 <a href="/taksong/">전국자동차탁송</a>
@@ -565,55 +592,12 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  new MutationObserver(render).observe(body,{childList:true});render();
 })();
 </script>
-<script>
-(function(){
-  'use strict';
-  const api='https://xgdijyiotsemfnsuwwoi.supabase.co/rest/v1/rpc/';
-  const key='sb_publishable_QjNQmNLe9NWRQtBjTu1QqQ_w-cmKGui';
-  const today=document.getElementById('today-visit-number');
-  const total=document.getElementById('total-visit-number');
-  const calls=document.getElementById('phone-click-number');
-  const label=document.getElementById('phone-click-count');
-  const headers={'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json'};
-  async function rpc(name,args){
-    const response=await fetch(api+name,{method:'POST',headers,body:JSON.stringify(args),cache:'no-store',keepalive:false});
-    if(!response.ok)throw Error('Statistics endpoint unavailable');
-    const result=await response.json();
-    return Array.isArray(result)?result[0]:result;
-  }
-  function number(el,value){if(el)el.textContent=Number(value).toLocaleString('ko-KR')+'회';}
-  async function refresh(){
-    try{
-      const result=await rpc('site_visit_stats',{p_record:false});
-      if(!result||result.today_visits==null||result.total_visits==null)throw Error('Invalid visit totals');
-      number(today,result.today_visits);number(total,result.total_visits);
-      if(label)label.title='Supabase 공용 방문 집계 (방문 기준은 서버 통계 정책에 따름)';
-    }catch(_){
-      if(today)today.textContent='0회';
-      if(total)total.textContent='0회';
-      if(label)label.title='방문수 통계용 서버 함수가 아직 확인되지 않았습니다';
-    }
-    try{
-      const result=await rpc('site_click_stats',{p_phone:null});
-      if(!result||result.today_phone_clicks==null)throw Error('Invalid call counter');
-      number(calls,result.today_phone_clicks);
-    }catch(_){if(calls)calls.textContent='0회';}
-  }
-  // Count a page load as a visit only if the server-side RPC is configured.
-  rpc('site_visit_stats',{p_record:true}).catch(()=>{}).finally(refresh);
-  document.addEventListener('click',function(event){
-    const target=event.target.closest('a[href^="tel:"]');
-    if(!target||target.getAttribute('href').replace(/\D/g,'')!=='18114294')return;
-    // Telephone navigation must not be blocked by analytics.
-    rpc('site_click_stats',{p_phone:true}).then(refresh).catch(()=>{});
-  });
-  window.addEventListener('focus',refresh);
-})();
-</script>
+
 <button class="back-to-top" id="back-to-top" type="button" aria-label="페이지 맨 위로 이동" title="맨 위로">↑ TOP</button>
 <script>
 (function(){const button=document.getElementById('back-to-top');if(!button)return;function update(){button.classList.toggle('visible',window.scrollY>260)}window.addEventListener('scroll',update,{passive:true});update();button.addEventListener('click',function(){window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})})})();
 </script>
+<script src="/assets/traffic-analytics.js" defer></script>
 </body>
 </html>
 
