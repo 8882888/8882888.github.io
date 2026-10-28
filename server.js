@@ -722,7 +722,19 @@ function applySeo(html,route){
  return html;
 }
 
-function respond(res,status,body,type='text/html; charset=utf-8'){res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});res.end(body)}
+function respond(res,status,body,type='text/html; charset=utf-8'){
+ // Public phone and visit statistics must track calls from ALL HTML pages,
+ // not just the static homepage. Never inject scripts into JSON/assets/XML.
+ if(status===200&&type.startsWith('text/html;')){
+  let html=Buffer.isBuffer(body)?body.toString('utf8'):String(body);
+  if(html.includes('</body>')&&!html.includes('src="/assets/traffic-analytics.js"')){
+   html=html.replace('</body>','<script src="/assets/traffic-analytics.js" defer></script></body>');
+  }
+  body=html;
+ }
+ res.writeHead(status,{'content-type':type,'x-content-type-options':'nosniff'});
+ res.end(body);
+}
 let mainCardPngPromise, faviconPngPromise;
 const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layout,servicePath,canonical,landmarks});
 const routeGuides=require('./lib/route-guides')({regions,byPath,pathBySlug,cachedRoadDistance,roadQuote:RoadFareServer.roadQuote,esc,layout,servicePath,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',matchingHistoricalRides});
