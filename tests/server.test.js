@@ -414,6 +414,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(trackerBody.includes("site_phone_event")&&trackerBody.includes("site_traffic_dashboard"));
   assert.ok(trackerBody.includes('p_page:location.pathname')&&trackerBody.includes('p_source:acquisition()'));
   assert.ok(!trackerBody.includes('event.preventDefault()'),'phone navigation is never blocked');
+  assert.ok(trackerBody.includes('response.status===204'),'Supabase void phone-event response must not cause retry or double count');
   assert.ok(!trackerBody.includes('document.referrer.trim()'),'raw referrers must not be transmitted');
   assert.equal((await get('/supabase/site_traffic_dashboard.sql')).status,403,
     'statistics database schema must not be web-exposed');
