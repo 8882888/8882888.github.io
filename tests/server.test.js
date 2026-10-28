@@ -394,6 +394,29 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((await get('/taksong/gangwon/not-a-city/fare/')).status,404,'unknown regions do not create topic guides');
   const secret=await get('/server.js');assert.equal(secret.status,403,'server source must not be exposed');
   const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
+  // Homepage statistics show KST today/yesterday visits and phone click provenance.
+  const statsHome=await (await get('/')).text();
+  for(const id of ['traffic-stats-panel','today-visit-number','yesterday-visit-number',
+                   'phone-click-number','total-phone-click-number','phone-source-list']){
+    assert.ok(statsHome.includes('id="'+id+'"'),'home header dashboard missing '+id);
+  }
+  assert.equal((statsHome.match(/src="\/assets\/traffic-analytics\.js"/g)||[]).length,1,
+    'no duplicate site click handlers on homepage');
+  assert.ok(!statsHome.includes('id="total-visit-number"'),'remove obsolete visit metric');
+  const statRoute=await (await get('/taksong/')).text();
+  assert.equal((statRoute.match(/src="\/assets\/traffic-analytics\.js"/g)||[]).length,1,
+    'dynamic transport pages track calls too');
+  const statOther=await (await get('/service/golf/')).text();
+  assert.ok(statOther.includes('traffic-analytics.js'),'static HTML pages track calls too');
+  const tracker=await get('/assets/traffic-analytics.js');
+  assert.equal(tracker.status,200);
+  const trackerBody=await tracker.text();
+  assert.ok(trackerBody.includes("site_phone_event")&&trackerBody.includes("site_traffic_dashboard"));
+  assert.ok(trackerBody.includes('p_page:location.pathname')&&trackerBody.includes('p_source:acquisition()'));
+  assert.ok(!trackerBody.includes('event.preventDefault()'),'phone navigation is never blocked');
+  assert.ok(!trackerBody.includes('document.referrer.trim()'),'raw referrers must not be transmitted');
+  assert.equal((await get('/supabase/site_traffic_dashboard.sql')).status,403,
+    'statistics database schema must not be web-exposed');
   const root=await get('/');assert.equal(root.status,200);
   const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');assert.equal(daeriMap.status,200);assert.equal(((await daeriMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);assert.equal(((await taksongMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');
   const search=await get('/region/?q='+encodeURIComponent('가평읍'));assert.equal(search.status,200);assert.ok((await search.text()).includes('가평읍'));
