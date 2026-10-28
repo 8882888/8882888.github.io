@@ -25,6 +25,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(asset.headers.get('content-type').includes('image/webp'));
    }
   }
+  // Nationwide local-intent SEO must distinguish transport and designated-driver services.
+  const busanTaksong=await (await get('/taksong/busan/')).text();
+  assert.ok(busanTaksong.includes('공업사탁송'),'repair-shop transport intent');
+  assert.ok(busanTaksong.includes('자동차검사소탁송'),'inspection transport intent');
+  assert.ok(busanTaksong.includes('블랙박스탁송'),'black-box transport intent');
+  const busanDaeri=await (await get('/daeri/busan/')).text();
+  assert.ok(busanDaeri.includes('골프장대리운전'),'golf designated-driver intent');
+  assert.ok(busanDaeri.includes('법인대리운전'),'corporate designated-driver intent');
+  assert.ok(!busanDaeri.includes('공업사탁송'),'no transport keyword leakage');
   // Shared layout must preserve exactly one page heading with and without a body H1.
   for(const route of ['/taksongdaeri/','/reviews/','/recruit/taksong/','/taksong/busan/']){
    const response=await get(route);assert.equal(response.status,200);
