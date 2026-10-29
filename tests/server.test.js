@@ -117,6 +117,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(crosslinkBusanDaeri.includes('id="regional-blog-links"'),'Busan driver page connects published blog articles');
   assert.ok(crosslinkBusanDaeri.includes('blog.naver.com/wjdtnr4757/'),'driver page uses operator blog');
   assert.ok(!crosslinkBusanDaeri.includes('blog.naver.com/eom4757/'),'old unrelated blog ID must never leak');
+  assert.ok(!crosslinkBusanDaeri.includes('부산동부권탁송 기장군탁송'),'taksong article must not be misclassified as daeri via brand name');
+  assert.ok(!crosslinkBusanDaeri.includes('대리운전 이용 목적</h2>'),'priority regional pages should avoid repeated keyword-dump sections');
+  const gimhaeDaeriQuality=await (await get('/daeri/gyeongnam/gimhae-si/')).text();
+  assert.ok(!gimhaeDaeriQuality.includes('김해공항탁송 부산강서구'),'Gimhae Airport in Busan is not evidence for Gimhae city driver services');
+  const busanTaksongQuality=await (await get('/taksong/busan/')).text();
+  assert.ok(busanTaksongQuality.includes('부산탁송'),'taksong regional page still links a relevant operator post');
+  assert.ok(!busanTaksongQuality.includes('차량탁송 이용 목적</h2>'),'priority taksong region avoids keyword-dump section');
+
   // Missing region-specific history must show only verified nationwide reviews, never a fabricated local ride.
   const localityWithoutRecord=await get('/taksong/busan/gijang-gun/gijang-eup/dongbu-ri/');
   assert.equal(localityWithoutRecord.status,200,'rural locality must resolve');
