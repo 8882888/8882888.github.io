@@ -21,7 +21,14 @@ async function inspect(route){
   if(!response.ok)issues.push('HTTP '+response.status);
   const html=await response.text();
   if(route==='/robots.txt'){if(!/User-agent:/i.test(html))issues.push('Missing User-agent');if(/Disallow:\s*\/\s*(?:\r?\n|$)/i.test(html))issues.push('Root blocked')}
-  else if(route==='/sitemap.xml'){if(!/<(?:urlset|sitemapindex)\b/i.test(html))issues.push('Invalid sitemap')}
+  else if(route==='/sitemap.xml'){
+   if(!/<(?:urlset|sitemapindex)\b/i.test(html))issues.push('Invalid sitemap');
+   out.sizeBytes=Buffer.byteLength(html,'utf8');
+   out.urlCount=(html.match(/<url>/g)||[]).length;
+   out.sitemapIndexCount=(html.match(/<sitemap>/g)||[]).length;
+   if(out.sizeBytes>=10*1024*1024)issues.push('Naver sitemap size limit exceeded (10MB): '+out.sizeBytes);
+   if(out.urlCount>=50000)issues.push('Naver sitemap URL limit exceeded (50000): '+out.urlCount);
+  }
   else {
    const titles=content(html,'title'),h1=content(html,'h1'),metas=elements(html,'meta'),links=elements(html,'link');
    const desc=metas.filter(m=>m.name==='description').map(m=>m.content||'');
