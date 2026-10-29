@@ -346,7 +346,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const coast=require('../data/coastal/places.json');assert.ok(coast.items.length>600);assert.equal(coast.unresolved.length,0);assert.equal(new Set(coast.items.map(x=>x.id)).size,coast.items.length);
   for(const x of coast.items){assert.equal(regions.find(r=>r.slug===x.regions[0])?.full_name,x.regionFull);assert.ok(x.aliases.includes(x.term));}
   const coastSitemap=await (await get('/sitemap.xml')).text();
-  for(const x of coast.items)for(const k of ['daeri','taksong'])assert.ok(coastSitemap.includes('/'+k+'/coast/'+x.id+'/'));
+  assert.ok(!coastSitemap.includes('/daeri/coast/'),'large automatically collected coastal combinations no longer dominate main sitemap');
+  assert.ok(!coastSitemap.includes('/taksong/coast/'),'large automatically collected coastal combinations no longer dominate main sitemap');
   for(const [term,region] of [['인구해수욕장','양양군'],['을왕리해수욕장','영종구'],['소래포구','남동구'],['삼길포항','서산시'],['삼천포항','사천시'],['대포항','속초시']]){
    const x=coast.items.find(x=>x.term===term&&x.regionFull.includes(region));assert.ok(x,term);
    for(const kind of ['daeri','taksong']){const p='/'+kind+'/coast/'+x.id+'/',r=await get(p);assert.equal(r.status,200);const html=await r.text();assert.ok(html.includes('href="https://example.com'+p+'"'));assert.ok(html.includes('name="service" value="'+kind+'"'));assert.ok(html.includes('tel:18114294'));assert.ok(html.includes('index,follow,max-image-preview:large'));const image=html.match(/property="og:image" content="([^"]+)/)[1];assert.ok(image.endsWith('-'+kind+'-brand.png'));assert.ok(html.includes('src="'+image+'"'));assert.ok(!html.includes('1877-'));}
@@ -432,9 +433,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(fareHtml.includes('통행료·주유비·주차비'),'estimator discloses costs to confirm');
   const homeHtml=await (await get('/')).text();
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
-  const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();assert.ok((xml.match(/<loc>/g)||[]).length>=regions.length+2,'main sitemap includes all regions and category URLs');assert.ok(xml.includes('example.com'));assert.ok(xml.includes('/places/'),'place category hub appears in sitemap');assert.ok(xml.includes('/places/'+encodeURIComponent('캠핑장')+'/'),'camping category appears in sitemap');assert.ok(xml.includes('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/'),'tow truck delivery category appears in sitemap');
+  const crawlRobots=await (await get('/robots.txt')).text();
+  const submittedMaps=crawlRobots.split('\n').filter(line=>line.startsWith('Sitemap: '));
+  assert.equal(submittedMaps.length,3,'robots advertises only curated and verified route sitemaps');
+  assert.ok(submittedMaps.some(x=>x.includes('/sitemap-priority.xml')));
+  assert.ok(submittedMaps.some(x=>x.includes('/sitemap-reviewed-routes.xml')));
+  assert.ok(!submittedMaps.some(x=>x.includes('nationwide-route')),'avoid diluting crawl effort across hundreds of thousands of generated combinations');
+  const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();const submitted=(xml.match(/<loc>/g)||[]).length;assert.ok(submitted>=29&&submitted<500,'main sitemap focuses fewer than 500 high-quality URLs');assert.ok(xml.includes('https://example.com/taksong/busan/'),'main sitemap includes curated Busan region');assert.ok(xml.includes('https://example.com/daeri/daegu/'),'main sitemap includes curated Daegu region');assert.ok(xml.includes('/reviews/'),'main sitemap links to verified rides');assert.ok(!xml.includes('/region/area-20562/'),'main sitemap must not expose all 20,562 low-priority regions');assert.ok(xml.includes('example.com'));assert.ok(xml.includes('/places/'),'place category hub appears in sitemap');assert.ok(xml.includes('/places/'+encodeURIComponent('캠핑장')+'/'),'camping category appears in sitemap');assert.ok(xml.includes('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/'),'tow truck delivery category appears in sitemap');
   const guideUrls=[...xml.matchAll(/<loc>([^<]+\/(?:fare|long-distance|handover)\/)<\/loc>/g)].map(x=>x[1]).filter(url=>!url.endsWith('example.com/fare/'));
-  assert.equal(guideUrls.length,health.regionalGuides,'submitted sitemap contains every regional topic guide');
+  assert.equal(guideUrls.length,0,'deep auto-generated intent guides remain usable without being submitted in the main sitemap');
   assert.equal(new Set(guideUrls).size,guideUrls.length,'regional topic canonicals are unique');
   assert.ok(health.regionalGuideAreas>=17,'guides cover every province');
   const guideImages=new Set();
@@ -450,7 +457,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('href="tel:18114294"'));
    assert.ok(html.includes('/'+kind+'/gangwon/gangreung-si/'),'guide connects back to its regional service');
    const image=html.match(/property="og:image" content="https:\/\/example.com([^"]+)"/)[1];guideImages.add(image);
-   assert.ok(xml.includes('https://example.com'+image),'topic card is included in image sitemap');
+   assert.ok(html.includes('src="'+image+'"'),'topic card is still visible even if deep topic guide is not submitted');
   }
   assert.equal(guideImages.size,2,'guides reuse their service basic card instead of topic-specific cards');
   assert.ok([...guideImages].every(x=>/-(daeri|taksong)-brand\.png$/.test(x)),'all guides point to the requested service-specific basic cards');

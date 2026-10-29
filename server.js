@@ -951,7 +951,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  }).join('')+'</channel></rss>';
  return respond(res,200,rss,'application/rss+xml; charset=utf-8');
 }
-if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-route-daeri.xml','Sitemap: '+base+'/sitemap-route-taksong.xml','Sitemap: '+base+'/sitemap-nationwide-route-daeri.xml','Sitemap: '+base+'/sitemap-nationwide-route-taksong.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
+if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const urls=['/','/daeri/','/taksong/',...priorityRegionalPages.map(p=>{
@@ -962,7 +962,38 @@ if(pathname==='/sitemap-priority.xml'){
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
 if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const service=pathname==='/sitemap-daeri.xml'?'daeri':'taksong';const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const cached=sitemapCache.get(pathname);if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'+['/'+service+'/',...(service==='daeri'?['/special/nationwide-daeri/','/service/daeri/']:['/service/taksong/','/service/long-distance-taksong/']),].map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+regions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc><image:image><image:loc>'+esc(base+cardPngPath(r.slug,service))+'</image:loc></image:image></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
-if(pathname==='/sitemap.xml'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const urls=['/', '/taksongdaeri/', '/service/golf/', '/service/taksong/', '/service/daeri/', '/service/daily-driver/', '/service/long-distance-taksong/', '/service/corporate/', '/special/nationwide-daeri/', '/special/24-hour-service/', '/fare/', '/fare/jeju/', '/places/', ...placeCategories.map(x=>'/places/'+encodeURIComponent(x[0])+'/'), '/taksong/', '/taksong/types/', ...vehicleTopics.map(([name])=>vehicleTopicPath(name)), '/daeri/', '/reviews/', '/reviews/history/', '/routes/reviewed/', '/blog/',...historicalRides.map(x=>'/reviews/history/'+x.id+'/'), '/blog/', ...publicRides.map(rideUrl), '/recruit/taksong/', '/recruit/daeri/', ...regions.filter(r=>r.level==='시도').flatMap(r=>['/recruit/taksong/'+r.slug+'/', '/recruit/daeri/'+r.slug+'/']), '/region/', '/business/', '/business/rental-car/', '/business/used-car/', '/business/auction/', '/business/scrapyard/', '/business/export-port/'];const verifiedRouteUrls=[...featuredTaksongRoutes.map(r=>'/taksong/route/'+r.slug+'/'),...featuredDaeriRoutes.map(r=>'/daeri/route/'+r.slug+'/')];urls.push('/fare/routes/',...routeGuides.allPaths(),...verifiedRouteUrls,...keywordEngine.newUrls,...keywordEngine.activityUrls);const cached=sitemapCache.get(pathname);if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'+[...new Set(urls)].map(x=>'<url><loc>'+esc(base+x)+'</loc>'+((x==='/'||x.startsWith('/recruit/'))?'<image:image><image:loc>'+esc(base+'/assets/smart24-business-card-inline-v2.png')+'</image:loc></image:image>':'')+'</url>').join('')+regions.map(r=>'<url><loc>'+esc(base+canonical(r.slug))+'</loc><image:image><image:loc>'+esc(base+cardPngPath(r.slug))+'</image:loc></image:image></url>').join('')+regionalIntentAreas.map(r=>Object.entries(regionalIntentTypes).flatMap(([kind,topics])=>topics.map(topic=>'<url><loc>'+esc(base+regionalIntentPath(r,kind,topic))+'</loc><image:image><image:loc>'+esc(base+regionalIntentImage(r,kind,topic))+'</image:loc></image:image></url>')).join('')).join('')+landmarks.map(item=>'<url><loc>'+esc(base+'/place/'+landmarkSlug(item[0])+'/')+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
+if(pathname==='/sitemap.xml'){
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const cached=sitemapCache.get(pathname);
+ if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
+ // A new site should first expose helpful national hubs, curated regions and
+ // SOURCE-VERIFIED trips, not 20k near-identical directory pages or 500k routes.
+ // All historic URLs remain reachable; this is a crawl-discovery change only.
+ const provinceRegions=regions.filter(r=>r.level==='시도');
+ const focused=[
+  '/','/taksongdaeri/','/daeri/','/taksong/','/fare/','/fare/jeju/',
+  '/reviews/','/reviews/history/','/routes/reviewed/','/blog/','/region/',
+  '/service/golf/','/service/taksong/','/service/daeri/',
+  '/service/daily-driver/','/service/long-distance-taksong/',
+  '/service/corporate/','/taksong/types/','/places/','/activities/',
+  '/special/nationwide-daeri/','/special/24-hour-service/',
+  '/business/','/business/rental-car/','/business/used-car/',
+  '/business/auction/','/business/scrapyard/','/business/export-port/',
+  ...placeCategories.map(x=>'/places/'+encodeURIComponent(x[0])+'/'),
+  ...vehicleTopics.map(([name])=>vehicleTopicPath(name)),
+  ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
+  ...priorityRegionalPages.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
+  ...publicRides.map(rideUrl),
+  ...featuredTaksongRoutes.map(r=>'/taksong/route/'+r.slug+'/'),
+  ...featuredDaeriRoutes.map(r=>'/daeri/route/'+r.slug+'/'),
+  ...routeKeywordPages.reviewed.entries.slice(0,100).map(e=>routeKeywordPages.reviewed.routePath(e)),
+  ...keywordEngine.activityUrls
+ ];
+ const urls=[...new Set(focused)];
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
+ sitemapCache.set(pathname,xml);
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 const intentMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/(fare|long-distance|handover)\/?$/);
 if(intentMatch){const [,kind,regionPath,topic]=intentMatch,r=byPath.get(regionPath);if(!r||!regionalIntentSlugs.has(r.slug)||!regionalIntentTypes[kind].includes(topic))return respond(res,404,'지역별 이용 안내를 찾을 수 없습니다.');const target=regionalIntentPath(r,kind,topic);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,regionalIntentPage(r,kind,topic))}
 const hierarchicalMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/?$/);
