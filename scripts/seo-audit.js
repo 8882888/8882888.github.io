@@ -54,7 +54,9 @@ async function inspect(route){
     if(!html.includes('id="priority-region-guide"'))issues.push('Missing priority region guide');
     if(!html.includes(focus.topic))issues.push('Missing distinct priority topic');
     if(!html.includes(focus.detail))issues.push('Missing distinct priority details');
-    if(focus.region.split(/\s+/).length===1&&!String(desc[0]||'').includes(focus.detail))issues.push('Province meta description lacks service-specific priority details');
+    const firstSentence=focus.detail.split(/[.!?。]/)[0].trim();
+    if(!String(desc[0]||'').includes(focus.topic)||!String(desc[0]||'').includes(firstSentence))issues.push('Meta description missing unique region service context');
+    if(String(desc[0]||'').length>170)issues.push('Priority meta description is too long: '+desc[0].length);
     if(!html.includes('href="tel:18114294"'))issues.push('Missing consultation phone link');
    }
 
@@ -105,6 +107,12 @@ async function inspect(route){
  if(!robotsText.includes('Sitemap: '+config.site+priorityRoute))priorityIssues.push('Priority sitemap missing from robots.txt');
  if(!priorityXml||Buffer.byteLength(priorityXml)>10000000)priorityIssues.push('Invalid sitemap size');
  pages.push({route:priorityRoute,status:priorityResponse.status,url:priorityResponse.url,urlCount:priorityUrls.length,issues:priorityIssues,passed:priorityIssues.length===0});
+ const descriptions=new Map();
+ for(const page of pages){
+  if(!priorityByPath.has(page.route)||!page.description)continue;
+  if(descriptions.has(page.description))pages.push({route:page.route+'#description',passed:false,issues:['Duplicate priority meta description with '+descriptions.get(page.description)]});
+  descriptions.set(page.description,page.route);
+ }
  const sitemapCache=new Map();
  for(const kind of ['daeri','taksong']){
   const route='/sitemap-'+kind+'.xml';
