@@ -28,6 +28,7 @@ async function inspect(route){
    out.sitemapIndexCount=(html.match(/<sitemap>/g)||[]).length;
    if(out.sizeBytes>=10*1024*1024)issues.push('Naver sitemap size limit exceeded (10MB): '+out.sizeBytes);
    if(out.urlCount>=50000)issues.push('Naver sitemap URL limit exceeded (50000): '+out.urlCount);
+   if(out.urlCount>500)issues.push('Focused sitemap should remain under 500 high-priority URLs: '+out.urlCount);
   }
   else {
    const titles=content(html,'title'),h1=content(html,'h1'),metas=elements(html,'meta'),links=elements(html,'link');
