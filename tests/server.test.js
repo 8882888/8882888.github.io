@@ -165,6 +165,22 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 
   // Region-specific source posts and visible homepage hub must not become keyword-only dead ends.
   const seoHome=await (await get('/')).text();
+  // Search-result titles and site identity must present a single Korean brand.
+  assert.ok(seoHome.includes('<title>전국대리운전·24시탁송 | 전국자동차탁송 스마트24 1811-4294</title>'),'homepage title uses the Korean nationwide-driving and 24h-delivery terms');
+  assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
+  assert.ok(seoHome.includes('<h1>전국대리운전·24시탁송'),'visible H1 matches the title');
+  const homeSchema=[...seoHome.matchAll(/<script type="application\\/ld\\+json">(.*?)<\\/script>/gs)].map(m=>JSON.parse(m[1]));
+  const homeWebsite=homeSchema.find(x=>x['@type']==='WebSite');
+  assert.ok(homeWebsite,'homepage declares WebSite JSON-LD');
+  assert.equal(homeWebsite.name,'스마트24 전국대리운전·24시탁송');
+  assert.equal(homeWebsite.url,'https://example.com/'===homeWebsite.url?'https://example.com/':'https://jeongukdaeri.kr/');
+  const koreanTaksong=await (await get('/taksong/')).text();
+  const koreanDaeri=await (await get('/daeri/')).text();
+  assert.ok(koreanTaksong.includes('<title>24시탁송·전국자동차탁송 | 스마트24 차량 인수·장거리 예약</title>'));
+  assert.ok(koreanDaeri.includes('<title>전국대리운전 예약·요금 | 스마트24 장거리·골프·일일기사</title>'));
+  assert.ok(koreanTaksong.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
+  assert.ok(koreanDaeri.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
+
   assert.ok(seoHome.includes('id="home-priority-regions"'),'homepage links to priority regional service pages');
   assert.ok(seoHome.includes('/taksong/busan/'),'homepage has direct Busan taksong link');
   assert.ok(seoHome.includes('/daeri/daegu/'),'homepage has direct Daegu driver link');
