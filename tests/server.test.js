@@ -176,6 +176,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(homeWebsite.url,'https://jeongukdaeri.kr/');
   const koreanTaksong=await (await get('/taksong/')).text();
   const koreanDaeri=await (await get('/daeri/')).text();
+  const duplicateDaeriService=await (await get('/service/daeri/')).text();
+  const duplicateNationwide=await (await get('/special/nationwide-daeri/')).text();
+  for(const duplicate of [duplicateDaeriService,duplicateNationwide])assert.ok(duplicate.includes('<link rel="canonical" href="https://jeongukdaeri.kr/daeri/">'),'related legacy daeri page consolidates to primary /daeri/ URL');
+  assert.equal((duplicateDaeriService.match(/<meta name="robots"/g)||[]).length,1,'service daeri has a single robots meta tag');
   assert.ok(koreanTaksong.includes('<title>24시탁송·전국자동차탁송 | 스마트24 차량 인수·장거리 예약</title>'));
   assert.ok(koreanDaeri.includes('<title>전국대리운전 예약·요금 | 스마트24 장거리·골프·일일기사</title>'));
   assert.ok(koreanTaksong.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
@@ -612,7 +616,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((await get('/supabase/site_traffic_dashboard.sql')).status,403,
     'statistics database schema must not be web-exposed');
   const root=await get('/');assert.equal(root.status,200);
-  const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');assert.equal(daeriMap.status,200);assert.equal(((await daeriMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);assert.equal(((await taksongMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');
+  const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);assert.equal((daeriXml.match(/<loc>/g)||[]).length,regions.length+1,'regional URLs plus one canonical daeri hub');const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);assert.equal(((await taksongMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');
   const search=await get('/region/?q='+encodeURIComponent('가평읍'));assert.equal(search.status,200);assert.ok((await search.text()).includes('가평읍'));
   // The sixteen user-confirmed Excel review drafts use Korean service labels in their source.
   // They must be normalized before the public verified-ride filter, not silently discarded.
