@@ -204,11 +204,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const localityWithoutRecord=await get('/taksong/busan/gijang-gun/gijang-eup/dongbu-ri/');
   assert.equal(localityWithoutRecord.status,200,'rural locality must resolve');
   const localityHtml=await localityWithoutRecord.text();
-  assert.ok(localityHtml.includes('동부리 출발·도착 운행 참고 후기'));
-  assert.ok(localityHtml.includes('다른 지역에서 확인된 탁송 운행후기'));
-  assert.ok(localityHtml.includes('이 지역에서 운행했다는 뜻이 아니며'));
-  assert.ok(/href="\/reviews\/[a-f0-9]{16}\//.test(localityHtml),'fallback must link to verified published reviews');
-  assert.ok(!localityHtml.includes('이 지역의 확인된 완료 운행 기록은 아직 없습니다. 확인된 사례가 등록되면'));
+  assert.ok(localityHtml.includes('동부리 실제 운행기록 확인 안내'));
+  assert.ok(localityHtml.includes('이 행정구역의 출발 또는 도착이 확인된 운행은 없습니다'));
+  assert.ok(localityHtml.includes('이름이 비슷한 다른 지역의 운행사례를 이곳의 실적으로 표시하지 않습니다'));
+  assert.ok(!/href="\/reviews\/[a-f0-9]{16}\//.test(localityHtml),'local pages without confirmed rides must not feature unrelated records');
+  assert.ok(localityHtml.includes('/reviews/history/?kind=taksong'),'all actual records remain accessible through a clearly labelled national archive');
   // Only completed, directional dispatch records should enrich SEO route pages.
   const verifiedRouteIndex=await get('/routes/reviewed/');
   const verifiedRouteHtml=await verifiedRouteIndex.text();
