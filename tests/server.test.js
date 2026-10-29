@@ -8,6 +8,25 @@ const files=fs.readdirSync(path.join(__dirname,'../data/legal-regions')).filter(
 assert.equal(files.length,17,'all 17 regional datasets must exist');
 const regions=[];
 for(const file of files){const doc=require('../data/legal-regions/'+file);for(const full_name of doc.full_names){const parts=full_name.split(' ');regions.push({full_name,name:parts.at(-1),slug:'area-'+(regions.length+1),level:parts.length===1?'시도':'other'});}}
+
+// Regression: place-name substrings in venue names must not be presented as local dispatches.
+const {matchingHistoryRegion,publicPlace}=require('../lib/regional-history-evidence');
+const record=(dep,dest)=>({rawDeparture:dep,rawDestination:dest});
+const region=(name,full_name,level)=>({name,full_name,level});
+assert.equal(matchingHistoryRegion(record('탁/경기 김포시 고촌읍','의정부산곡동/톨포'),region('부산광역시','부산광역시','시도'),regions),false,'의정부산곡동 is not 부산');
+assert.equal(matchingHistoryRegion(record('강화읍서울깍두기','김포시 장기동'),region('서울특별시','서울특별시','시도'),regions),false,'서울깍두기 is not a 서울 departure');
+assert.equal(matchingHistoryRegion(record('장기동속초명가','김포하성면'),region('속초시','강원특별자치도 속초시','시'),regions),false,'속초명가 is not a 속초 destination');
+assert.equal(matchingHistoryRegion(record('탁/설악산소공원주차장','오색주차장/톨포'),region('원주시','강원특별자치도 원주시','시'),regions),false,'공원주차장 is not 원주');
+assert.equal(matchingHistoryRegion(record('탁/양평읍','목포항국제여객터미널/톨포'),region('포항시','경상북도 포항시','시'),regions),false,'목포항 is not 포항');
+assert.equal(matchingHistoryRegion(record('대리/부산연산동','부산장전동'),region('부산광역시','부산광역시','시도'),regions),true,'real 부산 names remain eligible');
+assert.equal(matchingHistoryRegion(record('탁/기장군반룡산단','연수구 능허대로/톨포'),region('기장군','부산광역시 기장군','군'),regions),true,'explicit 기장군 record stays linked');
+assert.equal(publicPlace('의정부산곡동'),'지역 비공개','do not publicly label Uijeongbu as Busan');
+assert.equal(publicPlace('장기동속초명가'),'지역 비공개','do not publicly label restaurant as Sokcho');
+assert.equal(publicPlace('설악산소공원주차장'),'지역 비공개','do not publicly label parking lot as Wonju');
+assert.equal(publicPlace('목포항국제여객터미널'),'목포','known Mokpo seaport name remains visible');
+assert.equal(publicPlace('탁/김해공항T1'),'김해공항(부산 강서구)','Gimhae airport is not Gimhae city');
+assert.equal(publicPlace('인천공항 출발 → 부산남산동 도착'),'인천','public place shows the first origin rather than a later destination');
+
 const port=30000+Math.floor(Math.random()*10000);
 const child=spawn(process.execPath,['server.js'],{cwd:require('node:path').resolve(__dirname,'..'),env:{...process.env,PORT:String(port),PUBLIC_HOST:'example.com'},stdio:['ignore','pipe','pipe']});
 let stderr='';child.stderr.on('data',d=>stderr+=d);
@@ -125,6 +144,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(busanTaksongQuality.includes('부산탁송'),'taksong regional page still links a relevant operator post');
   assert.ok(!busanTaksongQuality.includes('차량탁송 이용 목적</h2>'),'priority taksong region avoids keyword-dump section');
 
+  // Priority regions lead with their own factual source evidence, not mass route keywords.
+  const verifiedBusan=await (await get('/daeri/busan/')).text();
+  assert.ok(verifiedBusan.includes('id="priority-verified-rides"'),'priority page needs visible real completed dispatch evidence');
+  assert.ok(verifiedBusan.includes('사용자 확인 공개 운행')||verifiedBusan.includes('기존 완료 운행기록'),'priority page identifies confirmed record source');
+  assert.ok(verifiedBusan.indexOf('id="priority-verified-rides"')<verifiedBusan.indexOf('출발 전국 주요 구간'),'real evidence precedes generic nationwide route links');
+  const verifiedGangwon=await (await get('/taksong/gangwon/')).text();
+  assert.ok(verifiedGangwon.includes('id="priority-verified-rides"'),'Gangwon priority page has factual record section');
+  const unverifiedLocality=await (await get('/taksong/jeonbuk/muju-gun/')).text();
+  assert.ok(unverifiedLocality.includes('id="priority-verified-rides"'),'Muju priority page explains evidence status');
+  assert.ok(!unverifiedLocality.includes('다른 지역에서 확인된 탁송 운행후기'),'priority landing must not use unrelated ride as local case');
   // Missing region-specific history must show only verified nationwide reviews, never a fabricated local ride.
   const localityWithoutRecord=await get('/taksong/busan/gijang-gun/gijang-eup/dongbu-ri/');
   assert.equal(localityWithoutRecord.status,200,'rural locality must resolve');
