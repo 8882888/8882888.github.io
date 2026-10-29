@@ -50,8 +50,13 @@ jobs:
             naver-web-monitor-result.json
           if-no-files-found: warn
           retention-days: 90
-      - name: Report failures
-        if: always() && (steps.seo.outcome == 'failure' || steps.rank.outcome == 'failure')
+      - name: Report production SEO failure
+        if: always() && steps.seo.outcome == 'failure'
         run: |
-          echo '::error::Production SEO audit or Naver API monitoring failed; inspect earlier steps. Search API credentials are required.'
+          echo '::error::Production SEO audit failed. Inspect production-seo-result.json for HTTP errors, timeouts, or SEO issues.'
+          exit 1
+      - name: Report Naver API failure
+        if: always() && steps.rank.outcome == 'failure'
+        run: |
+          echo '::error::Naver API monitoring failed. Inspect the API step and naver-web-monitor-result.json for the specific error.'
           exit 1
