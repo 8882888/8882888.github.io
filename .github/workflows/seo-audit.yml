@@ -11,6 +11,7 @@ on:
       - 'tools/mark_github_pages_mirror_noindex.py'
       - '.github/workflows/pages.yml'
       - 'index.html'
+      - 'taksongdaeri/index.html'
   schedule:
     - cron: '15 1 * * *'
 permissions:
