@@ -109,14 +109,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(seoHome.includes('id="home-priority-regions"'),'homepage links to priority regional service pages');
   assert.ok(seoHome.includes('/taksong/busan/'),'homepage has direct Busan taksong link');
   assert.ok(seoHome.includes('/daeri/daegu/'),'homepage has direct Daegu driver link');
-  const busanTaksong=await (await get('/taksong/busan/')).text();
-  assert.ok(busanTaksong.includes('id="regional-blog-links"'),'Busan region has related published Naver blog posts');
-  assert.ok(busanTaksong.includes('blog.naver.com/wjdtnr4757/'),'regional blog links use the operator blog');
-  assert.ok(busanTaksong.includes('/reviews/history/'),'regional page links verified ride history');
-  const busanDaeri=await (await get('/daeri/busan/')).text();
-  assert.ok(busanDaeri.includes('id="regional-blog-links"'),'Busan driver page connects published blog articles');
-  assert.ok(busanDaeri.includes('blog.naver.com/wjdtnr4757/'),'driver page uses operator blog');
-  assert.ok(!busanDaeri.includes('blog.naver.com/eom4757/'),'old unrelated blog ID must never leak');
+  const crosslinkBusanTaksong=await (await get('/taksong/busan/')).text();
+  assert.ok(crosslinkBusanTaksong.includes('id="regional-blog-links"'),'Busan region has related published Naver blog posts');
+  assert.ok(crosslinkBusanTaksong.includes('blog.naver.com/wjdtnr4757/'),'regional blog links use the operator blog');
+  assert.ok(crosslinkBusanTaksong.includes('/reviews/history/'),'regional page links verified ride history');
+  const crosslinkBusanDaeri=await (await get('/daeri/busan/')).text();
+  assert.ok(crosslinkBusanDaeri.includes('id="regional-blog-links"'),'Busan driver page connects published blog articles');
+  assert.ok(crosslinkBusanDaeri.includes('blog.naver.com/wjdtnr4757/'),'driver page uses operator blog');
+  assert.ok(!crosslinkBusanDaeri.includes('blog.naver.com/eom4757/'),'old unrelated blog ID must never leak');
   // Missing region-specific history must show only verified nationwide reviews, never a fabricated local ride.
   const localityWithoutRecord=await get('/taksong/busan/gijang-gun/gijang-eup/dongbu-ri/');
   assert.equal(localityWithoutRecord.status,200,'rural locality must resolve');
