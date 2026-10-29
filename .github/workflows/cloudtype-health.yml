@@ -60,7 +60,7 @@ jobs:
           set -euo pipefail
           base="${PRODUCTION_URL%/}"
           for route in /taksongdaeri/ /favicon.ico /blog/ /robots.txt; do
-            code=$(curl -L -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 25 -A 'Yeti/1.1 (NHN Corp.; http://help.naver.com/robots/)' "$base$route")
+            code=$(curl -L -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 25 -H 'X-Smart24-Monitor: github-health-probe' -A 'Yeti/1.1 (NHN Corp.; http://help.naver.com/robots/)' "$base$route")
             echo "Naver Yeti user agent: $code $base$route"
             test "$code" = 200
           done

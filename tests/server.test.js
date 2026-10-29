@@ -27,6 +27,28 @@ assert.equal(publicPlace('목포항국제여객터미널'),'목포','known Mokpo
 assert.equal(publicPlace('탁/김해공항T1'),'김해공항(부산 강서구)','Gimhae airport is not Gimhae city');
 assert.equal(publicPlace('인천공항 출발 → 부산남산동 도착'),'인천','public place shows the first origin rather than a later destination');
 
+// An observed Yeti User-Agent is useful diagnostic evidence but never an authenticated bot identity.
+const {observeCrawlerRequest}=require('../lib/crawler-observability');
+const {EventEmitter: CrawlerEmitter}=require('node:events');
+const observedCrawlerLogs=[];
+const claimedReq={method:'GET',url:'/taksong/busan/?utm_source=private-test',headers:{'user-agent':'Mozilla/5.0 (compatible; Yeti/1.1; +https://naver.me/spd)',cookie:'session=private',referer:'https://private.example/'}};
+const claimedRes=new CrawlerEmitter();claimedRes.statusCode=403;
+assert.equal(observeCrawlerRequest(claimedReq,claimedRes,line=>observedCrawlerLogs.push(line)),true);
+claimedRes.emit('finish');
+assert.equal(observedCrawlerLogs.length,1);
+assert.ok(observedCrawlerLogs[0].startsWith('SEO_YETI_UA '));
+assert.ok(observedCrawlerLogs[0].includes('"path":"/taksong/busan/"'));
+assert.ok(observedCrawlerLogs[0].includes('"status":403'));
+for(const forbidden of ['private-test','session=private','private.example','Mozilla/5.0'])assert.ok(!observedCrawlerLogs[0].includes(forbidden),'crawler output must not contain private query, cookie, referrer, or raw UA');
+const syntheticRes=new CrawlerEmitter();syntheticRes.statusCode=200;
+assert.equal(observeCrawlerRequest({...claimedReq,headers:{...claimedReq.headers,'x-smart24-monitor':'github-health-probe'}},syntheticRes,line=>observedCrawlerLogs.push(line)),false);
+syntheticRes.emit('finish');
+assert.equal(observedCrawlerLogs.length,1,'simulated GitHub Yeti requests must not appear in diagnostics');
+const normalRes=new CrawlerEmitter();normalRes.statusCode=200;
+assert.equal(observeCrawlerRequest({method:'GET',url:'/',headers:{'user-agent':'Mozilla/5.0'}},normalRes,line=>observedCrawlerLogs.push(line)),false);
+normalRes.emit('finish');
+assert.equal(observedCrawlerLogs.length,1,'ordinary visitors are not logged');
+
 const port=30000+Math.floor(Math.random()*10000);
 const child=spawn(process.execPath,['server.js'],{cwd:require('node:path').resolve(__dirname,'..'),env:{...process.env,PORT:String(port),PUBLIC_HOST:'example.com'},stdio:['ignore','pipe','pipe']});
 let stderr='';child.stderr.on('data',d=>stderr+=d);
