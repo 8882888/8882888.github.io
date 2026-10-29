@@ -169,11 +169,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(seoHome.includes('<title>전국대리운전·24시탁송 | 전국자동차탁송 스마트24 1811-4294</title>'),'homepage title uses the Korean nationwide-driving and 24h-delivery terms');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
   assert.ok(seoHome.includes('<h1>전국대리운전·24시탁송'),'visible H1 matches the title');
-  const homeSchema=[...seoHome.matchAll(/<script type="application\\/ld\\+json">(.*?)<\\/script>/gs)].map(m=>JSON.parse(m[1]));
-  const homeWebsite=homeSchema.find(x=>x['@type']==='WebSite');
+  const schemaNodes=[...seoHome.matchAll(/<script type="application\\/ld\\+json">([\\s\\S]*?)<\\/script>/g)].map(m=>JSON.parse(m[1]));
+  const homeWebsite=schemaNodes.find(x=>x['@type']==='WebSite');
   assert.ok(homeWebsite,'homepage declares WebSite JSON-LD');
   assert.equal(homeWebsite.name,'스마트24 전국대리운전·24시탁송');
-  assert.equal(homeWebsite.url,'https://example.com/'===homeWebsite.url?'https://example.com/':'https://jeongukdaeri.kr/');
+  assert.equal(homeWebsite.url,'https://jeongukdaeri.kr/');
   const koreanTaksong=await (await get('/taksong/')).text();
   const koreanDaeri=await (await get('/daeri/')).text();
   assert.ok(koreanTaksong.includes('<title>24시탁송·전국자동차탁송 | 스마트24 차량 인수·장거리 예약</title>'));
