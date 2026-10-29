@@ -180,6 +180,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(koreanDaeri.includes('<title>전국대리운전 예약·요금 | 스마트24 장거리·골프·일일기사</title>'));
   assert.ok(koreanTaksong.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
   assert.ok(koreanDaeri.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
+  assert.ok(koreanDaeri.includes('id="national-driver-guide"'),'national driving hub explains general, long-distance and golf reservation differences');
+  assert.ok(koreanDaeri.includes('id="national-driver-source-links"'),'national driving hub links existing pre-August-25 Naver content');
+  assert.ok(koreanDaeri.includes('blog.naver.com/wjdtnr4757/224388328571'),'national driving page points to the August 24 long-distance guide');
+  assert.ok(koreanDaeri.includes('1811-4294'),'national driving page preserves the official contact number');
+  assert.ok(!koreanTaksong.includes('id="national-driver-source-links"'),'vehicle delivery hub keeps its own distinct subject');
 
   assert.ok(seoHome.includes('id="home-priority-regions"'),'homepage links to priority regional service pages');
   assert.ok(seoHome.includes('/taksong/busan/'),'homepage has direct Busan taksong link');
