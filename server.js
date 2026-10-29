@@ -2,6 +2,7 @@
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const ROOT=__dirname,PORT=Number(process.env.PORT||3000),BRAND='스마트전국대리운전 스마트24탁송',PHONE='1811-4294';
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
+const {observeCrawlerRequest}=require('./lib/crawler-observability');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const load=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
 const baseRegions=load('data/regions.json').regions||[];
@@ -850,7 +851,7 @@ const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layou
 const routeGuides=require('./lib/route-guides')({regions,byPath,pathBySlug,cachedRoadDistance,roadQuote:RoadFareServer.roadQuote,esc,layout,servicePath,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',matchingHistoricalRides});
 const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});
 const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout,servicePath,label:seoRegionLabel,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',historicalRides});
-http.createServer((req,res)=>{let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
+http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 // Publish the public IndexNow ownership key at the root on Cloudtype.
 if(pathname==='/770f921af32e749f64c1d447c607ea42.txt')return respond(res,200,fs.readFileSync(path.join(ROOT,'770f921af32e749f64c1d447c607ea42.txt'),'utf8'),'text/plain; charset=utf-8');
 // Consolidate default-document URLs without changing query parameters.
