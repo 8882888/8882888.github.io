@@ -469,7 +469,17 @@ function regionalBlogLinks(r,kind){
   if(r.full_name==='경상남도 김해시'&&/김해공항|김해국제공항/.test(title)&&!/김해시|장유|율하|진영/.test(title))return false;
   return names.some(n=>title.includes(n))&&(!ambiguous||parents.some(n=>title.includes(n)));
  }).sort((a,b)=>{
-  const score=p=>Number(/운행완료|운행후기|배차완료|배차후기/.test(p.title))*4+Number(compact(p.title).includes(compact(r.name)))*2+Number(/후기|완료/.test(p.title));
+  // Prioritize articles about this region instead of passing destination mentions.
+  // Prefer posts dedicated to this service rather than mixed-service summaries.
+  const score=p=>{
+   const title=compact(p.title).replace(/^#+/,'');
+   const regionFirst=names.some(n=>title.startsWith(n));
+   const regionEarly=!regionFirst&&names.some(n=>title.slice(0,28).includes(n));
+   const serviceEarly=(kind==='taksong'?/탁송/:/대리운전/).test(title.slice(0,38));
+   const mixed=/탁송/.test(title)&&/대리운전/.test(title);
+   return (regionFirst?12:regionEarly?6:0)+Number(serviceEarly)*3-Number(mixed)*4
+    +Number(/운행완료|운행후기|배차완료|배차후기/.test(title))*4+Number(/후기|완료/.test(title));
+  };
   return score(b)-score(a);
  }).slice(0,3);
  if(!chosen.length)return '';

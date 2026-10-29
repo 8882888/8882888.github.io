@@ -199,6 +199,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const busanTaksongQuality=await (await get('/taksong/busan/')).text();
   assert.ok(busanTaksongQuality.includes('부산탁송'),'taksong regional page still links a relevant operator post');
   assert.ok(!busanTaksongQuality.includes('차량탁송 이용 목적</h2>'),'priority taksong region avoids keyword-dump section');
+  const gangwonDaeriBlogPage=await (await get('/daeri/gangwon/')).text();
+  const gangwonDaeriBlogLinks=gangwonDaeriBlogPage.split('id="regional-blog-links"')[1]?.split('</section>')[0]||'';
+  assert.ok(gangwonDaeriBlogLinks.includes('blog.naver.com/wjdtnr4757/'),'Gangwon driver page keeps regional Naver blog links');
+  assert.ok(!gangwonDaeriBlogLinks.includes('눈 내리는 부산'),'Gangwon driver page must prioritize Gangwon-focused articles');
 
   // Priority regions lead with their own factual source evidence, not mass route keywords.
   const sokchoGyodongPage=await get('/taksong/gangwon/sokcho-si/gyo-dong/');
