@@ -35,6 +35,8 @@ assert.equal(matchingHistoryRegion(record('대명동','부산서구 토성동'),
 assert.equal(matchingHistoryRegion(record('부산서구 토성동','대구'),busanSeogu,regions),true,'Busan district is qualified');
 assert.equal(matchingHistoryRegion(record('인천서구 토성동','대구'),busanToseong,regions),false,'other city Seo-gu is never Busan');
 assert.equal(matchingHistoryRegion(record('부산','서구 토성동'),busanToseong,regions),false,'do not combine province from departure with district from destination');
+assert.equal(matchingHistoryRegion(record('광주광역시 송정역','광주효천동'),region('광주시','경기도 광주시','시'),regions),false,'Gwangju metropolitan city is not Gyeonggi Gwangju-si');
+assert.equal(matchingHistoryRegion(record('경기도 광주시 경안동','인천'),region('광주시','경기도 광주시','시'),regions),true,'fully qualified Gyeonggi Gwangju-si remains matched');
 
 assert.equal(publicPlace('의정부산곡동'),'지역 비공개','do not publicly label Uijeongbu as Busan');
 assert.equal(publicPlace('장기동속초명가'),'지역 비공개','do not publicly label restaurant as Sokcho');
