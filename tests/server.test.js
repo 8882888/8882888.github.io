@@ -20,6 +20,22 @@ assert.equal(matchingHistoryRegion(record('탁/설악산소공원주차장','오
 assert.equal(matchingHistoryRegion(record('탁/양평읍','목포항국제여객터미널/톨포'),region('포항시','경상북도 포항시','시'),regions),false,'목포항 is not 포항');
 assert.equal(matchingHistoryRegion(record('대리/부산연산동','부산장전동'),region('부산광역시','부산광역시','시도'),regions),true,'real 부산 names remain eligible');
 assert.equal(matchingHistoryRegion(record('탁/기장군반룡산단','연수구 능허대로/톨포'),region('기장군','부산광역시 기장군','군'),regions),true,'explicit 기장군 record stays linked');
+// Public and Excel records cannot turn same-suffix neighborhoods into local achievements.
+const sokchoGyodong=region('교동','강원특별자치도 속초시 교동','동');
+const gangneungGyodong=region('교동','강원특별자치도 강릉시 교동','동');
+const busanToseong=region('토성동','부산광역시 서구 토성동','동');
+const busanSeogu=region('서구','부산광역시 서구','구');
+assert.equal(matchingHistoryRegion(record('방교동','광산구'),sokchoGyodong,regions),false,'Banggyo-dong must not be presented as Sokcho Gyo-dong');
+assert.equal(matchingHistoryRegion(record('강릉교동.명륜로83','평택시'),sokchoGyodong,regions),false,'Gangneung Gyo-dong must not be assigned to Sokcho');
+assert.equal(matchingHistoryRegion(record('강화교동면대룡시장','서울'),sokchoGyodong,regions),false,'Ganghwa Gyodong-myeon must not be matched to Sokcho');
+assert.equal(matchingHistoryRegion(record('교동','대구'),sokchoGyodong,regions),false,'unqualified Gyo-dong is not enough');
+assert.equal(matchingHistoryRegion(record('속초시 교동','대구'),sokchoGyodong,regions),true,'properly qualified Sokcho Gyo-dong remains visible');
+assert.equal(matchingHistoryRegion(record('강릉교동','대구'),gangneungGyodong,regions),true,'qualified Gangneung Gyo-dong remains visible');
+assert.equal(matchingHistoryRegion(record('대명동','부산서구 토성동'),busanToseong,regions),true,'same-field Busan Seo-gu Toseong-dong is a real local match');
+assert.equal(matchingHistoryRegion(record('부산서구 토성동','대구'),busanSeogu,regions),true,'Busan district is qualified');
+assert.equal(matchingHistoryRegion(record('인천서구 토성동','대구'),busanToseong,regions),false,'other city Seo-gu is never Busan');
+assert.equal(matchingHistoryRegion(record('부산','서구 토성동'),busanToseong,regions),false,'do not combine province from departure with district from destination');
+
 assert.equal(publicPlace('의정부산곡동'),'지역 비공개','do not publicly label Uijeongbu as Busan');
 assert.equal(publicPlace('장기동속초명가'),'지역 비공개','do not publicly label restaurant as Sokcho');
 assert.equal(publicPlace('설악산소공원주차장'),'지역 비공개','do not publicly label parking lot as Wonju');
@@ -167,6 +183,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(!busanTaksongQuality.includes('차량탁송 이용 목적</h2>'),'priority taksong region avoids keyword-dump section');
 
   // Priority regions lead with their own factual source evidence, not mass route keywords.
+  const sokchoGyodongPage=await get('/taksong/gangwon/sokcho-si/gyo-dong/');
+  assert.equal(sokchoGyodongPage.status,200,'Sokcho Gyo-dong page exists');
+  const sokchoGyodongHtml=await sokchoGyodongPage.text();
+  assert.ok(!sokchoGyodongHtml.includes('방교동 → 광산구'),'another citys Banggyo-dong ride cannot masquerade as Sokcho ride');
+  assert.ok(!sokchoGyodongHtml.includes('강릉교동'),'Gangneung ride cannot masquerade as Sokcho ride');
+
   const verifiedBusan=await (await get('/daeri/busan/')).text();
   assert.ok(verifiedBusan.includes('id="priority-verified-rides"'),'priority page needs visible real completed dispatch evidence');
   assert.ok(verifiedBusan.includes('사용자 확인 공개 운행')||verifiedBusan.includes('기존 완료 운행기록'),'priority page identifies confirmed record source');
