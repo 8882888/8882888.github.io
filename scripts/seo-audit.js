@@ -107,12 +107,6 @@ async function inspect(route){
  if(!robotsText.includes('Sitemap: '+config.site+priorityRoute))priorityIssues.push('Priority sitemap missing from robots.txt');
  if(!priorityXml||Buffer.byteLength(priorityXml)>10000000)priorityIssues.push('Invalid sitemap size');
  pages.push({route:priorityRoute,status:priorityResponse.status,url:priorityResponse.url,urlCount:priorityUrls.length,issues:priorityIssues,passed:priorityIssues.length===0});
- const descriptions=new Map();
- for(const page of pages){
-  if(!priorityByPath.has(page.route)||!page.description)continue;
-  if(descriptions.has(page.description))pages.push({route:page.route+'#description',passed:false,issues:['Duplicate priority meta description with '+descriptions.get(page.description)]});
-  descriptions.set(page.description,page.route);
- }
  const sitemapCache=new Map();
  for(const kind of ['daeri','taksong']){
   const route='/sitemap-'+kind+'.xml';
@@ -127,6 +121,12 @@ async function inspect(route){
   if(!sitemapCache.get(info.kind)?.includes('<loc>'+expectedUrl.href+'</loc>'))checked.issues.push('Missing regional service sitemap entry');
   checked.passed=checked.issues.length===0;
   pages.push(checked);
+ }
+ const descriptions=new Map();
+ for(const page of pages){
+  if(!priorityByPath.has(page.route)||!page.description)continue;
+  if(descriptions.has(page.description))pages.push({route:page.route+'#description',passed:false,issues:['Duplicate priority meta description with '+descriptions.get(page.description)]});
+  descriptions.set(page.description,page.route);
  }
  const report={site:base.href,checkedAt:new Date().toISOString(),priorityCount:priorityByPath.size,passed:pages.every(p=>p.passed),pages};
  console.log(JSON.stringify(report,null,2));
