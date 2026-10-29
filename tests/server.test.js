@@ -25,6 +25,7 @@ assert.equal(publicPlace('장기동속초명가'),'지역 비공개','do not pub
 assert.equal(publicPlace('설악산소공원주차장'),'지역 비공개','do not publicly label parking lot as Wonju');
 assert.equal(publicPlace('목포항국제여객터미널'),'목포','known Mokpo seaport name remains visible');
 assert.equal(publicPlace('탁/김해공항T1'),'김해공항(부산 강서구)','Gimhae airport is not Gimhae city');
+assert.equal(publicPlace('인천공항 출발 → 부산남산동 도착'),'인천','public place shows the first origin rather than a later destination');
 
 const port=30000+Math.floor(Math.random()*10000);
 const child=spawn(process.execPath,['server.js'],{cwd:require('node:path').resolve(__dirname,'..'),env:{...process.env,PORT:String(port),PUBLIC_HOST:'example.com'},stdio:['ignore','pipe','pipe']});
