@@ -143,6 +143,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(busanTaksongQuality.includes('부산탁송'),'taksong regional page still links a relevant operator post');
   assert.ok(!busanTaksongQuality.includes('차량탁송 이용 목적</h2>'),'priority taksong region avoids keyword-dump section');
 
+  // Priority regions lead with their own factual source evidence, not mass route keywords.
+  const verifiedBusan=await (await get('/daeri/busan/')).text();
+  assert.ok(verifiedBusan.includes('id="priority-verified-rides"'),'priority page needs visible real completed dispatch evidence');
+  assert.ok(verifiedBusan.includes('사용자 확인 공개 운행')||verifiedBusan.includes('기존 완료 운행기록'),'priority page identifies confirmed record source');
+  assert.ok(verifiedBusan.indexOf('id="priority-verified-rides"')<verifiedBusan.indexOf('출발 전국 주요 구간'),'real evidence precedes generic nationwide route links');
+  const verifiedGangwon=await (await get('/taksong/gangwon/')).text();
+  assert.ok(verifiedGangwon.includes('id="priority-verified-rides"'),'Gangwon priority page has factual record section');
+  const unverifiedLocality=await (await get('/taksong/jeonbuk/muju-gun/')).text();
+  assert.ok(unverifiedLocality.includes('id="priority-verified-rides"'),'Muju priority page explains evidence status');
+  assert.ok(!unverifiedLocality.includes('다른 지역에서 확인된 탁송 운행후기'),'priority landing must not use unrelated ride as local case');
   // Missing region-specific history must show only verified nationwide reviews, never a fabricated local ride.
   const localityWithoutRecord=await get('/taksong/busan/gijang-gun/gijang-eup/dongbu-ri/');
   assert.equal(localityWithoutRecord.status,200,'rural locality must resolve');
