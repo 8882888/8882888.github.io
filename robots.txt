@@ -1,12 +1,6 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://jeongukdaeri.kr/sitemap-priority.xml
 Sitemap: https://jeongukdaeri.kr/sitemap.xml
-Sitemap: https://jeongukdaeri.kr/sitemap-daeri.xml
-Sitemap: https://jeongukdaeri.kr/sitemap-taksong.xml
-
-Sitemap: https://jeongukdaeri.kr/sitemap-route-daeri.xml
-Sitemap: https://jeongukdaeri.kr/sitemap-route-taksong.xml
-Sitemap: https://jeongukdaeri.kr/sitemap-nationwide-route-daeri.xml
-Sitemap: https://jeongukdaeri.kr/sitemap-nationwide-route-taksong.xml
 Sitemap: https://jeongukdaeri.kr/sitemap-reviewed-routes.xml
