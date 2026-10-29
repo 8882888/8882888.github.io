@@ -352,6 +352,20 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const response=await get(route);assert.equal(response.status,200);
    assert.equal(((await response.text()).match(/<h1(?:\s|>)/gi)||[]).length,1,route+' must have exactly one H1');
   }
+
+   // The two URLs previously shown as Naver Search Advisor collection-limited are auditable.
+   const oldLandingResponse=await get('/taksongdaeri/');
+   assert.equal(oldLandingResponse.status,200,'combined service landing stays accessible');
+   const oldLandingHtml=await oldLandingResponse.text();
+   assert.ok(oldLandingHtml.includes('<link rel="canonical" href="https://example.com/taksongdaeri/">'),'combined landing owns its canonical');
+   assert.ok(oldLandingHtml.includes('<meta name="robots" content="index,follow,max-image-preview:large">'),'combined landing permits indexing');
+   const oldLandingSchema=oldLandingHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+   assert.ok(oldLandingSchema,'combined landing has valid structured data');
+   assert.equal(JSON.parse(oldLandingSchema[1]).url,'https://example.com/taksongdaeri/');
+   const faviconResponse=await get('/favicon.ico');
+   assert.equal(faviconResponse.status,200,'favicon URL returns 200');
+   assert.ok(/^image\//.test(faviconResponse.headers.get('content-type')||''),'favicon has an image MIME type');
+   assert.ok((await faviconResponse.arrayBuffer()).byteLength>=100,'favicon is a nonempty image');
   for(const [source,target] of [['/index.html','/'],['/daeri/index.html?ref=a','/daeri/?ref=a'],['/taksong/index.html','/taksong/']]){
    const response=await fetch('http://127.0.0.1:'+port+source,{redirect:'manual'});assert.equal(response.status,301);assert.equal(response.headers.get('location'),target);
   }

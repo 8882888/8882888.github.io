@@ -3,7 +3,7 @@
 const config=require('../data/seo-pages.json');
 const priority=require('../data/priority-regions.json').pages;
 const base=new URL(process.argv[2]||'http://localhost:3000/');
-const routes=[...new Set([...config.pages.map(p=>p.path),'/sitemap.xml','/robots.txt'])];
+const routes=[...new Set([...config.pages.map(p=>p.path),'/taksongdaeri/','/favicon.ico','/sitemap.xml','/robots.txt'])];
 const rules=new Map(config.pages.map(p=>[p.path,p]));
 const priorityByPath=new Map();
 function content(html,tag){return [...html.matchAll(new RegExp('<'+tag+'\\b[^>]*>([\\s\\S]*?)<\\/'+tag+'>','gi'))].map(m=>m[1].replace(/<[^>]*>/g,' ').trim())}
@@ -19,6 +19,14 @@ async function inspect(route){
   if(new URL(response.url).pathname!==url.pathname)issues.push('Unexpected redirect');
 
   if(!response.ok)issues.push('HTTP '+response.status);
+  if(route==='/favicon.ico'){
+   out.contentType=response.headers.get('content-type')||'';
+   const bytes=new Uint8Array(await response.arrayBuffer());
+   out.sizeBytes=bytes.byteLength;
+   if(!/^image\/(?:x-icon|vnd\.microsoft\.icon|png)(?:\s*;|$)/i.test(out.contentType))issues.push('Invalid favicon MIME: '+out.contentType);
+   if(bytes.byteLength<100)issues.push('Empty or tiny favicon: '+bytes.byteLength+' bytes');
+   out.issues=issues;out.passed=!issues.length;return out;
+  }
   const html=await response.text();
   if(route==='/robots.txt'){if(!/User-agent:/i.test(html))issues.push('Missing User-agent');if(/Disallow:\s*\/\s*(?:\r?\n|$)/i.test(html))issues.push('Root blocked')}
   else if(route==='/sitemap.xml'){
