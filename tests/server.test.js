@@ -189,6 +189,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(koreanDaeri.includes('blog.naver.com/wjdtnr4757/224388328571'),'national driving page points to the August 24 long-distance guide');
   assert.ok(koreanDaeri.includes('1811-4294'),'national driving page preserves the official contact number');
   assert.ok(!koreanTaksong.includes('id="national-driver-source-links"'),'vehicle delivery hub keeps its own distinct subject');
+  assert.ok(koreanDaeri.includes('id="long-distance-daeri-verified"'),'national daeri hub explains long-distance booking with verified examples');
+  for(const phrase of ['해운대중동 → 평택신장동','고흥군 → 종로숭인동','창원시 월영동 → 부산 부산진구','과거 금액','기사 복귀 교통편'])assert.ok(koreanDaeri.includes(phrase),'long-distance guidance contains verified source and booking advice: '+phrase);
+  assert.ok(koreanDaeri.includes('170,000원')&&koreanDaeri.includes('190,000원')&&koreanDaeri.includes('60,000원'),'only confirmed historical fares are displayed for selected rides');
+  const longDistanceSection=koreanDaeri.split('id="long-distance-daeri-verified"')[1]?.split('</section>')[0]||'';
+  assert.equal((longDistanceSection.match(/href="\/reviews\/[a-f0-9]{16}\//g)||[]).length,3,'three verified completed ride details are linked');
+  assert.ok(!koreanTaksong.includes('id="long-distance-daeri-verified"'),'taksong page never gets driver-specific completed rides');
 
   assert.ok(seoHome.includes('id="home-priority-regions"'),'homepage links to priority regional service pages');
   assert.ok(seoHome.includes('/taksong/busan/'),'homepage has direct Busan taksong link');
