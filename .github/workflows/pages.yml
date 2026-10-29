@@ -193,6 +193,16 @@ jobs:
           PY
       - name: Protect Smart24 branding and core files
         run: python tools/check_smart24_invariants.py
+      - name: Prevent Github Pages backup from competing with the official search index
+        run: |
+          python tools/mark_github_pages_mirror_noindex.py
+          python - <<'PY'
+          from pathlib import Path
+          page=Path('index.html').read_text(encoding='utf-8')
+          assert page.count('<meta name="robots" content="noindex,follow">')==1
+          assert 'rel="canonical" href="https://jeongukdaeri.kr/"' in page
+          print('PASS: mirror has noindex and points at official homepage')
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site files
