@@ -973,7 +973,7 @@ if(pathname==='/sitemap-priority.xml'){
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+[...new Set(urls)].map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
-if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const service=pathname==='/sitemap-daeri.xml'?'daeri':'taksong';const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const cached=sitemapCache.get(pathname);if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'+['/'+service+'/',...(service==='daeri'?['/special/nationwide-daeri/','/service/daeri/']:['/service/taksong/','/service/long-distance-taksong/']),].map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+regions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc><image:image><image:loc>'+esc(base+cardPngPath(r.slug,service))+'</image:loc></image:image></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
+if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const service=pathname==='/sitemap-daeri.xml'?'daeri':'taksong';const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const cached=sitemapCache.get(pathname);if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'+['/'+service+'/',...(service==='daeri'?[]:['/service/taksong/','/service/long-distance-taksong/']),].map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+regions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc><image:image><image:loc>'+esc(base+cardPngPath(r.slug,service))+'</image:loc></image:image></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
 if(pathname==='/sitemap.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const cached=sitemapCache.get(pathname);
@@ -985,10 +985,10 @@ if(pathname==='/sitemap.xml'){
  const focused=[
   '/','/taksongdaeri/','/daeri/','/taksong/','/fare/','/fare/jeju/',
   '/reviews/','/reviews/history/','/routes/reviewed/','/blog/','/region/',
-  '/service/golf/','/service/taksong/','/service/daeri/',
+  '/service/golf/','/service/taksong/',
   '/service/daily-driver/','/service/long-distance-taksong/',
   '/service/corporate/','/taksong/types/','/places/','/activities/',
-  '/special/nationwide-daeri/','/special/24-hour-service/',
+  '/special/24-hour-service/',
   '/business/','/business/rental-car/','/business/used-car/',
   '/business/auction/','/business/scrapyard/','/business/export-port/',
   ...placeCategories.map(x=>'/places/'+encodeURIComponent(x[0])+'/'),
