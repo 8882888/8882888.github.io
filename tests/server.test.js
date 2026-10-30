@@ -678,7 +678,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(editorialHtml.includes(gwangjuBlog.title),'call-producing post keeps exact published title');
   assert.ok(editorialHtml.includes('경기도 광주시·오포 지역 차량탁송'),'Gyeonggi Gwangju is not confused with Gwangju metropolitan city');
   assert.ok(editorialHtml.includes('출고 가능 시간'),'Gyeonggi Gwangju card gives customer booking information');
-  assert.ok(editorialHtml.includes('1811-4294'),'homepage shows official contact for current booking');
+  const gangwonInquiries=originalBlogPosts.find(p=>p.id==='224378263508');
+  assert.ok(gangwonInquiries,'user-confirmed August Gangwon call source must be in saved blog index');
+  assert.ok(editorialHtml.includes(gangwonInquiries.url),'homepage preserves source of real Gangwon phone inquiry');
+  assert.ok(editorialHtml.includes(gangwonInquiries.title),'homepage preserves exact source title');
+  assert.ok(editorialHtml.includes('평창군 봉평면'),'blog card correctly identifies Bongpyeong-myeon in Pyeongchang');
+  assert.ok(editorialHtml.includes('15만원이 언급됐지만'),'quote is expressly marked as unconfirmed, not a universal tariff');
+  const gangwonProvince=await (await get('/taksong/gangwon/')).text();
+  assert.ok(gangwonProvince.includes(gangwonInquiries.url),'Gangwon taksong provincial guide links to call-generating original blog post');
+    assert.ok(editorialHtml.includes('1811-4294'),'homepage shows official contact for current booking');
   assert.ok(!editorialHtml.includes('<img'),'do not display invented field photos');
   const archiveData=require('../lib/blog-archive');
   assert.equal(archiveData.total,require('../blog/posts.json').length,'archive retains source links');

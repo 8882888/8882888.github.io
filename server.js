@@ -477,7 +477,10 @@ function regionalBlogLinks(r,kind){
    const regionEarly=!regionFirst&&names.some(n=>title.slice(0,28).includes(n));
    const serviceEarly=(kind==='taksong'?/탁송/:/대리운전/).test(title.slice(0,38));
    const mixed=/탁송/.test(title)&&/대리운전/.test(title);
-   return (regionFirst?12:regionEarly?6:0)+Number(serviceEarly)*3-Number(mixed)*4
+   // Prioritize only the user-confirmed source of a phone inquiry in Gangwon.
+   // An inquiry does not prove a completed delivery or a fixed fare.
+   const inquirySignal=kind==='taksong'&&r.full_name==='강원특별자치도'&&p.id==='224378263508'?30:0;
+   return inquirySignal+(regionFirst?12:regionEarly?6:0)+Number(serviceEarly)*3-Number(mixed)*4
     +Number(/운행완료|운행후기|배차완료|배차후기/.test(title))*4+Number(/후기|완료/.test(title));
   };
   return score(b)-score(a);
