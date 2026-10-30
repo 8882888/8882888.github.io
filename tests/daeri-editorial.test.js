@@ -184,6 +184,26 @@ async function get(p){
    dailyServiceArchive.includes('href="/blog/archive/golf-corporate-daily/"'),
    'daily driver page sends readers to the same relevant original Naver archive');
 
+ const regionalThirdFive=[{"id":"capital-taksong","title":"서울·경기·인천탁송 | 수도권 자동차 인수·인계와 실제후기","ids":["224452097042","224452072174","224451107355","224451097227"]},{"id":"gyeongsang-taksong","title":"부산·대구·경상탁송 | 항만·산단·장거리 운행 원문","ids":["224452088793","224452085535","224450082013","224445300887"]},{"id":"jeolla-taksong","title":"광주·전북·전남탁송 | 목포항·산단·산간 차량이동","ids":["224449892895","224449871939","224448781333","224447539054"]},{"id":"chungcheong-taksong","title":"대전·세종·충청탁송 | 천안·청주·서산 실제후기","ids":["224452906198","224451239682","224447657132","224434019317"]},{"id":"general-daeri","title":"전국·장거리 대리운전 | 지역별 귀가·예약 실제원문","ids":["224453006635","224452992697","224452987205","224445451429"]}];
+ for(const item of regionalThirdFive){
+   const path='/blog/archive/'+item.id+'/';
+   const doc=await get(path);
+   assert.ok(doc.includes('<title>'+item.title)&&doc.includes('id="'+item.id+'-regional-guide"'),
+     item.id+' displays unique region editorial and title');
+   assert.ok(doc.includes('"@type":"CollectionPage"')&&doc.includes('"@type":"ItemList"'),
+     item.id+' includes original-source list metadata');
+   assert.ok(doc.includes('tel:18114294'),item.id+' keeps current nationwide service phone');
+   for(const sourceId of item.ids){
+     const src=originalById.get(sourceId);
+     assert.ok(src&&doc.includes(src.url),item.id+' uses verified existing original '+sourceId);
+   }
+   const count=require('../lib/blog-archive').counts[item.id];
+   const next=await fetch('http://127.0.0.1:3000'+path+'?page=2');
+   assert.equal(next.status,count>30?200:404,'regional archive pagination respects actual count');
+   if(next.status===200)assert.ok(!(await next.text()).includes('id="'+item.id+'-regional-guide"'),
+     'editorial not duplicated across '+item.id+' page 2');
+ }
+
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
