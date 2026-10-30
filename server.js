@@ -706,7 +706,8 @@ function vehicleTopicPage(topic){
 }
 function vehicleTopicsHub(){
  const groups=[...new Set(vehicleTopics.map(x=>x[1]))];
- const body='<section><h2>차종·톤급·서비스센터별 탁송 안내</h2><p>차량 유형별 조건과 기사 배차 가능 여부를 확인하는 상담 안내입니다. 실제 완료 운행이나 공식 서비스센터 제휴를 뜻하지 않습니다.</p></section>'+groups.map(g=>'<section><h2>'+esc(g)+'</h2><ul>'+vehicleTopics.filter(x=>x[1]===g).map(([name])=>'<li><a href="'+vehicleTopicPath(name)+'">'+esc(name)+'</a></li>').join('')+'</ul></section>').join('');
+ const editorial='<section id="vehicle-types-original-archive"><h2>승용차·화물차·서비스센터 차량탁송, 무엇이 다를까요?</h2><h3>승용차와 수입차·전기차</h3><p>차량 주행 가능 여부와 키 인수 담당자, 서비스센터 입고·출고 시간 등을 확인합니다. 전기차는 인계 당시 충전 상태와 출발지·도착지 충전 여건을 확인해 주세요. 특정 정비 업체 제휴나 제조사 공식 서비스라는 의미는 아닙니다.</p><h3>화물차와 특장차</h3><p>1톤·3.5톤·5톤 이상 화물차, 윙바디·덤프 등은 차량 크기와 운전 자격, 기사 수급 및 보험 적용 조건을 별도 상담해야 합니다. 운행할 수 없는 차량은 일반 로드탁송이 어려울 수 있습니다.</p><h3>서비스센터·차종별 공개 원문</h3><p><a href="https://blog.naver.com/wjdtnr4757/224431721391" target="_blank" rel="noopener noreferrer">국산차·수입차·화물·특수차량 탁송 공개 글</a> · <a href="https://blog.naver.com/wjdtnr4757/224419673150" target="_blank" rel="noopener noreferrer">기아 오토큐 정비 입고·출고 탁송 안내</a></p><p><a href="/blog/archive/vehicle-taksong/">차종·서비스센터·중고차탁송 블로그 자료실</a> · <a href="/business/used-car/">중고차 매매단지탁송</a> · <a href="/service/long-distance-taksong/">장거리 자동차탁송</a> · <a href="tel:18114294">전국탁송 상담 1811-4294</a></p></section>';
+ const body='<section><h2>차종·톤급·서비스센터별 탁송 안내</h2><p>차량 유형별 조건과 기사 배차 가능 여부를 확인하는 상담 안내입니다. 실제 완료 운행이나 공식 서비스센터 제휴를 뜻하지 않습니다.</p></section>'+editorial+groups.map(g=>'<section><h2>'+esc(g)+'</h2><ul>'+vehicleTopics.filter(x=>x[1]===g).map(([name])=>'<li><a href="'+vehicleTopicPath(name)+'">'+esc(name)+'</a></li>').join('')+'</ul></section>').join('');
  return layout('전국 차종별 탁송 · 서비스센터탁송','전기차, 화물차, 윙바디, 수입차·국산차 서비스센터 탁송 안내. '+PHONE,body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/taksong/types/',null);
 }
 const sitemapCache=new Map();
