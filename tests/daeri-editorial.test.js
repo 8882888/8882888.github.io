@@ -300,6 +300,20 @@ async function get(p){
   assert.ok(!html.includes('rel="canonical" href="https://8882888.github.io/'),
     entry.route+' does not prioritize the backup domain');
  }
+ const ninthFive=[{"route":"/special/osaek/","marker":"osaek-source-guide","source":["224451230156","224428185111"],"archive":"/blog/archive/mountain-cycle/","canonical":"https://jeongukdaeri.kr/special/osaek/"},{"route":"/special/hangyeryeong/","marker":"hangyeryeong-source-guide","source":["224423738485","224453015755"],"archive":"/blog/archive/mountain-cycle/","canonical":"https://jeongukdaeri.kr/special/hangyeryeong/"},{"route":"/special/baekdamsa/","marker":"baekdamsa-source-guide","source":["224453015755","224428185111"],"archive":"/blog/archive/mountain-cycle/","canonical":"https://jeongukdaeri.kr/special/baekdamsa/"},{"route":"/special/namgyori/","marker":"namgyori-source-guide","source":["224448653664","224453074981"],"archive":"/blog/archive/mountain-cycle/","canonical":"https://jeongukdaeri.kr/special/namgyori/"},{"route":"/special/seoraksan/","marker":"seoraksan-four-routes-guide","source":["224437898065","224448653664","224453074981"],"archive":"/blog/archive/mountain-cycle/","canonical":"https://jeongukdaeri.kr/special/seoraksan/"}];
+ for(const item of ninthFive){
+  const response=await fetch('http://127.0.0.1:3000'+item.route);
+  assert.equal(response.status,200,item.route+' HTTP 200');
+  const html=await response.text();
+  assert.ok(html.includes('id="'+item.marker+'"')&&html.includes('href="'+item.archive+'"'),item.route+' contains specific reader guidance and original archive');
+  assert.ok(html.includes('rel="canonical" href="'+item.canonical+'"'),item.route+' canonical uses official host');
+  assert.ok(!html.includes('rel="canonical" href="https://8882888.github.io/'),item.route+' excludes backup host canonical');
+  assert.equal((html.match(/<h1\\b/g)||[]).length,1,item.route+' retains one heading');
+  assert.ok(html.includes('tel:18114294'),item.route+' retains nationwide hotline');
+  for(const id of item.source){
+    assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),item.route+' links only verified public blog source '+id);
+  }
+ }
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
