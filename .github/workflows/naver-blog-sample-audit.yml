@@ -1,0 +1,30 @@
+name: Blog visibility spot-check (internal)
+on:
+  pull_request:
+    paths:
+      - scripts/naver-blog-sample-audit.js
+      - .github/workflows/naver-blog-sample-audit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  blog-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inspect 8/9/10 month sampled Naver Blog results (not webkr)
+        env:
+          NAVER_SEARCH_CLIENT_ID: ${{ secrets.NAVER_SEARCH_CLIENT_ID }}
+          NAVER_SEARCH_CLIENT_SECRET: ${{ secrets.NAVER_SEARCH_CLIENT_SECRET }}
+        run: node scripts/naver-blog-sample-audit.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: naver-blog-sample-audit
+          path: naver-blog-sample-results.json
+          retention-days: 14
+          if-no-files-found: ignore
