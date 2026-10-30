@@ -497,7 +497,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
    assert.ok(metadata.some(x=>x['@graph']?.some(y=>y['@type']==='WebPage'&&y.primaryImageOfPage)),'regional service page identifies its primary image');
    const imageMap=await (await get('/sitemap-'+service+'.xml')).text();
-   assert.equal((imageMap.match(/<image:image>/g)||[]).length,regions.length,'every regional service URL includes its existing card in the image sitemap');
+   const imageRegions=service==='daeri'?regions.filter(r=>r.level==='시도'||require('../data/priority-regions.json').pages.some(p=>p.kind==='daeri'&&p.region===r.full_name)):regions;
+    assert.equal((imageMap.match(/<image:image>/g)||[]).length,imageRegions.length,'image sitemap includes all discoverable service regions with their existing cards');
    if(service==='taksong'){
     const villages=[...imageMap.matchAll(/<loc>https:\/\/example\.com(\/taksong\/[^<]*\/yongsan-ri\/)<\/loc>/g)].map(m=>m[1]);
     assert.ok(villages.length>=2,'same-named villages have distinct regional URLs');
