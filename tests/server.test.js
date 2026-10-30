@@ -497,7 +497,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
    assert.ok(metadata.some(x=>x['@graph']?.some(y=>y['@type']==='WebPage'&&y.primaryImageOfPage)),'regional service page identifies its primary image');
    const imageMap=await (await get('/sitemap-'+service+'.xml')).text();
-   assert.equal((imageMap.match(/<image:image>/g)||[]).length,regions.length,'every regional service URL includes its existing card in the image sitemap');
+   const imageRegions=service==='daeri'?regions.filter(r=>r.level==='시도'||require('../data/priority-regions.json').pages.some(p=>p.kind==='daeri'&&p.region===r.full_name)):regions;
+    assert.equal((imageMap.match(/<image:image>/g)||[]).length,imageRegions.length,'image sitemap includes all discoverable service regions with their existing cards');
    if(service==='taksong'){
     const villages=[...imageMap.matchAll(/<loc>https:\/\/example\.com(\/taksong\/[^<]*\/yongsan-ri\/)<\/loc>/g)].map(m=>m[1]);
     assert.ok(villages.length>=2,'same-named villages have distinct regional URLs');
@@ -643,7 +644,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((await get('/supabase/site_traffic_dashboard.sql')).status,403,
     'statistics database schema must not be web-exposed');
   const root=await get('/');assert.equal(root.status,200);
-  const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);assert.equal((daeriXml.match(/<loc>/g)||[]).length,regions.length+1,'regional URLs plus one canonical daeri hub');const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);assert.equal(((await taksongMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');
+  const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);const priorityDaeri=require('../data/priority-regions.json').pages.filter(p=>p.kind==='daeri');
+ const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityDaeri.some(p=>p.region===r.full_name));
+ assert.equal((daeriXml.match(/<loc>/g)||[]).length,discoveryRegions.length+1,'driver sitemap focuses on province and priority regions only');
+ assert.ok(discoveryRegions.length<40,'driver sitemap must be curated, not a 20k-page generated directory');
+ for(const region of ['서울특별시','부산광역시','대구광역시','인천광역시']){
+  const url={'서울특별시':'seoul','부산광역시':'busan','대구광역시':'daegu','인천광역시':'incheon'}[region];
+  assert.ok(daeriXml.includes('https://example.com/daeri/'+url+'/'),'driver sitemap retains priority '+region);
+ }
+ assert.ok(!daeriXml.includes('https://example.com/daeri/seoul/gangnam-gu/yeoksam-dong/'),'unreviewed thin localities should not dominate driver discovery sitemap');const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);assert.equal(((await taksongMap.text()).match(/<loc>/g)||[]).length,regions.length+3,'regional URLs plus three service hubs');
   const search=await get('/region/?q='+encodeURIComponent('가평읍'));assert.equal(search.status,200);assert.ok((await search.text()).includes('가평읍'));
   // The sixteen user-confirmed Excel review drafts use Korean service labels in their source.
   // They must be normalized before the public verified-ride filter, not silently discarded.
