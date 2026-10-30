@@ -120,7 +120,7 @@ async function get(p){
    'Jeju archive includes practical blog-style port and price explanation');
  assert.ok(jejuArchive.includes('224415828744')&&jejuArchive.includes('224433990134'),
    'Jeju archive cites existing blog originals and does not invent new completed jobs');
- assert.ok(jejuArchive.includes('지정일 도착을 보장할 수 없습니다.')&&jejuArchive.includes('1811-4294'),
+ assert.ok(jejuArchive.includes('지정일 도착을 보장할 수 없습니다.')&&jejuArchive.includes('1877-5245'),
    'Jeju archive does not guarantee ferry schedule or past fare');
  assert.ok(homepage.includes('href="tel:18775245" aria-label="제주탁송 대표번호 1877-5245 전화 상담"'),
    'the homepage Jeju spotlight advertises the dedicated 1877-5245 number');
