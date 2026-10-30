@@ -1,12 +1,10 @@
 name: Notify Naver IndexNow (updated priority regions)
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: ['Deploy to Cloudtype']
+    types: [completed]
     branches: [main]
-    paths:
-      - 'scripts/indexnow-notify.js'
-      - '770f921af32e749f64c1d447c607ea42.txt'
-      - '.github/workflows/indexnow-notify.yml'
 permissions:
   contents: read
 concurrency:
@@ -14,6 +12,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   notify:
+    # Do not notify Naver about a revision until its actual Cloudtype deployment has succeeded.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:

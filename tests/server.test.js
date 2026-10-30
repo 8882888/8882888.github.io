@@ -225,7 +225,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(crosslinkBusanTaksong.includes('blog.naver.com/wjdtnr4757/'),'regional blog links use the operator blog');
   assert.ok(crosslinkBusanTaksong.includes('/reviews/history/'),'regional page links verified ride history');
   const crosslinkBusanDaeri=await (await get('/daeri/busan/')).text();
-  assert.ok(crosslinkBusanDaeri.includes('id="regional-blog-links"'),'Busan driver page connects published blog articles');
+  // Province driver pages use a curated 17-province editorial component, not the generic regional-blog-links widget.
+  assert.ok(crosslinkBusanDaeri.includes('id="province-daeri-blog-guide"'),'Busan driver page includes the curated province editorial');
+  assert.ok(crosslinkBusanDaeri.includes('https://blog.naver.com/wjdtnr4757/224452970245'),'Busan driver page links its curated real operator blog article');
   assert.ok(crosslinkBusanDaeri.includes('blog.naver.com/wjdtnr4757/'),'driver page uses operator blog');
   assert.ok(!crosslinkBusanDaeri.includes('blog.naver.com/eom4757/'),'old unrelated blog ID must never leak');
   assert.ok(!crosslinkBusanDaeri.includes('부산동부권탁송 기장군탁송'),'taksong article must not be misclassified as daeri via brand name');
@@ -236,9 +238,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(busanTaksongQuality.includes('부산탁송'),'taksong regional page still links a relevant operator post');
   assert.ok(!busanTaksongQuality.includes('차량탁송 이용 목적</h2>'),'priority taksong region avoids keyword-dump section');
   const gangwonDaeriBlogPage=await (await get('/daeri/gangwon/')).text();
-  const gangwonDaeriBlogLinks=gangwonDaeriBlogPage.split('id="regional-blog-links"')[1]?.split('</section>')[0]||'';
-  assert.ok(gangwonDaeriBlogLinks.includes('blog.naver.com/wjdtnr4757/'),'Gangwon driver page keeps regional Naver blog links');
-  assert.ok(!gangwonDaeriBlogLinks.includes('눈 내리는 부산'),'Gangwon driver page must prioritize Gangwon-focused articles');
+  const gangwonDaeriBlogLinks=gangwonDaeriBlogPage.split('id="province-daeri-blog-guide"')[1]?.split('</section>')[0]||'';
+  assert.ok(gangwonDaeriBlogPage.includes('id="province-daeri-blog-guide"'),'Gangwon driver page keeps curated local service guide');
+  assert.ok(gangwonDaeriBlogPage.includes('https://blog.naver.com/wjdtnr4757/224420736659'),'Gangwon driver page keeps a real source article');
+  assert.ok(!gangwonDaeriBlogLinks.includes('눈 내리는 부산'),'Gangwon region intro stays region-relevant');
 
   // Priority regions lead with their own factual source evidence, not mass route keywords.
   const sokchoGyodongPage=await get('/taksong/gangwon/sokcho-si/gyo-dong/');
@@ -690,7 +693,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const gangwonProvince=await (await get('/taksong/gangwon/')).text();
   assert.ok(gangwonProvince.includes(gangwonInquiries.url),'Gangwon taksong provincial guide links to call-generating original blog post');
     assert.ok(editorialHtml.includes('1811-4294'),'homepage shows official contact for current booking');
-  assert.ok(!editorialHtml.includes('<img'),'do not display invented field photos');
+  const editorialImages=[...editorialHtml.matchAll(/<img\b[^>]*alt="([^"]+)"/g)].map(x=>x[1]);
+  assert.ok(editorialImages.every(alt=>alt.includes('AI 연출 이미지')&&alt.includes('실제')&&alt.includes('촬영 사진 아님')),'travel illustrations must be transparently labeled, never claimed as field photographs');
   const archiveData=require('../lib/blog-archive');
   assert.equal(archiveData.total,require('../blog/posts.json').length,'archive retains source links');
   assert.equal(Object.values(archiveData.counts).reduce((sum,n)=>sum+n,0),archiveData.total,'all original posts are cataloged once');
@@ -710,7 +714,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const group of archiveData.groups)assert.ok(archiveSitemap.includes('/blog/archive/'+group.id+'/'),'category in sitemap');
   const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);const priorityDaeri=require('../data/priority-regions.json').pages.filter(p=>p.kind==='daeri');
  const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityDaeri.some(p=>p.region===r.full_name));
- assert.equal((daeriXml.match(/<loc>/g)||[]).length,discoveryRegions.length+1,'driver sitemap focuses on province and priority regions only');
+ assert.equal((daeriXml.match(/<loc>/g)||[]).length,discoveryRegions.length+1+require('../lib/daeri-travel-guides').destinations.length,'driver sitemap contains curated provinces, priority regions and four verified-source travel guides');
  assert.ok(discoveryRegions.length<40,'driver sitemap must be curated, not a 20k-page generated directory');
  for(const region of ['서울특별시','부산광역시','대구광역시','인천광역시']){
   const url={'서울특별시':'seoul','부산광역시':'busan','대구광역시':'daegu','인천광역시':'incheon'}[region];
