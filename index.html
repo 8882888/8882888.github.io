@@ -334,18 +334,25 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 .service-fare-layout .quick-booking .btn{font-size:15px}
 @media(max-width:850px){.service-fare-layout{grid-template-columns:1fr;padding:0 5%;margin:24px auto;gap:24px}}
 </style>
+<link rel="stylesheet" href="/assets/traffic-summary.css?v=20261030" />
 </head>
 <body>
 
-<header><strong>스마트24 전국대리운전·24시탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a><button type="button" class="traffic-call-trigger header-phone-count" id="traffic-call-trigger" aria-expanded="false" aria-controls="traffic-sources-detail" title="누적 전화클릭 전환 수 · 클릭하면 유입 경로 및 클릭 페이지 표시 (통화 연결 여부는 확인되지 않음)">전화클릭 전환 <strong id="phone-click-number">확인 중</strong></button></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 방문 및 전화 클릭 통계">
-  <div class="traffic-stats-lines" aria-live="polite">
-    <span class="traffic-stat">오늘 방문 <strong id="today-visit-number">확인 중</strong></span>
-    <span class="traffic-stat">누적 방문 <strong id="total-visit-number">확인 중</strong></span>
-  </div>
-  <div class="traffic-sources" id="traffic-sources-detail" hidden aria-label="전화클릭 전환 유입 경로와 클릭한 페이지">
-    <span class="traffic-sources-heading">전화클릭 전환 유입 경로 · 클릭한 페이지 (기록된 기간)</span>
-    <ol id="phone-source-list" aria-live="polite"><li>집계 확인 중입니다.</li></ol><small class="traffic-source-note">전환 수는 실제 전화 연결이 아니라 전화 버튼 클릭 기준입니다.</small>
-  </div>
+<header><strong>스마트24 전국대리운전·24시탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 접속 기록 및 전화 버튼 통계">
+ <div class="traffic-stats-lines" aria-live="polite">
+  <span class="traffic-stat" title="검색 노출 수가 아닌 브라우저 접속 기록입니다. 점검 방문이 포함될 수 있습니다.">오늘 접속 <strong id="today-visit-number">—</strong></span>
+  <span class="traffic-stat" title="집계 시작 이후 기록된 브라우저 접속 횟수입니다.">누적 기록 <strong id="total-visit-number">—</strong></span>
+  <button type="button" class="traffic-call-trigger" id="traffic-call-trigger" aria-controls="traffic-sources-detail" aria-expanded="false" title="누적 전화 버튼 클릭과 접속 집계 기준 확인">누적 전화클릭 <strong id="phone-click-number">—</strong> ▾</button>
+ </div>
+ <div class="traffic-sources" id="traffic-sources-detail" hidden>
+  <strong class="traffic-source-heading">접속 집계 안내</strong>
+  <p>오늘·누적 수치는 실제 네이버 검색 노출이나 순방문자가 아닙니다. 직접 작업·점검한 방문도 포함될 수 있으며, 전화 클릭은 통화 연결 건수가 아닙니다.</p>
+  <label class="traffic-optout-label"><input type="checkbox" id="exclude-my-visits"> 이 브라우저의 내 점검 방문·전화 버튼 클릭 집계 제외</label>
+  <small class="traffic-mode-note" id="traffic-mode-note">이 설정은 이후 접속부터 적용됩니다. 이미 기록된 수치는 자동 차감되지 않습니다.</small>
+  <strong class="traffic-source-heading">전화 버튼 클릭 경로</strong>
+  <ol id="phone-source-list" aria-live="polite"><li>확인 중입니다.</li></ol>
+  <small class="traffic-source-note">정확한 네이버 검색 노출·클릭 수는 네이버 서치어드바이저에서 확인해야 합니다.</small>
+ </div>
 </aside></div></header>
 <nav class="top-nav" aria-label="주요 서비스 메뉴"><div class="top-nav-inner">
 <a href="/daeri/">전국대리운전</a>
@@ -724,7 +731,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <script>
 (function(){const button=document.getElementById('back-to-top');if(!button)return;function update(){button.classList.toggle('visible',window.scrollY>260)}window.addEventListener('scroll',update,{passive:true});update();button.addEventListener('click',function(){window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})})})();
 </script>
-<script src="/assets/traffic-analytics.js?v=20261028-conversion" defer></script>
+<script src="/assets/traffic-analytics.js?v=20261030-count-accuracy" defer></script>
 </body>
 </html>
 
