@@ -29,6 +29,7 @@ function loadLegalRegions(){
 const regions=loadLegalRegions();
 const priorityRegionalPages=load('data/priority-regions.json').pages;
 const publishedBlogPosts=load('blog/posts.json').filter(p=>p&&typeof p.title==='string'&&/^https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+$/.test(p.url));
+const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
 const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]));
 if(priorityRegionalPages.length!==26||priorityByKey.size!==26)throw Error('Expected 26 unique priority regional pages');
 for(const guide of priorityRegionalPages){
@@ -414,6 +415,7 @@ const provinceServiceProfiles={"서울특별시":["도심 모임·업무 일정"
 function provinceServiceGuide(r,kind){
  if(r.level!=='시도')return '';
  const profile=provinceServiceProfiles[r.name];if(!profile)return '';
+ if(kind==='daeri')return daeriBlogEditorial.province(r,childrenByParent.get(r.slug)||[],servicePath,esc);
  const label=kind==='taksong'?'자동차탁송':'대리운전';
  const children=childrenByParent.get(r.slug)||[];
  const links=children.map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.name)+' '+label+'</a></li>').join('');
@@ -456,6 +458,8 @@ function blogPostMatchesService(post,kind){
 }
 function regionalBlogLinks(r,kind){
  if(!['시도','시','군','구'].includes(r.level))return '';
+ // Curated province-level driver articles are handled by daeriBlogEditorial.
+ if(kind==='daeri'&&r.level==='시도')return '';
  const service=kind==='taksong'?'자동차탁송':'대리운전';
  const compact=s=>String(s||'').replace(/[\s·｜|,，\-]/g,'');
  const trimSuffix=s=>String(s||'').replace(/(특별자치시|특별시|광역시|특별자치도|자치도|시|군|구)$/,'');
@@ -764,7 +768,7 @@ function serviceHub(kind){
   return '<section id="long-distance-daeri-verified"><h2>장거리대리운전 실제 운행완료 사례</h2><p>고객이 확인한 완료 운행기록 중 지역 간 이동 사례입니다. 아래 요금은 해당 운행 날짜와 배차 조건에서 기록된 과거 금액이며 지금도 동일한 금액으로 배차된다는 의미가 아닙니다.</p><ul>'+items+'</ul><h3>장거리 운행 예약 전 확인사항</h3><ol><li>출발지의 정확한 주차 위치와 도착지 주소를 알려주세요.</li><li>희망 출발 날짜·시각, 경유지 및 도착 희망 시간을 확인하세요.</li><li>차량 종류와 대기·통행료 등 추가 조건을 미리 전달해주세요.</li><li>운행 후 기사 복귀 교통편과 지역별 기사 수급을 확인하고 최종 요금·배차 여부를 상담으로 확정해주세요.</li></ol><p><a href="/fare/?service=daeri">장거리대리운전 예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>';
  })();
  const earlierDaeriPosts=isT?'':'<section id="national-driver-source-links"><h2>기존 장거리·법인대리운전 안내 자료</h2><p>번개탁송대리운전 네이버 블로그에 2026년 8월 25일 이전 게시된 자료입니다. 게시 당시 내용과 현재 상담 조건은 다를 수 있으며, 현재 스마트24 홈페이지 상담은 1811-4294입니다.</p><ul><li><a href="https://blog.naver.com/wjdtnr4757/224388328571" target="_blank" rel="noopener noreferrer">8월 24일 서울·부산·대구·광주·완도 장거리대리운전 예약 안내</a></li><li><a href="https://blog.naver.com/wjdtnr4757/224381997772" target="_blank" rel="noopener noreferrer">8월 18일 지방 장거리대리운전 요금·예약 시 확인사항</a></li><li><a href="https://blog.naver.com/wjdtnr4757/224371958009" target="_blank" rel="noopener noreferrer">8월 8일 법인대리운전 법인카드 등록 안내</a></li></ul></section>';
- const body=nationalDriverGuide+regionalStories+priorityRegionLinks(kind)+'<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
+ const body=(isT?'':daeriBlogEditorial.national(majorRegions,servicePath,esc))+nationalDriverGuide+regionalStories+priorityRegionLinks(kind)+'<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
  '<section id="reservation-guide"><h2>'+label+' 예약할 때 필요한 정보</h2><ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치</li><li>도착지 주소와 희망 출발 날짜·시각</li><li>차종과 차량 인수·인계 조건</li><li>경유지, 통행료 및 기타 요청사항</li></ol><p>거리만으로 최종 요금을 확정하지 않으며, 기사 접근·복귀 여건을 확인합니다.</p></section>'+
  bookingGuide(kind)+faqHtml+longDistanceDaeriExamples+earlierDaeriPosts+featuredLinks+
  (isT?'<section><h2>차종·서비스별 자동차탁송</h2><p>국산차·수입차·전기차·화물차 및 서비스센터 입출고 등 차량 종류와 이용 목적에 따라 확인할 사항이 다릅니다.</p><p><a href="/taksong/types/">차종별 탁송과 서비스센터탁송 살펴보기</a></p></section>':'<section><h2>장거리·골프장 대리운전</h2><p>일반 시내 이동과 달리 장거리·골프장 출발은 운행 후 기사 복귀 여건이 배차에 영향을 줄 수 있습니다. 출발 예정 시각과 목적지를 함께 알려주세요.</p></section>')+
