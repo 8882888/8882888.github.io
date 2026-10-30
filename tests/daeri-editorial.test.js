@@ -48,6 +48,19 @@ async function get(p){
 }
 (async()=>{
  const hub=await get('/daeri/');
+ const foodTravelMap=await get('/travel/food-map/');
+ assert.ok(foodTravelMap.includes('전국 맛집·여행지도')&&foodTravelMap.includes('대리운전·자동차탁송'),'map emphasizes natural travel and transport intent');
+ assert.equal((foodTravelMap.match(/class="ft-card"/g)||[]).length,21,'food map contains 17 provinces and 4 curated guides');
+ assert.ok(foodTravelMap.includes('id="ft-map"')&&foodTravelMap.includes('id="ft-search"'),'interactive and accessible search');
+ for(const guide of travel.destinations){assert.ok(foodTravelMap.includes(travel.pathFor(guide)),'food map links verified guide '+guide.slug);assert.ok(foodTravelMap.includes(travel.original(guide).url),'food map links Naver original '+guide.slug)}
+ assert.ok(foodTravelMap.includes('tel:18114294')&&foodTravelMap.includes('/taksong/'),'food map connects to real transport consultations');
+ const mapRedirect=await fetch('http://127.0.0.1:3000/travel/food-map',{redirect:'manual'});
+ assert.equal(mapRedirect.status,301,'map canonical redirect');
+ assert.equal(mapRedirect.headers.get('location'),'/travel/food-map/','map canonical path');
+ const mapPriority=await get('/sitemap-priority.xml');
+ assert.ok(mapPriority.includes('https://jeongukdaeri.kr/travel/food-map/'),'map in priority sitemap');
+ const indexPage=await get('/');
+ assert.ok(indexPage.includes('id="home-food-travel-map"')&&indexPage.includes('href="/travel/food-map/"'),'homepage prominent map links');
  assert.ok(hub.includes('id="national-daeri-blog-editorial"'),'nationwide driver editorial is visible');
  assert.ok(hub.includes('강남·프리미엄·법인 대리운전'),'driver services have their own editorial grouping');
  assert.ok(hub.includes('href="/daeri/gangwon/"'),'national guide links existing Gangwon page');

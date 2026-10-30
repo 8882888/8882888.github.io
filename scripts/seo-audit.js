@@ -120,7 +120,7 @@ async function inspect(route){
  const priorityResponse=await fetch(new URL(priorityRoute,base),{signal:AbortSignal.timeout(15000)});
  const priorityXml=await priorityResponse.text();
  const priorityUrls=[...priorityXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
- const expectedPriorityUrls=['/','/daeri/','/taksong/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...found].map(p=>new URL(p,new URL(config.site)).href);
+ const expectedPriorityUrls=['/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...found].map(p=>new URL(p,new URL(config.site)).href);
  const priorityIssues=[];
  if(priorityResponse.status!==200)priorityIssues.push('Priority sitemap HTTP '+priorityResponse.status);
  if(!String(priorityResponse.headers.get('content-type')).includes('application/xml'))priorityIssues.push('Wrong sitemap content-type');

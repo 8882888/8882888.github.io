@@ -31,6 +31,7 @@ const priorityRegionalPages=load('data/priority-regions.json').pages;
 const publishedBlogPosts=load('blog/posts.json').filter(p=>p&&typeof p.title==='string'&&/^https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+$/.test(p.url));
 const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
 const daeriTravelGuides=require('./lib/daeri-travel-guides');
+const foodTravelMap=require('./lib/food-travel-map');
 const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]));
 if(priorityRegionalPages.length!==26||priorityByKey.size!==26)throw Error('Expected 26 unique priority regional pages');
 for(const guide of priorityRegionalPages){
@@ -965,6 +966,8 @@ if(pathname==='/taksong/')return respond(res,200,applySeo(serviceHub('taksong'),
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
 const daeriRouteMatch=pathname.match(/^\/daeri\/route\/([a-z-]+)\/?$/);if(daeriRouteMatch){const route=featuredDaeriRoutes.find(x=>x.slug===daeriRouteMatch[1]);return route?respond(res,200,featuredDaeriRoutePage(route)):respond(res,404,'해당 대리운전 구간을 찾을 수 없습니다.')}
+if(pathname==='/travel/food-map'){res.writeHead(301,{location:'/travel/food-map/'+u.search});return res.end()}
+if(pathname==='/travel/food-map/')return respond(res,200,foodTravelMap.page({layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',regions,servicePath}));
 const driverTravelMatch=pathname.match(/^\/daeri\/travel\/([a-z-]+)\/?$/);
 if(driverTravelMatch){const canonical='/daeri/travel/'+driverTravelMatch[1]+'/';if(pathname!==canonical){res.writeHead(301,{location:canonical});return res.end()};const article=daeriTravelGuides.page(driverTravelMatch[1],{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});return respond(res,article?200:404,article||'대리운전 지역 여행 안내를 찾을 수 없습니다.')}
 if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return res.end()}
@@ -1011,7 +1014,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
 if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const urls=['/','/daeri/','/taksong/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...priorityRegionalPages.map(p=>{
+ const urls=['/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...priorityRegionalPages.map(p=>{
   const region=regions.find(r=>r.full_name===p.region);
   return servicePath(region,p.kind);
  })];
@@ -1035,7 +1038,7 @@ if(pathname==='/sitemap.xml'){
  const provinceRegions=regions.filter(r=>r.level==='시도');
  const focused=[
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
-  '/','/taksongdaeri/','/daeri/','/taksong/','/taksong/jeju/','/fare/','/fare/jeju/',
+  '/','/taksongdaeri/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/fare/','/fare/jeju/',
   '/reviews/','/reviews/history/','/routes/reviewed/','/blog/','/blog/archive/',
    ...blogArchive.groups.map(g=>'/blog/archive/'+g.id+'/'),'/region/',
   '/service/golf/','/service/taksong/','/recruit/daeri/','/recruit/taksong/',
