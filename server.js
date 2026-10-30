@@ -512,7 +512,7 @@ function jejuTaksongBlogEditorial(){
  '<li><a href="https://blog.naver.com/wjdtnr4757/224387354617" target="_blank" rel="noopener noreferrer">8월 23일 청주 오송 출발, 목포항 경유 제주 차량 선적탁송 후기</a></li>'+
  '<li><a href="https://blog.naver.com/wjdtnr4757/224362663400" target="_blank" rel="noopener noreferrer">7월 30일 제주도 차량탁송과 선적 준비 안내</a></li></ul>'+
  '<h3>육지·제주도 연계 시 확인할 차량 인수 동선</h3><p>제주항·목포항 등 항만을 이용하는 일정은 차량이 출발하는 실제 위치, 항만 인계 방식, 선박 적재 가능 여부와 반대편 항구 도착 후 운행 범위를 나누어 상담합니다. 제주 시내·서귀포시·애월·성산 등 섬 안에서의 이동은 선적이 필요 없는 경우도 있으므로 먼저 구분하세요. 특정 항로의 운항·예약 또는 항만 상주 기사를 보장하지 않습니다.</p>'+
- '<p><a href="/fare/jeju/">제주 차량탁송·선적 예상요금 구성 보기</a> · <a href="/recruit/taksong/">전국 탁송기사 모집·지원 안내</a> · <a href="tel:18114294">제주도탁송 상담 1811-4294</a></p>'+
+ '<p><a href="/fare/jeju/">제주 차량탁송·선적 예상요금 구성 보기</a> · <a href="/recruit/taksong/">전국 탁송기사 모집·지원 안내</a> · <a href="tel:18775245">제주탁송 대표 상담 1877-5245</a></p>'+
  '<p>위 링크는 공개된 기존 네이버 블로그 원문입니다. 당시 사례의 차량·요금·일정은 현재의 고정 요금이나 모든 구간의 배차 가능을 의미하지 않습니다.</p></section>';
 }
 
@@ -549,7 +549,7 @@ async function servicePage(r,kind){
   :name+' '+(kind==='taksong'?'자동차탁송':'대리운전')+' 예상요금·예약 안내. '+(provinceSpecificGuide?provinceSpecificGuide+' ':'')+(kind==='taksong'?'차량 인수·인계 장소, 차종, 이동 시간과 기사 접근·복귀 여건을 확인합니다.':'출발·도착지, 동승·경유·대기 여부와 기사 복귀 여건을 확인합니다.')+' 최종요금과 배차 가능 여부는 상담 후 안내합니다. '+PHONE+'.'+riContext;
  const jejuSearchPage=kind==='taksong'&&r.name==='제주특별자치도';
  const searchTitle=jejuSearchPage?'제주도탁송 · 차량선적·실제후기':focusedTitle;
- const searchDesc=jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 예상요금·예약 상담 1811-4294.':focusedDesc;
+ const searchDesc=jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':focusedDesc;
  const hierarchyNote='행정구역 경로: '+regionAncestors(r).map(a=>a.name).join(' → ')+'. '+(r.level==='리'?'마을 단위 상세 위치와 차량 인수 지점을 확인합니다.':r.level==='동'?'건물 출입구와 주차 위치를 확인합니다.':r.level==='면'?'면 소재지와 외곽의 기사 이동 여건을 확인합니다.':'지역별 출발지와 목적지의 이동 조건을 확인합니다.');
  const aliasTerms=[...new Set(regionAliases(r).map(x=>x+service))].filter(x=>x!==name+' '+service&&x!==keyword);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
  const intro=kind==='taksong'?'자동차탁송은 고객이 지정한 출발지에서 차량을 인수해 목적지로 이동시키는 서비스입니다. 차량 인수·인계 장소와 차종, 도로거리, 시간대, 기사 접근·복귀 동선, 통행료에 따라 요금이 달라집니다.':'대리운전은 고객 차량을 기사에게 맡겨 목적지까지 이동하는 서비스입니다. 고객의 동승 여부와 이용 조건을 상담 시 확인하며, 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
@@ -585,7 +585,11 @@ async function servicePage(r,kind){
  const caption='<figcaption style="text-align:center">'+esc(name)+' '+serviceBrand(kind)+' 상담 명함 · <a href="tel:18114294">'+PHONE+'</a>'+dispatchNotice(kind)+'</figcaption>';
  const visibleCard=card.replace('</figure>',caption+'</figure>');
  const jejuLead=jejuSearchPage?jejuTaksongBlogEditorial():'';
- return layout(searchTitle,searchDesc,'<script type="application/ld+json">'+imageData+'</script>'+body.replace('</section>','</section>'+visibleCard+jejuLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
+ const jejuContact=jejuSearchPage?'<section id="jeju-dedicated-contact"><h2>제주탁송 대표번호 1877-5245</h2><p>제주도 차량 선적·항구 인계 및 육지 연계 탁송은 제주탁송 전용 번호로 상담해 주세요.</p><p><a class="cta" href="tel:18775245">제주탁송 전화 상담 1877-5245</a></p></section>':'';
+ const rendered=layout(searchTitle,searchDesc,(jejuSearchPage?'':'<script type="application/ld+json">'+imageData+'</script>')+body.replace('</section>','</section>'+(jejuSearchPage?jejuContact:visibleCard)+jejuLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,jejuSearchPage?null:imageUrl);
+ // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
+ // do not edit any saved trip records, other provinces, or original Naver post titles.
+ return jejuSearchPage?rendered.replaceAll('1811-4294','1877-5245').replaceAll('18114294','18775245'):rendered;
 }
 function remoteRegionGuidance(r){
  const full=r.full_name||'',names=[
