@@ -27,6 +27,25 @@
   const kstDay=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const readSession=(key)=>{try{return sessionStorage.getItem(key)}catch(_){return null}};
   const writeSession=(key,value)=>{try{sessionStorage.setItem(key,value)}catch(_){}};
+  const readLocal=(key)=>{try{return localStorage.getItem(key)}catch(_){return null}};
+  const writeLocal=(key,value)=>{try{localStorage.setItem(key,value)}catch(_){}};
+  const exclusionKey='smart24_exclude_own_visits_v1';
+  const checkExclusion=el('exclude-my-visits');
+  const modeNote=el('traffic-mode-note');
+  // Explicit ?internal=1 is useful when opening a preview link from a new device:
+  // it excludes the very first access from statistics before any network requests.
+  try{if(new URL(location.href).searchParams.get('internal')==='1')writeLocal(exclusionKey,'1')}catch(_){}
+  const isExcluded=()=>readLocal(exclusionKey)==='1';
+  function reflectExclusion(){
+    if(checkExclusion)checkExclusion.checked=isExcluded();
+    if(modeNote)modeNote.textContent=isExcluded()?
+      '점검 접속 제외 중: 이 브라우저의 이후 방문 및 전화 테스트는 기록하지 않습니다. 과거 기록은 그대로 남습니다.':
+      '점검 접속 포함: 본인 방문도 기록될 수 있습니다. 제외를 켜면 이후 접속부터 적용되며 과거 기록은 차감하지 않습니다.';
+  }
+  if(checkExclusion)checkExclusion.addEventListener('change',function(){
+    writeLocal(exclusionKey,checkExclusion.checked?'1':'0');reflectExclusion();
+  });
+  reflectExclusion();
   const format=n=>(n===null||n===undefined||n===''||!Number.isFinite(Number(n)))?'—':Number(n).toLocaleString('ko-KR')+'회';
   const put=(field,value)=>{if(figures[field])figures[field].textContent=format(value)};
   async function rpc(name,data,options){
@@ -110,15 +129,20 @@
       }catch(_){put('phoneClicks',null);}
       drawSources(null);
     }
-    if(panel)panel.title='방문수는 브라우저 세션 기준 · 전화 클릭은 연결 여부와 무관한 누적 클릭 수';
+    if(panel)panel.title='접속 기록에는 작업·점검 방문이 포함될 수 있습니다. 네이버 검색 노출이나 실제 통화 연결 수가 아닙니다.';
   }
   // Remember the *landing-page* referrer before later internal navigations
   // replace it with the site's own URL. Only a coarse category is retained.
   acquisition();
-  // At most once per tab/session and KST calendar day, not once per page view.
-  // Client-side analytics cannot precisely measure unique individuals or bots.
-  const visitKey='smart24_visit_'+kstDay();
-  if(!readSession(visitKey)){
+  // New records are at most once per browser and KST day, not once per tab/page.
+  // Older records used per-tab counts, so historical totals cannot be fixed automatically.
+  // Browser clearing, devices and automated traffic mean these are NOT unique customers.
+  const today=kstDay(),visitKey='smart24_visit_'+today,browserDayKey='smart24_last_recorded_visit_day';
+  const alreadyCounted=readLocal(browserDayKey)===today||!!readSession(visitKey);
+  if(alreadyCounted)writeLocal(browserDayKey,today);
+  if(!isExcluded()&&!alreadyCounted){
+    // Mark before sending to avoid double-counts during concurrent tabs/refreshes.
+    writeLocal(browserDayKey,today);
     writeSession(visitKey,'pending');
     rpc('site_visit_stats',{p_record:true})
       .then(()=>writeSession(visitKey,'sent'))
@@ -130,6 +154,8 @@
   document.addEventListener('click',function(event){
     const link=event.target.closest&&event.target.closest('a[href^="tel:"]');
     if(!link||link.getAttribute('href').replace(/\D/g,'')!=='18114294')return;
+    // Exclude owner/test calls on this browser without interrupting tel: navigation.
+    if(isExcluded())return;
     // Do not cancel tel: navigation; analytics must never block calling.
     const payload={p_page:location.pathname.slice(0,160),p_source:acquisition()};
     rpc('site_phone_event',payload,{keepalive:true})
