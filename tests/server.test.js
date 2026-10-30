@@ -590,8 +590,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
   // Homepage statistics show KST today/yesterday visits and phone click provenance.
   const statsHome=await (await get('/')).text();
-  assert.ok(statsHome.includes('전화클릭 전환 <strong id="phone-click-number"'),
-    'conversion counter label must display next to the representative phone');
+  assert.ok(statsHome.includes('누적 전화클릭 <strong id="phone-click-number"'),
+    'lifetime phone-button click label must appear in the top-right header panel');
   assert.ok(statsHome.includes('id="priority-verified-routes"')&&
     statsHome.includes('/routes/taksong/area-494/area-1174/')&&
     statsHome.includes('/routes/taksong/area-1/area-494/')&&
@@ -612,37 +612,45 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((statsHome.match(/class="quick-booking"/g)||[]).length,1,'fare form must not be duplicated');
   assert.ok(statsHome.includes('name="from"')&&statsHome.includes('name="to"')&&statsHome.includes('action="/fare/"'),
     'top fare calculator still submits the real fare lookup');
-  assert.ok(statsHome.includes('background:transparent;color:#fff;text-align:right'),
-    'visits are compact plain white text without a boxed dashboard');
+  assert.ok(statsHome.includes('/assets/traffic-summary.css?v=20261030'),
+    'homepage loads compact header traffic styling');
+  const trafficCss=await get('/assets/traffic-summary.css');
+  assert.equal(trafficCss.status,200,'traffic summary stylesheet must be served');
+  assert.ok((await trafficCss.text()).includes('.traffic-stats .traffic-stats-lines'),
+    'traffic counters are styled in a compact header row');
+  assert.ok(statsHome.includes('오늘 접속')&&statsHome.includes('누적 기록')&&
+    statsHome.includes('누적 전화클릭')&&statsHome.includes('접속 집계 안내')&&
+    statsHome.includes('이미 기록된 수치는 자동 차감되지 않습니다.'),
+    'header labels distinguish browser records from search impressions and actual calls');
   assert.ok(statsHome.includes('id="traffic-sources-detail" hidden') &&
     statsHome.includes('id="traffic-call-trigger"'),
-    'source details remain hidden until the count beside the phone is clicked');
+    'source details remain hidden until the header phone-click counter is clicked');
   const headerNumberAt=statsHome.indexOf('class="header-phone-line"');
   const phoneNumberEnd=statsHome.indexOf('</a>',headerNumberAt);
   const phoneClickAt=statsHome.indexOf('id="traffic-call-trigger"');
   const phoneClickEnd=statsHome.indexOf('</button>',phoneClickAt);
   assert.ok(headerNumberAt>=0&&phoneNumberEnd>headerNumberAt&&
-    phoneClickAt>phoneNumberEnd&&phoneClickAt<statsHome.indexOf('</div>',headerNumberAt),
-    'phone click count is immediately beside the representative number');
+    phoneClickAt>phoneNumberEnd&&phoneClickAt<statsHome.indexOf('</aside>',phoneNumberEnd),
+    'phone click counter appears in the header traffic panel after the representative number');
   assert.ok(phoneClickEnd>phoneClickAt &&
     statsHome.slice(phoneClickAt,phoneClickEnd).includes('id="phone-click-number"'),
-    'count beside telephone opens the source details');
+    'header phone click counter opens the source details');
   const headerPhonePos=statsHome.indexOf('class="header-call"');
   const dashboardPos=statsHome.indexOf('id="traffic-stats-panel"');
   assert.ok(headerPhonePos>=0&&headerPhonePos<dashboardPos&&dashboardPos<statsNavPos,
-    'small visit counts remain below the top-right phone');
+    'compact traffic panel appears after the header phone and before navigation');
   assert.ok(!statsHome.includes('id="yesterday-visit-number"')&&
     !statsHome.includes('id="total-phone-click-number"')&&
     !statsHome.includes('traffic-stats-grid'),
     'remove yesterday and duplicate phone count and boxed dashboard');
   for(const id of ['traffic-stats-panel','today-visit-number','total-visit-number',
-                   'phone-click-number','phone-source-list']){
+                   'phone-click-number','phone-source-list','exclude-my-visits']){
     assert.ok(statsHome.includes('id="'+id+'"'),'home header statistic missing '+id);
   }
-  assert.equal(statsHome.split('src="/assets/traffic-analytics.js?v=20261028-conversion"').length-1,1,
+  assert.equal(statsHome.split('src="/assets/traffic-analytics.js?v=20261030-count-accuracy"').length-1,1,
     'homepage loads new versioned click tracking exactly once');
   const statRoute=await (await get('/taksong/')).text();
-  assert.equal(statRoute.split('src="/assets/traffic-analytics.js?v=20261028-conversion"').length-1,1,
+  assert.equal(statRoute.split('src="/assets/traffic-analytics.js?v=20261030-count-accuracy"').length-1,1,
     'dynamic transport pages track clicks with current script without duplicates');
   const statOther=await (await get('/service/golf/')).text();
   assert.ok(statOther.includes('traffic-analytics.js'),'static HTML pages track calls too');
