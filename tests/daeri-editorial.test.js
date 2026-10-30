@@ -235,6 +235,32 @@ async function get(p){
    assert.ok(page.includes('1811-4294')&&!page.includes('tel:18775245'),
      'fifth batch non-Jeju pages preserve nationwide phone: '+entry.route);
  }
+ const sixBatch=[
+ {route:'/business/auction/',marker:'auction-original-blog-guide',origins:['224421653506','224398306763'],archive:'/blog/archive/vehicle-taksong/'},
+ {route:'/business/export-port/',marker:'export-original-blog-guide',origins:['224363608182','224421653506'],archive:'/blog/archive/vehicle-taksong/'},
+ {route:'/business/scrapyard/',marker:'scrapyard-original-blog-guide',origins:['224389438504','224371924577'],archive:'/blog/archive/other-taksong/'},
+ {route:'/special/24-hour-service/',marker:'overnight-original-blog-guide',origins:['224430950314','224431721391'],archive:'/blog/archive/vehicle-taksong/'},
+ {route:'/service/taksong/',marker:'taksong-service-original-guide',origins:[],archive:'/blog/archive/gangwon-taksong/'}
+ ];
+ for(const entry of sixBatch){
+  const page=await get(entry.route);
+  assert.ok(page.includes('id="'+entry.marker+'"')&&page.includes('href="'+entry.archive+'"'),
+   'sixth batch page has distinct booking guide and original archive: '+entry.route);
+  for(const id of entry.origins){
+   assert.ok(originalById.has(id)&&page.includes(originalById.get(id).url),
+    'sixth batch only links real original Naver posts: '+id);
+  }
+  assert.ok(page.includes('tel:18114294'),'national consultation retained '+entry.route);
+ }
+ const overnight=await get('/special/24-hour-service/');
+ assert.ok(overnight.includes('rel="canonical" href="https://jeongukdaeri.kr/special/24-hour-service/"'),
+  'overnight official page uses one canonical domain, not old github.io');
+ assert.ok(!overnight.includes('rel="canonical" href="https://8882888.github.io/'),
+  'github backup address must not be canonical');
+ const nationwideTaksongSix=await get('/service/taksong/');
+ assert.ok(nationwideTaksongSix.includes('tel:18775245')&&nationwideTaksongSix.includes('/blog/archive/jeju-taksong/'),
+  'national taksong gives Jeju-only consultation for Jeju service');
+
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
