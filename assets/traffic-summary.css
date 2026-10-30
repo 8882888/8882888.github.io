@@ -1,0 +1,38 @@
+/* Small, legible record counter in the upper-right corner of Smart24 pages.
+   Records are browser visits / tel-button clicks, NOT Naver impressions or connected calls. */
+.traffic-stats{position:relative;max-width:100%;margin-left:auto;text-align:right;color:#f4f8ff}
+.traffic-stats .traffic-stats-lines{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex-wrap:wrap}
+.traffic-stats .traffic-stat,.traffic-stats .traffic-call-trigger{
+  display:inline-flex!important;align-items:center;gap:4px;min-height:31px;
+  border:1px solid #6b93b7!important;border-radius:7px!important;padding:3px 8px!important;
+  background:#173d61!important;color:#fff!important;font-size:12px!important;
+  font-weight:600!important;line-height:1.2!important;text-decoration:none!important;
+  white-space:nowrap
+}
+.traffic-stats .traffic-stat strong,.traffic-stats .traffic-call-trigger strong{
+  color:#ffe680!important;font-size:13px!important;font-weight:900!important;font-variant-numeric:tabular-nums
+}
+.traffic-stats .traffic-call-trigger{cursor:pointer;font-family:inherit}
+.traffic-stats .traffic-call-trigger:focus-visible,.traffic-stats input:focus-visible{
+  outline:2px solid #ffe680;outline-offset:2px
+}
+.traffic-stats .traffic-sources{
+  margin-top:7px!important;padding:11px 13px!important;border:1px solid #a9cbeb!important;
+  background:#102b47!important;border-radius:9px!important;color:#fff!important;
+  max-width:415px;max-height:340px;overflow:auto;font-size:12px;text-align:left;line-height:1.6
+}
+.traffic-stats .traffic-sources[hidden]{display:none!important}
+.traffic-stats .traffic-sources p{margin:4px 0 10px;font-size:12px}
+.traffic-stats .traffic-source-heading{font-weight:800;color:#ffe680;font-size:12px}
+.traffic-stats .traffic-optout-label{display:flex;align-items:start;gap:6px;font-size:12px;font-weight:700;cursor:pointer;margin:8px 0}
+.traffic-stats .traffic-optout-label input{width:17px;height:17px;flex-shrink:0;margin-top:1px}
+.traffic-stats .traffic-mode-note,.traffic-stats .traffic-source-note{display:block;font-size:11px;color:#d2e7f7;line-height:1.45;margin:6px 0}
+.traffic-stats .traffic-sources ol{max-height:85px;overflow:auto;margin:4px 0;padding-left:18px}
+.traffic-stats .traffic-sources li{overflow-wrap:anywhere;font-size:11px}
+@media(max-width:650px){
+ .traffic-stats{width:100%;max-width:100%}
+ .traffic-stats .traffic-stats-lines{justify-content:flex-end;gap:4px}
+ .traffic-stats .traffic-stat,.traffic-stats .traffic-call-trigger{font-size:11px!important;padding:3px 6px!important;min-height:30px}
+ .traffic-stats .traffic-stat strong,.traffic-stats .traffic-call-trigger strong{font-size:12px!important}
+ .traffic-stats .traffic-sources{max-width:100%}
+}
