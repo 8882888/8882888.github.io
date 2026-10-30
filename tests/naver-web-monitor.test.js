@@ -14,8 +14,10 @@ const evidence = pageEvidence([{query:'domain',matches:[{url:'https://jeongukdae
 assert.equal(evidence.find(p=>p.path==='/daeri/').status,'observed-in-api-results');
 assert.equal(evidence.find(p=>p.path==='/daeri/').found[0].title,'old title');
 assert.equal(evidence.find(p=>p.path==='/fare/').status,'not-observed-in-these-results');
-assert.equal(pageEvidence([{query:'failed',error:'HTTP 500'}]).length,12);
+assert.equal(pageEvidence([{query:'failed',error:'HTTP 500'}]).length,require('../scripts/naver-web-monitor').CORE_PAGES.length);
 assert.equal(pageEvidence([{query:'부산탁송',matches:[{url:'https://jeongukdaeri.kr/taksong/busan/',position:4,title:'부산탁송'}]}]).find(p=>p.path==='/taksong/busan/').found[0].position,4);
+for(const keyword of ['서울대리운전','부산대리운전','해운대대리운전','대구대리운전','인천대리운전','용인대리운전','속초대리운전','강원도대리운전']) assert.ok(QUERIES.includes(keyword),'monitor nationwide regional driver search '+keyword);
+assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes('/daeri/daegu/'));
 assert.ok(require('../scripts/naver-web-monitor').QUERIES.includes('강원도탁송'));
 
 console.log('Naver web result matching passed');

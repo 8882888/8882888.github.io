@@ -723,9 +723,12 @@ function priorityRegionLinks(kind){
  const label=kind==='daeri'?'대리운전':'탁송';
  const items=priorityRegionalPages.filter(p=>p.kind===kind).map(p=>{
   const region=regions.find(r=>r.full_name===p.region);
-  return '<li><a href="'+servicePath(region,kind)+'" data-region="'+esc(p.region)+'">'+esc(p.region+' '+label)+'</a> · '+esc(p.topic)+'</li>';
+  // Search-friendly locality labels belong on links to the existing canonical region pages.
+  const anchor=kind==='daeri'?seoRegionLabel(region)+'대리운전':p.region+' '+label;
+  return '<li><a href="'+servicePath(region,kind)+'" data-region="'+esc(p.region)+'">'+esc(anchor)+'</a> · '+esc(p.topic)+'</li>';
  }).join('');
- return '<section id="priority-regions"><h2>실제 지역 정보 중심 '+label+' 우선 안내</h2><p>지역별 차량 인수·인계 또는 대리운전 출발 조건을 구분해 안내합니다. 실제 완료 운행은 확인된 기록만 게시하며 모든 지역에 기사가 상주하는 것은 아닙니다.</p><ul>'+items+'</ul></section>';
+ const intro=kind==='daeri'?'출발할 지역을 선택해 주차장 위치, 장거리·골프장 이용 조건과 예약 준비사항을 확인하세요. 실제 배차 가능 여부는 상담 시 확정합니다.':'지역별 차량 인수·인계 조건을 구분해 안내합니다. 실제 완료 운행은 확인된 기록만 게시하며 모든 지역에 기사가 상주하는 것은 아닙니다.';
+ return '<section id="priority-regions"><h2>'+(kind==='daeri'?'전국 주요 지역 대리운전 예약 안내':'실제 지역 정보 중심 탁송 우선 안내')+'</h2><p>'+intro+'</p><ul>'+items+'</ul></section>';
 }
 function serviceHub(kind){
  const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';

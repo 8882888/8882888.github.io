@@ -2,8 +2,8 @@
 const fs = require('node:fs');
 const QUERY = '전국대리운전';
 const DOMAIN = 'jeongukdaeri.kr';
-const CORE_PAGES = ['/', '/daeri/', '/taksong/', '/fare/', '/reviews/', '/service/golf/', '/service/daily-driver/', '/service/corporate/', '/daeri/busan/', '/taksong/busan/', '/taksong/daegu/', '/taksong/gangwon/'];
-const QUERIES = [QUERY, '24시탁송', '전국대리운전·24시탁송', '전국자동차탁송', '골프대리운전', '일일기사', '스마트24', DOMAIN, DOMAIN+'/fare/', DOMAIN+'/reviews/', DOMAIN+'/service/daily-driver/', DOMAIN+'/service/corporate/', '부산인천탁송', '기장군대구탁송', '대구서울대리운전', '서울부산탁송', '김해공항서울탁송', '김해공항인천탁송', '강릉서울탁송', '서울대구대리운전', '강릉인천탁송', '울진영덕탁송', '부산탁송', '부산대리운전', '대구탁송', '강원도탁송'];
+const CORE_PAGES = ['/', '/daeri/', '/taksong/', '/fare/', '/reviews/', '/service/golf/', '/service/daily-driver/', '/service/corporate/', '/daeri/busan/', '/daeri/seoul/', '/daeri/seoul/gangnam-gu/', '/daeri/busan/haeundae-gu/', '/daeri/daegu/', '/daeri/daegu/suseong-gu/', '/daeri/incheon/', '/daeri/gyeonggi/yongin-si/', '/daeri/gangwon/sokcho-si/', '/taksong/busan/', '/taksong/daegu/', '/taksong/gangwon/'];
+const QUERIES = [QUERY, '24시탁송', '전국대리운전·24시탁송', '전국자동차탁송', '골프대리운전', '일일기사', '스마트24', DOMAIN, DOMAIN+'/fare/', DOMAIN+'/reviews/', DOMAIN+'/service/daily-driver/', DOMAIN+'/service/corporate/', '부산인천탁송', '기장군대구탁송', '대구서울대리운전', '서울부산탁송', '김해공항서울탁송', '김해공항인천탁송', '강릉서울탁송', '서울대구대리운전', '강릉인천탁송', '울진영덕탁송', '부산탁송', '부산대리운전', '대구탁송', '강원도탁송', '서울대리운전', '강남대리운전', '해운대대리운전', '대구대리운전', '수성구대리운전', '인천대리운전', '용인대리운전', '김해대리운전', '속초대리운전', '강원도대리운전'];
 const COMPARISONS = ['gosudaeri.com', 'k-daeri.com', '8882888.github.io'];
 function inspect(items, domain = DOMAIN) {
   return items.map((item, index) => {

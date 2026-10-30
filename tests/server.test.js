@@ -185,6 +185,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(koreanTaksong.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
   assert.ok(koreanDaeri.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
   assert.ok(koreanDaeri.includes('id="national-driver-guide"'),'national driving hub explains general, long-distance and golf reservation differences');
+  const regionalDriverNav=koreanDaeri.split('id="priority-regions"')[1]?.split('</section>')[0]||'';
+  for(const [path,keyword] of [['/daeri/seoul/','서울대리운전'],['/daeri/busan/','부산대리운전'],['/daeri/daegu/','대구대리운전'],['/daeri/incheon/','인천대리운전'],['/daeri/gangwon/sokcho-si/','속초대리운전']]){
+   assert.ok(regionalDriverNav.includes('href="'+path+'"'),path+' appears in curated nationwide driver links');
+   assert.ok(regionalDriverNav.includes('>'+keyword+'</a>'),keyword+' uses a natural region search phrase without creating duplicate pages');
+  }
+  assert.ok(koreanDaeri.includes('전국 주요 지역 대리운전 예약 안내'));
+
   assert.ok(koreanDaeri.includes('id="national-driver-source-links"'),'national driving hub links existing pre-August-25 Naver content');
   assert.ok(koreanDaeri.includes('blog.naver.com/wjdtnr4757/224388328571'),'national driving page points to the August 24 long-distance guide');
   assert.ok(koreanDaeri.includes('1811-4294'),'national driving page preserves the official contact number');
