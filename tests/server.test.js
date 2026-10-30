@@ -693,7 +693,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const gangwonProvince=await (await get('/taksong/gangwon/')).text();
   assert.ok(gangwonProvince.includes(gangwonInquiries.url),'Gangwon taksong provincial guide links to call-generating original blog post');
     assert.ok(editorialHtml.includes('1811-4294'),'homepage shows official contact for current booking');
-  assert.ok(!editorialHtml.includes('<img'),'do not display invented field photos');
+  const editorialImages=[...editorialHtml.matchAll(/<img\b[^>]*alt="([^"]+)"/g)].map(x=>x[1]);
+  assert.ok(editorialImages.every(alt=>alt.includes('AI 연출 이미지')&&alt.includes('실제')&&alt.includes('촬영 사진 아님')),'travel illustrations must be transparently labeled, never claimed as field photographs');
   const archiveData=require('../lib/blog-archive');
   assert.equal(archiveData.total,require('../blog/posts.json').length,'archive retains source links');
   assert.equal(Object.values(archiveData.counts).reduce((sum,n)=>sum+n,0),archiveData.total,'all original posts are cataloged once');
