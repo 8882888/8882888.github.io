@@ -308,7 +308,7 @@ async function get(p){
   assert.ok(html.includes('id="'+item.marker+'"')&&html.includes('href="'+item.archive+'"'),item.route+' contains specific reader guidance and original archive');
   assert.ok(html.includes('rel="canonical" href="'+item.canonical+'"'),item.route+' canonical uses official host');
   assert.ok(!html.includes('rel="canonical" href="https://8882888.github.io/'),item.route+' excludes backup host canonical');
-  assert.equal((html.match(/<h1\\b/g)||[]).length,1,item.route+' retains one heading');
+  assert.equal((html.match(/<h1\b/g)||[]).length,1,item.route+' retains one heading');
   assert.ok(html.includes('tel:18114294'),item.route+' retains nationwide hotline');
   for(const id of item.source){
     assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),item.route+' links only verified public blog source '+id);
