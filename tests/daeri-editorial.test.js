@@ -85,10 +85,30 @@ async function get(p){
  assert.ok(daeriRecruit.includes('전국 대리운전기사 모집')&&daeriRecruit.includes('tel:18114294'),'nationwide designated-driver recruitment is reachable');
  assert.ok(taksongRecruit.includes('전국 탁송기사 모집')&&taksongRecruit.includes('수입을 보장하지 않습니다'),'taksong-driver recruitment avoids earnings guarantees');
  assert.ok(homepage.includes('id="home-driver-recruitment"')&&homepage.includes('href="/recruit/daeri/"')&&homepage.includes('href="/recruit/taksong/"'),'recruitment is discoverable from the homepage');
+ assert.ok(homepage.includes('id="front-driver-recruitment"'),'dedicated driver-recruitment CTA appears above fare calculator');
+ assert.ok(homepage.indexOf('id="front-driver-recruitment"')<homepage.indexOf('id="top-fare-calculator"'),'recruitment is visible at top before calculator');
+ const mainNav=homepage.match(/<nav class="top-nav"[\s\S]*?<\/nav>/)||[];
+ assert.ok(mainNav[0]&&mainNav[0].includes('href="/recruit/daeri/"')&&mainNav[0].includes('href="/recruit/taksong/"'),'both recruitment paths are in top navigation');
+ const hero=homepage.match(/<div class="hero hero-with-photo">[\s\S]*?<\/figure><\/div>/)||[];
+ assert.ok(hero[0]&&hero[0].includes('href="/recruit/daeri/"')&&hero[0].includes('href="/recruit/taksong/"'),'both recruitment CTAs appear in hero');
+ 
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('id="jeju-source-route-guide"'),'Jeju transfer has distinct island and port guide');
  for(const id of ['224371918565','224387354617','224362663400'])assert.ok(jeju.includes(originalById.get(id).url),'Jeju guide links verified pre-September originals '+id);
  assert.ok(jeju.includes('제주항')&&jeju.includes('목포항'),'Jeju sea transfer handover is explained');
+ const jejuTitle=(jeju.match(/<title>([^<]+)<\/title>/)||[])[1]||'';
+ assert.ok(jejuTitle.startsWith('제주도탁송'), 'Jeju primary title begins with service keyword');
+ assert.equal((jeju.match(/id="jeju-source-route-guide"/g)||[]).length,1,'Jeju evidence is presented exactly once');
+ assert.ok(jeju.indexOf('id="jeju-source-route-guide"')<jeju.indexOf('서울·대구 출발 제주탁송 예상요금'),'Jeju original evidence is prominent');
+ assert.ok(daeriRecruit.includes('대리운전기사 지원 시 안내할 사항'),'driver recruitment provides focused application information');
+ assert.ok(taksongRecruit.includes('탁송기사 지원 시 안내할 사항'),'vehicle-transfer recruitment provides focused application information');
+ for(const [p,href] of [['/recruit/daeri','/recruit/daeri/'],['/recruit/taksong','/recruit/taksong/']]){
+  const response=await fetch('http://127.0.0.1:3000'+p,{redirect:'manual'});
+  assert.equal(response.status,301,'recruitment canonical redirect');
+  assert.equal(response.headers.get('location'),href,'recruitment redirects to canonical URL');
+ }
+ const sitemapPriority=await get('/sitemap-priority.xml');
+ for(const p of ['/taksong/jeju/','/recruit/daeri/','/recruit/taksong/'])assert.ok(sitemapPriority.includes('https://jeongukdaeri.kr'+p),'priority sitemap includes '+p);
  const mainSitemap=await get('/sitemap.xml');
  const driverSitemap=await get('/sitemap-daeri.xml');
  assert.ok(mainSitemap.includes('https://jeongukdaeri.kr/recruit/daeri/')&&mainSitemap.includes('https://jeongukdaeri.kr/recruit/taksong/'),'main discovery sitemap includes both existing recruitment hubs');
