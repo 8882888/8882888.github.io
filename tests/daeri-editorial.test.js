@@ -343,6 +343,21 @@ async function get(p){
    assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),item.route+' links to real existing public Naver original '+id);
   }
  }
+ const twelfthFive=[{"path":"/special/","marker":"special-topic-original-guide","sources":["224451230156","224430920625","224431773709","224450163134"],"canonical":"https://jeongukdaeri.kr/special/"},{"path":"/special/pension-daeri/","marker":"pension-original-guide","sources":["224380155076","224441331464"],"canonical":"https://jeongukdaeri.kr/special/pension-daeri/"},{"path":"/special/valley-daeri/","marker":"valley-original-guide","sources":["224365571250","224374979481"],"canonical":"https://jeongukdaeri.kr/special/valley-daeri/"},{"path":"/business/","marker":"business-original-guide","sources":["224421653506","224430950314","224371924577"],"canonical":"https://jeongukdaeri.kr/business/"},{"path":"/route-taksong/centers/","marker":"cycling-centers-original-guide","sources":["224445317658","224430900352","224452067282"],"canonical":"https://jeongukdaeri.kr/route-taksong/centers/"}];
+ for(const item of twelfthFive){
+  const response=await fetch('http://127.0.0.1:3000'+item.path);
+  assert.equal(response.status,200,item.path+' should return HTTP 200');
+  const html=await response.text();
+  assert.ok(html.includes('id="'+item.marker+'"'),item.path+' has a unique editorial section');
+  assert.ok(html.includes('href="/blog/archive/'),item.path+' provides Naver original archive navigation');
+  assert.ok(html.includes('rel="canonical" href="'+item.canonical+'"'),item.path+' uses official canonical URL');
+  assert.ok(!html.includes('rel="canonical" href="https://8882888.github.io/'),item.path+' does not choose backup host');
+  assert.equal((html.match(/<h1\b/g)||[]).length,1,item.path+' retains exactly one H1');
+  assert.ok(html.includes('tel:18114294'),item.path+' retains nationwide consultation phone');
+  for(const id of item.sources){
+   assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),item.path+' links to existing original source '+id);
+  }
+ }
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
