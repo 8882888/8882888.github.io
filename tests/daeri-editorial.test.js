@@ -60,6 +60,11 @@ async function get(p){
  const mapPriority=await get('/sitemap-priority.xml');
  assert.ok(mapPriority.includes('https://jeongukdaeri.kr/travel/food-map/'),'map in priority sitemap');
  const indexPage=await get('/');
+ assert.ok(indexPage.includes('id="traffic-stats-panel"')&&indexPage.includes('id="exclude-my-visits"'),'homepage has a compact visitor counter and opt-out control');
+ assert.ok(indexPage.includes('오늘 접속')&&indexPage.includes('누적 기록')&&indexPage.includes('누적 전화클릭'),'homepage labels are distinct from real search impressions/calls');
+ assert.ok(indexPage.includes('/assets/traffic-summary.css'),'homepage references compact traffic styling');
+ assert.ok(hub.includes('id="traffic-stats-panel"')&&hub.includes('id="exclude-my-visits"'),'secondary service pages show same header counts and control');
+ assert.ok(hub.includes('접속 집계 안내')&&hub.includes('과거 기록은 차감하지 않습니다'),'stats explain internal traffic and historical limits');
  assert.ok(indexPage.includes('id="home-food-travel-map"')&&indexPage.includes('href="/travel/food-map/"'),'homepage prominent map links');
  assert.ok(hub.includes('id="national-daeri-blog-editorial"'),'nationwide driver editorial is visible');
  assert.ok(hub.includes('강남·프리미엄·법인 대리운전'),'driver services have their own editorial grouping');
