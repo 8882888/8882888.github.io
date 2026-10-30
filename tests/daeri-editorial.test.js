@@ -374,6 +374,12 @@ async function get(p){
       assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),entry.path+' retains verified existing original source '+id);
    }
  }
+ for(const staticRegion of ['seoul-daeri-taksong','gyeonggi-daeri-taksong','incheon-daeri-taksong','busan-daeri-taksong','daegu-daeri-taksong','gangwon-daeri-taksong','gangneung-taksong']){
+  const resp=await fetch('http://127.0.0.1:3000/region/'+staticRegion+'/');
+  assert.equal(resp.status,200,'curated region landing accessible '+staticRegion);
+  const html=await resp.text();
+  assert.ok(html.includes('https://jeongukdaeri.kr/region/'+staticRegion+'/'),'region landing keeps official self-canonical');
+ }
  const batch13CorePages=[{"route":"/route-taksong/","marker":"route-original-ref","ids":["224445317658","224452067282","224451230156","224430920625"],"jeju":false},{"route":"/region/","marker":"region-original-ref","ids":["224450113520","224449909441","224450005690"],"jeju":false},{"route":"/taksongdaeri/","marker":"booking-original-ref","ids":["224445451429","224452072174"],"jeju":false},{"route":"/fare/","marker":"fare-original-ref","ids":["224445451429","224452072174"],"jeju":false},{"route":"/fare/jeju/","marker":"jeju-fare-original-ref","ids":["224415828744","224408142163","224433990134"],"jeju":true}];
  for(const item of batch13CorePages){
   const resp=await fetch('http://127.0.0.1:3000'+item.route);
@@ -386,7 +392,7 @@ async function get(p){
   for(const id of item.ids)assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),item.route+' original '+id);
  }
  assert.ok((await get('/route-taksong/')).includes('name="q"')||(await get('/route-taksong/')).includes('id="center"'),'cycling center search present');
- assert.ok((await get('/region/')).includes('id="regions"')&& (await get('/region/')).includes('id="q"'),'region filter unchanged');
+ assert.ok((await get('/region/')).includes('method="get" action="/region/"')&&(await get('/region/')).includes('name="q"'),'dynamic region search form retained');
  assert.ok((await get('/fare/')).includes('id="quote-form"')&&(await get('/fare/')).includes('/assets/road-fare.js'),'main fare calculator intact');
  assert.ok((await get('/fare/jeju/')).includes('135,940')&&(await get('/fare/jeju/')).includes('id="submit"'),'Jeju fare example and calculator unchanged');
  const jeju=await get('/taksong/jeju/');
