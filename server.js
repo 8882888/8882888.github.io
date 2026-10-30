@@ -30,6 +30,7 @@ const regions=loadLegalRegions();
 const priorityRegionalPages=load('data/priority-regions.json').pages;
 const publishedBlogPosts=load('blog/posts.json').filter(p=>p&&typeof p.title==='string'&&/^https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+$/.test(p.url));
 const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
+const daeriTravelGuides=require('./lib/daeri-travel-guides');
 const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]));
 if(priorityRegionalPages.length!==26||priorityByKey.size!==26)throw Error('Expected 26 unique priority regional pages');
 for(const guide of priorityRegionalPages){
@@ -419,7 +420,7 @@ function provinceServiceGuide(r,kind){
  const label=kind==='taksong'?'자동차탁송':'대리운전';
  const children=childrenByParent.get(r.slug)||[];
  const links=children.map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.name)+' '+label+'</a></li>').join('');
- return '<section class="province-service-guide"><h2>'+esc(shortPlace(r.name))+' '+label+' · '+esc(profile[0])+'</h2><p>'+esc(profile[1])+'</p><p>'+(kind==='taksong'?'차량만 보내는 경우 인수·인계 담당자와 차량 운행 가능 상태를 확인합니다.':'고객 차량으로 이동하며 골프 왕복·일일기사 일정은 편도 이동과 구분해 상담합니다.')+'</p><h3>'+esc(shortPlace(r.name))+' 출발 지역 선택</h3><ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 16px">'+links+'</ul><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.name)+'">출발·도착지 예상요금 조회</a> · <a href="/'+kind+'/#reservation-guide">예약 준비사항</a> · <a href="/reviews/history/?kind='+kind+'">서비스별 완료 운행기록</a></p></section>';
+ return '<section class="province-service-guide"><h2>'+esc(shortPlace(r.name))+' '+label+' · '+esc(profile[0])+'</h2><p>'+esc(profile[1])+'</p><p><strong>24시탁송 안내:</strong> 전국 장거리·심야 차량 이동도 상담하나, 월요일 일부 시간대와 폭우·폭설·강풍 등 악천후에는 지방 외곽의 기사 배정이 지연되거나 불가능할 수 있습니다. 현재 기사 수급과 안전한 도로 운행 가능 여부는 상담으로 확인해야 합니다.</p><p>'+(kind==='taksong'?'차량만 보내는 경우 인수·인계 담당자와 차량 운행 가능 상태를 확인합니다.':'고객 차량으로 이동하며 골프 왕복·일일기사 일정은 편도 이동과 구분해 상담합니다.')+'</p><h3>'+esc(shortPlace(r.name))+' 출발 지역 선택</h3><ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 16px">'+links+'</ul><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.name)+'">출발·도착지 예상요금 조회</a> · <a href="/'+kind+'/#reservation-guide">예약 준비사항</a> · <a href="/reviews/history/?kind='+kind+'">서비스별 완료 운행기록</a></p></section>';
 }
 const verifiedRepairShops=load('data/verified-repair-shops.json').shops;
 const verifiedScrapyards=load('data/verified-scrapyards.json').shops;
@@ -768,7 +769,8 @@ function serviceHub(kind){
   return '<section id="long-distance-daeri-verified"><h2>장거리대리운전 실제 운행완료 사례</h2><p>고객이 확인한 완료 운행기록 중 지역 간 이동 사례입니다. 아래 요금은 해당 운행 날짜와 배차 조건에서 기록된 과거 금액이며 지금도 동일한 금액으로 배차된다는 의미가 아닙니다.</p><ul>'+items+'</ul><h3>장거리 운행 예약 전 확인사항</h3><ol><li>출발지의 정확한 주차 위치와 도착지 주소를 알려주세요.</li><li>희망 출발 날짜·시각, 경유지 및 도착 희망 시간을 확인하세요.</li><li>차량 종류와 대기·통행료 등 추가 조건을 미리 전달해주세요.</li><li>운행 후 기사 복귀 교통편과 지역별 기사 수급을 확인하고 최종 요금·배차 여부를 상담으로 확정해주세요.</li></ol><p><a href="/fare/?service=daeri">장거리대리운전 예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>';
  })();
  const earlierDaeriPosts=isT?'':'<section id="national-driver-source-links"><h2>기존 장거리·법인대리운전 안내 자료</h2><p>번개탁송대리운전 네이버 블로그에 2026년 8월 25일 이전 게시된 자료입니다. 게시 당시 내용과 현재 상담 조건은 다를 수 있으며, 현재 스마트24 홈페이지 상담은 1811-4294입니다.</p><ul><li><a href="https://blog.naver.com/wjdtnr4757/224388328571" target="_blank" rel="noopener noreferrer">8월 24일 서울·부산·대구·광주·완도 장거리대리운전 예약 안내</a></li><li><a href="https://blog.naver.com/wjdtnr4757/224381997772" target="_blank" rel="noopener noreferrer">8월 18일 지방 장거리대리운전 요금·예약 시 확인사항</a></li><li><a href="https://blog.naver.com/wjdtnr4757/224371958009" target="_blank" rel="noopener noreferrer">8월 8일 법인대리운전 법인카드 등록 안내</a></li></ul></section>';
- const body=(isT?'':daeriBlogEditorial.national(majorRegions,servicePath,esc))+nationalDriverGuide+regionalStories+priorityRegionLinks(kind)+'<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
+ const operationalNotice=isT?'<section id="taksong-24-hour-and-weather"><h2>24시탁송 · 전국 24시간 차량 이동 상담 안내</h2><p><strong>24시탁송</strong>은 야간·새벽을 포함해 전국 차량탁송을 상담하는 서비스입니다. 상담 접수와 실제 기사 배정·출발은 다르며, 모든 지역에 기사가 상주하거나 즉시 배차된다는 뜻은 아닙니다.</p><p><strong>월요일이나 악천후, 특히 지방·산간·해안 등 외곽에서</strong> 탁송기사 배정 및 도착이 지연되거나 안전상 운행이 어려울 수 있습니다. 폭우·폭설·강풍·도로 통제 시에는 출발 시간과 실제 배차 가능 여부를 먼저 확인해 주세요. 모든 월요일에 지연되는 것은 아닙니다.</p><p><a href="tel:18114294">24시탁송 상담 1811-4294</a> · <a href="/fare/?service=taksong">예상요금 확인</a></p></section>':'<section id="daeri-weather-notice"><h2>전국대리운전 예약 안내｜월요일·악천후 배차 지연 가능</h2><p>월요일 특정 시간대와 비·눈·강풍 등 악천후에는 특히 지방 외곽, 해안·산간·골프장 출발 대리운전의 기사 배정이나 도착이 지연될 수 있습니다. 월요일마다 지연되는 것은 아니며 실제 기사 수급·도로 상황에 따라 달라집니다.</p><p><a href="tel:18114294">대리운전 상담 1811-4294</a></p></section>';
+ const body=operationalNotice+(isT?'':daeriBlogEditorial.national(majorRegions,servicePath,esc))+nationalDriverGuide+regionalStories+priorityRegionLinks(kind)+'<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
  '<section id="reservation-guide"><h2>'+label+' 예약할 때 필요한 정보</h2><ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치</li><li>도착지 주소와 희망 출발 날짜·시각</li><li>차종과 차량 인수·인계 조건</li><li>경유지, 통행료 및 기타 요청사항</li></ol><p>거리만으로 최종 요금을 확정하지 않으며, 기사 접근·복귀 여건을 확인합니다.</p></section>'+
  bookingGuide(kind)+faqHtml+longDistanceDaeriExamples+earlierDaeriPosts+featuredLinks+
  (isT?'<section><h2>차종·서비스별 자동차탁송</h2><p>국산차·수입차·전기차·화물차 및 서비스센터 입출고 등 차량 종류와 이용 목적에 따라 확인할 사항이 다릅니다.</p><p><a href="/taksong/types/">차종별 탁송과 서비스센터탁송 살펴보기</a></p></section>':'<section><h2>장거리·골프장 대리운전</h2><p>일반 시내 이동과 달리 장거리·골프장 출발은 운행 후 기사 복귀 여건이 배차에 영향을 줄 수 있습니다. 출발 예정 시각과 목적지를 함께 알려주세요.</p></section>')+
@@ -945,6 +947,8 @@ if(pathname==='/taksong/')return respond(res,200,applySeo(serviceHub('taksong'),
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
 const daeriRouteMatch=pathname.match(/^\/daeri\/route\/([a-z-]+)\/?$/);if(daeriRouteMatch){const route=featuredDaeriRoutes.find(x=>x.slug===daeriRouteMatch[1]);return route?respond(res,200,featuredDaeriRoutePage(route)):respond(res,404,'해당 대리운전 구간을 찾을 수 없습니다.')}
+const driverTravelMatch=pathname.match(/^\/daeri\/travel\/([a-z-]+)\/?$/);
+if(driverTravelMatch){const canonical='/daeri/travel/'+driverTravelMatch[1]+'/';if(pathname!==canonical){res.writeHead(301,{location:canonical});return res.end()};const article=daeriTravelGuides.page(driverTravelMatch[1],{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});return respond(res,article?200:404,article||'대리운전 지역 여행 안내를 찾을 수 없습니다.')}
 if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return res.end()}
 if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
 if(pathname==='/region/'||pathname==='/region'){
@@ -1002,7 +1006,7 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  const discoveryRegions=service==='daeri'
   ?regions.filter(r=>r.level==='시도'||priorityByKey.has('daeri|'+r.full_name))
   :regions;
- const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'+['/'+service+'/',...(service==='daeri'?[]:['/service/taksong/','/service/long-distance-taksong/']),].map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc><image:image><image:loc>'+esc(base+cardPngPath(r.slug,service))+'</image:loc></image:image></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'+['/'+service+'/',...(service==='daeri'?daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor):['/service/taksong/','/service/long-distance-taksong/']),].map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc><image:image><image:loc>'+esc(base+cardPngPath(r.slug,service))+'</image:loc></image:image></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
 if(pathname==='/sitemap.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const cached=sitemapCache.get(pathname);
@@ -1012,6 +1016,7 @@ if(pathname==='/sitemap.xml'){
  // All historic URLs remain reachable; this is a crawl-discovery change only.
  const provinceRegions=regions.filter(r=>r.level==='시도');
  const focused=[
+  ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
   '/','/taksongdaeri/','/daeri/','/taksong/','/fare/','/fare/jeju/',
   '/reviews/','/reviews/history/','/routes/reviewed/','/blog/','/blog/archive/',
    ...blogArchive.groups.map(g=>'/blog/archive/'+g.id+'/'),'/region/',
