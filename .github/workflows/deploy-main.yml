@@ -63,19 +63,32 @@ jobs:
                       tracker=response.read().decode('utf-8')
                   with urllib.request.urlopen('https://jeongukdaeri.kr/favicon.ico',timeout=10) as response:
                       icon_ok=response.status==200 and response.headers.get('Content-Type','').startswith('image/')
-                  stats_ok=('전화클릭 전환' in home
+                  with urllib.request.urlopen(urllib.request.Request(
+                      'https://jeongukdaeri.kr/assets/traffic-summary.css?v='+os.environ['DEPLOYED_COMMIT'],
+                      headers={'Cache-Control':'no-cache'}),timeout=10) as response:
+                      traffic_css=response.read().decode('utf-8')
+                  stats_ok=('오늘 접속' in home
+                    and '누적 기록' in home
+                    and '누적 전화클릭' in home
                     and 'id="traffic-call-trigger"' in home
+                    and 'id="exclude-my-visits"' in home
                     and 'id="phone-source-list"' in home
                     and 'id="top-fare-calculator"' in home
                     and '/routes/taksong/area-494/area-1174/' in home
-                    and '20261028-conversion' in home
+                    and '20261030-count-accuracy' in home
+                    and 'traffic-summary.css?v=20261030' in home
+                    and 'smart24_exclude_own_visits_v1' in tracker
+                    and 'smart24_last_recorded_visit_day' in tracker
+                    and '.traffic-stats .traffic-stats-lines' in traffic_css
                     and '유입 경로 미확인' in tracker and 'acquisition();' in tracker)
-                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok:
-                      print('PASS: live regional service revision and hierarchy verified')
+                  region_stats_ok=('id="traffic-stats-panel"' in page
+                    and 'id="exclude-my-visits"' in page)
+                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok:
+                      print('PASS: live Cloudtype compact traffic panel, own-visit opt-out, and regional hierarchy verified')
                       break
               except Exception:
                   pass
               if attempt==23:
-                  raise SystemExit('Deployment accepted, but live HTML/phone-click conversion JS/SEO links did NOT match the commit; investigate production routing/cache before claiming success.')
+                  raise SystemExit('Deployment accepted, but live HTML/compact counters/own-visit opt-out did NOT reflect the new release; investigate Cloudtype rollout or cache.')
               time.sleep(5)
           PYVERIFY
