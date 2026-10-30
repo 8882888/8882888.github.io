@@ -148,6 +148,14 @@ async function get(p){
    jejuArchiveUpdated.includes('"@type":"CollectionPage"')&&jejuArchiveUpdated.includes('tel:18775245'),
    'Jeju archive uses search-specific editorial metadata and dedicated phone');
  const jeju=await get('/taksong/jeju/');
+ assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
+   'Jeju service guide links directly to the curated Jeju blog article');
+ const gangwonService=await get('/taksong/gangwon/');
+ assert.ok(gangwonService.includes('id="gangwon-source-archive"')&&
+   gangwonService.includes('href="/blog/archive/gangwon-taksong/"'),
+   'Gangwon taksong region service links directly to the curated provincial blog article');
+ assert.ok(gangwonService.includes('tel:18114294'),
+   'Gangwon service continues to use nationwide contact, not Jeju dedicated phone');
  assert.ok(jeju.includes('제주탁송 대표번호 1877-5245')&&jeju.includes('tel:18775245'),
    'Jeju region uses the dedicated 1877-5245 contact number');
  assert.ok(!jeju.includes('tel:18114294')&&!jeju.includes('1811-4294'),
