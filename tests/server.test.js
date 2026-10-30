@@ -672,6 +672,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(editorialHtml.includes(post.url),'homepage uses unchanged Naver original URL '+id);
     assert.ok(editorialHtml.includes(post.title.replace(/&/g,'&amp;').replace(/</g,'&lt;')),'homepage retains original title '+id);
   }
+  const gwangjuBlog=originalBlogPosts.find(p=>p.id==='224415779391');
+  assert.ok(gwangjuBlog,'user-reported Gyeonggi Gwangju post is in archived source data');
+  assert.ok(editorialHtml.includes(gwangjuBlog.url),'call-producing Gyeonggi Gwangju post keeps exact original link');
+  assert.ok(editorialHtml.includes(gwangjuBlog.title),'call-producing post keeps exact published title');
+  assert.ok(editorialHtml.includes('경기도 광주시·오포 지역 차량탁송'),'Gyeonggi Gwangju is not confused with Gwangju metropolitan city');
+  assert.ok(editorialHtml.includes('출고 가능 시간'),'Gyeonggi Gwangju card gives customer booking information');
   assert.ok(editorialHtml.includes('1811-4294'),'homepage shows official contact for current booking');
   assert.ok(!editorialHtml.includes('<img'),'do not display invented field photos');
   const archiveData=require('../lib/blog-archive');
