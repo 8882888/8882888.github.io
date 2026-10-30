@@ -106,12 +106,15 @@ async function inspect(route){
  const daeriXml=await daeriDiscovery.text();
  const daeriUrls=[...daeriXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
  const expectedDaeriRegions=new Set(priority.filter(x=>x.kind==='daeri').map(x=>x.region));
- const expectedDaeriCount=1+17+priority.filter(x=>x.kind==='daeri'&&!['서울특별시','부산광역시','대구광역시','인천광역시'].includes(x.region)).length;
+ const travelGuides=require('../lib/daeri-travel-guides');
+ const expectedTravelUrls=travelGuides.destinations.map(x=>new URL(travelGuides.pathFor(x),new URL(config.site)).href);
+ const expectedDaeriCount=1+17+priority.filter(x=>x.kind==='daeri'&&!['서울특별시','부산광역시','대구광역시','인천광역시'].includes(x.region)).length+expectedTravelUrls.length;
  const daeriIssues=[];
  if(daeriDiscovery.status!==200)daeriIssues.push('Driver sitemap HTTP '+daeriDiscovery.status);
  if(daeriUrls.length!==expectedDaeriCount)daeriIssues.push('Driver discovery sitemap count '+daeriUrls.length+'/'+expectedDaeriCount);
  if(new Set(daeriUrls).size!==daeriUrls.length)daeriIssues.push('Duplicate driver discovery URL');
  for(const p of found) if(p.startsWith('/daeri/')&&!daeriUrls.includes(new URL(p,new URL(config.site)).href)) daeriIssues.push('Missing priority driver URL '+p);
+ for(const url of expectedTravelUrls)if(!daeriUrls.includes(url))daeriIssues.push('Missing tourism-driver guide URL '+url);
  pages.push({route:'/sitemap-daeri.xml',status:daeriDiscovery.status,urlCount:daeriUrls.length,issues:daeriIssues,passed:daeriIssues.length===0});
  const priorityRoute='/sitemap-priority.xml';
  const priorityResponse=await fetch(new URL(priorityRoute,base),{signal:AbortSignal.timeout(15000)});
