@@ -1,8 +1,18 @@
 'use strict';
 const assert=require('node:assert/strict');
 const editorial=require('../lib/daeri-blog-editorial');
+const travel=require('../lib/daeri-travel-guides');
 const source=require('../blog/posts.json');
 assert.equal(editorial.provinces.length,17,'all 17 nationwide provinces are represented');
+assert.deepEqual(travel.destinations.map(x=>x.slug),['samgilpo','gungpyeong'],'two curated real tourism locales');
+for(const place of travel.destinations){
+ const sourcePost=travel.original(place);
+ assert.ok(sourcePost.title.includes(place.slug==='samgilpo'?'삼길포항':'궁평항'),'real original post matches region');
+ assert.equal(place.tags.length,12,'a distinct set of twelve contextual hashtags, not stuffed original tags');
+ for(const section of place.sections){
+  assert.ok(section.heading.length>=10&&section.paragraphs.length>=2,'non-thin travel content');
+ }
+}
 assert.equal(new Set(editorial.provinces.map(p=>p.region)).size,17,'no duplicate provinces');
 const originalById=new Map(source.map(p=>[p.id,p]));
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -57,6 +67,28 @@ async function get(p){
  for(const id of ['224445451429','224420736659','224386422952','224452987205'])
   assert.ok(homepage.includes(originalById.get(id).url),'homepage displays unchanged original driver post '+id);
  assert.ok(homepage.includes('/daeri/#national-daeri-blog-editorial'),'home links to nationwide editorial');
+ const mainSitemap=await get('/sitemap.xml');
+ const driverSitemap=await get('/sitemap-daeri.xml');
+ for(const place of travel.destinations){
+  const path=travel.pathFor(place);
+  const page=await get(path);
+  const original=travel.original(place);
+  assert.ok(page.includes(place.title),'travel detail title and on-page content match');
+  assert.ok(page.includes(original.url),'existing source blog post linked without rewriting');
+  assert.ok(page.includes(place.tags[0]),'site-visible topical hashtag reflects content');
+  assert.ok(page.includes('원문에서 수집한 해시태그 목록은 아닙니다'),'new topical hashtag is never attributed to Naver original');
+  assert.ok(page.includes('tel:18114294'),'booking retains official site phone');
+  assert.ok(page.includes('https://jeongukdaeri.kr'+path),'canonical URL uses official domain');
+  for(const section of place.sections)assert.ok(page.includes(section.heading),'all original editorial sections retained');
+  assert.ok(mainSitemap.includes('https://jeongukdaeri.kr'+path),'travel page in global sitemap');
+  assert.ok(driverSitemap.includes('https://jeongukdaeri.kr'+path),'travel page in driver discovery sitemap');
+  assert.ok(homepage.includes(path),'homepage tourism card is visible');
+ }
+ const west=await get('/daeri/gyeonggi/');
+ const south=await get('/daeri/chungnam/');
+ assert.ok(west.includes('/daeri/travel/gungpyeong/'),'Gyeonggi page features relevant Hwaseong destination');
+ assert.ok(south.includes('/daeri/travel/samgilpo/'),'Chungnam page features relevant Seosan destination');
+ assert.ok(hub.includes('/daeri/travel/samgilpo/')&&hub.includes('/daeri/travel/gungpyeong/'),'national driver hub links both travel guides');
  const taksong=await get('/taksong/');
  assert.ok(!taksong.includes('id="national-daeri-blog-editorial"'),'taksong hub remains independent');
  console.log('PASS: 17 national designated-driver provinces, curated Naver original articles, homepage and service pages');
