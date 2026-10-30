@@ -8,7 +8,7 @@ const dryRun=process.argv.includes('--dry-run');
 const base=new URL(dryRun?(process.argv[process.argv.indexOf('--dry-run')+1]||'http://localhost:3000/'):'https://jeongukdaeri.kr/');
 const fileKey=fs.readFileSync(path.join(root,key+'.txt'),'utf8').trim();
 if(fileKey!==key)throw Error('Invalid local IndexNow key file');
-const expectedCount=3+require('../data/priority-regions.json').pages.length;
+const expectedCount=6+require('../data/priority-regions.json').pages.length;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function get(rel){return fetch(new URL(rel,base),{headers:{'user-agent':'Smart24-IndexNow-Notifier/1.0','cache-control':'no-cache'},signal:AbortSignal.timeout(10000),redirect:'manual'});}
 async function verify(){
@@ -24,7 +24,7 @@ async function verify(){
   const parsed=new URL(url);
   if(parsed.protocol!=='https:'||parsed.hostname!=='jeongukdaeri.kr'||parsed.search||parsed.hash)throw Error('Invalid canonical URL in sitemap: '+url);
  }
- for(const url of ['https://jeongukdaeri.kr/','https://jeongukdaeri.kr/daeri/','https://jeongukdaeri.kr/taksong/','https://jeongukdaeri.kr/daeri/busan/','https://jeongukdaeri.kr/taksong/busan/']){
+ for(const url of ['https://jeongukdaeri.kr/','https://jeongukdaeri.kr/daeri/','https://jeongukdaeri.kr/taksong/','https://jeongukdaeri.kr/taksong/jeju/','https://jeongukdaeri.kr/recruit/daeri/','https://jeongukdaeri.kr/recruit/taksong/','https://jeongukdaeri.kr/daeri/busan/','https://jeongukdaeri.kr/taksong/busan/']){
   if(!urls.includes(url))throw Error('Missing priority path: '+url);
  }
  const busan=await get('/taksong/busan/');
