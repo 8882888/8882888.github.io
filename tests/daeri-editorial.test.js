@@ -153,6 +153,37 @@ async function get(p){
  assert.ok(jejuArchiveUpdated.includes('<title>제주탁송 차량선적·실제후기 원문')&&
    jejuArchiveUpdated.includes('"@type":"CollectionPage"')&&jejuArchiveUpdated.includes('tel:18775245'),
    'Jeju archive uses search-specific editorial metadata and dedicated phone');
+ const secondFive=[
+  {id:'mountain-cycle',title:'설악산·지리산 종주탁송·자전거 인증센터 차량회수',sourceIds:['224453074981','224451230156','224450163134','224452067282'],service:'/taksong/gangwon/'},
+  {id:'golf-corporate-daily',title:'골프장대리운전·일일기사 예약과 실제후기',sourceIds:['224451280349','224417611971','224445462278'],service:'/service/golf/'},
+  {id:'vehicle-taksong',title:'중고차·서비스센터·렌트카·경매장탁송 실제원문',sourceIds:['224427052635','224421653506','224430950314','224419673150'],service:'/taksong/'}
+ ];
+ for(const item of secondFive){
+   const page=await get('/blog/archive/'+item.id+'/');
+   assert.ok(page.includes('<title>'+item.title)&&page.includes('id="'+item.id+'-editorial"'),
+     item.id+' archive has unique search metadata and practical editorial guide');
+   assert.ok(page.includes('"@type":"CollectionPage"')&&page.includes('tel:18114294'),
+     item.id+' archive retains structured original links and nationwide phone');
+   assert.ok(page.includes(item.service),item.id+' connects to its related service');
+   for(const sourceId of item.sourceIds){
+     assert.ok(originalById.has(sourceId)&&page.includes(originalById.get(sourceId).url),
+       item.id+' only points to known original Naver blog articles: '+sourceId);
+   }
+   const pg2=await fetch('http://127.0.0.1:3000/blog/archive/'+item.id+'/?page=2');
+   const count=require('../lib/blog-archive').counts[item.id];
+   assert.equal(pg2.status,count>30?200:404,item.id+' respects archive pagination');
+   if(pg2.status===200)assert.ok(!(await pg2.text()).includes('id="'+item.id+'-editorial"'),
+     item.id+' does not duplicate full editorial on page 2');
+ }
+ const golfServiceArchive=await get('/service/golf/');
+ const dailyServiceArchive=await get('/service/daily-driver/');
+ assert.ok(golfServiceArchive.includes('id="golf-blog-archive-link"')&&
+   golfServiceArchive.includes('href="/blog/archive/golf-corporate-daily/"'),
+   'golf service page sends readers to original Naver archive');
+ assert.ok(dailyServiceArchive.includes('id="daily-blog-archive-link"')&&
+   dailyServiceArchive.includes('href="/blog/archive/golf-corporate-daily/"'),
+   'daily driver page sends readers to the same relevant original Naver archive');
+
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
