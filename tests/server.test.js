@@ -489,6 +489,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const ganghwa=await (await get('/daeri/incheon/ganghwa-gun/')).text();assert.ok(ganghwa.includes('id="destination-guide"'));assert.ok(ganghwa.includes('/keyword-search/'));
   for(const p of ['/fare/jeju/','/assets/road-fare.js','/assets/jeju-quote.js','/assets/jeju-ferry-rates.json'])assert.equal((await get(p)).status,200,p);
   const jejuPage=await (await get('/taksong/jeju/')).text();assert.ok(jejuPage.includes('/fare/jeju/'));assert.ok(jejuPage.includes('275,000원'));
+  assert.ok(jejuPage.includes('href="tel:18775245"')&&jejuPage.includes('1877-5245'),'Jeju landing page links its dedicated phone');
+  assert.ok(!jejuPage.includes('tel:18114294')&&!jejuPage.includes('1811-4294'),'Jeju landing page contains no conflicting nationwide phone');
+  const jejuFareHtml=await (await get('/fare/jeju/')).text();
+  assert.ok(jejuFareHtml.includes('1877-5245')&&jejuFareHtml.includes('tel:18775245'),'Jeju quote page uses the correct phone');
   const slugs=new Set(regions.map(r=>r.slug));assert.equal(slugs.size,regions.length,'duplicate slugs');
   assert.equal(regions.filter(r=>r.level==='시도').length,17,'17 provinces expected');
   const fullNames=new Set(regions.map(r=>r.full_name));assert.equal(fullNames.size,regions.length,'duplicate full region paths');
