@@ -358,6 +358,22 @@ async function get(p){
    assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),item.path+' links to existing original source '+id);
   }
  }
+ const thirteenthFive=[{"path":"/region/seoul-daeri-taksong/","marker":"seoul-transport-reader-guide","archives":["/blog/archive/capital-taksong/","/blog/archive/general-daeri/","/blog/archive/golf-corporate-daily/"],"sources":["224445476153","224452049503"]},{"path":"/region/gyeonggi-daeri-taksong/","marker":"gyeonggi-transport-reader-guide","archives":["/blog/archive/capital-taksong/","/blog/archive/general-daeri/","/blog/archive/vehicle-taksong/"],"sources":["224452072174","224363696967"]},{"path":"/region/incheon-daeri-taksong/","marker":"incheon-transport-reader-guide","archives":["/blog/archive/capital-taksong/","/blog/archive/vehicle-taksong/","/blog/archive/general-daeri/"],"sources":["224445451429","224452097042"]},{"path":"/region/busan-daeri-taksong/","marker":"busan-transport-reader-guide","archives":["/blog/archive/gyeongsang-taksong/","/blog/archive/general-daeri/","/blog/archive/vehicle-taksong/"],"sources":["224445300887","224452088793"]},{"path":"/region/daegu-daeri-taksong/","marker":"daegu-transport-reader-guide","archives":["/blog/archive/gyeongsang-taksong/","/blog/archive/golf-corporate-daily/","/blog/archive/general-daeri/"],"sources":["224451280349","224452088793"]}];
+ for(const entry of thirteenthFive){
+   const response=await fetch('http://127.0.0.1:3000'+entry.path);
+   assert.equal(response.status,200,entry.path+' region landing is HTTP 200');
+   const html=await response.text();
+   assert.ok(html.includes('id="'+entry.marker+'"'),entry.path+' adds unique local handoff and booking guidance');
+   assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+entry.path+'"'),entry.path+' retains correct regional canonical');
+   assert.equal((html.match(/<h1\b/g)||[]).length,1,entry.path+' retains exactly one H1');
+   assert.ok(html.includes('tel:18114294'),entry.path+' keeps nationwide contact');
+   for(const archive of entry.archives){
+      assert.ok(html.includes('href="'+archive+'"'),entry.path+' connects already-existing source archive '+archive);
+   }
+   for(const id of entry.sources){
+      assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),entry.path+' retains verified existing original source '+id);
+   }
+ }
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
