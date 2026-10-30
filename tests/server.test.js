@@ -225,7 +225,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(crosslinkBusanTaksong.includes('blog.naver.com/wjdtnr4757/'),'regional blog links use the operator blog');
   assert.ok(crosslinkBusanTaksong.includes('/reviews/history/'),'regional page links verified ride history');
   const crosslinkBusanDaeri=await (await get('/daeri/busan/')).text();
-  assert.ok(crosslinkBusanDaeri.includes('id="regional-blog-links"'),'Busan driver page connects published blog articles');
+  // Province driver pages use a curated 17-province editorial component, not the generic regional-blog-links widget.
+  assert.ok(crosslinkBusanDaeri.includes('id="province-daeri-blog-guide"'),'Busan driver page includes the curated province editorial');
+  assert.ok(crosslinkBusanDaeri.includes('https://blog.naver.com/wjdtnr4757/224452970245'),'Busan driver page links its curated real operator blog article');
   assert.ok(crosslinkBusanDaeri.includes('blog.naver.com/wjdtnr4757/'),'driver page uses operator blog');
   assert.ok(!crosslinkBusanDaeri.includes('blog.naver.com/eom4757/'),'old unrelated blog ID must never leak');
   assert.ok(!crosslinkBusanDaeri.includes('부산동부권탁송 기장군탁송'),'taksong article must not be misclassified as daeri via brand name');
