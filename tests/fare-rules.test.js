@@ -10,5 +10,5 @@ assert.deepEqual(fare.withFerry([80000,110000],135940).total,[220000,250000]);
 assert.deepEqual(fare.withFerry([80000,110000],145280).total,[230000,260000]);
 assert.throws(()=>fare.baseQuote(NaN,'taksong'));assert.throws(()=>fare.withFerry([80000],NaN));
 const rates=require('../assets/jeju-ferry-rates.json');assert.equal(rates.classes.find(c=>c.id==='compact').weekday,135940);assert.ok(rates.classes.every(c=>c.holiday>c.weekday));
-const html=fs.readFileSync(require('node:path').join(__dirname,'../fare/jeju/index.html'),'utf8');assert.ok(html.includes('제주항 이후'));assert.ok(html.includes('tel:18114294'));assert.ok(!html.includes('1877-5245'));
+const html=fs.readFileSync(require('node:path').join(__dirname,'../fare/jeju/index.html'),'utf8');assert.ok(html.includes('제주항 이후'));assert.ok(html.includes('tel:18775245'));assert.ok(html.includes('1877-5245'));assert.ok(!html.includes('tel:18114294'));
 console.log('PASS: road pricing preserved and ferry components rounded correctly');
