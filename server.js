@@ -545,6 +545,9 @@ async function servicePage(r,kind){
  const focusedDesc=priorityMeta
   ?keyword+' · '+priorityMeta.topic+'. '+priorityFirstSentence+'. 예약상담 '+PHONE+'.'
   :name+' '+(kind==='taksong'?'자동차탁송':'대리운전')+' 예상요금·예약 안내. '+(provinceSpecificGuide?provinceSpecificGuide+' ':'')+(kind==='taksong'?'차량 인수·인계 장소, 차종, 이동 시간과 기사 접근·복귀 여건을 확인합니다.':'출발·도착지, 동승·경유·대기 여부와 기사 복귀 여건을 확인합니다.')+' 최종요금과 배차 가능 여부는 상담 후 안내합니다. '+PHONE+'.'+riContext;
+ const jejuSearchPage=kind==='taksong'&&r.name==='제주특별자치도';
+ const searchTitle=jejuSearchPage?'제주도탁송 · 차량선적·실제후기':focusedTitle;
+ const searchDesc=jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 예상요금·예약 상담 1811-4294.':focusedDesc;
  const hierarchyNote='행정구역 경로: '+regionAncestors(r).map(a=>a.name).join(' → ')+'. '+(r.level==='리'?'마을 단위 상세 위치와 차량 인수 지점을 확인합니다.':r.level==='동'?'건물 출입구와 주차 위치를 확인합니다.':r.level==='면'?'면 소재지와 외곽의 기사 이동 여건을 확인합니다.':'지역별 출발지와 목적지의 이동 조건을 확인합니다.');
  const aliasTerms=[...new Set(regionAliases(r).map(x=>x+service))].filter(x=>x!==name+' '+service&&x!==keyword);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
  const intro=kind==='taksong'?'자동차탁송은 고객이 지정한 출발지에서 차량을 인수해 목적지로 이동시키는 서비스입니다. 차량 인수·인계 장소와 차종, 도로거리, 시간대, 기사 접근·복귀 동선, 통행료에 따라 요금이 달라집니다.':'대리운전은 고객 차량을 기사에게 맡겨 목적지까지 이동하는 서비스입니다. 고객의 동승 여부와 이용 조건을 상담 시 확인하며, 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
@@ -579,7 +582,8 @@ async function servicePage(r,kind){
  const imageData=JSON.stringify({'@context':'https://schema.org','@graph':[{'@type':'WebPage','@id':pageUrl,url:pageUrl,name:focusedTitle,breadcrumb:{'@id':pageUrl+'#breadcrumb'},primaryImageOfPage:{'@id':imageId}},{'@type':'ImageObject','@id':imageId,contentUrl:imageUrl,url:imageUrl,name:name+' '+serviceBrand(kind)+' 상담 명함',caption:name+' '+serviceBrand(kind)+' 대표전화 '+PHONE,width:1200,height:800,encodingFormat:'image/png'},{'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}]}).replace(/</g,'\\u003c');
  const caption='<figcaption style="text-align:center">'+esc(name)+' '+serviceBrand(kind)+' 상담 명함 · <a href="tel:18114294">'+PHONE+'</a>'+dispatchNotice(kind)+'</figcaption>';
  const visibleCard=card.replace('</figure>',caption+'</figure>');
- return layout(focusedTitle,focusedDesc,'<script type="application/ld+json">'+imageData+'</script>'+body.replace('</section>','</section>'+visibleCard)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':'')+(kind==='taksong'&&r.name==='제주특별자치도'?jejuTaksongBlogEditorial():''),pageUrl,imageUrl);
+ const jejuLead=jejuSearchPage?jejuTaksongBlogEditorial():'';
+ return layout(searchTitle,searchDesc,'<script type="application/ld+json">'+imageData+'</script>'+body.replace('</section>','</section>'+visibleCard+jejuLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
 }
 function remoteRegionGuidance(r){
  const full=r.full_name||'',names=[
@@ -839,11 +843,12 @@ function routeKeywordSearchPage(from,to,kind,page=1){
 function recruitmentPage(kind,region){
  const isT=kind==='taksong',label=isT?'탁송기사':'대리운전기사',area=region?region.full_name:'전국',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const url='/recruit/'+kind+'/'+(region?region.slug+'/':'');
- const title=area+' '+label+' 모집 | '+(isT?'차량탁송':'대리운전')+' 기사 지원 안내';
- const desc=area+' '+label+' 모집 안내. 운행 가능 지역과 시간, 경력 및 운행 조건을 상담으로 확인하세요. 스마트24탁송 1811-4294.';
+ const title=region?area+' '+label+' 모집':isT?'전국 탁송기사 모집':'전국 대리기사 모집';
+ const desc=region?area+' '+label+' 지원 상담. 운행지역·경력·등록 조건 확인. 1811-4294.':isT?'전국 탁송기사 모집 안내. 차량 인수·인계 및 운행지역·기사 등록 조건 상담. 1811-4294.':'전국 대리기사 모집 안내. 운행 시간·지역·경력과 기사 등록 조건 상담. 1811-4294.';
  const provinces=regions.filter(r=>r.level==='시도').slice(0,20);
  const regionLinks=!region?'<section><h2>지역별 기사 모집 안내</h2><ul>'+provinces.map(r=>'<li><a href="/recruit/'+kind+'/'+r.slug+'/">'+esc(r.full_name)+' '+label+' 모집</a></li>').join('')+'</ul></section>':'';
- const body='<h1>'+esc(area)+' '+label+' 모집</h1><figure><a href="tel:18114294"><img src="/assets/smart24-business-card-inline-v2.png" alt="스마트24탁송 전국 탁송 대리운전 기사 모집 상담 명함 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" style="width:100%;height:auto;max-width:720px"></a><figcaption>기사 모집 상담 1811-4294</figcaption></figure><p>'+esc(desc)+'</p><section><h2>지원 및 상담</h2><p>전국에서 '+label+' 지원 상담을 받고 있습니다. 실제 배차 가능 지역, 운행 시간, 기사 등록 절차 및 필요한 확인 사항은 전화로 안내합니다. 특정 지역의 상시 배차나 수입을 보장하지 않습니다.</p><p><a href="tel:18114294">기사 지원 상담 1811-4294</a></p></section><section><h2>지원 전 확인할 사항</h2><p>주로 운행할 지역, 운행 가능한 요일과 시간, 장거리 이동 가능 여부, 운전 경력 등을 상담 시 알려주세요. 보험·등록 및 업무 조건은 상담 과정에서 확인합니다.</p></section>'+regionLinks+'<section><h2>관련 안내</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a> · <a href="/'+kind+'/">'+(isT?'탁송':'대리운전')+' 서비스 안내</a></p></section>';
+ const jobFocus=isT?'<section><h2>탁송기사 지원 시 안내할 사항</h2><p>차량을 인수하고 목적지에서 인계하는 로드탁송 업무를 희망하는 경우, 가능한 차종과 지역·거리, 이동 및 복귀 가능 시간, 차량 키와 인수·인계 확인 경험 등을 알려주세요. 현재 가능한 업무·등록 및 보험 적용 조건은 상담으로 확인하며 근무 조건이나 수입을 보장하지 않습니다.</p></section>':'<section><h2>대리운전기사 지원 시 안내할 사항</h2><p>대리운전 지원 상담 시 주 운행 지역, 야간·주말 등 가능한 시간, 운전 경력과 장거리 운행 가능 여부를 알려주세요. 배차 운영 방식, 등록 및 보험 적용 조건은 상담을 통해 확인합니다. 특정 시간의 일감이나 수입을 보장하지 않습니다.</p></section>';
+ const body='<h1>'+esc(area)+' '+label+' 모집</h1><figure><a href="tel:18114294"><img src="/assets/smart24-business-card-inline-v2.png" alt="스마트24탁송 전국 탁송 대리운전 기사 모집 상담 명함 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" style="width:100%;height:auto;max-width:720px"></a><figcaption>기사 모집 상담 1811-4294</figcaption></figure><p>'+esc(desc)+'</p><section><h2>지원 및 상담</h2><p>전국에서 '+label+' 지원 상담을 받고 있습니다. 실제 배차 가능 지역, 운행 시간, 기사 등록 절차 및 필요한 확인 사항은 전화로 안내합니다. 특정 지역의 상시 배차나 수입을 보장하지 않습니다.</p><p><a href="tel:18114294">기사 지원 상담 1811-4294</a></p></section><section><h2>지원 전 확인할 사항</h2><p>주로 운행할 지역, 운행 가능한 요일과 시간, 장거리 이동 가능 여부, 운전 경력 등을 상담 시 알려주세요. 보험·등록 및 업무 조건은 상담 과정에서 확인합니다.</p></section>'+jobFocus+regionLinks+'<section><h2>관련 안내</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a> · <a href="/'+kind+'/">'+(isT?'탁송':'대리운전')+' 서비스 안내</a></p></section>';
  return layout(title,desc,body,base+url,base+'/assets/smart24-business-card-inline-v2.png');
 }
 
@@ -916,7 +921,7 @@ if(pathname==='/reviews/'||pathname==='/reviews')return respond(res,200,applySeo
 const rideMatch=pathname.match(/^\/reviews\/([a-f0-9]{16})\/?$/);
 if(rideMatch){const x=publicRideById.get(rideMatch[1]);return x?respond(res,200,ridePage(x)):respond(res,404,'확인된 운행 기록이 없습니다.')}
 const recruitmentMatch=pathname.match(/^\/recruit\/(taksong|daeri)(?:\/([a-z0-9-]+))?\/?$/);
-if(recruitmentMatch){const region=recruitmentMatch[2]?bySlug.get(recruitmentMatch[2]):null;if(recruitmentMatch[2]&&(!region||region.level!=='시도'))return respond(res,404,'모집 지역을 찾을 수 없습니다.');return respond(res,200,recruitmentPage(recruitmentMatch[1],region))}
+if(recruitmentMatch){const region=recruitmentMatch[2]?bySlug.get(recruitmentMatch[2]):null;if(recruitmentMatch[2]&&(!region||region.level!=='시도'))return respond(res,404,'모집 지역을 찾을 수 없습니다.');if(!pathname.endsWith('/')){res.writeHead(301,{location:pathname+'/'+u.search});return res.end()}return respond(res,200,recruitmentPage(recruitmentMatch[1],region))}
 if(pathname==='/taksongdaeri/'||pathname==='/taksongdaeri'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const guideSchema={'@context':'https://schema.org','@type':'WebPage',name:'전국 자동차탁송·대리운전 예약 안내',url:base+'/taksongdaeri/',description:'전국 자동차탁송·대리운전 예약과 예상요금, 산간·오지·항구의 사전 예약 안내',isPartOf:{'@type':'WebSite',name:'스마트24 전국대리운전·24시탁송',url:base+'/'}};const body='<script type="application/ld+json">'+JSON.stringify(guideSchema)+'</script><h1>전국 자동차탁송·대리운전 예약 안내</h1><p>스마트24는 전국 자동차탁송과 대리운전 예약 상담을 안내합니다. 출발지와 도착지에 따른 예상요금은 도로거리 확인 후 산출하며 실제 배차요금은 기사 수급과 운행 조건에 따라 달라집니다.</p><section><h2>서비스 선택</h2><p><a href="/taksong/">전국 자동차탁송 지역별 안내</a> · <a href="/daeri/">전국 대리운전 지역별 안내</a> · <a href="/fare/">출발지·도착지 예상요금 조회</a></p></section><section><h2>산간·오지·항구 사전 예약</h2><p>산간마을, 오지, 항구·여객선터미널, 관광지와 등산로 입구는 기사 접근·복귀가 어려울 수 있습니다. 당일 또는 심야 긴급 호출은 사전 예약보다 요금이 높아지거나 배차가 지연될 수 있습니다. 실제 추가비용과 배차 가능 여부는 상담 후 확정합니다.</p><p><a href="tel:18114294">예약 상담 1811-4294</a></p></section>';return respond(res,200,layout('전국 자동차탁송·대리운전 예약 | 스마트24','전국 자동차탁송·대리운전 지역별 서비스, 예상요금 및 산간·오지·항구 사전 예약 안내',body,base+'/taksongdaeri/',base+'/assets/smart24-business-card-inline-v2.png'))}
 if(pathname==='/favicon.ico'){
  if(!faviconPngPromise){
@@ -1005,7 +1010,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
 if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const urls=['/','/daeri/','/taksong/',...priorityRegionalPages.map(p=>{
+ const urls=['/','/daeri/','/taksong/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...priorityRegionalPages.map(p=>{
   const region=regions.find(r=>r.full_name===p.region);
   return servicePath(region,p.kind);
  })];
@@ -1029,7 +1034,7 @@ if(pathname==='/sitemap.xml'){
  const provinceRegions=regions.filter(r=>r.level==='시도');
  const focused=[
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
-  '/','/taksongdaeri/','/daeri/','/taksong/','/fare/','/fare/jeju/',
+  '/','/taksongdaeri/','/daeri/','/taksong/','/taksong/jeju/','/fare/','/fare/jeju/',
   '/reviews/','/reviews/history/','/routes/reviewed/','/blog/','/blog/archive/',
    ...blogArchive.groups.map(g=>'/blog/archive/'+g.id+'/'),'/region/',
   '/service/golf/','/service/taksong/','/recruit/daeri/','/recruit/taksong/',
