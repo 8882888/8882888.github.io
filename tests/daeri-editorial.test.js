@@ -129,6 +129,24 @@ async function get(p){
    'Jeju archive has the correct dedicated phone CTA');
  assert.ok(!jejuArchiveUpdated.includes('현재 스마트24 문의는 1811-4294로 해주세요.'),
    'Jeju page does not show outdated generic consultation number');
+
+ const gangwonBlog=await get('/blog/archive/gangwon-taksong/');
+ assert.ok(gangwonBlog.includes('강원도탁송 영동·영서 지역 안내와 실제후기 원문')&&gangwonBlog.includes('id="gangwon-blog-guide"'),
+   'Gangwon archive has an original editorial guide for coastal and inland regions');
+ assert.ok(gangwonBlog.includes('224437809013')&&gangwonBlog.includes('224452920151')&&gangwonBlog.includes('224452928413'),
+   'Gangwon article links to existing Naver original posts without inventing trips');
+ assert.ok(gangwonBlog.includes('/taksong/gangwon/')&&gangwonBlog.includes('tel:18114294'),
+   'Gangwon article links service guide and preserves the nationwide phone');
+ assert.ok(gangwonBlog.includes('"@type":"CollectionPage"')&&gangwonBlog.includes('"@type":"ItemList"'),
+   'curated article source list provides structured collection metadata');
+ const gangwonBlogPage2=await get('/blog/archive/gangwon-taksong/?page=2');
+ assert.ok(!gangwonBlogPage2.includes('id="gangwon-blog-guide"'),
+   'long editorials do not duplicate across paginated archive pages');
+ assert.ok(homepage.includes('id="gangwon-blog-spotlight"')&&homepage.includes('href="/blog/archive/gangwon-taksong/"'),
+   'homepage displays a source-linked Gangwon editorial entry');
+ assert.ok(jejuArchiveUpdated.includes('<title>제주탁송 차량선적·실제후기 원문')&&
+   jejuArchiveUpdated.includes('"@type":"CollectionPage"')&&jejuArchiveUpdated.includes('tel:18775245'),
+   'Jeju archive uses search-specific editorial metadata and dedicated phone');
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('제주탁송 대표번호 1877-5245')&&jeju.includes('tel:18775245'),
    'Jeju region uses the dedicated 1877-5245 contact number');
