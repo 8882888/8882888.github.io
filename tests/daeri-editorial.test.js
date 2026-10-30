@@ -314,6 +314,20 @@ async function get(p){
     assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),item.route+' links only verified public blog source '+id);
   }
  }
+ const tenthFive=[{"route":"/special/jirisan/","marker":"jirisan-courses-source-guide","ids":["224453077687","224422345862","224430920625"],"canonical":"https://jeongukdaeri.kr/special/jirisan/"},{"route":"/special/seongjung-jongju/","marker":"seongjung-route-source-guide","ids":["224422345862","224423794958"],"canonical":"https://jeongukdaeri.kr/special/seongjung-jongju/"},{"route":"/special/seongdae-jongju/","marker":"seongdae-route-source-guide","ids":["224430920625","224441143799"],"canonical":"https://jeongukdaeri.kr/special/seongdae-jongju/"},{"route":"/special/hwadae-jongju/","marker":"hwadae-route-source-guide","ids":["224448671127","224446360523","224447485635"],"canonical":"https://jeongukdaeri.kr/special/hwadae-jongju/"},{"route":"/special/hwajung-jongju/","marker":"hwajung-route-source-guide","ids":["224409989860","224447485635"],"canonical":"https://jeongukdaeri.kr/special/hwajung-jongju/"}];
+ for(const entry of tenthFive){
+  const response=await fetch('http://127.0.0.1:3000'+entry.route);
+  assert.equal(response.status,200,entry.route+' should serve status 200');
+  const html=await response.text();
+  assert.ok(html.includes('id="'+entry.marker+'"')&&html.includes('href="/blog/archive/mountain-cycle/"'),entry.route+' has distinct course guide and real blog archive');
+  assert.ok(html.includes('rel="canonical" href="'+entry.canonical+'"'),entry.route+' uses official canonical host');
+  assert.ok(!html.includes('rel="canonical" href="https://8882888.github.io/'),entry.route+' does not use backup domain as canonical');
+  assert.equal((html.match(/<h1\b/g)||[]).length,1,entry.route+' keeps one H1');
+  assert.ok(html.includes('tel:18114294'),entry.route+' keeps current nationwide contact');
+  for(const id of entry.ids){
+   assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),entry.route+' links verified existing Naver source '+id);
+  }
+ }
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
