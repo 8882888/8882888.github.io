@@ -80,8 +80,18 @@ async function get(p){
  const taksongNotice=await get('/taksong/');
  assert.ok(taksongNotice.includes('24시탁송 · 전국 24시간 차량 이동 상담 안내'),'24 hour taksong service emphasized');
  assert.ok(taksongNotice.includes('월요일'),'taksong delay notice is shown');
+ const daeriRecruit=await get('/recruit/daeri/');
+ const taksongRecruit=await get('/recruit/taksong/');
+ assert.ok(daeriRecruit.includes('전국 대리운전기사 모집')&&daeriRecruit.includes('tel:18114294'),'nationwide designated-driver recruitment is reachable');
+ assert.ok(taksongRecruit.includes('전국 탁송기사 모집')&&taksongRecruit.includes('수입을 보장하지 않습니다'),'taksong-driver recruitment avoids earnings guarantees');
+ assert.ok(homepage.includes('id="home-driver-recruitment"')&&homepage.includes('href="/recruit/daeri/"')&&homepage.includes('href="/recruit/taksong/"'),'recruitment is discoverable from the homepage');
+ const jeju=await get('/taksong/jeju/');
+ assert.ok(jeju.includes('id="jeju-source-route-guide"'),'Jeju transfer has distinct island and port guide');
+ for(const id of ['224371918565','224387354617','224362663400'])assert.ok(jeju.includes(originalById.get(id).url),'Jeju guide links verified pre-September originals '+id);
+ assert.ok(jeju.includes('제주항')&&jeju.includes('목포항'),'Jeju sea transfer handover is explained');
  const mainSitemap=await get('/sitemap.xml');
  const driverSitemap=await get('/sitemap-daeri.xml');
+ assert.ok(mainSitemap.includes('https://jeongukdaeri.kr/recruit/daeri/')&&mainSitemap.includes('https://jeongukdaeri.kr/recruit/taksong/'),'main discovery sitemap includes both existing recruitment hubs');
  for(const place of travel.destinations){
   const path=travel.pathFor(place);
   const page=await get(path);
