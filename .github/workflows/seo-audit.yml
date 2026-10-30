@@ -45,6 +45,7 @@ jobs:
           node --check scripts/seo-audit.js
           node --check assets/traffic-analytics.js
           node tests/traffic-analytics.test.js
+          node tests/traffic-optout.test.js
           node -e "const c=require('./data/seo-pages.json'); if(!Array.isArray(c.pages)||!c.pages.length) process.exit(1)"
       - name: Install dependencies
         run: npm install --no-save --no-package-lock --ignore-scripts
