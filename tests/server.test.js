@@ -658,6 +658,24 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((await get('/supabase/site_traffic_dashboard.sql')).status,403,
     'statistics database schema must not be web-exposed');
   const root=await get('/');assert.equal(root.status,200);
+  assert.ok((await root.text()).includes('/blog/archive/'),'homepage links to blog directory');
+  const archiveData=require('../lib/blog-archive');
+  assert.equal(archiveData.total,require('../blog/posts.json').length,'archive retains source links');
+  assert.equal(Object.values(archiveData.counts).reduce((sum,n)=>sum+n,0),archiveData.total,'all original posts are cataloged once');
+  const archiveIndex=await get('/blog/archive/');assert.equal(archiveIndex.status,200);
+  const archiveIndexHtml=await archiveIndex.text();
+  assert.ok(archiveIndexHtml.includes(archiveData.total+'편'),'archive displays source count');
+  for(const group of archiveData.groups){
+    const slug='/blog/archive/'+group.id+'/';
+    assert.ok(archiveIndexHtml.includes(slug),'archive index links '+group.id);
+    const catalog=await get(slug);assert.equal(catalog.status,200,slug);
+    assert.ok((await catalog.text()).includes('https://blog.naver.com/wjdtnr4757/'),'links original blog');
+  }
+  assert.equal((await get('/blog/archive/vehicle-taksong/?page=2')).status,200,'pagination works');
+  assert.equal((await get('/blog/archive/vehicle-taksong/?page=999')).status,404,'rejects invalid page');
+  const archiveSitemap=await (await get('/sitemap.xml')).text();
+  assert.ok(archiveSitemap.includes('https://example.com/blog/archive/'),'directory in sitemap');
+  for(const group of archiveData.groups)assert.ok(archiveSitemap.includes('/blog/archive/'+group.id+'/'),'category in sitemap');
   const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);const priorityDaeri=require('../data/priority-regions.json').pages.filter(p=>p.kind==='daeri');
  const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityDaeri.some(p=>p.region===r.full_name));
  assert.equal((daeriXml.match(/<loc>/g)||[]).length,discoveryRegions.length+1,'driver sitemap focuses on province and priority regions only');

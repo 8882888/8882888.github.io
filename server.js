@@ -875,6 +875,7 @@ let mainCardPngPromise, faviconPngPromise;
 const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layout,servicePath,canonical,landmarks});
 const routeGuides=require('./lib/route-guides')({regions,byPath,pathBySlug,cachedRoadDistance,roadQuote:RoadFareServer.roadQuote,esc,layout,servicePath,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',matchingHistoricalRides});
 const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});
+const blogArchive=require('./lib/blog-archive');
 const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout,servicePath,label:seoRegionLabel,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',historicalRides});
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 // Publish the public IndexNow ownership key at the root on Cloudtype.
@@ -887,7 +888,8 @@ if(pathname==='/fare/routes/'||pathname==='/fare/routes')return respond(res,200,
 const fareRouteMatch=pathname.match(/^\/fare\/route\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/(seoul|incheon|daejeon|daegu|busan)\/?$/);
 if(fareRouteMatch){if(!pathname.endsWith('/')){res.writeHead(301,{location:pathname+'/'});return res.end()}return routeGuides.page(fareRouteMatch[1],fareRouteMatch[2]).then(html=>html?respond(res,200,html):respond(res,404,'구간을 찾을 수 없습니다.')).catch(err=>{console.error('fare route error',err);respond(res,500,'요금 안내를 불러올 수 없습니다.')})}
 const historicalDetail=pathname.match(new RegExp('^/reviews/history/(excel-[0-9]{4})/?$'));if(historicalDetail){const x=historicalRides.find(v=>v.id===historicalDetail[1]);return x?respond(res,200,historyDetailPage(x)):respond(res,404,'운행기록을 찾을 수 없습니다.');}
-if(pathname==='/blog/'||pathname==='/blog')return blogLatestPage().then(html=>respond(res,200,html)).catch(err=>{console.error('blog feed error',err);respond(res,503,'블로그 목록을 불러올 수 없습니다.');});
+const archivePage=blogArchive.handle(pathname,u,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});if(archivePage)return respond(res,archivePage.status,archivePage.html);
+ if(pathname==='/blog/'||pathname==='/blog')return blogLatestPage().then(html=>respond(res,200,html)).catch(err=>{console.error('blog feed error',err);respond(res,503,'블로그 목록을 불러올 수 없습니다.');});
 if(pathname==='/reviews/history/'||pathname==='/reviews/history'){const page=Math.max(1,Math.min(1000,Number(u.searchParams.get('page'))||1)),kind=['daeri','taksong'].includes(u.searchParams.get('kind'))?u.searchParams.get('kind'):'all';return respond(res,200,historyIndexPage(page,kind));}
 if(pathname==='/reviews/'||pathname==='/reviews')return respond(res,200,applySeo(ridesIndex(),'/reviews/'));
 const rideMatch=pathname.match(/^\/reviews\/([a-f0-9]{16})\/?$/);
@@ -1004,7 +1006,8 @@ if(pathname==='/sitemap.xml'){
  const provinceRegions=regions.filter(r=>r.level==='시도');
  const focused=[
   '/','/taksongdaeri/','/daeri/','/taksong/','/fare/','/fare/jeju/',
-  '/reviews/','/reviews/history/','/routes/reviewed/','/blog/','/region/',
+  '/reviews/','/reviews/history/','/routes/reviewed/','/blog/','/blog/archive/',
+   ...blogArchive.groups.map(g=>'/blog/archive/'+g.id+'/'),'/region/',
   '/service/golf/','/service/taksong/',
   '/service/daily-driver/','/service/long-distance-taksong/',
   '/service/corporate/','/taksong/types/','/places/','/activities/',
