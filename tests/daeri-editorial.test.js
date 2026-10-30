@@ -139,9 +139,15 @@ async function get(p){
    'Gangwon article links service guide and preserves the nationwide phone');
  assert.ok(gangwonBlog.includes('"@type":"CollectionPage"')&&gangwonBlog.includes('"@type":"ItemList"'),
    'curated article source list provides structured collection metadata');
- const gangwonBlogPage2=await get('/blog/archive/gangwon-taksong/?page=2');
- assert.ok(!gangwonBlogPage2.includes('id="gangwon-blog-guide"'),
-   'long editorials do not duplicate across paginated archive pages');
+ const gangwonArchiveCount=require('../lib/blog-archive').counts['gangwon-taksong'];
+ const gangwonBlogPage2Response=await fetch('http://127.0.0.1:3000/blog/archive/gangwon-taksong/?page=2');
+ assert.equal(gangwonBlogPage2Response.status,gangwonArchiveCount>30?200:404,
+   'archive pagination returns 404 when there are fewer than 31 indexed source posts');
+ if(gangwonBlogPage2Response.status===200){
+   const page2Html=await gangwonBlogPage2Response.text();
+   assert.ok(!page2Html.includes('id="gangwon-blog-guide"'),
+     'long editorials do not duplicate across paginated archive pages');
+ }
  assert.ok(homepage.includes('id="gangwon-blog-spotlight"')&&homepage.includes('href="/blog/archive/gangwon-taksong/"'),
    'homepage displays a source-linked Gangwon editorial entry');
  assert.ok(jejuArchiveUpdated.includes('<title>제주탁송 차량선적·실제후기 원문')&&
