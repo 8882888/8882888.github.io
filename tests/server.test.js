@@ -658,7 +658,22 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((await get('/supabase/site_traffic_dashboard.sql')).status,403,
     'statistics database schema must not be web-exposed');
   const root=await get('/');assert.equal(root.status,200);
-  assert.ok((await root.text()).includes('/blog/archive/'),'homepage links to blog directory');
+  const rootHtml=await root.text();
+  assert.ok(rootHtml.includes('/blog/archive/'),'homepage links to blog directory');
+  assert.ok(rootHtml.includes('id="field-notes"'),'homepage editorial section appears');
+  assert.ok(rootHtml.indexOf('id="field-notes"')<rootHtml.indexOf('id="priority-verified-routes"'),'blog-first content precedes route listings');
+  assert.equal((rootHtml.match(/<h1\b/g)||[]).length,1,'homepage retains one H1');
+  const editorialHtml=rootHtml.split('<section class="editorial-hub"')[1]?.split('</section>')[0]||'';
+  const originalBlogPosts=require('../blog/posts.json');
+  const featuredIds=['224451280349','224453015755','224452067282','224445300887','224452928413','224452920151','224449909441','224450082013','224448741396','224452906198','224453006635'];
+  for(const id of featuredIds){
+    const post=originalBlogPosts.find(p=>p.id===id);
+    assert.ok(post,'featured post must exist in saved original Naver directory '+id);
+    assert.ok(editorialHtml.includes(post.url),'homepage uses unchanged Naver original URL '+id);
+    assert.ok(editorialHtml.includes(post.title.replace(/&/g,'&amp;').replace(/</g,'&lt;')),'homepage retains original title '+id);
+  }
+  assert.ok(editorialHtml.includes('1811-4294'),'homepage shows official contact for current booking');
+  assert.ok(!editorialHtml.includes('<img'),'do not display invented field photos');
   const archiveData=require('../lib/blog-archive');
   assert.equal(archiveData.total,require('../blog/posts.json').length,'archive retains source links');
   assert.equal(Object.values(archiveData.counts).reduce((sum,n)=>sum+n,0),archiveData.total,'all original posts are cataloged once');
