@@ -120,9 +120,23 @@ async function get(p){
    'Jeju archive includes practical blog-style port and price explanation');
  assert.ok(jejuArchive.includes('224415828744')&&jejuArchive.includes('224433990134'),
    'Jeju archive cites existing blog originals and does not invent new completed jobs');
- assert.ok(jejuArchive.includes('지정일 도착을 보장할 수 없습니다.')&&jejuArchive.includes('1811-4294'),
+ assert.ok(jejuArchive.includes('지정일 도착을 보장할 수 없습니다.')&&jejuArchive.includes('1877-5245'),
    'Jeju archive does not guarantee ferry schedule or past fare');
+ assert.ok(homepage.includes('href="tel:18775245" aria-label="제주탁송 대표번호 1877-5245 전화 상담"'),
+   'the homepage Jeju spotlight advertises the dedicated 1877-5245 number');
+ const jejuArchiveUpdated=await get('/blog/archive/jeju-taksong/');
+ assert.ok(jejuArchiveUpdated.includes('제주탁송 대표 상담 1877-5245')&&jejuArchiveUpdated.includes('href="tel:18775245"'),
+   'Jeju archive has the correct dedicated phone CTA');
+ assert.ok(!jejuArchiveUpdated.includes('현재 스마트24 문의는 1811-4294로 해주세요.'),
+   'Jeju page does not show outdated generic consultation number');
  const jeju=await get('/taksong/jeju/');
+ assert.ok(jeju.includes('제주탁송 대표번호 1877-5245')&&jeju.includes('tel:18775245'),
+   'Jeju region uses the dedicated 1877-5245 contact number');
+ assert.ok(!jeju.includes('tel:18114294')&&!jeju.includes('1811-4294'),
+   'the Jeju landing page has no conflicting nationwide phone number');
+ const jejuFare=await get('/fare/jeju/');
+ assert.ok(jejuFare.includes('1877-5245')&&jejuFare.includes('tel:18775245')&&!jejuFare.includes('1811-4294'),
+   'Jeju quote page uses its dedicated phone without displaying the national number');
  assert.ok(jeju.includes('id="jeju-source-route-guide"'),'Jeju transfer has distinct island and port guide');
  for(const id of ['224371918565','224387354617','224362663400'])assert.ok(jeju.includes(originalById.get(id).url),'Jeju guide links verified pre-September originals '+id);
  assert.ok(jeju.includes('제주항')&&jeju.includes('목포항'),'Jeju sea transfer handover is explained');
