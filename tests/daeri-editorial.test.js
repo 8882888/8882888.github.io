@@ -328,6 +328,21 @@ async function get(p){
    assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),entry.route+' links verified existing Naver source '+id);
   }
  }
+ const eleventhFive=[{"route":"/special/jungsanri/","marker":"jungsanri-original-guide","archive":"/blog/archive/mountain-cycle/","sourceIds":["224422345862","224405795415"],"canonical":"https://jeongukdaeri.kr/special/jungsanri/"},{"route":"/special/baekmudong/","marker":"baekmudong-original-guide","archive":"/blog/archive/mountain-cycle/","sourceIds":["224405795415","224372802111"],"canonical":"https://jeongukdaeri.kr/special/baekmudong/"},{"route":"/special/baekdudaegan/","marker":"baekdudaegan-original-guide","archive":"/blog/archive/mountain-cycle/","sourceIds":["224361549457","224431773709","224437860486"],"canonical":"https://jeongukdaeri.kr/special/baekdudaegan/"},{"route":"/special/national-cycling-tour/","marker":"national-cycling-original-guide","archive":"/blog/archive/mountain-cycle/","sourceIds":["224450163134","224430877181","224430195408"],"canonical":"https://jeongukdaeri.kr/special/national-cycling-tour/"},{"route":"/special/camping-car-transport/","marker":"camping-car-original-guide","archive":"/blog/archive/vehicle-taksong/","sourceIds":["224412269285","224431721391"],"canonical":"https://jeongukdaeri.kr/special/camping-car-transport/"}];
+ for(const item of eleventhFive){
+  const response=await fetch('http://127.0.0.1:3000'+item.route);
+  assert.equal(response.status,200,item.route+' page returned HTTP 200');
+  const html=await response.text();
+  assert.ok(html.includes('id="'+item.marker+'"')&&html.includes('href="'+item.archive+'"'),
+    item.route+' offers focused content and source archive navigation');
+  assert.ok(html.includes('rel="canonical" href="'+item.canonical+'"'),item.route+' canonical is official domain');
+  assert.ok(!html.includes('rel="canonical" href="https://8882888.github.io/'),item.route+' does not choose backup domain');
+  assert.equal(html.split('<h1').length-1,1,item.route+' retains exactly one H1');
+  assert.ok(html.includes('tel:18114294'),item.route+' retains nationwide phone');
+  for(const id of item.sourceIds){
+   assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),item.route+' links to real existing public Naver original '+id);
+  }
+ }
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
