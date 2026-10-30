@@ -283,6 +283,23 @@ async function get(p){
  for(const path of backupCanonicals){
   assert.ok(!(await get(path)).includes('rel="canonical" href="https://8882888.github.io/'),path+' must not use backup host as canonical');
  }
+ const eighthFive=[{"route":"/special/seoraksan-transport/","marker":"seoraksan-real-source-guide","archive":"/blog/archive/mountain-cycle/","origins":["224451230156","224453015755","224453074981"],"canonical":"https://jeongukdaeri.kr/special/seoraksan-transport/"},{"route":"/special/jirisan-transport/","marker":"jirisan-real-source-guide","archive":"/blog/archive/mountain-cycle/","origins":["224430920625","224422345862","224453077687"],"canonical":"https://jeongukdaeri.kr/special/jirisan-transport/"},{"route":"/special/cycling-trail-transport/","marker":"cycling-trail-real-source-guide","archive":"/blog/archive/mountain-cycle/","origins":["224450163134","224445317658","224452067282"],"canonical":"https://jeongukdaeri.kr/special/cycling-trail-transport/"},{"route":"/special/national-bicycle-road/","marker":"national-bicycle-real-source-guide","archive":"/blog/archive/mountain-cycle/","origins":["224443728585","224445430649","224452067282"],"canonical":"https://jeongukdaeri.kr/special/national-bicycle-road/"},{"route":"/special/deogyusan/","marker":"deogyusan-real-source-guide","archive":"/blog/archive/mountain-cycle/","origins":["224431773709","224448804487"],"canonical":"https://jeongukdaeri.kr/special/deogyusan/"}];
+ for(const entry of eighthFive){
+  const response=await fetch('http://127.0.0.1:3000'+entry.route);
+  assert.equal(response.status,200,entry.route+' must return HTTP 200');
+  const html=await response.text();
+  assert.ok(html.includes('id="'+entry.marker+'"')&&html.includes('href="'+entry.archive+'"'),
+    entry.route+' has unique guidance and original Naver archive');
+  assert.ok(html.includes('rel="canonical" href="'+entry.canonical+'"'),
+    entry.route+' canonical uses official website');
+  for(const id of entry.origins){
+   assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),
+     entry.route+' links real blog source '+id);
+  }
+  assert.ok(html.includes('tel:18114294'),entry.route+' keeps nationwide consultation');
+  assert.ok(!html.includes('rel="canonical" href="https://8882888.github.io/'),
+    entry.route+' does not prioritize the backup domain');
+ }
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
