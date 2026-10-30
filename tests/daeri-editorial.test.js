@@ -95,7 +95,7 @@ async function get(p){
  assert.ok(jeju.indexOf('id="jeju-source-route-guide"')<jeju.indexOf('서울·대구 출발 제주탁송 예상요금'),'Jeju original evidence is prominent');
  assert.ok(daeriRecruit.includes('대리운전기사 지원 시 안내할 사항'),'driver recruitment provides focused application information');
  assert.ok(taksongRecruit.includes('탁송기사 지원 시 안내할 사항'),'vehicle-transfer recruitment provides focused application information');
- for(const [p,href] of [['/recruit/daeri','/recruit/daeri/'],['/recruit/taksong','/recruit/taksong/'],['/recruit/daeri/jeju','/recruit/daeri/jeju/']]){
+ for(const [p,href] of [['/recruit/daeri','/recruit/daeri/'],['/recruit/taksong','/recruit/taksong/'],['/recruit/daeri/province-17','/recruit/daeri/province-17/']]){
   const response=await fetch('http://127.0.0.1:3000'+p,{redirect:'manual'});
   assert.equal(response.status,301,'recruitment canonical redirect');
   assert.equal(response.headers.get('location'),href,'recruitment redirects to canonical URL');
