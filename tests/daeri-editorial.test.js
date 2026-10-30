@@ -219,6 +219,22 @@ async function get(p){
  assert.ok(historyFourth.includes('id="history-original-distinction"')&&historyFourth.includes('네이버 블로그 공개 원문 자료실'), 'history page distinguishes completed records from blog titles');
  const historyFilteredFourth=await get('/reviews/history/?kind=daeri&page=2');
  assert.ok(historyFilteredFourth.includes('https://jeongukdaeri.kr/reviews/history/?kind=daeri&amp;page=2')||historyFilteredFourth.includes('https://jeongukdaeri.kr/reviews/history/?kind=daeri&page=2'), 'filter and page retain own canonical URL');
+ const fifthBatch=[
+   {route:'/service/corporate/',marker:'corporate-original-archive',archive:'/blog/archive/golf-corporate-daily/',source:'224371958009'},
+   {route:'/service/long-distance-taksong/',marker:'long-taksong-original-guides',archive:'/blog/archive/vehicle-taksong/',source:'224452072174'},
+   {route:'/business/rental-car/',marker:'rental-original-archive',archive:'/blog/archive/vehicle-taksong/',source:'224430950314'},
+   {route:'/business/used-car/',marker:'usedcar-original-archive',archive:'/blog/archive/vehicle-taksong/',source:'224421653506'},
+   {route:'/taksong/types/',marker:'vehicle-types-original-archive',archive:'/blog/archive/vehicle-taksong/',source:'224431721391'}
+ ];
+ for(const entry of fifthBatch){
+   const page=await get(entry.route);
+   assert.ok(page.includes('id="'+entry.marker+'"')&&page.includes('href="'+entry.archive+'"'),
+     'fifth batch original-source links present: '+entry.route);
+   assert.ok(page.includes('https://blog.naver.com/wjdtnr4757/'+entry.source),
+     'fifth batch Naver original sourced: '+entry.route);
+   assert.ok(page.includes('1811-4294')&&!page.includes('tel:18775245'),
+     'fifth batch non-Jeju pages preserve nationwide phone: '+entry.route);
+ }
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
