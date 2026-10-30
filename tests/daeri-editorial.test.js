@@ -110,6 +110,18 @@ async function get(p){
  const hero=homepage.match(/<div class="hero hero-with-photo">[\s\S]*?<\/figure><\/div>/)||[];
  assert.ok(hero[0]&&hero[0].includes('href="/recruit/daeri/"')&&hero[0].includes('href="/recruit/taksong/"'),'both recruitment CTAs appear in hero');
  
+ assert.ok(homepage.indexOf('id="field-notes"')>homepage.indexOf('class="hero hero-with-photo"')&&
+   homepage.indexOf('id="field-notes"')<homepage.indexOf('id="home-driver-recruitment"'),
+   'real blog stories now lead the homepage before recruitment editorial');
+ assert.ok(homepage.includes('id="jeju-blog-spotlight"')&&homepage.includes('/blog/archive/jeju-taksong/'),
+   'homepage prominently links Jeju source-guided article');
+ const jejuArchive=await get('/blog/archive/jeju-taksong/');
+ assert.ok(jejuArchive.includes('id="jeju-blog-guide"')&&jejuArchive.includes('id="jeju-port"')&&jejuArchive.includes('id="jeju-cost"'),
+   'Jeju archive includes practical blog-style port and price explanation');
+ assert.ok(jejuArchive.includes('224415828744')&&jejuArchive.includes('224433990134'),
+   'Jeju archive cites existing blog originals and does not invent new completed jobs');
+ assert.ok(jejuArchive.includes('지정일 도착을 보장할 수 없습니다.')&&jejuArchive.includes('1811-4294'),
+   'Jeju archive does not guarantee ferry schedule or past fare');
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('id="jeju-source-route-guide"'),'Jeju transfer has distinct island and port guide');
  for(const id of ['224371918565','224387354617','224362663400'])assert.ok(jeju.includes(originalById.get(id).url),'Jeju guide links verified pre-September originals '+id);
