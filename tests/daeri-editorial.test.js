@@ -204,6 +204,21 @@ async function get(p){
      'editorial not duplicated across '+item.id+' page 2');
  }
 
+ const archiveHomeFourth=await get('/blog/archive/');
+ assert.ok(archiveHomeFourth.includes('id="blog-archive-start"')&&archiveHomeFourth.includes('/blog/archive/jeju-taksong/'), 'blog archive directory contains useful first-step navigation');
+ assert.ok(archiveHomeFourth.includes('tel:18775245')&&archiveHomeFourth.includes('tel:18114294'), 'archive directory differentiates Jeju and nationwide consultation');
+ const latestBlogFourth=await get('/blog/');
+ assert.ok(latestBlogFourth.includes('id="blog-reader-guide"')&&latestBlogFourth.includes('/blog/archive/mountain-cycle/'), 'latest blog links to targeted original article categories');
+ assert.ok(latestBlogFourth.includes('네이버 RSS')&&latestBlogFourth.includes('tel:18775245'), 'blog feed labels freshness source and separate Jeju phone');
+ const taksongHubFourth=await get('/taksong/');
+ assert.ok(taksongHubFourth.includes('id="national-taksong-blog-archive"')&&taksongHubFourth.includes('/blog/archive/vehicle-taksong/'), 'nationwide taksong hub has curated archived originals');
+ assert.ok(taksongHubFourth.includes('tel:18775245')&&taksongHubFourth.includes('tel:18114294'), 'nationwide taksong hub separates Jeju and nationwide consultation');
+ const daeriHubFourth=await get('/daeri/');
+ assert.ok(daeriHubFourth.includes('id="national-daeri-blog-archive"')&&daeriHubFourth.includes('/blog/archive/general-daeri/'), 'nationwide designated-driver hub links original Naver posts');
+ const historyFourth=await get('/reviews/history/');
+ assert.ok(historyFourth.includes('id="history-original-distinction"')&&historyFourth.includes('네이버 블로그 공개 원문 자료실'), 'history page distinguishes completed records from blog titles');
+ const historyFilteredFourth=await get('/reviews/history/?kind=daeri&page=2');
+ assert.ok(historyFilteredFourth.includes('https://jeongukdaeri.kr/reviews/history/?kind=daeri&amp;page=2')||historyFilteredFourth.includes('https://jeongukdaeri.kr/reviews/history/?kind=daeri&page=2'), 'filter and page retain own canonical URL');
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('href="/blog/archive/jeju-taksong/"'),
    'Jeju service guide links directly to the curated Jeju blog article');
