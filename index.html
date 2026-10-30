@@ -342,7 +342,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  <div class="traffic-stats-lines" aria-live="polite">
   <span class="traffic-stat" title="검색 노출 수가 아닌 브라우저 접속 기록입니다. 점검 방문이 포함될 수 있습니다.">오늘 접속 <strong id="today-visit-number">—</strong></span>
   <span class="traffic-stat" title="집계 시작 이후 기록된 브라우저 접속 횟수입니다.">누적 기록 <strong id="total-visit-number">—</strong></span>
-  <button type="button" class="traffic-call-trigger" id="traffic-call-trigger" aria-controls="traffic-sources-detail" aria-expanded="false" title="누적 전화 버튼 클릭과 접속 집계 기준 확인">전화 버튼 <strong id="phone-click-number">—</strong> ▾</button>
+  <button type="button" class="traffic-call-trigger" id="traffic-call-trigger" aria-controls="traffic-sources-detail" aria-expanded="false" title="누적 전화 버튼 클릭과 접속 집계 기준 확인">누적 전화클릭 <strong id="phone-click-number">—</strong> ▾</button>
  </div>
  <div class="traffic-sources" id="traffic-sources-detail" hidden>
   <strong class="traffic-source-heading">접속 집계 안내</strong>
@@ -731,7 +731,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <script>
 (function(){const button=document.getElementById('back-to-top');if(!button)return;function update(){button.classList.toggle('visible',window.scrollY>260)}window.addEventListener('scroll',update,{passive:true});update();button.addEventListener('click',function(){window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})})})();
 </script>
-<script src="/assets/traffic-analytics.js?v=20261028-conversion" defer></script>
+<script src="/assets/traffic-analytics.js?v=20261030-count-accuracy" defer></script>
 </body>
 </html>
 
