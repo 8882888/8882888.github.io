@@ -85,6 +85,13 @@ async function get(p){
  assert.ok(daeriRecruit.includes('전국 대리운전기사 모집')&&daeriRecruit.includes('tel:18114294'),'nationwide designated-driver recruitment is reachable');
  assert.ok(taksongRecruit.includes('전국 탁송기사 모집')&&taksongRecruit.includes('수입을 보장하지 않습니다'),'taksong-driver recruitment avoids earnings guarantees');
  assert.ok(homepage.includes('id="home-driver-recruitment"')&&homepage.includes('href="/recruit/daeri/"')&&homepage.includes('href="/recruit/taksong/"'),'recruitment is discoverable from the homepage');
+ assert.ok(homepage.includes('id="front-driver-recruitment"'),'dedicated driver-recruitment CTA appears above fare calculator');
+ assert.ok(homepage.indexOf('id="front-driver-recruitment"')<homepage.indexOf('id="top-fare-calculator"'),'recruitment is visible at top before calculator');
+ const mainNav=homepage.match(/<nav class="top-nav"[\s\S]*?<\/nav>/)||[];
+ assert.ok(mainNav[0]&&mainNav[0].includes('href="/recruit/daeri/"')&&mainNav[0].includes('href="/recruit/taksong/"'),'both recruitment paths are in top navigation');
+ const hero=homepage.match(/<div class="hero hero-with-photo">[\s\S]*?<\/figure><\/div>/)||[];
+ assert.ok(hero[0]&&hero[0].includes('href="/recruit/daeri/"')&&hero[0].includes('href="/recruit/taksong/"'),'both recruitment CTAs appear in hero');
+ 
  const jeju=await get('/taksong/jeju/');
  assert.ok(jeju.includes('id="jeju-source-route-guide"'),'Jeju transfer has distinct island and port guide');
  for(const id of ['224371918565','224387354617','224362663400'])assert.ok(jeju.includes(originalById.get(id).url),'Jeju guide links verified pre-September originals '+id);
