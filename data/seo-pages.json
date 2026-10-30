@@ -26,6 +26,21 @@
       "path": "/reviews/",
       "titleContains": "운행",
       "descriptionContains": "운행"
+    },
+    {
+      "path": "/taksong/jeju/",
+      "titleContains": "제주도탁송",
+      "descriptionContains": "제주도탁송"
+    },
+    {
+      "path": "/recruit/daeri/",
+      "titleContains": "대리기사 모집",
+      "descriptionContains": "대리기사 모집"
+    },
+    {
+      "path": "/recruit/taksong/",
+      "titleContains": "탁송기사 모집",
+      "descriptionContains": "탁송기사 모집"
     }
   ]
 }
