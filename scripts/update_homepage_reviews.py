@@ -32,7 +32,13 @@ def render(posts):
                     2 if ROUTE.search(title) else 3)
         found.append((priority, len(found), title, url))
     found.sort(key=lambda row: (row[0], row[1]))
-    found = found[:6]
+    # Preserve both services in the six visible links.
+    taksong = [r for r in found if TAKSONG.search(r[2])]
+    daeri = [r for r in found if re.search(r"대리운전|대리기사|일일기사", r[2]) and not TAKSONG.search(r[2])]
+    selected = taksong[:4] + daeri[:2]
+    selected_urls = {r[3] for r in selected}
+    selected.extend(r for r in found if r[3] not in selected_urls)
+    found = selected[:6]
     lines = [
         '<div id="latest-public-ride-reviews" aria-labelledby="latest-public-ride-reviews-heading">',
         '<h3 id="latest-public-ride-reviews-heading">최근 공개된 실제 운행후기 · 출발지→도착지 중심</h3>',
