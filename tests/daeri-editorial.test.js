@@ -102,17 +102,12 @@ async function get(p){
  const taksongRecruit=await get('/recruit/taksong/');
  assert.ok(daeriRecruit.includes('전국 대리운전기사 모집')&&daeriRecruit.includes('tel:18114294'),'nationwide designated-driver recruitment is reachable');
  assert.ok(taksongRecruit.includes('전국 탁송기사 모집')&&taksongRecruit.includes('수입을 보장하지 않습니다'),'taksong-driver recruitment avoids earnings guarantees');
- assert.ok(homepage.includes('id="home-driver-recruitment"')&&homepage.includes('href="/recruit/daeri/"')&&homepage.includes('href="/recruit/taksong/"'),'recruitment is discoverable from the homepage');
- assert.ok(homepage.includes('id="front-driver-recruitment"'),'dedicated driver-recruitment CTA appears above fare calculator');
- assert.ok(homepage.indexOf('id="front-driver-recruitment"')<homepage.indexOf('id="top-fare-calculator"'),'recruitment is visible at top before calculator');
+ assert.ok(!homepage.includes('id="home-driver-recruitment"')&&!homepage.includes('id="front-driver-recruitment"'),'recruitment panels are intentionally absent from homepage');
  const mainNav=homepage.match(/<nav class="top-nav"[\s\S]*?<\/nav>/)||[];
- assert.ok(mainNav[0]&&mainNav[0].includes('href="/recruit/daeri/"')&&mainNav[0].includes('href="/recruit/taksong/"'),'both recruitment paths are in top navigation');
+ assert.ok(mainNav[0]&&!mainNav[0].includes('href="/recruit/daeri/"')&&!mainNav[0].includes('href="/recruit/taksong/"'),'recruitment links are intentionally absent from main navigation');
  const hero=homepage.match(/<div class="hero hero-with-photo">[\s\S]*?<\/figure><\/div>/)||[];
- assert.ok(hero[0]&&hero[0].includes('href="/recruit/daeri/"')&&hero[0].includes('href="/recruit/taksong/"'),'both recruitment CTAs appear in hero');
- 
- assert.ok(homepage.indexOf('id="field-notes"')>homepage.indexOf('class="hero hero-with-photo"')&&
-   homepage.indexOf('id="field-notes"')<homepage.indexOf('id="home-driver-recruitment"'),
-   'real blog stories now lead the homepage before recruitment editorial');
+ assert.ok(hero[0]&&!hero[0].includes('href="/recruit/daeri/"')&&!hero[0].includes('href="/recruit/taksong/"'),'recruitment CTAs are intentionally absent from hero');
+ assert.ok(homepage.indexOf('id="field-notes"')>homepage.indexOf('class="hero hero-with-photo"'),'real blog stories follow homepage hero');
  assert.ok(homepage.includes('id="jeju-blog-spotlight"')&&homepage.includes('/blog/archive/jeju-taksong/'),
    'homepage prominently links Jeju source-guided article');
  const jejuArchive=await get('/blog/archive/jeju-taksong/');
