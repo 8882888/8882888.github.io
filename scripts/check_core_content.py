@@ -6,12 +6,13 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 REQUIRED = {
-    "index.html": ["five-service-fastlinks", "card-daeri-top", "route-first-real-trips", "mobile-fare-call-quick", "regional-real-routes"],
+    "index.html": ["five-service-fastlinks", "card-daeri-top", "route-first-real-trips", "mobile-fare-call-quick", "regional-real-routes", "verified-case-direct"],
     "service/card-daeri/index.html": ["card-payment-faq", "card-region-consultation", "card-route-fare-steps", "card-daeri-trust-links", "card-daeri-search-intent", "mobile-card-call", "1811-4294"],
     "special/seoraksan-transport/index.html": ["seoraksan-fare-first", "seoraksan-review-shortcuts"],
     "special/cycling-trail-transport/index.html": ["cycling-card-fare-first", "cycling-route-index"],
     "reviews/ride-record-stories/index.html": ["자동차탁송", "대리운전"],
-    "reviews/verified/index.html": ["운행기록"],
+    "fare/index.html": ["fare-real-case-links", "1811-4294"],
+    "reviews/verified/index.html": ["운행기록", "예상요금 조회", "카드대리운전 상담"],
     "service/daeri/index.html": ["real-long-distance-daeri", "daeri-image-provenance", "long-distance-daeri-trust"],
     "service/heavy-truck-taksong/index.html": ["25톤", "완료가 확인된 후기와는 다릅니다", "heavy-truck-types"],
     "service/golf/index.html": ["golf-driver-real-case", "golf-photo-standard", "golf-route-consult", "실제 운행 증빙사진 아님"],
