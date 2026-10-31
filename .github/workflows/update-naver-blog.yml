@@ -28,10 +28,10 @@ jobs:
         run: python scripts/build_ride_record_stories.py
       - name: Commit archive and regional pages when changed
         run: |
-          if ! git diff --quiet -- blog/posts.json blog/index.html index.html region/ reviews/ride-record-stories/index.html data/verified_fare_quotes.json; then
+          git add blog/posts.json blog/index.html index.html region/ reviews/ride-record-stories/index.html data/verified_fare_quotes.json
+          if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add blog/posts.json blog/index.html index.html region/ data/verified_fare_quotes.json
             git commit -m "Update Naver archive and regional review HTML"
             git push
           fi
