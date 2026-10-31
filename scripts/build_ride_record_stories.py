@@ -46,7 +46,7 @@ def big_vehicle_case(record):
     dest = record["destination"]
     # Strip operational shorthand but retain original uncertainty and source trace.
     description = re.sub(r"^(?:탁/확대/|스/탁/확대/)", "", origin).split("/")
-    vehicle = next((x for x in description if re.search(r"25\\s*톤|9[.]8톤", x)), "대형차")
+    vehicle = next((x for x in description if re.search(r"25\s*톤|9[.]8톤", x)), "대형차")
     return ("<article class='case'><h3>" + esc(vehicle) + " 탁송 배차기록</h3>"
             "<p>기록일 " + esc(record["date"]) + " · 기록요금 " + esc(record["fare"]) + "</p>"
             "<p>기록상 출발정보: " + esc(origin) + "</p><p>기록상 도착정보: " + esc(dest)
@@ -62,7 +62,7 @@ def main():
     cases.sort(key=lambda r: r["date"], reverse=True)
     taksong = [r for r in cases if r["service"] == "taksong"][:12]
     daeri = [r for r in cases if r["service"] == "daeri"][:8]
-    large = [r for r in history if re.search(r"25\\s*톤|9[.]8톤", r.get("departure", ""))][:12]
+    large = [r for r in history if re.search(r"25\s*톤|9[.]8톤", r.get("departure", ""))][:12]
     style = """body{font-family:system-ui,sans-serif;color:#142b46;margin:0;background:#f6f9fd}
 main{max-width:1050px;margin:auto;padding:25px 18px 65px}h1{font-size:clamp(27px,4vw,38px)}
 h2{margin-top:42px;border-bottom:2px solid #cbdcf0;padding-bottom:10px}
