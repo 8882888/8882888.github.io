@@ -17,8 +17,10 @@ jobs:
         with:
           python-version: '3.12'
       - name: Fetch RSS and append new posts
+        continue-on-error: true
         run: python scripts/update_naver_blog.py
       - name: Refresh verified public-route fare snapshots
+        continue-on-error: true
         run: node scripts/refresh_verified_fares.js
       - name: Rebuild regional review HTML from public posts
         run: python scripts/build_regional_reviews.py
