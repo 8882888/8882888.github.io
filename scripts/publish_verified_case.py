@@ -73,7 +73,15 @@ def write_index(published, records):
         rows.append('<li><a href="/reviews/verified/'+key+'/">'+esc(x["departure"])+' → '
                     +esc(x["destination"])+' '+label+'</a> · 실제 운행일 '+esc(x["date"])
                     +' · 당시 '+esc(x["fare"])+'</li>')
-    body='<article><h1>실제 운행기록 기반 탁송·대리운전 사례</h1><p>운행완료로 분류된 원자료에 근거합니다. 게시일과 실제 운행일은 다르며, 이전 기록을 새로운 운행으로 표시하지 않습니다.</p><p><a href="/reviews/ride-record-stories/">전체 운행기록 보기</a> · <a href="/blog/">공개 네이버 후기</a> · <a href="tel:18114294">전화 상담 1811-4294</a></p><ul>'+ "".join(rows)+'</ul></article>'
+    summary = ('<p><strong>현재 공개된 개별 후기 ' + str(len(rows)) + '건</strong> · ' +
+               '각 후기에는 실제 운행일과 당시 기록요금을 표시합니다.</p>')
+    body=('<article><h1>실제 운행기록 기반 탁송·대리운전 사례</h1>' +
+          '<p>운행완료로 분류된 원자료에 근거합니다. 게시일과 실제 운행일은 다르며, 이전 기록을 새로운 운행으로 표시하지 않습니다.</p>' +
+          summary +
+          '<p><a href="/reviews/ride-record-stories/">전체 운행기록 보기</a> · ' +
+          '<a href="/fare/">구간별 예상요금 조회</a> · <a href="/service/card-daeri/">카드대리운전 상담</a> · ' +
+          '<a href="tel:18114294">전화 상담 1811-4294</a></p><ul>' +
+          "".join(rows) + '</ul></article>')
     DIRECTORY.parent.mkdir(parents=True,exist_ok=True)
     DIRECTORY.write_text(shell("실제 운행기록 후기 모음","자동차탁송·대리운전 출발지 도착지별 운행기록",body,
                  "https://jeongukdaeri.kr/reviews/verified/"),encoding="utf-8")
