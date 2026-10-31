@@ -19,5 +19,7 @@ assert.equal(pageEvidence([{query:'부산탁송',matches:[{url:'https://jeongukd
 for(const keyword of ['서울대리운전','부산대리운전','해운대대리운전','대구대리운전','인천대리운전','용인대리운전','속초대리운전','강원도대리운전']) assert.ok(QUERIES.includes(keyword),'monitor nationwide regional driver search '+keyword);
 assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes('/daeri/daegu/'));
 assert.ok(require('../scripts/naver-web-monitor').QUERIES.includes('강원도탁송'));
+for(const q of ['설악산탁송','지리산탁송','자전거길종주탁송','동해안자전거길종주탁송','섬진강자전거길종주탁송','영산강자전거길종주탁송','금강자전거길종주탁송','낙동강자전거길종주탁송']) assert.ok(QUERIES.includes(q),'monitor priority route: '+q);
+for(const page of ['/special/seoraksan-transport/','/special/jirisan-transport/','/route-taksong/','/route-taksong/centers/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(page),'monitor dedicated page: '+page);
 
 console.log('Naver web result matching passed');
