@@ -30,6 +30,8 @@ jobs:
         run: python scripts/build_ride_record_stories.py
       - name: Publish one new verified case on Smart24 website
         run: python scripts/publish_verified_case.py
+      - name: Verify core pages and preserved ride history
+        run: python scripts/check_core_content.py
       - name: Commit archive and regional pages when changed
         run: |
           git add blog/posts.json blog/index.html index.html region/ reviews/ride-record-stories/index.html reviews/verified/ data/published-ride-case-ids.json data/verified_fare_quotes.json
