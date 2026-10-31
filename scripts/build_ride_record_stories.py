@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Build factual route-first case summaries from existing ride records; never invent completion."""
+import html
+import json
+import pathlib
+import re
+from datetime import date
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+OUTPUT = ROOT / "reviews" / "ride-record-stories" / "index.html"
+CURATED = ROOT / "data" / "public-reviewed-rides-202610.json"
+HISTORY = ROOT / "data" / "ride-history.json"
+
+def esc(v):
+    return html.escape(str(v), quote=True)
+
+def tags(origin, destination, service):
+    def words(s):
+        return re.findall(r"[가-힣]{2,12}", s)
+    # Only source-specific terms; do not add unrelated cities for SEO.
+    terms = []
+    for place in [origin, destination]:
+        for word in words(place):
+            if word in ("시", "군", "구", "동") or word.isdigit():
+                continue
+            tag = word + ("탁송" if service == "taksong" else "대리운전")
+            if tag not in terms:
+                terms.append(tag)
+    return " ".join("#" + esc(t) for t in terms[:12])
+
+def case(entry):
+    departure, destination = entry["departure"], entry["destination"]
+    service = entry["service"]
+    label = "자동차탁송" if service == "taksong" else "대리운전"
+    title = f"{departure} → {destination} {label} 운행기록"
+    return ("<article class='case'><h3>" + esc(title) + "</h3>"
+            "<p>운행일 " + esc(entry["date"]) + " · 기록요금 " + esc(entry["fare"]) +
+            " · 운행완료로 분류된 기존 기록</p>"
+            "<p>" + esc(departure) + "에서 " + esc(destination) + "까지 이동한 "
+            + label + " 사례입니다. 실제 기록에 차종·기사 배차상황 등이 없는 경우 추가하지 않습니다. "
+            "요금은 당시 기록으로 현재 견적과 다를 수 있습니다.</p>"
+            "<p class='tags'>" + tags(departure, destination, service) + "</p></article>")
+
+def big_vehicle_case(record):
+    origin = record["departure"]
+    dest = record["destination"]
+    # Strip operational shorthand but retain original uncertainty and source trace.
+    description = re.sub(r"^(?:탁/확대/|스/탁/확대/)", "", origin).split("/")
+    vehicle = next((x for x in description if re.search(r"25\\s*톤|9[.]8톤", x)), "대형차")
+    return ("<article class='case'><h3>" + esc(vehicle) + " 탁송 배차기록</h3>"
+            "<p>기록일 " + esc(record["date"]) + " · 기록요금 " + esc(record["fare"]) + "</p>"
+            "<p>기록상 출발정보: " + esc(origin) + "</p><p>기록상 도착정보: " + esc(dest)
+            + "</p><p><strong>배차기록 기반 자료</strong>이며 운행완료 여부는 이 원본에서 확인되지 않습니다. "
+            "차량 제원과 실제 인수·인계 내용은 확인 후 후기화합니다.</p></article>")
+
+def main():
+    curated = json.loads(CURATED.read_text(encoding="utf-8"))
+    history = json.loads(HISTORY.read_text(encoding="utf-8"))
+    cases = [r for r in curated if r.get("verified") is True and r.get("status") == "completed"
+             and r.get("service") in ("taksong", "daeri")
+             and all(r.get(k) for k in ("date", "departure", "destination", "fare"))]
+    cases.sort(key=lambda r: r["date"], reverse=True)
+    taksong = [r for r in cases if r["service"] == "taksong"][:12]
+    daeri = [r for r in cases if r["service"] == "daeri"][:8]
+    large = [r for r in history if re.search(r"25\\s*톤|9[.]8톤", r.get("departure", ""))][:12]
+    style = """body{font-family:system-ui,sans-serif;color:#142b46;margin:0;background:#f6f9fd}
+main{max-width:1050px;margin:auto;padding:25px 18px 65px}h1{font-size:clamp(27px,4vw,38px)}
+h2{margin-top:42px;border-bottom:2px solid #cbdcf0;padding-bottom:10px}
+.case{background:white;border:1px solid #d3dfef;border-radius:13px;padding:18px;margin:12px 0;line-height:1.65}
+.case h3{margin-top:0;color:#1553a3}.tags{font-size:14px;color:#185b91}
+a{color:#0757ae}header{padding:15px 24px;background:#104f96;color:white}
+header a{color:white}footer{margin-top:40px}"""
+    page = ('<!doctype html><html lang="ko"><head><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            '<title>실제 출발지 도착지 탁송·대리운전 운행기록 | 스마트24</title>'
+            '<meta name="description" content="운행기록으로 확인된 자동차탁송·장거리대리운전 실제 출발지와 도착지, 기록요금, 25톤 대형차 배차기록을 구분해 소개합니다.">'
+            '<link rel="canonical" href="https://jeongukdaeri.kr/reviews/ride-record-stories/">'
+            '<style>' + style + '</style></head><body>'
+            '<header><a href="/">스마트24 홈</a> · <a href="/reviews/history/">기존 운행기록</a></header><main>'
+            '<h1>출발지 → 도착지 중심 탁송·대리운전 운행기록</h1>'
+            '<p>기존 운행자료에서 확인된 내용만 정리합니다. 동일한 자료를 새 운행처럼 재발행하지 않으며, 실제 운행 날짜와 기록 요금을 표시합니다.</p>'
+            '<h2>자동차탁송 운행완료 기록</h2>' + "".join(map(case, taksong))
+            + '<h2>대리운전 운행완료 기록</h2>' + "".join(map(case, daeri))
+            + '<h2>25톤·대형 화물차 배차기록 (완료 여부 추가 확인 필요)</h2>' +
+            "".join(map(big_vehicle_case, large)) +
+            '<footer><p>새로운 확인 기록이 데이터 파일에 추가될 때 목록이 갱신됩니다. '
+            '콘텐츠 확인일과 운행일은 구분됩니다. 상담은 <a href="tel:18114294">1811-4294</a>.</p></footer>'
+            '</main></body></html>')
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != page:
+        OUTPUT.write_text(page, encoding="utf-8")
+        print(f"Updated case page: taksong={len(taksong)} daeri={len(daeri)} large={len(large)}")
+    else:
+        print("No new verified ride records; unchanged")
+
+if __name__ == "__main__":
+    main()
