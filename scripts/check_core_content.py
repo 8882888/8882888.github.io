@@ -6,7 +6,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 REQUIRED = {
-    "index.html": ["five-service-fastlinks", "card-daeri-top", "route-first-real-trips", "mobile-fare-call-quick", "regional-real-routes", "verified-case-direct", "case-compare-8"],
+    "index.html": ["homepage-fare-top", "five-menu-mobile-layout", "review-service-image-grid", "route-first-real-trips"],
     "service/card-daeri/index.html": ["card-payment-faq", "card-region-consultation", "card-route-fare-steps", "card-daeri-trust-links", "card-daeri-search-intent", "card-daeri-fact-check", "mobile-card-call", "1811-4294"],
     "special/seoraksan-transport/index.html": ["seoraksan-fare-first", "seoraksan-review-shortcuts"],
     "special/cycling-trail-transport/index.html": ["cycling-card-fare-first", "cycling-route-index"],
@@ -20,6 +20,21 @@ REQUIRED = {
     "service/long-distance-taksong/index.html": ["long-distance-verified-routes", "taksong-vehicle-visual-guide", "long-taksong-route-comparison"],
 }
 issues=[]
+# Only the requested five service links should appear in the primary menu.
+homepage = (ROOT / "index.html").read_text(encoding="utf-8")
+nav_start = homepage.find('<nav class="top-nav"')
+nav_end = homepage.find('</nav>', nav_start)
+if nav_start < 0 or nav_end < 0:
+    issues.append("Primary navigation missing")
+else:
+    import re
+    menu = homepage[nav_start:nav_end]
+    hrefs = re.findall(r'<a\b[^>]*href="([^"]+)"', menu)
+    expected = ["/daeri/", "/taksong/", "/service/corporate/", "/service/golf/",
+                "https://open.kakao.com/o/sGV88r7h"]
+    if hrefs != expected:
+        issues.append(f"Primary navigation must have exactly five requested links; got {hrefs!r}")
+
 for path, snippets in REQUIRED.items():
     file = ROOT / path
     if not file.is_file():
