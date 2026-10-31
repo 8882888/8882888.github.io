@@ -33,13 +33,19 @@ def case(entry):
     service = entry["service"]
     label = "자동차탁송" if service == "taksong" else "대리운전"
     title = f"{departure} → {destination} {label} 운행기록"
+    vehicle = entry.get("vehicle")
+    vehicle_row = ("<dt>차종</dt><dd>" + esc(vehicle) + "</dd>") if vehicle else ""
     return ("<article class='case'><h3>" + esc(title) + "</h3>"
-            "<p>운행일 " + esc(entry["date"]) + " · 기록요금 " + esc(entry["fare"]) +
-            " · 운행완료로 분류된 기존 기록</p>"
-            "<p>" + esc(departure) + "에서 " + esc(destination) + "까지 이동한 "
-            + label + " 사례입니다. 실제 기록에 차종·기사 배차상황 등이 없는 경우 추가하지 않습니다. "
-            "요금은 당시 기록으로 현재 견적과 다를 수 있습니다.</p>"
-            "<p class='tags'>" + tags(departure, destination, service) + "</p></article>")
+            "<dl class='facts'><dt>출발지</dt><dd>" + esc(departure) +
+            "</dd><dt>도착지</dt><dd>" + esc(destination) +
+            "</dd><dt>운행일</dt><dd>" + esc(entry["date"]) +
+            "</dd><dt>기록요금</dt><dd>" + esc(entry["fare"]) +
+            "</dd>" + vehicle_row + "</dl>"
+            "<p>기존 운행완료 분류 자료에 근거한 " + label + " 운행사례입니다. "
+            "당시 요금은 현재 견적이 아니며 기록에 없는 차종, 시간과 상황은 추가하지 않았습니다.</p>"
+            "<p class='tags' aria-label='출발지 도착지 지역 검색어'>" +
+            tags(departure, destination, service) + "</p>"
+            "<p><a href='tel:18114294'>이 구간 탁송·대리운전 상담 1811-4294</a></p></article>")
 
 def big_vehicle_case(record):
     origin = record["departure"]
@@ -67,7 +73,7 @@ def main():
 main{max-width:1050px;margin:auto;padding:25px 18px 65px}h1{font-size:clamp(27px,4vw,38px)}
 h2{margin-top:42px;border-bottom:2px solid #cbdcf0;padding-bottom:10px}
 .case{background:white;border:1px solid #d3dfef;border-radius:13px;padding:18px;margin:12px 0;line-height:1.65}
-.case h3{margin-top:0;color:#1553a3}.tags{font-size:14px;color:#185b91}
+.case h3{margin-top:0;color:#1553a3}.tags{font-size:14px;color:#185b91}.facts{display:grid;grid-template-columns:90px 1fr;gap:8px 12px}.facts dt{font-weight:700}.facts dd{margin:0}
 a{color:#0757ae}header{padding:15px 24px;background:#104f96;color:white}
 header a{color:white}footer{margin-top:40px}"""
     page = ('<!doctype html><html lang="ko"><head><meta charset="utf-8">'
@@ -78,7 +84,7 @@ header a{color:white}footer{margin-top:40px}"""
             '<style>' + style + '</style></head><body>'
             '<header><a href="/">스마트24 홈</a> · <a href="/reviews/history/">기존 운행기록</a></header><main>'
             '<h1>출발지 → 도착지 중심 탁송·대리운전 운행기록</h1>'
-            '<p>기존 운행자료에서 확인된 내용만 정리합니다. 동일한 자료를 새 운행처럼 재발행하지 않으며, 실제 운행 날짜와 기록 요금을 표시합니다.</p>'
+            '<p>실제 출발지역에서 도착지역까지의 차량 이동을 찾는 고객을 위해 운행일·운행구간·당시 요금을 정리했습니다. 기존 자료를 새로운 운행처럼 재발행하지 않으며, 차종은 확인된 경우만 표시합니다.</p><p><a href="/fare/">출발지·도착지 요금 상담</a> · <a href="/blog/">기존 네이버 공개 후기</a></p>'
             '<h2>자동차탁송 운행완료 기록</h2>' + "".join(map(case, taksong))
             + '<h2>대리운전 운행완료 기록</h2>' + "".join(map(case, daeri))
             + '<h2>25톤·대형 화물차 배차기록 (완료 여부 추가 확인 필요)</h2>' +
