@@ -37,6 +37,31 @@ try:
 except (OSError, ValueError) as error:
     issues.append(f"Ride-history data invalid: {error}")
 
+
+# Verify that every published case state entry points to a real page
+# and that a record cannot be included twice on different runs.
+published_state = ROOT / "data/published-ride-case-ids.json"
+if published_state.exists():
+    try:
+        published = json.loads(published_state.read_text(encoding="utf-8"))
+        if not isinstance(published, list):
+            raise ValueError("published state must be a list")
+        keys = []
+        for item in published:
+            key = item.get("id") if isinstance(item, dict) else None
+            if not isinstance(key, str) or len(key) != 16 or not all(c in "0123456789abcdef" for c in key):
+                issues.append("Invalid published ride-case identifier")
+                continue
+            keys.append(key)
+            case_file = ROOT / "reviews" / "verified" / key / "index.html"
+            if not case_file.is_file():
+                issues.append(f"Published ride-case page missing: {key}")
+        if len(keys) != len(set(keys)):
+            issues.append("Duplicate ride-case publication IDs found")
+    except (OSError, ValueError) as error:
+        issues.append(f"Invalid published ride-case state: {error}")
+
+
 if issues:
     for issue in issues:
         print("FAIL:", issue, file=sys.stderr)
