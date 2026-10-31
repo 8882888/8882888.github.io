@@ -51,6 +51,12 @@ for path, snippets in REQUIRED.items():
         if item not in content:
             issues.append(f"Missing required element {item!r} in {path}")
 
+# Check customer-intent sitemap URLs in both source arrays.
+server_source = (ROOT / "server.js").read_text(encoding="utf-8")
+for page in ("/special/cycling-trail-transport/", "/service/long-distance-taksong/", "/fare/", "/reviews/history/", "/reviews/ride-record-stories/", "/reviews/verified/"):
+    if server_source.count("'"+page+"'") < 2:
+        issues.append("Sitemap priority coverage missing: " + page)
+
 rides = ROOT / "data/ride-history.json"
 try:
     data = json.loads(rides.read_text(encoding="utf-8"))
