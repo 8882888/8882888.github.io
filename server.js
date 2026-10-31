@@ -66,7 +66,8 @@ const publicRideById=new Map(publicRides.map(x=>[x.publicId,x]));
 // Display a privacy-preserving summary; raw address and customer notes are never published.
 const historicalRides=(Array.isArray(rides)?rides:[]).map((x,i)=>{
  const dep=String(x.departure||''),dest=String(x.destination||'');
- const service=/탁/.test(dep)||/톨포/.test(dest)?'taksong':'daeri';
+ const mixed=/탁송\s*\+\s*대리|대리\s*\+\s*탁송/.test(dep);
+ const service=mixed?'mixed':/(?:^|\/)\s*탁(?:\/|송|$)/.test(dep)||/톨포/.test(dest)?'taksong':'daeri';
  const place=publicPlace;
  return {id:'excel-'+String(i+1).padStart(4,'0'),date:x.date,service,departure:place(dep),destination:place(dest),fare:x.fare||'',rawDeparture:dep,rawDestination:dest};
 });
@@ -86,7 +87,7 @@ function peakDispatchNotice(){
  return '<section><h2>피크타임·지방·오지의 당일 호출과 요금</h2><p>주말, 야간·새벽, 피크타임 또는 기사 접근·복귀가 어려운 지방·산간·오지에서는 예약 없이 급히 호출하면 기사 배차가 어렵거나 지연될 수 있습니다. 먼 곳에서 기사를 이동시키고 복귀 교통편을 확보해야 하는 경우도 있습니다.</p><p><strong>긴급 배차는 평소보다 훨씬 높은 요금, 상황에 따라 2배 이상의 금액이 제시될 수도 있습니다.</strong> 이는 모든 호출에 적용되는 고정 할증률이 아니며 기사 수급, 접근·복귀, 차량 조건에 따라 실제 금액이 달라집니다.</p><p>운영자가 확인해 준 바로는 지금까지 예약 확정한 운행은 안내 금액 그대로 100% 배차·운행완료했습니다. 이는 이미 예약 확정해 수행한 건에 관한 실적이며 앞으로 모든 요청에 동일한 배차를 보장한다는 뜻은 아닙니다.</p><p>해당 운행 기록에 표시된 요금이 긴급 할증금액이었다는 의미도 아닙니다. 기록된 사실과 일반적인 배차 안내는 구분해 설명합니다.</p></section>';
 }
 function historyDetailPage(x){
- const kind=x.service==='taksong'?'자동차탁송':'대리운전';
+ const kind=x.service==='taksong'?'자동차탁송':x.service==='mixed'?'탁송+대리운전':'대리운전';
  const title=x.departure+'에서 '+x.destination+'까지 '+kind+' 완료 운행후기｜'+x.date+' · 요금 '+x.fare;
  const relatedRoute=routeKeywordPages.reviewed.forRide(x);
  const movement=x.service==='taksong'
@@ -102,8 +103,8 @@ function matchingHistoricalRides(origin,destination){
 }
 function historyIndexPage(page=1,kind='all'){
  const list=historicalRides.filter(x=>kind==='all'||x.service===kind),size=40,pages=Math.max(1,Math.ceil(list.length/size)),p=Math.max(1,Math.min(pages,page)),part=list.slice((p-1)*size,p*size);
- const nav='<p><a href="/reviews/history/?kind=all">전체</a> · <a href="/reviews/history/?kind=daeri">대리운전</a> · <a href="/reviews/history/?kind=taksong">자동차탁송</a> · <a href="/fare/routes/">전국 1,000개 예상요금</a></p>';
- const items=part.map(x=>'<li><a href="/reviews/history/'+x.id+'/">운행기록 상세</a> · '+esc(x.date)+' · '+(x.service==='taksong'?'자동차탁송':'대리운전')+' · '+esc(x.departure)+' → '+esc(x.destination)+' · '+esc(x.fare)+' <small>(운행기록 기준)</small></li>').join('');
+ const nav='<p><a href="/reviews/history/?kind=all">전체 '+historicalRides.length+'건</a> · <a href="/reviews/history/?kind=daeri">대리운전 '+historicalRides.filter(x=>x.service==='daeri').length+'건</a> · <a href="/reviews/history/?kind=taksong">자동차탁송 '+historicalRides.filter(x=>x.service==='taksong').length+'건</a> · <a href="/reviews/history/?kind=mixed">탁송+대리운전 혼합 '+historicalRides.filter(x=>x.service==='mixed').length+'건</a> · <a href="/fare/">출발·도착 예상요금</a></p>';
+ const items=part.map(x=>'<li><a href="/reviews/history/'+x.id+'/">운행기록 상세</a> · '+esc(x.date)+' · '+(x.service==='taksong'?'자동차탁송':x.service==='mixed'?'탁송+대리운전':'대리운전')+' · '+esc(x.departure)+' → '+esc(x.destination)+' · '+esc(x.fare)+' <small>(운행기록 기준)</small></li>').join('');
  const canonicalParams=kind==='all'&&p===1?'':'?kind='+kind+(p>1?'&page='+p:'');
  const historicalConnections='<section id="history-original-distinction"><h2>완료 운행기록과 공개 블로그 원문의 구분</h2><p>이 목록은 저장된 운행기록의 완료 내역으로, 네이버 블로그에서 게시된 글 수와 별개입니다. 게시물 제목에 적힌 운행완료·요금 표현을 이 기록과 자동으로 연결하지 않습니다. 과거 요금은 현재 배차 견적이 아닙니다.</p><p><a href="/blog/archive/">네이버 블로그 공개 원문 자료실</a> · <a href="/blog/archive/capital-taksong/">수도권 차량탁송 글</a> · <a href="/blog/archive/general-daeri/">전국 대리운전 글</a> · <a href="/reviews/">사용자 확인 완료 기록</a></p></section>';
  const pagination='<p>'+(p>1?'<a href="?kind='+kind+'&page='+(p-1)+'">이전</a> ':'')+' '+p+'/'+pages+' '+(p<pages?'<a href="?kind='+kind+'&page='+(p+1)+'">다음</a>':'')+'</p>';
@@ -929,7 +930,7 @@ if(fareRouteMatch){if(!pathname.endsWith('/')){res.writeHead(301,{location:pathn
 const historicalDetail=pathname.match(new RegExp('^/reviews/history/(excel-[0-9]{4})/?$'));if(historicalDetail){const x=historicalRides.find(v=>v.id===historicalDetail[1]);return x?respond(res,200,historyDetailPage(x)):respond(res,404,'운행기록을 찾을 수 없습니다.');}
 const archivePage=blogArchive.handle(pathname,u,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});if(archivePage)return respond(res,archivePage.status,archivePage.html);
  if(pathname==='/blog/'||pathname==='/blog')return blogLatestPage().then(html=>respond(res,200,html)).catch(err=>{console.error('blog feed error',err);respond(res,503,'블로그 목록을 불러올 수 없습니다.');});
-if(pathname==='/reviews/history/'||pathname==='/reviews/history'){const page=Math.max(1,Math.min(1000,Number(u.searchParams.get('page'))||1)),kind=['daeri','taksong'].includes(u.searchParams.get('kind'))?u.searchParams.get('kind'):'all';return respond(res,200,historyIndexPage(page,kind));}
+if(pathname==='/reviews/history/'||pathname==='/reviews/history'){const page=Math.max(1,Math.min(1000,Number(u.searchParams.get('page'))||1)),kind=['daeri','taksong','mixed'].includes(u.searchParams.get('kind'))?u.searchParams.get('kind'):'all';return respond(res,200,historyIndexPage(page,kind));}
 if(pathname==='/reviews/'||pathname==='/reviews')return respond(res,200,applySeo(ridesIndex(),'/reviews/'));
 const rideMatch=pathname.match(/^\/reviews\/([a-f0-9]{16})\/?$/);
 if(rideMatch){const x=publicRideById.get(rideMatch[1]);return x?respond(res,200,ridePage(x)):respond(res,404,'확인된 운행 기록이 없습니다.')}
