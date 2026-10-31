@@ -28,7 +28,7 @@ def render(posts):
         if len(found) >= 6:
             break
     lines = [
-        '<section id="latest-public-ride-reviews" aria-labelledby="latest-public-ride-reviews-heading">',
+        '<div id="latest-public-ride-reviews" aria-labelledby="latest-public-ride-reviews-heading">',
         '<h3 id="latest-public-ride-reviews-heading">최근 공개된 실제 운행후기</h3>',
         '<p>네이버 블로그에 공개된 글 중 제목에서 완료 운행이나 후기를 명시한 원문만 연결합니다. 안내글과 예약 소개는 제외하며, 블로그 게시일과 실제 운행일은 다를 수 있습니다.</p>',
     ]
