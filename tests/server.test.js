@@ -408,6 +408,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const quoteHtml=await (await get('/fare/')).text();
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=taksong"'));
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=daeri"'));
+  const historyListResponse=await get('/reviews/history/?kind=taksong');
+  const historyListHtml=await historyListResponse.text();
+  assert.equal(historyListResponse.status,200);
+  assert.ok(historyListHtml.includes('804건'),'actual taksong count');
+  const unknownFareRecord=historyListHtml.match(/href="\/fare\/\?service=taksong[^"]*"[^>]*>예상요금 조회/);
+  assert.ok(unknownFareRecord,'historical fares remain linked');
+  const hiddenRide=await (await get('/reviews/history/?kind=daeri&q='+encodeURIComponent('지역 비공개'))).text();
+  assert.ok(hiddenRide.includes('출발·도착 지역 검색'),'search stays available');
   const recordHtml=await (await get('/reviews/history/excel-0001/')).text();
   assert.ok(recordHtml.includes('class="service-journey"'));
   assert.ok(recordHtml.includes('2026-10-16'));
