@@ -28,9 +28,11 @@ jobs:
         run: python scripts/update_homepage_reviews.py
       - name: Build factual route-first ride record case page
         run: python scripts/build_ride_record_stories.py
+      - name: Publish one new verified case on Smart24 website
+        run: python scripts/publish_verified_case.py
       - name: Commit archive and regional pages when changed
         run: |
-          git add blog/posts.json blog/index.html index.html region/ reviews/ride-record-stories/index.html data/verified_fare_quotes.json
+          git add blog/posts.json blog/index.html index.html region/ reviews/ride-record-stories/index.html reviews/verified/ data/published-ride-case-ids.json data/verified_fare_quotes.json
           if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
