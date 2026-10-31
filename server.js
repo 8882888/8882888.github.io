@@ -64,11 +64,35 @@ const publicRides=verifiedRides.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(String(x.da
 const publicRideById=new Map(publicRides.map(x=>[x.publicId,x]));
 // Excel-derived completed dispatch records: classified by departure 탁 or destination 톨포.
 // Display a privacy-preserving summary; raw address and customer notes are never published.
+// Publish only recognized place names; never print dispatch notes or detailed addresses.
+function completedRidePublicPlace(raw){
+ const general=publicPlace(raw);
+ if(general!=='지역 비공개')return general;
+ const v=String(raw||'');
+ const landmarkRules=[
+  [/백담사(?:입구|주차장|탐방지원센터)?/,'백담사'],
+  [/한계령(?:휴게소|주차장)?/,'한계령'],
+  [/(?:설악산|설악선)\s*소공원|소공원(?:주차장|입구)/,'설악산 소공원'],
+  [/(?:양양\s*)?오색(?:그린야드|주차장|공영주차장|탐방지원센터|약수터)/,'오색'],
+  [/경포대(?:주차장|해수욕장|인증센터)?/,'경포대'],
+  [/통일전망대(?:인증센터|주차장)?/,'통일전망대'],
+  [/은어다리(?:인증센터|주차장)?/,'은어다리'],
+  [/영덕\s*해맞이공원/,'영덕해맞이공원'],
+  [/담양댐(?:인증센터|주차장)?/,'담양댐'],
+  [/영산강\s*하구둑/,'영산강하구둑'],
+  [/섬진강댐(?:인증센터|주차장)?/,'섬진강댐'],
+  [/배알도(?:인증센터|주차장)?/,'광양 배알도'],
+  [/강원랜드(?:카지노|주차장)?/,'강원랜드'],
+  [/육십령(?:고개|휴게소)?/,'육십령']
+ ];
+ for(const [pattern,label] of landmarkRules)if(pattern.test(v))return label;
+ return general;
+}
 const historicalRides=(Array.isArray(rides)?rides:[]).map((x,i)=>{
  const dep=String(x.departure||''),dest=String(x.destination||'');
  const mixed=/탁송\s*\+\s*대리|대리\s*\+\s*탁송/.test(dep);
  const service=mixed?'mixed':/(?:^|\/)\s*탁(?:\/|송|$)/.test(dep)||/톨포/.test(dest)?'taksong':'daeri';
- const place=publicPlace;
+ const place=completedRidePublicPlace;
  return {id:'excel-'+String(i+1).padStart(4,'0'),date:x.date,service,departure:place(dep),destination:place(dest),fare:x.fare||'',rawDeparture:dep,rawDestination:dest};
 });
 const historyCounts=Object.freeze({taksong:historicalRides.filter(x=>x.service==='taksong').length,daeri:historicalRides.filter(x=>x.service==='daeri').length,mixed:historicalRides.filter(x=>x.service==='mixed').length});
@@ -90,7 +114,7 @@ function peakDispatchNotice(){
 }
 function historyDetailPage(x){
  const kind=x.service==='taksong'?'자동차탁송':x.service==='mixed'?'탁송+대리운전':'대리운전';
- const title=x.departure+'에서 '+x.destination+'까지 '+kind+' 완료 운행후기｜'+x.date+' · 요금 '+x.fare;
+ const title=(x.departure==='지역 비공개'&&x.destination==='지역 비공개'?'전국 '+kind+' 운행기록':x.departure+'에서 '+x.destination+'까지 '+kind+' 운행기록')+'｜'+x.date+' · 요금 '+x.fare;
  const relatedRoute=routeKeywordPages.reviewed.forRide(x);
  const movement=x.service==='taksong'||x.service==='mixed'
  ?'<p>자동차탁송은 고객 차량을 출발지에서 인수해 목적지로 이동시키는 방식입니다. 차키 전달, 차량 운행 가능 상태, 인수·인계 장소 및 기사 복귀 여건은 실제 접수 시 별도로 확인합니다.</p>'
@@ -116,7 +140,7 @@ function historyIndexPage(page=1,kind='all',query=''){
  const params='kind='+encodeURIComponent(kind)+(term?'&q='+encodeURIComponent(term):'');
  const pagination='<p>'+(p>1?'<a href="?'+params+'&page='+(p-1)+'">이전 40건</a> ':'')+' '+p+'/'+pages+'페이지 '+(p<pages?'<a href="?'+params+'&page='+(p+1)+'">다음 40건</a>':'')+'</p>';
  const specials='<p><a href="/special/seoraksan-transport/">설악산탁송 실제 후기·구간요금</a> · <a href="/special/cycling-trail-transport/">자전거길 종주탁송 후기</a> · <a href="/service/long-distance-taksong/">장거리탁송</a> · <a href="/fare/">전체 예상요금</a></p>';
- const note='<p>운영자가 완료로 확인한 과거 기록입니다. 원본의 탁 또는 톨포 구분으로 서비스 유형을 나눴으며, 기사 배차 메모·상세 주소·고객 개인정보는 공개하지 않습니다. 기록요금은 현재 배차 확정요금이 아닙니다.</p>'+(list.length?'':'<p><strong>검색 결과가 없습니다.</strong> 다른 지역명으로 검색하거나 <a href="/reviews/history/?kind='+kind+'">전체 후기</a>로 돌아가세요.</p>');
+ const note='<p>운영자가 완료로 확인한 과거 기록입니다. 원본의 탁 또는 톨포 구분으로 서비스 유형을 나눴으며, 기사 배차 메모·상세 주소·고객 개인정보는 공개하지 않습니다. 오색·백담사 같은 실제 장소만 확인되는 경우 장소명만 표시합니다. 기록요금은 현재 배차 확정요금이 아닙니다.</p>'+(list.length?'':'<p><strong>검색 결과가 없습니다.</strong> 다른 지역명으로 검색하거나 <a href="/reviews/history/?kind='+kind+'">전체 후기</a>로 돌아가세요.</p>');
  const canonical='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/reviews/history/'+(kind==='all'&&!term&&p===1?'':'?'+params+(p>1?'&page='+p:''));
  return layout('전국 운행완료 후기 '+list.length+'건'+(kind==='taksong'?' | 자동차탁송':kind==='daeri'?' | 대리운전':kind==='mixed'?' | 혼합':''),'실제 완료 운행후기 '+list.length+'건. 운행 날짜, 출발지, 도착지, 당시 요금과 참고요금 연결.','<section id="history-filtered-completed-reviews-202611"><h1>실제 운행완료 후기 '+list.length+'건</h1>'+nav+form+note+specials+'<h2>운행일·구간·당시 요금 확인</h2><ol>'+items+'</ol>'+pagination+'<p>전화상담 <a href="tel:18114294">1811-4294</a> · <a href="https://open.kakao.com/o/sGV88r7h" rel="noopener noreferrer" target="_blank">카카오상담</a></p></section>',canonical);
 }
