@@ -6,21 +6,21 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 REQUIRED = {
-    "assets/service-taksong-visual.svg": ["taksong-marketing-number-plate", "1811-4294"],
+    "assets/service-taksong-visual.svg": ["taksong-marketing-number-plate","1811-4294"],
     "service/corporate/index.html": ["corporate-image-and-consult-1811"],
     "reviews/verified/d09f9ce6526e3f85/index.html": ["verified-daeri-illustration"],
-    "index.html": ["homepage-fare-top", "five-menu-mobile-layout", "review-service-image-grid", "route-first-real-trips", "1811-4294, "mountain-cycle-review-three-links-202611"],,
-    "service/card-daeri/index.html": ["card-payment-faq", "card-region-consultation", "card-route-fare-steps", "card-daeri-trust-links", "card-daeri-search-intent", "card-daeri-fact-check", "mobile-card-call", "1811-4294"],
-    "special/seoraksan-transport/index.html": ["seoraksan-fare-first", "seoraksan-review-shortcuts, "seoraksan-search-call-guide-202611"],,
-    "special/cycling-trail-transport/index.html": ["cycling-card-fare-first", "cycling-route-index, "cycling-four-route-consult-202611"],,
-    "reviews/ride-record-stories/index.html": ["자동차탁송", "대리운전, "review-taksong-shortlist-202611"],,
-    "fare/index.html": ["fare-real-case-links", "1811-4294"],
-    "reviews/verified/index.html": ["운행기록", "예상요금 조회", "카드대리운전 상담"],
-    "service/daeri/index.html": ["real-long-distance-daeri", "daeri-image-provenance", "long-distance-daeri-trust", "daeri-review-visual-1811"],
-    "service/heavy-truck-taksong/index.html": ["25톤", "완료가 확인된 후기와는 다릅니다", "heavy-truck-types", "heavy-dispatch-verification-8", "heavy-25t-wingbody-photo-1811"],
-    "service/golf/index.html": ["golf-driver-real-case", "golf-photo-standard", "golf-route-consult", "golf-driver-comparison-8", "golf-visual-and-callback-1811", "실제 운행 증빙사진 아님"],
-    "service/daily-driver/index.html": ["daily-driver-real-route", "daily-photo-standard", "daily-route-consult", "daily-golf-photo-and-fare-1811", "참고 일러스트"],
-    "service/long-distance-taksong/index.html": ["long-distance-verified-routes", "taksong-vehicle-visual-guide", "long-taksong-route-comparison", "long-taksong-1811-plate"],
+    "index.html": ["homepage-fare-top","five-menu-mobile-layout","review-service-image-grid","route-first-real-trips","1811-4294","mountain-cycle-review-three-links-202611"],
+    "service/card-daeri/index.html": ["card-payment-faq","card-region-consultation","card-route-fare-steps","card-daeri-trust-links","card-daeri-search-intent","card-daeri-fact-check","mobile-card-call","1811-4294"],
+    "special/seoraksan-transport/index.html": ["seoraksan-fare-first","seoraksan-review-shortcuts","seoraksan-search-call-guide-202611","special-to-fare-202611"],
+    "special/cycling-trail-transport/index.html": ["cycling-card-fare-first","cycling-route-index","cycling-four-route-consult-202611","special-to-fare-202611"],
+    "reviews/ride-record-stories/index.html": ["자동차탁송","대리운전","review-taksong-shortlist-202611"],
+    "fare/index.html": ["fare-real-case-links","fare-special-routes-202611","route-fare-preset-styles","data-fare-from","1811-4294"],
+    "reviews/verified/index.html": ["운행기록","예상요금 조회","카드대리운전 상담"],
+    "service/daeri/index.html": ["real-long-distance-daeri","daeri-image-provenance","long-distance-daeri-trust","daeri-review-visual-1811"],
+    "service/heavy-truck-taksong/index.html": ["25톤","완료가 확인된 후기와는 다릅니다","heavy-truck-types","heavy-dispatch-verification-8","heavy-25t-wingbody-photo-1811"],
+    "service/golf/index.html": ["golf-driver-real-case","golf-photo-standard","golf-route-consult","golf-driver-comparison-8","golf-visual-and-callback-1811","실제 운행 증빙사진 아님"],
+    "service/daily-driver/index.html": ["daily-driver-real-route","daily-photo-standard","daily-route-consult","daily-golf-photo-and-fare-1811","참고 일러스트"],
+    "service/long-distance-taksong/index.html": ["long-distance-verified-routes","taksong-vehicle-visual-guide","long-taksong-route-comparison","long-taksong-1811-plate"],
 }
 issues=[]
 # Only the requested five service links should appear in the primary menu.
