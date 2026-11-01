@@ -154,6 +154,19 @@ jobs:
             elif 'Sitemap: '+base+'/sitemap-priority.xml' not in payload:
               raise SystemExit('robots.txt missing priority sitemap')
             print('PASS',path)
+          for path in ['/sitemap-taksong.xml','/sitemap-daeri.xml']:
+            req=urllib.request.Request(base+path+'?release-check='+os.environ['DEPLOYED_COMMIT'],
+              headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
+            with urllib.request.urlopen(req,timeout=20) as response:
+              xml=response.read().decode('utf-8')
+              if response.status!=200: raise SystemExit(path+' HTTP '+str(response.status))
+            root=ET.fromstring(xml)
+            urls=[node.text for node in root.iter() if node.tag.endswith('loc') and node.text]
+            if len(urls)>500: raise SystemExit(path+' too many discovery URLs: '+str(len(urls)))
+            if len(urls)!=len(set(urls)): raise SystemExit(path+' duplicate sitemap URLs')
+            if path.endswith('taksong.xml') and not any('/taksong/busan/' in u for u in urls):
+              raise SystemExit('Taksong sitemap missing 부산 regional destinations')
+            print('PASS focused discovery',path,len(urls),'URL entries')
           PYNAVER
       - name: Verify live taksong reviews and search sitemaps
         run: |
