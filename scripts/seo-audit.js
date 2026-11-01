@@ -148,6 +148,23 @@ async function inspect(route){
   if(!robotsText.includes('Sitemap: '+config.site+reviewedRoute))reviewedIssues.push('Reviewed sitemap missing from robots.txt');
   pages.push({route:reviewedRoute,status:response.status,urlCount:urls.length,issues:reviewedIssues,passed:reviewedIssues.length===0});
  }catch(error){pages.push({route:reviewedRoute,passed:false,issues:[String(error)]})}
+ // Reproduce the main Naver crawler's view of the most valuable landing pages.
+ for(const route of ['/special/seoraksan-transport/','/special/jirisan-transport/','/special/cycling-trail-transport/','/reviews/taksong/','/region/daegu-daeri-taksong/']){
+  const issues=[];
+  try{
+   const response=await fetch(new URL(route,base),{headers:{'User-Agent':'Yeti/1.1 (NHN Corp.; http://help.naver.com/robots/)','Cache-Control':'no-cache'},signal:AbortSignal.timeout(15000)});
+   const html=await response.text();
+   const titles=content(html,'title'),headings=content(html,'h1');
+   const robots=elements(html,'meta').find(x=>x.name==='robots');
+   if(!response.ok)issues.push('Naver crawler HTTP '+response.status);
+   if(titles.length!==1)issues.push('Expected one page title');
+   if(headings.length!==1)issues.push('Expected one H1');
+   if(/noindex/i.test(robots?.content||''))issues.push('Page has noindex');
+   if(route.startsWith('/special/')&&!/탁송/.test(headings[0]||''))issues.push('Taksong intent missing in H1');
+   if(!html.includes('1811-4294'))issues.push('Service phone missing');
+   pages.push({route:route+'#naver-yeti',status:response.status,issues,passed:issues.length===0});
+  }catch(error){pages.push({route:route+'#naver-yeti',passed:false,issues:[String(error)]})}
+ }
  const sitemapCache=new Map();
  for(const kind of ['daeri','taksong']){
   const route='/sitemap-'+kind+'.xml';
