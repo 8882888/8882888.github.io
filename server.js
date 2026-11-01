@@ -998,7 +998,13 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   body=html;
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
- if(isHtml||type.startsWith('application/xml;')||type.startsWith('text/plain;'))headers['cache-control']='no-cache, max-age=0, must-revalidate';
+ if(isHtml||type.startsWith('text/plain;'))headers['cache-control']='no-cache, max-age=0, must-revalidate';
+ // XML sitemaps must never be served from a stale intermediary cache after rollout.
+ if(type.startsWith('application/xml;')){
+  headers['cache-control']='no-store, max-age=0, must-revalidate';
+  headers['surrogate-control']='no-store';
+  headers['x-smart24-sitemap-format']='focused-html-only-202611';
+ }
  res.writeHead(status,headers);
  res.end(body);
 }
