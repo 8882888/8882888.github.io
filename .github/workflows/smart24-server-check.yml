@@ -68,6 +68,12 @@ jobs:
           curl --fail --show-error --max-time 4 --output /tmp/smart24-blog.html http://127.0.0.1:3000/blog/
           grep -q 'id="automated-real-ride-blog-reviews"' /tmp/smart24-blog.html
           grep -q 'id="dynamic-blog-service-directory"' /tmp/smart24-blog.html
+          grep -q 'id="gijang-taksong-blog-originals"' /tmp/smart24-blog.html
+          grep -q '224388244274' /tmp/smart24-blog.html
+          curl --fail --show-error --output /tmp/smart24-gijang.html http://127.0.0.1:3000/taksong/busan/gijang-gun/
+          grep -q 'id="gijang-original-blog-evidence"' /tmp/smart24-gijang.html
+          grep -q '224388244274' /tmp/smart24-gijang.html
+          grep -q '224398217114' /tmp/smart24-gijang.html
           grep -q '설악산탁송 요금·후기' /tmp/smart24-blog.html
           grep -q '지리산탁송 요금·후기' /tmp/smart24-blog.html
           grep -q '자전거길탁송 요금·후기' /tmp/smart24-blog.html
