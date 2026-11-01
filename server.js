@@ -994,7 +994,7 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   body=html;
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
- if(isHtml)headers['cache-control']='no-cache, max-age=0, must-revalidate';
+ if(isHtml||type.startsWith('application/xml;')||type.startsWith('text/plain;'))headers['cache-control']='no-cache, max-age=0, must-revalidate';
  res.writeHead(status,headers);
  res.end(body);
 }
