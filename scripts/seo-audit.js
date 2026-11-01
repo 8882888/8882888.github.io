@@ -186,6 +186,7 @@ async function inspect(route){
   if(!/<urlset\b/.test(xml))regionalIssues.push('Invalid regional sitemap');
   if(listedUrls.length>500)regionalIssues.push('Regional discovery sitemap too broad: '+listedUrls.length+' URLs');
   if(new Set(listedUrls).size!==listedUrls.length)regionalIssues.push('Duplicate regional sitemap URLs');
+  if(/<image:image\b|<image:loc\b/.test(xml))regionalIssues.push('Regional sitemap still submits generated images for crawling');
   if(!robotsText.includes('Sitemap: '+config.site+route))regionalIssues.push('Regional sitemap missing from robots.txt');
   pages.push({route,urlCount:listedUrls.length,passed:regionalIssues.length===0,issues:regionalIssues});
  }
