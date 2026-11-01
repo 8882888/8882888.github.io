@@ -408,6 +408,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const quoteHtml=await (await get('/fare/')).text();
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=taksong"'));
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=daeri"'));
+  // Real route history searches accept the words customers type, not just exact place names.
+  for(const phrase of ['설악산탁송','오색탁송','백담사탁송','영덕탁송','강릉탁송']){
+    const page=await get('/reviews/history/?kind=taksong&q='+encodeURIComponent(phrase));
+    const html=await page.text();
+    assert.equal(page.status,200,phrase+' completed review query responds');
+    assert.ok(html.includes('실제 운행완료 후기'),phrase+' review search stays rendered');
+    assert.ok(html.includes('예상요금 조회')||html.includes('검색 결과가 없습니다'),phrase+' keeps accurate quote/no-result state');
+  }
   const historyListResponse=await get('/reviews/history/?kind=taksong');
   const historyListHtml=await historyListResponse.text();
   assert.equal(historyListResponse.status,200);

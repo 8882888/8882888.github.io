@@ -129,14 +129,22 @@ function matchingHistoricalRides(origin,destination){
 }
 function historyIndexPage(page=1,kind='all',query=''){
  const term=String(query||'').trim().slice(0,40);
+ const locality=term.replace(/(?:자동차)?탁송|대리운전|운행완료|운행후기|후기|가격|요금/g,'').trim();
+ const needle=locality||term;
  const locationTerms=['설악산','소공원','오색','백담사','한계령','남교리','대청봉','공룡능선','경포대','통일전망대','은어다리','해맞이공원','영덕','담양댐','영산강','배알도','섬진강','강원랜드','정선','강릉','속초','인제','삼척','양양','주문진'];
- const searchRawPlace=locationTerms.some(t=>term===t||term.includes(t));
- const list=historicalRides.filter(x=>(kind==='all'||x.service===kind)&&(!term||[x.departure,x.destination,x.date].some(v=>String(v||'').includes(term))||(searchRawPlace&&[x.rawDeparture,x.rawDestination].some(v=>String(v||'').includes(term)))));
- const size=40,pages=Math.max(1,Math.ceil(list.length/size)),p=Math.max(1,Math.min(pages,page)),part=list.slice((p-1)*size,p*size);
+ const searchRawPlace=locationTerms.some(t=>needle===t||needle.includes(t));
+ const list=historicalRides.filter(x=>(kind==='all'||x.service===kind)&&(!term||[x.departure,x.destination,x.date].some(v=>String(v||'').includes(needle))||(searchRawPlace&&[x.rawDeparture,x.rawDestination].some(v=>String(v||'').includes(needle)))));
+ // Put useful, verified locality summaries first. Keep the original IDs and source data untouched.
+ const ranked=list.slice().sort((a,b)=>{
+  const score=x=>(x.departure!=='지역 비공개'?1:0)+(x.destination!=='지역 비공개'?1:0);
+  return score(b)-score(a);
+ });
+ const size=40,pages=Math.max(1,Math.ceil(ranked.length/size)),p=Math.max(1,Math.min(pages,page)),part=ranked.slice((p-1)*size,p*size);
  const nav='<p><a href="/reviews/history/">전체 '+historicalRides.length+'건</a> · <a href="/reviews/history/?kind=daeri">대리운전 '+historyCounts.daeri+'건</a> · <a href="/reviews/history/?kind=taksong">자동차탁송 '+historyCounts.taksong+'건</a> · <a href="/reviews/history/?kind=mixed">혼합 '+historyCounts.mixed+'건</a></p>';
- const form='<form method="get" action="/reviews/history/"><input type="hidden" name="kind" value="'+esc(kind)+'"><label for="history-query">출발·도착 지역 검색</label> <input id="history-query" name="q" maxlength="40" placeholder="설악산, 속초, 부산, 인천" value="'+esc(term)+'" style="padding:10px;font:inherit;border:1px solid #9fbad8;border-radius:7px;max-width:65%"> <button type="submit" style="padding:10px;font:inherit">후기 찾기</button></form><p><a href="/reviews/history/?kind=taksong&amp;q=설악산">설악산탁송 기록</a> · <a href="/reviews/history/?kind=taksong&amp;q=오색">오색탁송</a> · <a href="/reviews/history/?kind=taksong&amp;q=백담사">백담사탁송</a> · <a href="/reviews/history/?kind=taksong&amp;q=강릉">강릉탁송</a> · <a href="/reviews/history/?kind=taksong&amp;q=영덕">자전거길 영덕탁송</a></p>';
+ const form='<form method="get" action="/reviews/history/"><input type="hidden" name="kind" value="'+esc(kind)+'"><label for="history-query">출발·도착 지역 검색</label> <input id="history-query" name="q" maxlength="40" placeholder="설악산탁송, 오색탁송, 부산탁송" value="'+esc(term)+'" style="padding:10px;font:inherit;border:1px solid #9fbad8;border-radius:7px;max-width:65%"> <button type="submit" style="padding:10px;font:inherit">후기 찾기</button></form><p>검색어 예시: 설악산탁송 · 오색탁송 · 강릉탁송 · 장거리대리운전</p><p><a href="/reviews/history/?kind=taksong&amp;q=설악산">설악산탁송 기록</a> · <a href="/reviews/history/?kind=taksong&amp;q=오색">오색탁송</a> · <a href="/reviews/history/?kind=taksong&amp;q=백담사">백담사탁송</a> · <a href="/reviews/history/?kind=taksong&amp;q=강릉">강릉탁송</a> · <a href="/reviews/history/?kind=taksong&amp;q=영덕">자전거길 영덕탁송</a></p>';
  const label=x=>x.service==='taksong'?'자동차탁송':x.service==='mixed'?'탁송+대리운전':'대리운전';
- const items=part.map(x=>'<li><a href="/reviews/history/'+x.id+'/">'+esc(x.departure+' → '+x.destination+' '+label(x)+' 운행후기')+'</a> · '+esc(x.date)+' · 당시 '+esc(x.fare)+' · <a href="/fare/?service='+(x.service==='daeri'?'daeri':'taksong')+((x.departure==='지역 비공개'||x.destination==='지역 비공개')?'':'&amp;from='+encodeURIComponent(x.departure)+'&amp;to='+encodeURIComponent(x.destination))+'">예상요금 조회</a></li>').join('');
+ const heading=x=>x.departure==='지역 비공개'&&x.destination==='지역 비공개'?x.date+' '+label(x)+' 완료 운행기록':x.departure==='지역 비공개'?x.destination+' 도착 '+label(x)+' 완료 후기':x.destination==='지역 비공개'?x.departure+' 출발 '+label(x)+' 완료 후기':x.departure+' → '+x.destination+' '+label(x)+' 운행후기';
+ const items=part.map(x=>'<li><a href="/reviews/history/'+x.id+'/">'+esc(heading(x))+'</a> · '+esc(x.date)+' · 당시 '+esc(x.fare)+' · <a href="/fare/?service='+(x.service==='daeri'?'daeri':'taksong')+((x.departure==='지역 비공개'||x.destination==='지역 비공개')?'':'&amp;from='+encodeURIComponent(x.departure)+'&amp;to='+encodeURIComponent(x.destination))+'">예상요금 조회</a></li>').join('');
  const params='kind='+encodeURIComponent(kind)+(term?'&q='+encodeURIComponent(term):'');
  const pagination='<p>'+(p>1?'<a href="?'+params+'&page='+(p-1)+'">이전 40건</a> ':'')+' '+p+'/'+pages+'페이지 '+(p<pages?'<a href="?'+params+'&page='+(p+1)+'">다음 40건</a>':'')+'</p>';
  const specials='<p><a href="/special/seoraksan-transport/">설악산탁송 실제 후기·구간요금</a> · <a href="/special/cycling-trail-transport/">자전거길 종주탁송 후기</a> · <a href="/service/long-distance-taksong/">장거리탁송</a> · <a href="/fare/">전체 예상요금</a></p>';

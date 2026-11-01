@@ -6,7 +6,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 REQUIRED = {
-    "server.js": ["history-filtered-completed-reviews-202611", "historyCounts","completedRidePublicPlace", "u.searchParams.get(\'q\')", "이 구간 예상요금 조회","searchRawPlace"],
+    "server.js": ["history-filtered-completed-reviews-202611", "historyCounts","completedRidePublicPlace","const locality=term.replace","const ranked=list.slice().sort", "u.searchParams.get(\'q\')", "이 구간 예상요금 조회","searchRawPlace"],
     "reviews/taksong/index.html": ["자동차탁송 운행완료 기록 후기", "1811-4294"],
     "reviews/daeri/index.html": ["대리운전 운행완료 기록 후기", "1811-4294"],
     "assets/service-taksong-visual.svg": ["taksong-marketing-number-plate","1811-4294"],
