@@ -31,4 +31,6 @@ for(const p of ['/taksong/busan/haeundae-gu/','/taksong/busan/gangseo-gu/','/tak
 for(const query of ['동래구탁송','온천동탁송','사직동탁송','금정구탁송','장전동탁송','구서동탁송','북구탁송','화명동탁송','덕천동탁송','연제구탁송','연산동탁송','수영구탁송','광안동탁송','민락동탁송']) assert.ok(QUERIES.includes(query),'missing hyperlocal Busan taksong query: '+query);
 for(const path of ['/taksong/busan/dongnae-gu/','/taksong/busan/geumjeong-gu/','/taksong/busan/buk-gu/','/taksong/busan/yeonje-gu/','/taksong/busan/suyeong-gu/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(path),'missing monitored Busan district: '+path);
 for(const q of ['부산진구탁송','대연동탁송','토성동탁송','초량동탁송','남포동탁송']) assert.ok(QUERIES.includes(q),'central Busan search '+q);
+for(const q of ['수성구탁송','범어동탁송','달서구탁송','상인동탁송','대구북구탁송','침산동탁송','대구동구탁송','신천동탁송','대구중구탁송','삼덕동탁송']) assert.ok(QUERIES.includes(q),'Daegu taksong query '+q);
+for(const p of ['/taksong/daegu/suseong-gu/','/taksong/daegu/dalseo-gu/','/taksong/daegu/buk-gu/','/taksong/daegu/dong-gu/','/taksong/daegu/jung-gu/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(p),'Daegu taksong region '+p);
 console.log('Naver web result matching passed');
