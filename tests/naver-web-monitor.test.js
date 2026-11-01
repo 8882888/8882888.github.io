@@ -24,4 +24,6 @@ for(const page of ['/special/seoraksan-transport/','/special/jirisan-transport/'
 
 for(const path of ['/reviews/history/','/reviews/ride-record-stories/','/reviews/verified/','/special/cycling-trail-transport/','/service/long-distance-taksong/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(path),'high-intent page search evidence '+path);
 for(const query of ['오색탁송','백담사탁송','영덕탁송','경포대탁송','자동차탁송운행완료후기']) assert.ok(QUERIES.includes(query),'high-intent actual ride search '+query);
+for (const query of ['기장군탁송','기장읍탁송','정관탁송','정관읍탁송','일광탁송','일광읍탁송','기장군로드탁송','로드탁송']) assert.ok(QUERIES.includes(query),'missing hyperlocal road-taksong query: '+query);
+assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes('/taksong/busan/gijang-gun/'),'Gijang-gun landing must be monitored');
 console.log('Naver web result matching passed');
