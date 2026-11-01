@@ -164,6 +164,8 @@ jobs:
             urls=[node.text for node in root.iter() if node.tag.endswith('loc') and node.text]
             if len(urls)>500: raise SystemExit(path+' too many discovery URLs: '+str(len(urls)))
             if len(urls)!=len(set(urls)): raise SystemExit(path+' duplicate sitemap URLs')
+            if '<image:image' in xml or '<image:loc' in xml:
+              raise SystemExit(path+' still exposes generated illustrations as separately crawled images')
             if path.endswith('taksong.xml') and not any('/taksong/busan/' in u for u in urls):
               raise SystemExit('Taksong sitemap missing 부산 regional destinations')
             print('PASS focused discovery',path,len(urls),'URL entries')
