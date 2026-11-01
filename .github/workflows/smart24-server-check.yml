@@ -74,6 +74,22 @@ jobs:
           # Ensure major local service pages are discoverable in their sitemap.
           curl --fail --show-error --output /tmp/smart24-taksong-sitemap.xml http://127.0.0.1:3000/sitemap-taksong.xml
           grep -q '/taksong/' /tmp/smart24-taksong-sitemap.xml
+          # Regional sitemaps must list actual pages, not separate generated car-card images.
+          if grep -Eq '<image:image|<image:loc' /tmp/smart24-taksong-sitemap.xml; then
+            echo 'Generated card illustration URL remains in taksong sitemap'
+            exit 1
+          fi
+          curl --fail --show-error --output /tmp/smart24-daeri-sitemap.xml http://127.0.0.1:3000/sitemap-daeri.xml
+          if grep -Eq '<image:image|<image:loc' /tmp/smart24-daeri-sitemap.xml; then
+            echo 'Generated card illustration URL remains in daeri sitemap'
+            exit 1
+          fi
+          curl --fail --show-error --output /tmp/smart24-robots.txt http://127.0.0.1:3000/robots.txt
+          grep -q 'Sitemap: https://jeongukdaeri.kr/sitemap-taksong.xml' /tmp/smart24-robots.txt
+          grep -q 'Sitemap: https://jeongukdaeri.kr/sitemap-daeri.xml' /tmp/smart24-robots.txt
+          curl --fail --show-error --output /tmp/smart24-seoraksan.html http://127.0.0.1:3000/special/seoraksan-transport/
+          grep -q '<h1>설악산탁송 요금·실제후기' /tmp/smart24-seoraksan.html
+          echo 'PASS crawler discovery sitemaps and updated Seoraksan title'
           grep -q 'rel="canonical"' /tmp/smart24-seoul.html
           # Verify a paginated keyword directory links to real regional destinations.
           curl --fail --show-error --output /tmp/smart24-keywords.html 'http://127.0.0.1:3000/keywords/taksong/?page=2'
