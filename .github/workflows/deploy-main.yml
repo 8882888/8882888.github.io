@@ -92,3 +92,36 @@ jobs:
                   raise SystemExit('Deployment accepted, but live HTML/compact counters/own-visit opt-out did NOT reflect the new release; investigate Cloudtype rollout or cache.')
               time.sleep(5)
           PYVERIFY
+      - name: Verify live taksong reviews and search sitemaps
+        run: |
+          python3 - <<'PYSEO'
+          import time, urllib.request, xml.etree.ElementTree as ET
+          base='https://jeongukdaeri.kr'
+          paths=['/taksong/','/service/taksong/','/reviews/taksong/','/sitemap-priority.xml','/sitemap-reviewed-routes.xml']
+          failed=[]
+          for path in paths:
+              ok=False
+              for attempt in range(3):
+                  try:
+                      request=urllib.request.Request(base+path,headers={'User-Agent':'Smart24-Release-Verification/1.0','Cache-Control':'no-cache'})
+                      with urllib.request.urlopen(request,timeout=15) as response:
+                          body=response.read()
+                          if response.status!=200: raise ValueError('HTTP '+str(response.status))
+                      if path.endswith('.xml'):
+                          root=ET.fromstring(body)
+                          urls=[e.text or '' for e in root.iter() if e.tag.endswith('loc')]
+                          if not any('/reviews/taksong/' in u for u in urls):
+                              raise ValueError('Missing verified taksong URL')
+                      elif path=='/reviews/taksong/' and b'taksong-baekdamsa-sogongwon' not in body:
+                          raise ValueError('Verified taksong anchors missing')
+                      elif path=='/service/taksong/' and 'taksong-evidence-202611' not in body.decode('utf-8'):
+                          raise ValueError('New taksong evidence section not deployed')
+                      print('PASS',path)
+                      ok=True
+                      break
+                  except Exception as e:
+                      print('RETRY',path,str(e))
+                      time.sleep(3)
+              if not ok: failed.append(path)
+          if failed: raise SystemExit('Live taksong page or sitemap checks failed: '+', '.join(failed))
+          PYSEO
