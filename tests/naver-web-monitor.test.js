@@ -22,4 +22,6 @@ assert.ok(require('../scripts/naver-web-monitor').QUERIES.includes('강원도탁
 for(const q of ['설악산탁송','지리산탁송','자전거길종주탁송','동해안자전거길종주탁송','섬진강자전거길종주탁송','영산강자전거길종주탁송','금강자전거길종주탁송','낙동강자전거길종주탁송']) assert.ok(QUERIES.includes(q),'monitor priority route: '+q);
 for(const page of ['/special/seoraksan-transport/','/special/jirisan-transport/','/route-taksong/','/route-taksong/centers/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(page),'monitor dedicated page: '+page);
 
+for(const path of ['/reviews/history/','/reviews/ride-record-stories/','/reviews/verified/','/special/cycling-trail-transport/','/service/long-distance-taksong/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(path),'high-intent page search evidence '+path);
+for(const query of ['오색탁송','백담사탁송','영덕탁송','경포대탁송','자동차탁송운행완료후기']) assert.ok(QUERIES.includes(query),'high-intent actual ride search '+query);
 console.log('Naver web result matching passed');
