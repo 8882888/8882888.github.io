@@ -1130,7 +1130,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  }).join('')+'</channel></rss>';
  return respond(res,200,rss,'application/rss+xml; charset=utf-8');
 }
-if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
+if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const urls=['/','/daeri/','/taksong/','/route-taksong/','/special/seoraksan-transport/','/special/jirisan-transport/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...priorityRegionalPages.map(p=>{
@@ -1142,10 +1142,19 @@ if(pathname==='/sitemap-priority.xml'){
 }
 if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const service=pathname==='/sitemap-daeri.xml'?'daeri':'taksong';const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const cached=sitemapCache.get(pathname);if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');// Keep existing 20,562 region URLs usable for route lookup, but prioritize the
  // 17 province hubs and 12 hand-curated driver regions for Naver crawl discovery.
- // The delivery sitemap retains its prior behavior; no route, fare, or ride is deleted.
- const discoveryRegions=service==='daeri'
-  ?regions.filter(r=>r.level==='시도'||priorityByKey.has('daeri|'+r.full_name))
-  :regions;
+ // Both sitemaps now prioritize useful province hubs and operationally relevant city/district pages.
+ // Other valid regional URLs remain available through navigation and search; no data is deleted.
+ const focusTaksongAreas=new Set([
+  '부산광역시 기장군','부산광역시 해운대구','부산광역시 강서구','부산광역시 사하구',
+  '부산광역시 동래구','부산광역시 금정구','부산광역시 북구','부산광역시 연제구',
+  '부산광역시 수영구','부산광역시 부산진구','부산광역시 남구','부산광역시 서구',
+  '부산광역시 동구','부산광역시 중구','대구광역시 수성구','대구광역시 달서구',
+  '대구광역시 북구','대구광역시 동구','대구광역시 중구',
+  '강원특별자치도 속초시','강원특별자치도 강릉시','강원특별자치도 양양군',
+  '강원특별자치도 태백시','강원특별자치도 동해시','강원특별자치도 삼척시',
+  '강원특별자치도 원주시','강원특별자치도 정선군'
+ ]);
+ const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityByKey.has(service+'|'+r.full_name)||(service==='taksong'&&focusTaksongAreas.has(r.full_name)));
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'+['/'+service+'/',...(service==='daeri'?daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor):['/service/taksong/','/service/long-distance-taksong/']),].map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc><image:image><image:loc>'+esc(base+cardPngPath(r.slug,service))+'</image:loc></image:image></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
 if(pathname==='/sitemap.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
