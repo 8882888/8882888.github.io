@@ -54,8 +54,8 @@ jobs:
           from pathlib import Path
           data=Path('/tmp/smart24-favicon.bin').read_bytes()
           headers=Path('/tmp/smart24-favicon.headers').read_text().lower()
-          is_png=data.startswith(b'\\x89PNG\\r\\n\\x1a\\n')
-          is_ico=data.startswith(b'\\x00\\x00\\x01\\x00')
+          is_png=data.startswith(bytes.fromhex('89504e470d0a1a0a'))
+          is_ico=data.startswith(bytes.fromhex('00000100'))
           if not (is_png or is_ico): raise SystemExit('favicon.ico returned neither PNG nor ICO bytes')
           if not ('content-type: image/png' in headers or 'content-type: image/x-icon' in headers):
             raise SystemExit('favicon.ico returned incorrect image content type')
