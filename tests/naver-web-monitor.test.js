@@ -28,4 +28,6 @@ for (const query of ['기장군탁송','기장읍탁송','정관탁송','정관�
 assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes('/taksong/busan/gijang-gun/'),'Gijang-gun landing must be monitored');
 for(const q of ['해운대구탁송','우동탁송','중동탁송','좌동탁송','강서구탁송','명지동탁송','녹산동탁송','사하구탁송','하단동탁송','다대동탁송']) assert.ok(QUERIES.includes(q),'district road-taksong query '+q);
 for(const p of ['/taksong/busan/haeundae-gu/','/taksong/busan/gangseo-gu/','/taksong/busan/saha-gu/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(p),'district page monitored '+p);
+for(const query of ['동래구탁송','온천동탁송','사직동탁송','금정구탁송','장전동탁송','구서동탁송','북구탁송','화명동탁송','덕천동탁송','연제구탁송','연산동탁송','수영구탁송','광안동탁송','민락동탁송']) assert.ok(QUERIES.includes(query),'missing hyperlocal Busan taksong query: '+query);
+for(const path of ['/taksong/busan/dongnae-gu/','/taksong/busan/geumjeong-gu/','/taksong/busan/buk-gu/','/taksong/busan/yeonje-gu/','/taksong/busan/suyeong-gu/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(path),'missing monitored Busan district: '+path);
 console.log('Naver web result matching passed');
