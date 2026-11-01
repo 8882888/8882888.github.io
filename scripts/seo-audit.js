@@ -180,7 +180,14 @@ async function inspect(route){
   const response=await fetch(new URL(route,base),{signal:AbortSignal.timeout(30000)});
   const xml=await response.text();
   sitemapCache.set(kind,xml);
-  if(!response.ok)pages.push({route,passed:false,issues:['HTTP '+response.status]});
+  const listedUrls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);
+  const regionalIssues=[];
+  if(!response.ok)regionalIssues.push('HTTP '+response.status);
+  if(!/<urlset\b/.test(xml))regionalIssues.push('Invalid regional sitemap');
+  if(listedUrls.length>500)regionalIssues.push('Regional discovery sitemap too broad: '+listedUrls.length+' URLs');
+  if(new Set(listedUrls).size!==listedUrls.length)regionalIssues.push('Duplicate regional sitemap URLs');
+  if(!robotsText.includes('Sitemap: '+config.site+route))regionalIssues.push('Regional sitemap missing from robots.txt');
+  pages.push({route,urlCount:listedUrls.length,passed:regionalIssues.length===0,issues:regionalIssues});
  }
  for(const [route,info] of priorityByPath){
   const checked=await inspect(route);
