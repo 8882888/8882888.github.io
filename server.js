@@ -1005,6 +1005,25 @@ const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,ho
 const blogArchive=require('./lib/blog-archive');
 const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout,servicePath,label:seoRegionLabel,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',historicalRides});
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
+// Public diagnostics for deployment freshness; reports source HTML only, not Naver indexing.
+if(pathname==='/health/seo.json'){
+ const files={
+  seoraksan:'special/seoraksan-transport/index.html',
+  jirisan:'special/jirisan-transport/index.html',
+  cycling:'special/cycling-trail-transport/index.html',
+  taksongReviews:'reviews/taksong/index.html',
+  daegu:'region/daegu-daeri-taksong/index.html'
+ };
+ const pages={};
+ for(const [key,file] of Object.entries(files)){
+  try{
+   const html=fs.readFileSync(path.join(ROOT,file),'utf8');
+   pages[key]={h1:(html.match(/<h1[^>]*>([^<]+)<\/h1>/)||[])[1]||'',title:(html.match(/<title>([^<]+)<\/title>/)||[])[1]||'',hasPhone:html.includes('1811-4294')};
+  }catch{pages[key]={error:'source unavailable'}}
+ }
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages}),'application/json; charset=utf-8');
+}
 // Publish the public IndexNow ownership key at the root on Cloudtype.
 if(pathname==='/770f921af32e749f64c1d447c607ea42.txt')return respond(res,200,fs.readFileSync(path.join(ROOT,'770f921af32e749f64c1d447c607ea42.txt'),'utf8'),'text/plain; charset=utf-8');
 // Consolidate default-document URLs without changing query parameters.
