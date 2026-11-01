@@ -90,6 +90,38 @@ jobs:
           curl --fail --show-error --output /tmp/smart24-seoraksan.html http://127.0.0.1:3000/special/seoraksan-transport/
           grep -q '<h1>설악산탁송 요금·실제후기' /tmp/smart24-seoraksan.html
           echo 'PASS crawler discovery sitemaps and updated Seoraksan title'
+          # A sitemap URL must be a real indexable HTML destination, not just a listed string.
+          curl --fail --show-error --output /tmp/smart24-priority-sitemap.xml http://127.0.0.1:3000/sitemap-priority.xml
+          python3 - <<'PYINDEX'
+          import urllib.request
+          import xml.etree.ElementTree as ET
+          base='http://127.0.0.1:3000'
+          root=ET.parse('/tmp/smart24-priority-sitemap.xml').getroot()
+          listed={node.text for node in root.iter() if node.tag.endswith('loc') and node.text}
+          required=[
+            '/special/seoraksan-transport/',
+            '/special/jirisan-transport/',
+            '/special/cycling-trail-transport/',
+            '/reviews/taksong/',
+            '/reviews/verified/',
+            '/routes/reviewed/',
+            '/region/daegu-daeri-taksong/',
+            '/fare/',
+            '/blog/',
+            '/route-taksong/centers/',
+          ]
+          for path in required:
+            expected='https://jeongukdaeri.kr'+path
+            if expected not in listed:
+              raise SystemExit('Priority sitemap missing '+path)
+            with urllib.request.urlopen(base+path,timeout=20) as response:
+              page=response.read().decode('utf-8')
+              if response.status!=200:
+                raise SystemExit('Priority URL non-200 '+path)
+              if 'noindex' in page.lower() or '<link rel="canonical"' not in page:
+                raise SystemExit('Priority URL not index-ready '+path)
+            print('PASS priority indexable URL',path)
+          PYINDEX
           grep -q 'rel="canonical"' /tmp/smart24-seoul.html
           # Verify a paginated keyword directory links to real regional destinations.
           curl --fail --show-error --output /tmp/smart24-keywords.html 'http://127.0.0.1:3000/keywords/taksong/?page=2'
