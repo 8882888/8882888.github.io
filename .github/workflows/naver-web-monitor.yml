@@ -15,6 +15,9 @@ on:
       - lib/route-keyword-pages.js
       - data/seo-pages.json
       - service/taksong/index.html
+      - special/seoraksan-transport/index.html
+      - special/jirisan-transport/index.html
+      - special/cycling-trail-transport/index.html
       - reviews/taksong/index.html
       - sitemap.xml
       - robots.txt
