@@ -568,7 +568,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
   const crawlRobots=await (await get('/robots.txt')).text();
   const submittedMaps=crawlRobots.split('\n').filter(line=>line.startsWith('Sitemap: '));
-  assert.equal(submittedMaps.length,3,'robots advertises only curated and verified route sitemaps');
+  assert.equal(submittedMaps.length,5,'robots advertises five curated, regional and verified-route sitemaps');
+   for(const sitemap of ['sitemap-priority.xml','sitemap.xml','sitemap-reviewed-routes.xml','sitemap-taksong.xml','sitemap-daeri.xml'])assert.ok(submittedMaps.some(x=>x.endsWith('/'+sitemap)),'robots retains '+sitemap);
   assert.ok(submittedMaps.some(x=>x.includes('/sitemap-priority.xml')));
   assert.ok(submittedMaps.some(x=>x.includes('/sitemap-reviewed-routes.xml')));
   assert.ok(!submittedMaps.some(x=>x.includes('nationwide-route')),'avoid diluting crawl effort across hundreds of thousands of generated combinations');
