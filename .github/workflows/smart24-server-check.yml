@@ -67,6 +67,14 @@ jobs:
           curl --fail --show-error --output /tmp/smart24-blog.html http://127.0.0.1:3000/blog/
           grep -q 'id="automated-real-ride-blog-reviews"' /tmp/smart24-blog.html
           grep -Eq 'href="/reviews/history/excel-[0-9]{4}/"' /tmp/smart24-blog.html
+          blog_review_path=$(grep -oE 'href="/reviews/history/excel-[0-9]{4}/"' /tmp/smart24-blog.html | head -1 | cut -d '"' -f2)
+          test -n "$blog_review_path"
+          curl --fail --show-error --output /tmp/smart24-blog-review.html "http://127.0.0.1:3000$blog_review_path"
+          grep -q '빠른 배차에 도움이 되는 준비사항' /tmp/smart24-blog-review.html
+          grep -q '당시 요금과 현재 예상요금은 왜 다를까요' /tmp/smart24-blog-review.html
+          grep -q 'rel="canonical"' /tmp/smart24-blog-review.html
+          curl --fail --show-error --output /tmp/smart24-priority-review-sitemap.xml http://127.0.0.1:3000/sitemap-priority.xml
+          grep -q "$blog_review_path" /tmp/smart24-priority-review-sitemap.xml
           grep -q '네이버 블로그' /tmp/smart24-blog.html
           echo 'PASS dynamic blog displays recorded ride reviews and retains Naver archive'
           curl --fail --show-error --output /tmp/smart24-seoul.html http://127.0.0.1:3000/daeri/seoul/
