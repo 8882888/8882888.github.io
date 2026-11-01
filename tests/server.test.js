@@ -534,19 +534,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
    assert.ok(metadata.some(x=>x['@graph']?.some(y=>y['@type']==='WebPage'&&y.primaryImageOfPage)),'regional service page identifies its primary image');
    const imageMap=await (await get('/sitemap-'+service+'.xml')).text();
-   const imageRegions=service==='daeri'?regions.filter(r=>r.level==='시도'||require('../data/priority-regions.json').pages.some(p=>p.kind==='daeri'&&p.region===r.full_name)):regions;
-    assert.equal((imageMap.match(/<image:image>/g)||[]).length,imageRegions.length,'image sitemap includes all discoverable service regions with their existing cards');
-   if(service==='taksong'){
-    const villages=[...imageMap.matchAll(/<loc>https:\/\/example\.com(\/taksong\/[^<]*\/yongsan-ri\/)<\/loc>/g)].map(m=>m[1]);
-    assert.ok(villages.length>=2,'same-named villages have distinct regional URLs');
-    const firstVillage=await (await get(villages[0])).text(),secondVillage=await (await get(villages[1])).text();
-    const firstTitle=firstVillage.match(/<title>([^<]+)<\/title>/)?.[1];
-    const secondTitle=secondVillage.match(/<title>([^<]+)<\/title>/)?.[1];
-    assert.ok(firstTitle&&secondTitle&&firstTitle!==secondTitle,'two YongSan villages do not share a search title');
-    assert.ok(firstVillage.includes('차량인수탁송')&&!firstVillage.includes('폐차산업탁송'),'village has handover intent rather than nationwide industry keyword stuffing');
-   }
-
-   assert.ok(imageMap.includes('https://example.com'+card[1]),'sitemap and visible card use the same image URL');
+   // Focused Naver sitemaps contain HTML URLs only. PNG cards remain on the actual pages.
+   assert.ok(!/<image:image|<image:loc/.test(imageMap),'focused sitemap must not list generated card images');
+   const sitemapUrls=[...imageMap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
+   assert.ok(sitemapUrls.includes('https://example.com/'+service+'/seoul/'),'focused sitemap includes Seoul service HTML');
+   assert.ok(sitemapUrls.length<100,'focused sitemap limits low-value locality URLs');
+   if(service==='taksong')assert.ok(sitemapUrls.includes('https://example.com/taksong/busan/gijang-gun/'),'Gijang landing page is discoverable');
    const image=await get(card[1]);assert.equal(image.status,200);
    assert.equal(image.headers.get('content-type'),'image/png');
    const bytes=new Uint8Array(await image.arrayBuffer());
