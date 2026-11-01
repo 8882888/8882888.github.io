@@ -1066,6 +1066,13 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  return respond(res,200,rss,'application/rss+xml; charset=utf-8');
 }
 if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
+if(pathname==='/sitemap-reviewed-routes.xml'){
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const paths=['/reviews/taksong/','/reviews/verified/','/reviews/ride-record-stories/','/routes/reviewed/',...routeKeywordPages.reviewed.entries.slice(0,100).map(e=>routeKeywordPages.reviewed.routePath(e))];
+ const urls=[...new Set(paths)];
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const urls=['/','/daeri/','/taksong/','/route-taksong/','/special/seoraksan-transport/','/special/jirisan-transport/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...priorityRegionalPages.map(p=>{
