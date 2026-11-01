@@ -175,7 +175,7 @@ jobs:
           python3 - <<'PYSEO'
           import time, urllib.request, xml.etree.ElementTree as ET
           base='https://jeongukdaeri.kr'
-          paths=['/taksong/','/service/taksong/','/reviews/taksong/','/sitemap-priority.xml','/sitemap-reviewed-routes.xml']
+          paths=['/taksong/','/service/taksong/','/reviews/taksong/','/blog/','/sitemap-priority.xml','/sitemap-reviewed-routes.xml']
           failed=[]
           for path in paths:
               ok=False
@@ -194,6 +194,8 @@ jobs:
                           raise ValueError('Verified taksong anchors missing')
                       elif path=='/service/taksong/' and 'taksong-evidence-202611' not in body.decode('utf-8'):
                           raise ValueError('New taksong evidence section not deployed')
+                      elif path=='/blog/' and not all(marker in body.decode('utf-8') for marker in ('dynamic-blog-service-directory','automated-real-ride-blog-reviews','search-evidence-service-guide-202611')):
+                          raise ValueError('Latest dynamic blog, actual ride reviews or search-intent sections not deployed')
                       print('PASS',path)
                       ok=True
                       break
