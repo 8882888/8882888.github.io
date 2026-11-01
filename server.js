@@ -1003,7 +1003,39 @@ const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layou
 const routeGuides=require('./lib/route-guides')({regions,byPath,pathBySlug,cachedRoadDistance,roadQuote:RoadFareServer.roadQuote,esc,layout,servicePath,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',matchingHistoricalRides});
 // Reuse existing privacy-safe completed ride summaries; never expose raw dispatch notes.
 const blogRideHighlights=historicalRides.filter(x=>['taksong','daeri'].includes(x.service)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개'&&x.fare&&x.date).slice().reverse().slice(0,12);
-const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',rideHighlights:blogRideHighlights});
+const dynamicBlogSections=[
+ {title:'자동차탁송·대리운전 실제 운행후기',description:'완료된 기록만 소개하고 당시 요금과 현재 상담 요금을 구분합니다.',links:[
+  {path:'/reviews/history/?kind=taksong',title:'자동차탁송 완료후기 전체'},
+  {path:'/reviews/history/?kind=daeri',title:'대리운전 완료후기 전체'},
+  {path:'/reviews/taksong/',title:'실제 자동차탁송 후기와 예약·배차 안내'},
+  {path:'/reviews/ride-record-stories/',title:'운행기록 기반 블로그형 후기'},
+  {path:'/routes/reviewed/',title:'출발·도착 구간별 검증 후기'}
+ ]},
+ {title:'전국 지역별 동적 확장 안내',description:'전국 지역별 탁송·대리운전 요금과 배차 조건을 안내합니다.',links:[
+  {path:'/taksong/',title:'전국 자동차탁송'},
+  {path:'/daeri/',title:'전국 대리운전'},
+  {path:'/region/',title:'전국 지역별 서비스 찾기'},
+  {path:'/region/daegu-daeri-taksong/',title:'대구 대리운전·탁송'},
+  ...priorityRegionalPages.slice(0,26).map(p=>({path:servicePath(regions.find(r=>r.full_name===p.region),p.kind),title:p.region+' '+(p.kind==='taksong'?'자동차탁송':'대리운전')}))
+ ]},
+ {title:'설악산·지리산·자전거 종주 차량탁송',description:'산행 출발지, 하산지, 자전거 인증센터의 인수·인계 및 예약 안내입니다.',links:[
+  {path:'/special/seoraksan-transport/',title:'설악산탁송 요금·후기'},
+  {path:'/special/jirisan-transport/',title:'지리산탁송 요금·후기'},
+  {path:'/special/cycling-trail-transport/',title:'자전거길탁송 요금·후기'},
+  {path:'/route-taksong/centers/',title:'종주 인증센터 안내'}
+ ]},
+ {title:'탁송 예상요금·예약·특수 서비스',description:'고객이 출발·도착지와 차량 종류를 정해 상담하기 위한 서비스 안내입니다.',links:[
+  {path:'/fare/',title:'자동차탁송·대리운전 예상요금'},
+  {path:'/service/long-distance-taksong/',title:'장거리 자동차탁송'},
+  {path:'/service/daily-driver/',title:'왕복 일일기사'},
+  {path:'/service/golf/',title:'골프장 기사 서비스'},
+  {path:'/taksong/jeju/',title:'제주도 차량탁송'},
+  {path:'/business/rental-car/',title:'렌트카 차량탁송'},
+  {path:'/business/auction/',title:'경매장 차량탁송'},
+  {path:'/business/export-port/',title:'수출단지·항만 탁송'}
+ ]}
+];
+const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',rideHighlights:blogRideHighlights,dynamicSections:dynamicBlogSections});
 const blogArchive=require('./lib/blog-archive');
 const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout,servicePath,label:seoRegionLabel,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',historicalRides});
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
