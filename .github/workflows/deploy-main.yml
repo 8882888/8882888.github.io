@@ -155,20 +155,28 @@ jobs:
               raise SystemExit('robots.txt missing priority sitemap')
             print('PASS',path)
           for path in ['/sitemap-taksong.xml','/sitemap-daeri.xml']:
-            req=urllib.request.Request(base+path+'?release-check='+os.environ['DEPLOYED_COMMIT'],
-              headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
-            with urllib.request.urlopen(req,timeout=20) as response:
-              xml=response.read().decode('utf-8')
-              if response.status!=200: raise SystemExit(path+' HTTP '+str(response.status))
-            root=ET.fromstring(xml)
-            urls=[node.text for node in root.iter() if node.tag.endswith('loc') and node.text]
-            if len(urls)>500: raise SystemExit(path+' too many discovery URLs: '+str(len(urls)))
-            if len(urls)!=len(set(urls)): raise SystemExit(path+' duplicate sitemap URLs')
-            if '<image:image' in xml or '<image:loc' in xml:
-              raise SystemExit(path+' still exposes generated illustrations as separately crawled images')
-            if path.endswith('taksong.xml') and not any('/taksong/busan/' in u for u in urls):
-              raise SystemExit('Taksong sitemap missing 부산 regional destinations')
-            print('PASS focused discovery',path,len(urls),'URL entries')
+            last_error=''
+            for attempt in range(6):
+              req=urllib.request.Request(base+path+'?release-check='+os.environ['DEPLOYED_COMMIT']+'&attempt='+str(attempt),
+                headers={'Cache-Control':'no-cache, no-store','Pragma':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
+              with urllib.request.urlopen(req,timeout=20) as response:
+                xml=response.read().decode('utf-8')
+                if response.status!=200: raise SystemExit(path+' HTTP '+str(response.status))
+                sitemap_version=response.headers.get('X-Smart24-Sitemap-Format','missing')
+                cache_control=response.headers.get('Cache-Control','missing')
+                cache_age=response.headers.get('Age','missing')
+                cache_status=response.headers.get('CF-Cache-Status',response.headers.get('X-Cache','unknown'))
+              root=ET.fromstring(xml)
+              urls=[node.text for node in root.iter() if node.tag.endswith('loc') and node.text]
+              image_entries='<image:image' in xml or '<image:loc' in xml
+              if len(urls)<=500 and len(urls)==len(set(urls)) and not image_entries and (not path.endswith('taksong.xml') or any('/taksong/busan/' in u for u in urls)):
+                print('PASS focused discovery',path,len(urls),'URL entries; version',sitemap_version)
+                break
+              last_error=path+' served older or invalid sitemap: locs='+str(len(urls))+' image_entries='+str(image_entries)+' signature='+sitemap_version+' cache_control='+cache_control+' age='+cache_age+' cache_status='+cache_status
+              print('RETRY',last_error)
+              if attempt<5: time.sleep(5)
+            else:
+              raise SystemExit(last_error+'; compare site CDN cache and Cloudtype release')
           PYNAVER
       - name: Verify live taksong reviews and search sitemaps
         run: |
