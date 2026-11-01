@@ -133,6 +133,21 @@ async function inspect(route){
  if(!robotsText.includes('Sitemap: '+config.site+priorityRoute))priorityIssues.push('Priority sitemap missing from robots.txt');
  if(!priorityXml||Buffer.byteLength(priorityXml)>10000000)priorityIssues.push('Invalid sitemap size');
  pages.push({route:priorityRoute,status:priorityResponse.status,url:priorityResponse.url,urlCount:priorityUrls.length,issues:priorityIssues,passed:priorityIssues.length===0});
+ const reviewedRoute='/sitemap-reviewed-routes.xml';
+ const reviewedIssues=[];
+ try{
+  const response=await fetch(new URL(reviewedRoute,base),{signal:AbortSignal.timeout(15000),headers:{'user-agent':'Smart24-SEO-Audit/1.1'}});
+  const xml=await response.text();
+  const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
+  if(!response.ok)reviewedIssues.push('HTTP '+response.status);
+  if(!/<urlset\b/.test(xml))reviewedIssues.push('Invalid reviewed sitemap XML');
+  for(const route of ['/reviews/taksong/','/reviews/verified/','/reviews/ride-record-stories/','/routes/reviewed/']){
+   if(!urls.includes(config.site+route))reviewedIssues.push('Missing verified review hub '+route);
+  }
+  if(new Set(urls).size!==urls.length)reviewedIssues.push('Duplicate reviewed sitemap URLs');
+  if(!robotsText.includes('Sitemap: '+config.site+reviewedRoute))reviewedIssues.push('Reviewed sitemap missing from robots.txt');
+  pages.push({route:reviewedRoute,status:response.status,urlCount:urls.length,issues:reviewedIssues,passed:reviewedIssues.length===0});
+ }catch(error){pages.push({route:reviewedRoute,passed:false,issues:[String(error)]})}
  const sitemapCache=new Map();
  for(const kind of ['daeri','taksong']){
   const route='/sitemap-'+kind+'.xml';
