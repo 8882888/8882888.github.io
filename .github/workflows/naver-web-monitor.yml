@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - scripts/naver-web-monitor.js
+      - scripts/seo-audit.js
       - tests/naver-web-monitor.test.js
       - .github/workflows/naver-web-monitor.yml
       - index.html
