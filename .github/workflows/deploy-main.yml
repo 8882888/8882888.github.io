@@ -124,6 +124,24 @@ jobs:
             if attempt==17:
               raise SystemExit('Latest landing pages not deployed or stale: '+', '.join(missing))
             time.sleep(5)
+          # Confirm the deployed server is reading the same current HTML files.
+          import json
+          probe=urllib.request.Request(base+'/health/seo.json?release-check='+os.environ['DEPLOYED_COMMIT'],
+            headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
+          with urllib.request.urlopen(probe,timeout=15) as response:
+            data=json.loads(response.read().decode('utf-8'))
+            if response.status!=200: raise SystemExit('SEO freshness probe HTTP '+str(response.status))
+          expected_titles={
+            'seoraksan':'설악산탁송 요금·실제후기',
+            'jirisan':'지리산탁송 요금·실제후기',
+            'cycling':'자전거길탁송 요금·실제후기'
+          }
+          for key,phrase in expected_titles.items():
+            if phrase not in data.get('pages',{}).get(key,{}).get('h1',''):
+              raise SystemExit('Live source is outdated: '+key)
+          if not all(x.get('hasPhone') for x in data.get('pages',{}).values()):
+            raise SystemExit('SEO freshness probe missing phone on at least one page')
+          print('PASS live source file freshness probe')
           for path in ['/robots.txt','/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml']:
             req=urllib.request.Request(base+path+'?release-check='+os.environ['DEPLOYED_COMMIT'],
               headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
