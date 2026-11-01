@@ -492,9 +492,21 @@ function gijangRoadTaksongGuide(r,kind){
  }).join('');
  return '<section id="gijang-road-taksong-guide"><h2>기장군탁송: 기장읍·정관읍·일광읍 출발 로드탁송</h2><p>이 안내는 부산 기장군에서 기사가 차량을 직접 운전해 목적지로 이동하는 자동차탁송 상담입니다. 자동차를 운송차량 위에 싣는 카캐리어·셀프카 운송이나 화물을 싣는 용달 운송과 방식이 다릅니다. 차량 운행이 불가능하거나 적재 운송이 필요한 경우는 별도 운송 방식을 확인해야 합니다.</p><p>기장읍의 주차장·상가 출입, 정관읍의 아파트 주차장 인수, 일광읍의 해안·숙박시설 차량 인계처럼 실제 출발 장소에 따라 기사 접근 조건이 달라집니다. 특정 장소에 상주 기사가 있다는 뜻은 아닙니다.</p><h3>기장군 안에서 출발 위치 선택</h3><ul>'+links+'</ul><h3>기장군 로드탁송 요금 확인</h3><p>출발지, 도착지, 운행 시간, 차종, 차량 운행 상태, 통행료 및 기사 복귀 조건에 따라 참고요금과 최종 견적이 달라집니다. 정관·일광·기장읍 간 이동도 상세 주소를 기준으로 상담합니다.</p><p><a href="/fare/?service=taksong&amp;from='+encodeURIComponent(r.full_name)+'">기장군 출발 예상요금 조회</a> · <a href="/reviews/history/?kind=taksong&amp;q='+encodeURIComponent('기장')+'">기장 관련 기존 운행기록 검색</a> · <a href="tel:18114294">1811-4294 상담</a></p><p>운행기록 검색에 표시되지 않는 구간을 실제 완료후기로 주장하지 않습니다.</p></section>';
 }
+function busanDistrictRoadGuide(r,kind){
+ if(kind!=='taksong')return '';
+ const data={
+  '부산광역시 해운대구':['해운대구탁송','우동·중동·좌동','숙박시설과 센텀시티 상가 주차장 출입구를 구분하고, 인수 담당자의 차량 키 전달 시각을 확인합니다.'],
+  '부산광역시 강서구':['강서구탁송','명지동·녹산동·대저동','산업시설과 김해공항 주변은 일반 도심 주차장과 출입 조건이 달라 인수 가능 구역을 먼저 확인합니다.'],
+  '부산광역시 사하구':['사하구탁송','하단동·다대동·장림동','공업사·정비시설 출고 시간과 도착지 차량 수령 담당자, 기사 복귀 가능 조건을 확인합니다.']
+ };
+ const info=data[r.full_name];if(!info)return '';
+ const [keyword,places,detail]=info;
+ const descendants=(childrenByParent.get(r.slug)||[]).filter(x=>['동','읍','면'].includes(x.level)).slice(0,9).map(x=>'<li><a href="'+servicePath(x,'taksong')+'">'+esc(x.name)+'탁송 지역 안내</a></li>').join('');
+ return '<section id="busan-district-road-guide"><h2>'+esc(keyword)+' · '+esc(places)+' 로드탁송 예약</h2><p>기사가 운행 가능한 고객 차량을 직접 운전해 이동하는 자동차탁송 안내입니다. 캐리어·셀프카 차량 적재 운송이나 용달 화물 운송과 구분됩니다. 차량 운행 불가 상태라면 적재 운송 여부를 별도로 확인해야 합니다.</p><p>'+esc(detail)+'</p><ul>'+descendants+'</ul><p><a href="/fare/?service=taksong&amp;from='+encodeURIComponent(r.full_name)+'">출발지·도착지별 예상요금</a> · <a href="/reviews/history/?kind=taksong&amp;q='+encodeURIComponent(r.name.replace(/구$/,''))+'">기존 운행기록 검색</a> · <a href="tel:18114294">1811-4294 상담</a></p><p>안내 지역 모두에 완료 운행내역이나 상주 기사가 있다는 뜻은 아닙니다.</p></section>';
+}
 function priorityLocalGuide(r,kind){
  const info=priorityByKey.get(kind+'|'+r.full_name);
- if(!info)return '';
+ if(!info)return busanDistrictRoadGuide(r,kind);
  const label=kind==='daeri'?'대리운전':'자동차탁송';
  return gijangRoadTaksongGuide(r,kind)+'<section id="priority-region-guide"><h2>'+esc(r.name)+' '+label+' 상세 준비사항: '+esc(info.topic)+'</h2><p>'+esc(info.detail)+'</p><p>이 내용은 지역별 예약 준비 안내이며 해당 구간의 운행을 완료했다는 주장이 아닙니다. 실제 운행내역은 출발지와 도착지가 확인된 자료만 별도로 연결합니다.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">이 지역 출발 예상요금 조회</a> · <a href="tel:18114294">예약 상담 '+PHONE+'</a></p></section>';
 }
