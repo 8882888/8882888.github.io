@@ -14,6 +14,8 @@ async function inspect(route){
  try{
   const response=await fetch(url,{signal:AbortSignal.timeout(15000),headers:{'user-agent':'Smart24-SEO-Audit/1.1'}});
   out.status=response.status;out.finalUrl=response.url;
+  out.cacheControl=response.headers.get('cache-control')||'';
+  if(['/robots.txt','/sitemap.xml'].includes(route)&&!/no-cache|no-store|must-revalidate/i.test(out.cacheControl))issues.push('Crawler discovery response may be stale: missing cache revalidation header');
   out.xRobotsTag=response.headers.get('x-robots-tag')||'';
   if(/\bnoindex\b/i.test(out.xRobotsTag))issues.push('X-Robots-Tag noindex');
   if(new URL(response.url).pathname!==url.pathname)issues.push('Unexpected redirect');
