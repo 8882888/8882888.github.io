@@ -1050,8 +1050,9 @@ if(pathname==='/favicon.ico'){
  }
  return faviconPngPromise.then(buf=>{
   if(buf){res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});return res.end(buf)}
-  const fallback=fs.readFileSync(path.join(ROOT,'assets/smart24-business-card.svg'));
-  res.writeHead(200,{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=3600','x-content-type-options':'nosniff'});res.end(fallback);
+  // Keep favicon.ico a real icon even if the SVG-to-PNG renderer is unavailable.
+  const fallback=fs.readFileSync(path.join(ROOT,'favicon.ico'));
+  res.writeHead(200,{'content-type':'image/x-icon','cache-control':'public, max-age=3600','x-content-type-options':'nosniff'});res.end(fallback);
  });
 }
 const hubCardMatch=pathname.match(/^\/assets\/smart24-(daeri|taksong)-brand\.png$/);
