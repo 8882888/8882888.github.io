@@ -92,6 +92,51 @@ jobs:
                   raise SystemExit('Deployment accepted, but live HTML/compact counters/own-visit opt-out did NOT reflect the new release; investigate Cloudtype rollout or cache.')
               time.sleep(5)
           PYVERIFY
+      - name: Verify latest five Naver-focused landing pages
+        env:
+          DEPLOYED_COMMIT: ${{ github.sha }}
+        run: |
+          python3 - <<'PYNAVER'
+          import os,time,urllib.request,xml.etree.ElementTree as ET
+          base='https://jeongukdaeri.kr'
+          expected={
+            '/special/seoraksan-transport/':'<h1>설악산탁송 요금·실제후기',
+            '/special/jirisan-transport/':'<h1>지리산탁송 요금·실제후기',
+            '/special/cycling-trail-transport/':'<h1>자전거길탁송 요금·실제후기',
+            '/reviews/taksong/':'completed-case-conversion-first-202611',
+            '/region/daegu-daeri-taksong/':'daegu-route-real-review-first-202611',
+          }
+          for attempt in range(18):
+            missing=[]
+            for path,text in expected.items():
+              try:
+                req=urllib.request.Request(base+path+'?release-check='+os.environ['DEPLOYED_COMMIT'],
+                  headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
+                with urllib.request.urlopen(req,timeout=12) as response:
+                  html=response.read().decode('utf-8')
+                  if response.status!=200 or text not in html or '1811-4294' not in html:
+                    missing.append(path)
+              except Exception as e:
+                missing.append(path+': '+str(e))
+            if not missing:
+              print('PASS five latest customer-facing landing pages')
+              break
+            if attempt==17:
+              raise SystemExit('Latest landing pages not deployed or stale: '+', '.join(missing))
+            time.sleep(5)
+          for path in ['/robots.txt','/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml']:
+            req=urllib.request.Request(base+path+'?release-check='+os.environ['DEPLOYED_COMMIT'],
+              headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
+            with urllib.request.urlopen(req,timeout=15) as response:
+              payload=response.read().decode('utf-8')
+              if response.status!=200: raise SystemExit(path+' HTTP '+str(response.status))
+            if path.endswith('.xml'):
+              ET.fromstring(payload)
+              if '/reviews/taksong/' not in payload: raise SystemExit(path+' missing taksong evidence URL')
+            elif 'Sitemap: '+base+'/sitemap-priority.xml' not in payload:
+              raise SystemExit('robots.txt missing priority sitemap')
+            print('PASS',path)
+          PYNAVER
       - name: Verify live taksong reviews and search sitemaps
         run: |
           python3 - <<'PYSEO'
