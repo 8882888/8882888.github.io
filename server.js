@@ -271,7 +271,7 @@ const serviceCardArt={daeri:path.join(ROOT,'assets/smart24-daeri-brand.webp'),ta
 const serviceCardData=Object.fromEntries(Object.entries(serviceCardArt).map(([kind,file])=>[kind,fs.readFileSync(file).toString('base64')]));
 function serviceBrand(kind){return kind==='daeri'?'스마트전국대리운전':'스마트24시전국탁송'}
 const cardSvg=(label,kind)=>{
- const full=String(label||'전국').trim(),place=label?shortPlace(full.split(/\s+/).at(-1)):'';
+ const full=String(label||'전국').trim(),place=label?full.split(/\s+/).map(shortPlace).join(' '):'';
  const prefix=place?place+' ':'';
  if(kind){
   const brand=kind==='taksong'?'스마트탁송':'스마트대리운전',heading=esc(prefix+brand),size=Math.min(48,Math.floor(850/(prefix.length+brand.length)));
@@ -289,7 +289,7 @@ const regionalCardPngs=new Map();
 function regionalCardPng(r,kind,topic){
  const key=r.slug+(kind?'-'+kind:'');
  if(regionalCardPngs.has(key))return regionalCardPngs.get(key);
- const promise=renderCardArtwork(r.full_name,kind).catch(err=>{regionalCardPngs.delete(key);throw err});
+ const promise=renderCardArtwork(seoRegionLabel(r),kind).catch(err=>{regionalCardPngs.delete(key);throw err});
  regionalCardPngs.set(key,promise);
  if(regionalCardPngs.size>16)regionalCardPngs.delete(regionalCardPngs.keys().next().value);
  return promise;
