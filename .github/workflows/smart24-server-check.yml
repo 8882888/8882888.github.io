@@ -66,6 +66,12 @@ jobs:
           # Dynamic blog must show genuine automatically generated ride-review links.
           curl --fail --show-error --output /tmp/smart24-blog.html http://127.0.0.1:3000/blog/
           grep -q 'id="automated-real-ride-blog-reviews"' /tmp/smart24-blog.html
+          grep -q 'id="dynamic-blog-service-directory"' /tmp/smart24-blog.html
+          grep -q '설악산탁송 요금·후기' /tmp/smart24-blog.html
+          grep -q '지리산탁송 요금·후기' /tmp/smart24-blog.html
+          grep -q '자전거길탁송 요금·후기' /tmp/smart24-blog.html
+          grep -q '/fare/' /tmp/smart24-blog.html
+          grep -q '/region/daegu-daeri-taksong/' /tmp/smart24-blog.html
           grep -Eq 'href="/reviews/history/excel-[0-9]{4}/"' /tmp/smart24-blog.html
           blog_review_path=$(grep -oE 'href="/reviews/history/excel-[0-9]{4}/"' /tmp/smart24-blog.html | head -1 | cut -d '"' -f2)
           test -n "$blog_review_path"
