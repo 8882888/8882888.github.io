@@ -161,6 +161,13 @@ async function inspect(route){
    if(headings.length!==1)issues.push('Expected one H1');
    if(/noindex/i.test(robots?.content||''))issues.push('Page has noindex');
    if(route.startsWith('/special/')&&!/탁송/.test(headings[0]||''))issues.push('Taksong intent missing in H1');
+   const expectedH1={
+    '/special/seoraksan-transport/':'설악산탁송 요금·실제후기',
+    '/special/jirisan-transport/':'지리산탁송 요금·실제후기',
+    '/special/cycling-trail-transport/':'자전거길탁송 요금·실제후기'
+   };
+   if(expectedH1[route]&&!String(headings[0]||'').includes(expectedH1[route]))issues.push('Stale deployed H1: '+String(headings[0]||''));
+
    if(!html.includes('1811-4294'))issues.push('Service phone missing');
    pages.push({route:route+'#naver-yeti',status:response.status,issues,passed:issues.length===0});
   }catch(error){pages.push({route:route+'#naver-yeti',passed:false,issues:[String(error)]})}
