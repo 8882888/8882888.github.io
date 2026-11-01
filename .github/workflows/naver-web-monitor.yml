@@ -14,6 +14,12 @@ on:
       - server.js
       - lib/route-keyword-pages.js
       - data/seo-pages.json
+      - service/taksong/index.html
+      - reviews/taksong/index.html
+      - sitemap.xml
+      - robots.txt
+      - route-taksong/index.html
+      - region/*-daeri-taksong/index.html
       - .github/scripts/indexnow.js
 permissions:
   contents: read
