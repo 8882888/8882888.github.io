@@ -1,6 +1,7 @@
 'use strict';
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const ROOT=__dirname,PORT=Number(process.env.PORT||3000),BRAND='스마트전국대리운전 스마트24탁송',PHONE='1811-4294';
+const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFileSync(__filename)).digest('hex');
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1161,6 +1162,8 @@ const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 // Public diagnostics for deployment freshness; reports source HTML only, not Naver indexing.
 if(pathname==='/health/seo.json'){
+ res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
+ res.setHeader('surrogate-control','no-store');
  const files={
   seoraksan:'special/seoraksan-transport/index.html',
   jirisan:'special/jirisan-transport/index.html',
@@ -1180,6 +1183,8 @@ if(pathname==='/health/seo.json'){
 }
 // Human-readable Cloudtype deployment proof. This page is deliberately not indexable.
 if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){
+ res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
+ res.setHeader('surrogate-control','no-store');
  const rules=['/','/taksong/','/daeri/','/region/'];
  const sourceLinks=[...priorityBlogLinksByKey.values()].reduce((sum,v)=>sum+v.ids.length,0);
  const fingerprint=require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'server.js'))).digest('hex').slice(0,16);
@@ -1343,7 +1348,11 @@ if(pathname==='/api/public-rides'){
  const safe=Array.isArray(rows)?rows.filter(r=>r.status==='종료'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&[r.departure,r.destination,r.fare].every(v=>typeof v==='string'&&v.length>0&&v.length<100)).map(r=>({date:r.date,departure:r.departure,destination:r.destination,fare:r.fare})):[];
  return respond(res,200,JSON.stringify(safe),'application/json; charset=utf-8');
 }
-if(pathname==='/health')return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy',release:'smart24-regional-guides-20261024',regionalGuideAreas:regionalIntentAreas.length,regionalGuides:regionalIntentAreas.length*4,keywordAutomation:{stored:keywordEngine.summary.stored,collected:keywordEngine.summary.collected,updatedAt:keywordEngine.summary.updatedAt},features:{keywordAutoLinking:true,pngBusinessCards:true,cardClickToCall:true,publicRideHistory:true,hideDepartureTime:true}}), 'application/json; charset=utf-8');
+if(pathname==='/health'){
+ res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy',release:'sha256-'+DEPLOY_SHA256.slice(0,16),regionalGuideAreas:regionalIntentAreas.length,regionalGuides:regionalIntentAreas.length*4,keywordAutomation:{stored:keywordEngine.summary.stored,collected:keywordEngine.summary.collected,updatedAt:keywordEngine.summary.updatedAt},features:{keywordAutoLinking:true,pngBusinessCards:true,cardClickToCall:true,publicRideHistory:true,hideDepartureTime:true}}), 'application/json; charset=utf-8');
+}
 if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const all=[...publicRideById.values()].sort((a,b)=>b.date.localeCompare(a.date)||a.publicId.localeCompare(b.publicId));
