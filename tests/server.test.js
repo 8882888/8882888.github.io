@@ -320,6 +320,36 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
       assert.ok(guideHubHtml.includes('href="'+path+'"'),'guide hub links article '+path);
     }
   }
+  // Current regional daeri blog-like articles use real prior source links, per-region contact numbers,
+  // original artwork and individual indexable canonicals on both production hosts.
+  const recreationSlugs=["sanjeong-lake","baegun-valley","jangheung-valley","namhansanseong","gapyeong-hyeonri","gapyeong-seorak","ilyeong-valley","bukhansan-valley","buyeo-daeri","daegu-daeri"];
+  assert.equal(recreationSlugs.length,10);
+  assert.equal(new Set(recreationSlugs).size,10);
+  const recreationIndex=await get('/blog/daeri-regions/'),recreationHubHtml=await recreationIndex.text();
+  assert.equal(recreationIndex.status,200);
+  assert.ok(recreationHubHtml.includes('rel="canonical" href="https://jeongukdaeri.kr/blog/daeri-regions/"'));
+  assert.ok(seoHome.includes('href="/blog/daeri-regions/"'),'homepage links the published local driving editorial index');
+  const recreationPriorityXml=await (await get('/sitemap-priority.xml')).text();
+  const recreationMainXml=await (await get('/sitemap.xml')).text();
+  for(const [idx,slug] of recreationSlugs.entries()){
+    const route='/blog/daeri-regions/'+slug+'/',poster='/blog/daeri-regions/media/'+slug+'.svg';
+    const response=await get(route),html=await response.text();
+    const pic=await get(poster),svg=await pic.text();
+    assert.equal(response.status,200,'published local driving editorial '+route);
+    assert.equal(pic.status,200,'unique region artwork '+poster);
+    assert.ok(svg.startsWith('<svg')&&svg.includes('010-4072-1577'),'locality image has direct phone '+slug);
+    assert.ok(html.includes('src="'+poster+'"')&&html.includes('application/ld+json'),'SEO image plus BlogPosting '+slug);
+    assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),'permalink canonical '+slug);
+    assert.ok(html.includes('010-4072-1577'),'regional article direct phone '+slug);
+    assert.ok(html.includes((slug==='jangheung-valley'||slug==='buyeo-daeri')?'1811-0963':'1877-3015'),'correct per-region published blog phone '+slug);
+    assert.ok((html.match(/<h1[ >]/g)||[]).length===1,'one H1 per article '+slug);
+    assert.ok(html.includes('새로운 완료 후기')||html.includes('완료후기를 만들어내지')||html.includes('운행완료 기록은 추가하지'),'no fabricated reviews '+slug);
+    assert.ok(recreationHubHtml.includes('href="'+route+'"'),'regional index links article '+slug);
+    assert.ok(recreationMainXml.includes('https://example.com'+route),'main sitemap '+slug);
+    assert.ok(recreationPriorityXml.includes('https://example.com'+route),'priority sitemap '+slug);
+  }
+  assert.ok(recreationPriorityXml.includes('https://example.com/blog/daeri-regions/'));
+  assert.ok(recreationMainXml.includes('https://example.com/blog/daeri-regions/'));
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>전국자동차탁송·장거리탁송·24시탁송 | 스마트24 1811-4294</title>'),'homepage title leads with nationwide vehicle delivery and 24h service');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
