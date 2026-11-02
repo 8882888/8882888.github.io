@@ -351,9 +351,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(recreationPriorityXml.includes('https://example.com/blog/daeri-regions/'));
   assert.ok(recreationMainXml.includes('https://example.com/blog/daeri-regions/'));
   // Search-result titles and site identity must present a single Korean brand.
-  assert.ok(seoHome.includes('<title>전국자동차탁송·장거리탁송·24시탁송 | 스마트24 1811-4294</title>'),'homepage title leads with nationwide vehicle delivery and 24h service');
+  assert.ok(seoHome.includes('<title>'+require('../data/seo-pages.json').pages.find(x=>x.path==='/').title+'</title>'),'homepage title matches the centrally configured SEO title');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
-  assert.ok(seoHome.includes('<h1>전국자동차탁송·장거리탁송·24시탁송'),'visible H1 matches the title');
+  assert.ok(seoHome.includes('<h1>전국자동차탁송·지역별탁송·전국대리운전'),'visible H1 communicates nationwide, region and driver services');
   const schemaNodes=[...seoHome.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m=>JSON.parse(m[1]));
   const homeWebsite=schemaNodes.find(x=>x['@type']==='WebSite');
   assert.ok(homeWebsite,'homepage declares WebSite JSON-LD');
