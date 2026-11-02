@@ -697,7 +697,7 @@ async function servicePage(r,kind){
   '<p>차량 인수 장소와 도착지·차종·희망 날짜를 확인한 뒤 배차 가능 여부와 현재 요금을 안내합니다. 기존 완료기록의 당시 요금은 현재 확정 견적이 아닙니다.</p>'+
   '<nav aria-label="'+esc(preciseLocality)+'탁송 고객 바로가기" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px">'+
   '<a style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:10px;background:#0755a3;color:#fff;text-decoration:none;padding:10px;font-weight:800" href="/fare/?service=taksong&amp;from='+encodeURIComponent(name)+'">지역별 예상요금 조회</a>'+
-  '<a style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:10px;background:#eaf2fc;color:#143c72;text-decoration:none;padding:10px;font-weight:800" href="/reviews/history/?kind=taksong">실제 완료 운행기록</a>'+
+  '<a style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:10px;background:#eaf2fc;color:#143c72;text-decoration:none;padding:10px;font-weight:800" href="/reviews/history/?kind=taksong&amp;q='+encodeURIComponent(preciseLocality)+'">이 지역 실제 운행기록 검색</a>'+
   '<a style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:10px;background:#fff1af;color:#17263e;text-decoration:none;padding:10px;font-weight:800" href="tel:18114294">☎ 상담 1811-4294</a>'+
   '<a style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:10px;background:#fee500;color:#191919;text-decoration:none;padding:10px;font-weight:800" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 상담</a></nav>'+
   '<h3>'+esc(preciseLocality)+'탁송 자주 묻는 질문</h3>'+
