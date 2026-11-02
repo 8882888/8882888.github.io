@@ -535,7 +535,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(referrerResult.headers.get('location'),'/special/seoraksan-transport/');
   const nationwideHome=await get('/');
   assert.equal(nationwideHome.status,200,'plain homepage remains nationwide');
-  assert.ok((await nationwideHome.text()).includes('id="mobile-direct-image-priority"'),'ordinary homepage keeps nationwide hero');
+  const nationwideHtml=await nationwideHome.text();
+  assert.ok(nationwideHtml.includes('id="mobile-direct-image-priority"'),'ordinary homepage retains mountain direct-view mobile hero');
+  assert.ok(nationwideHtml.indexOf('<body><section id="mobile-direct-image-priority"')>=0,'mobile poster is placed before all navigation');
+  const firstMobileHero=nationwideHtml.slice(nationwideHtml.indexOf('id="mobile-direct-image-priority"'),nationwideHtml.indexOf('</section>',nationwideHtml.indexOf('id="mobile-direct-image-priority"')));
+  assert.ok(firstMobileHero.includes('src="/assets/seoraksan-taksong-original-fare.png"'),'Seoraksan original fare first');
+  assert.ok(firstMobileHero.includes('src="/assets/jirisan-taksong-original-fare.png"'),'Jirisan original fare in same direct-view area');
+  assert.ok(!firstMobileHero.includes('smart24-business-card-inline.webp'),'generic brand card no longer blocks mobile mountain posters');
+  const specialHub=await (await get('/special/')).text();
+  assert.ok(specialHub.includes('<body><section aria-label="설악산·지리산 원본 요금표 우선 안내"'),'special category menu follows original poster');
+  assert.ok(specialHub.indexOf('src="/assets/seoraksan-taksong-original-fare.png"')<specialHub.indexOf('<header>'),'Seoraksan original poster before special category menu');
   // All legal-area levels share one on-demand image generator; never need hand-authored 10-image batches.
   const imageSamples=[
    regions.find(r=>r.full_name==='경상남도 창원시'),
