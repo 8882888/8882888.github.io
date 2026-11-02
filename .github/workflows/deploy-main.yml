@@ -142,7 +142,7 @@ jobs:
               raise SystemExit('Mobile mountain landing mismatch: '+keyword+' -> '+landing)
             image_req=urllib.request.Request(base+picture+'?release-check='+os.environ['DEPLOYED_COMMIT'],headers={'Cache-Control':'no-cache'})
             with urllib.request.urlopen(image_req,timeout=15) as image_response:
-              if image_response.status!=200 or image_response.read(8)!=b'\\x89PNG\\r\\n\\x1a\\n':
+              if image_response.status!=200 or image_response.read(8)!=bytes.fromhex('89504e470d0a1a0a'):
                 raise SystemExit('Mountain original fare PNG unavailable: '+picture)
             print('PASS mountain mobile route + original fare poster',keyword)
           # Confirm the deployed server is reading the same current HTML files.
