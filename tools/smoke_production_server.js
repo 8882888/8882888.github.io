@@ -70,6 +70,15 @@ async function main(){
     assert(String(r.headers['cache-control']||'').includes('no-store'),'Health report must not be cached');
    }
   }
+  // The nationwide taksong hub must link directly to the weakly discovered
+  // metropolitan and Gyeongnam canonical pages, not only to the homepage.
+  const taksongHub=await request(port,'/taksong/');
+  assert.equal(taksongHub.status,200,'nationwide taksong hub');
+  for(const pathname of ['/taksong/gwangju/','/taksong/daejeon/',
+                         '/taksong/gyeongnam/changwon-si/','/taksong/gyeongnam/gimhae-si/']){
+    assert(taksongHub.body.includes('href="'+pathname+'"'),
+      'Weakly discovered local landing must have a direct national hub link: '+pathname);
+  }
   // Twenty concrete high-value routes. Failing any one prevents a bad Cloudtype redeploy.
   // The ten curated region routes must render directly grounded Naver original links.
   const priorityRoutes=[
