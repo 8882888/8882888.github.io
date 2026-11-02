@@ -46,8 +46,9 @@ async function main(){
   const diagnostic=JSON.parse(json.body);
   assert(String(json.headers['cache-control']||'').includes('no-store'),'SEO health JSON must not be cacheable');
   assert.equal(diagnostic.priority_region_count,expected.length,'production dynamic priority region count');
-  assert.equal(diagnostic.curated_source_groups,10);
-  assert.equal(diagnostic.curated_source_links,20);
+  const curatedSources=JSON.parse(fs.readFileSync('data/priority-blog-links.json','utf8')).pages;
+  assert.equal(diagnostic.curated_source_groups,curatedSources.length);
+  assert.equal(diagnostic.curated_source_links,curatedSources.reduce((count,item)=>count+item.ids.length,0));
   assert.equal(diagnostic.blog_source_count,630);
   for(const name of ['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js'])
    assert.match(diagnostic.deployment_hashes[name],/^[0-9a-f]{64}$/);
@@ -100,6 +101,16 @@ async function main(){
     assert(page.body.includes('id="local-naver-originals"'),'existing original source links missing: '+url);
     assert(page.body.includes('https://blog.naver.com/wjdtnr4757/'),'external Naver original URL missing: '+url);
    }
+  }
+  const newRegionalBlogPages=curatedSources.filter(item=>item.kind==='taksong'&&item.path);
+  assert.equal(newRegionalBlogPages.length,10,'exactly 10 newly source-linked region service pages');
+  for(const entry of newRegionalBlogPages){
+    const page=await request(port,entry.path);
+    assert.equal(page.status,200,'new regional blog landing HTTP: '+entry.path);
+    assert(page.body.includes('rel="canonical" href="https://jeongukdaeri.kr'+entry.path+'"'),'new region canonical missing: '+entry.path);
+    assert(!/name="robots" content="[^"]*noindex/i.test(page.body),'new region accidentally noindex: '+entry.path);
+    assert(page.body.includes(entry.handoff),'regional pickup advice missing: '+entry.path);
+    for(const id of entry.ids)assert(page.body.includes('https://blog.naver.com/wjdtnr4757/'+id),'published Naver link absent: '+id);
   }
   const trailingSlashRedirects=[
    ['/region?service=taksong','/region/?service=taksong'],
