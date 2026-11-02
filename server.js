@@ -681,8 +681,9 @@ async function servicePage(r,kind){
  const riContext=r.level==='리'?' 마을 출발 위치와 기사 접근·복귀 여건을 확인합니다.':'';
  const provinceSpecificGuide=scope==='province'&&provinceProfile?(priorityByKey.get(kind+'|'+r.full_name)?.detail||provinceProfile[1]):'';
  const priorityFirstSentence=priorityMeta?priorityMeta.detail.split(/[.!?。]/)[0].trim():'';
+ const concisePrioritySentence=r.full_name==='울산광역시'&&kind==='taksong'?'지역별 인수·인계 위치와 출고 시각, 기사 복귀를 확인합니다':priorityFirstSentence;
  const focusedDesc=priorityMeta
-  ?keyword+' · '+priorityMeta.topic+'. '+priorityFirstSentence+'. 예약상담 '+PHONE+'.'
+  ?keyword+' · '+priorityMeta.topic+'. '+concisePrioritySentence+'. 예약상담 '+PHONE+'.'
   :name+' '+(kind==='taksong'?'자동차탁송':'대리운전')+' 예상요금·예약 안내. '+(provinceSpecificGuide?provinceSpecificGuide+' ':'')+(kind==='taksong'?'차량 인수·인계 장소, 차종, 이동 시간과 기사 접근·복귀 여건을 확인합니다.':'출발·도착지, 동승·경유·대기 여부와 기사 복귀 여건을 확인합니다.')+' 최종요금과 배차 가능 여부는 상담 후 안내합니다. '+PHONE+'.'+riContext;
  const jejuSearchPage=kind==='taksong'&&r.name==='제주특별자치도';
  const searchTitle=jejuSearchPage?'제주도탁송 · 차량선적·실제후기':focusedTitle;
