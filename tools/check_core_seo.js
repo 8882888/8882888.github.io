@@ -48,16 +48,16 @@ for(const x of ['staticOriginalSourceSection','regionDirectOriginalLinks','real-
  check(server.includes(x),'Cloudtype source/sitemap wiring: '+x);
 }
 let sitemap=read('sitemap.xml');
-if (/<sitemapindex\\b/.test(sitemap)) {
+if (/<sitemapindex\b/.test(sitemap)) {
   const index=sitemap;
-  const children=[...index.matchAll(/<loc>(https:\/\/jeongukdaeri\\.kr\/sitemap-\\d+\\.xml)<\/loc>/g)];
+  const children=[...index.matchAll(/<loc>(https:\/\/jeongukdaeri\.kr\/sitemap-\d+\.xml)<\/loc>/g)];
   check(children.length>0,'generated sitemap index has no child sitemap references');
-  sitemap+='\\n'+children.map(match=>{
+  sitemap+='\n'+children.map(match=>{
     const pathname=new URL(match[1]).pathname.slice(1);
-    check(/^sitemap-\\d+\\.xml$/.test(pathname),'unsafe generated sitemap path '+pathname);
+    check(/^sitemap-\d+\.xml$/.test(pathname),'unsafe generated sitemap path '+pathname);
     check(fs.existsSync(pathname),'generated sitemap child missing '+pathname);
     return read(pathname);
-  }).join('\\n');
+  }).join('\n');
 }
 for(const route of ['/설악산탁송/','/지리산탁송/','/blog/archive/','/service/taksong/']){
  check(sitemap.includes('https://jeongukdaeri.kr'+route),'static sitemap route '+route);
