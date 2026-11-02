@@ -516,6 +516,26 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const samples=[regions[0],regions.find(r=>r.full_name==='서울특별시 강남구'),regions.at(-1)].filter(Boolean);
   for(const r of samples){const res=await get('/region/'+r.slug+'/');assert.equal(res.status,200,r.slug);const html=await res.text();assert.ok(html.includes(r.name));assert.ok(html.includes('대리운전'));assert.ok(html.includes('자동차탁송'));assert.ok(html.includes('1811-4294'));assert.ok(html.includes('일일기사'))}
   const missing=await get('/region/not-a-real-region/');assert.equal(missing.status,404);
+  // A mobile mountain keyword must open its own original fare poster, not the generic Smart24 card.
+  const mountainQueries=[
+   ['설악산탁송','seoraksan'],['설악산 종주 탁송','seoraksan'],['한계령소공원탁송','seoraksan'],
+   ['지리산탁송','jirisan'],['지리산 종주 탁송','jirisan'],['성삼재중산리탁송','jirisan']
+  ];
+  for(const [keyword,mountain] of mountainQueries){
+    const result=await get('/?q='+encodeURIComponent(keyword));
+    assert.equal(result.status,200,'search redirects to dedicated page: '+keyword);
+    assert.ok(result.url.includes('/special/'+mountain+'-transport/'),'no generic homepage for mountain keyword: '+keyword);
+    const body=await result.text();
+    assert.ok(body.startsWith('<!doctype html>')&&body.includes('<body><figure id="original-mountain-fare-visual"'),'mountain original image first: '+keyword);
+    assert.ok(body.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct mountain PNG: '+keyword);
+    assert.ok(!body.includes('id="mobile-direct-image-priority"'),'no homepage Smart24 hero: '+keyword);
+  }
+  const referrerResult=await fetch('http://127.0.0.1:'+port+'/',{headers:{referer:'https://search.naver.com/search.naver?query='+encodeURIComponent('설악산탁송')}},redirect:'manual');
+  assert.equal(referrerResult.status,302,'available search referrer resolves to image-first Seoraksan page');
+  assert.equal(referrerResult.headers.get('location'),'/special/seoraksan-transport/');
+  const nationwideHome=await get('/');
+  assert.equal(nationwideHome.status,200,'plain homepage remains nationwide');
+  assert.ok((await nationwideHome.text()).includes('id="mobile-direct-image-priority"'),'ordinary homepage keeps nationwide hero');
   // All legal-area levels share one on-demand image generator; never need hand-authored 10-image batches.
   const imageSamples=[
    regions.find(r=>r.full_name==='경상남도 창원시'),
