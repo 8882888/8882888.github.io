@@ -44,4 +44,13 @@ const legacy=legacyDriverEvidence([
 ]);
 assert.equal(legacy.length,2,'detect duplicate nationwide driver URLs in returned web results');
 assert.deepEqual(legacy.map(x=>x.position),[1,5]);
+
+const {selectQueries}=require('../scripts/naver-web-monitor');
+const planned=selectQueries(new Date('2026-11-02T00:00:00Z'));
+assert.equal(planned.length,20,'daily Naver checks use 10 priority and 10 rotating keywords');
+assert.equal(new Set(planned).size,planned.length,'all daily Naver queries are distinct');
+for(const key of ['설악산탁송','지리산탁송','오색탁송','한계령탁송','부산탁송','대구탁송','창원탁송','기장군탁송'])
+ assert.ok(planned.includes(key),'always check critical route: '+key);
+const nextDay=selectQueries(new Date('2026-11-03T00:00:00Z'));
+assert.ok(nextDay.some(x=>!planned.includes(x)),'nonpriority checks must rotate over days');
 console.log('Naver web result matching passed');
