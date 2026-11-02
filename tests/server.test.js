@@ -570,7 +570,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(serviceUrl,'dedicated '+kind+' link: '+r.full_name);
     const response=await get(serviceUrl);assert.equal(response.status,200,serviceUrl);
     const html=await response.text();
-    const imagePath='/card/'+r.slug+'-'+kind+'-brand.png';
+    const imagePath='/card/'+r.slug+'-'+kind+'-brand'+(kind==='taksong'?'-v2':'')+'.png';
     assert.ok(html.includes('<body><figure'),'image is visible before navigation: '+serviceUrl);
     assert.ok(html.includes('src="'+imagePath+'"'),'only correct locality and service image is linked: '+serviceUrl);
     assert.ok(html.includes('property="og:image" content="https://example.com'+imagePath+'"'),'search image matches body image: '+serviceUrl);
@@ -580,6 +580,25 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.deepEqual([...signature],[137,80,78,71,13,10,26,10],'valid PNG: '+imagePath);
    }
   }
+  // Keyword+service searches go straight to the matching locality-first banner.
+  for(const [query,canonicalPath,headline] of [
+   ['창원탁송','/taksong/gyeongnam/changwon-si/','창원전국탁송'],
+   ['창원전국탁송','/taksong/gyeongnam/changwon-si/','창원전국탁송'],
+   ['부산탁송','/taksong/busan/','부산전국탁송'],
+   ['부산전국탁송','/taksong/busan/','부산전국탁송'],
+   ['기장군탁송','/taksong/busan/gijang-gun/','기장전국탁송']
+  ]){
+   for(const entry of ['/?q=','/region/?q=']){
+    const response=await get(entry+encodeURIComponent(query));
+    assert.equal(response.status,200,'regional search resolves: '+query);
+    assert.equal(new URL(response.url).pathname,canonicalPath,'regional keyword selects matching landing: '+query);
+    const html=await response.text();
+    assert.ok(html.includes('<body><figure')&&html.includes(headline),'region+전국탁송 banner is first: '+query);
+    assert.ok(/src="\/card\/area-\d+-taksong-brand-v2\.png"/.test(html),'new image URL avoids previous browser cache: '+query);
+   }
+  }
+  const ambiguousRegion=await get('/region/?q='+encodeURIComponent('광주탁송'));
+  assert.equal(new URL(ambiguousRegion.url).pathname,'/region/','ambiguous city name must show region choices');
   const oldRegion=await get('/region/detail/?region='+encodeURIComponent('창원시')+'&parent='+encodeURIComponent('경상남도')+'&kind=daeri');
   assert.equal(oldRegion.status,200,'fetch follows legacy regional redirect');
   const oldRegionHtml=await oldRegion.text();
@@ -587,7 +606,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const service of ['daeri','taksong']){
    const response=await get('/'+service+'/seoul/');assert.equal(response.status,200);
    const html=await response.text();
-   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-(?:daeri|taksong)-brand\.png)"/);
+   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-(?:daeri|taksong)-brand(?:-v2)?\.png)"/);
    assert.ok(card,'regional '+service+' page must advertise a PNG business card');
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
    const svg=await (await get(card[1].replace('.png','.svg'))).text();
@@ -662,7 +681,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('src="'+image+'"'),'topic card is still visible even if deep topic guide is not submitted');
   }
   assert.equal(guideImages.size,2,'guides reuse their service basic card instead of topic-specific cards');
-  assert.ok([...guideImages].every(x=>/-(daeri|taksong)-brand\.png$/.test(x)),'all guides point to the requested service-specific basic cards');
+  assert.ok([...guideImages].every(x=>/-(daeri|taksong)-brand(?:-v2)?\.png$/.test(x)),'all guides point to the requested service-specific basic cards');
   const topicImage=await get([...guideImages][0]);assert.equal(topicImage.status,200);
   const topicBytes=new Uint8Array(await topicImage.arrayBuffer());const topicMeta=await require('sharp')(topicBytes).metadata();assert.equal(topicMeta.width,1200);assert.equal(topicMeta.height,800);
   const topicStats=await require('sharp')(topicBytes).extract({left:0,top:100,width:1200,height:700}).stats();assert.ok(topicStats.channels.some(c=>c.stdev>35),'topic cards retain approved detailed artwork');
