@@ -530,7 +530,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(body.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct mountain PNG: '+keyword);
     assert.ok(!body.includes('id="mobile-direct-image-priority"'),'no homepage Smart24 hero: '+keyword);
   }
-  const referrerResult=await fetch('http://127.0.0.1:'+port+'/',{headers:{referer:'https://search.naver.com/search.naver?query='+encodeURIComponent('설악산탁송')},redirect:'manual');
+  const referrerResult=await fetch('http://127.0.0.1:'+port+'/',{headers:{referer:'https://search.naver.com/search.naver?query='+encodeURIComponent('설악산탁송')},redirect:'manual'});
   assert.equal(referrerResult.status,302,'available search referrer resolves to image-first Seoraksan page');
   assert.equal(referrerResult.headers.get('location'),'/special/seoraksan-transport/');
   const nationwideHome=await get('/');
