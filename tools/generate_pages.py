@@ -228,7 +228,9 @@ def generate_service_pages(urls):
     for item in pages:
         slug = item["slug"]
         url = f"{SITE_URL}/service/{slug}/"
-        urls.add(url)
+        # The old /service/daeri/ is a noindex alias of /daeri/.
+        if slug != "daeri":
+            urls.add(url)
         section_html = []
         for heading, bullets in item["sections"]:
             section_html.append("<h2>" + esc(heading) + "</h2><ul>" + "".join("<li>" + esc(b) + "</li>" for b in bullets) + "</ul>")
@@ -469,7 +471,9 @@ def generate_topic_pages(urls):
     ]
     for item in topics:
         url = f"{SITE_URL}/special/{item['slug']}/"
-        urls.add(url)
+        # The official mountain and nationwide-driver URLs have separate canonical homes.
+        if item["slug"] not in {"nationwide-daeri", "seoraksan-transport", "jirisan-transport"}:
+            urls.add(url)
         sections = []
         for heading, bullets in item["sections"]:
             sections.append("<h2>" + esc(heading) + "</h2><ul>" + "".join("<li>" + esc(b) + "</li>" for b in bullets) + "</ul>")
@@ -514,7 +518,8 @@ def main():
         if (special_root / "index.html").exists():
             urls.add(f"{SITE_URL}/special/")
         for special_page in special_root.glob("*/index.html"):
-            urls.add(f"{SITE_URL}/special/{special_page.parent.name}/")
+            if special_page.parent.name not in {"nationwide-daeri", "seoraksan-transport", "jirisan-transport"}:
+                urls.add(f"{SITE_URL}/special/{special_page.parent.name}/")
     count = 0
     location_by_name = {}
     children_by_parent = {}
