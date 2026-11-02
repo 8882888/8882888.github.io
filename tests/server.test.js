@@ -532,7 +532,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   const referrerResult=await fetch('http://127.0.0.1:'+port+'/',{headers:{referer:'https://search.naver.com/search.naver?query='+encodeURIComponent('설악산탁송')},redirect:'manual'});
   assert.equal(referrerResult.status,302,'available search referrer resolves to image-first Seoraksan page');
-  assert.equal(referrerResult.headers.get('location'),'/설악산탁송/');
+  assert.equal(referrerResult.headers.get('location'),encodeURI('/설악산탁송/'));
   for(const [segment,mountain] of [['설악산탁송','seoraksan'],['지리산탁송','jirisan']]){
     const seo=await get('/'+encodeURIComponent(segment)+'/');
     assert.equal(seo.status,200,'Korean keyword URL resolves');
