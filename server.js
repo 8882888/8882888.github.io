@@ -203,7 +203,7 @@ const seoRegionBase=r=>r.level==='시도'?(provinceSeoLabels[r.name]||shortPlace
 const seoRegionCounts=new Map();
 for(const region of regions){const name=seoRegionBase(region);seoRegionCounts.set(name,(seoRegionCounts.get(name)||0)+1)}
 // A national keyword belongs on the national hub; duplicate locality names need their full legal hierarchy.
-function seoRegionLabel(r){const short=seoRegionBase(r);return r.level==='리'||seoRegionCounts.get(short)>1?r.full_name:short}
+function seoRegionLabel(r){const short=seoRegionBase(r);return r.level==='시도'?short:(r.level==='리'||seoRegionCounts.get(short)>1?r.full_name:short)}
 
 const regionAliases=r=>{
  const n=r.name,short=shortPlace(n),a=new Set([n]);if(['시도','시','군'].includes(r.level))a.add(short);
