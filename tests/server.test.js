@@ -201,6 +201,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.indexOf('<body><figure')>=0&& (html.indexOf('id="priority-verified-rides"')<0 || html.indexOf('id="regional-taksong-quick-start"')<html.indexOf('id="priority-verified-rides"')),
     'regional picture and customer choices come ahead of long evidence listings: '+loc);
   }
+  assert.ok(seoHome.includes('id="southeast-priority-regions"')&&
+   seoHome.includes('href="/taksong/ulsan/"')&&
+   seoHome.includes('href="https://blog.naver.com/wjdtnr4757/224441226524"'),
+   'homepage provides Ulsan region and grounded blog evidence near its first view');
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>전국자동차탁송·장거리탁송·24시탁송 | 스마트24 1811-4294</title>'),'homepage title leads with nationwide vehicle delivery and 24h service');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
@@ -514,6 +518,40 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const p of ['/activities/','/activities/food/','/activities/hiking/','/activities/cycling/']){const r=await get(p);assert.equal(r.status,200);const h=await r.text();assert.ok(h.includes('index,follow,max-image-preview:large'));assert.ok(h.includes('property="og:image"'));const activityImage=h.match(/property="og:image" content="https:\/\/example.com([^"]+)/)[1];assert.ok(h.includes('src="'+activityImage+'"'),'advertised card must be visible on category page');assert.ok(h.includes('tel:18114294'));assert.ok(!h.includes('자동 갱신 현황'));assert.ok(!h.includes('20,562'));assert.ok(h.includes('href="https://example.com'+p+'"'));}
   const oldCategory=await fetch('http://127.0.0.1:'+port+'/keyword-search/?category='+encodeURIComponent('맛집'),{redirect:'manual'});assert.equal(oldCategory.status,301);assert.equal(oldCategory.headers.get('location'),'/activities/food/');
   assert.equal((await get('/activities/unknown/')).status,404);
+  // Strong Busan/Ulsan locality intent without duplicating the brand image or
+  // inventing a delivered ride. Priority pages need source-linked local context.
+  const priorityRegions=require('../data/priority-regions.json').pages;
+  assert.equal(priorityRegions.length,27,'Ulsan joins 26 existing curated regions');
+  assert.ok(priorityRegions.some(p=>p.kind==='taksong'&&p.region==='울산광역시'),
+    'Ulsan is an actual curated taksong priority, not a generic province directory');
+  const ulsanHtml=await (await get('/taksong/ulsan/')).text();
+  assert.ok(ulsanHtml.includes('<title>울산탁송 | 남구 삼산동·동구 방어진'),
+    'Ulsan title gives locality-first service intent');
+  assert.ok(ulsanHtml.includes('id="southeast-taksong-local-evidence"') &&
+    ulsanHtml.includes('href="/taksong/ulsan/ulju-gun/"'),
+    'Ulsan links local district/county pages and specific pickup guidance');
+  assert.ok(ulsanHtml.includes('blog.naver.com/wjdtnr4757/224441226524'),
+    'Ulsan evidence comes from a published Naver blog source');
+  const busanEvidence=await (await get('/taksong/busan/')).text();
+  assert.ok(busanEvidence.includes('id="southeast-taksong-local-evidence"')&&
+    busanEvidence.includes('blog.naver.com/wjdtnr4757/224445300887'),
+    'Busan links regional landmarks to existing published source rather than made-up completions');
+  for(const [region,html] of [['busan',busanEvidence],['ulsan',ulsanHtml]]){
+    const imagePath=region==='busan'?'/card/area-494-taksong-brand-v2.png':null;
+    assert.equal((html.match(/<img src="\/card\/area-[0-9]+-taksong-brand-v2.png"/g)||[]).length,1,
+      'region branded hero image must be shown exactly once: '+region);
+    assert.ok(html.includes('href="tel:18114294"')&&html.includes('href="https://open.kakao.com/o/sGV88r7h"'),
+      'Busan and Ulsan local booking paths remain accessible: '+region);
+  }
+  const curSitemap=await (await get('/sitemap-priority.xml')).text();
+  assert.ok(curSitemap.includes('https://example.com/taksong/ulsan/'),
+    'priority crawl sitemap includes Ulsan canonical landing');
+  const regionSitemap=await (await get('/sitemap-taksong.xml')).text();
+  for(const route of ['/taksong/ulsan/nam-gu/','/taksong/ulsan/dong-gu/','/taksong/ulsan/buk-gu/','/taksong/ulsan/ulju-gun/'])
+    assert.ok(regionSitemap.includes('https://example.com'+route),'regional discovery includes '+route);
+  const hubHtml=await (await get('/taksong/')).text();
+  assert.ok(hubHtml.includes('href="/taksong/ulsan/"')&&hubHtml.includes('>울산탁송</a>'),
+    'national taksong hub uses a concise Ulsan keyword anchor');
   const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 | 항만·서비스센터 및 부산 시내 차량 인수 준비'),'priority page title reflects actual Busan service conditions');
   assert.ok(busanHtml.includes('class="province-service-guide"'));
   assert.ok(busanHtml.includes('부산 출발 지역 선택'));
