@@ -104,4 +104,38 @@ check(daeriLegacy.includes('rel="canonical" href="https://jeongukdaeri.kr/daeri/
 check(/<meta name="robots" content="noindex,follow">/.test(daeriLegacy),'legacy daeri alias must not compete for indexing');
 check(server.includes("pathname==='/health/seo-report/'"),'human-readable production deployment report missing');
 check(server.includes('deployment_hashes:Object.fromEntries'),'source-level SHA256 diagnostic missing');
+const smoke=read('tools/smoke_production_server.js');
+const liveAudit=read('tools/audit_live_seo.py');
+const priorityPublicURLs=[
+ '/','/taksong/','/daeri/','/region/',
+ '/taksong/busan/','/taksong/daegu/','/taksong/incheon/','/taksong/gwangju/',
+ '/taksong/daejeon/','/taksong/ulsan/',
+ '/taksong/gyeongnam/changwon-si/','/taksong/gyeongnam/gimhae-si/',
+ '/daeri/busan/','/daeri/daegu/','/daeri/incheon/','/daeri/gwangju/',
+ '/daeri/daejeon/','/daeri/ulsan/',
+ '/blog/archive/','/blog/taksong-categories/'
+];
+check(priorityPublicURLs.length===20&&new Set(priorityPublicURLs).size===20,'20 unique priority public URLs');
+for(const url of priorityPublicURLs){
+ check(smoke.includes("'"+url+"'"),'20-route startup smoke test missing '+url);
+ // Live audit has intentionally different role: includes the ten source-linked
+ // metro pages, the four national service hubs and deployment diagnostics.
+}
+for(const url of [
+ '/','/taksong/','/daeri/','/region/','/blog/archive/',
+ '/taksong/busan/','/taksong/daegu/','/taksong/incheon/',
+ '/taksong/gwangju/','/taksong/daejeon/','/taksong/ulsan/',
+ '/taksong/gyeongnam/changwon-si/','/taksong/gyeongnam/gimhae-si/',
+ '/daeri/busan/','/daeri/daegu/'
+]){
+ check(liveAudit.includes('"'+url+'":'),'production HTML audit must include '+url);
+}
+const pagesCi=read('.github/workflows/pages.yml');
+const cloudtypeCi=read('.github/workflows/cloudtype-redeploy.yml');
+for(const [name,workflow] of [['GitHub Pages',pagesCi],['Cloudtype',cloudtypeCi]]){
+ check(workflow.includes('node tools/smoke_production_server.js'),name+' must run real startup test');
+}
+const configurePages=read('tools/configure_site.py');
+check(configurePages.includes('GitHub Pages backup: official Cloudtype CNAME not published'),'backup CNAME protection missing');
+check(pagesCi.includes('Stop GitHub Pages mirror from claiming the Cloudtype domain'),'backup domain claim build guard missing');
 console.log('PASS: '+posts.length+' unique Naver post URLs, '+categories.size+' categories, '+sections.length+' original-source sections, production SEO overrides, homepage order and core sitemaps.');
