@@ -193,10 +193,15 @@ jobs:
           PY
       - name: Protect Smart24 branding and core files
         run: python tools/check_smart24_invariants.py
+      - name: Set up Node.js for real startup tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Validate 630-source SEO links and production settings
         run: |
           node --check server.js
           node tools/check_core_seo.js
+          node tools/smoke_production_server.js
       - name: Prevent Github Pages backup from competing with the official search index
         run: |
           python tools/mark_github_pages_mirror_noindex.py
