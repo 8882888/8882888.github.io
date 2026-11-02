@@ -205,6 +205,62 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    seoHome.includes('href="/taksong/ulsan/"')&&
    seoHome.includes('href="https://blog.naver.com/wjdtnr4757/224441226524"'),
    'homepage provides Ulsan region and grounded blog evidence near its first view');
+  // The Seoul city-wide editorial series contains exactly 25 distinct
+  // boroughs, grouped in sets of three or four, with real existing Naver sources.
+  const seoulEditorial=require('../data/seoul-taksong-editorial.json').groups;
+  assert.equal(seoulEditorial.length,7,'seven Seoul editorial groups are published');
+  const seoulBoroughs=seoulEditorial.flatMap(g=>g.districts.map(d=>d[0]));
+  assert.equal(seoulBoroughs.length,25);
+  assert.equal(new Set(seoulBoroughs).size,25,'all 25 Seoul boroughs included exactly once');
+  assert.ok(seoulEditorial.every(g=>g.districts.length>=3&&g.districts.length<=4),
+    'each article handles 3-4 adjacent boroughs');
+  const existingNaverPosts=require('../blog/posts.json');
+  const existingIds=new Set(existingNaverPosts.map(p=>p.id));
+  assert.ok(seoulEditorial.every(g=>g.sources.every(src=>existingIds.has(src[0]))),
+    'all linked source posts exist in the recorded 630 published Naver blog posts');
+  const seoIndex=await get('/blog/seoul-taksong/'),seoIndexText=await seoIndex.text();
+  assert.equal(seoIndex.status,200,'Seoul grouped blog index is available');
+  assert.ok(seoIndexText.includes('<h1>서울탁송 25개 구')&&
+    seoIndexText.includes('rel="canonical" href="https://jeongukdaeri.kr/blog/seoul-taksong/"'),
+    'Seoul editorial index has distinct H1 and canonical');
+  assert.ok(seoHome.includes('id="seoul-seven-editorial-links"')&&seoHome.includes('href="/blog/seoul-taksong/"'),
+    'home includes 7 group links without disrupting mountain posters');
+  const seoulRegional=await (await get('/taksong/seoul/')).text();
+  assert.ok(seoulRegional.includes('id="seoul-editorial-guide"')&&
+    seoulRegional.includes('href="/blog/seoul-taksong/"'),
+    'main Seoul locality landing references editorial index');
+  const seoulHub=await (await get('/taksong/')).text();
+  assert.ok(seoulHub.includes('id="seoul-taksong-seven-articles"'),
+    'national taksong hub links Seoul grouped content');
+  for(const group of seoulEditorial){
+    const route='/blog/seoul-taksong/'+group.slug+'/';
+    const response=await get(route),html=await response.text();
+    assert.equal(response.status,200,'editorial article route works: '+route);
+    assert.ok(html.includes('href="https://jeongukdaeri.kr/blog/seoul-taksong/'+group.slug+'/"')&&
+      html.includes('type="application/ld+json"')&&html.includes('content="index,follow,max-image-preview:large"'),
+      'each article includes canonical, JSON-LD and allows indexing: '+route);
+    assert.ok(html.includes('href="tel:18114294"')&&html.includes('href="https://open.kakao.com/o/sGV88r7h"'),
+      'phone and Kakao consultations available: '+route);
+    assert.ok(html.includes('현재 확정 견적')&&html.includes('운행기록'),
+      'past quote, real history and present-day price are distinguished: '+route);
+    for(const [name,slug] of group.districts){
+      assert.ok(html.includes('href="/taksong/seoul/'+slug+'/"'),name+' canonical borough link');
+      assert.ok(html.includes(name+'탁송'),'borough-specific search phrase '+name);
+      const boroughHtml=await (await get('/taksong/seoul/'+slug+'/')).text();
+      assert.ok(boroughHtml.includes('href="/blog/seoul-taksong/'+group.slug+'/'),
+        'each Seoul borough points back to its curated cluster: '+name);
+    }
+    for(const [postId] of group.sources)
+      assert.ok(html.includes('https://blog.naver.com/wjdtnr4757/'+postId),
+        'article links recorded published original '+postId);
+    assert.ok(seoIndexText.includes(route),'index links all 7 editorial pages');
+  }
+  const seoulPriorityMap=await (await get('/sitemap-priority.xml')).text();
+  const seoulMainMap=await (await get('/sitemap.xml')).text();
+  for(const path of ['/blog/seoul-taksong/',...seoulEditorial.map(g=>'/blog/seoul-taksong/'+g.slug+'/')]){
+    assert.ok(seoulPriorityMap.includes('https://example.com'+path),'priority sitemap: '+path);
+    assert.ok(seoulMainMap.includes('https://example.com'+path),'main sitemap: '+path);
+  }
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>전국자동차탁송·장거리탁송·24시탁송 | 스마트24 1811-4294</title>'),'homepage title leads with nationwide vehicle delivery and 24h service');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
