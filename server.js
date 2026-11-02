@@ -1153,7 +1153,7 @@ if(!explicitMountainKeyword&&(pathname==='/'||pathname==='/index.html')){
 }
 const mountainRedirect= (pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search')
  ?mountainTarget(explicitMountainKeyword||searchReferrerKeyword):null;
-if(mountainRedirect){res.writeHead(302,{location:mountainRedirect,'cache-control':'no-store','vary':'Accept-Encoding'});return res.end();}
+if(mountainRedirect){res.writeHead(302,{location:encodeURI(mountainRedirect),'cache-control':'no-store','vary':'Accept-Encoding'});return res.end();}
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');return respond(res,200,applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/'))}
 // Redirect regional search clicks to a single service-specific, image-first landing page.
 if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
