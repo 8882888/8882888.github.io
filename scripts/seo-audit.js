@@ -110,7 +110,7 @@ async function inspect(route){
  const expectedDaeriRegions=new Set(priority.filter(x=>x.kind==='daeri').map(x=>x.region));
  const travelGuides=require('../lib/daeri-travel-guides');
  const expectedTravelUrls=travelGuides.destinations.map(x=>new URL(travelGuides.pathFor(x),new URL(config.site)).href);
- const expectedDaeriCount=1+17+priority.filter(x=>x.kind==='daeri'&&!['서울특별시','부산광역시','대구광역시','인천광역시'].includes(x.region)).length+expectedTravelUrls.length;
+ const expectedDaeriCount=1+17+priority.filter(x=>x.kind==='daeri'&&x.region.includes(' ')).length+expectedTravelUrls.length;
  const daeriIssues=[];
  if(daeriDiscovery.status!==200)daeriIssues.push('Driver sitemap HTTP '+daeriDiscovery.status);
  if(daeriUrls.length!==expectedDaeriCount)daeriIssues.push('Driver discovery sitemap count '+daeriUrls.length+'/'+expectedDaeriCount);
