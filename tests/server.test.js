@@ -241,7 +241,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
       'each article includes canonical, JSON-LD and allows indexing: '+route);
     assert.ok(html.includes('href="tel:18114294"')&&html.includes('href="https://open.kakao.com/o/sGV88r7h"'),
       'phone and Kakao consultations available: '+route);
-    assert.equal((html.match(/<h1\\b/g)||[]).length,1,'one unique article heading: '+route);
+    assert.equal((html.match(/<h1[ >]/g)||[]).length,1,'one unique article heading: '+route);
     assert.ok(html.includes('특정 운행의 현장 촬영 사진은 아닙니다'),
       'vehicle imagery must not be misrepresented as an actual delivered route photo: '+route);
     assert.ok(html.includes('현재 예약 확정 요금')&&html.includes('운행기록'),
