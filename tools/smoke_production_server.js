@@ -44,6 +44,7 @@ async function main(){
   assert(expected.length>=34,'Priority regions unexpectedly reduced');
   const json=await request(port,'/health/seo.json');assert.equal(json.status,200,'Deployment JSON');
   const diagnostic=JSON.parse(json.body);
+  assert.equal(diagnostic.priority_region_count,expected.length,'production dynamic priority region count');
   assert.equal(diagnostic.curated_source_groups,10);
   assert.equal(diagnostic.curated_source_links,20);
   assert.equal(diagnostic.blog_source_count,630);
