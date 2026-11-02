@@ -138,7 +138,7 @@ jobs:
               landing=response.geturl()
             hero='<body><figure id="original-mountain-fare-visual"'
             picture='/assets/'+mountain+'-taksong-original-fare.png'
-            if route not in landing or hero not in page or ('src="'+picture+'"') not in page:
+            if quote(route) not in landing or hero not in page or ('src="'+picture+'"') not in page:
               raise SystemExit('Mobile mountain landing mismatch: '+keyword+' -> '+landing)
             image_req=urllib.request.Request(base+picture+'?release-check='+os.environ['DEPLOYED_COMMIT'],headers={'Cache-Control':'no-cache'})
             with urllib.request.urlopen(image_req,timeout=15) as image_response:
