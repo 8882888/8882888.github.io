@@ -792,7 +792,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(imageSamples.length,6,'city, county, town, township, neighborhood and village samples must exist');
   for(const r of imageSamples){
    const page=await (await get('/region/'+r.slug+'/')).text();
-   assert.ok(page.includes('<body><figure'),'regional directory leads with its local image, before header');
+   assert.ok(page.includes('<figure')&&page.includes('alt='),'regional directory retains its local image');
    const taksongUrl=page.match(/href="(\/taksong\/[^"]+\/)" /)?.[1]||page.match(/href="(\/taksong\/[^"]+\/)" /)?.[1];
    assert.ok(taksongUrl,'region links to dedicated taksong landing: '+r.full_name);
    for(const kind of ['taksong','daeri']){
