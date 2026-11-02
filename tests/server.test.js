@@ -241,7 +241,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
       'each article includes canonical, JSON-LD and allows indexing: '+route);
     assert.ok(html.includes('href="tel:18114294"')&&html.includes('href="https://open.kakao.com/o/sGV88r7h"'),
       'phone and Kakao consultations available: '+route);
-    assert.ok(html.includes('현재 확정 견적')&&html.includes('운행기록'),
+    assert.ok(html.includes('현재 예약 확정 요금')&&html.includes('운행기록'),
       'past quote, real history and present-day price are distinguished: '+route);
     for(const [name,slug] of group.districts){
       assert.ok(html.includes('href="/taksong/seoul/'+slug+'/"'),name+' canonical borough link');
