@@ -53,4 +53,21 @@ for(const key of ['설악산탁송','지리산탁송','오색탁송','한계령�
  assert.ok(planned.includes(key),'always check critical route: '+key);
 const nextDay=selectQueries(new Date('2026-11-03T00:00:00Z'));
 assert.ok(nextDay.some(x=>!planned.includes(x)),'nonpriority checks must rotate over days');
+const {targetLandingEvidence,TARGET_LANDINGS}=require('../scripts/naver-web-monitor');
+const targetRows=targetLandingEvidence([
+ {query:'설악산탁송',matches:[{url:'https://jeongukdaeri.kr/',position:14,title:'홈페이지'}]},
+ {query:'부산탁송',matches:[{url:'https://jeongukdaeri.kr/taksong/busan/',position:7,title:'부산탁송'}]},
+ {query:'대구탁송',matches:[]},
+ {query:'울산탁송',error:'API unavailable'}
+]);
+assert.equal(targetRows.length,4);
+assert.equal(targetRows[0].status,'only-other-site-pages-observed','homepage match cannot prove dedicated mountain page exposure');
+assert.equal(targetRows[0].position,null);
+assert.equal(targetRows[1].status,'target-observed','matched exact dedicated Busan page');
+assert.equal(targetRows[1].position,7);
+assert.equal(targetRows[2].status,'site-not-observed-in-returned-results','top-100 absence is not index exclusion');
+assert.equal(targetRows[3].status,'query-failed','API errors must not be interpreted as lost rankings');
+assert.equal(TARGET_LANDINGS['지리산탁송'],'/지리산탁송/');
+for(const query of ['부산탁송','대구탁송','울산탁송','창원탁송','인천탁송','제주도탁송','렌트카탁송','중고차탁송'])
+ assert.ok(planned.includes(query),'daily high-priority Naver monitoring includes '+query);
 console.log('Naver web result matching passed');
