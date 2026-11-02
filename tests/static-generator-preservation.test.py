@@ -30,7 +30,13 @@ with TemporaryDirectory(prefix="smart24-preserve-") as directory:
     for file, original in preserved.items():
         assert file.read_text(encoding="utf-8") == original, "Editorial page overwritten: " + str(file)
         expected_url = generator.SITE_URL + "/" + file.relative_to(generator.ROOT).parent.as_posix() + "/"
-        assert expected_url in urls, "Preserved page missing from sitemap: " + expected_url
+        is_alias = ((file.parts[-3:-1] == ("service", "daeri")) or
+                    (file.parts[-3] == "special" and file.parts[-2] in (
+                        "nationwide-daeri", "seoraksan-transport", "jirisan-transport")))
+        if is_alias:
+            assert expected_url not in urls, "Noncanonical alias leaked into sitemap: " + expected_url
+        else:
+            assert expected_url in urls, "Preserved page missing from sitemap: " + expected_url
 
     for path in ("special/camping-car-transport/index.html",
                  "special/truck-transport/index.html"):
