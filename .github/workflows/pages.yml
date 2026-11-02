@@ -193,6 +193,10 @@ jobs:
           PY
       - name: Protect Smart24 branding and core files
         run: python tools/check_smart24_invariants.py
+      - name: Validate 630-source SEO links and production settings
+        run: |
+          node --check server.js
+          node tools/check_core_seo.js
       - name: Prevent Github Pages backup from competing with the official search index
         run: |
           python tools/mark_github_pages_mirror_noindex.py
