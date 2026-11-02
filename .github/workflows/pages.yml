@@ -75,6 +75,8 @@ jobs:
           else:
               print("Official region coverage threshold met; site build and sitemap validation still required.")
           PY
+      - name: Validate original SEO source before building noindex Pages backup
+        run: node tools/check_core_seo.js
       - name: Generate 100,000 SEO keyword targets
         run: python tools/generate_seo_keywords.py
       - name: Protect curated pages from the static backup generator
@@ -210,7 +212,6 @@ jobs:
         run: |
           node --check server.js
           node tests/regional-history-ambiguity.test.js
-          node tools/check_core_seo.js
           node tools/smoke_production_server.js
           python -m py_compile tools/audit_live_seo.py
       - name: Prevent Github Pages backup from competing with the official search index
