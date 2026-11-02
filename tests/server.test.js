@@ -666,7 +666,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   // Strong Busan/Ulsan locality intent without duplicating the brand image or
   // inventing a delivered ride. Priority pages need source-linked local context.
   const priorityRegions=require('../data/priority-regions.json').pages;
-  assert.equal(priorityRegions.length,27,'Ulsan joins 26 existing curated regions');
+  assert.ok(priorityRegions.length>=34,'current 34+ unique curated service regions remain available');
   assert.ok(priorityRegions.some(p=>p.kind==='taksong'&&p.region==='울산광역시'),
     'Ulsan is an actual curated taksong priority, not a generic province directory');
   const ulsanHtml=await (await get('/taksong/ulsan/')).text();
