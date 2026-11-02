@@ -21,17 +21,17 @@ const samples=[
 ['성삼재','중산리']
 ];
 function clean(s){
- let n=String(s||'').trim().replace(/\\s+/g,' ');
+ let n=String(s||'').trim().replace(/\s+/g,' ');
  n=n.replace(suffix,'').replace(/(?:으로|까지|방향|행|도착|출발)$/g,'').trim();
  return canonical[n]||n;
 }
 function parse(input){
- let s=String(input||'').trim().replace(/[→➜➡＞]/g,' → ').replace(/\\s+/g,' ');
+ let s=String(input||'').trim().replace(/[→➜➡＞]/g,' → ').replace(/\s+/g,' ');
  if(!s||s.length>130)return null;
  const service=/대리운전/.test(s)?'daeri':'taksong';
- s=s.replace(/(자동차탁송|장거리탁송|차량탁송|탁송|대리운전|차량이동|운전기사)/g,' ').replace(/\\s+/g,' ').trim();
- let match=s.match(/^(.+?)\\s*(?:에서|부터|출발|→|에서부터)\\s*(.+?)(?:\\s*(?:까지|도착))?$/);
- if(!match)match=s.match(/^(.+?)\\s+(?:에서|부터|출발|→)\\s+(.+)$/);
+ s=s.replace(/(자동차탁송|장거리탁송|차량탁송|탁송|대리운전|차량이동|운전기사)/g,' ').replace(/\s+/g,' ').trim();
+ let match=s.match(/^(.+?)\s*(?:에서|부터|출발|→|에서부터)\s*(.+?)(?:\s*(?:까지|도착))?$/);
+ if(!match)match=s.match(/^(.+?)\s+(?:에서|부터|출발|→)\s+(.+)$/);
  // Unambiguous whitespace-separated two-place route, such as "기장군 대구".
  if(!match){
    const tokens=s.split(' ').filter(Boolean);
