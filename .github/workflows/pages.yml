@@ -209,6 +209,7 @@ jobs:
           node --check server.js
           node tools/check_core_seo.js
           node tools/smoke_production_server.js
+          python -m py_compile tools/audit_live_seo.py
       - name: Prevent Github Pages backup from competing with the official search index
         run: |
           python tools/mark_github_pages_mirror_noindex.py
