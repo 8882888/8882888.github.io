@@ -28,6 +28,22 @@ function targetLandingEvidence(results) {
  });
 }
 
+const WEB_BASELINE=require('../audit/naver-web-baseline-2026-11-03.json');
+function compareBaseline(results,baseline=WEB_BASELINE){
+ const sampled=new Map(results.map(r=>[r.query,r]));
+ return baseline.records.map(b=>{
+  const r=sampled.get(b.query);
+  if(!r)return {query:b.query,baselineBest:b.sitePositions[0]??null,currentBest:null,status:'not-sampled-today'};
+  if(r.error)return {query:b.query,baselineBest:b.sitePositions[0]??null,currentBest:null,status:'query-failed'};
+  const prev=b.sitePositions.length?Math.min(...b.sitePositions):null;
+  const curr=(r.matches||[]).length?Math.min(...r.matches.map(m=>m.position)):null;
+  let status='not-observed-in-either-top100';
+  if(prev!==null&&curr===null)status='previously-observed-now-absent';
+  else if(prev===null&&curr!==null)status='newly-observed-in-api-top100';
+  else if(prev!==null&&curr!==null)status=curr<prev?'improved-in-api-top100':curr>prev?'lower-in-api-top100':'same-api-position';
+  return {query:b.query,baselineBest:prev,currentBest:curr,status};
+ });
+}
 const LEGACY_DRIVER_URLS = ['/service/daeri/', '/special/nationwide-daeri/'];
 const ALWAYS_CHECK = ['전국대리운전','설악산탁송','지리산탁송','오색탁송','한계령탁송','부산탁송','울산탁송','대구탁송','창원탁송','기장군탁송','성삼재중산리탁송','인천탁송','제주도탁송','렌트카탁송','중고차탁송'];
 // Keep priority locality searches in every run. Rotate the remaining terms
@@ -84,7 +100,7 @@ async function main() {
       if(/HTTP 429/.test(error.message))break;
     }
   }
-  const result = {source: 'Naver Search API: web documents', query: QUERY, checkedAt: new Date().toISOString(), queryCatalogCount:QUERIES.length, selectedQueries:selectQueries(), ...results[0], results, pageEvidence: pageEvidence(results), targetLandingEvidence: targetLandingEvidence(results), legacyDriverCandidates: legacyDriverEvidence(results), limitation: 'Positions are within the returned web-document API results, not Naver integrated search rankings. This API does not expose mobile Naver sitelinks. No match does not prove a page is not indexed.'};
+  const result = {source: 'Naver Search API: web documents', query: QUERY, checkedAt: new Date().toISOString(), queryCatalogCount:QUERIES.length, selectedQueries:selectQueries(), ...results[0], results, pageEvidence: pageEvidence(results), targetLandingEvidence: targetLandingEvidence(results), baselineComparison: compareBaseline(results), legacyDriverCandidates: legacyDriverEvidence(results), limitation: 'Positions are within the returned web-document API results, not Naver integrated search rankings. This API does not expose mobile Naver sitelinks. No match does not prove a page is not indexed.'};
   fs.writeFileSync('naver-web-monitor-result.json', JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify(result, null, 2));
   if (process.env.GITHUB_STEP_SUMMARY) {
@@ -99,7 +115,11 @@ async function main() {
     const rows=result.targetLandingEvidence.map(x=>'| '+x.query+' | '+x.targetPath+' | '+(x.position??'미발견')+' | '+x.status+' | '+x.otherSitePages.map(p=>p.position).join(', ')+' |');
     fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '\n## 키워드별 대표 페이지 도달 여부\n\n홈페이지가 잡혀도 해당 지역 전용 페이지가 미발견이면 별도로 표시합니다. 네이버 통합검색 순위나 URL별 색인 상태는 아닙니다.\n\n| 검색어 | 목표 URL | 웹문서 API 순번 | 상태 | 타 페이지 순번 |\n|---|---|---:|---|---|\n'+rows.join('\n')+'\n');
   }
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    const rows=result.baselineComparison.map(x=>'| '+x.query+' | '+(x.baselineBest??'—')+' | '+(x.currentBest??'—')+' | '+x.status+' |');
+    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '\n## 11월 3일 기준 대비 웹문서 결과 변화\n\n상위 100개 웹문서 API 위치만 비교합니다. 검색 노출 총량·통합검색 순위·색인 상태의 변화라고 단정하지 않습니다.\n\n| 검색어 | 11/3 기준 위치 | 이번 검사 위치 | 변화 분류 |\n|---|---:|---:|---|\n'+rows.join('\n')+'\n');
+  }
   if (failures) throw new Error(failures + ' selected query checks failed; partial results saved');
 }
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
-module.exports = { inspect, QUERIES, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, legacyDriverEvidence, selectQueries };
+module.exports = { inspect, QUERIES, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };
