@@ -691,7 +691,7 @@ async function servicePage(r,kind){
  // A concise first-view decision area for curated and provincial taksong pages.
  // The locality-specific FAQ reuses the verified editorial context. It never
  // claims a fixed price, actual local staffing, or a completed trip not in records.
- const regionalQuickStart=kind==='taksong'&&(priorityMeta||r.level==='시도')?
+ const regionalQuickStart=kind==='taksong'&&(priorityMeta||['시도','시','군','구'].includes(r.level))?
   '<section id="regional-taksong-quick-start" style="border:2px solid #1c65a0;background:#fff;padding:18px;margin:12px 0;border-radius:13px">'+
   '<h2>'+esc(preciseLocality)+'탁송 · 예상요금·실제후기·상담</h2>'+
   '<p>차량 인수 장소와 도착지·차종·희망 날짜를 확인한 뒤 배차 가능 여부와 현재 요금을 안내합니다. 기존 완료기록의 당시 요금은 현재 확정 견적이 아닙니다.</p>'+
