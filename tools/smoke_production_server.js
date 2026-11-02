@@ -101,6 +101,16 @@ async function main(){
     assert(page.body.includes('https://blog.naver.com/wjdtnr4757/'),'external Naver original URL missing: '+url);
    }
   }
+  const trailingSlashRedirects=[
+   ['/region?service=taksong','/region/?service=taksong'],
+   ['/blog?kind=taksong','/blog/?kind=taksong'],
+   ['/blog/archive?page=2','/blog/archive/?page=2']
+  ];
+  for(const [from,to] of trailingSlashRedirects){
+   const redirect=await request(port,from);
+   assert.equal(redirect.status,301,'canonical URL should 301: '+from);
+   assert.equal(redirect.headers.location,to,'canonical redirect must preserve query: '+from);
+  }
   for(const file of ['/sitemap-priority.xml','/sitemap.xml']){
    const r=await request(port,file);
    assert.equal(r.status,200,file+' HTTP');
