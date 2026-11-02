@@ -1,3 +1,5 @@
+> **2026-11-03 운영 기준:** 이 문서 아래의 Railway 설정은 과거 대안 안내입니다. 현재 공식 도메인 `jeongukdaeri.kr`의 동적 Node 운영 환경은 Cloudtype으로 관리합니다. 최신 GitHub 배포와 운영 사이트 반영은 별개이며, 자동 재배포 연결 및 검증은 [Cloudtype 배포 가이드](docs/CLOUDTYPE_AUTO_DEPLOY.md)를 먼저 확인하세요. 기존 Railway 안내만 따라 새 사이트를 만들거나 공식 도메인을 이동하지 마세요.
+
 # 스마트전국대리운전 스마트24탁송 — 실제 동적 홈페이지 연결
 
 대표번호: **1811-4294**. 기존 GitHub Pages 주소: https://8882888.github.io/
