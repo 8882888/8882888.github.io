@@ -1133,6 +1133,18 @@ if(pathname==='/keyword-search/'||pathname==='/keyword-search'){const q=u.search
 const serviceVisit=pathname.match(/^\/(daeri|taksong)\/visit\/([a-f0-9]{20})\/?$/);
 if(serviceVisit){const [,kind,id]=serviceVisit,item=keywordEngine.byId.get(id);if(!item)return respond(res,404,'연결된 키워드를 찾을 수 없습니다.');const target=keywordEngine.url(item,kind);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,keywordEngine.itemPage(item,kind))}
 const visitKeyword=pathname.match(/^\/visit\/([a-f0-9]{20})\/?$/);if(visitKeyword){const item=keywordEngine.byId.get(visitKeyword[1]);if(!item)return respond(res,404,'연결된 키워드를 찾을 수 없습니다.');const target=keywordEngine.url(item);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,keywordEngine.itemPage(item))}
+// Exact mountain search phrases are routed to their original image-first fare page, not the generic mobile card.
+const mountainTarget=(value)=>{
+ const q=String(value||'').replace(/[\\s+_\-]/g,'').toLowerCase();
+ if(!q||q.length>100)return null;
+ if(/(설악산|오색|한계령|백담사|남교리|소공원)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/special/seoraksan-transport/';
+ if(/(지리산|성삼재|중산리|대원사|화엄사|백무동|성중종주|성대종주|화중종주|화대종주)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/special/jirisan-transport/';
+ return null;
+};
+const explicitMountainKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
+const mountainRedirect= (pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search')
+ ?mountainTarget(explicitMountainKeyword):null;
+if(mountainRedirect){res.writeHead(302,{location:mountainRedirect,'cache-control':'no-store','vary':'Accept-Encoding'});return res.end();}
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');return respond(res,200,applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/'))}
 // Redirect regional search clicks to a single service-specific, image-first landing page.
 if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
