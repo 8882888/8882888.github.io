@@ -148,7 +148,7 @@ jobs:
           # Korean SEO paths must be the public canonical, not duplicate legacy canonical URLs.
           for label,mountain in [('설악산탁송','seoraksan'),('지리산탁송','jirisan')]:
             route='/'+label+'/'
-            req=urllib.request.Request(base+route+'?release-check='+os.environ['DEPLOYED_COMMIT'],headers={'Cache-Control':'no-cache'})
+            req=urllib.request.Request(base+quote(route)+'?release-check='+os.environ['DEPLOYED_COMMIT'],headers={'Cache-Control':'no-cache'})
             with urllib.request.urlopen(req,timeout=15) as response:
               page=response.read().decode('utf-8')
             if 'rel="canonical" href="'+base+route+'"' not in page or '/assets/'+mountain+'-taksong-original-fare.png' not in page:
