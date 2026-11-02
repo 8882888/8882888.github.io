@@ -212,6 +212,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const seoulBoroughs=seoulEditorial.flatMap(g=>g.districts.map(d=>d[0]));
   assert.equal(seoulBoroughs.length,25);
   assert.equal(new Set(seoulBoroughs).size,25,'all 25 Seoul boroughs included exactly once');
+  assert.equal(seoulEditorial.find(g=>g.slug==='jongno-jung-yongsan-dongdaemun').districts[0][1],'jongro-gu','Jongno link matches legacy canonical path');
+  assert.equal(seoulEditorial.find(g=>g.slug==='seongdong-gwangjin-jungnang-seongbuk').districts[2][1],'jungrang-gu','Jungnang link matches legacy canonical path');
   assert.ok(seoulEditorial.every(g=>g.districts.length>=3&&g.districts.length<=4),
     'each article handles 3-4 adjacent boroughs');
   const existingNaverPosts=require('../blog/posts.json');
