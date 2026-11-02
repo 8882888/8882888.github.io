@@ -126,7 +126,7 @@ def run():
     ]
     for path, status, result, detail in rows:
         safe = detail.replace("|", "/").replace("\n", " ")
-        lines.append(f"| \`{path}\` | {status} | **{result}** | {safe} |")
+        lines.append(f"| `{path}` | {status} | **{result}** | {safe} |")
     lines += ["", f"**Failures: {failures} / {len(rows)}**"]
     summary = "\n".join(lines) + "\n"
     if os.environ.get("GITHUB_STEP_SUMMARY"):
