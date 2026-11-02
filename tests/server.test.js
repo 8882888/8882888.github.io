@@ -775,7 +775,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(nationwideHome.status,200,'plain homepage remains nationwide');
   const nationwideHtml=await nationwideHome.text();
   assert.ok(nationwideHtml.includes('id="mobile-direct-image-priority"'),'ordinary homepage retains mountain direct-view mobile hero');
-  assert.ok(nationwideHtml.indexOf('<body><section id="mobile-direct-image-priority"')>=0,'mobile poster is placed before all navigation');
+  assert.ok(nationwideHtml.indexOf('<header')>=0&&nationwideHtml.indexOf('<header')<nationwideHtml.indexOf('<section id="mobile-direct-image-priority"'),'general-service header comes before the mountain mobile poster');
   const firstMobileHero=nationwideHtml.slice(nationwideHtml.indexOf('id="mobile-direct-image-priority"'),nationwideHtml.indexOf('</section>',nationwideHtml.indexOf('id="mobile-direct-image-priority"')));
   assert.ok(firstMobileHero.includes('src="/assets/seoraksan-taksong-original-fare.png"'),'Seoraksan original fare first');
   assert.ok(firstMobileHero.includes('src="/assets/jirisan-taksong-original-fare.png"'),'Jirisan original fare in same direct-view area');
@@ -801,7 +801,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     const response=await get(serviceUrl);assert.equal(response.status,200,serviceUrl);
     const html=await response.text();
     const imagePath='/card/'+r.slug+'-'+kind+'-brand'+(kind==='taksong'?'-v2':'')+'.png';
-    assert.ok(html.includes('<body><figure'),'image is visible before navigation: '+serviceUrl);
+    assert.ok(html.includes('<figure'),'region image remains visible without an oversized first-view placement: '+serviceUrl);
     assert.ok(html.includes('src="'+imagePath+'"'),'only correct locality and service image is linked: '+serviceUrl);
     assert.ok(html.includes('property="og:image" content="https://example.com'+imagePath+'"'),'search image matches body image: '+serviceUrl);
     const picture=await get(imagePath);assert.equal(picture.status,200,'on-demand PNG exists: '+imagePath);
@@ -823,7 +823,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(response.status,200,'regional search resolves: '+query);
     assert.equal(new URL(response.url).pathname,canonicalPath,'regional keyword selects matching landing: '+query);
     const html=await response.text();
-    assert.ok(html.includes('<body><figure')&&html.includes(headline),'region+전국탁송 banner is first: '+query);
+    assert.ok(html.includes('<figure')&&html.includes(headline),'region+전국탁송 banner and locality identity are visible: '+query);
     assert.ok(/src="\/card\/area-\d+-taksong-brand-v2\.png"/.test(html),'new image URL avoids previous browser cache: '+query);
    }
   }
