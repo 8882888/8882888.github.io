@@ -73,10 +73,11 @@ jobs:
               return r.read(),r.geturl()
           body,_=fetch('/?mobile-mountain-verify='+os.environ.get('GITHUB_SHA','current'))
           page=body.decode('utf-8')
-          first=page.split('<body>',1)[-1].lstrip()
-          if not first.startswith('<section id="mobile-direct-image-priority"'):
-            raise SystemExit('FAIL: homepage mobile first element is not the mountain poster section')
-          first_section=first.split('</section>',1)[0]
+          section_start=page.find('<section id="mobile-direct-image-priority"')
+          header_start=page.find('<header')
+          if header_start<0 or section_start<=header_start:
+            raise SystemExit('FAIL: general-service header must precede the mountain mobile poster section')
+          first_section=page[section_start:].split('</section>',1)[0]
           original=[
             '/assets/seoraksan-taksong-original-fare.png',
             '/assets/jirisan-taksong-original-fare.png'
@@ -101,7 +102,7 @@ jobs:
             if not sub.split('<body>',1)[-1].lstrip().startswith('<figure id="original-mountain-fare-visual"') or expected not in sub:
               raise SystemExit('FAIL: incorrect first image on mountain destination '+route)
             print('PASS live original-image-first special page:',route)
-          print('PASS actual live mobile homepage: Seoraksan first, Jirisan second, no generic card')
+          print('PASS actual live mobile homepage: general services first, mountain posters remain available in order')
           PYMOBILE
 
       - name: Check Naver crawler access to previously restricted URLs
