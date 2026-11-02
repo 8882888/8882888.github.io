@@ -1,0 +1,50 @@
+'use strict';
+// Offline, deterministic checks: this does NOT confirm live Cloudtype deployment or Naver indexing.
+const fs=require('node:fs');
+const read=p=>fs.readFileSync(p,'utf8');
+const check=(ok,message)=>{if(!ok)throw Error('SEO check failed: '+message)};
+const posts=JSON.parse(read('blog/posts.json'));
+check(Array.isArray(posts)&&posts.length>=630,'630 original blog links must remain');
+const ids=new Set(),urls=new Set(),categories=new Set();
+for(const p of posts){
+ check(typeof p.title==='string'&&p.title.trim()&&typeof p.category==='string','post title and category');
+ check(/^https:\/\/blog\.naver\.com\/wjdtnr4757\/[0-9]{12}$/.test(p.url),'original Naver URL format: '+p.url);
+ check(p.id===p.url.slice(p.url.lastIndexOf('/')+1),'Naver post ID mismatch');
+ check(!ids.has(p.id)&&!urls.has(p.url),'duplicate post ID or URL: '+p.id);
+ ids.add(p.id);urls.add(p.url);categories.add(p.category);
+}
+check(categories.size>=52,'52 original categories should remain');
+const sections=[
+ ['region/index.html','verified-naver-region-links-20261102'],
+ ['service/taksong/index.html','real-original-taksong-links-20261102'],
+ ['service/daeri/index.html','real-original-daeri-links-20261102'],
+ ['blog/taksong-categories/index.html','naver-taksong-direct-originals-20261102'],
+ ['blog/daeri-regions/index.html','naver-daeri-direct-originals-20261102'],
+ ['region/busan-daeri-taksong/index.html','busan-direct-naver-evidence-20261102'],
+ ['region/daegu-daeri-taksong/index.html','daegu-direct-naver-evidence-20261102'],
+ ['region/incheon-daeri-taksong/index.html','incheon-direct-naver-evidence-20261102'],
+ ['fare/jeju/index.html','jeju-original-evidence-20261102'],
+ ['service/heavy-truck-taksong/index.html','heavy-original-links-20261102']
+];
+for(const [p,id] of sections){
+ const html=read(p);
+ check(html.includes('id="'+id+'"'),'missing editorial link section: '+p);
+ check(!/<meta\s+name="robots"\s+content="noindex/i.test(html),'unexpected noindex: '+p);
+}
+const home=read('index.html');
+check(home.indexOf('<body>')<home.indexOf('<header')&&home.indexOf('<header')<home.indexOf('<section id="mobile-direct-image-priority"'),'homepage general service must precede mountain posters');
+check(home.includes('id="general-taksong-service-focus-20261102"'),'missing general regional focus');
+const rules=JSON.parse(read('data/seo-pages.json')).pages;
+for(const p of ['/','/taksong/','/daeri/','/region/']){
+ const rule=rules.find(x=>x.path===p);
+ check(rule&&rule.title&&rule.description,'production SEO metadata for '+p);
+}
+const server=read('server.js');
+for(const x of ['staticOriginalSourceSection','regionDirectOriginalLinks','real-original-taksong-links-20261102','real-original-daeri-links-20261102','/blog/taksong-categories/']){
+ check(server.includes(x),'Cloudtype source/sitemap wiring: '+x);
+}
+const sitemap=read('sitemap.xml');
+for(const route of ['/설악산탁송/','/지리산탁송/','/blog/archive/','/service/taksong/']){
+ check(sitemap.includes('https://jeongukdaeri.kr'+route),'static sitemap route '+route);
+}
+console.log('PASS: '+posts.length+' unique Naver post URLs, '+categories.size+' categories, '+sections.length+' original-source sections, production SEO overrides, homepage order and core sitemaps.');
