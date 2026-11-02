@@ -33,7 +33,7 @@ const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
 const daeriTravelGuides=require('./lib/daeri-travel-guides');
 const foodTravelMap=require('./lib/food-travel-map');
 const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]));
-if(priorityRegionalPages.length!==26||priorityByKey.size!==26)throw Error('Expected 26 unique priority regional pages');
+if(priorityRegionalPages.length!==27||priorityByKey.size!==27)throw Error('Expected 27 unique priority regional pages');
 for(const guide of priorityRegionalPages){
  if(!['daeri','taksong'].includes(guide.kind)||!regions.some(r=>r.full_name===guide.region)||!guide.topic||!guide.detail)
   throw Error('Invalid priority region entry: '+JSON.stringify([guide.kind,guide.region]));
@@ -703,7 +703,32 @@ async function servicePage(r,kind){
   '<h3>'+esc(preciseLocality)+'탁송 자주 묻는 질문</h3>'+
   '<dl><dt><strong>차량을 맡기려면 무엇이 필요한가요?</strong></dt><dd>출발지 실제 주차장, 도착지 인계 장소, 차량 종류, 희망 인수시각을 알려주세요. '+esc(priorityMeta?.detail||provinceSpecificGuide||hierarchyNote)+'</dd>'+
   '<dt><strong>홈페이지에 표시된 요금으로 바로 예약되나요?</strong></dt><dd>아닙니다. 완료 운행기록에 기재된 금액은 당시 요금이며, 도로거리·시간대·주차·기사 복귀 여건에 따라 현재 견적과 배차 가능 여부를 개별 확인합니다.</dd></dl></section>':'';
- const body=daeguTaksongGuide+taebaekTaksongHeader+regionalQuickStart+(priorityMeta?priorityEvidence+priorityLocalGuide(r,kind)+regionalBlogLinks(r,kind)+routeKeywordPages.links(r,kind):routeKeywordPages.links(r,kind)+priorityLocalGuide(r,kind)+reviewCards+regionalBlogLinks(r,kind))+vehicleGuideLink(kind)+(priorityMeta?priorityServiceUseCases(r,kind):localIntentLinks)+'<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(seoRegionLabel(a))+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+provinceServiceGuide(r,kind)+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+routeGuides.regionSection(r)+neighborhoodStorySection(r,kind)+taebaekGuide+bookingGuide(kind,r)+(priorityMeta?'':aliasSection)+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(serviceBrand(kind))+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 출발지·도착지 예상요금 확인하기</a></p></section><section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+(priorityMeta&&matches.length?'<p>상단에 표시된 확인 완료 사례에서 실제 출발·도착지와 당시 요금을 확인할 수 있습니다. 현재 견적은 별도 상담으로 안내합니다.</p><p><a href="/reviews/history/?kind='+kind+'">전체 운행기록 더 보기</a></p>':history)+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
+ const southeastTaksongFocus=kind==='taksong'&&['부산광역시','울산광역시'].includes(r.full_name)?(()=>{
+  const isBusan=r.full_name==='부산광역시';
+  const links=isBusan?[
+   ['해운대구탁송','/taksong/busan/haeundae-gu/'],
+   ['기장군탁송','/taksong/busan/gijang-gun/'],
+   ['강서구탁송','/taksong/busan/gangseo-gu/'],
+   ['사하구탁송','/taksong/busan/saha-gu/'],
+   ['울산탁송','/taksong/ulsan/']
+  ]:[
+   ['울산남구탁송','/taksong/ulsan/nam-gu/'],
+   ['울산동구탁송','/taksong/ulsan/dong-gu/'],
+   ['울산북구탁송','/taksong/ulsan/buk-gu/'],
+   ['울주군탁송','/taksong/ulsan/ulju-gun/'],
+   ['부산탁송','/taksong/busan/']
+  ];
+  const postUrl=isBusan?'https://blog.naver.com/wjdtnr4757/224445300887':'https://blog.naver.com/wjdtnr4757/224441226524';
+  const postTitle=isBusan?'부산 연산동 출발 경산 중산동 도착 자동차탁송 공개 운행후기':'울산 달천동 출발 사천 사남면 도착 자동차탁송 공개 원문';
+  const locality=isBusan?'부산':'울산';
+  const terms=isBusan?'부산항·감만동 등 항만시설은 출입 허가와 차량 인계 시간을, 해운대·연산동은 주차층과 담당자를, 기장·강서 외곽은 기사 복귀 여건을 각각 확인합니다.':'울산 남구 삼산동 도심과 동구 방어진 해안권, 북구 달천동, 울주군 언양·온산은 차량 출입 절차와 주차 위치가 다릅니다. 특히 산업시설 입고·출고는 담당자와 출입 가능 시간을 확인합니다.';
+  return '<section id="southeast-taksong-local-evidence" style="background:#fff;border:1px solid #a9c4da;padding:18px;margin:12px 0;border-radius:12px">'+
+   '<h2>'+locality+'탁송 · 구군별 차량 인수와 실제 공개 원문</h2><p>'+terms+'</p>'+
+   '<h3>'+locality+' 지역별 자동차탁송 안내</h3><nav aria-label="'+locality+'탁송 구군 안내"><ul>'+links.map(([label,href])=>'<li><a href="'+href+'">'+label+'</a></li>').join('')+'</ul></nav>'+
+   '<h3>실제 게시된 지역 자동차탁송 원문</h3><p><a href="'+postUrl+'" target="_blank" rel="noopener noreferrer">'+postTitle+'</a></p>'+
+   '<p>링크는 게시된 네이버 블로그 원문입니다. 당시 일정·요금과 현재 확정 견적은 다르며, 원문에 없는 차종이나 운행 시간을 추정하지 않습니다. <a href="/reviews/history/?kind=taksong&amp;q='+encodeURIComponent(locality)+'">'+locality+' 운행완료 기록 검색</a> · <a href="/fare/?service=taksong&amp;from='+encodeURIComponent(r.full_name)+'">'+locality+'탁송 예상요금</a></p></section>';
+ })():'';
+ const body=daeguTaksongGuide+taebaekTaksongHeader+regionalQuickStart+southeastTaksongFocus+(priorityMeta?priorityEvidence+priorityLocalGuide(r,kind)+regionalBlogLinks(r,kind)+routeKeywordPages.links(r,kind):routeKeywordPages.links(r,kind)+priorityLocalGuide(r,kind)+reviewCards+regionalBlogLinks(r,kind))+vehicleGuideLink(kind)+(priorityMeta?priorityServiceUseCases(r,kind):localIntentLinks)+'<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(seoRegionLabel(a))+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+provinceServiceGuide(r,kind)+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+routeGuides.regionSection(r)+neighborhoodStorySection(r,kind)+taebaekGuide+bookingGuide(kind,r)+(priorityMeta?'':aliasSection)+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(serviceBrand(kind))+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 출발지·도착지 예상요금 확인하기</a></p></section><section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+(priorityMeta&&matches.length?'<p>상단에 표시된 확인 완료 사례에서 실제 출발·도착지와 당시 요금을 확인할 수 있습니다. 현재 견적은 별도 상담으로 안내합니다.</p><p><a href="/reviews/history/?kind='+kind+'">전체 운행기록 더 보기</a></p>':history)+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
  // Nationwide service-brand cards dynamically imprint the exact locality and service.
  // These are branded templates, not purported photographs of the city or a completed trip.
  const regionImagePath=cardPngPath(r.slug,kind);
@@ -723,7 +748,7 @@ async function servicePage(r,kind){
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Render the matching locality image before header navigation on mobile and desktop.
- const imageFirst=visibleCard?rendered.replace('<body><header>','<body>'+visibleCard+'<header>').replace('<main>'+visibleCard,'<main>'):rendered;
+ const imageFirst=visibleCard?rendered.replace(visibleCard,'').replace('<body><header>','<body>'+visibleCard+'<header>'):rendered;
  return jejuSearchPage?imageFirst.replaceAll('1811-4294','1877-5245').replaceAll('18114294','18775245'):imageFirst;
 }
 function remoteRegionGuidance(r){
@@ -852,7 +877,7 @@ function regionServiceLinks(items,kind){const label=kind==='taksong'?'탁송':'�
 function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=childrenByParent.get(r.slug)||[];return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
 
 function homepagePriorityLinks(){
- const selected=['부산광역시','대구광역시','인천광역시','강원특별자치도','서울특별시','경기도'];
+ const selected=['부산광역시','울산광역시','대구광역시','인천광역시','강원특별자치도','서울특별시','경기도'];
  const groups=['taksong','daeri'].map(kind=>{
   const label=kind==='taksong'?'자동차탁송':'대리운전';
   const links=selected.map(n=>regions.find(r=>r.full_name===n)).filter(Boolean).map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(seoRegionLabel(r)+label)+'</a></li>').join('');
@@ -892,7 +917,7 @@ function priorityRegionLinks(kind){
  const items=priorityRegionalPages.filter(p=>p.kind===kind).map(p=>{
   const region=regions.find(r=>r.full_name===p.region);
   // Search-friendly locality labels belong on links to the existing canonical region pages.
-  const anchor=kind==='daeri'?seoRegionLabel(region)+'대리운전':p.region+' '+label;
+  const anchor=kind==='daeri'?seoRegionLabel(region)+'대리운전':seoRegionLabel(region)+'탁송';
   return '<li><a href="'+servicePath(region,kind)+'" data-region="'+esc(p.region)+'">'+esc(anchor)+'</a> · '+esc(p.topic)+'</li>';
  }).join('');
  const intro=kind==='daeri'?'출발할 지역을 선택해 주차장 위치, 장거리·골프장 이용 조건과 예약 준비사항을 확인하세요. 실제 배차 가능 여부는 상담 시 확정합니다.':'지역별 차량 인수·인계 조건을 구분해 안내합니다. 실제 완료 운행은 확인된 기록만 게시하며 모든 지역에 기사가 상주하는 것은 아닙니다.';
@@ -1294,7 +1319,7 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
   '부산광역시 기장군','부산광역시 해운대구','부산광역시 강서구','부산광역시 사하구',
   '부산광역시 동래구','부산광역시 금정구','부산광역시 북구','부산광역시 연제구',
   '부산광역시 수영구','부산광역시 부산진구','부산광역시 남구','부산광역시 서구',
-  '부산광역시 동구','부산광역시 중구','대구광역시 수성구','대구광역시 달서구',
+  '부산광역시 동구','부산광역시 중구','울산광역시 남구','울산광역시 중구','울산광역시 동구','울산광역시 북구','울산광역시 울주군','대구광역시 수성구','대구광역시 달서구',
   '대구광역시 북구','대구광역시 동구','대구광역시 중구',
   '강원특별자치도 속초시','강원특별자치도 강릉시','강원특별자치도 양양군',
   '강원특별자치도 태백시','강원특별자치도 동해시','강원특별자치도 삼척시',
