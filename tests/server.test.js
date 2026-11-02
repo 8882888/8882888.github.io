@@ -190,6 +190,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(dailyRegion.includes('id="daily-verified-examples"')&&dailyRegion.includes('id="daily-region-evidence"'),'daily driver landing should show authentic itinerary evidence');
   assert.ok(dailyRegion.includes('224451280349')&&dailyRegion.includes('224417611971'),'daily driver page links two published round-trip cases');
   for(const page of [golfRegion,corporateRegion,dailyRegion])assert.ok(page.includes('1811-4294'),'service page must retain official call number');
+  // Duplicate nationwide-driver pages must not compete for mobile Naver sitelinks.
+  for(const oldPath of ['/service/daeri/','/special/nationwide-daeri/']){
+   const redirect=await fetch('http://127.0.0.1:'+port+oldPath,{redirect:'manual'});
+   assert.equal(redirect.status,301,'legacy nationwide driver URL redirects: '+oldPath);
+   assert.equal(redirect.headers.get('location'),'/daeri/','legacy driver canonical consolidation: '+oldPath);
+  }
+  const homepageRegionalNavigation=(seoHome.match(/<nav class="top-nav"[^>]*>[\s\S]*?<\/nav>/)||[])[0]||'';
+  for(const keyword of ['설악산탁송','지리산탁송','부산탁송','창원탁송','대구탁송'])
+   assert.ok(homepageRegionalNavigation.includes('>'+keyword+'</a>'),'homepage primary GNB prioritizes '+keyword);
+  assert.ok(seoHome.includes('href="/daeri/" rel="nosublink"'),
+   'duplicate nationwide-driver navigation links opt out of Naver sitelink candidates');
   const duplicateDaeriService=await (await get('/service/daeri/')).text();
   const duplicateNationwide=await (await get('/special/nationwide-daeri/')).text();
   for(const duplicate of [duplicateDaeriService,duplicateNationwide])assert.ok(duplicate.includes('<link rel="canonical" href="https://jeongukdaeri.kr/daeri/">'),'related legacy daeri page consolidates to primary /daeri/ URL');
