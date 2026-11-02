@@ -8,6 +8,7 @@ import html
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import sys
 import urllib.error
@@ -33,6 +34,7 @@ PATHS = {
     "/taksong/gyeongnam/gimhae-si/": "local-naver-originals",
     "/daeri/busan/": "local-naver-originals",
     "/daeri/daegu/": "local-naver-originals",
+    "/daeri/gwangju/": "광주광역시대리운전",
     "/business/rental-car/": "rental-b2b-operating-guide-20261103",
     "/business/used-car/": "dealer-b2b-operating-guide-20261103",
     "/business/export-port/": "export-b2b-operating-guide-20261103",
@@ -105,6 +107,8 @@ def run():
                 errors.append("old/mismatched SEO title: " + parser.title.strip()[:85])
             if marker not in body:
                 errors.append("expected deployed content marker absent")
+            if path == "/daeri/gwangju/" and re.search(r"<h3>광주시\s*(?:쌍동리|초월읍|곤지암읍)", body):
+                errors.append("Gyeonggi Gwangju-si ride wrongly displayed as Gwangju Metropolitan City evidence")
             if path != "/health/seo-report/":
                 if parser.canonical_count != 1:
                     errors.append(f"expected exactly one canonical, got {parser.canonical_count}")
