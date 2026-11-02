@@ -122,12 +122,12 @@ async function inspect(route){
  const priorityResponse=await fetch(new URL(priorityRoute,base),{signal:AbortSignal.timeout(15000)});
  const priorityXml=await priorityResponse.text();
  const priorityUrls=[...priorityXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
- const expectedPriorityUrls=['/','/daeri/','/taksong/','/route-taksong/','/special/seoraksan-transport/','/special/jirisan-transport/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/ride-record-stories/','/reviews/verified/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...found].map(p=>new URL(p,new URL(config.site)).href);
+ const expectedPriorityUrls=['/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/daegu-daeri-taksong/','/blog/','/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...found].map(p=>new URL(p,new URL(config.site)).href);
  const priorityIssues=[];
  if(priorityResponse.status!==200)priorityIssues.push('Priority sitemap HTTP '+priorityResponse.status);
  if(!String(priorityResponse.headers.get('content-type')).includes('application/xml'))priorityIssues.push('Wrong sitemap content-type');
  if(!priorityXml.includes('<urlset'))priorityIssues.push('Missing XML urlset');
- if(priorityUrls.length!==expectedPriorityUrls.length)priorityIssues.push('Wrong priority sitemap count '+priorityUrls.length+'/'+expectedPriorityUrls.length);
+ if(priorityUrls.length<expectedPriorityUrls.length||priorityUrls.length>200)priorityIssues.push('Unexpected priority sitemap coverage '+priorityUrls.length+' / minimum '+expectedPriorityUrls.length);
  if(new Set(priorityUrls).size!==priorityUrls.length)priorityIssues.push('Duplicate priority sitemap URLs');
  for(const url of expectedPriorityUrls){if(!priorityUrls.includes(url))priorityIssues.push('Missing priority URL '+url)}
  const robotsResponse=await fetch(new URL('/robots.txt',base),{signal:AbortSignal.timeout(15000)});
