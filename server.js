@@ -651,7 +651,8 @@ function priorityBlogEvidence(r,kind){
  if(!originals.length)return '';
  const label=kind==='daeri'?'대리운전':'자동차탁송';
  const items=originals.map(post=>'<li><a href="'+esc(post.url)+'" target="_blank" rel="noopener noreferrer">'+esc(post.title)+'</a> <small>기존 네이버 블로그 원문 · '+esc(post.category)+'</small></li>').join('');
- return '<section id="local-naver-originals" aria-label="기존 발행 원문 링크"><h2>'+esc(seoRegionLabel(r))+' '+label+' 관련 네이버 블로그 원문</h2><p>'+esc(entry.focus)+'</p><ol>'+items+'</ol><p>이 목록은 번개탁송대리운전이 이미 발행한 글의 제목·원문 링크입니다. 원문 본문·사진을 무단 복사하지 않았으며, 제목만으로 운행완료나 현재 요금을 확인한 것으로 표시하지 않습니다.</p><p><a href="/blog/archive/">공개 원문 630편 자료실</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">'+esc(r.name)+' 출발 예상요금</a> · <a href="tel:18114294">상담 1811-4294</a></p></section>';
+ const pickupGuidance=entry.handoff?'<h3>'+esc(entry.label||seoRegionLabel(r)+' '+label)+' 지역 차량 인수·인계 안내</h3><p>'+esc(entry.handoff)+'</p>':'';
+ return '<section id="local-naver-originals" aria-label="기존 발행 원문 링크"><h2>'+esc(seoRegionLabel(r))+' '+label+' 관련 네이버 블로그 원문</h2><p>'+esc(entry.focus)+'</p>'+pickupGuidance+'<ol>'+items+'</ol><p>이 목록은 번개탁송대리운전이 이미 발행한 글의 제목·원문 링크입니다. 원문 본문·사진을 무단 복사하지 않았으며, 제목만으로 운행완료나 현재 요금을 확인한 것으로 표시하지 않습니다.</p><p><a href="/blog/archive/">공개 원문 630편 자료실</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">'+esc(r.name)+' 출발 예상요금</a> · <a href="tel:18114294">상담 1811-4294</a></p></section>';
 }
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';

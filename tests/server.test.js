@@ -1040,6 +1040,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const archiveIndex=await get('/blog/archive/');assert.equal(archiveIndex.status,200);
   const archiveIndexHtml=await archiveIndex.text();
   assert.ok(archiveIndexHtml.includes(archiveData.total+'편'),'archive displays source count');
+   const additionalBlogRegions=require('../data/priority-blog-links.json').pages.filter(x=>x.kind==='taksong'&&x.path);
+   assert.equal(additionalBlogRegions.length,10,'ten region keyword blog improvements');
+   assert.ok(archiveIndexHtml.includes('regional-blog-keyword-guide-20261103'),'blog archive links regional service pages');
+   for(const item of additionalBlogRegions){
+      assert.ok(archiveIndexHtml.includes('href="'+item.path+'"'),'regional blog archive page has '+item.label);
+      const response=await get(item.path);assert.equal(response.status,200,item.label);
+      const pageHtml=await response.text();
+      assert.ok(pageHtml.includes('id="local-naver-originals"')&&pageHtml.includes(item.handoff),'unique local editorial context '+item.label);
+      for(const id of item.ids)assert.ok(pageHtml.includes('https://blog.naver.com/wjdtnr4757/'+id),'exact existing Naver source '+id);
+   }
   for(const group of archiveData.groups){
     const slug='/blog/archive/'+group.id+'/';
     assert.ok(archiveIndexHtml.includes(slug),'archive index links '+group.id);

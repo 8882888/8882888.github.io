@@ -76,7 +76,7 @@ check(server.includes("sparseVillage=r.level==='리'"),'sparse village low-quali
 check(server.includes("specialized-business-taksong-hub"),'production business hub direct links missing');
 check(home.includes('id="special-business-top-links-20261103"'),'homepage business navigation missing');
 const curated=JSON.parse(read('data/priority-blog-links.json')).pages;
-check(curated.length===10,'expected exactly ten curated existing service pages');
+check(curated.length===20,'twenty curated existing service pages');
 const curatedKeys=new Set(),curatedIds=new Set();
 for(const item of curated){
  const key=item.kind+'|'+item.region;
@@ -85,6 +85,7 @@ for(const item of curated){
  curatedKeys.add(key);
  check(item.ids.length===2,'require two original Naver sources for '+key);
  check(typeof item.focus==='string'&&item.focus.length>=20,'missing unique editorial context '+key);
+ if(item.path){check(item.path.startsWith('/'+item.kind+'/'),'invalid curated URL '+key);check(typeof item.handoff==='string'&&item.handoff.length>=60,'missing unique locality context '+key);}
  for(const id of item.ids){
   check(ids.has(id),'curated source id missing from original 630 posts: '+id);
   check(!curatedIds.has(id),'source must not be reused in separate curated region: '+id);
