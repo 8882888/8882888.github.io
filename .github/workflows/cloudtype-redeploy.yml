@@ -53,8 +53,11 @@ jobs:
           if [ -z "$CLOUDTYPE_TOKEN" ] || [ -z "$CLOUDTYPE_PROJECT" ] || [ -z "$CLOUDTYPE_APP" ] || [ -z "$CLOUDTYPE_STAGE" ]; then
             echo "::notice::Cloudtype redeploy not connected. Requires CLOUDTYPE_TOKEN secret and CLOUDTYPE_PROJECT, CLOUDTYPE_APP, CLOUDTYPE_STAGE repository variables. No deployment requested."
             echo 'enabled=false' >> "$GITHUB_OUTPUT"
+            echo '### Cloudtype: no deployment requested' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Cloudtype API key or existing app identifiers are not configured. The source startup test ran, but Cloudtype production is NOT updated by this workflow.' >> "$GITHUB_STEP_SUMMARY"
           else
             echo 'enabled=true' >> "$GITHUB_OUTPUT"
+            echo '### Cloudtype redeploy: configuration present' >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Request Cloudtype to redeploy the EXISTING application
         if: steps.connection.outputs.enabled == 'true'
@@ -70,3 +73,4 @@ jobs:
             --data "$payload" --output /tmp/smart24-deploy-response.json
           echo 'Cloudtype deployment requested for the configured existing application.'
           echo 'This confirms request acceptance only. Production deployment and Naver indexing are separate.'
+          echo 'Cloudtype existing-app redeploy request accepted. Verify actual live HTML and source SHA256 separately.' >> "$GITHUB_STEP_SUMMARY"
