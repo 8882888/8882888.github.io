@@ -29,7 +29,11 @@ const sections=[
 for(const [p,id] of sections){
  const html=read(p);
  check(html.includes('id="'+id+'"'),'missing editorial link section: '+p);
- check(!/<meta\s+name="robots"\s+content="noindex/i.test(html),'unexpected noindex: '+p);
+ if(p==='service/daeri/index.html'){
+  check(/<meta\s+name="robots"\s+content="noindex,follow"/i.test(html),'legacy daeri URL must remain noindex: '+p);
+ }else{
+  check(!/<meta\s+name="robots"\s+content="noindex/i.test(html),'unexpected noindex: '+p);
+ }
 }
 const home=read('index.html');
 check(home.indexOf('<body>')<home.indexOf('<header')&&home.indexOf('<header')<home.indexOf('<section id="mobile-direct-image-priority"'),'homepage general service must precede mountain posters');
