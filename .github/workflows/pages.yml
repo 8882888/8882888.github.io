@@ -85,8 +85,15 @@ jobs:
           else
             echo "::warning::No verified region data; preserving committed homepage and service pages."
           fi
-      - name: Configure canonical URLs and custom-domain artifact
+      - name: Configure canonical URLs for backup artifact
         run: python tools/configure_site.py
+      - name: Stop GitHub Pages mirror from claiming the Cloudtype domain
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          assert not Path('CNAME').exists(), 'GitHub Pages backup cannot publish a custom-domain CNAME'
+          print('PASS: Pages backup has no CNAME; official site remains Cloudtype-managed')
+          PY
       - name: Guard official Smart24 canonical domain before publishing
         shell: bash
         run: |
