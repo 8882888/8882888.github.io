@@ -262,7 +262,11 @@ function landmarkPage(item){
  return layout(name+' 대리운전·탁송 | 예약·예상요금·빠른배차',desc,body,url);
 }
 const landmarkMatches=(r,query)=>landmarks.some(([name,areas])=>compact(name).includes(compact(query))&&areas.some(a=>regionAncestors(r).some(x=>x.name===a)));
-const regionMatches=(r,q)=>placeNames(r).some(n=>compact(n).includes(compact(q)))||landmarkMatches(r,q);
+// Treat service suffixes as search intent, not part of a locality name.
+const regionMatches=(r,q)=>{
+ const term=compact(q).replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$/,'')||compact(q);
+ return placeNames(r).some(n=>compact(n).includes(term))||landmarkMatches(r,term);
+};
 const regionAncestors=r=>{const a=[];let cur=r;while(cur){a.unshift(cur);cur=cur.parent_slug?bySlug.get(cur.parent_slug):null}return a};
 const regionContext=r=>({읍:'읍내·인접 마을',면:'면 소재지·인접 마을',리:'마을·인접 읍면',동:'주거지·상업시설',구:'구내 주요 생활권',군:'읍·면·리 지역',시:'시내·외곽 지역',시도:'시·군·구별 지역'})[r.level]||'해당 지역';
 const cardArtFile=path.join(ROOT,'assets/smart24-business-card-inline.webp');
@@ -272,13 +276,18 @@ const serviceCardData=Object.fromEntries(Object.entries(serviceCardArt).map(([ki
 function serviceBrand(kind){return kind==='daeri'?'스마트전국대리운전':'스마트24시전국탁송'}
 const cardSvg=(label,kind)=>{
  const full=String(label||'전국').trim(),place=label?full.split(/\s+/).map(shortPlace).join(' '):'';
- const prefix=place?place+' ':'';
+ const prefix=place?place.replace(/\s+/g,''):'';
  if(kind){
-  const brand=kind==='taksong'?'스마트탁송':'스마트대리운전',heading=esc(prefix+brand),size=Math.min(48,Math.floor(850/(prefix.length+brand.length)));
+  // One national artwork template is customized for all 20,562 verified administrative areas.
+  // The requested headline order is exact: locality + 전국탁송 (e.g. 창원전국탁송).
+  const brand=kind==='taksong'?'전국탁송':'스마트대리운전';
+  const fullHeading=prefix+brand,heading=esc(fullHeading);
+  const size=Math.min(48,Math.max(19,Math.floor(850/fullHeading.length)));
+  const phone=kind==='taksong'&&place==='제주'?'1877-5245':'1811-4294';
   const formalBrand=kind==='taksong'?'스마트24시전국탁송':'스마트전국대리운전';
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="card-title"><title id="card-title">${esc(full)} ${esc(brand)} 1811-4294</title><desc>${esc(place+' '+formalBrand)} · ${esc(full)} ${esc(brand)} · 1811-4294</desc><image href="data:image/webp;base64,${serviceCardData[kind]}" width="1200" height="800"/><defs><linearGradient id="banner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#007e91"/><stop offset="0.55" stop-color="#004252"/><stop offset="1" stop-color="#008d9d"/></linearGradient></defs><rect x="200" y="7" width="884" height="74" rx="8" fill="url(#banner)"/><text x="642" y="59" fill="#fff04b" stroke="#002b3a" stroke-width="2" paint-order="stroke fill" font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle">${heading}</text><rect x="285" y="663" width="640" height="68" rx="16" fill="#062d5d" stroke="#ffffff" stroke-width="3"/><text x="605" y="714" fill="#fff04b" font-family="sans-serif" font-weight="900" font-size="51" text-anchor="middle">☎ 1811-4294</text><rect x="76" y="731" width="184" height="29" fill="#031b3a"/><text x="84" y="752" fill="#ffffff" font-family="sans-serif" font-weight="700" font-size="16">전 직원 100% 보험가입</text></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="card-title"><title id="card-title">${esc(fullHeading)} ${phone}</title><desc>${esc(place+' '+formalBrand)} · ${esc(fullHeading)} · ${phone}</desc><image href="data:image/webp;base64,${serviceCardData[kind]}" width="1200" height="800"/><defs><linearGradient id="banner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#007e91"/><stop offset="0.55" stop-color="#004252"/><stop offset="1" stop-color="#008d9d"/></linearGradient></defs><rect x="200" y="7" width="884" height="74" rx="8" fill="url(#banner)"/><text x="642" y="59" fill="#fff04b" stroke="#002b3a" stroke-width="2" paint-order="stroke fill" font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle">${heading}</text><rect x="285" y="663" width="640" height="68" rx="16" fill="#062d5d" stroke="#ffffff" stroke-width="3"/><text x="605" y="714" fill="#fff04b" font-family="sans-serif" font-weight="900" font-size="51" text-anchor="middle">☎ ${phone}</text><rect x="76" y="731" width="184" height="29" fill="#031b3a"/><text x="84" y="752" fill="#ffffff" font-family="sans-serif" font-weight="700" font-size="16">전 직원 100% 보험가입</text></svg>`;
  }
- const first=prefix+'스마트대리운전',second=prefix+'스마트탁송';
+ const first=prefix+'스마트대리운전',second=prefix+'전국탁송';
  const daeriHeading=esc(first),taksongHeading=esc(second),size=Math.min(32,Math.floor(850/Math.max(first.length,second.length)));
  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="card-title"><title id="card-title">${esc(full)} 스마트전국대리운전 스마트24시탁송 1811-4294</title><image href="data:image/webp;base64,${cardArtData}" x="0" y="0" width="1200" height="800"/><defs><linearGradient id="banner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#007e91"/><stop offset="0.55" stop-color="#004252"/><stop offset="1" stop-color="#008d9d"/></linearGradient></defs><rect x="200" y="7" width="884" height="74" rx="8" fill="url(#banner)"/><g font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle" stroke="#002b3a" stroke-width="1.8" paint-order="stroke fill"><text x="642" y="36" fill="#ffffff">${daeriHeading}</text><text x="642" y="70" fill="#fff04b">${taksongHeading}</text></g></svg>`;
 };
@@ -296,7 +305,8 @@ function regionalCardPng(r,kind,topic){
  return promise;
 }
 const cardPath=(slug)=>'/card/'+encodeURIComponent(slug)+'.svg';
-const cardPngPath=(slug,kind)=>'/card/'+encodeURIComponent(slug)+(kind?'-'+kind+'-brand.png':'-inline-v2.png');
+// Version the new locality-first taksong image to bypass 24-hour cached old cards.
+const cardPngPath=(slug,kind)=>'/card/'+encodeURIComponent(slug)+(kind?(kind==='taksong'?'-taksong-brand-v2.png':'-daeri-brand.png'):'-inline-v2.png');
 const canonical=(slug)=>'/region/'+encodeURIComponent(slug)+'/';
 const link=(slug)=>'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+canonical(slug);
 const compactTrafficPanel="<aside class=\"traffic-stats\" id=\"traffic-stats-panel\" aria-label=\"스마트24 접속 기록 및 전화 버튼 통계\">\n <div class=\"traffic-stats-lines\" aria-live=\"polite\">\n  <span class=\"traffic-stat\" title=\"검색 노출 수가 아닌 브라우저 접속 기록입니다. 점검 방문이 포함될 수 있습니다.\">오늘 접속 <strong id=\"today-visit-number\">—</strong></span>\n  <span class=\"traffic-stat\" title=\"집계 시작 이후 기록된 브라우저 접속 횟수입니다.\">누적 기록 <strong id=\"total-visit-number\">—</strong></span>\n  <button type=\"button\" class=\"traffic-call-trigger\" id=\"traffic-call-trigger\" aria-controls=\"traffic-sources-detail\" aria-expanded=\"false\" title=\"누적 전화 버튼 클릭과 접속 집계 기준 확인\">누적 전화클릭 <strong id=\"phone-click-number\">—</strong> ▾</button>\n </div>\n <div class=\"traffic-sources\" id=\"traffic-sources-detail\" hidden>\n  <strong class=\"traffic-source-heading\">접속 집계 안내</strong>\n  <p>오늘·누적 수치는 실제 네이버 검색 노출이나 순방문자가 아닙니다. 직접 작업·점검한 방문도 포함될 수 있으며, 전화 클릭은 통화 연결 건수가 아닙니다.</p>\n  <label class=\"traffic-optout-label\"><input type=\"checkbox\" id=\"exclude-my-visits\"> 이 브라우저의 내 점검 방문·전화 버튼 클릭 집계 제외</label>\n  <small class=\"traffic-mode-note\" id=\"traffic-mode-note\">이 설정은 이후 접속부터 적용됩니다. 이미 기록된 수치는 자동 차감되지 않습니다.</small>\n  <strong class=\"traffic-source-heading\">전화 버튼 클릭 경로</strong>\n  <ol id=\"phone-source-list\" aria-live=\"polite\"><li>확인 중입니다.</li></ol>\n  <small class=\"traffic-source-note\">정확한 네이버 검색 노출·클릭 수는 네이버 서치어드바이저에서 확인해야 합니다.</small>\n </div>\n</aside>";
@@ -683,7 +693,7 @@ async function servicePage(r,kind){
  // These are branded templates, not purported photographs of the city or a completed trip.
  const regionImagePath=cardPngPath(r.slug,kind);
  const imageUrl=regionImagePath?'https://'+host+regionImagePath:null;
- const displayBrand=seoRegionLabel(r)+(kind==='taksong'?'스마트탁송':'스마트대리운전');
+ const displayBrand=seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전');
  const card=regionImagePath?'<figure><a href="tel:18114294" aria-label="'+esc(name)+' '+service+' 1811-4294 전화 상담"><img src="'+regionImagePath+'" alt="'+esc(displayBrand)+' 지역별 상담 대표 이미지 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" style="display:block;width:100%;height:auto"></a></figure>':'';
  const pageUrl='https://'+host+servicePath(r,kind);
  const imageId=imageUrl+'#image';
@@ -694,11 +704,11 @@ async function servicePage(r,kind){
  const gangwonArchiveLead=kind==='taksong'&&r.name==='강원특별자치도'?'<section id="gangwon-source-archive" aria-labelledby="gangwon-source-archive-heading"><h2 id="gangwon-source-archive-heading">강원도탁송 영동·영서 실제 블로그 글과 차량 인수 안내</h2><p>영동의 속초·양양·주문진·강릉·동해·삼척, 영서의 춘천·원주·홍천·횡성·평창·정선은 차량 인수 위치와 기사 복귀 여건이 서로 다릅니다. 별도 지역 홍보글을 반복하기보다 실제 공개된 원문과 주차장·인계 준비사항을 함께 확인할 수 있도록 정리했습니다.</p><p><a href="/blog/archive/gangwon-taksong/">강원도탁송 영동·영서 블로그 자료실 읽기</a> · <a href="/blog/archive/mountain-cycle/">설악산 종주 차량회수 관련 글</a> · <a href="tel:18114294">전국탁송 상담 1811-4294</a></p></section>':'';
  const jejuPageSchema=jejuSearchPage?JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:searchTitle,description:searchDesc,url:pageUrl,about:{'@type':'Service',name:'제주탁송',provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}}).replace(/</g,'\\u003c'):'';
  const jejuContact=jejuSearchPage?'<section id="jeju-dedicated-contact"><h2>제주탁송 대표번호 1877-5245</h2><p>제주도 차량 선적·항구 인계 및 육지 연계 탁송은 제주탁송 전용 번호로 상담해 주세요.</p><p><a class="cta" href="tel:18775245">제주탁송 전화 상담 1877-5245</a></p></section>':'';
- const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+(jejuSearchPage?jejuContact:visibleCard)+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,jejuSearchPage?null:imageUrl);
+ const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+visibleCard+(jejuSearchPage?jejuContact:'')+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,jejuSearchPage?null:imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
- // Render the matching locality image before header navigation for immediate keyword landing, rather than below fare/category links.
- const imageFirst=(!jejuSearchPage&&visibleCard)?rendered.replace('<body><header>','<body>'+visibleCard+'<header>').replace('<main>'+visibleCard,'<main>'):rendered;
+ // Render the matching locality image before header navigation on mobile and desktop.
+ const imageFirst=visibleCard?rendered.replace('<body><header>','<body>'+visibleCard+'<header>').replace('<main>'+visibleCard,'<main>'):rendered;
  return jejuSearchPage?imageFirst.replaceAll('1811-4294','1877-5245').replaceAll('18114294','18775245'):imageFirst;
 }
 function remoteRegionGuidance(r){
@@ -1151,9 +1161,33 @@ if(!explicitMountainKeyword&&(pathname==='/'||pathname==='/index.html')){
   }
  }catch{}
 }
+// The service keyword in the query is not a region. A unique matching region
+// routes directly to its image-first canonical page; duplicate names remain a search.
+const regionalTaksongTarget=(value)=>{
+ const raw=compact(value||'');
+ if(raw.length<3||raw.length>80||!/(?:전국)?(?:자동차|차량)?탁송$/.test(raw))return null;
+ const place=raw.replace(/(?:전국)?(?:자동차|차량)?탁송$/,'');
+ if(!place||/^(?:전국|장거리|24시|자동차|차량)$/.test(place))return null;
+ let matched=null;
+ for(const r of regions){
+  const ancestors=regionAncestors(r);
+  const province=ancestors[0]?(provinceSeoLabels[ancestors[0].name]||shortPlace(ancestors[0].name)):'';
+  const aliases=[seoRegionLabel(r),r.full_name,...regionAliases(r),
+   ancestors.map(x=>shortPlace(x.name)).join(''),
+   ancestors.map(x=>x.name).join(''),
+   province+r.name,province+shortPlace(r.name)];
+  if(aliases.some(label=>compact(label)===place)){
+   if(matched)return null; // e.g. 광주 can mean the metro or Gyeonggi city
+   matched=r;
+  }
+ }
+ return matched?servicePath(matched,'taksong'):null;
+};
 const mountainRedirect= (pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search')
  ?mountainTarget(explicitMountainKeyword||searchReferrerKeyword):null;
 if(mountainRedirect){res.writeHead(302,{location:encodeURI(mountainRedirect),'cache-control':'no-store','vary':'Accept-Encoding'});return res.end();}
+const regionalRedirect=(pathname==='/'||pathname==='/index.html')?regionalTaksongTarget(explicitMountainKeyword):null;
+if(regionalRedirect){res.writeHead(302,{location:regionalRedirect,'cache-control':'no-store'});return res.end();}
 if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');return respond(res,200,applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/'))}
 // Redirect regional search clicks to a single service-specific, image-first landing page.
 if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
@@ -1181,6 +1215,8 @@ if(driverTravelMatch){const canonical='/daeri/travel/'+driverTravelMatch[1]+'/';
 if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return res.end()}
 if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
 if(pathname==='/region/'||pathname==='/region'){
+ const directRegion=regionalTaksongTarget(u.searchParams.get('q'));
+ if(directRegion){res.writeHead(302,{location:directRegion,'cache-control':'no-store'});return res.end()}
  const q=clean(u.searchParams.get('q')||'');
  const requestedService=u.searchParams.get('service');
  const selectedService=requestedService==='daeri'||requestedService==='taksong'?requestedService:null;
@@ -1193,11 +1229,11 @@ if(pathname==='/region/'||pathname==='/region'){
  return respond(res,200,layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<section><h2>전국 지역 찾기</h2>'+form+'<p>전체 '+regions.length+'개 지역 중 '+(q?'검색 일치 최대 100개':'시·도 목록')+' 표시</p>' +links+'</section>'+regionOriginalGuide+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/'));
 }
  const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
- const brandCardMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand\.(png|svg)$/);
+ const brandCardMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand(?:-v2)?\.(png|svg)$/);
  if(brandCardMatch){const [,slug,kind,format]=brandCardMatch,r=bySlug.get(slug);if(!r)return respond(res,404,'명함을 찾을 수 없습니다.');if(format==='svg')return respond(res,200,cardSvg(seoRegionLabel(r),kind),'image/svg+xml; charset=utf-8');return regionalCardPng(r,kind).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'))}
  const intentCardMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-(fare|long-distance|handover)\.png$/);
  if(intentCardMatch){const [,slug,kind,topic]=intentCardMatch,r=bySlug.get(slug);if(!r||!regionalIntentSlugs.has(slug)||!regionalIntentTypes[kind].includes(topic))return respond(res,404,'명함을 찾을 수 없습니다.');return regionalCardPng(r,kind,topic).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'))}
- const cardPngMatch=pathname.match(/^\/card\/(area-[0-9]+)(?:-(taksong|daeri)-brand|-(?:light|art(?:-v2)?|inline(?:-v2)?))?\.png$/);if(cardPngMatch){const r=bySlug.get(cardPngMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');return regionalCardPng(r,cardPngMatch[2]||undefined).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'))}
+ const cardPngMatch=pathname.match(/^\/card\/(area-[0-9]+)(?:-(taksong|daeri)-brand(?:-v2)?|-(?:light|art(?:-v2)?|inline(?:-v2)?))?\.png$/);if(cardPngMatch){const r=bySlug.get(cardPngMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');return regionalCardPng(r,cardPngMatch[2]||undefined).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'))}
 const cardMatch=pathname.match(/^\/card\/(area-[0-9]+)\.svg$/);if(cardMatch){const r=bySlug.get(cardMatch[1]);if(!r)return respond(res,404,'명함을 찾을 수 없습니다');res.writeHead(200,{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});return res.end(cardSvg(r.full_name));}
 if(pathname==='/api/public-rides'){
  const rows=load('data/ride-history-upload-202610.json');
