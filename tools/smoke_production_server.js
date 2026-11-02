@@ -115,6 +115,9 @@ async function main(){
    const r=await request(port,file);
    assert.equal(r.status,200,file+' HTTP');
    for(const canonical of ['/taksong/','/daeri/'])assert(r.body.includes('https://jeongukdaeri.kr'+canonical),file+' missing '+canonical);
+   for(const [regionUrl,sourceLinked] of priorityRoutes){
+    if(sourceLinked)assert(r.body.includes('<loc>https://jeongukdaeri.kr'+regionUrl+'</loc>'),file+' missing original-linked priority region '+regionUrl);
+   }
   }
   console.log('PASS: production server boots with '+expected.length+' priority regions; 20 priority URLs HTTP 200 / H1 / canonical / index / phone checks; 630 original blog links and 10 source groups; XML routes accessible.');
  }finally{
