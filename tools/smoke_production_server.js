@@ -90,7 +90,8 @@ async function main(){
    assert(page.body.includes('rel="canonical" href="https://jeongukdaeri.kr'+url+'"'),'canonical missing/wrong: '+url);
    assert(!/name="robots" content="[^"]*noindex/i.test(page.body),'accidental noindex: '+url);
    assert(!/x-robots-tag.*noindex/i.test(String(page.headers['x-robots-tag']||'')),'noindex response header: '+url);
-   assert(page.body.includes('tel:18114294'),'homepage business phone CTA missing: '+url);
+   const expectedPhone=url.startsWith('/blog/')?'tel:18773015':'tel:18114294';
+   assert(page.body.includes(expectedPhone),'service-appropriate phone CTA missing: '+url+' expected '+expectedPhone);
    const h1=(page.body.match(/<h1\\b/gi)||[]).length;
    assert.equal(h1,1,'must have one H1: '+url);
    if(requiresNaverOriginals){
