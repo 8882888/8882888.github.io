@@ -266,6 +266,36 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(seoulPriorityMap.includes('https://example.com'+path),'priority sitemap: '+path);
     assert.ok(seoulMainMap.includes('https://example.com'+path),'main sitemap: '+path);
   }
+  // Preserve all original Naver blog categories, without copying article bodies.
+  const ownerBlog=require('../blog/posts.json'),sourceArchive=require('../lib/blog-archive');
+  assert.equal(ownerBlog.length,630,'owner source inventory contains 630 published original posts');
+  assert.equal(sourceArchive.originalCategories.length,52,'all 52 original Naver categories are retained');
+  assert.equal(sourceArchive.categoryTopics.length,11,'usable editorial subjects replace redundant raw-category indexes');
+  assert.equal(sourceArchive.originalCategories.reduce((sum,c)=>sum+c.count,0),630,'every post remains accounted for');
+  assert.equal(sourceArchive.categoryTopics.flatMap(g=>g.categories).length,52,
+    'no original Naver category is discarded or duplicated during editorial grouping');
+  const archiveHub=await get('/blog/archive/categories/'),archiveMarkup=await archiveHub.text();
+  assert.equal(archiveHub.status,200,'complete original-category portal must load');
+  assert.ok(archiveMarkup.includes('52개 카테고리')&&archiveMarkup.includes('630편')&&archiveMarkup.includes('중고차탁송')&&archiveMarkup.includes('인증센터탁송 종주탁송'),
+    'all original source categories are visible under grouped editorial themes');
+  assert.ok(archiveMarkup.includes('rel="canonical" href="https://example.com/blog/archive/categories/"'),
+    'category portal has a stable canonical and is indexable');
+  assert.ok(seoHome.includes('href="/blog/archive/categories/"'),
+    'homepage links users to 52 original categories and source links');
+  const usedPostCategory='중고차탁송',categorySearch='/blog/archive/categories/?category='+encodeURIComponent(usedPostCategory);
+  const filteredArchive=await get(categorySearch),filteredText=await filteredArchive.text();
+  assert.equal(filteredArchive.status,200);
+  assert.equal(filteredArchive.headers.get('x-robots-tag'),'noindex, follow',
+    'individual category filters cannot spawn dozens of redundant search pages');
+  assert.ok(filteredText.includes('중고차탁송')&&filteredText.includes('https://blog.naver.com/wjdtnr4757/'),
+    'category filters display original published article URLs');
+  assert.equal((filteredText.match(/<li><a href="https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+"/g)||[]).length,25,
+    'large original categories paginate source links in groups of 25');
+  assert.equal((await get('/blog/archive/categories/?category='+encodeURIComponent('없는분류'))).status,404,
+    'unknown source category must not create a misleading search page');
+  const archivePriority=await (await get('/sitemap-priority.xml')).text(),archiveMain=await (await get('/sitemap.xml')).text();
+  for(const xml of [archivePriority,archiveMain])assert.ok(xml.includes('https://example.com/blog/archive/categories/'),
+    'one canonical rebuilt Naver category portal is discoverable in sitemap');
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>전국자동차탁송·장거리탁송·24시탁송 | 스마트24 1811-4294</title>'),'homepage title leads with nationwide vehicle delivery and 24h service');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
