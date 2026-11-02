@@ -165,6 +165,42 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 
   // Region-specific source posts and visible homepage hub must not become keyword-only dead ends.
   const seoHome=await (await get('/')).text();
+  // Ten-point customer journey audit: avoid duplicate sections and show the fare
+  // poster before navigation, then one fare table, verified history and booking.
+  for(const id of ['mountain-cycle-priority-links','mountain-taksong-fares',
+   'long-distance-five-routes','keyword-topics','core-search-services','cycle-second-five-home'])
+   assert.ok(!seoHome.includes('id="'+id+'"'),'duplicate homepage section removed: '+id);
+  assert.ok(seoHome.indexOf('id="mobile-direct-image-priority"')<seoHome.indexOf('<header'),'original mountain poster comes before mobile header');
+  assert.ok(seoHome.includes('id="homepage-mountain-fare-shortcuts-202611"')&&seoHome.includes('id="real-completed-service-hubs-202611"'),
+   'homepage retains fare first then genuine ride-history journey');
+  for(const [url,expectedFare,requiredSource] of [
+   ['/설악산탁송/','오색 → 소공원','real-route-proof-202610'],
+   ['/지리산탁송/','성삼재 → 중산리','jirisan-real-source-guide']
+  ]){
+   const response=await get(url),html=await response.text();
+   assert.equal(response.status,200,'mountain canonical page loads: '+url);
+   assert.ok(html.indexOf('id="original-mountain-fare-visual"')<html.indexOf('<header'),
+    'original mountain fare poster is visually first: '+url);
+   const a=html.indexOf('id="mountain-route-fare-table-202611"');
+   assert.ok(a>0&&a<html.indexOf('id="mountain-complete-course-guide-20261102"'),
+    'readable existing fare table precedes long route guide: '+url);
+   assert.ok(html.includes(expectedFare)&&html.includes('현재 확정 견적은 아닙니다'),
+    'historical fare is kept separate from live estimates: '+url);
+   assert.ok(html.includes('id="'+requiredSource+'"'),'actual sourced route guidance preserved: '+url);
+   assert.ok(html.includes('href="tel:18114294"'),'mountain consultation button works: '+url);
+   assert.ok((html.match(/<h2\b/g)||[]).length<=12,'repetitive mountain sections consolidated: '+url);
+  }
+  for(const loc of ['/taksong/busan/','/taksong/daegu/','/taksong/gyeongnam/changwon-si/']){
+   const response=await get(loc),html=await response.text();
+   assert.equal(response.status,200,'priority regional page loads: '+loc);
+   assert.ok(html.includes('id="regional-taksong-quick-start"'),'region first-view decision panel: '+loc);
+   assert.ok(html.includes('자주 묻는 질문')&&html.includes('기존 완료기록의 당시 요금'),
+    'region has fact-grounded FAQ and historic-price warning: '+loc);
+   assert.ok(html.includes('href="tel:18114294"')&&html.includes('href="https://open.kakao.com/o/sGV88r7h"'),
+    'phone and Kakao consultation links present: '+loc);
+   assert.ok(html.indexOf('<body><figure')>=0&&html.indexOf('id="regional-taksong-quick-start"')<html.indexOf('id="priority-verified-rides"'),
+    'regional picture and customer choices come ahead of long evidence listings: '+loc);
+  }
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>전국자동차탁송·장거리탁송·24시탁송 | 스마트24 1811-4294</title>'),'homepage title leads with nationwide vehicle delivery and 24h service');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
