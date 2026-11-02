@@ -5,8 +5,10 @@ This verifies deployment and crawlable HTML, NOT Google/Naver indexing or rankin
 Uses only Python's standard library. Prints GitHub Actions job summary when available.
 """
 import html
+import hashlib
 import json
 import os
+from pathlib import Path
 import sys
 import urllib.error
 import urllib.request
@@ -111,6 +113,14 @@ def run():
             errors.append(f"published Naver source data mismatch: {source_count!r}")
         if group_count != 10 or link_count != 20:
             errors.append(f"old Cloudtype deployment: curated groups={group_count!r}, links={link_count!r}")
+        live_hashes = health.get("deployment_hashes") or {}
+        for filepath in ["server.js", "index.html", "data/seo-pages.json", "data/priority-blog-links.json"]:
+            expected_hash = hashlib.sha256(Path(filepath).read_bytes()).hexdigest()
+            live_hash = live_hashes.get(filepath)
+            if not live_hash:
+                errors.append(f"deployment SHA256 missing: {filepath}")
+            elif expected_hash != live_hash:
+                errors.append(f"Cloudtype source behind or divergent: {filepath} (GitHub {expected_hash[:12]}, live {live_hash[:12]})")
         live_rules = health.get("seo_meta", {})
         for name, path in [("home", "/"), ("taksong", "/taksong/"), ("daeri", "/daeri/"), ("region", "/region/")]:
             expected = rules.get(path, {}).get("title")
@@ -121,7 +131,7 @@ def run():
         errors.append(type(ex).__name__ + ": " + str(ex)[:125])
     result = "PASS" if not errors else "FAIL"
     failures += bool(errors)
-    detail = "; ".join(errors) if errors else "630 sources, 10 region groups, 20 links and exact SEO titles deployed"
+    detail = "; ".join(errors) if errors else "630 posts, 10 region groups, 20 links, exact SEO titles and 4 source SHA256 fingerprints deployed"
     print(f"{result}: /health/seo.json — {detail}")
     rows.append(("/health/seo.json", status, result, detail))
 
