@@ -38,6 +38,13 @@ PATHS = {
     "/business/export-port/": "export-b2b-operating-guide-20261103",
     "/business/auction/": "auction-b2b-operating-guide-20261103",
 }
+CURATED_SOURCE_ROUTES = {
+    "/taksong/busan/", "/taksong/daegu/", "/taksong/incheon/",
+    "/taksong/gwangju/", "/taksong/daejeon/", "/taksong/ulsan/",
+    "/taksong/gyeongnam/changwon-si/", "/taksong/gyeongnam/gimhae-si/",
+    "/daeri/busan/", "/daeri/daegu/",
+}
+
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; Smart24SeoAudit/1.0)",
            "Cache-Control": "no-cache", "Pragma": "no-cache"}
 
@@ -197,6 +204,7 @@ def run():
                 root = ET.fromstring(body)
                 locs = {node.text for node in root.iter() if node.tag.endswith("loc") and node.text}
                 expected = {BASE + "/daeri/", BASE + "/taksong/"}
+                expected |= {BASE + route for route in CURATED_SOURCE_ROUTES}
                 if path == "/sitemap.xml":
                     expected |= {
                         BASE + "/blog/archive/", BASE + "/설악산탁송/", BASE + "/지리산탁송/",
