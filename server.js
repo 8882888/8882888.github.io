@@ -36,7 +36,7 @@ const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
 const daeriTravelGuides=require('./lib/daeri-travel-guides');
 const foodTravelMap=require('./lib/food-travel-map');
 const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]));
-if(priorityRegionalPages.length!==27||priorityByKey.size!==27)throw Error('Expected 27 unique priority regional pages');
+if(priorityRegionalPages.length<27||priorityByKey.size!==priorityRegionalPages.length)throw Error('Invalid or duplicate priority regional pages: '+priorityRegionalPages.length+' entries, '+priorityByKey.size+' unique');
 for(const guide of priorityRegionalPages){
  if(!['daeri','taksong'].includes(guide.kind)||!regions.some(r=>r.full_name===guide.region)||!guide.topic||!guide.detail)
   throw Error('Invalid priority region entry: '+JSON.stringify([guide.kind,guide.region]));
