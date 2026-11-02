@@ -12,6 +12,7 @@ from pathlib import Path
 import sys
 import urllib.error
 import urllib.request
+import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 
 BASE = "https://jeongukdaeri.kr"
@@ -21,6 +22,7 @@ PATHS = {
     "/daeri/": "real-original-daeri-links-20261102",
     "/region/": "verified-naver-region-links-20261102",
     "/blog/archive/": "630",
+    "/health/seo-report/": "서버 파일 지문:",
     "/business/rental-car/": "rental-b2b-operating-guide-20261103",
     "/business/used-car/": "dealer-b2b-operating-guide-20261103",
     "/business/export-port/": "export-b2b-operating-guide-20261103",
@@ -86,7 +88,10 @@ def run():
                 errors.append("expected deployed content marker absent")
             if parser.canonical and parser.canonical.rstrip("/") != (BASE + path).rstrip("/"):
                 errors.append("canonical mismatch: " + parser.canonical[:95])
-            if "noindex" in parser.robots.lower():
+            if path == "/health/seo-report/":
+                if "noindex" not in parser.robots.lower():
+                    errors.append("diagnostic page must be noindex")
+            elif "noindex" in parser.robots.lower():
                 errors.append("noindex found on priority page")
             if parser.h1 != 1:
                 errors.append("expected exactly one H1, got " + str(parser.h1))
@@ -147,6 +152,24 @@ def run():
             status, final_url, body = fetch(path)
             if status != 200 or required not in body:
                 errors.append("missing expected XML/robots content or HTTP status")
+            if path.endswith(".xml") and status == 200:
+                root = ET.fromstring(body)
+                locs = {node.text for node in root.iter() if node.tag.endswith("loc") and node.text}
+                expected = {BASE + "/daeri/", BASE + "/taksong/"}
+                if path == "/sitemap.xml":
+                    expected |= {
+                        BASE + "/blog/archive/", BASE + "/설악산탁송/", BASE + "/지리산탁송/",
+                        BASE + "/business/rental-car/", BASE + "/business/used-car/",
+                        BASE + "/business/export-port/", BASE + "/business/auction/",
+                    }
+                missing = expected - locs
+                if missing:
+                    errors.append("required canonical URLs missing: " + ", ".join(sorted(missing)[:6]))
+                duplicate_aliases = {BASE + "/service/daeri/", BASE + "/special/nationwide-daeri/",
+                                     BASE + "/special/seoraksan-transport/", BASE + "/special/jirisan-transport/"}
+                duplicates = locs & duplicate_aliases
+                if duplicates:
+                    errors.append("redirect/canonical alias submitted: " + ", ".join(sorted(duplicates)))
         except Exception as ex:
             errors.append(type(ex).__name__ + ": " + str(ex)[:125])
         result = "PASS" if not errors else "FAIL"
