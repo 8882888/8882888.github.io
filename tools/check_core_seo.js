@@ -47,7 +47,18 @@ const server=read('server.js');
 for(const x of ['staticOriginalSourceSection','regionDirectOriginalLinks','real-original-taksong-links-20261102','real-original-daeri-links-20261102','/blog/taksong-categories/']){
  check(server.includes(x),'Cloudtype source/sitemap wiring: '+x);
 }
-const sitemap=read('sitemap.xml');
+let sitemap=read('sitemap.xml');
+if (/<sitemapindex\\b/.test(sitemap)) {
+  const index=sitemap;
+  const children=[...index.matchAll(/<loc>(https:\/\/jeongukdaeri\\.kr\/sitemap-\\d+\\.xml)<\/loc>/g)];
+  check(children.length>0,'generated sitemap index has no child sitemap references');
+  sitemap+='\\n'+children.map(match=>{
+    const pathname=new URL(match[1]).pathname.slice(1);
+    check(/^sitemap-\\d+\\.xml$/.test(pathname),'unsafe generated sitemap path '+pathname);
+    check(fs.existsSync(pathname),'generated sitemap child missing '+pathname);
+    return read(pathname);
+  }).join('\\n');
+}
 for(const route of ['/설악산탁송/','/지리산탁송/','/blog/archive/','/service/taksong/']){
  check(sitemap.includes('https://jeongukdaeri.kr'+route),'static sitemap route '+route);
 }
