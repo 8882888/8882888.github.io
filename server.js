@@ -1137,8 +1137,8 @@ const visitKeyword=pathname.match(/^\/visit\/([a-f0-9]{20})\/?$/);if(visitKeywor
 const mountainTarget=(value)=>{
  const q=String(value||'').replace(/\s+/g,'').replace(/[+_-]/g,'').toLowerCase();
  if(!q||q.length>100)return null;
- if(/(설악산|오색|한계령|백담사|남교리|소공원)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/special/seoraksan-transport/';
- if(/(지리산|성삼재|중산리|대원사|화엄사|백무동|성중종주|성대종주|화중종주|화대종주)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/special/jirisan-transport/';
+ if(/(설악산|오색|한계령|백담사|남교리|소공원)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/설악산탁송/';
+ if(/(지리산|성삼재|중산리|대원사|화엄사|백무동|성중종주|성대종주|화중종주|화대종주)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/지리산탁송/';
  return null;
 };
 const explicitMountainKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
@@ -1223,7 +1223,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
 if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const urls=['/','/daeri/','/taksong/','/route-taksong/','/special/seoraksan-transport/','/special/jirisan-transport/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/daegu-daeri-taksong/','/blog/','/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),...priorityRegionalPages.map(p=>{
+ const urls=['/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/daegu-daeri-taksong/','/blog/','/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),...priorityRegionalPages.map(p=>{
   const region=regions.find(r=>r.full_name===p.region);
   return servicePath(region,p.kind);
  })];
@@ -1260,7 +1260,7 @@ if(pathname==='/sitemap.xml'){
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
   '/','/taksongdaeri/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/fare/','/fare/jeju/',
   '/reviews/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/blog/','/blog/archive/',
-  '/route-taksong/','/route-taksong/centers/','/special/seoraksan-transport/','/special/jirisan-transport/','/special/cycling-trail-transport/',
+  '/route-taksong/','/route-taksong/centers/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/',
    ...blogArchive.groups.map(g=>'/blog/archive/'+g.id+'/'),'/region/',
   '/service/golf/','/service/taksong/','/recruit/daeri/','/recruit/taksong/',
   '/service/daily-driver/','/service/long-distance-taksong/',
