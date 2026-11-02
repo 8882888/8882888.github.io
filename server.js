@@ -459,7 +459,9 @@ function regionalIntentPage(r,kind,topic){
  const children=(childrenByParent.get(r.slug)||[]).slice(0,12);
  const local='<section><h2>'+full+' 내 출발 지역 확인</h2><p>'+esc(regionContext(r))+'에서 차량을 인수할 정확한 도로명주소와 건물명·주차 위치를 알려주세요. 아래 지역 안내에서 실제 출발지를 더 구체적으로 찾을 수 있습니다.</p><ul>'+children.map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.full_name)+' '+service+'</a></li>').join('')+'</ul></section>';
  const data=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',url:base+pathname,name:title,description:desc,primaryImageOfPage:{'@type':'ImageObject',contentUrl:base+image,width:1200,height:800}}).replace(/</g,'\\u003c');
- return layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+content+remoteRegionGuidance(r)+local+regionalIntentNav(r,pathname),base+pathname,base+image);
+ const page=layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+content+remoteRegionGuidance(r)+local+regionalIntentNav(r,pathname),base+pathname,base+image);
+ // Move the actual keyword image to the first visible element, before fare lookup and navigation.
+ return page.replace('<body><header>','<body>'+card+'<header>').replace(intro+card,intro);
 }
 
 const provinceServiceProfiles={"서울특별시":["도심 모임·업무 일정","업무시설·상가·공동주택은 건물명과 주차장 층·구역을 구분해 알려주세요. 도심에서 외곽으로 이동하는 일정은 경유지와 도착 후 차량 인계 방법을 함께 정합니다."],"부산광역시":["도심·공항·항만 차량 이동","공항 주차장이나 항만 시설에서 인수한다면 주차 구역·출입 가능 시간과 현장 담당자를 확인하세요. 시내 이동과 다른 시·도로 보내는 장거리 이동은 목적지 인계 시간을 나누어 상담합니다."],"인천광역시":["공항·항만·섬 지역 일정","공항은 터미널과 주차장 구역을, 항만은 시설 출입과 담당자 인계 조건을 확인하세요. 섬으로 이동하는 일정은 차량 진입과 선박 이용 여부를 먼저 설명해 주세요."],"경기도":["시·군별 출발지와 골프·업무 일정","같은 경기도 안에서도 출발 시·군과 외곽 위치에 따라 기사 이동 조건이 달라집니다. 골프장 왕복이나 지방 출장은 경유·대기·종료 예정 시간을 함께 알려주세요."],"강원특별자치도":["산행·해변·외곽 출발 일정","산행 차량 회수는 산행 시작 주차장과 종료 후 차량을 받을 곳을 구분하세요. 해변·숙소나 산간 출발은 정확한 진입 위치, 차량 키 전달 방법과 기사 복귀 교통편을 함께 확인합니다."],"대구광역시":["도심 귀가·정비소 입출고","상가·숙박시설 출발은 차량 주차 위치와 출차 가능 시각을 알려주세요. 서비스센터 이동은 접수·출고 담당자와 마감 시간을 확인한 뒤 다른 지역으로 이동할 일정까지 상담합니다."],"대전광역시":["업무 출장·도시 간 이동","업무시설 차량 인계는 담당자와 출입 가능한 시각을 확인하세요. 세종·충청권 또는 수도권으로 이동하는 일정은 출발지·목적지와 경유·대기 여부를 함께 알려주세요."],"광주광역시":["시내·전남 방향 이동","시내 출발과 전남의 다른 시·군으로 이동하는 일정을 구분해 상담하세요. 외곽 목적지는 차량을 받을 담당자, 인계 가능한 시간과 기사 복귀 조건을 확인합니다."],"울산광역시":["업무시설·도심 차량 이동","업무시설이나 공장 구역에서 차량을 넘길 때는 출입 허가와 담당자 만남 장소를 확인하세요. 부산·경남 등 다른 지역으로 이동하는 일정은 최종 인계 시간까지 함께 알려주세요."],"세종특별자치시":["업무 일정·인근 도시 이동","업무시설 주차장과 실제 기사 만남 장소를 구분해 알려주세요. 대전·충청권이나 수도권 이동은 출발 예정 시각, 경유 업무와 대기 여부를 확인합니다."],"충청북도":["시·군 간 이동·출장 일정","차량 위치가 있는 시·군과 읍·면을 정확히 알려주세요. 여러 업무 장소를 방문하는 일정은 경유 순서와 대기·종료 예정 시간을 미리 정하면 견적 상담에 도움이 됩니다."],"충청남도":["도시·해안·외곽 차량 인계","해안 시설·숙소·외곽 주차장에서 차량을 인수한다면 진입 위치와 출차 조건을 확인하세요. 타 시·도로 보내는 차량은 목적지 담당자와 인계 마감 시간을 함께 전달해 주세요."],"전북특별자치도":["도시권·산행 차량 회수","도시권 차량 이동과 산행 후 차량 회수는 준비할 정보가 다릅니다. 산행은 차량을 둔 주차장, 종료 지점과 열쇠 인계 방법을, 일반 이동은 정확한 출발·도착 주소를 알려주세요."],"전라남도":["시·군·항만·섬 연결 일정","항만이나 섬 관련 차량 이동은 차량 진입과 선박 이용 조건을 먼저 확인해야 합니다. 출발 주차장과 목적지의 차량 인수 담당자, 접수 가능한 시각을 구분해 알려주세요."],"경상북도":["도시 간 장거리·외곽 출발","출발 시·군과 차량 주차 위치를 정확히 알려주세요. 다른 지역으로 이동하거나 외곽에서 출발하는 일정은 기사 접근·복귀 교통편과 목적지 인계 시간을 함께 상담합니다."],"경상남도":["도시권·해안·업무 차량 이동","업무시설·정비소·해안 숙소 등 차량이 있는 장소에 따라 인수 조건을 확인하세요. 인근 도시 이동과 수도권 장거리 이동을 구분하고 경유·대기·인계 시간을 알려주세요."],"제주특별자치도":["제주 내 이동·육지 연계 구분","제주도 안에서 차량을 이동하는 일정과 선박을 이용해 육지와 연결하는 일정은 견적 조건이 다릅니다. 항만 인수 여부, 차량 종류와 선적 일정, 제주항 이후 이동 범위를 별도로 확인하세요."]};
@@ -757,7 +759,9 @@ function regionPage(r){
  ${children.length?'<section><h2>인접 행정 단계의 하위 지역 찾기</h2><ul>'+children.map(x=>'<li><a href="'+canonical(x.slug)+'">'+esc(x.name)+' 지역 안내</a> · <a href="'+servicePath(x,'taksong')+'">'+esc(x.name)+'탁송</a> · <a href="'+servicePath(x,'daeri')+'">'+esc(x.name)+'대리운전</a></li>').join('')+'</ul></section>':''}`;
  const imageUrl="https://"+(process.env.PUBLIC_HOST||"jeongukdaeri.kr")+cardPngPath(r.slug);
  const imageData=JSON.stringify({"@context":"https://schema.org","@type":"ImageObject",contentUrl:imageUrl,url:imageUrl,name:fullName+" 대리운전·자동차탁송 지역 명함",description:fullName+" 스마트전국대리운전 스마트24탁송 상담 명함 1811-4294",width:1200,height:800,encodingFormat:"image/png",representativeOfPage:true}).replace(/</g,"\\u003c");
- return layout(title,intro,`<script type="application/ld+json">${imageData}</script><figure style="margin:15px 0"><a href="tel:18114294" aria-label="${full} 대리운전 탁송 1811-4294 전화 상담"><img src="${cardPngPath(r.slug)}" loading="lazy" decoding="async" alt="${full} 스마트전국대리운전 스마트24탁송 전화 상담 명함 1811-4294" width="1200" height="800" style="width:100%;height:auto;border-radius:12px"></a><figcaption style="text-align:center"><a class="cta" href="tel:18114294">☎ ${PHONE} 전화 상담</a>${dispatchNotice()}</figcaption></figure>`+serviceLinks+regionalIntentNav(r)+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+cardPngPath(r.slug));
+ const regionHero=`<figure style="margin:0 auto 12px;max-width:900px"><a href="${servicePath(r,'taksong')}" aria-label="${full} 자동차탁송 이미지와 상세 안내"><img src="${cardPngPath(r.slug,'taksong')}" loading="eager" fetchpriority="high" decoding="async" alt="${full} 스마트탁송 지역 대표 이미지, 상담전화 1811-4294" width="1200" height="800" style="display:block;width:100%;height:auto;border-radius:12px"></a><figcaption style="text-align:center">${full} 자동차탁송 · <a href="${servicePath(r,'daeri')}">${full} 대리운전</a> · <a href="tel:18114294">${PHONE}</a></figcaption></figure>`;
+ const page=layout(title,intro,`<script type="application/ld+json">${imageData}</script>`+serviceLinks+regionalIntentNav(r)+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+cardPngPath(r.slug,'taksong'));
+ return page.replace('<body><header>','<body>'+regionHero+'<header>');
 }
 // Service-specific, human-readable category pages: no invented dispatch or completion claims.
 // Category discovery pages describe service contexts; they do not invent individual Naver Place listings.
@@ -1268,6 +1272,11 @@ const match=pathname.match(/^\/region\/([^/]+)\/?$/);
 if(match){
  const r=bySlug.get(match[1]);
  if(r)return respond(res,200,regionPage(r));
+ if(match[1]==='detail'){
+  const region=String(u.searchParams.get('region')||'').trim(), parent=String(u.searchParams.get('parent')||'').trim();
+  if(region){const matches=regions.filter(x=>x.name===region&&(!parent||x.parent_name===parent));
+   if(matches.length===1){const kind=u.searchParams.get('kind')==='daeri'?'daeri':'taksong';res.writeHead(302,{location:servicePath(matches[0],kind),'cache-control':'no-store'});return res.end()}}
+ }
  if(curatedRegionFiles.has(match[1])){
   try{return respond(res,200,fs.readFileSync(path.join(ROOT,'region',match[1],'index.html')),'text/html; charset=utf-8')}
   catch{return respond(res,404,'지역 안내를 찾을 수 없습니다.')}
