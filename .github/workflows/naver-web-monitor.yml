@@ -3,31 +3,14 @@ on:
   schedule:
     - cron: '35 1 * * *'
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - scripts/naver-web-monitor.js
-      - scripts/seo-audit.js
-      - tests/naver-web-monitor.test.js
-      - .github/workflows/naver-web-monitor.yml
-      - index.html
-      - server.js
-      - lib/route-keyword-pages.js
-      - data/seo-pages.json
-      - service/taksong/index.html
-      - special/seoraksan-transport/index.html
-      - special/jirisan-transport/index.html
-      - special/cycling-trail-transport/index.html
-      - reviews/taksong/index.html
-      - sitemap.xml
-      - robots.txt
-      - route-taksong/index.html
-      - region/*-daeri-taksong/index.html
-      - .github/scripts/indexnow.js
+  workflow_run:
+    workflows: ['Deploy to Cloudtype']
+    types: [completed]
 permissions:
   contents: read
 jobs:
   monitor:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
