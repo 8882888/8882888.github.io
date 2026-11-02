@@ -1178,6 +1178,18 @@ if(pathname==='/health/seo.json'){
  res.setHeader('x-robots-tag','noindex, nofollow');
  return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0)}),'application/json; charset=utf-8');
 }
+// Human-readable Cloudtype deployment proof. This page is deliberately not indexable.
+if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){
+ const rules=['/','/taksong/','/daeri/','/region/'];
+ const sourceLinks=[...priorityBlogLinksByKey.values()].reduce((sum,v)=>sum+v.ids.length,0);
+ const coreRows=rules.map(route=>{
+  const p=seoRules.get(route)||{};
+  return '<tr><td><a href="'+route+'">'+esc(route)+'</a></td><td>'+esc(p.title||'SEO override missing')+'</td></tr>';
+ }).join('');
+ const diagnostic='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><title>스마트24 운영 서버 SEO 배포 상태</title><style>body{font:16px/1.75 system-ui,Malgun Gothic,sans-serif;color:#17233d;max-width:930px;margin:24px auto;padding:16px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #cbd5e1;padding:10px;text-align:left;overflow-wrap:anywhere}code{padding:2px 4px;background:#f1f5f9}</style></head><body><h1>운영 서버 SEO 배포 상태</h1><p><strong>현재 Node 서버가 읽는 SEO 설정</strong>을 보여줍니다. 이 주소가 404로 나오거나 아래 숫자가 630·10·20과 다르면 최신 GitHub 수정본이 실제 배포되지 않았을 가능성이 있습니다.</p><p>네이버 색인 및 검색 순위, 실제 전화 문의 실적은 이 화면으로 확인할 수 없습니다.</p><p><strong>네이버 원문 자료:</strong> '+publishedBlogPosts.length+'편 · <strong>원문 연결 지역:</strong> '+priorityBlogLinksByKey.size+'곳 · <strong>지역별 원문 링크:</strong> '+sourceLinks+'개</p><h2>대표 페이지 검색 제목</h2><table><thead><tr><th>운영 URL</th><th>현재 설정된 SEO 제목</th></tr></thead><tbody>'+coreRows+'</tbody></table><p><a href="/health/seo.json">상태 JSON</a> · <a href="/taksong/">전국자동차탁송</a> · <a href="/daeri/">전국대리운전</a></p></body></html>';
+ res.setHeader('X-Robots-Tag','noindex, nofollow');
+ return respond(res,200,diagnostic);
+}
 // Publish the public IndexNow ownership key at the root on Cloudtype.
 if(pathname==='/770f921af32e749f64c1d447c607ea42.txt')return respond(res,200,fs.readFileSync(path.join(ROOT,'770f921af32e749f64c1d447c607ea42.txt'),'utf8'),'text/plain; charset=utf-8');
 // Consolidate default-document URLs without changing query parameters.
