@@ -77,6 +77,8 @@ jobs:
           PY
       - name: Generate 100,000 SEO keyword targets
         run: python tools/generate_seo_keywords.py
+      - name: Protect curated pages from the static backup generator
+        run: python tests/static-generator-preservation.test.py
       - name: Generate regional pages if verified region data exists
         shell: bash
         run: |
