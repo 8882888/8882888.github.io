@@ -69,12 +69,41 @@ async function main(){
     assert(String(r.headers['cache-control']||'').includes('no-store'),'Health report must not be cached');
    }
   }
+  // Twenty concrete high-value routes. Failing any one prevents a bad Cloudtype redeploy.
+  // The ten curated region routes must render directly grounded Naver original links.
+  const priorityRoutes=[
+   ['/',false],['/taksong/',false],['/daeri/',false],['/region/',false],
+   ['/taksong/busan/',true],['/taksong/daegu/',true],
+   ['/taksong/incheon/',true],['/taksong/gwangju/',true],
+   ['/taksong/daejeon/',true],['/taksong/ulsan/',true],
+   ['/taksong/gyeongnam/changwon-si/',true],
+   ['/taksong/gyeongnam/gimhae-si/',true],
+   ['/daeri/busan/',true],['/daeri/daegu/',true],
+   ['/daeri/incheon/',false],['/daeri/gwangju/',false],
+   ['/daeri/daejeon/',false],['/daeri/ulsan/',false],
+   ['/blog/archive/',false],['/blog/taksong-categories/',false]
+  ];
+  assert.equal(priorityRoutes.length,20,'exactly 20 priority SEO smoke tests');
+  for(const [url,requiresNaverOriginals] of priorityRoutes){
+   const page=await request(port,url);
+   assert.equal(page.status,200,'priority URL must return 200: '+url);
+   assert(page.body.includes('rel="canonical" href="https://jeongukdaeri.kr'+url+'"'),'canonical missing/wrong: '+url);
+   assert(!/name="robots" content="[^"]*noindex/i.test(page.body),'accidental noindex: '+url);
+   assert(!/x-robots-tag.*noindex/i.test(String(page.headers['x-robots-tag']||'')),'noindex response header: '+url);
+   assert(page.body.includes('tel:18114294'),'homepage business phone CTA missing: '+url);
+   const h1=(page.body.match(/<h1\\b/gi)||[]).length;
+   assert.equal(h1,1,'must have one H1: '+url);
+   if(requiresNaverOriginals){
+    assert(page.body.includes('id="local-naver-originals"'),'existing original source links missing: '+url);
+    assert(page.body.includes('https://blog.naver.com/wjdtnr4757/'),'external Naver original URL missing: '+url);
+   }
+  }
   for(const file of ['/sitemap-priority.xml','/sitemap.xml']){
    const r=await request(port,file);
    assert.equal(r.status,200,file+' HTTP');
    for(const canonical of ['/taksong/','/daeri/'])assert(r.body.includes('https://jeongukdaeri.kr'+canonical),file+' missing '+canonical);
   }
-  console.log('PASS: production server boots with '+expected.length+' priority regions; 630 existing blog links, 10 curated groups, 20 posts; core service, regional and XML routes accessible.');
+  console.log('PASS: production server boots with '+expected.length+' priority regions; 20 priority URLs HTTP 200 / H1 / canonical / index / phone checks; 630 original blog links and 10 source groups; XML routes accessible.');
  }finally{
   srv.kill('SIGTERM');
  }
