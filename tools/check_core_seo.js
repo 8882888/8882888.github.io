@@ -47,4 +47,25 @@ const sitemap=read('sitemap.xml');
 for(const route of ['/설악산탁송/','/지리산탁송/','/blog/archive/','/service/taksong/']){
  check(sitemap.includes('https://jeongukdaeri.kr'+route),'static sitemap route '+route);
 }
+const businessChecks=[
+ ['business/rental-car/index.html','rental-b2b-operating-guide-20261103'],
+ ['business/used-car/index.html','dealer-b2b-operating-guide-20261103'],
+ ['business/export-port/index.html','export-b2b-operating-guide-20261103'],
+ ['business/auction/index.html','auction-b2b-operating-guide-20261103']
+];
+for(const [p,id] of businessChecks){
+ const html=read(p);
+ check(html.includes('id="'+id+'"'),'missing business guidance: '+p);
+ check(html.includes('href="tel:18114294"'),'missing business phone contact: '+p);
+ check(html.includes('https://blog.naver.com/wjdtnr4757/'),'missing verified Naver source links: '+p);
+}
+const priorities=JSON.parse(read('data/priority-regions.json')).pages;
+const priorityKeys=new Set(priorities.map(x=>x.kind+'|'+x.region));
+check(priorities.length===priorityKeys.size,'duplicate metropolitan priority rule');
+for(const key of ['taksong|광주광역시','taksong|대전광역시','taksong|경상남도 창원시','daeri|광주광역시','daeri|대전광역시','daeri|울산광역시']){
+ check(priorityKeys.has(key),'missing curated regional SEO topic: '+key);
+}
+check(server.includes("sparseVillage=r.level==='리'"),'sparse village low-quality indexing protection missing');
+check(server.includes("specialized-business-taksong-hub"),'production business hub direct links missing');
+check(home.includes('id="special-business-top-links-20261103"'),'homepage business navigation missing');
 console.log('PASS: '+posts.length+' unique Naver post URLs, '+categories.size+' categories, '+sections.length+' original-source sections, production SEO overrides, homepage order and core sitemaps.');
