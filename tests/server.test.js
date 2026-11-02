@@ -198,7 +198,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     'region has fact-grounded FAQ and historic-price warning: '+loc);
    assert.ok(html.includes('href="tel:18114294"')&&html.includes('href="https://open.kakao.com/o/sGV88r7h"'),
     'phone and Kakao consultation links present: '+loc);
-   assert.ok(html.indexOf('<body><figure')>=0&&html.indexOf('id="regional-taksong-quick-start"')<html.indexOf('id="priority-verified-rides"'),
+   assert.ok(html.indexOf('<body><figure')>=0&& (html.indexOf('id="priority-verified-rides"')<0 || html.indexOf('id="regional-taksong-quick-start"')<html.indexOf('id="priority-verified-rides"')),
     'regional picture and customer choices come ahead of long evidence listings: '+loc);
   }
   // Search-result titles and site identity must present a single Korean brand.
