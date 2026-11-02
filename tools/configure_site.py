@@ -62,8 +62,15 @@ if robots.exists():
     lines = [rewrite_sitemap(line) for line in lines]
     robots.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-# A CNAME file is only added for a custom host; GitHub's default host needs none.
-if parts.netloc.lower() != "8882888.github.io":
+# This GitHub Actions Pages artifact is a noindex backup of the Cloudtype-hosted site.
+# Never claim the official Cloudtype domain through a generated Pages CNAME.
+# GitHub Pages custom-domain settings are configured separately in repository Settings.
+if os.environ.get("GITHUB_ACTIONS") == "true" and parts.netloc.lower() == "jeongukdaeri.kr":
+    artifact_cname = ROOT / "CNAME"
+    if artifact_cname.exists() and artifact_cname.read_text(encoding="utf-8").strip().lower() == "jeongukdaeri.kr":
+        artifact_cname.unlink()
+    print("GitHub Pages backup: official Cloudtype CNAME not published in Pages artifact.")
+elif parts.netloc.lower() != "8882888.github.io":
     (ROOT / "CNAME").write_text(parts.netloc.lower() + "\n", encoding="utf-8")
 
 print(f"Configured canonical host {SITE_URL}; updated {changed} HTML files.")
