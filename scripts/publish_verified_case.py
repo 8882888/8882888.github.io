@@ -64,7 +64,7 @@ def render_case(x):
               '" loading="lazy" width="960" height="504" style="width:100%;max-width:630px;height:auto">' +
               '<figcaption style="font-size:13px">서비스별 참고 이미지 · 실제 운행 증빙사진 아님</figcaption></figure>')
     body = ('<article><h1>'+esc(title)+'</h1><p><strong>기존 운행완료 자료 기반 사례</strong></p>'
-            visual+'<dl>'+detail+'</dl><h2>차량 이동 구간</h2><p>'+esc(x["departure"])+'에서 '
+            +visual+'<dl>'+detail+'</dl><h2>차량 이동 구간</h2><p>'+esc(x["departure"])+'에서 '
             +esc(x["destination"])+'까지 '+label+'으로 기록된 운행입니다. '
             '운행기록에 없는 차량 종류·경유지·상황은 추정하여 작성하지 않습니다.</p>'
             '<h2>차량 인계 및 요금 상담</h2><p>당시 기록요금은 현재 요금표가 아닙니다. '
