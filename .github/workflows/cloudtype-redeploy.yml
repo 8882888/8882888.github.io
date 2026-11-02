@@ -34,6 +34,17 @@ jobs:
       CLOUDTYPE_APP: ${{ vars.CLOUDTYPE_APP }}
       CLOUDTYPE_STAGE: ${{ vars.CLOUDTYPE_STAGE }}
     steps:
+      - name: Checkout production source
+        uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test REAL Cloudtype Node startup and SEO routes before redeploy
+        run: |
+          node --check server.js
+          node tools/check_core_seo.js
+          node tools/smoke_production_server.js
       - name: Check whether existing Cloudtype deployment is connected
         id: connection
         shell: bash
