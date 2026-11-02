@@ -763,9 +763,10 @@ async function servicePage(r,kind){
  const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+visibleCard+(jejuSearchPage?jejuContact:'')+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,jejuSearchPage?null:imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
- // Render the matching locality image before header navigation on mobile and desktop.
- const imageFirst=visibleCard?rendered.replace(visibleCard,'').replace('<body><header>','<body>'+visibleCard+'<header>'):rendered;
- return jejuSearchPage?imageFirst.replaceAll('1811-4294','1877-5245').replaceAll('18114294','18775245'):imageFirst;
+ // Show useful local service information and a phone CTA before a generic promotional card.
+ // Keep the card on the page and retain structured data; avoid an oversized image as the first mobile element.
+ const imageAfterContent=visibleCard?rendered.replace(visibleCard,'').replace('</main>',visibleCard.replace('loading="eager" fetchpriority="high"','loading="lazy"')+'</main>'):rendered;
+ return jejuSearchPage?imageAfterContent.replaceAll('1811-4294','1877-5245').replaceAll('18114294','18775245'):imageAfterContent;
 }
 function remoteRegionGuidance(r){
  const full=r.full_name||'',names=[
