@@ -52,6 +52,58 @@ jobs:
           done
           exit "$failed"
 
+      - name: Verify live mobile homepage original mountain fare posters
+        shell: bash
+        env:
+          PRODUCTION_URL: ${{ vars.CLOUDTYPE_PRODUCTION_URL || 'https://jeongukdaeri.kr' }}
+        run: |
+          python3 - <<'PYMOBILE'
+          import os,urllib.request,re,html
+          from html.parser import HTMLParser
+          base=os.environ['PRODUCTION_URL'].rstrip('/')
+          headers={
+            'User-Agent':'Mozilla/5.0 (Linux; Android 15; Mobile) AppleWebKit/537.36 Chrome/140.0.0.0 Mobile Safari/537.36',
+            'Cache-Control':'no-cache',
+            'Pragma':'no-cache'
+          }
+          def fetch(path):
+            req=urllib.request.Request(base+path,headers=headers)
+            with urllib.request.urlopen(req,timeout=20) as r:
+              if r.status!=200: raise SystemExit('HTTP '+str(r.status)+' '+path)
+              return r.read(),r.geturl()
+          body,_=fetch('/?mobile-mountain-verify='+os.environ.get('GITHUB_SHA','current'))
+          page=body.decode('utf-8')
+          first=page.split('<body>',1)[-1].lstrip()
+          if not first.startswith('<section id="mobile-direct-image-priority"'):
+            raise SystemExit('FAIL: homepage mobile first element is not the mountain poster section')
+          first_section=first.split('</section>',1)[0]
+          original=[
+            '/assets/seoraksan-taksong-original-fare.png',
+            '/assets/jirisan-taksong-original-fare.png'
+          ]
+          order=[first_section.find('src="'+p+'"') for p in original]
+          if min(order)<0 or order!=sorted(order):
+            raise SystemExit('FAIL: mountain original posters are missing or reversed on live homepage: '+str(order))
+          if 'src="/assets/smart24-business-card-inline.webp"' in first_section:
+            raise SystemExit('FAIL: generic Smart24 artwork still precedes mountain original posters')
+          if '@media(max-width:1199px)' not in page or '#mobile-direct-image-priority{display:block' not in page:
+            raise SystemExit('FAIL: mobile media rule does not show fare posters')
+          for p in original:
+            image_data,_=fetch(p+'?mobile-fare-verify=1')
+            if image_data[:8]!=bytes.fromhex('89504e470d0a1a0a'):
+              raise SystemExit('FAIL: actual poster is not a valid PNG: '+p)
+            print('PASS live mobile poster PNG:',p,len(image_data),'bytes')
+          for mountain in ['seoraksan','jirisan']:
+            route='/special/'+mountain+'-transport/'
+            sub,_=fetch(route+'?mobile-fare-verify=1')
+            sub=sub.decode('utf-8')
+            expected='src="/assets/'+mountain+'-taksong-original-fare.png"'
+            if not sub.split('<body>',1)[-1].lstrip().startswith('<figure id="original-mountain-fare-visual"') or expected not in sub:
+              raise SystemExit('FAIL: incorrect first image on mountain destination '+route)
+            print('PASS live original-image-first special page:',route)
+          print('PASS actual live mobile homepage: Seoraksan first, Jirisan second, no generic card')
+          PYMOBILE
+
       - name: Check Naver crawler access to previously restricted URLs
         shell: bash
         env:
