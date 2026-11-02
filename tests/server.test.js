@@ -516,6 +516,37 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const samples=[regions[0],regions.find(r=>r.full_name==='서울특별시 강남구'),regions.at(-1)].filter(Boolean);
   for(const r of samples){const res=await get('/region/'+r.slug+'/');assert.equal(res.status,200,r.slug);const html=await res.text();assert.ok(html.includes(r.name));assert.ok(html.includes('대리운전'));assert.ok(html.includes('자동차탁송'));assert.ok(html.includes('1811-4294'));assert.ok(html.includes('일일기사'))}
   const missing=await get('/region/not-a-real-region/');assert.equal(missing.status,404);
+  // All legal-area levels share one on-demand image generator; never need hand-authored 10-image batches.
+  const imageSamples=[
+   regions.find(r=>r.full_name==='경상남도 창원시'),
+   regions.find(r=>r.full_name==='부산광역시 기장군'),
+   ...['읍','면','동','리'].map(suffix=>regions.find(r=>r.name.endsWith(suffix)))
+  ].filter(Boolean);
+  assert.equal(imageSamples.length,6,'city, county, town, township, neighborhood and village samples must exist');
+  for(const r of imageSamples){
+   const page=await (await get('/region/'+r.slug+'/')).text();
+   assert.ok(page.includes('<body><figure'),'regional directory leads with its local image, before header');
+   const taksongUrl=page.match(/href="(\/taksong\/[^"]+\/)" /)?.[1]||page.match(/href="(\/taksong\/[^"]+\/)" /)?.[1];
+   assert.ok(taksongUrl,'region links to dedicated taksong landing: '+r.full_name);
+   for(const kind of ['taksong','daeri']){
+    const serviceUrl=page.match(new RegExp('href="(/'+kind+'/[^"]+/)"'))?.[1];
+    assert.ok(serviceUrl,'dedicated '+kind+' link: '+r.full_name);
+    const response=await get(serviceUrl);assert.equal(response.status,200,serviceUrl);
+    const html=await response.text();
+    const imagePath='/card/'+r.slug+'-'+kind+'-brand.png';
+    assert.ok(html.includes('<body><figure'),'image is visible before navigation: '+serviceUrl);
+    assert.ok(html.includes('src="'+imagePath+'"'),'only correct locality and service image is linked: '+serviceUrl);
+    assert.ok(html.includes('property="og:image" content="https://example.com'+imagePath+'"'),'search image matches body image: '+serviceUrl);
+    const picture=await get(imagePath);assert.equal(picture.status,200,'on-demand PNG exists: '+imagePath);
+    assert.ok(picture.headers.get('content-type').includes('image/png'),'image has PNG MIME: '+imagePath);
+    const signature=new Uint8Array(await picture.arrayBuffer()).slice(0,8);
+    assert.deepEqual([...signature],[137,80,78,71,13,10,26,10],'valid PNG: '+imagePath);
+   }
+  }
+  const oldRegion=await get('/region/detail/?region='+encodeURIComponent('창원시')+'&parent='+encodeURIComponent('경상남도')+'&kind=daeri');
+  assert.equal(oldRegion.status,200,'fetch follows legacy regional redirect');
+  const oldRegionHtml=await oldRegion.text();
+  assert.ok(oldRegionHtml.includes('창원')&&oldRegionHtml.includes('스마트대리운전'),'old regional links open matching driver page');
   for(const service of ['daeri','taksong']){
    const response=await get('/'+service+'/seoul/');assert.equal(response.status,200);
    const html=await response.text();
