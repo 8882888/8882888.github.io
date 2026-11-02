@@ -1,0 +1,31 @@
+name: Verify live Cloudtype SEO deployment
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 09:20 Korea Standard Time, daily
+    - cron: '20 0 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-seo-deployment-audit
+  cancel-in-progress: true
+
+jobs:
+  audit-production:
+    name: Compare production SEO with GitHub
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout the current GitHub repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax-check production SEO audit
+        run: python -m py_compile tools/audit_live_seo.py
+      - name: Check actual public website, sitemap and SEO freshness
+        run: python tools/audit_live_seo.py
