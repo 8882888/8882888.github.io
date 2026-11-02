@@ -36,7 +36,7 @@ async function main(){
   const stop=Date.now()+40000;
   let healthy=false;
   while(Date.now()<stop&&!exited){
-   try{const res=await request(port,'/health');if(res.status===200){const data=JSON.parse(res.body);if(data.ok&&data.regions>=20000){healthy=true;break}}}catch(_){}
+   try{const res=await request(port,'/health');if(res.status===200){const data=JSON.parse(res.body);if(data.ok&&data.regions>=20000&&/^sha256-[0-9a-f]{16}$/.test(data.release)&&String(res.headers['cache-control']||'').includes('no-store')){healthy=true;break}}}catch(_){}
    await new Promise(resolve=>setTimeout(resolve,350));
   }
   assert(healthy,'Node server failed to start with nationwide region data; output: '+logs.slice(-5000));
@@ -44,6 +44,7 @@ async function main(){
   assert(expected.length>=34,'Priority regions unexpectedly reduced');
   const json=await request(port,'/health/seo.json');assert.equal(json.status,200,'Deployment JSON');
   const diagnostic=JSON.parse(json.body);
+  assert(String(json.headers['cache-control']||'').includes('no-store'),'SEO health JSON must not be cacheable');
   assert.equal(diagnostic.priority_region_count,expected.length,'production dynamic priority region count');
   assert.equal(diagnostic.curated_source_groups,10);
   assert.equal(diagnostic.curated_source_links,20);
@@ -63,7 +64,10 @@ async function main(){
    const r=await request(port,url);
    assert.equal(r.status,200,url+' HTTP');
    assert(r.body.includes(marker),url+' missing '+marker);
-   if(url.startsWith('/health/'))assert.match(String(r.headers['x-robots-tag']||''),/noindex/);
+   if(url.startsWith('/health/')){
+    assert.match(String(r.headers['x-robots-tag']||''),/noindex/);
+    assert(String(r.headers['cache-control']||'').includes('no-store'),'Health report must not be cached');
+   }
   }
   for(const file of ['/sitemap-priority.xml','/sitemap.xml']){
    const r=await request(port,file);
