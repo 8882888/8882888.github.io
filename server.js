@@ -1098,6 +1098,11 @@ if(pathname==='/health/seo.json'){
 if(pathname==='/770f921af32e749f64c1d447c607ea42.txt')return respond(res,200,fs.readFileSync(path.join(ROOT,'770f921af32e749f64c1d447c607ea42.txt'),'utf8'),'text/plain; charset=utf-8');
 // Consolidate default-document URLs without changing query parameters.
 if(/\/index\.html$/.test(pathname)){const target=u.pathname.slice(0,-'index.html'.length);res.writeHead(301,{location:target+u.search});return res.end()}
+// Two legacy nationwide driver pages share the /daeri/ canonical. Redirect
+// instead of serving duplicate indexable HTML so search results can consolidate.
+if(/^\/(?:service\/daeri|special\/nationwide-daeri)\/?$/.test(pathname)){
+ res.writeHead(301,{location:'/daeri/'+u.search,'cache-control':'public, max-age=86400'});return res.end();
+}
 
 const routeResult=routeKeywordPages.handle(pathname,u);if(routeResult){if(routeResult.location){res.writeHead(301,{location:routeResult.location});return res.end()}return respond(res,routeResult.status,routeResult.body,routeResult.type)}
 if(pathname==='/fare/routes/'||pathname==='/fare/routes')return respond(res,200,routeGuides.index());
