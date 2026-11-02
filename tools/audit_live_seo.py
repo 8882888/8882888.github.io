@@ -48,6 +48,7 @@ class SEOParser(HTMLParser):
         self.is_title = False
         self.title = ""
         self.canonical = ""
+        self.canonical_count = 0
         self.robots = ""
         self.h1 = 0
 
@@ -57,6 +58,7 @@ class SEOParser(HTMLParser):
             self.is_title = True
         elif tag == "link" and d.get("rel", "").lower() == "canonical":
             self.canonical = d.get("href", "")
+            self.canonical_count += 1
         elif tag == "meta" and d.get("name", "").lower() == "robots":
             self.robots = d.get("content", "")
         elif tag == "h1":
@@ -74,7 +76,7 @@ class SEOParser(HTMLParser):
 def fetch(path):
     req = urllib.request.Request(BASE + path, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=22) as response:
-        return response.status, response.url, response.read(4_000_000).decode("utf-8", "replace")
+        return response.status, response.url, response.read(4_000_000).decode("utf-8", "replace"), response.headers
 
 
 def run():
@@ -86,7 +88,7 @@ def run():
         errors = []
         status = "-"
         try:
-            status, final_url, body = fetch(path)
+            status, final_url, body, headers = fetch(path)
             parser = SEOParser()
             parser.feed(body)
             expected_title = rules.get(path, {}).get("title")
@@ -96,13 +98,16 @@ def run():
                 errors.append("old/mismatched SEO title: " + parser.title.strip()[:85])
             if marker not in body:
                 errors.append("expected deployed content marker absent")
-            if parser.canonical and parser.canonical.rstrip("/") != (BASE + path).rstrip("/"):
-                errors.append("canonical mismatch: " + parser.canonical[:95])
+            if path != "/health/seo-report/":
+                if parser.canonical_count != 1:
+                    errors.append(f"expected exactly one canonical, got {parser.canonical_count}")
+                elif parser.canonical.rstrip("/") != (BASE + path).rstrip("/"):
+                    errors.append("canonical mismatch: " + parser.canonical[:95])
             if path == "/health/seo-report/":
-                if "noindex" not in parser.robots.lower():
-                    errors.append("diagnostic page must be noindex")
-            elif "noindex" in parser.robots.lower():
-                errors.append("noindex found on priority page")
+                if "noindex" not in parser.robots.lower() or "noindex" not in headers.get("X-Robots-Tag", "").lower():
+                    errors.append("diagnostic page must be noindex in HTML and X-Robots-Tag")
+            elif "noindex" in parser.robots.lower() or "noindex" in headers.get("X-Robots-Tag", "").lower():
+                errors.append("noindex found in HTML or HTTP header on priority page")
             if parser.h1 != 1:
                 errors.append("expected exactly one H1, got " + str(parser.h1))
         except Exception as ex:
@@ -118,7 +123,7 @@ def run():
     errors = []
     status = "-"
     try:
-        status, final_url, body = fetch("/health")
+        status, final_url, body, headers = fetch("/health")
         health_basic = json.loads(body)
         actual_release = str(health_basic.get("release", ""))
         expected_source = hashlib.sha256(Path("server.js").read_bytes()).hexdigest()[:16]
@@ -140,7 +145,7 @@ def run():
     errors = []
     status = "-"
     try:
-        status, final_url, body = fetch("/health/seo.json")
+        status, final_url, body, headers = fetch("/health/seo.json")
         health = json.loads(body)
         source_count = health.get("blog_source_count")
         expected_priority_count = len(json.loads(Path('data/priority-regions.json').read_text(encoding='utf-8'))['pages'])
@@ -185,7 +190,7 @@ def run():
         errors = []
         status = "-"
         try:
-            status, final_url, body = fetch(path)
+            status, final_url, body, headers = fetch(path)
             if status != 200 or required not in body:
                 errors.append("missing expected XML/robots content or HTTP status")
             if path.endswith(".xml") and status == 200:
