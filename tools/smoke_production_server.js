@@ -92,7 +92,7 @@ async function main(){
    assert(!/x-robots-tag.*noindex/i.test(String(page.headers['x-robots-tag']||'')),'noindex response header: '+url);
    const expectedPhone=url==='/blog/taksong-categories/'?'tel:18773015':'tel:18114294';
    assert(page.body.includes(expectedPhone),'service-appropriate phone CTA missing: '+url+' expected '+expectedPhone);
-   const h1=(page.body.match(/<h1\\b/gi)||[]).length;
+   const h1=(page.body.match(/<h1\b/gi)||[]).length;
    assert.equal(h1,1,'must have one H1: '+url);
    if(url==='/taksong/gwangju/')assert(page.body.includes('<title>광주탁송'),'Gwangju Metropolitan taksong title should use natural keyword');
    if(url==='/daeri/gwangju/')assert(page.body.includes('<title>광주대리운전'),'Gwangju Metropolitan driver title should use natural keyword');
