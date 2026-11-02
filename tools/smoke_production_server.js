@@ -94,6 +94,8 @@ async function main(){
    assert(page.body.includes(expectedPhone),'service-appropriate phone CTA missing: '+url+' expected '+expectedPhone);
    const h1=(page.body.match(/<h1\\b/gi)||[]).length;
    assert.equal(h1,1,'must have one H1: '+url);
+   if(url==='/taksong/gwangju/')assert(page.body.includes('<title>광주탁송'),'Gwangju Metropolitan taksong title should use natural keyword');
+   if(url==='/daeri/gwangju/')assert(page.body.includes('<title>광주대리운전'),'Gwangju Metropolitan driver title should use natural keyword');
    if(requiresNaverOriginals){
     assert(page.body.includes('id="local-naver-originals"'),'existing original source links missing: '+url);
     assert(page.body.includes('https://blog.naver.com/wjdtnr4757/'),'external Naver original URL missing: '+url);
