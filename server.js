@@ -1176,7 +1176,7 @@ if(pathname==='/health/seo.json'){
   }catch{pages[key]={error:'source unavailable'}}
  }
  res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length}),'application/json; charset=utf-8');
+ return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0)}),'application/json; charset=utf-8');
 }
 // Publish the public IndexNow ownership key at the root on Cloudtype.
 if(pathname==='/770f921af32e749f64c1d447c607ea42.txt')return respond(res,200,fs.readFileSync(path.join(ROOT,'770f921af32e749f64c1d447c607ea42.txt'),'utf8'),'text/plain; charset=utf-8');
