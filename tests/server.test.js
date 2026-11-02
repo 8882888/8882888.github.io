@@ -390,8 +390,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const duplicateNationwide=await (await get('/special/nationwide-daeri/')).text();
   for(const duplicate of [duplicateDaeriService,duplicateNationwide])assert.ok(duplicate.includes('<link rel="canonical" href="https://example.com/daeri/">'),'legacy daeri redirects land on the one canonical national driver page');
   assert.equal((duplicateDaeriService.match(/<meta name="robots"/g)||[]).length,1,'service daeri has a single robots meta tag');
-  assert.ok(koreanTaksong.includes('<title>24시탁송·전국자동차탁송 | 스마트24 차량 인수·장거리 예약</title>'));
-  assert.ok(koreanDaeri.includes('<title>전국대리운전 예약·요금 | 스마트24 장거리·골프·일일기사</title>'));
+  assert.ok(koreanTaksong.includes('<title>'+require('../data/seo-pages.json').pages.find(x=>x.path==='/taksong/').title+'</title>'),'taksong hub title matches central SEO rules');
+  assert.ok(koreanDaeri.includes('<title>'+require('../data/seo-pages.json').pages.find(x=>x.path==='/daeri/').title+'</title>'),'daeri hub title matches central SEO rules');
   assert.ok(koreanTaksong.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
   assert.ok(koreanDaeri.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
   assert.ok(koreanDaeri.includes('id="national-driver-guide"'),'national driving hub explains general, long-distance and golf reservation differences');
