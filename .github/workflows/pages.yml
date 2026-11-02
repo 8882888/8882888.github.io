@@ -207,6 +207,7 @@ jobs:
       - name: Validate 630-source SEO links and production settings
         run: |
           node --check server.js
+          node tests/regional-history-ambiguity.test.js
           node tools/check_core_seo.js
           node tools/smoke_production_server.js
           python -m py_compile tools/audit_live_seo.py
