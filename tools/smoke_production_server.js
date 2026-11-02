@@ -49,7 +49,7 @@ async function main(){
   assert.equal(diagnostic.curated_source_groups,10);
   assert.equal(diagnostic.curated_source_links,20);
   assert.equal(diagnostic.blog_source_count,630);
-  for(const name of ['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json'])
+  for(const name of ['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js'])
    assert.match(diagnostic.deployment_hashes[name],/^[0-9a-f]{64}$/);
   const checks=[
    ['/', 'special-business-top-links-20261103'],
