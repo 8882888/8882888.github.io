@@ -126,8 +126,8 @@ jobs:
           root=ET.parse('/tmp/smart24-priority-sitemap.xml').getroot()
           listed={node.text for node in root.iter() if node.tag.endswith('loc') and node.text}
           required=[
-            '/special/seoraksan-transport/',
-            '/special/jirisan-transport/',
+            '/설악산탁송/',
+            '/지리산탁송/',
             '/special/cycling-trail-transport/',
             '/reviews/taksong/',
             '/reviews/verified/',
