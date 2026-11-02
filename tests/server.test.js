@@ -524,7 +524,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const [keyword,mountain] of mountainQueries){
     const result=await get('/?q='+encodeURIComponent(keyword));
     assert.equal(result.status,200,'search redirects to dedicated page: '+keyword);
-    assert.ok(result.url.includes('/special/'+mountain+'-transport/'),'no generic homepage for mountain keyword: '+keyword);
+    assert.ok(decodeURIComponent(result.url).includes('/'+(mountain==='seoraksan'?'설악산탁송':'지리산탁송')+'/'),'no generic homepage for mountain keyword: '+keyword);
     const body=await result.text();
     assert.ok(body.startsWith('<!doctype html>')&&body.includes('<body><figure id="original-mountain-fare-visual"'),'mountain original image first: '+keyword);
     assert.ok(body.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct mountain PNG: '+keyword);
@@ -532,7 +532,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   const referrerResult=await fetch('http://127.0.0.1:'+port+'/',{headers:{referer:'https://search.naver.com/search.naver?query='+encodeURIComponent('설악산탁송')},redirect:'manual'});
   assert.equal(referrerResult.status,302,'available search referrer resolves to image-first Seoraksan page');
-  assert.equal(referrerResult.headers.get('location'),'/special/seoraksan-transport/');
+  assert.equal(referrerResult.headers.get('location'),'/설악산탁송/');
+  for(const [segment,mountain] of [['설악산탁송','seoraksan'],['지리산탁송','jirisan']]){
+    const seo=await get('/'+encodeURIComponent(segment)+'/');
+    assert.equal(seo.status,200,'Korean keyword URL resolves');
+    const html=await seo.text();
+    assert.ok(html.includes('<body><figure id="original-mountain-fare-visual"'),'Korean keyword URL shows original poster before menus');
+    assert.ok(html.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct original mountain fare image');
+    assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr/'+segment+'/"'),'Korean URL is canonical');
+  }
   const nationwideHome=await get('/');
   assert.equal(nationwideHome.status,200,'plain homepage remains nationwide');
   const nationwideHtml=await nationwideHome.text();
