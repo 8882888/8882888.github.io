@@ -166,11 +166,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   // Region-specific source posts and visible homepage hub must not become keyword-only dead ends.
   const seoHome=await (await get('/')).text();
   // Ten-point customer journey audit: avoid duplicate sections and show the fare
-  // poster before navigation, then one fare table, verified history and booking.
+  // general service header before the mountain poster, then verified history and booking.
   for(const id of ['mountain-cycle-priority-links','mountain-taksong-fares',
    'long-distance-five-routes','keyword-topics','core-search-services','cycle-second-five-home'])
    assert.ok(!seoHome.includes('id="'+id+'"'),'duplicate homepage section removed: '+id);
-  assert.ok(seoHome.indexOf('id="mobile-direct-image-priority"')<seoHome.indexOf('<header'),'original mountain poster comes before mobile header');
+  assert.ok(seoHome.indexOf('<header')<seoHome.indexOf('id="mobile-direct-image-priority"'),'general service header must precede mountain poster on homepage');
   assert.ok(seoHome.includes('id="homepage-mountain-fare-shortcuts-202611"')&&seoHome.includes('id="real-completed-service-hubs-202611"'),
    'homepage retains fare first then genuine ride-history journey');
   for(const [url,expectedFare,requiredSource] of [
