@@ -45,6 +45,7 @@ jobs:
           node --check server.js
           node tools/check_core_seo.js
           node tools/smoke_production_server.js
+          python3 -m py_compile tools/audit_live_seo.py
       - name: Check whether existing Cloudtype deployment is connected
         id: connection
         shell: bash
@@ -74,3 +75,29 @@ jobs:
           echo 'Cloudtype deployment requested for the configured existing application.'
           echo 'This confirms request acceptance only. Production deployment and Naver indexing are separate.'
           echo 'Cloudtype existing-app redeploy request accepted. Verify actual live HTML and source SHA256 separately.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Cloudtype redeploy request accepted; live SHA256 verification begins next.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Confirm LIVE Cloudtype release matches GitHub source
+        if: steps.connection.outputs.enabled == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(sha256sum server.js | cut -c1-16)"
+          verified=false
+          for n in $(seq 1 18); do
+            response="$(curl --fail --silent --show-error --connect-timeout 8 --max-time 14 -H 'Cache-Control: no-cache' 'https://jeongukdaeri.kr/health' 2>/dev/null || true)"
+            actual="$(jq -r '.release // ""' <<<"$response" 2>/dev/null || true)"
+            if [ "$actual" = "sha256-$expected" ]; then
+              verified=true
+              break
+            fi
+            sleep 10
+          done
+          if [ "$verified" != true ]; then
+            echo '### Cloudtype live deployment NOT verified' >> "$GITHUB_STEP_SUMMARY"
+            echo "Live /health did not report the GitHub server.js release sha256-$expected within the verification window." >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::Cloudtype redeploy request may have been accepted, but the official public site did not confirm the latest Node release."
+            exit 1
+          fi
+          echo '### Cloudtype live deployment verified' >> "$GITHUB_STEP_SUMMARY"
+          echo "Production /health release matches GitHub server.js sha256-$expected." >> "$GITHUB_STEP_SUMMARY"
+          echo 'Live deployment verified. Naver Search Advisor indexing and search ranking remain separate checks.' >> "$GITHUB_STEP_SUMMARY"
