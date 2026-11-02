@@ -8,7 +8,17 @@ const dryRun=process.argv.includes('--dry-run');
 const base=new URL(dryRun?(process.argv[process.argv.indexOf('--dry-run')+1]||'http://localhost:3000/'):'https://jeongukdaeri.kr/');
 const fileKey=fs.readFileSync(path.join(root,key+'.txt'),'utf8').trim();
 if(fileKey!==key)throw Error('Invalid local IndexNow key file');
-const expectedCount=16+require('../data/priority-regions.json').pages.length; // 16 fixed high-intent URLs + 26 region pages
+// The priority sitemap grows as verified ride highlights are added. Guard core URLs
+// and regional coverage instead of rejecting a valid increase in published pages.
+const fixedPriorityPaths=[
+ '/', '/daeri/', '/taksong/', '/route-taksong/', '/설악산탁송/', '/지리산탁송/',
+ '/special/cycling-trail-transport/', '/service/long-distance-taksong/', '/fare/',
+ '/reviews/history/', '/reviews/taksong/', '/reviews/ride-record-stories/',
+ '/reviews/verified/', '/routes/reviewed/', '/region/daegu-daeri-taksong/',
+ '/blog/', '/route-taksong/centers/', '/travel/food-map/', '/taksong/jeju/',
+ '/recruit/daeri/', '/recruit/taksong/'
+];
+const minimumCount=fixedPriorityPaths.length+require('../data/priority-regions.json').pages.length;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function get(rel){return fetch(new URL(rel,base),{headers:{'user-agent':'Smart24-IndexNow-Notifier/1.0','cache-control':'no-cache'},signal:AbortSignal.timeout(10000),redirect:'manual'});}
 async function verify(){
@@ -19,20 +29,24 @@ async function verify(){
  if(xmlResponse.status!==200)throw Error('Priority sitemap HTTP '+xmlResponse.status);
  const xml=await xmlResponse.text();
  const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);
- if(urls.length!==expectedCount||new Set(urls).size!==urls.length)throw Error('Unexpected priority sitemap URL count '+urls.length+'/'+expectedCount);
+ // URLs may contain Hangul in XML, but IndexNow requests require RFC3986 URLs.
+ const normalizedUrls=urls.map(value=>new URL(value).href);
+ if(urls.length<minimumCount||urls.length>200||new Set(normalizedUrls).size!==urls.length)
+  throw Error('Unexpected priority sitemap coverage or duplicates: '+urls.length+' URLs, at least '+minimumCount+' required');
  for(const url of urls){
   const parsed=new URL(url);
   if(parsed.protocol!=='https:'||parsed.hostname!=='jeongukdaeri.kr'||parsed.search||parsed.hash)throw Error('Invalid canonical URL in sitemap: '+url);
  }
- for(const url of ['https://jeongukdaeri.kr/','https://jeongukdaeri.kr/daeri/','https://jeongukdaeri.kr/taksong/','https://jeongukdaeri.kr/route-taksong/','https://jeongukdaeri.kr/special/seoraksan-transport/','https://jeongukdaeri.kr/special/jirisan-transport/','https://jeongukdaeri.kr/travel/food-map/','https://jeongukdaeri.kr/taksong/jeju/','https://jeongukdaeri.kr/recruit/daeri/','https://jeongukdaeri.kr/recruit/taksong/','https://jeongukdaeri.kr/daeri/busan/','https://jeongukdaeri.kr/taksong/busan/','https://jeongukdaeri.kr/special/cycling-trail-transport/','https://jeongukdaeri.kr/service/long-distance-taksong/','https://jeongukdaeri.kr/fare/','https://jeongukdaeri.kr/reviews/history/','https://jeongukdaeri.kr/reviews/ride-record-stories/','https://jeongukdaeri.kr/reviews/verified/']){
-  if(!urls.includes(url))throw Error('Missing priority path: '+url);
+ for(const route of fixedPriorityPaths){
+  const canonical=new URL(route,base).href;
+  if(!normalizedUrls.includes(canonical))throw Error('Missing priority path: '+canonical);
  }
  const busan=await get('/taksong/busan/');
  if(busan.status!==200)throw Error('Busan taksong HTTP '+busan.status);
  const body=await busan.text();
  if(!body.includes('id="priority-region-guide"')||!body.includes('항만·서비스센터 및 부산 시내 차량 인수 준비'))throw Error('Latest Busan update not deployed');
  console.log('Verified live key and '+urls.length+' canonical priority URLs on '+base.origin);
- return urls;
+ return normalizedUrls;
 }
 (async()=>{
  let urls;
