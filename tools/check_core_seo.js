@@ -68,4 +68,22 @@ for(const key of ['taksong|광주광역시','taksong|대전광역시','taksong|�
 check(server.includes("sparseVillage=r.level==='리'"),'sparse village low-quality indexing protection missing');
 check(server.includes("specialized-business-taksong-hub"),'production business hub direct links missing');
 check(home.includes('id="special-business-top-links-20261103"'),'homepage business navigation missing');
+const curated=JSON.parse(read('data/priority-blog-links.json')).pages;
+check(curated.length===10,'expected exactly ten curated existing service pages');
+const curatedKeys=new Set(),curatedIds=new Set();
+for(const item of curated){
+ const key=item.kind+'|'+item.region;
+ check(!curatedKeys.has(key),'duplicate curated service page '+key);
+ check(priorityKeys.has(key),'unrecognized priority region '+key);
+ curatedKeys.add(key);
+ check(item.ids.length===2,'require two original Naver sources for '+key);
+ check(typeof item.focus==='string'&&item.focus.length>=20,'missing unique editorial context '+key);
+ for(const id of item.ids){
+  check(ids.has(id),'curated source id missing from original 630 posts: '+id);
+  check(!curatedIds.has(id),'source must not be reused in separate curated region: '+id);
+  curatedIds.add(id);
+ }
+}
+check(server.includes("priorityBlogEvidence(r,kind)"),'ten dynamic regional source sections not wired');
+check(server.includes("priorityBlogLinksByKey"),'ten curated sections not loaded');
 console.log('PASS: '+posts.length+' unique Naver post URLs, '+categories.size+' categories, '+sections.length+' original-source sections, production SEO overrides, homepage order and core sitemaps.');
