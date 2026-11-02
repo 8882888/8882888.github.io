@@ -102,7 +102,7 @@ jobs:
           expected={
             '/special/seoraksan-transport/':'<h1>설악산탁송 요금·실제후기',
             '/special/jirisan-transport/':'<h1>지리산탁송 요금·실제후기',
-            '/special/cycling-trail-transport/':'<h1>자전거길탁송 요금·실제후기',
+            '/special/cycling-trail-transport/':'<h1>전국 자전거길 종주탁송 요금·실제후기',
             '/reviews/taksong/':'completed-case-conversion-first-202611',
             '/region/daegu-daeri-taksong/':'daegu-route-real-review-first-202611',
           }
@@ -124,6 +124,27 @@ jobs:
             if attempt==17:
               raise SystemExit('Latest landing pages not deployed or stale: '+', '.join(missing))
             time.sleep(5)
+          # Verify mobile search keyword routing and the first visible mountain poster on production.
+          from urllib.parse import quote
+          mountain_cases=[
+            ('설악산탁송','seoraksan'),('한계령소공원탁송','seoraksan'),
+            ('지리산탁송','jirisan'),('성삼재중산리탁송','jirisan')
+          ]
+          for keyword,mountain in mountain_cases:
+            route='/special/'+mountain+'-transport/'
+            url=base+'/?q='+quote(keyword)+'&release-check='+os.environ['DEPLOYED_COMMIT']
+            with urllib.request.urlopen(urllib.request.Request(url,headers={'Cache-Control':'no-cache'}),timeout=15) as response:
+              page=response.read().decode('utf-8')
+              landing=response.geturl()
+            hero='<body><figure id="original-mountain-fare-visual"'
+            picture='/assets/'+mountain+'-taksong-original-fare.png'
+            if route not in landing or hero not in page or ('src="'+picture+'"') not in page:
+              raise SystemExit('Mobile mountain landing mismatch: '+keyword+' -> '+landing)
+            image_req=urllib.request.Request(base+picture+'?release-check='+os.environ['DEPLOYED_COMMIT'],headers={'Cache-Control':'no-cache'})
+            with urllib.request.urlopen(image_req,timeout=15) as image_response:
+              if image_response.status!=200 or image_response.read(8)!=b'\\x89PNG\\r\\n\\x1a\\n':
+                raise SystemExit('Mountain original fare PNG unavailable: '+picture)
+            print('PASS mountain mobile route + original fare poster',keyword)
           # Confirm the deployed server is reading the same current HTML files.
           import json
           probe=urllib.request.Request(base+'/health/seo.json?release-check='+os.environ['DEPLOYED_COMMIT'],
@@ -134,7 +155,7 @@ jobs:
           expected_titles={
             'seoraksan':'설악산탁송 요금·실제후기',
             'jirisan':'지리산탁송 요금·실제후기',
-            'cycling':'자전거길탁송 요금·실제후기'
+            'cycling':'전국 자전거길 종주탁송 요금·실제후기'
           }
           for key,phrase in expected_titles.items():
             if phrase not in data.get('pages',{}).get(key,{}).get('h1',''):
