@@ -121,6 +121,7 @@ jobs:
           curl --fail --show-error --output /tmp/smart24-priority-sitemap.xml http://127.0.0.1:3000/sitemap-priority.xml
           python3 - <<'PYINDEX'
           import urllib.request
+          from urllib.parse import quote
           import xml.etree.ElementTree as ET
           base='http://127.0.0.1:3000'
           root=ET.parse('/tmp/smart24-priority-sitemap.xml').getroot()
@@ -141,7 +142,7 @@ jobs:
             expected='https://jeongukdaeri.kr'+path
             if expected not in listed:
               raise SystemExit('Priority sitemap missing '+path)
-            with urllib.request.urlopen(base+path,timeout=20) as response:
+            with urllib.request.urlopen(base+quote(path),timeout=20) as response:
               page=response.read().decode('utf-8')
               if response.status!=200:
                 raise SystemExit('Priority URL non-200 '+path)
