@@ -998,7 +998,7 @@ function serviceHub(kind){
  '<section><h2>전국 지역 검색</h2><form action="/region/" method="get"><input type="hidden" name="service" value="'+kind+'"><label>지역명 <input name="q" placeholder="예: 서울, 부산, 인천"></label><button>지역 찾기</button></form><p>지역 검색 후 '+label+' 전용 페이지를 선택할 수 있습니다.</p></section>';
  const hubImage='/assets/smart24-'+kind+'-brand.png';
  const hubCard=serviceVehicleGallery(kind);
- return layout(isT?'전국 '+label+' 예약·요금 | 스마트24':'전국대리운전 예약·예상요금 | 장거리·골프·일일기사',isT?'전국 '+label+' 예약과 예상요금, 장거리 운행 및 지역별 배차 조건 안내. '+PHONE:'전국대리운전 예상요금 조회와 예약 상담. 장거리·골프장·일일기사·법인 서비스와 실제 운행기록을 확인하세요. '+PHONE,body.replace('</section>','</section>'+hubCard),'https://'+host+'/'+kind+'/','https://'+host+hubImage);
+ return layout(isT?'전국자동차탁송·장거리탁송 예약·요금 | 스마트24':'전국대리운전 예약·예상요금 | 장거리·골프·일일기사',isT?'전국 '+label+' 예약과 예상요금, 장거리 운행 및 지역별 배차 조건 안내. '+PHONE:'전국대리운전 예상요금 조회와 예약 상담. 장거리·골프장·일일기사·법인 서비스와 실제 운행기록을 확인하세요. '+PHONE,body.replace('</section>','</section>'+hubCard),'https://'+host+'/'+kind+'/','https://'+host+hubImage);
 }
 function regionKeywordLabel(r,kind,short=false){
  const parts=r.full_name.split(' ');
