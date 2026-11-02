@@ -296,6 +296,30 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const archivePriority=await (await get('/sitemap-priority.xml')).text(),archiveMain=await (await get('/sitemap.xml')).text();
   for(const xml of [archivePriority,archiveMain])assert.ok(xml.includes('https://example.com/blog/archive/categories/'),
     'one canonical rebuilt Naver category portal is discoverable in sitemap');
+  // Ten source-grounded, unique content guides must be visible on both hosts.
+  const blogGuideRoutes=["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"];
+  assert.equal(blogGuideRoutes.length,10);
+  assert.equal(new Set(blogGuideRoutes).size,10);
+  const guideHub=await get('/blog/guides/'),guideHubHtml=await guideHub.text();
+  assert.equal(guideHub.status,200);
+  assert.ok(guideHubHtml.includes('rel="canonical" href="https://jeongukdaeri.kr/blog/guides/"'),'guide hub has canonical');
+  assert.ok(seoHome.includes('href="/blog/guides/"'),'homepage points to new evidence-linked editorials');
+  const guidePrioritySitemap=await (await get('/sitemap-priority.xml')).text();
+  const guideMainSitemap=await (await get('/sitemap.xml')).text();
+  for(const path of ['/blog/guides/',...blogGuideRoutes]){
+    const r=await get(path),body=await r.text();
+    assert.equal(r.status,200,'published blog guide '+path);
+    assert.ok(body.includes('rel="canonical" href="https://jeongukdaeri.kr'+path+'"'),'canonical '+path);
+    assert.ok(body.includes('href="tel:18114294"')&&body.includes('application/ld+json'),'contact and structured data '+path);
+    assert.ok(guideMainSitemap.includes('https://example.com'+path),'main sitemap '+path);
+    assert.ok(guidePrioritySitemap.includes('https://example.com'+path),'priority sitemap '+path);
+    if(path!=='/blog/guides/'){
+      assert.equal((body.match(/<h1[ >]/g)||[]).length,1,'single guide H1 '+path);
+      assert.ok((body.match(/https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+/g)||[]).length>=4,'four existing Naver posts '+path);
+      assert.ok(body.includes('현재 확정 견적은 다릅니다'),'historic and current prices separate '+path);
+      assert.ok(guideHubHtml.includes('href="'+path+'"'),'guide hub links article '+path);
+    }
+  }
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>전국자동차탁송·장거리탁송·24시탁송 | 스마트24 1811-4294</title>'),'homepage title leads with nationwide vehicle delivery and 24h service');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');

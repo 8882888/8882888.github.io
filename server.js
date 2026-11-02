@@ -1320,7 +1320,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
 if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const urls=['/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/daegu-daeri-taksong/','/blog/','/blog/archive/','/blog/archive/categories/','/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),'/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),...priorityRegionalPages.map(p=>{
+ const urls=['/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/daegu-daeri-taksong/','/blog/','/blog/archive/','/blog/archive/categories/','/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],'/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),'/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),...priorityRegionalPages.map(p=>{
   const region=regions.find(r=>r.full_name===p.region);
   return servicePath(region,p.kind);
  })];
@@ -1371,6 +1371,7 @@ if(pathname==='/sitemap.xml'){
   ...priorityRegionalPages.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
   '/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),
   '/blog/archive/categories/',
+  '/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],
   ...publicRides.map(rideUrl),
   ...featuredTaksongRoutes.map(r=>'/taksong/route/'+r.slug+'/'),
   ...featuredDaeriRoutes.map(r=>'/daeri/route/'+r.slug+'/'),
