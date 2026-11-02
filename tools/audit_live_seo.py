@@ -1,0 +1,140 @@
+#!/usr/bin/env python3
+"""Check production HTML freshness against this repository's SEO rules.
+
+This verifies deployment and crawlable HTML, NOT Google/Naver indexing or ranking.
+Uses only Python's standard library. Prints GitHub Actions job summary when available.
+"""
+import html
+import json
+import os
+import sys
+import urllib.error
+import urllib.request
+from html.parser import HTMLParser
+
+BASE = "https://jeongukdaeri.kr"
+PATHS = {
+    "/": "special-business-top-links-20261103",
+    "/taksong/": "specialized-business-taksong-hub",
+    "/daeri/": "real-original-daeri-links-20261102",
+    "/region/": "verified-naver-region-links-20261102",
+    "/blog/archive/": "630",
+    "/business/rental-car/": "rental-b2b-operating-guide-20261103",
+    "/business/used-car/": "dealer-b2b-operating-guide-20261103",
+    "/business/export-port/": "export-b2b-operating-guide-20261103",
+    "/business/auction/": "auction-b2b-operating-guide-20261103",
+}
+HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; Smart24SeoAudit/1.0)",
+           "Cache-Control": "no-cache", "Pragma": "no-cache"}
+
+
+class SEOParser(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.is_title = False
+        self.title = ""
+        self.canonical = ""
+        self.robots = ""
+        self.h1 = 0
+
+    def handle_starttag(self, tag, attrs):
+        d = dict(attrs)
+        if tag == "title":
+            self.is_title = True
+        elif tag == "link" and d.get("rel", "").lower() == "canonical":
+            self.canonical = d.get("href", "")
+        elif tag == "meta" and d.get("name", "").lower() == "robots":
+            self.robots = d.get("content", "")
+        elif tag == "h1":
+            self.h1 += 1
+
+    def handle_endtag(self, tag):
+        if tag == "title":
+            self.is_title = False
+
+    def handle_data(self, data):
+        if self.is_title:
+            self.title += data
+
+
+def fetch(path):
+    req = urllib.request.Request(BASE + path, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=22) as response:
+        return response.status, response.url, response.read(4_000_000).decode("utf-8", "replace")
+
+
+def run():
+    with open("data/seo-pages.json", encoding="utf-8") as stream:
+        rules = {p["path"]: p for p in json.load(stream)["pages"]}
+    rows = []
+    failures = 0
+    for path, marker in PATHS.items():
+        errors = []
+        status = "-"
+        try:
+            status, final_url, body = fetch(path)
+            parser = SEOParser()
+            parser.feed(body)
+            expected_title = rules.get(path, {}).get("title")
+            if status != 200 or final_url.rstrip("/") != (BASE + path).rstrip("/"):
+                errors.append("unexpected HTTP status or redirect")
+            if expected_title and parser.title.strip() != expected_title:
+                errors.append("old/mismatched SEO title: " + parser.title.strip()[:85])
+            if marker not in body:
+                errors.append("expected deployed content marker absent")
+            if parser.canonical and parser.canonical.rstrip("/") != (BASE + path).rstrip("/"):
+                errors.append("canonical mismatch: " + parser.canonical[:95])
+            if "noindex" in parser.robots.lower():
+                errors.append("noindex found on priority page")
+            if parser.h1 != 1:
+                errors.append("expected exactly one H1, got " + str(parser.h1))
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:125])
+        result = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        detail = "; ".join(errors) if errors else "HTML/SEO marker present"
+        print(f"{result}: {path} — {detail}")
+        rows.append((path, status, result, detail))
+
+    # XML endpoints can fail in text-extraction tools; test actual HTTP and XML here.
+    for path, required in [
+        ("/robots.txt", "Sitemap: " + BASE + "/sitemap.xml"),
+        ("/sitemap-priority.xml", "<urlset"),
+        ("/sitemap.xml", "<urlset"),
+    ]:
+        errors = []
+        status = "-"
+        try:
+            status, final_url, body = fetch(path)
+            if status != 200 or required not in body:
+                errors.append("missing expected XML/robots content or HTTP status")
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:125])
+        result = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        detail = "; ".join(errors) if errors else "accessible, expected content present"
+        print(f"{result}: {path} — {detail}")
+        rows.append((path, status, result, detail))
+
+    lines = [
+        "## Production SEO deployment audit",
+        "",
+        "Compares GitHub SEO settings to public HTTP responses; does **not** prove Naver indexing.",
+        "",
+        "| URL | HTTP | Result | Findings |",
+        "|---|---:|---|---|",
+    ]
+    for path, status, result, detail in rows:
+        safe = detail.replace("|", "/").replace("\n", " ")
+        lines.append(f"| \`{path}\` | {status} | **{result}** | {safe} |")
+    lines += ["", f"**Failures: {failures} / {len(rows)}**"]
+    summary = "\n".join(lines) + "\n"
+    if os.environ.get("GITHUB_STEP_SUMMARY"):
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as stream:
+            stream.write(summary)
+    print("Failures: ", failures)
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    sys.exit(run())
