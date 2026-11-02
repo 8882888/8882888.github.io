@@ -46,6 +46,14 @@ CURATED_SOURCE_ROUTES = {
     "/taksong/gyeongnam/changwon-si/", "/taksong/gyeongnam/gimhae-si/",
     "/daeri/busan/", "/daeri/daegu/",
 }
+PROMOTED_REGION_SOURCE_PAGES={
+    item["path"]: item["ids"] for item in json.loads(Path("data/priority-blog-links.json").read_text(encoding="utf-8"))["pages"]
+    if item.get("kind")=="taksong" and item.get("path")
+}
+for route in PROMOTED_REGION_SOURCE_PAGES:
+    PATHS[route]="local-naver-originals"
+    CURATED_SOURCE_ROUTES.add(route)
+
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; Smart24SeoAudit/1.0)",
            "Cache-Control": "no-cache", "Pragma": "no-cache"}
@@ -107,6 +115,9 @@ def run():
                 errors.append("old/mismatched SEO title: " + parser.title.strip()[:85])
             if marker not in body:
                 errors.append("expected deployed content marker absent")
+            for source_id in PROMOTED_REGION_SOURCE_PAGES.get(path, []):
+                if "https://blog.naver.com/wjdtnr4757/"+source_id not in body:
+                    errors.append("original Naver blog link not deployed: "+source_id)
             if path == "/daeri/gwangju/" and re.search(r"<h3>광주시\s*(?:쌍동리|초월읍|곤지암읍)", body):
                 errors.append("Gyeonggi Gwangju-si ride wrongly displayed as Gwangju Metropolitan City evidence")
             if path != "/health/seo-report/":
@@ -168,8 +179,11 @@ def run():
             errors.append("health route did not return HTTP 200")
         if source_count != 630:
             errors.append(f"published Naver source data mismatch: {source_count!r}")
-        if group_count != 10 or link_count != 20:
-            errors.append(f"old Cloudtype deployment: curated groups={group_count!r}, links={link_count!r}")
+        curated_entries = json.loads(Path("data/priority-blog-links.json").read_text(encoding="utf-8"))["pages"]
+        expected_groups = len(curated_entries)
+        expected_links = sum(len(entry["ids"]) for entry in curated_entries)
+        if group_count != expected_groups or link_count != expected_links:
+            errors.append(f"curated original sources are stale: live groups={group_count!r}, links={link_count!r}; expected {expected_groups}/{expected_links}")
         live_hashes = health.get("deployment_hashes") or {}
         for filepath in ["server.js", "index.html", "data/seo-pages.json", "data/priority-blog-links.json", "lib/regional-history-evidence.js"]:
             expected_hash = hashlib.sha256(Path(filepath).read_bytes()).hexdigest()
@@ -188,7 +202,7 @@ def run():
         errors.append(type(ex).__name__ + ": " + str(ex)[:125])
     result = "PASS" if not errors else "FAIL"
     failures += bool(errors)
-    detail = "; ".join(errors) if errors else "630 posts, 10 region groups, 20 links, exact SEO titles and 4 source SHA256 fingerprints deployed"
+    detail = "; ".join(errors) if errors else "630 posts and all curated original-source regions, SEO titles and source SHA256 fingerprints match"
     print(f"{result}: /health/seo.json — {detail}")
     rows.append(("/health/seo.json", status, result, detail))
 
