@@ -33,6 +33,8 @@ jobs:
         run: node tests/fare-rules.test.js
       - name: Verify phone conversion tracking and referral toggles (no live DB writes)
         run: node tests/traffic-analytics.test.js
+      - name: Check metropolitan and same-name city ride attribution
+        run: node tests/regional-history-ambiguity.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
       - name: Start and smoke-test HTTP service
