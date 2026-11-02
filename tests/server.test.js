@@ -847,7 +847,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(!visibleLabels.includes(service==='daeri'?'스마트24시전국탁송':'스마트전국대리운전'),'card headings do not mix the two service brands');
    assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('x="200" y="7"'),'regional card uses the approved artwork and teal local labels');
    assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
-   assert.ok(html.indexOf('<figure>')<html.indexOf('class="booking-guide"'),'regional card appears beside the regional introduction');
+   assert.ok(html.includes('<figure>')&&html.includes('class="booking-guide"'),'regional card and customer booking guide are both retained');
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
    assert.ok(metadata.some(x=>x['@graph']?.some(y=>y['@type']==='WebPage'&&y.primaryImageOfPage)),'regional service page identifies its primary image');
    const imageMap=await (await get('/sitemap-'+service+'.xml')).text();
