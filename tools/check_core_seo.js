@@ -60,6 +60,9 @@ for(const [p,id] of businessChecks){
  check(html.includes('https://blog.naver.com/wjdtnr4757/'),'missing verified Naver source links: '+p);
 }
 const priorities=JSON.parse(read('data/priority-regions.json')).pages;
+check(priorities.length>=34,'at least 34 current priority pages must remain');
+check(server.includes('priorityByKey.size!==priorityRegionalPages.length'),'startup priority validation must be data-driven');
+check(!server.includes("priorityRegionalPages.length!==27"),'old hardcoded count would crash Cloudtype deployment');
 const priorityKeys=new Set(priorities.map(x=>x.kind+'|'+x.region));
 check(priorities.length===priorityKeys.size,'duplicate metropolitan priority rule');
 for(const key of ['taksong|광주광역시','taksong|대전광역시','taksong|경상남도 창원시','daeri|광주광역시','daeri|대전광역시','daeri|울산광역시']){
