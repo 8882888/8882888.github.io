@@ -110,6 +110,9 @@ def run():
         status, final_url, body = fetch("/health/seo.json")
         health = json.loads(body)
         source_count = health.get("blog_source_count")
+        expected_priority_count = len(json.loads(Path('data/priority-regions.json').read_text(encoding='utf-8'))['pages'])
+        if health.get('priority_region_count') != expected_priority_count:
+            errors.append(f"priority region count not deployed: live={health.get('priority_region_count')!r}, GitHub={expected_priority_count}")
         group_count = health.get("curated_source_groups")
         link_count = health.get("curated_source_links")
         if status != 200:
