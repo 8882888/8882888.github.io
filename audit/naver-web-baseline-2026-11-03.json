@@ -1,0 +1,228 @@
+{
+  "checkedAt": "2026-11-02T21:48:31.972Z",
+  "source": "Naver Search API: web documents",
+  "queryLimit": 100,
+  "limitation": "Naver Web Document API positions within top 100. Not integrated or mobile search ranking. No match does not establish noindex. No user click/impression metrics.",
+  "comparisonDomains": [
+    "gosudaeri.com",
+    "k-daeri.com"
+  ],
+  "records": [
+    {
+      "query": "전국대리운전",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": 66,
+        "k-daeri.com": 43
+      }
+    },
+    {
+      "query": "설악산탁송",
+      "sitePositions": [
+        24,
+        79
+      ],
+      "siteUrls": [
+        "https://jeongukdaeri.kr/",
+        "https://jeongukdaeri.kr/taksong/"
+      ],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "지리산탁송",
+      "sitePositions": [
+        14,
+        100
+      ],
+      "siteUrls": [
+        "https://jeongukdaeri.kr/",
+        "https://jeongukdaeri.kr/route-taksong/"
+      ],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "오색탁송",
+      "sitePositions": [
+        13,
+        35
+      ],
+      "siteUrls": [
+        "https://jeongukdaeri.kr/",
+        "https://jeongukdaeri.kr/taksong/"
+      ],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "한계령탁송",
+      "sitePositions": [
+        12,
+        24,
+        47
+      ],
+      "siteUrls": [
+        "https://jeongukdaeri.kr/",
+        "https://jeongukdaeri.kr/taksong/",
+        "https://jeongukdaeri.kr/route-taksong/"
+      ],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "부산탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": 7
+      }
+    },
+    {
+      "query": "울산탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": 72
+      }
+    },
+    {
+      "query": "대구탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": 7,
+        "k-daeri.com": 9
+      }
+    },
+    {
+      "query": "창원탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": 56
+      }
+    },
+    {
+      "query": "기장군탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "성삼재중산리탁송",
+      "sitePositions": [
+        3,
+        5
+      ],
+      "siteUrls": [
+        "https://jeongukdaeri.kr/",
+        "https://jeongukdaeri.kr/route-taksong/"
+      ],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "jeongukdaeri.kr/service/corporate/",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "부산인천탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": 32
+      }
+    },
+    {
+      "query": "기장군대구탁송",
+      "sitePositions": [
+        39
+      ],
+      "siteUrls": [
+        "https://jeongukdaeri.kr/"
+      ],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": 19
+      }
+    },
+    {
+      "query": "대구서울대리운전",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": 2,
+        "k-daeri.com": 14
+      }
+    },
+    {
+      "query": "서울부산탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": 6
+      }
+    },
+    {
+      "query": "김해공항서울탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "김해공항인천탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": null,
+        "k-daeri.com": null
+      }
+    },
+    {
+      "query": "강릉서울탁송",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": 64,
+        "k-daeri.com": 1
+      }
+    },
+    {
+      "query": "서울대구대리운전",
+      "sitePositions": [],
+      "siteUrls": [],
+      "competitorBestPositions": {
+        "gosudaeri.com": 1,
+        "k-daeri.com": 4
+      }
+    }
+  ]
+}
