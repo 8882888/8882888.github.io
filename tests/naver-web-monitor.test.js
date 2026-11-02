@@ -20,7 +20,7 @@ for(const keyword of ['서울대리운전','부산대리운전','해운대대리
 assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes('/daeri/daegu/'));
 assert.ok(require('../scripts/naver-web-monitor').QUERIES.includes('강원도탁송'));
 for(const q of ['설악산탁송','지리산탁송','자전거길종주탁송','동해안자전거길종주탁송','섬진강자전거길종주탁송','영산강자전거길종주탁송','금강자전거길종주탁송','낙동강자전거길종주탁송']) assert.ok(QUERIES.includes(q),'monitor priority route: '+q);
-for(const page of ['/special/seoraksan-transport/','/special/jirisan-transport/','/route-taksong/','/route-taksong/centers/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(page),'monitor dedicated page: '+page);
+for(const page of ['/설악산탁송/','/지리산탁송/','/taksong/gyeongnam/changwon-si/','/route-taksong/','/route-taksong/centers/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(page),'monitor dedicated page: '+page);
 
 for(const path of ['/reviews/history/','/reviews/ride-record-stories/','/reviews/verified/','/special/cycling-trail-transport/','/service/long-distance-taksong/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(path),'high-intent page search evidence '+path);
 for(const query of ['오색탁송','백담사탁송','영덕탁송','경포대탁송','자동차탁송운행완료후기']) assert.ok(QUERIES.includes(query),'high-intent actual ride search '+query);
@@ -33,4 +33,15 @@ for(const path of ['/taksong/busan/dongnae-gu/','/taksong/busan/geumjeong-gu/','
 for(const q of ['부산진구탁송','대연동탁송','토성동탁송','초량동탁송','남포동탁송']) assert.ok(QUERIES.includes(q),'central Busan search '+q);
 for(const q of ['수성구탁송','범어동탁송','달서구탁송','상인동탁송','대구북구탁송','침산동탁송','대구동구탁송','신천동탁송','대구중구탁송','삼덕동탁송']) assert.ok(QUERIES.includes(q),'Daegu taksong query '+q);
 for(const p of ['/taksong/daegu/suseong-gu/','/taksong/daegu/dalseo-gu/','/taksong/daegu/buk-gu/','/taksong/daegu/dong-gu/','/taksong/daegu/jung-gu/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(p),'Daegu taksong region '+p);
+
+for(const q of ['창원탁송','창원전국탁송','부산전국탁송','설악산탁송 요금표','지리산탁송 요금표'])assert.ok(QUERIES.includes(q),'region-first Naver monitoring query '+q);
+const encodedResult=pageEvidence([{query:'설악산탁송',matches:[{url:'https://jeongukdaeri.kr/%EC%84%A4%EC%95%85%EC%82%B0%ED%83%81%EC%86%A1/',position:3,title:'설악산탁송 요금표'}]}]);
+assert.equal(encodedResult.find(p=>p.path==='/설악산탁송/').found[0].position,3,'monitor URL-encoded Korean canonical path');
+const {legacyDriverEvidence}=require('../scripts/naver-web-monitor');
+const legacy=legacyDriverEvidence([
+ {query:'전국대리운전',matches:[{url:'https://jeongukdaeri.kr/service/daeri/',position:1,title:'전국대리운전'}]},
+ {query:'설악산탁송',matches:[{url:'https://jeongukdaeri.kr/설악산탁송/',position:2,title:'설악산탁송'},{url:'https://jeongukdaeri.kr/special/nationwide-daeri/',position:5,title:'전국대리운전'}]}
+]);
+assert.equal(legacy.length,2,'detect duplicate nationwide driver URLs in returned web results');
+assert.deepEqual(legacy.map(x=>x.position),[1,5]);
 console.log('Naver web result matching passed');
