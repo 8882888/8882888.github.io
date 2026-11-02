@@ -766,7 +766,11 @@ async function servicePage(r,kind){
  // Show useful local service information and a phone CTA before a generic promotional card.
  // Keep the card on the page and retain structured data; avoid an oversized image as the first mobile element.
  const imageAfterContent=visibleCard?rendered.replace(visibleCard,'').replace('</main>',visibleCard.replace('loading="eager" fetchpriority="high"','loading="lazy"')+'</main>'):rendered;
- return jejuSearchPage?imageAfterContent.replaceAll('1811-4294','1877-5245').replaceAll('18114294','18775245'):imageAfterContent;
+ // Avoid adding templated village-level pages without specific confirmed trips to the search index.
+ // These URLs remain navigable; verified local trips and all priority hubs stay indexable.
+ const sparseVillage=r.level==='리'&&!priorityMeta&&!matches.length&&!historicalMatches.length;
+ const crawlerReady=sparseVillage?imageAfterContent.replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">'):imageAfterContent;
+ return jejuSearchPage?crawlerReady.replaceAll('1811-4294','1877-5245').replaceAll('18114294','18775245'):crawlerReady;
 }
 function remoteRegionGuidance(r){
  const full=r.full_name||'',names=[
@@ -828,7 +832,9 @@ function regionPage(r){
  const imageData=JSON.stringify({"@context":"https://schema.org","@type":"ImageObject",contentUrl:imageUrl,url:imageUrl,name:fullName+" 스마트탁송 지역 대표 이미지",description:fullName+" 자동차탁송과 상담 대표번호 1811-4294",width:1200,height:800,encodingFormat:"image/png",representativeOfPage:true}).replace(/</g,"\\u003c");
  const regionHero=`<figure style="margin:0 auto 12px;max-width:900px"><a href="${servicePath(r,'taksong')}" aria-label="${full} 자동차탁송 이미지와 상세 안내"><img src="${cardPngPath(r.slug,'taksong')}" loading="eager" fetchpriority="high" decoding="async" alt="${full} 스마트탁송 지역 대표 이미지, 상담전화 1811-4294" width="1200" height="800" style="display:block;width:100%;height:auto;border-radius:12px"></a><figcaption style="text-align:center">${full} 자동차탁송 · <a href="${servicePath(r,'daeri')}">${full} 대리운전</a> · <a href="tel:18114294">${PHONE}</a></figcaption></figure>`;
  const page=layout(title,intro,`<script type="application/ld+json">${imageData}</script>`+serviceLinks+regionalIntentNav(r)+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+cardPngPath(r.slug,'taksong'));
- return page.replace('<body><header>','<body>'+regionHero+'<header>');
+ // Preserve the regional promo card, but place it after substantive local guide content.
+ const withCard=page.replace('</main>',regionHero.replace('loading="eager" fetchpriority="high"','loading="lazy"')+'</main>');
+ return r.level==='리'&&!matches.length?withCard.replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">'):withCard;
 }
 // Service-specific, human-readable category pages: no invented dispatch or completion claims.
 // Category discovery pages describe service contexts; they do not invent individual Naver Place listings.
