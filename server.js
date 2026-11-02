@@ -1109,7 +1109,8 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   body=html;
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
- if(isHtml||type.startsWith('text/plain;'))headers['cache-control']='no-cache, max-age=0, must-revalidate';
+ // Explicit no-store on deployment diagnostics must survive the common HTML response writer.
+ if((isHtml||type.startsWith('text/plain;'))&&!res.getHeader('cache-control'))headers['cache-control']='no-cache, max-age=0, must-revalidate';
  // XML sitemaps must never be served from a stale intermediary cache after rollout.
  if(type.startsWith('application/xml;')){
   headers['cache-control']='no-store, max-age=0, must-revalidate';
