@@ -171,7 +171,7 @@ def run():
         if group_count != 10 or link_count != 20:
             errors.append(f"old Cloudtype deployment: curated groups={group_count!r}, links={link_count!r}")
         live_hashes = health.get("deployment_hashes") or {}
-        for filepath in ["server.js", "index.html", "data/seo-pages.json", "data/priority-blog-links.json"]:
+        for filepath in ["server.js", "index.html", "data/seo-pages.json", "data/priority-blog-links.json", "lib/regional-history-evidence.js"]:
             expected_hash = hashlib.sha256(Path(filepath).read_bytes()).hexdigest()
             live_hash = live_hashes.get(filepath)
             if not live_hash:
