@@ -757,8 +757,8 @@ function regionPage(r){
  ${nearby}
  ${parent?'<section><h2>상위 지역 안내</h2><p><a href="'+canonical(parent.slug)+'">'+esc(parent.full_name)+' 대리운전·탁송</a></p></section>':''}
  ${children.length?'<section><h2>인접 행정 단계의 하위 지역 찾기</h2><ul>'+children.map(x=>'<li><a href="'+canonical(x.slug)+'">'+esc(x.name)+' 지역 안내</a> · <a href="'+servicePath(x,'taksong')+'">'+esc(x.name)+'탁송</a> · <a href="'+servicePath(x,'daeri')+'">'+esc(x.name)+'대리운전</a></li>').join('')+'</ul></section>':''}`;
- const imageUrl="https://"+(process.env.PUBLIC_HOST||"jeongukdaeri.kr")+cardPngPath(r.slug);
- const imageData=JSON.stringify({"@context":"https://schema.org","@type":"ImageObject",contentUrl:imageUrl,url:imageUrl,name:fullName+" 대리운전·자동차탁송 지역 명함",description:fullName+" 스마트전국대리운전 스마트24탁송 상담 명함 1811-4294",width:1200,height:800,encodingFormat:"image/png",representativeOfPage:true}).replace(/</g,"\\u003c");
+ const imageUrl="https://"+(process.env.PUBLIC_HOST||"jeongukdaeri.kr")+cardPngPath(r.slug,'taksong');
+ const imageData=JSON.stringify({"@context":"https://schema.org","@type":"ImageObject",contentUrl:imageUrl,url:imageUrl,name:fullName+" 스마트탁송 지역 대표 이미지",description:fullName+" 자동차탁송과 상담 대표번호 1811-4294",width:1200,height:800,encodingFormat:"image/png",representativeOfPage:true}).replace(/</g,"\\u003c");
  const regionHero=`<figure style="margin:0 auto 12px;max-width:900px"><a href="${servicePath(r,'taksong')}" aria-label="${full} 자동차탁송 이미지와 상세 안내"><img src="${cardPngPath(r.slug,'taksong')}" loading="eager" fetchpriority="high" decoding="async" alt="${full} 스마트탁송 지역 대표 이미지, 상담전화 1811-4294" width="1200" height="800" style="display:block;width:100%;height:auto;border-radius:12px"></a><figcaption style="text-align:center">${full} 자동차탁송 · <a href="${servicePath(r,'daeri')}">${full} 대리운전</a> · <a href="tel:18114294">${PHONE}</a></figcaption></figure>`;
  const page=layout(title,intro,`<script type="application/ld+json">${imageData}</script>`+serviceLinks+regionalIntentNav(r)+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+cardPngPath(r.slug,'taksong'));
  return page.replace('<body><header>','<body>'+regionHero+'<header>');
