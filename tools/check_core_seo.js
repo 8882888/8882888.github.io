@@ -86,4 +86,19 @@ for(const item of curated){
 }
 check(server.includes("priorityBlogEvidence(r,kind)"),'ten dynamic regional source sections not wired');
 check(server.includes("priorityBlogLinksByKey"),'ten curated sections not loaded');
+const nonCanonicalSitemapAliases=[
+ '/service/daeri/','/special/nationwide-daeri/',
+ '/special/seoraksan-transport/','/special/jirisan-transport/'
+];
+for(const route of nonCanonicalSitemapAliases){
+ check(!sitemap.includes('<loc>https://jeongukdaeri.kr'+route+'</loc>'),'redirect/canonical alias in sitemap '+route);
+}
+for(const route of ['/taksong/','/daeri/']){
+ check(sitemap.includes('<loc>https://jeongukdaeri.kr'+route+'</loc>'),'canonical service hub missing in sitemap '+route);
+}
+const daeriLegacy=read('service/daeri/index.html');
+check(daeriLegacy.includes('rel="canonical" href="https://jeongukdaeri.kr/daeri/"'),'legacy daeri alias must canonicalize to /daeri/');
+check(/<meta name="robots" content="noindex,follow">/.test(daeriLegacy),'legacy daeri alias must not compete for indexing');
+check(server.includes("pathname==='/health/seo-report/'"),'human-readable production deployment report missing');
+check(server.includes('deployment_hashes:Object.fromEntries'),'source-level SHA256 diagnostic missing');
 console.log('PASS: '+posts.length+' unique Naver post URLs, '+categories.size+' categories, '+sections.length+' original-source sections, production SEO overrides, homepage order and core sitemaps.');
