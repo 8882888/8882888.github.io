@@ -23,7 +23,7 @@
 | 대전·세종·충청 자동차탁송 | 26 | https://jeongukdaeri.kr/blog/archive/chungcheong-taksong/ | 분야별 목록 제공 | 미검증 | 미검증 | 미검증 |
 | 제주도 자동차탁송 | 7 | https://jeongukdaeri.kr/blog/archive/jeju-taksong/ | 분야별 목록 제공 | 미검증 | 미검증 | 미검증 |
 | 중고차·수입차·서비스센터·경매장 | 126 | https://jeongukdaeri.kr/blog/archive/vehicle-taksong/ | 분야별 목록 제공 | 미검증 | 미검증 | 미검증 |
-| 탁송후기·기타 서비스 | 66 | https://jeongukdaeri.kr/blog/archive/general-taksong/ | 분야별 목록 제공 | 미검증 | 미검증 | 미검증 |
+| 탁송후기·기타 서비스 | 66 | https://jeongukdaeri.kr/blog/archive/other-taksong/ | 분야별 목록 제공 | 미검증 | 미검증 | 미검증 |
 | **합계** | **630** | | **목록 수 표기 확인** | **전체 미검증** | **전체 미검증** | **전체 미검증** |
 
 ## 공개 샘플 확인
