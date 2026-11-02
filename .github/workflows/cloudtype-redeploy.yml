@@ -1,0 +1,61 @@
+name: Redeploy official Cloudtype site on verified repository changes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'index.html'
+      - 'data/**'
+      - 'lib/**'
+      - 'blog/**'
+      - 'business/**'
+      - 'service/**'
+      - 'region/**'
+      - 'assets/**'
+      - 'sitemap*.xml'
+      - '.github/workflows/cloudtype-redeploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smart24-cloudtype-production-redeploy
+  cancel-in-progress: true
+
+jobs:
+  request-existing-cloudtype-deployment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}
+      CLOUDTYPE_PROJECT: ${{ vars.CLOUDTYPE_PROJECT }}
+      CLOUDTYPE_APP: ${{ vars.CLOUDTYPE_APP }}
+      CLOUDTYPE_STAGE: ${{ vars.CLOUDTYPE_STAGE }}
+    steps:
+      - name: Check whether existing Cloudtype deployment is connected
+        id: connection
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$CLOUDTYPE_TOKEN" ] || [ -z "$CLOUDTYPE_PROJECT" ] || [ -z "$CLOUDTYPE_APP" ] || [ -z "$CLOUDTYPE_STAGE" ]; then
+            echo "::notice::Cloudtype redeploy not connected. Requires CLOUDTYPE_TOKEN secret and CLOUDTYPE_PROJECT, CLOUDTYPE_APP, CLOUDTYPE_STAGE repository variables. No deployment requested."
+            echo 'enabled=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'enabled=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Request Cloudtype to redeploy the EXISTING application
+        if: steps.connection.outputs.enabled == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          payload="$(jq -cn --arg project "$CLOUDTYPE_PROJECT" --arg app "$CLOUDTYPE_APP" --arg stage "$CLOUDTYPE_STAGE" '{project:$project,app:$app,stage:$stage}')"
+          curl --fail-with-body --silent --show-error \
+            --connect-timeout 10 --max-time 55 --retry 1 \
+            --request POST 'https://api.cloudtype.io/webhooks/deploy' \
+            --header 'Content-Type: application/json' \
+            --header "Authorization: Bearer $CLOUDTYPE_TOKEN" \
+            --data "$payload" --output /tmp/smart24-deploy-response.json
+          echo 'Cloudtype deployment requested for the configured existing application.'
+          echo 'This confirms request acceptance only. Production deployment and Naver indexing are separate.'
