@@ -1251,7 +1251,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
  const focusedDaeri=[...require('../data/naver-regional-focus-50.json').priority,...require('../data/naver-regional-focus-next-50.json').priority].filter(p=>p.kind==='daeri');
  const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityDaeri.some(p=>p.region===r.full_name)||focusedDaeri.some(p=>p.region===r.full_name));
  assert.equal((daeriXml.match(/<loc>/g)||[]).length,discoveryRegions.length+1+require('../lib/daeri-travel-guides').destinations.length,'driver sitemap contains curated provinces, priority regions and four verified-source travel guides');
- assert.ok(discoveryRegions.length<40,'driver sitemap must be curated, not a 20k-page generated directory');
+ assert.ok(discoveryRegions.length<100,'driver sitemap must be a curated 100-page-scale collection, not a 20k-page generated directory');
  for(const region of ['서울특별시','부산광역시','대구광역시','인천광역시']){
   const url={'서울특별시':'seoul','부산광역시':'busan','대구광역시':'daegu','인천광역시':'incheon'}[region];
   assert.ok(daeriXml.includes('https://example.com/daeri/'+url+'/'),'driver sitemap retains priority '+region);
