@@ -114,6 +114,26 @@ check('National driver link and no route duplication',async()=>{
  assert.ok(r.body.includes('법인카드대리운전'));
  assert.ok(!r.body.includes('서울특별시 강남구 법인카드대리운전 실제 완료'),'no invented cases');
 });
+
+check('Exact Gyeonggi full administrative name resolves instead of colliding with Dori',async()=>{
+ const d=await preview('경기도탁송');
+ assert.equal(d.status,'matched');
+ assert.equal(d.region,'경기도');
+ assert.equal(d.cards.length,1);
+ assert.equal(d.cards[0].kind,'taksong');
+});
+check('Sejong real town works without internal direct-admin label',async()=>{
+ for(const [q,area,kind] of [
+  ['세종특별자치시 조치원읍탁송','세종특별자치시 (직할) 조치원읍','taksong'],
+  ['세종특별자치시 반곡동대리운전','세종특별자치시 (직할) 반곡동','daeri']
+ ]){
+  const d=await preview(q);
+  assert.equal(d.status,'matched',q);
+  assert.equal(d.region,area,q);
+  assert.equal(d.cards.length,1);
+  assert.equal(d.cards[0].kind,kind);
+ }
+});
 (async()=>{
  let ok=0;
  for(const t of tasks){try{await t.fn();ok++;console.log('PASS '+t.name)}catch(e){console.error('FAIL '+t.name+': '+String(e?.message||e))}}

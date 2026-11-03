@@ -35,7 +35,7 @@ def choose():
         names=doc["full_names"]
         if doc["province"] not in names: raise RuntimeError("Missing province "+doc["province"])
         target=next((n for n in names if len(n.split())==2 and n.endswith(("시","군","구"))),None)
-        if not target: target=next((n for n in names if n!=doc["province"]),None)
+        if not target: target=next((n for n in names if n!=doc["province"] and not n.endswith(" (직할)")),None)
         if not target: raise RuntimeError("Missing subordinate area "+doc["province"])
         selected.append(target)
     for doc in docs:
@@ -52,7 +52,7 @@ def choose():
 
 def check(item):
     number,area,kind=item
-    query=area+("대리운전" if kind=="daeri" else "탁송")
+    query=area.replace(" (직할)","")+("대리운전" if kind=="daeri" else "탁송")
     started=time.perf_counter()
     result={"number":number,"query":query,"region":area,"service":kind,"passed":False}
     try:

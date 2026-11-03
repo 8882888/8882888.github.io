@@ -1290,6 +1290,11 @@ const liveCardAliases=new Map();
 for(const r of regions){
  const province=regionAncestors(r)[0];
  const names=new Set([r.full_name,r.name,seoRegionBase(r),seoRegionLabel(r),...regionAliases(r)]);
+ // Searchers omit the internal Sejong '(직할)' grouping when typing 읍·면·동·리.
+ if(r.full_name.includes(' (직할) ')){
+  names.add(r.full_name.replace(' (직할) ',' '));
+  names.add(r.full_name.replace(/[()]/g,''));
+ }
  if(province&&province!==r){
   const provinceShort=provinceSeoLabels[province.name]||shortPlace(province.name);
   names.add(provinceShort+r.name);
@@ -1508,7 +1513,10 @@ if(pathname==='/api/region-card-preview'){
  const kind=['daeri','taksong'].includes(requested)?requested:inferred;
  const locality=clean(normalizedKeyword.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
  const key=compact(locality||query);
- const exact=(key.length>=2?liveCardAliases.get(key)||[]:[]).slice().sort((a,b)=>a.full_name.length-b.full_name.length||a.full_name.localeCompare(b.full_name,'ko'));
+ // A full official place name must take precedence over colliding shorthand (e.g. 경기도 vs 경기+도리).
+ const exactCandidates=(key.length>=2?liveCardAliases.get(key)||[]:[]).slice().sort((a,b)=>a.full_name.length-b.full_name.length||a.full_name.localeCompare(b.full_name,'ko'));
+ const fullNameMatches=exactCandidates.filter(r=>compact(r.full_name)===key);
+ const exact=fullNameMatches.length===1?fullNameMatches:exactCandidates;
  let status='not_found',region=null,candidates=[];
  if(exact.length===1){status='matched';region=exact[0]}
  else if(exact.length>1){status='ambiguous';candidates=exact.slice(0,10)}
