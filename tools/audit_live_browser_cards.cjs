@@ -20,6 +20,7 @@ const cases=[
  {q:'제주도대리운전',region:'제주특별자치도',kind:'daeri',image:'png',screen:'mobile'}
 ];
 const results=[];
+(async()=>{
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 try{
  for(const [index,caseData] of cases.entries()){
@@ -99,3 +100,4 @@ fs.writeFileSync(path.join(OUT,'report.json'),JSON.stringify(report,null,2));
 console.log('SMART24_LIVE_BROWSER_DYNAMIC '+passed+'/'+results.length+' passed; '+failed+' failed; keyword-literal titles '+report.keyword_painted_exactly+'/'+cases.length);
 if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\n## Live interactive keyword cards\n\n**'+passed+'/'+results.length+' passed**. '+report.keyword_painted_exactly+'/'+cases.length+' image-card headings show the exact search term. Full-resolution image zoom tested in real Chromium on mobile and desktop. **Not** a Naver ranking measurement.\n');
 if(failed)process.exitCode=1;
+})().catch(error=>{console.error(error);process.exitCode=1});
