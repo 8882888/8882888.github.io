@@ -69,7 +69,7 @@ if(regionalJourneyPlans.length!==10||regionalJourneyByPath.size!==regionalJourne
  throw Error('Invalid curated regional journey groups');
 for(const entry of regionalJourneyPlans){
  const region=regions.find(r=>r.full_name===entry.region);
- if(!region||servicePath(region,'taksong')!==entry.path||!entry.heading||!entry.summary||!Array.isArray(entry.related)||entry.related.length<2)
+ if(!region||servicePath(region,'taksong')!==entry.path||!entry.heading||!entry.summary||!Array.isArray(entry.related)||entry.related.length<2||!Array.isArray(entry.faq)||entry.faq.length!==2||entry.faq.some(q=>!q.question||!q.answer||q.answer.length<55))
   throw Error('Invalid journey region: '+entry.region);
  const seen=new Set();
  for(const link of entry.related){
@@ -750,6 +750,11 @@ async function servicePage(r,kind){
  // A concise first-view decision area for curated and provincial taksong pages.
  // The locality-specific FAQ reuses the verified editorial context. It never
  // claims a fixed price, actual local staffing, or a completed trip not in records.
+ const regionalCustomerFaq=kind==='taksong'?regionalJourneyByPath.get(servicePath(r,kind))?.faq:null;
+ const regionalQuickStartFaq=regionalCustomerFaq
+  ?regionalCustomerFaq.map(q=>'<dt><strong>'+esc(q.question)+'</strong></dt><dd>'+esc(q.answer)+'</dd>').join('')
+  :'<dt><strong>차량을 맡기려면 무엇이 필요한가요?</strong></dt><dd>출발지 실제 주차장, 도착지 인계 장소, 차량 종류, 희망 인수시각을 알려주세요. '+esc(priorityMeta?.detail||provinceSpecificGuide||hierarchyNote)+'</dd>'+
+   '<dt><strong>홈페이지에 표시된 요금으로 바로 예약되나요?</strong></dt><dd>아닙니다. 완료 운행기록에 기재된 금액은 당시 요금이며, 도로거리·시간대·주차·기사 복귀 여건에 따라 현재 견적과 배차 가능 여부를 개별 확인합니다.</dd>';
  const regionalQuickStart=kind==='taksong'&&(priorityMeta||['시도','시','군','구'].includes(r.level))?
   '<section id="regional-taksong-quick-start" style="border:2px solid #1c65a0;background:#fff;padding:18px;margin:12px 0;border-radius:13px">'+
   '<h2>'+esc(preciseLocality)+'탁송 · 예상요금·실제후기·상담</h2>'+
@@ -760,8 +765,7 @@ async function servicePage(r,kind){
   '<a style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:10px;background:#fff1af;color:#17263e;text-decoration:none;padding:10px;font-weight:800" href="tel:18114294">☎ 상담 1811-4294</a>'+
   '<a style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:10px;background:#fee500;color:#191919;text-decoration:none;padding:10px;font-weight:800" href="https://open.kakao.com/o/sGV88r7h" target="_blank" rel="noopener noreferrer">카카오톡 상담</a></nav>'+
   '<h3>'+esc(preciseLocality)+'탁송 자주 묻는 질문</h3>'+
-  '<dl><dt><strong>차량을 맡기려면 무엇이 필요한가요?</strong></dt><dd>출발지 실제 주차장, 도착지 인계 장소, 차량 종류, 희망 인수시각을 알려주세요. '+esc(priorityMeta?.detail||provinceSpecificGuide||hierarchyNote)+'</dd>'+
-  '<dt><strong>홈페이지에 표시된 요금으로 바로 예약되나요?</strong></dt><dd>아닙니다. 완료 운행기록에 기재된 금액은 당시 요금이며, 도로거리·시간대·주차·기사 복귀 여건에 따라 현재 견적과 배차 가능 여부를 개별 확인합니다.</dd></dl></section>':'';
+  '<dl>'+regionalQuickStartFaq+'</dl></section>':'';
  const southeastTaksongFocus=kind==='taksong'&&['부산광역시','울산광역시'].includes(r.full_name)?(()=>{
   const isBusan=r.full_name==='부산광역시';
   const links=isBusan?[

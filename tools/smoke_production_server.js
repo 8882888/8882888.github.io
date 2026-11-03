@@ -88,6 +88,11 @@ async function main(){
     assert(page.body.includes('id="verified-region-journey-links"'),'missing customer region navigation: '+entry.path);
     assert(page.body.includes(entry.heading),'region-specific navigation heading missing: '+entry.path);
     for(const link of entry.related)assert(page.body.includes('href="'+link.path+'"'),entry.path+' missing real region link '+link.path);
+    for(const faq of entry.faq){
+      assert(page.body.includes(faq.question),'missing local customer question: '+entry.path);
+      assert(page.body.includes(faq.answer),'missing grounded customer answer: '+entry.path);
+    }
+    assert.equal((page.body.match(/<dt><strong>/g)||[]).length>=2,true,'FAQ missing: '+entry.path);
   }
   const kw=await request(port,'/taksong/gwangju/');
   assert(!kw.body.includes('광산구·풍암매매단지·송도수출단지 장거리탁송'),'misleading Gwangju/remote Incheon location wording');

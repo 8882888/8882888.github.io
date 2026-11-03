@@ -128,6 +128,11 @@ def run():
                 for link in JOURNEY_PLANS[path]["related"]:
                     if 'href="' + link["path"] + '"' not in body:
                         errors.append("missing canonical related-region link: " + link["path"])
+                for faq in JOURNEY_PLANS[path]["faq"]:
+                    if html.escape(faq["question"], quote=False) not in body:
+                        errors.append("missing specific customer question")
+                    if html.escape(faq["answer"], quote=False) not in body:
+                        errors.append("missing specific customer answer")
             if path == "/taksong/gwangju/" and "광산구·풍암매매단지·송도수출단지 장거리탁송" in body:
                 errors.append("Incheon Songdo incorrectly grouped into Gwangju facilities")
             if path == "/daeri/gwangju/" and re.search(r"<h3>광주시\s*(?:쌍동리|초월읍|곤지암읍)", body):
