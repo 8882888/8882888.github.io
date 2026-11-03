@@ -31,6 +31,7 @@ function loadLegalRegions(){
  return regions;
 }
 const regions=loadLegalRegions();
+const regionByFullName=new Map(regions.map(r=>[r.full_name,r]));
 const priorityRegionalPages=load('data/priority-regions.json').pages;
 const naverFocus50=load('data/naver-regional-focus-50.json').priority;
 const naverFocusNext50=load('data/naver-regional-focus-next-50.json').priority;
@@ -64,7 +65,7 @@ const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]
 const focus50ByKey=new Map(naverFocus1100.map(x=>[x.kind+'|'+x.region,x]));
 if(naverFocus50.length!==50||naverFocusNext50.length!==50||naverFocusThird50.length!==50||naverFocusFourth50.length!==50||naverFocusFifthTaksong50.length!==50||naverFocusFifthDaeri50.length!==50||naverFocusSixth100.length!==100||naverFocusSeventh100.length!==100||naverFocusEighth100.length!==100||naverFocusNinth100.length!==100||naverFocusTenth100.length!==100||naverFocusEleventhTaksong50.length!==50||naverFocusEleventhDaeri50.length!==50||naverFocusTwelfthTaksong100.length!==100||naverFocusTwelfthDaeri100.length!==100||naverFocus1100.length!==1100||
  focus50ByKey.size!==1100||new Set(naverFocus1100.map(x=>x.keyword)).size!==1100||
- naverFocus1100.some(x=>!['taksong','daeri'].includes(x.kind)||!regions.some(r=>r.full_name===x.region)||
+ naverFocus1100.some(x=>!['taksong','daeri'].includes(x.kind)||!regionByFullName.has(x.region)||
   !x.keyword||!x.topic||!x.pickup||!x.handover||
   (x.related&&!/^\/(?:service|business|fare|route-taksong|special|daeri)\/[a-z0-9\-/]*$/.test(x.related))))
  throw Error('Invalid 1100 curated regional SEO entries (twelfth batch: 200 new locations and services)');
@@ -124,7 +125,7 @@ function naverFocus50Hub(kind){
  const label=kind==='taksong'?'자동차탁송':'대리운전';
  const directory=[...grouped].map(([province,entries])=>
   '<div><h3>'+esc(province)+' 지역</h3><p>'+entries.map(entry=>{
-   const r=regions.find(r=>r.full_name===entry.region);
+   const r=regionByFullName.get(entry.region);
    return '<a href="'+servicePath(r,kind)+'">'+esc(entry.keyword)+'</a>';
   }).join(' · ')+'</p></div>'
  ).join('');
@@ -143,7 +144,7 @@ const realTaksongPaths=new Set(regions.map(r=>servicePath(r,'taksong')));
 if(regionalJourneyPlans.length!==10||regionalJourneyByPath.size!==regionalJourneyPlans.length)
  throw Error('Invalid curated regional journey groups');
 for(const entry of regionalJourneyPlans){
- const region=regions.find(r=>r.full_name===entry.region);
+ const region=regionByFullName.get(entry.region);
  if(!region||servicePath(region,'taksong')!==entry.path||!entry.heading||!entry.summary||!Array.isArray(entry.related)||entry.related.length<2||!Array.isArray(entry.faq)||entry.faq.length!==2||entry.faq.some(q=>!q.question||!q.answer||q.answer.length<55))
   throw Error('Invalid journey region: '+entry.region);
  if(!Array.isArray(entry.handover)||entry.handover.length!==3||entry.handover.some(x=>typeof x!=='string'||x.length<25)||
@@ -298,7 +299,7 @@ function tripMatchesRegion(x,r){
 
 function ridePriorityRegionLinks(x){
  // Only independently confirmed public rides link back to matching regional service pages.
- const matches=priorityRegionalPages.filter(p=>p.kind===x.service).map(p=>regions.find(r=>r.full_name===p.region)).filter(r=>r&&tripMatchesRegion(x,r)).slice(0,6);
+ const matches=priorityRegionalPages.filter(p=>p.kind===x.service).map(p=>regionByFullName.get(p.region)).filter(r=>r&&tripMatchesRegion(x,r)).slice(0,6);
  if(!matches.length)return '';
  const label=x.service==='taksong'?'자동차탁송':'대리운전';
  return '<section><h2>이 운행기록과 관련된 지역별 '+label+' 안내</h2><ul>'+matches.map(r=>'<li><a href="'+servicePath(r,x.service)+'">'+esc(seoRegionLabel(r)+label)+' 지역 안내</a></li>').join('')+'</ul><p>지역 안내는 예약 조건과 기사 접근을 설명하며 실제 완료 기록은 이 운행 페이지의 확인된 내용에 한정됩니다.</p></section>';
@@ -1144,7 +1145,7 @@ function featuredTaksongRoutePage(route){
 function priorityRegionLinks(kind){
  const label=kind==='daeri'?'대리운전':'탁송';
  const items=priorityRegionalPages.filter(p=>p.kind===kind).map(p=>{
-  const region=regions.find(r=>r.full_name===p.region);
+  const region=regionByFullName.get(p.region);
   // Search-friendly locality labels belong on links to the existing canonical region pages.
   const anchor=kind==='daeri'?seoRegionLabel(region)+'대리운전':seoRegionLabel(region)+'탁송';
   return '<li><a href="'+servicePath(region,kind)+'" data-region="'+esc(p.region)+'">'+esc(anchor)+'</a> · '+esc(p.topic)+'</li>';
@@ -1363,10 +1364,10 @@ const dynamicBlogSections=[
   {path:'/daeri/',title:'전국 대리운전'},
   {path:'/region/',title:'전국 지역별 서비스 찾기'},
   {path:'/region/daegu-daeri-taksong/',title:'대구 대리운전·탁송'},
-  ...priorityRegionalPages.slice(0,26).map(p=>({path:servicePath(regions.find(r=>r.full_name===p.region),p.kind),title:p.region+' '+(p.kind==='taksong'?'자동차탁송':'대리운전')}))
+  ...priorityRegionalPages.slice(0,26).map(p=>({path:servicePath(regionByFullName.get(p.region),p.kind),title:p.region+' '+(p.kind==='taksong'?'자동차탁송':'대리운전')}))
  ]},
  {title:'요청 지역별 탁송·대리운전 핵심 검색어',description:'실제 지역 페이지로 연결되는 탁송업체·대리운전회사·법인카드·골프장·일일기사·화물차·종주탁송 안내입니다. 별도 지점·후기 생성은 아닙니다.',links:regionalBlogKeywords.focusedLinks.map(entry=>{
-   const item=regions.find(r=>r.full_name===entry.region);
+   const item=regionByFullName.get(entry.region);
    if(!item)throw Error('Unknown focus locality '+entry.region);
    return {path:servicePath(item,entry.kind),title:entry.title};
  })},
@@ -1837,9 +1838,9 @@ if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'je
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const urls=['/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/','/region/gyeonggi-daeri-taksong/','/region/seoul-daeri-taksong/','/region/gangwon-daeri-taksong/','/service/corporate/','/service/heavy-truck-taksong/','/business/rental-car/','/business/used-car/','/business/export-port/','/business/auction/','/blog/taksong-categories/','/blog/archive/gyeongsang-taksong/','/blog/archive/vehicle-taksong/','/blog/archive/general-daeri/','/blog/','/blog/archive/','/blog/archive/categories/','/blog/guides/','/blog/daeri-regions/',...blogHashtagArticlePaths,...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],'/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),'/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),...priorityRegionalPages.map(p=>{
-  const region=regions.find(r=>r.full_name===p.region);
+  const region=regionByFullName.get(p.region);
   return servicePath(region,p.kind);
- }),...naverFocus1100.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind))];
+ }),...naverFocus1100.map(p=>servicePath(regionByFullName.get(p.region),p.kind))];
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+[...new Set(urls)].map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
@@ -1884,8 +1885,8 @@ if(pathname==='/sitemap.xml'){
   ...placeCategories.map(x=>'/places/'+encodeURIComponent(x[0])+'/'),
   ...vehicleTopics.map(([name])=>vehicleTopicPath(name)),
   ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
-  ...priorityRegionalPages.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
-  ...naverFocus1100.slice(0,200).map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
+  ...priorityRegionalPages.map(p=>servicePath(regionByFullName.get(p.region),p.kind)),
+  ...naverFocus1100.slice(0,200).map(p=>servicePath(regionByFullName.get(p.region),p.kind)),
   '/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),
   '/blog/archive/categories/',
   '/blog/daeri-regions/',...blogHashtagArticlePaths,'/blog/taksong-categories/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/',...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],
