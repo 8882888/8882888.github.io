@@ -11,6 +11,8 @@
   return el;
  };
  const safePath=(value,prefix)=>typeof value==='string'&&value.startsWith(prefix)&&!value.startsWith('//')&&!value.includes('..')?value:null;
+ const imagePath=value=>['/card/','/assets/','/keyword-card/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
+ const guidePath=value=>['/daeri/','/taksong/','/service/','/special/','/business/','/설악산탁송/','/지리산탁송/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
  const addLink=(parent,href,text,cls)=>{
   const a=node('a',cls,text);a.href=href;parent.append(a);return a;
  };
@@ -52,16 +54,16 @@
    output.hidden=!reason;output.removeAttribute('aria-busy');
   }
   function renderCard(card){
-   const original=safePath(card.image,'/card/');
-   const preview=safePath(card.previewImage,'/card/');
-   const page=safePath(card.url,'/daeri/')||safePath(card.url,'/taksong/');
+   const original=imagePath(card.image);
+   const preview=imagePath(card.previewImage);
+   const page=guidePath(card.url);
    if(!original||!page)return null;
    const article=node('article','smart24-card-panel');
    const title=node('h3','smart24-card-heading',card.label||'지역별 상담 명함');
    const img=node('img','smart24-card-preview-image');
    img.src=preview||original;
    img.alt=(card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 전용 명함';
-   img.width=800;img.height=533;img.loading='eager';img.decoding='async';
+   img.width=1200;img.height=800;img.loading='eager';img.decoding='async';
    let pngFallback=false;
    img.addEventListener('error',()=>{
     if(!pngFallback&&preview){pngFallback=true;img.src=original;return}
@@ -92,7 +94,7 @@
   function show(data){
    output.hidden=false;results.replaceChildren();
    if(data.status==='matched'&&Array.isArray(data.cards)&&data.cards.length){
-    message.textContent=(data.region||'선택 지역')+'의 '+(data.cards.length===2?'대리운전·자동차탁송':'서비스 전용')+' 명함입니다. 이미지를 누르면 크게 볼 수 있습니다.';
+    message.textContent=(data.region||'선택 키워드')+'에 맞는 '+(data.cards.length===2?'대리운전·자동차탁송':'서비스 전용')+' 이미지입니다. 이미지를 누르면 크게 볼 수 있습니다.';
     const grid=node('div','smart24-card-grid');
     data.cards.forEach(card=>{const el=renderCard(card);if(el)grid.append(el)});
     results.append(grid);
