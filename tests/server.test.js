@@ -1248,7 +1248,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(archiveSitemap.includes('https://example.com/blog/archive/'),'directory in sitemap');
   for(const group of archiveData.groups)assert.ok(archiveSitemap.includes('/blog/archive/'+group.id+'/'),'category in sitemap');
   const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);const priorityDaeri=require('../data/priority-regions.json').pages.filter(p=>p.kind==='daeri');
- const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityDaeri.some(p=>p.region===r.full_name));
+ const focusedDaeri=require('../data/naver-regional-focus-50.json').priority.filter(p=>p.kind==='daeri');
+ const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityDaeri.some(p=>p.region===r.full_name)||focusedDaeri.some(p=>p.region===r.full_name));
  assert.equal((daeriXml.match(/<loc>/g)||[]).length,discoveryRegions.length+1+require('../lib/daeri-travel-guides').destinations.length,'driver sitemap contains curated provinces, priority regions and four verified-source travel guides');
  assert.ok(discoveryRegions.length<40,'driver sitemap must be curated, not a 20k-page generated directory');
  for(const region of ['서울특별시','부산광역시','대구광역시','인천광역시']){
@@ -1471,7 +1472,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(pagePath.startsWith('/'+target.kind+'/'),'same-service landing '+target.keyword);
    assert.ok(!focusPaths.has(pagePath),'one unique page per focus item '+pagePath);
    focusPaths.add(pagePath);
-   assert.ok(siteMaps[target.kind].includes('https://jeongukdaeri.kr'+pagePath),
+   assert.ok(siteMaps[target.kind].includes('https://example.com'+pagePath),
     '50 priority pages should be in service sitemap '+target.keyword);
    const response=await get(pagePath);
    assert.equal(response.status,200,'priority region HTTP '+target.keyword);
@@ -1481,7 +1482,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes(target.topic)&&html.includes(target.pickup)&&html.includes(target.handover),
     'two distinctive locality paragraphs and topic '+target.keyword);
    assert.ok(html.includes('href="/fare/?service='+target.kind),'fare CTA '+target.keyword);
-   assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+pagePath+'"'),
+   assert.ok(html.includes('rel="canonical" href="https://example.com'+pagePath+'"'),
     'canonical remains unchanged '+target.keyword);
    assert.ok(!html.includes('<meta name="robots" content="noindex'),
     'SEO-focus pages must remain indexable '+target.keyword);
