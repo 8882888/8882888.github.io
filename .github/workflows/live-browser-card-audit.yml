@@ -31,6 +31,24 @@ jobs:
           }
           console.log('PASS cycling seven intrinsic 1200×630 SVG image dimensions');
           NODE
+      - name: Confirm updated cycling image is published on Cloudtype before browser audit
+        run: |
+          python3 - <<'PY'
+          import time,urllib.request
+          url='https://jeongukdaeri.kr/assets/cycling-routes/yeongsan-taksong.svg?dimension-probe=20261104'
+          for attempt in range(24):
+              try:
+                  request=urllib.request.Request(url,headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SVG-Dimensions/1.0'})
+                  with urllib.request.urlopen(request,timeout=12) as response:
+                      svg=response.read(400).decode('utf-8')
+                      if 'width="1200" height="630" viewBox="0 0 1200 630"' in svg:
+                          print('PASS: latest Cloudtype cycling SVG contains intrinsic full-resolution dimensions')
+                          break
+              except Exception as error:
+                  print('Cloudtype image check:',str(error))
+              if attempt==23: raise SystemExit('Cycling SVG on public site is still stale after deployment')
+              time.sleep(5)
+          PY
       - name: Install isolated browser test tooling
         run: |
           mkdir -p /tmp/smart24-browser-tooling
