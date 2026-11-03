@@ -73,7 +73,7 @@ async function main(){
     const page=await request(port,route);
     assert.equal(page.status,200,'regional dynamic card page '+route);
     const kind=route.startsWith('/taksong/')?'taksong':'daeri';
-    const match=page.body.match(new RegExp('src="(/card/area-[0-9]+-'+kind+'-brand-v3\\.png)"'));
+    const match=page.body.match(new RegExp('src="(/card/area-[0-9]+-'+kind+'-brand-v5\\.png)"'));
     assert(match,'missing automatically generated regional PNG: '+route);
     assert(page.body.includes('property="og:image" content="https://jeongukdaeri.kr'+match[1]+'"'),'region OG image not matching visible card '+route);
     assert(page.body.includes('href="'+match[1]+'" target="_blank"'),'regional card not tap-to-enlarge '+route);
@@ -88,7 +88,7 @@ async function main(){
   const preview=await request(port,'/region/?q='+encodeURIComponent('강릉'));
   assert.equal(preview.status,200);
   assert(preview.body.includes('class="dynamic-region-card-preview" open'),'Gangneung should auto-expand the correct card');
-  assert(preview.body.includes('-taksong-brand-v3.png'),'preview should use region-specific v3 PNG');
+  assert(preview.body.includes('-taksong-brand-v5.png'),'preview should use region-specific v3 PNG');
   const cycleHub=await request(port,'/route-taksong/');
   assert.equal(cycleHub.status,200);
   assert(cycleHub.body.includes('id="cycling-visible-fare-table-20261103"'),'cycling hub lost its visible fare table');
