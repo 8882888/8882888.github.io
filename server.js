@@ -1419,10 +1419,22 @@ if(pathname==='/region/'){
  const selectedService=['daeri','taksong'].includes(requestedService)?requestedService:inferredService;
  const directRegion=selectedService==='taksong'?regionalTaksongTarget(rawQuery):null;
  if(directRegion){res.writeHead(302,{location:directRegion,'cache-control':'no-store'});return res.end()}
- const matches=rawQuery?regions.filter(r=>regionMatches(r,searchPlace)).slice(0,100):regions.filter(r=>r.level==='시도');
+ const key=compact(searchPlace);
+ // Prefer matching town/province names before generic landmark associations.
+ // '울산' must not be crowded out by other cities' '중구' when 울산혁신도시 is in landmarks.
+ const regionMatchRank=r=>{
+  const names=[seoRegionBase(r),seoRegionLabel(r),r.full_name,shortPlace(r.name),r.name].map(compact);
+  if(names.includes(key))return 0;
+  if(names.some(n=>n.startsWith(key)))return 1;
+  if(names.some(n=>n.includes(key)))return 2;
+  if(regionAncestors(r).some(a=>[compact(a.name),compact(shortPlace(a.name)),compact(seoRegionLabel(a))].includes(key)))return 3;
+  return 4;
+ };
+ const matches=rawQuery?regions.filter(r=>regionMatches(r,searchPlace))
+  .sort((a,b)=>regionMatchRank(a)-regionMatchRank(b)||a.full_name.length-b.full_name.length)
+  .slice(0,100):regions.filter(r=>r.level==='시도');
  const matchedLandmarks=rawQuery?landmarks.filter(item=>compact(item[0]).includes(compact(searchPlace))).slice(0,20):[];
  const landmarkLinks=matchedLandmarks.length?'<section><h2>관련 역·관광지 안내</h2><ul>'+matchedLandmarks.map(item=>'<li><a href="/place/'+landmarkSlug(item[0])+'/">'+esc(item[0])+' 대리운전·탁송</a></li>').join('')+'</ul></section>':'';
- const key=compact(searchPlace);
  const exactMatches=rawQuery?matches.filter(r=>compact(seoRegionBase(r))===key||compact(r.full_name)===key||compact(seoRegionLabel(r))===key):[];
  // Keep names shared by multiple provinces separate, e.g. Gwangju metro vs Gyeonggi.
  const homonymMatches=rawQuery?regions.filter(r=>['시도','시','군','구'].includes(r.level)&&compact(shortPlace(r.name))===key):[];
