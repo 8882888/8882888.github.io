@@ -1,0 +1,1008 @@
+{
+  "version": 1,
+  "batch": 6,
+  "createdOn": "2026-11-04",
+  "purpose": "100 independently unique canonical region-service improvement records (50 taksong and 50 daeri): locality-specific dispatch preparation, service links and exact keyword posters. No fabricated ride, branch, permanent driver presence or fixed fare.",
+  "priority": [
+    {
+      "id": 301,
+      "region": "서울특별시 동대문구",
+      "kind": "taksong",
+      "keyword": "동대문구탁송",
+      "topic": "청량리·장안동 차량탁송 인수·인계",
+      "pickup": "철도역 주변 인수는 역 출구보다 차량이 주차된 건물과 진출입로를 기준으로 지정해야 합니다.",
+      "handover": "업무용 차량은 소유자 출고 승인과 차량 키 전달자를 확인한 뒤 목적지 수령 시각을 맞춥니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 302,
+      "region": "서울특별시 서대문구",
+      "kind": "taksong",
+      "keyword": "서대문구탁송",
+      "topic": "연희·홍제 차량탁송 인수·인계",
+      "pickup": "연희동 주거지와 홍제동 상가 차량은 건물별 주차층 및 출입 가능한 차도를 확인합니다.",
+      "handover": "중고차 인도라면 차량 상태 확인과 서류·열쇠 담당자를 정하고 도착지 수령인을 구분합니다.",
+      "related": "/business/used-car/"
+    },
+    {
+      "id": 303,
+      "region": "서울특별시 성북구",
+      "kind": "taksong",
+      "keyword": "성북구탁송",
+      "topic": "길음·정릉 차량탁송 인수·인계",
+      "pickup": "길음동 아파트 단지와 정릉동 경사지 주거지역은 차량 인수 위치와 접근 경로를 별도로 전달합니다.",
+      "handover": "단지 출차는 방문 등록·주차비와 실제 차키 전달 시간을 확인한 후 시외 차량 인도를 협의합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 304,
+      "region": "서울특별시 강북구",
+      "kind": "taksong",
+      "keyword": "강북구탁송",
+      "topic": "미아·수유 차량탁송 인수·인계",
+      "pickup": "미아동 상가와 수유동 주거차량은 골목길 주차 위치 및 차량 출차 가능 여부를 먼저 확인합니다.",
+      "handover": "경사가 있는 주차면이나 좁은 출구가 있으면 차종과 출차 방법을 알리고 수령 장소를 정합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 305,
+      "region": "서울특별시 강동구",
+      "kind": "taksong",
+      "keyword": "강동구탁송",
+      "topic": "천호·고덕 차량탁송 인수·인계",
+      "pickup": "천호역 상가와 고덕동 주거단지의 차량 보관건물·주차층을 정확하게 확인합니다.",
+      "handover": "공동주택 방문 등록이나 서비스센터 출고 승인이 필요한지 구분하고 차량 키 담당자를 정합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 306,
+      "region": "서울특별시 양천구",
+      "kind": "taksong",
+      "keyword": "양천구탁송",
+      "topic": "목동·신정 차량탁송 인수·인계",
+      "pickup": "목동 업무시설과 신정동 아파트 차량 인수는 방문 주차등록 및 출입구 동선을 확인합니다.",
+      "handover": "다른 시도로 보내는 차량은 주차료 처리와 도착지 수령자의 가능 시간을 미리 지정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 307,
+      "region": "서울특별시 구로구",
+      "kind": "taksong",
+      "keyword": "구로구탁송",
+      "topic": "구로디지털단지·오류 차량탁송 인수·인계",
+      "pickup": "구로디지털단지 업무시설 차량과 오류동 주거차량은 출고 시간과 주차장 접근로가 다를 수 있습니다.",
+      "handover": "법인 차량 인수 담당자의 승인을 받고 보안시설 출입이 가능한 위치에서 인계 조건을 협의합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 308,
+      "region": "서울특별시 금천구",
+      "kind": "taksong",
+      "keyword": "금천구탁송",
+      "topic": "가산·독산 차량탁송 인수·인계",
+      "pickup": "가산디지털단지 업무시설과 독산동 생활권의 출고 차량은 사업장 출입 조건과 주차층을 구분합니다.",
+      "handover": "회사차 반납은 열쇠·차량 상태·인수 승인 담당자를 확인한 뒤 반납지 운영시간을 맞춥니다.",
+      "related": "/business/rental-car/"
+    },
+    {
+      "id": 309,
+      "region": "광주광역시 동구",
+      "kind": "taksong",
+      "keyword": "광주동구탁송",
+      "topic": "충장로·학동 차량탁송 인수·인계",
+      "pickup": "충장로 도심 주차타워와 학동 주거지역의 차량 인수는 출차 가능한 시간과 주차장 층을 확인합니다.",
+      "handover": "도심 출고는 차량 키 관리자를 지정하고 다른 지역 수령자의 방문 가능시간을 맞춥니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 310,
+      "region": "광주광역시 서구",
+      "kind": "taksong",
+      "keyword": "광주서구탁송",
+      "topic": "상무·화정 차량탁송 인수·인계",
+      "pickup": "상무지구 업무시설과 화정동 주거시설의 차량 주차 위치 및 관리실 출입 조건을 확인합니다.",
+      "handover": "업무용 차량은 인수 권한과 정비 완료 시각, 도착지 차량 수령 부서를 구분합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 311,
+      "region": "광주광역시 남구",
+      "kind": "taksong",
+      "keyword": "광주남구탁송",
+      "topic": "봉선·백운 차량탁송 인수·인계",
+      "pickup": "봉선동 주거단지와 백운동 상업시설의 차량이 있는 실제 주차장 출입구를 확인해야 합니다.",
+      "handover": "아파트 방문 등록과 차키 인계 시간, 다른 시도 수령자를 구분해 이동 일정을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 312,
+      "region": "광주광역시 북구",
+      "kind": "taksong",
+      "keyword": "광주북구탁송",
+      "topic": "용봉·일곡 차량탁송 인수·인계",
+      "pickup": "용봉동 대학가와 일곡동 주거지역은 주차장 위치·방문등록 절차가 다를 수 있습니다.",
+      "handover": "렌터카 또는 업무 차량을 반납하면 계약상 반납 장소와 인계 담당자가 맞는지 확인합니다.",
+      "related": "/business/rental-car/"
+    },
+    {
+      "id": 313,
+      "region": "대전광역시 동구",
+      "kind": "taksong",
+      "keyword": "대전동구탁송",
+      "topic": "용전·가오 차량탁송 인수·인계",
+      "pickup": "용전동 복합터미널 주변 차량과 가오동 주거단지 차량의 출차 위치를 구분해 주세요.",
+      "handover": "터미널 인근에서는 승객 대기 위치가 아닌 차량 보관 장소로 출발지를 정하고 키 전달자를 확인합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 314,
+      "region": "대전광역시 중구",
+      "kind": "taksong",
+      "keyword": "대전중구탁송",
+      "topic": "은행·대흥 차량탁송 인수·인계",
+      "pickup": "은행동 도심 상가와 대흥동 생활권 차량은 건물 주차장 통제와 차량 출차 동선을 확인합니다.",
+      "handover": "차량 인도는 도심 일방통행과 출차가능 시각, 도착지 인계 장소를 기준으로 정합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 315,
+      "region": "대전광역시 서구",
+      "kind": "taksong",
+      "keyword": "대전서구탁송",
+      "topic": "둔산·관저 차량탁송 인수·인계",
+      "pickup": "둔산동 업무시설과 관저동 주거지역의 지하주차장 출구·차량 인수 절차를 구분합니다.",
+      "handover": "업무차 출고는 회사 승인 담당자와 키 전달 방법을 정해 목적지 인계를 협의합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 316,
+      "region": "대전광역시 대덕구",
+      "kind": "taksong",
+      "keyword": "대전대덕구탁송",
+      "topic": "오정·신탄진 차량탁송 인수·인계",
+      "pickup": "오정동 사업장과 신탄진 생활권 차량은 출고 승인과 주차 위치를 달리 확인해야 합니다.",
+      "handover": "산업시설 출차는 담당자 인수 권한·보안 구역과 다른 시도 인계 시간을 구분합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 317,
+      "region": "세종특별자치시",
+      "kind": "taksong",
+      "keyword": "세종시탁송",
+      "topic": "나성·조치원 차량탁송 인수·인계",
+      "pickup": "나성동 업무시설과 조치원읍 생활권의 차량 인수는 주차장 출입과 이동 거리를 구분합니다.",
+      "handover": "공공·법인 업무차량은 차량 인계 권한과 정비·반납시간, 도착지 수령 담당자를 확인합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 318,
+      "region": "경기도 과천시",
+      "kind": "taksong",
+      "keyword": "과천탁송",
+      "topic": "정부과천청사·별양 차량탁송 인수·인계",
+      "pickup": "정부과천청사 주변 업무차량과 별양동 상가 차량은 실제 주차장 출구 및 출입 가능구역을 확인합니다.",
+      "handover": "보안 출입이 필요한 시설은 반출 허가와 인계 장소가 확정된 경우에만 운행 가능성을 상담합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 319,
+      "region": "경기도 연천군",
+      "kind": "taksong",
+      "keyword": "연천탁송",
+      "topic": "전곡·연천읍 차량탁송 인수·인계",
+      "pickup": "전곡읍 생활권과 연천읍 외곽 차량은 실제 주차 구역·도로 접근로가 달라질 수 있습니다.",
+      "handover": "군 관련 출입제한 구역은 무단 진입하지 않으며 일반도로 인수 지점을 별도로 정해야 합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 320,
+      "region": "강원특별자치도 강릉시",
+      "kind": "taksong",
+      "keyword": "강릉탁송",
+      "topic": "교동·경포 차량탁송 인수·인계",
+      "pickup": "교동 상업시설과 경포해변 숙박시설은 주차장·차량 보관 위치와 출차 시간이 다를 수 있습니다.",
+      "handover": "관광지 차량 회수는 체크아웃 시간, 열쇠 인계자와 타지역 수령자를 따로 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 321,
+      "region": "강원특별자치도 속초시",
+      "kind": "taksong",
+      "keyword": "속초탁송",
+      "topic": "조양·청호 차량탁송 인수·인계",
+      "pickup": "조양동 주거단지와 청호동 해안권 차량은 도로 진입 및 주차장 출차 조건을 확인합니다.",
+      "handover": "관광객 차량 이동은 숙박시설 체크아웃과 차량 키 위탁 가능 여부를 먼저 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 322,
+      "region": "강원특별자치도 양양군",
+      "kind": "taksong",
+      "keyword": "양양탁송",
+      "topic": "양양읍·낙산 차량탁송 인수·인계",
+      "pickup": "양양읍 시가지와 낙산해변 숙박시설 차량은 주차장 출차·체크아웃 조건을 구분합니다.",
+      "handover": "산행 차량을 맡기면 오색·설악산 코스의 출발 주차장과 수령 목적지를 정확히 알려야 합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 323,
+      "region": "강원특별자치도 정선군",
+      "kind": "taksong",
+      "keyword": "정선탁송",
+      "topic": "정선읍·사북 차량탁송 인수·인계",
+      "pickup": "정선읍 주거지역과 사북읍 숙박시설 차량은 산간 도로와 실제 주차 위치를 확인합니다.",
+      "handover": "겨울철 도로·주차장 출차 여건과 차량 운행 가능 상태를 함께 확인한 뒤 견적을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 324,
+      "region": "전북특별자치도 고창군",
+      "kind": "taksong",
+      "keyword": "고창탁송",
+      "topic": "고창읍·선운산 차량탁송 인수·인계",
+      "pickup": "고창읍 상업시설과 선운산 관광지 주차장의 차량 인수 장소 및 유료 여부를 확인합니다.",
+      "handover": "관광·산행 관련 차량은 주차권 정산과 차량 키 인수 승인, 목적지 수령 시각을 맞춥니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 325,
+      "region": "전북특별자치도 순창군",
+      "kind": "taksong",
+      "keyword": "순창탁송",
+      "topic": "순창읍·강천산 차량탁송 인수·인계",
+      "pickup": "순창읍 생활권 차량과 강천산 관광지 회수 차량은 접근로와 출차 시각을 분리합니다.",
+      "handover": "관광지에서 차를 맡길 때 주차구역과 열쇠 담당자, 도착지 수령자를 정확히 지정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 326,
+      "region": "전북특별자치도 임실군",
+      "kind": "taksong",
+      "keyword": "임실탁송",
+      "topic": "임실읍·오수 차량탁송 인수·인계",
+      "pickup": "임실읍 상가와 오수면 생활권 차량은 주차장 접근과 실제 인수 장소를 확인합니다.",
+      "handover": "시외 인도차량의 키 전달 방식, 차량 상태와 도착지 수령 시간을 미리 맞춥니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 327,
+      "region": "전라남도 강진군",
+      "kind": "taksong",
+      "keyword": "강진탁송",
+      "topic": "강진읍·마량 차량탁송 인수·인계",
+      "pickup": "강진읍 도심 차량과 마량면 해안권 차량은 접근도로와 주차장 출입 조건을 구분합니다.",
+      "handover": "항구 인접 지역의 차량 인계는 일반 주차구역과 제한구역을 확인하고 열쇠 담당자를 정합니다.",
+      "related": "/business/export-port/"
+    },
+    {
+      "id": 328,
+      "region": "전라남도 장성군",
+      "kind": "taksong",
+      "keyword": "장성탁송",
+      "topic": "장성읍·황룡 차량탁송 인수·인계",
+      "pickup": "장성읍 업무시설과 황룡면 주거·사업장은 차량 출고 시간과 실제 주차 위치를 확인합니다.",
+      "handover": "법인차량 반납은 차량 담당자 승인, 키 전달과 목적지 수령 부서를 구분합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 329,
+      "region": "전라남도 함평군",
+      "kind": "taksong",
+      "keyword": "함평탁송",
+      "topic": "함평읍·손불 차량탁송 인수·인계",
+      "pickup": "함평읍 생활권과 손불면 외곽 차량은 주차 구역과 기사 도착 동선이 달라질 수 있습니다.",
+      "handover": "시외로 보내는 차량의 인수권자와 도착지 수령자, 복귀 시간을 별도로 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 330,
+      "region": "전라남도 장흥군",
+      "kind": "taksong",
+      "keyword": "장흥탁송",
+      "topic": "장흥읍·대덕 차량탁송 인수·인계",
+      "pickup": "장흥읍 도심과 대덕읍 외곽의 차량 인수는 건물 출구와 보관 주차장을 각각 확인합니다.",
+      "handover": "관광시설 차량은 숙박 종료 시간과 차량 키 전달자, 목적지 인수 시간을 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 331,
+      "region": "전라남도 보성군",
+      "kind": "taksong",
+      "keyword": "보성탁송",
+      "topic": "벌교·보성읍 차량탁송 인수·인계",
+      "pickup": "벌교읍 상가 차량과 보성읍 관광시설 차량은 주차장 위치와 출차 가능 시간을 구분합니다.",
+      "handover": "관광차량 인도 시 열쇠 위탁 여부와 목적지 수령자, 복귀 경로를 먼저 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 332,
+      "region": "전라남도 진도군",
+      "kind": "taksong",
+      "keyword": "진도탁송",
+      "topic": "진도읍·임회 차량탁송 인수·인계",
+      "pickup": "진도읍 시가지와 임회면 해안권 차량은 주차장 위치와 기사 접근 경로를 구체적으로 확인합니다.",
+      "handover": "도서 연계 이동 여부를 구분하고 선박을 이용한다면 별도 선적·항만 인계 조건을 확인합니다.",
+      "related": "/business/export-port/"
+    },
+    {
+      "id": 333,
+      "region": "전라남도 신안군",
+      "kind": "taksong",
+      "keyword": "신안탁송",
+      "topic": "압해·지도 차량탁송 인수·인계",
+      "pickup": "압해읍과 지도읍 등 섬별 차량 이동은 연결 도로·선박 이용 가능 여부가 달라질 수 있습니다.",
+      "handover": "차량이 있는 섬과 최종 도착지의 교량·선박 이동 구간을 구분해 개별 견적을 상담합니다.",
+      "related": "/business/export-port/"
+    },
+    {
+      "id": 334,
+      "region": "전라남도 영광군",
+      "kind": "taksong",
+      "keyword": "영광탁송",
+      "topic": "영광읍·백수 차량탁송 인수·인계",
+      "pickup": "영광읍 업무시설과 백수읍 해안권 차량은 출입 가능 장소와 주차장 위치가 다릅니다.",
+      "handover": "회사 차량은 인수 승인 담당자를, 관광 차량은 주차비·체크아웃 시간을 먼저 확인합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 335,
+      "region": "경상북도 성주군",
+      "kind": "taksong",
+      "keyword": "성주탁송",
+      "topic": "성주읍·선남 차량탁송 인수·인계",
+      "pickup": "성주읍 생활권과 선남면 사업장 출고 차량은 주차 위치·사업장 출입 시간을 구분합니다.",
+      "handover": "업무용 차는 열쇠 담당자와 반출 승인, 다른 시도 인계 가능 시간을 확인합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 336,
+      "region": "경상북도 고령군",
+      "kind": "taksong",
+      "keyword": "고령탁송",
+      "topic": "대가야읍·다산 차량탁송 인수·인계",
+      "pickup": "대가야읍 시내와 다산면 산업시설 차량은 출고 승인과 차량 보관 위치를 구분합니다.",
+      "handover": "산업시설에서는 보안 출입과 반출 담당자 승인 시간을 확인한 후 수령지를 지정합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 337,
+      "region": "경상북도 예천군",
+      "kind": "taksong",
+      "keyword": "예천탁송",
+      "topic": "호명·예천읍 차량탁송 인수·인계",
+      "pickup": "호명읍 업무시설과 예천읍 주거지역은 차량 인수 위치와 건물 출입 규칙을 구분합니다.",
+      "handover": "법인 차량은 담당자 인수 승인과 차키 보관장소, 목적지 수령 시간을 먼저 맞춥니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 338,
+      "region": "경상북도 봉화군",
+      "kind": "taksong",
+      "keyword": "봉화탁송",
+      "topic": "봉화읍·춘양 차량탁송 인수·인계",
+      "pickup": "봉화읍 생활권과 춘양면 외곽 차량은 출차 위치와 산간 도로 접근을 구분합니다.",
+      "handover": "차량 상태·도로 기상·기사 복귀 가능 여부와 도착지 인계 일정을 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 339,
+      "region": "경상북도 울릉군",
+      "kind": "taksong",
+      "keyword": "울릉도탁송",
+      "topic": "울릉읍·서면 차량탁송 인수·인계",
+      "pickup": "울릉읍 시가지와 서면 해안권 차량 회수는 섬 내 도로 이동과 선박 선적을 반드시 구분합니다.",
+      "handover": "육지로 차량을 옮기려면 선박 적재 가능 여부·항만 인계·출도 일정에 대한 별도 확인이 필요합니다.",
+      "related": "/business/export-port/"
+    },
+    {
+      "id": 340,
+      "region": "경상북도 의성군",
+      "kind": "taksong",
+      "keyword": "의성탁송",
+      "topic": "의성읍·안계 차량탁송 인수·인계",
+      "pickup": "의성읍 도심 차량과 안계면 외곽 차량은 보관 주차장과 기사 접근 거리를 확인합니다.",
+      "handover": "장거리 인도는 목적지 수령 시각·키 담당자·차량 운행 가능 상태를 미리 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 341,
+      "region": "경상북도 영양군",
+      "kind": "taksong",
+      "keyword": "영양탁송",
+      "topic": "영양읍·입암 차량탁송 인수·인계",
+      "pickup": "영양읍 생활권과 입암면 산간 차량은 현장 도로 진입과 주차장 출차 여부를 확인합니다.",
+      "handover": "겨울철 도로 상태와 차종 운행 조건, 타지역 수령자의 인수 가능 시간을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 342,
+      "region": "경상북도 청송군",
+      "kind": "taksong",
+      "keyword": "청송탁송",
+      "topic": "청송읍·주왕산 차량탁송 인수·인계",
+      "pickup": "청송읍 도심과 주왕산 관광지 주차장 출발 차량은 출차 시각 및 주차권 처리를 구분합니다.",
+      "handover": "산행 차량 이동은 차량이 있는 주차장과 하산 예정 지점, 열쇠 담당자를 별도로 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 343,
+      "region": "경상남도 거창군",
+      "kind": "taksong",
+      "keyword": "거창탁송",
+      "topic": "거창읍·가조 차량탁송 인수·인계",
+      "pickup": "거창읍 업무시설과 가조면 외곽 차량의 실제 주차 위치와 도로 접근로를 확인합니다.",
+      "handover": "장거리 출고 차량의 키 담당자·차량 상태와 목적지 수령 시간을 함께 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 344,
+      "region": "경상남도 합천군",
+      "kind": "taksong",
+      "keyword": "합천탁송",
+      "topic": "합천읍·가야 차량탁송 인수·인계",
+      "pickup": "합천읍 생활권과 가야면 관광지 차량은 주차장 인수 위치·출차시간을 구분해야 합니다.",
+      "handover": "관광 시설 차량은 열쇠 위탁 가능 여부와 기사 복귀 동선, 목적지 인계 시간을 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 345,
+      "region": "경상남도 산청군",
+      "kind": "taksong",
+      "keyword": "산청탁송",
+      "topic": "산청읍·시천 차량탁송 인수·인계",
+      "pickup": "산청읍 일반 차량과 시천면 지리산 산행권 차량은 출발 위치·기사 접근 경로가 달라질 수 있습니다.",
+      "handover": "산행 목적이면 산행 출발 주차장과 하산지, 차량 키 인계 시각을 분리해 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 346,
+      "region": "경상남도 고성군",
+      "kind": "taksong",
+      "keyword": "경남고성탁송",
+      "topic": "고성읍·회화 차량탁송 인수·인계",
+      "pickup": "경남 고성읍과 회화면 생활권 차량은 강원 고성과 혼동되지 않도록 도착지·출발지를 명확히 확인합니다.",
+      "handover": "차량 인수자는 차량 주차 위치와 담당자 연락처를 정하고 장거리 수령 시각을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 347,
+      "region": "경상남도 의령군",
+      "kind": "taksong",
+      "keyword": "의령탁송",
+      "topic": "의령읍·부림 차량탁송 인수·인계",
+      "pickup": "의령읍 도심 차량과 부림면 외곽 차량은 기사 접근 도로와 실제 보관 주차장을 구분합니다.",
+      "handover": "차량 인수·인계 담당자와 운행 가능 상태, 도착지의 수령 시간을 따로 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 348,
+      "region": "경상남도 창녕군",
+      "kind": "taksong",
+      "keyword": "창녕탁송",
+      "topic": "창녕읍·남지 차량탁송 인수·인계",
+      "pickup": "창녕읍 생활권과 남지읍 산업시설 차량은 사업장 출입 허가와 주차장 위치가 달라집니다.",
+      "handover": "업무용 차량은 반출 승인 담당자와 차량 열쇠 위치, 인도 목적지 연락처를 확인합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 349,
+      "region": "경상남도 하동군",
+      "kind": "taksong",
+      "keyword": "하동탁송",
+      "topic": "하동읍·화개 차량탁송 인수·인계",
+      "pickup": "하동읍 도심 차량과 화개면 관광·산행권 차량은 도로 접근 및 주차장 출차시간이 다를 수 있습니다.",
+      "handover": "섬진강 주변 장거리 차량 이동은 차키 인계·주차비·기사 복귀 여건을 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 350,
+      "region": "경상남도 함안군",
+      "kind": "taksong",
+      "keyword": "함안탁송",
+      "topic": "가야·칠원 차량탁송 인수·인계",
+      "pickup": "가야읍 주거지역과 칠원읍 산업시설에서 차량을 인수하려면 출고 승인과 주차 위치를 확인합니다.",
+      "handover": "법인차량은 키 담당자와 차량 반출 시간, 목적지 수령 부서의 가능시간을 맞춥니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 351,
+      "region": "서울특별시 동대문구",
+      "kind": "daeri",
+      "keyword": "동대문구법인대리운전",
+      "topic": "청량리·장안동 대리운전 예약",
+      "pickup": "청량리 상권과 장안동 모임은 만남 장소와 실제 주차장을 구분해서 기사에게 알려주세요.",
+      "handover": "법인 이용자는 출발 승인 담당자와 카드 결제 조건, 도심 출차 시간을 미리 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 352,
+      "region": "서울특별시 서대문구",
+      "kind": "daeri",
+      "keyword": "서대문구대리운전업체",
+      "topic": "연희·홍제 대리운전 예약",
+      "pickup": "연희동 식당가와 홍제역 모임의 주차장 입구가 약속 장소와 다른지 확인해 주세요.",
+      "handover": "야간 외곽 귀가는 목적지·경유 여부와 복귀 여건을 기준으로 실제 배차 가능성을 상담합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 353,
+      "region": "서울특별시 성북구",
+      "kind": "daeri",
+      "keyword": "성북구대리운전회사",
+      "topic": "길음·정릉 대리운전 예약",
+      "pickup": "정릉 외곽과 길음역 상권 출발은 기사 접근로와 출차 가능한 주차구역을 따로 알려주세요.",
+      "handover": "야간 귀가는 정확한 목적지와 기사 복귀 방법에 따라 시간과 비용이 달라질 수 있습니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 354,
+      "region": "서울특별시 강북구",
+      "kind": "daeri",
+      "keyword": "강북구대리운전",
+      "topic": "미아·수유 대리운전 예약",
+      "pickup": "수유역 상권과 미아사거리 모임은 차량이 있는 주차장과 기사 만남 지점을 분리합니다.",
+      "handover": "심야에는 귀가 목적지와 출발 희망시각, 기사 접근 가능 구간을 먼저 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 355,
+      "region": "서울특별시 강동구",
+      "kind": "daeri",
+      "keyword": "강동구법인카드대리운전",
+      "topic": "천호·고덕 대리운전 예약",
+      "pickup": "천호동 회식 후 법인차량을 이용한다면 회식 장소와 실제 차가 있는 지하주차장 출구를 구분합니다.",
+      "handover": "회사 카드 결제는 사전 등록 및 승인 여부를 확인하고 목적지·경유지를 알려주세요.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 356,
+      "region": "서울특별시 양천구",
+      "kind": "daeri",
+      "keyword": "양천구대리운전업체",
+      "topic": "목동·신정 대리운전 예약",
+      "pickup": "목동 상업시설 모임과 신정동 귀가 출발은 차량이 있는 지하주차장 위치를 확인합니다.",
+      "handover": "심야 장거리 목적지라면 중간 경유·대기 여부와 기사 복귀 여건을 함께 알려주세요.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 357,
+      "region": "서울특별시 구로구",
+      "kind": "daeri",
+      "keyword": "구로구법인대리운전",
+      "topic": "구로디지털단지·오류 대리운전 예약",
+      "pickup": "디지털단지 야간 회식 출발은 건물 보안 통제시간과 주차장에서 차를 찾는 방법을 확인합니다.",
+      "handover": "기업 단체 이용 시 인원·차량 수·법인 정산 방법을 따로 협의하며 즉시 배차는 보장하지 않습니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 358,
+      "region": "서울특별시 금천구",
+      "kind": "daeri",
+      "keyword": "금천구법인대리운전",
+      "topic": "가산·독산 대리운전 예약",
+      "pickup": "가산 업무지구 회식 장소와 차량이 있는 건물은 달라질 수 있어 출입구를 정확히 지정합니다.",
+      "handover": "법인 이용자와 결제 승인 담당자, 장거리 목적지와 기사 복귀 조건을 먼저 확인합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 359,
+      "region": "광주광역시 동구",
+      "kind": "daeri",
+      "keyword": "광주동구대리운전",
+      "topic": "충장로·학동 대리운전 예약",
+      "pickup": "충장로 상권 모임과 학동 숙박시설 출발은 차량 위치를 정확한 주차구역으로 알려주세요.",
+      "handover": "도심 심야 귀가에서 기사 접근이 어려운 경우 가까운 만남 지점을 별도로 정합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 360,
+      "region": "광주광역시 서구",
+      "kind": "daeri",
+      "keyword": "광주서구법인대리운전",
+      "topic": "상무·화정 대리운전 예약",
+      "pickup": "상무지구 법인 모임 후 대리운전은 모임 장소가 아니라 차가 있는 건물의 주차출구를 지정합니다.",
+      "handover": "기업 정산 여부와 복수 차량 예약이 필요한 경우 차량 수·시각을 사전에 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 361,
+      "region": "광주광역시 남구",
+      "kind": "daeri",
+      "keyword": "광주남구대리운전",
+      "topic": "봉선·백운 대리운전 예약",
+      "pickup": "봉선동 식당가와 백운동 모임 장소에서 차량이 실제로 주차된 곳을 정확히 알려주세요.",
+      "handover": "야간 외곽 목적지는 예상 출발시간·중간 경유 여부와 기사 복귀 가능성을 확인합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 362,
+      "region": "광주광역시 북구",
+      "kind": "daeri",
+      "keyword": "광주북구대리운전회사",
+      "topic": "용봉·일곡 대리운전 예약",
+      "pickup": "용봉동 상권 출발과 일곡동 단지 출발은 실제 차가 있는 주차장을 구분해서 안내합니다.",
+      "handover": "심야 귀가에서는 목적지의 주차 가능 여부와 기사 복귀 여건을 함께 확인합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 363,
+      "region": "대전광역시 동구",
+      "kind": "daeri",
+      "keyword": "대전동구대리운전",
+      "topic": "용전·가오 대리운전 예약",
+      "pickup": "용전동 식당 모임과 가오동 상가 귀가는 실제 차량 주차 위치가 달라질 수 있습니다.",
+      "handover": "심야 장거리라면 통행료 포함 여부 및 기사 복귀 교통을 함께 상담합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 364,
+      "region": "대전광역시 중구",
+      "kind": "daeri",
+      "keyword": "대전중구대리운전",
+      "topic": "은행·대흥 대리운전 예약",
+      "pickup": "은행동 번화가 모임 후에는 도로변 대기가 아닌 지정 주차장 출입구를 알려주세요.",
+      "handover": "귀가 시각과 목적지·경유 여부를 미리 정하고 기사 접근을 상담합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 365,
+      "region": "대전광역시 서구",
+      "kind": "daeri",
+      "keyword": "대전서구법인카드대리운전",
+      "topic": "둔산·관저 대리운전 예약",
+      "pickup": "둔산 회식 후 법인차를 이용한다면 업무시설 주차장 출구와 만남 시각을 정해주세요.",
+      "handover": "법인카드는 승인된 수단인지 회사 담당자와 확인하고 이용 조건을 사전 조율합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 366,
+      "region": "대전광역시 대덕구",
+      "kind": "daeri",
+      "keyword": "대전대덕구대리운전업체",
+      "topic": "오정·신탄진 대리운전 예약",
+      "pickup": "오정동 업무 모임과 신탄진 외곽 숙박시설 출발은 실제 차량 위치를 명확하게 지정합니다.",
+      "handover": "회사 회식 이후 장거리 귀가는 복귀 교통과 도착 예정 시각에 따라 상담합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 367,
+      "region": "세종특별자치시",
+      "kind": "daeri",
+      "keyword": "세종법인대리운전",
+      "topic": "나성·조치원 대리운전 예약",
+      "pickup": "나성동 법인 업무 모임과 조치원읍 출발은 차가 있는 주차장 출구를 정확히 알려주세요.",
+      "handover": "법인 이용 승인과 정산 방식, 출발 시각·여러 차량 동시 예약 여부를 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 368,
+      "region": "경기도 과천시",
+      "kind": "daeri",
+      "keyword": "과천법인카드대리운전",
+      "topic": "정부과천청사·별양 대리운전 예약",
+      "pickup": "별양동 업무 모임이나 청사 주변 출발은 보안구역 밖의 차량 인수 위치를 지정합니다.",
+      "handover": "법인카드 승인 여부와 일일기사·편도 대리운전 유형을 명확히 구분해 상담합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 369,
+      "region": "경기도 연천군",
+      "kind": "daeri",
+      "keyword": "연천대리운전업체",
+      "topic": "전곡·연천읍 대리운전 예약",
+      "pickup": "전곡읍 상권과 연천읍 숙박시설의 차량 주차 위치를 구분해 알려주세요.",
+      "handover": "북부 외곽 심야 귀가는 기사 접근·복귀가 어려울 수 있어 가능 여부를 사전 확인합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 370,
+      "region": "강원특별자치도 강릉시",
+      "kind": "daeri",
+      "keyword": "강릉대리운전회사",
+      "topic": "교동·경포 대리운전 예약",
+      "pickup": "경포해변 모임과 교동 시내 출발은 숙소 출입구와 차량이 있는 주차장 위치를 구분합니다.",
+      "handover": "야간 장거리 귀가는 실제 목적지와 기사 복귀 시간 및 현장 주차 조건을 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 371,
+      "region": "강원특별자치도 속초시",
+      "kind": "daeri",
+      "keyword": "속초대리운전업체",
+      "topic": "조양·청호 대리운전 예약",
+      "pickup": "조양동 식당 모임과 청호동 숙박지역 출발은 차량 주차 위치를 정확히 지정합니다.",
+      "handover": "해안 관광지 심야 외곽 귀가는 기사 접근과 복귀 가능 여부를 미리 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 372,
+      "region": "강원특별자치도 양양군",
+      "kind": "daeri",
+      "keyword": "양양대리운전회사",
+      "topic": "양양읍·낙산 대리운전 예약",
+      "pickup": "낙산해변 관광시설 출발과 양양읍 모임 귀가는 실제 차량 보관 장소가 다를 수 있습니다.",
+      "handover": "야간 해변·외곽 지역은 출발 시각과 기사 복귀 교통편을 확인하고 예약합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 373,
+      "region": "강원특별자치도 정선군",
+      "kind": "daeri",
+      "keyword": "정선강원랜드대리운전",
+      "topic": "정선읍·사북 대리운전 예약",
+      "pickup": "사북 카지노 주변 숙박시설과 정선읍 모임은 주차장 동선 및 실제 출발 시각을 별도로 정합니다.",
+      "handover": "산간 심야 출발은 기사 접근·복귀 상황에 따라 배차와 최종요금이 달라질 수 있습니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 374,
+      "region": "전북특별자치도 고창군",
+      "kind": "daeri",
+      "keyword": "고창골프장대리운전",
+      "topic": "고창읍·선운산 대리운전 예약",
+      "pickup": "고창 골프장과 선운산 숙박시설 출발은 차량이 있는 주차장 구역을 정확히 지정합니다.",
+      "handover": "라운딩 종료시각과 편도 귀가·왕복 일일기사 여부, 대기 식대 조건을 확인합니다.",
+      "related": "/service/golf/"
+    },
+    {
+      "id": 375,
+      "region": "전북특별자치도 순창군",
+      "kind": "daeri",
+      "keyword": "순창대리운전업체",
+      "topic": "순창읍·강천산 대리운전 예약",
+      "pickup": "순창읍 모임과 강천산 관광시설의 대리운전 출발 위치를 차량 주차장 기준으로 확인합니다.",
+      "handover": "야간 산간 이동은 기사 수급과 복귀 이동 가능 여부를 우선 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 376,
+      "region": "전북특별자치도 임실군",
+      "kind": "daeri",
+      "keyword": "임실대리운전",
+      "topic": "임실읍·오수 대리운전 예약",
+      "pickup": "임실읍 식당가 출발과 오수면 외곽 모임은 기사에게 출입구와 차량 위치를 별도로 알려주세요.",
+      "handover": "늦은 시간 장거리 귀가는 목적지와 기사 복귀 교통편을 먼저 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 377,
+      "region": "전라남도 강진군",
+      "kind": "daeri",
+      "keyword": "강진대리운전",
+      "topic": "강진읍·마량 대리운전 예약",
+      "pickup": "강진읍 모임과 마량 해안 숙박시설 출발은 실제 주차장과 차량 인수 위치를 명확히 지정합니다.",
+      "handover": "외곽 야간 귀가는 복귀 교통편과 출발 시각에 따라 배차 가능 여부를 확인합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 378,
+      "region": "전라남도 장성군",
+      "kind": "daeri",
+      "keyword": "장성법인대리운전",
+      "topic": "장성읍·황룡 대리운전 예약",
+      "pickup": "장성읍 회식과 황룡면 사업장 출발은 모임 장소보다 차량이 있는 건물 출구를 확인합니다.",
+      "handover": "회사 정산 및 기사 접근·복귀, 외곽 목적지를 사전에 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 379,
+      "region": "전라남도 함평군",
+      "kind": "daeri",
+      "keyword": "함평대리운전",
+      "topic": "함평읍·손불 대리운전 예약",
+      "pickup": "함평읍 상권 출발과 손불면 숙박시설 출발은 차량 주차장 위치를 구분해 주세요.",
+      "handover": "군 외곽 심야 출발은 목적지까지의 이동과 기사 복귀 가능 여부를 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 380,
+      "region": "전라남도 장흥군",
+      "kind": "daeri",
+      "keyword": "장흥대리운전업체",
+      "topic": "장흥읍·대덕 대리운전 예약",
+      "pickup": "장흥읍 식당가 모임과 대덕읍 숙박지역은 차량 출발 지점이 다를 수 있습니다.",
+      "handover": "장거리 심야 귀가는 기사 접근·복귀 여건을 사전에 확인하고 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 381,
+      "region": "전라남도 보성군",
+      "kind": "daeri",
+      "keyword": "보성대리운전",
+      "topic": "벌교·보성읍 대리운전 예약",
+      "pickup": "벌교읍 음식점과 보성읍 숙박시설에서 차량이 있는 주차장 출입구를 지정합니다.",
+      "handover": "해안·외곽 지역 야간 귀가는 목적지와 복귀 이동을 함께 확인합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 382,
+      "region": "전라남도 진도군",
+      "kind": "daeri",
+      "keyword": "진도대리운전",
+      "topic": "진도읍·임회 대리운전 예약",
+      "pickup": "진도읍 모임과 임회면 해안 숙박시설 출발은 정확한 차량 주차구역을 알려주세요.",
+      "handover": "외곽 심야 이동 시 기사 복귀 교통과 목적지까지 이동 가능 여부를 먼저 확인합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 383,
+      "region": "전라남도 신안군",
+      "kind": "daeri",
+      "keyword": "신안대리운전",
+      "topic": "압해·지도 대리운전 예약",
+      "pickup": "압해읍 모임과 지도읍 숙박시설 출발은 섬 이름과 차량 주차 위치를 명확하게 알려주세요.",
+      "handover": "도서 지역 심야 대리운전은 기사 접근·복귀 및 선박 운항 여부에 따라 불가능할 수 있습니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 384,
+      "region": "전라남도 영광군",
+      "kind": "daeri",
+      "keyword": "영광법인대리운전",
+      "topic": "영광읍·백수 대리운전 예약",
+      "pickup": "영광읍 업무회식과 백수 해안권 숙박시설의 차량 위치를 정확히 지정합니다.",
+      "handover": "법인 정산 조건과 외곽 기사 복귀 동선을 출발 시각에 맞춰 상담합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 385,
+      "region": "경상북도 성주군",
+      "kind": "daeri",
+      "keyword": "성주법인대리운전",
+      "topic": "성주읍·선남 대리운전 예약",
+      "pickup": "성주읍 식당 모임과 선남면 업무시설의 차량 주차장을 정확한 출입구로 안내합니다.",
+      "handover": "법인차 이용은 카드 정산 가능 여부와 심야 기사 복귀 조건을 사전에 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 386,
+      "region": "경상북도 고령군",
+      "kind": "daeri",
+      "keyword": "고령법인카드대리운전",
+      "topic": "대가야읍·다산 대리운전 예약",
+      "pickup": "대가야읍 업무 모임과 다산면 산업시설 귀가는 실제 차량이 있는 주차장 위치가 중요합니다.",
+      "handover": "법인카드 승인 여부와 원거리 기사 복귀 경로를 상담해 출발 시각을 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 387,
+      "region": "경상북도 예천군",
+      "kind": "daeri",
+      "keyword": "예천법인대리운전",
+      "topic": "호명·예천읍 대리운전 예약",
+      "pickup": "호명읍 업무시설 모임과 예천읍 식당가 출발은 주차 출구와 실제 차량 위치를 확인합니다.",
+      "handover": "단체·법인 사용은 차량 수와 정산 방법, 기사 복귀 여건을 사전에 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 388,
+      "region": "경상북도 봉화군",
+      "kind": "daeri",
+      "keyword": "봉화대리운전",
+      "topic": "봉화읍·춘양 대리운전 예약",
+      "pickup": "봉화읍 식당 모임과 춘양면 산간 숙박시설에서 정확한 차량 주차 위치를 안내합니다.",
+      "handover": "늦은 시간 외곽 귀가는 기사 이동·복귀 여건으로 배차가 제한될 수 있습니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 389,
+      "region": "경상북도 울릉군",
+      "kind": "daeri",
+      "keyword": "울릉도대리운전",
+      "topic": "울릉읍·서면 대리운전 예약",
+      "pickup": "울릉읍 모임과 서면 숙박시설 출발은 섬 내 차량 주차장과 기사 접근을 먼저 확인합니다.",
+      "handover": "울릉도 내 기사 배차 여부와 심야 복귀 교통은 상담 후 결정되며 즉시 배차를 보장하지 않습니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 390,
+      "region": "경상북도 의성군",
+      "kind": "daeri",
+      "keyword": "의성대리운전",
+      "topic": "의성읍·안계 대리운전 예약",
+      "pickup": "의성읍 생활권 모임과 안계면 외곽 식당 출발은 주차장 위치를 분리해서 알려주세요.",
+      "handover": "야간 귀가 목적지와 기사 복귀 교통편에 따라 이용 가능 여부가 달라집니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 391,
+      "region": "경상북도 영양군",
+      "kind": "daeri",
+      "keyword": "영양대리운전",
+      "topic": "영양읍·입암 대리운전 예약",
+      "pickup": "영양읍 상가와 입암면 외곽 모임은 기사에게 차가 있는 정확한 주차 장소를 전달합니다.",
+      "handover": "야간 산간 귀가는 도로·기상·기사 복귀 상황에 따라 제한될 수 있습니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 392,
+      "region": "경상북도 청송군",
+      "kind": "daeri",
+      "keyword": "청송대리운전",
+      "topic": "청송읍·주왕산 대리운전 예약",
+      "pickup": "청송읍 모임과 주왕산 주변 관광시설의 주차장 출발지를 구분해 주세요.",
+      "handover": "외곽 관광지의 야간 대리운전은 출발시간·기사 접근 및 복귀를 먼저 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 393,
+      "region": "경상남도 거창군",
+      "kind": "daeri",
+      "keyword": "거창대리운전회사",
+      "topic": "거창읍·가조 대리운전 예약",
+      "pickup": "거창읍 식당 모임과 가조면 관광 숙박시설에서 차량이 있는 주차구역을 알려주세요.",
+      "handover": "심야 외곽 귀가는 기사 접근·복귀 여건을 먼저 확인한 후 예약 가능성을 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 394,
+      "region": "경상남도 합천군",
+      "kind": "daeri",
+      "keyword": "합천대리운전업체",
+      "topic": "합천읍·가야 대리운전 예약",
+      "pickup": "합천읍 모임과 가야면 관광지역 출발은 차량이 있는 주차장을 정확히 지정합니다.",
+      "handover": "산간 야간 이동은 목적지와 기사 복귀 상황에 따라 견적 및 배차가 달라질 수 있습니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 395,
+      "region": "경상남도 산청군",
+      "kind": "daeri",
+      "keyword": "산청대리운전",
+      "topic": "산청읍·시천 대리운전 예약",
+      "pickup": "산청읍 식당 출발과 시천면 관광지 출발은 주차장과 기사 만남 지점을 명확히 구분합니다.",
+      "handover": "지리산권 산간 심야 귀가는 기사 복귀 교통편과 실제 도로 조건을 미리 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 396,
+      "region": "경상남도 고성군",
+      "kind": "daeri",
+      "keyword": "경남고성대리운전",
+      "topic": "고성읍·회화 대리운전 예약",
+      "pickup": "경남 고성읍 모임과 회화면 외곽 식당 출발은 강원 고성과 다른 지역임을 분명히 알려주세요.",
+      "handover": "야간 귀가는 복귀 교통과 목적지까지의 이동 가능 여부를 사전 확인합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 397,
+      "region": "경상남도 의령군",
+      "kind": "daeri",
+      "keyword": "의령대리운전",
+      "topic": "의령읍·부림 대리운전 예약",
+      "pickup": "의령읍 식당가 모임과 부림면 외곽 숙박지역의 차량 위치를 정확하게 알려주세요.",
+      "handover": "심야 지방 이동은 기사 접근·복귀가 제한될 수 있어 사전에 확인합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 398,
+      "region": "경상남도 창녕군",
+      "kind": "daeri",
+      "keyword": "창녕법인대리운전",
+      "topic": "창녕읍·남지 대리운전 예약",
+      "pickup": "창녕읍 업무 모임과 남지읍 사업장 출발은 차량이 있는 주차장 및 출차 시각을 구분합니다.",
+      "handover": "법인 정산과 장거리 복귀 가능 여부, 차량별 운행 시간을 미리 협의합니다.",
+      "related": "/service/corporate/"
+    },
+    {
+      "id": 399,
+      "region": "경상남도 하동군",
+      "kind": "daeri",
+      "keyword": "하동대리운전",
+      "topic": "하동읍·화개 대리운전 예약",
+      "pickup": "하동읍 모임과 화개 관광지 출발은 차량이 주차된 정확한 건물·주차장 구역을 알려주세요.",
+      "handover": "산간·관광지 심야 귀가는 목적지와 기사의 복귀 가능 여부를 먼저 상담합니다.",
+      "related": "/service/daily-driver/"
+    },
+    {
+      "id": 400,
+      "region": "경상남도 함안군",
+      "kind": "daeri",
+      "keyword": "함안법인카드대리운전",
+      "topic": "가야·칠원 대리운전 예약",
+      "pickup": "가야읍 업무 모임과 칠원읍 산단 출발은 차량 주차장 출구·사업장 통제시간을 지정합니다.",
+      "handover": "법인카드는 등록·승인된 결제수단인지 확인하고 복귀 조건까지 협의합니다.",
+      "related": "/service/corporate/"
+    }
+  ]
+}
