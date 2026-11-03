@@ -25,6 +25,6 @@ assert.ok(provinceD.includes('부산법인카드대리운전')&&provinceD.includ
 assert.ok(!provinceD.includes('부산화물차탁송'));
 assert.ok(!m.render({name:'부산광역시 강서구 명지동',kind:'taksong',scope:'neighborhood',esc}),
  'avoid repetitive village doorway-content sections');
-assert.ok(provinceT.includes('당시')&&provinceD.includes('승인'),'historic fare and corporate approval disclaimers');
+assert.ok(provinceT.includes('과거 운행요금')&&provinceD.includes('승인'),'historic fare and corporate approval disclaimers');
 assert.ok(provinceT.includes('/fare/')&&provinceT.includes('/reviews/history/'),'service navigation present');
 console.log('PASS: 63 exact user-supplied locality suffixes × four geographic forms, grouped non-spam regional blog guidance');
