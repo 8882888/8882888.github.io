@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Syntax-check production SEO audit
-        run: python -m py_compile tools/audit_live_seo.py
+        run: python -m py_compile tools/audit_live_seo.py tools/audit_live_500.py
       - name: Check actual public website, sitemap and SEO freshness
         run: python tools/audit_live_seo.py
       - name: Audit 100 live localities and separate service images
@@ -53,4 +53,13 @@ jobs:
         with:
           name: smart24-live-seo-mobile-50
           path: /tmp/smart24-live-seo-mobile-50.json
+          if-no-files-found: warn
+      - name: Audit 500 live locality SEO pages and actual WebP cards
+        run: python tools/audit_live_500.py
+      - name: Store 500-point production audit details
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-live-seo-mobile-500
+          path: /tmp/smart24-live-500.json
           if-no-files-found: warn
