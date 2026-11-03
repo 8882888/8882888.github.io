@@ -1305,6 +1305,17 @@ const liveCardPublicData=(r,kind)=>({
 let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
+const regionalKeywordImageMatch=pathname.match(/^\/keyword-card\/([a-z0-9-]+)\/(area-[0-9]+)\.svg$/);
+if(regionalKeywordImageMatch){
+ const [,topicSlug,regionSlug]=regionalKeywordImageMatch,region=bySlug.get(regionSlug);
+ if(!region)return respond(res,404,'지역별 키워드 이미지를 찾을 수 없습니다');
+ const label=seoRegionLabel(region);
+ const phone=topicSlug.endsWith('taksong')&&region.full_name==='제주특별자치도'?'1877-5245':PHONE;
+ const svg=keywordExpansion.svg(topicSlug,label,phone);
+ if(!svg)return respond(res,404,'키워드 서비스를 찾을 수 없습니다');
+ res.setHeader('cache-control','public, max-age=86400, immutable');
+ return respond(res,200,svg,'image/svg+xml; charset=utf-8');
+}
 const keywordImageMatch=pathname.match(/^\/keyword-card\/([a-z0-9-]+)\.svg$/);
 if(keywordImageMatch){
  const svg=keywordExpansion.svg(keywordImageMatch[1]);
@@ -1484,12 +1495,29 @@ if(pathname==='/api/region-card-preview'){
   status=candidates.length?'suggestions':'not_found';
  }
  const topic=region?null:keywordExpansion.resolve(query);
- if(topic&&exact.length===0){status='matched';candidates=[]}
- const cards=region?(kind?[liveCardPublicData(region,kind)]:[liveCardPublicData(region,'daeri'),liveCardPublicData(region,'taksong')]):(topic&&(!kind||kind===topic.kind)?[keywordExpansion.preview(topic)]:[]);
- const destination=region?.full_name||(topic?topic.label:null);
- if(topic&&kind&&kind!==topic.kind)status='not_found';
+ // e.g. 부산렌트카탁송, 서울강남골프장대리운전: dynamically include BOTH the
+ // verified legal region AND exact service keyword, never a random same-name city.
+ let themedRegion=null,themeSuffix='',themedAmbiguous=false;
+ if(topic&&topic.image.startsWith('/keyword-card/')&&exact.length===0){
+  const whole=compact(query);
+  themeSuffix=topic.terms.map(compact).sort((a,b)=>b.length-a.length).find(t=>whole.endsWith(t))||'';
+  const regionPrefix=themeSuffix?whole.slice(0,-themeSuffix.length):'';
+  const options=regionPrefix.length>=2?(liveCardAliases.get(regionPrefix)||[]):[];
+  if(options.length===1)themedRegion=options[0];
+  else if(options.length>1){themedAmbiguous=true;status='ambiguous';candidates=options.slice(0,10)}
+ }
+ if(topic&&exact.length===0&&!themedAmbiguous){status='matched';candidates=[]}
+ const themedInfo=themedRegion?{
+  slug:themedRegion.slug,label:seoRegionLabel(themedRegion),
+  url:servicePath(themedRegion,topic.kind),
+  phone:topic.kind==='taksong'&&themedRegion.full_name==='제주특별자치도'?'1877-5245':PHONE
+ }:null;
+ const cards=region?(kind?[liveCardPublicData(region,kind)]:[liveCardPublicData(region,'daeri'),liveCardPublicData(region,'taksong')]):
+  (topic&&!themedAmbiguous&&(!kind||kind===topic.kind)?[keywordExpansion.preview(topic,themedInfo)]:[]);
+ const destination=region?.full_name||themedRegion?.full_name||(topic?topic.label:null);
+ if(topic&&kind&&kind!==topic.kind){status='not_found';candidates=[]}
  const data={status,query,locality:locality||query,service:kind,region:destination,
-  cards,candidates:candidates.map(r=>({name:r.full_name,query:r.full_name,slug:r.slug})),
+  cards,candidates:candidates.map(r=>({name:r.full_name,query:r.full_name+(themedAmbiguous?themeSuffix:''),slug:r.slug})),
   source:'지역별 서비스 소개 이미지이며 실제 배차·운행완료를 의미하지 않습니다.'};
  res.setHeader('cache-control','private, no-store, max-age=0');
  res.setHeader('x-robots-tag','noindex, nofollow');
