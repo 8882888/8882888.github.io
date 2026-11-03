@@ -54,6 +54,15 @@ jobs:
           name: smart24-live-seo-mobile-50
           path: /tmp/smart24-live-seo-mobile-50.json
           if-no-files-found: warn
+      - name: Measure 20 live HTML mobile transfer sizes
+        run: python tools/audit_live_html_compression.py
+      - name: Save 20-route gzip report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-live-mobile-gzip-20
+          path: /tmp/smart24-live-gzip-20.json
+          if-no-files-found: warn
       - name: Audit 500 live locality SEO pages and actual WebP cards
         run: python tools/audit_live_500.py
       - name: Store 500-point production audit details
