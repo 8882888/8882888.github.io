@@ -527,7 +527,7 @@ def run():
         print(f"{result}: {path} — {detail}")
         rows.append((path, status, result, detail))
     for path, keyword_marker in [
-        ("/special/pension-daeri/", "data-kind=\\\"daeri\\\""),
+        ("/special/pension-daeri/", 'data-kind="daeri"'),
         ("/special/osaek/", "seoraksan-taksong-fares.svg"),
         ("/special/seongjung-jongju/", "jirisan-taksong-fares.svg"),
         ("/special/national-cycling-tour/", "cycling-routes/nationwide-taksong.svg"),
@@ -538,7 +538,7 @@ def run():
             with urllib.request.urlopen(urllib.request.Request(BASE + path, headers=HEADERS), timeout=22) as response:
                 status = response.status
                 body = response.read().decode("utf-8")
-                if "id=\\\"keyword-intent-dynamic-image\\\"" not in body or keyword_marker.replace("\\\"", '"') not in body:
+                if 'id="keyword-intent-dynamic-image"' not in body or keyword_marker not in body:
                     errors.append("keyword-matched image missing from public landing page")
                 if "smart24-taksong-brand.webp" in body and "national-cycling-tour" in path:
                     errors.append("old Gangneung-branded image remains")
