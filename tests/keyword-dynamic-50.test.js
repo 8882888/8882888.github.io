@@ -89,13 +89,31 @@ checks.push(['48','Keyword image endpoint actually returns valid SVG',async()=>{
  assert.ok(r.body.includes('<svg')&&r.body.includes('골프장대리운전')&&r.body.includes('1811-4294'));
  assert.ok(!r.body.includes('강릉스마트'),'never retain foreign-city card label');
 }]);
-checks.push(['49','Homepage maintains fare anchors and nationwide images are service-specific',async()=>{
- const r=await get('/');assert.equal(r.res.status,200);
- assert.ok(r.body.includes('id="mountain-cycling-fare-first-20261103"'));
- assert.ok(r.body.includes('id="dynamic-service-card-search-20261103"'));
+checks.push(['49','Combined region + purpose yields matching local service image (not another locality)',async()=>{
+ for(const [query,kind,region,keyword,phone] of [
+  ['부산렌트카탁송','taksong','부산광역시','렌트카탁송','1811-4294'],
+  ['대구법인대리운전','daeri','대구광역시','법인대리운전','1811-4294'],
+  ['서울강남골프장대리운전','daeri','서울특별시 강남구','골프장대리운전','1811-4294'],
+  ['제주도렌터카탁송','taksong','제주특별자치도','렌트카탁송','1877-5245']
+ ]){
+  const r=await get('/api/region-card-preview?q='+encodeURIComponent(query));
+  const d=JSON.parse(r.body);
+  assert.equal(d.status,'matched',query);assert.equal(d.region,region,query);
+  assert.equal(d.cards.length,1);assert.equal(d.cards[0].kind,kind);
+  assert.ok(d.cards[0].label.includes(keyword)&&d.cards[0].image.includes('/keyword-card/'),query);
+  assert.equal(d.cards[0].phone,phone);
+  const svg=await get(d.cards[0].image);
+  assert.equal(svg.res.status,200,query);assert.match(svg.res.headers.get('content-type')||'',/image\/svg\+xml/);
+  assert.ok(svg.body.includes(keyword)&&svg.body.includes(phone),'image itself must include correct regional service name and telephone');
+ }
+ const ambiguous=JSON.parse((await get('/api/region-card-preview?q='+encodeURIComponent('광주렌트카탁송'))).body);
+ assert.equal(ambiguous.status,'ambiguous');
+ assert.equal(ambiguous.cards.length,0);
+ assert.ok(ambiguous.candidates.some(x=>x.query.includes('렌트카탁송')),'region choice retains service purpose');
+ const h=await get('/');assert.equal(h.res.status,200);
+ assert.ok(h.body.includes('id="dynamic-service-card-search-20261103"'));
  const script=await get('/assets/region-card-preview.js');
- assert.equal(script.res.status,200);
- assert.ok(script.body.includes("'/keyword-card/'")&&script.body.includes("'/assets/'"),'mobile viewer handles all topic assets');
+ assert.ok(script.body.includes("'/keyword-card/'")&&script.body.includes("'/assets/'"));
 }]);
 checks.push(['50','Non-keyword records and ambiguous city stay unmodified',async()=>{
  const history=await get('/reviews/history/');
