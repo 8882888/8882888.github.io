@@ -45,6 +45,8 @@ jobs:
         run: node tests/regional-blog-keywords.test.js
       - name: Verify user priority 25 locality keywords
         run: node tests/blog-priority-25.test.js
+      - name: Verify 100 new regional keywords across 20 canonical blog guides
+        run: node tests/blog-work-100.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
       - name: Ensure curated service and mountain guide preservation

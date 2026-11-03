@@ -1375,6 +1375,44 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(directory.includes('부산기장군탁송')&&directory.includes('강남프리미엄대리운전'),
    'blog directory contains exact priority phrase labels');
   console.log('PASS: 25 priority keywords -> 16 canonical locality/service guides and blog navigation');
+  // The 100 new phrases must open the correct region page and matching
+  // taksong/daeri image. Never treat keyword interest as a completed trip.
+  const workGroups=require('../data/blog-regional-work-100.json').groups;
+  assert.equal(workGroups.length,20);
+  const workPages=new Map();
+  let confirmedWords=0;
+  for(const group of workGroups){
+   for(const keyword of group.keywords){
+    const response=await get('/api/region-card-preview?q='+encodeURIComponent(keyword));
+    assert.equal(response.status,200,'100-keyword API status '+keyword);
+    const data=await response.json();
+    assert.equal(data.status,'matched','100-keyword recognized '+keyword);
+    assert.equal(data.region,group.region,'100-keyword region '+keyword);
+    assert.equal(data.cards.length,1,'single regional visual for '+keyword);
+    assert.equal(data.cards[0].kind,group.kind,'correct service for '+keyword);
+    assert.ok(data.cards[0].image.startsWith('/card/')||data.cards[0].image.startsWith('/keyword-card/'),'no generic false image '+keyword);
+    const pageUrl=data.cards[0].url;
+    assert.ok(pageUrl.startsWith('/'+group.kind+'/'),'canonical regional route '+keyword);
+    if(!workPages.has(pageUrl)){
+     const page=await get(pageUrl);
+     assert.equal(page.status,200,'existing regional page '+pageUrl);
+     workPages.set(pageUrl,await page.text());
+    }
+    const pageHtml=workPages.get(pageUrl);
+    assert.ok(pageHtml.includes('id="regional-priority-search-guide"'),'guide visible '+pageUrl);
+    assert.ok(pageHtml.includes(keyword),'exact phrase visible '+keyword);
+    assert.ok(pageHtml.includes(group.guide),'specific editorial context '+pageUrl);
+    assert.ok(pageHtml.includes('href="/fare/?service='),'fare CTA preserved '+pageUrl);
+    assert.ok(pageHtml.includes('rel="canonical"'),'canonical preserved '+pageUrl);
+    confirmedWords++;
+   }
+  }
+  assert.equal(confirmedWords,100);
+  assert.equal(workPages.size,20,'100 phrases converge to exactly 20 existing pages');
+  const workBlog=await (await get('/blog/')).text();
+  assert.ok(workBlog.includes('요청 지역별 탁송·대리운전 핵심 검색어'));
+  assert.ok(workBlog.includes('창원탁송')&&workBlog.includes('인천탁송'),'new priority region navigation');
+  console.log('PASS: 100 new locality SEO intents -> 20 canonical pages, proper regional images and actual article context');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
