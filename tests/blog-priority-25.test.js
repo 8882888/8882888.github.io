@@ -6,7 +6,7 @@ const m=require('../lib/regional-blog-keywords');
 const list=m.priority.keywords;
 assert.equal(list.length,25);
 assert.equal(new Set(list.map(x=>x.keyword)).size,25);
-assert.equal(m.focusedLinks.length,16);
+assert.equal(m.focusedLinks.length,20);
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const seen=new Set();
 for(const row of list){
@@ -21,7 +21,7 @@ for(const row of list){
  assert.ok(html.includes('예상요금 확인')&&html.includes('실제 운행기록'));
  assert.ok(!html.includes('실제 운행완료 후기입니다'),'do not invent a trip');
 }
-assert.equal(seen.size,m.focusedLinks.length,'one existing canonical page per place/service');
+assert.equal(seen.size,16,'25 original phrases still point to 16 prior canonical pages');
 assert.ok(!m.focused({region:'강원특별자치도 춘천시',kind:'daeri',label:'춘천시',esc}),'do not repeat identical SEO section on unrelated pages');
 const busan=m.focused({region:'부산광역시',kind:'taksong',label:'부산',esc});
 assert.ok(busan.includes('부산탁송업체')&&busan.includes('부산탁송회사'));
