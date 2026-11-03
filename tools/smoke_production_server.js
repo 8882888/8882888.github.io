@@ -79,6 +79,20 @@ async function main(){
     assert(taksongHub.body.includes('href="'+pathname+'"'),
       'Weakly discovered local landing must have a direct national hub link: '+pathname);
   }
+  const journeyPlans=JSON.parse(fs.readFileSync('data/region-journey-links.json','utf8')).pages;
+  assert.equal(journeyPlans.length,10,'exactly ten useful regional cross-links');
+  for(const entry of journeyPlans){
+    const page=await request(port,entry.path);
+    assert.equal(page.status,200,'related region page: '+entry.path);
+    assert(page.body.includes('rel="canonical" href="https://jeongukdaeri.kr'+entry.path+'"'),'wrong canonical '+entry.path);
+    assert(page.body.includes('id="verified-region-journey-links"'),'missing customer region navigation: '+entry.path);
+    assert(page.body.includes(entry.heading),'region-specific navigation heading missing: '+entry.path);
+    for(const link of entry.related)assert(page.body.includes('href="'+link.path+'"'),entry.path+' missing real region link '+link.path);
+  }
+  const kw=await request(port,'/taksong/gwangju/');
+  assert(!kw.body.includes('광산구·풍암매매단지·송도수출단지 장거리탁송'),'misleading Gwangju/remote Incheon location wording');
+  for(const file of ['data/priority-regions.json','data/region-journey-links.json'])
+    assert.match(diagnostic.deployment_hashes[file],/^[0-9a-f]{64}$/,'missing geographic page source hash: '+file);
   // Twenty concrete high-value routes. Failing any one prevents a bad Cloudtype redeploy.
   // The ten curated region routes must render directly grounded Naver original links.
   const priorityRoutes=[

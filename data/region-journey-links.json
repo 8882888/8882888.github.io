@@ -1,0 +1,236 @@
+{
+  "version": 1,
+  "note": "Practical cross-region customer navigation, not proof of a booked or completed trip or a ferry service.",
+  "pages": [
+    {
+      "region": "부산광역시",
+      "path": "/taksong/busan/",
+      "heading": "부산항·도심 출발과 동부산·경남 차량 인계",
+      "summary": "부산항·감만동 항만 인수와 해운대 도심 주차장 출고, 기장 외곽 차량 인수는 담당자·출입 시각이 다릅니다. 다른 지역으로 보낼 때는 도착지의 실제 인계 가능 시간을 확인하세요.",
+      "related": [
+        {
+          "path": "/taksong/busan/gijang-gun/",
+          "label": "기장군탁송",
+          "reason": "기장읍·정관읍·일광읍 인수 위치"
+        },
+        {
+          "path": "/taksong/gyeongnam/gimhae-si/",
+          "label": "김해탁송",
+          "reason": "김해공항·장유·진영의 인수 조건"
+        },
+        {
+          "path": "/taksong/gyeongnam/changwon-si/",
+          "label": "창원탁송",
+          "reason": "마산·진해·성산구 출고 담당자 확인"
+        }
+      ]
+    },
+    {
+      "region": "부산광역시 기장군",
+      "path": "/taksong/busan/gijang-gun/",
+      "heading": "기장읍·정관읍·일광읍 출발 탁송과 인접지역 연계",
+      "summary": "기장군에서는 읍·면과 자동차매매시설의 실제 인수 위치를 먼저 구분합니다. 부산 시내나 울산·김해에서 인계할 때에도 주차장 출입 시간과 차량 열쇠 전달 방법을 확인하세요.",
+      "related": [
+        {
+          "path": "/taksong/busan/",
+          "label": "부산탁송",
+          "reason": "부산 시내·항만 출발 차량 인수"
+        },
+        {
+          "path": "/taksong/ulsan/",
+          "label": "울산탁송",
+          "reason": "울주·동구 산업시설 출고 조건"
+        },
+        {
+          "path": "/taksong/gyeongnam/gimhae-si/",
+          "label": "김해탁송",
+          "reason": "김해·장유권 차량 인계 안내"
+        }
+      ]
+    },
+    {
+      "region": "대구광역시",
+      "path": "/taksong/daegu/",
+      "heading": "대구 서비스센터 출고와 경북·동남권 장거리 차량탁송",
+      "summary": "수성구·달서구의 정비·매매시설은 출고 마감과 차량 열쇠 전달 방식을 확인하세요. 포항·울산·부산 등 타지역 도착 시에는 차량 수령 담당자의 일정도 필요합니다.",
+      "related": [
+        {
+          "path": "/taksong/gyeongbuk/pohang-si/",
+          "label": "포항탁송",
+          "reason": "포항 도심·항만권 차량 인수"
+        },
+        {
+          "path": "/taksong/ulsan/",
+          "label": "울산탁송",
+          "reason": "울산 산업시설 출입·인계 조건"
+        },
+        {
+          "path": "/taksong/busan/",
+          "label": "부산탁송",
+          "reason": "부산 항만·도심 도착 차량 인계"
+        }
+      ]
+    },
+    {
+      "region": "울산광역시",
+      "path": "/taksong/ulsan/",
+      "heading": "울산 도심·산업시설 출고와 부산·경남 인계",
+      "summary": "삼산동 도심 주차장과 동구·울주군 산업시설은 기사 진입과 출고 담당자가 다를 수 있습니다. 부산 기장군이나 창원 도착 차량은 인수 가능한 장소와 시각을 확인하세요.",
+      "related": [
+        {
+          "path": "/taksong/busan/",
+          "label": "부산탁송",
+          "reason": "부산 시내·항만 도착지 인계"
+        },
+        {
+          "path": "/taksong/busan/gijang-gun/",
+          "label": "기장군탁송",
+          "reason": "동부산 읍·면 차량 인수"
+        },
+        {
+          "path": "/taksong/gyeongnam/changwon-si/",
+          "label": "창원탁송",
+          "reason": "성산구·마산·진해 차량 출고"
+        }
+      ]
+    },
+    {
+      "region": "인천광역시",
+      "path": "/taksong/incheon/",
+      "heading": "인천 송도수출단지·렌터카 반납과 수도권 탁송",
+      "summary": "인천 송도의 수출차량 인계는 반입 마감과 서류·출입 절차를, 공항권 렌터카 반납은 주차장 및 키 수령자를 따로 확인합니다. 서울·경기권 차량 회수 조건과 구분해 상담하세요.",
+      "related": [
+        {
+          "path": "/taksong/seoul/",
+          "label": "서울탁송",
+          "reason": "서울 서비스센터·중고차 인계"
+        },
+        {
+          "path": "/taksong/gyeonggi/goyang-si/",
+          "label": "고양탁송",
+          "reason": "일산·덕양 차량 회수"
+        },
+        {
+          "path": "/taksong/gyeonggi/suwon-si/",
+          "label": "수원탁송",
+          "reason": "수원 영통·권선 차량 인수"
+        }
+      ]
+    },
+    {
+      "region": "광주광역시",
+      "path": "/taksong/gwangju/",
+      "heading": "광주광역시 차량 인수와 인천 송도 장거리 도착지 구분",
+      "summary": "광주 광산구·서구 풍암동 등에서 차량을 인수하는 경우와 인천 송도수출단지로 보내는 장거리 이동은 별개 지역입니다. 광주 출발 위치와 인천 도착지 반입 마감 시간을 각각 확인하세요.",
+      "related": [
+        {
+          "path": "/taksong/incheon/",
+          "label": "인천탁송",
+          "reason": "인천 송도 수출단지 도착지 인계"
+        },
+        {
+          "path": "/taksong/daejeon/",
+          "label": "대전탁송",
+          "reason": "대전 정비·매매시설 출고"
+        },
+        {
+          "path": "/taksong/seoul/",
+          "label": "서울탁송",
+          "reason": "서울 도심·서비스센터 인계"
+        }
+      ]
+    },
+    {
+      "region": "대전광역시",
+      "path": "/taksong/daejeon/",
+      "heading": "대전 정비·매매시설 출고와 시외 차량 인계",
+      "summary": "월평동 매매시설·둔산권 업무시설·유성구 정비시설의 차량 인수 시간과 담당자를 확인하세요. 대구·광주·인천으로 이동하는 구간은 현재 배차 가능 여부와 목적지 인계 시각을 별도로 상담합니다.",
+      "related": [
+        {
+          "path": "/taksong/daegu/",
+          "label": "대구탁송",
+          "reason": "대구 서비스센터·매매시설 인계"
+        },
+        {
+          "path": "/taksong/gwangju/",
+          "label": "광주탁송",
+          "reason": "광주광역시 출발·도착지 구분"
+        },
+        {
+          "path": "/taksong/incheon/",
+          "label": "인천탁송",
+          "reason": "인천 송도 수출차량 반입 안내"
+        }
+      ]
+    },
+    {
+      "region": "경상남도 창원시",
+      "path": "/taksong/gyeongnam/changwon-si/",
+      "heading": "창원·마산·진해 출고와 부산·김해 연계 차량탁송",
+      "summary": "창원 성산구 산업시설과 마산·진해 정비·매매시설은 차량 인수 장소가 다릅니다. 김해·부산 등 인접 도시로 이동하는 경우 출고 담당자와 목적지 수령 가능 시각을 함께 확인하세요.",
+      "related": [
+        {
+          "path": "/taksong/gyeongnam/gimhae-si/",
+          "label": "김해탁송",
+          "reason": "김해공항·장유권 출고 조건"
+        },
+        {
+          "path": "/taksong/busan/",
+          "label": "부산탁송",
+          "reason": "부산항·도심 차량 인계"
+        },
+        {
+          "path": "/taksong/ulsan/",
+          "label": "울산탁송",
+          "reason": "울산 산업단지 차량 출고"
+        }
+      ]
+    },
+    {
+      "region": "경상남도 김해시",
+      "path": "/taksong/gyeongnam/gimhae-si/",
+      "heading": "김해공항·장유·진영 차량 회수와 경남권 인계",
+      "summary": "김해공항 인수는 터미널·주차장 구역을, 장유·진영 출고는 차량 열쇠와 담당자를 구분해 확인하세요. 창원·부산·기장군으로 이동할 때에도 차량이 실제로 있는 위치가 중요합니다.",
+      "related": [
+        {
+          "path": "/taksong/gyeongnam/changwon-si/",
+          "label": "창원탁송",
+          "reason": "마산·진해·성산구 차량 인계"
+        },
+        {
+          "path": "/taksong/busan/",
+          "label": "부산탁송",
+          "reason": "부산 항만·도심권 차량 인수"
+        },
+        {
+          "path": "/taksong/busan/gijang-gun/",
+          "label": "기장군탁송",
+          "reason": "동부산 매매시설·읍면 차량 위치"
+        }
+      ]
+    },
+    {
+      "region": "제주특별자치도",
+      "path": "/taksong/jeju/",
+      "heading": "제주도 안에서의 차량탁송과 육지 연계 선적 일정 구분",
+      "summary": "제주도 내 로드탁송과 항만을 통한 육지 연계 차량 선적은 다른 절차입니다. 선박 이용 가능 여부와 항구 인계·열쇠·서류 전달 범위는 확인이 필요하며, 특정 노선이나 운항을 보장하지 않습니다.",
+      "related": [
+        {
+          "path": "/taksong/busan/",
+          "label": "부산탁송",
+          "reason": "부산 출발 차량·항만 인계 준비"
+        },
+        {
+          "path": "/taksong/incheon/",
+          "label": "인천탁송",
+          "reason": "인천 출발 차량 인수 조건"
+        },
+        {
+          "path": "/taksong/seoul/",
+          "label": "서울탁송",
+          "reason": "서울 도심·업체 출고 준비"
+        }
+      ]
+    }
+  ]
+}

@@ -40,6 +40,10 @@ PATHS = {
     "/business/export-port/": "export-b2b-operating-guide-20261103",
     "/business/auction/": "auction-b2b-operating-guide-20261103",
 }
+JOURNEY_PLANS = {x["path"]: x for x in json.loads(Path("data/region-journey-links.json").read_text(encoding="utf-8"))["pages"]}
+for route in JOURNEY_PLANS:
+    PATHS.setdefault(route, "verified-region-journey-links")
+
 CURATED_SOURCE_ROUTES = {
     "/taksong/busan/", "/taksong/daegu/", "/taksong/incheon/",
     "/taksong/gwangju/", "/taksong/daejeon/", "/taksong/ulsan/",
@@ -118,6 +122,14 @@ def run():
             for source_id in PROMOTED_REGION_SOURCE_PAGES.get(path, []):
                 if "https://blog.naver.com/wjdtnr4757/"+source_id not in body:
                     errors.append("original Naver blog link not deployed: "+source_id)
+            if path in JOURNEY_PLANS:
+                if 'id="verified-region-journey-links"' not in body:
+                    errors.append("curated inter-region customer navigation missing")
+                for link in JOURNEY_PLANS[path]["related"]:
+                    if 'href="' + link["path"] + '"' not in body:
+                        errors.append("missing canonical related-region link: " + link["path"])
+            if path == "/taksong/gwangju/" and "광산구·풍암매매단지·송도수출단지 장거리탁송" in body:
+                errors.append("Incheon Songdo incorrectly grouped into Gwangju facilities")
             if path == "/daeri/gwangju/" and re.search(r"<h3>광주시\s*(?:쌍동리|초월읍|곤지암읍)", body):
                 errors.append("Gyeonggi Gwangju-si ride wrongly displayed as Gwangju Metropolitan City evidence")
             if path != "/health/seo-report/":
@@ -185,7 +197,7 @@ def run():
         if group_count != expected_groups or link_count != expected_links:
             errors.append(f"curated original sources are stale: live groups={group_count!r}, links={link_count!r}; expected {expected_groups}/{expected_links}")
         live_hashes = health.get("deployment_hashes") or {}
-        for filepath in ["server.js", "index.html", "data/seo-pages.json", "data/priority-blog-links.json", "lib/regional-history-evidence.js"]:
+        for filepath in ["server.js", "index.html", "data/seo-pages.json", "data/priority-blog-links.json", "lib/regional-history-evidence.js", "data/priority-regions.json", "data/region-journey-links.json"]:
             expected_hash = hashlib.sha256(Path(filepath).read_bytes()).hexdigest()
             live_hash = live_hashes.get(filepath)
             if not live_hash:

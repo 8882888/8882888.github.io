@@ -59,6 +59,35 @@ for(const r of regions){const parentPath=r.parent_slug?pathBySlug.get(r.parent_s
  const suffixLabels={'특별자치시':'si','특별시':'si','광역시':'si','특별자치도':'do','자치도':'do','도':'do','시':'si','군':'gun','구':'gu','읍':'eup','면':'myeon','동':'dong','리':'ri'};
  const segment=romanOverrides[r.name]||(suffixMatch&&suffixMatch[1]?romanizeKorean(suffixMatch[1])+'-'+suffixLabels[suffixMatch[2]]:romanizeKorean(r.name));const proposed=(parentPath?parentPath+'/':'')+segment;const unique=byPath.has(proposed)?proposed+'-'+r.slug:proposed;pathBySlug.set(r.slug,unique);byPath.set(unique,r)}
 function servicePath(r,kind){return '/'+kind+'/'+pathBySlug.get(r.slug)+'/'}
+
+// Hand-curated next-region routes are selected for customer utility, not as keyword spam.
+// Keep related links on only ten main taksong pages, with distinct factual guidance.
+const regionalJourneyPlans=load('data/region-journey-links.json').pages;
+const regionalJourneyByPath=new Map(regionalJourneyPlans.map(x=>[x.path,x]));
+const realTaksongPaths=new Set(regions.map(r=>servicePath(r,'taksong')));
+if(regionalJourneyPlans.length!==10||regionalJourneyByPath.size!==regionalJourneyPlans.length)
+ throw Error('Invalid curated regional journey groups');
+for(const entry of regionalJourneyPlans){
+ const region=regions.find(r=>r.full_name===entry.region);
+ if(!region||servicePath(region,'taksong')!==entry.path||!entry.heading||!entry.summary||!Array.isArray(entry.related)||entry.related.length<2)
+  throw Error('Invalid journey region: '+entry.region);
+ const seen=new Set();
+ for(const link of entry.related){
+  if(!realTaksongPaths.has(link.path)||link.path===entry.path||seen.has(link.path)||!link.label||!link.reason)
+   throw Error('Invalid related region link: '+entry.path+' -> '+link.path);
+  seen.add(link.path);
+ }
+}
+function regionalJourneyNavigation(r,kind){
+ if(kind!=='taksong')return '';
+ const record=regionalJourneyByPath.get(servicePath(r,kind));
+ if(!record)return '';
+ return '<section id="verified-region-journey-links"><h2>'+esc(record.heading)+'</h2><p>'+esc(record.summary)+'</p>'+
+ '<nav aria-label="'+esc(seoRegionLabel(r))+' 관련 지역별 자동차탁송 안내"><ul>'+
+ record.related.map(x=>'<li><a href="'+esc(x.path)+'">'+esc(x.label)+'</a> · '+esc(x.reason)+'</li>').join('')+
+ '</ul></nav><p>위 링크는 출발지·도착지별 준비사항을 비교하기 위한 안내이며, 해당 구간의 운행완료·배차 확약 또는 고정요금을 의미하지 않습니다.</p></section>';
+}
+
 const rides=load('data/ride-history.json');
 const excelReviewFiles=['data/daeri-review-drafts-202610.json','data/taksong-review-drafts-202610.json'];
 const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);const service=({'대리운전':'daeri','탁송':'taksong','daeri':'daeri','taksong':'taksong'})[String(doc.service||'').trim()];if(!service)return [];return (doc.items||[]).filter(x=>x.publication_status==='사용자 확인 운행완료').map(x=>({...x,service,status:'completed',verified:true,verification_source:'user-confirmed Excel'}))}catch{return []}});
@@ -758,7 +787,7 @@ async function servicePage(r,kind){
    '<h3>실제 게시된 지역 자동차탁송 원문</h3><p><a href="'+postUrl+'" target="_blank" rel="noopener noreferrer">'+postTitle+'</a></p>'+
    '<p>링크는 게시된 네이버 블로그 원문입니다. 당시 일정·요금과 현재 확정 견적은 다르며, 원문에 없는 차종이나 운행 시간을 추정하지 않습니다. <a href="/reviews/history/?kind=taksong&amp;q='+encodeURIComponent(locality)+'">'+locality+' 운행완료 기록 검색</a> · <a href="/fare/?service=taksong&amp;from='+encodeURIComponent(r.full_name)+'">'+locality+'탁송 예상요금</a></p></section>';
  })():'';
- const body=daeguTaksongGuide+taebaekTaksongHeader+regionalQuickStart+seoulEditorialLinks(r,kind)+southeastTaksongFocus+(priorityMeta?priorityEvidence+priorityBlogEvidence(r,kind)+priorityLocalGuide(r,kind)+regionalBlogLinks(r,kind)+routeKeywordPages.links(r,kind):routeKeywordPages.links(r,kind)+priorityLocalGuide(r,kind)+reviewCards+regionalBlogLinks(r,kind))+vehicleGuideLink(kind)+(priorityMeta?priorityServiceUseCases(r,kind):localIntentLinks)+'<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(seoRegionLabel(a))+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+provinceServiceGuide(r,kind)+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+routeGuides.regionSection(r)+neighborhoodStorySection(r,kind)+taebaekGuide+bookingGuide(kind,r)+(priorityMeta?'':aliasSection)+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(serviceBrand(kind))+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 출발지·도착지 예상요금 확인하기</a></p></section><section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+(priorityMeta&&matches.length?'<p>상단에 표시된 확인 완료 사례에서 실제 출발·도착지와 당시 요금을 확인할 수 있습니다. 현재 견적은 별도 상담으로 안내합니다.</p><p><a href="/reviews/history/?kind='+kind+'">전체 운행기록 더 보기</a></p>':history)+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
+ const body=daeguTaksongGuide+taebaekTaksongHeader+regionalQuickStart+regionalJourneyNavigation(r,kind)+seoulEditorialLinks(r,kind)+southeastTaksongFocus+(priorityMeta?priorityEvidence+priorityBlogEvidence(r,kind)+priorityLocalGuide(r,kind)+regionalBlogLinks(r,kind)+routeKeywordPages.links(r,kind):routeKeywordPages.links(r,kind)+priorityLocalGuide(r,kind)+reviewCards+regionalBlogLinks(r,kind))+vehicleGuideLink(kind)+(priorityMeta?priorityServiceUseCases(r,kind):localIntentLinks)+'<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(seoRegionLabel(a))+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+provinceServiceGuide(r,kind)+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+routeGuides.regionSection(r)+neighborhoodStorySection(r,kind)+taebaekGuide+bookingGuide(kind,r)+(priorityMeta?'':aliasSection)+'<section><h2>'+esc(name)+' '+service+' 상담 명함</h2><p><strong>'+esc(serviceBrand(kind))+'</strong></p><p><a href="tel:18114294">대표전화 '+PHONE+' 전화 상담</a></p></section><section><h2>예약·예상요금·빠른배차</h2><p>출발지·도착지·출발 시간·차종을 알려주시면 배차 가능 여부와 예상요금을 안내합니다. 추가 비용 여부는 상담 시 확인하세요.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 출발지·도착지 예상요금 확인하기</a></p></section><section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+(priorityMeta&&matches.length?'<p>상단에 표시된 확인 완료 사례에서 실제 출발·도착지와 당시 요금을 확인할 수 있습니다. 현재 견적은 별도 상담으로 안내합니다.</p><p><a href="/reviews/history/?kind='+kind+'">전체 운행기록 더 보기</a></p>':history)+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
  // Nationwide service-brand cards dynamically imprint the exact locality and service.
  // These are branded templates, not purported photographs of the city or a completed trip.
  const regionImagePath=cardPngPath(r.slug,kind);
@@ -1182,7 +1211,7 @@ if(pathname==='/health/seo.json'){
   }catch{pages[key]={error:'source unavailable'}}
  }
  res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]))}),'application/json; charset=utf-8');
+ return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]))}),'application/json; charset=utf-8');
 }
 // Human-readable Cloudtype deployment proof. This page is deliberately not indexable.
 if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){
