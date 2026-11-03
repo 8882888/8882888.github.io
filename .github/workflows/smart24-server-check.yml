@@ -33,6 +33,8 @@ jobs:
         run: node tests/indexnow-targeting.test.js
       - name: Check thirty regional blog posts have thirty unique local hashtags
         run: node tests/blog-regional-hashtags.test.js
+      - name: Validate ten source-backed regional taksong guides
+        run: node tests/regional-originals.test.js
       - name: Verify road and ferry quote calculations
         run: node tests/fare-rules.test.js
       - name: Verify phone conversion tracking and referral toggles (no live DB writes)

@@ -92,6 +92,13 @@ async function main(){
       assert(page.body.includes(faq.question),'missing local customer question: '+entry.path);
       assert(page.body.includes(faq.answer),'missing grounded customer answer: '+entry.path);
     }
+    assert(page.body.includes('id="regional-original-source-links-20261103"'),'regional source evidence section missing: '+entry.path);
+    for(const item of entry.handover)assert(page.body.includes(item),'regional vehicle handover instruction missing: '+entry.path);
+    for(const item of entry.originals){
+      const expected='https://blog.naver.com/wjdtnr4757/'+item.id;
+      assert(page.body.includes('href="'+expected+'"'),'original Naver source link missing: '+entry.path+' / '+item.id);
+      assert(page.body.includes(item.note),'contextual original-source note missing: '+entry.path+' / '+item.id);
+    }
     assert.equal((page.body.match(/<dt><strong>/g)||[]).length>=2,true,'FAQ missing: '+entry.path);
   }
   const kw=await request(port,'/taksong/gwangju/');

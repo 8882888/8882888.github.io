@@ -76,6 +76,10 @@ for(const entry of regionalJourneyPlans){
  const region=regions.find(r=>r.full_name===entry.region);
  if(!region||servicePath(region,'taksong')!==entry.path||!entry.heading||!entry.summary||!Array.isArray(entry.related)||entry.related.length<2||!Array.isArray(entry.faq)||entry.faq.length!==2||entry.faq.some(q=>!q.question||!q.answer||q.answer.length<55))
   throw Error('Invalid journey region: '+entry.region);
+ if(!Array.isArray(entry.handover)||entry.handover.length!==3||entry.handover.some(x=>typeof x!=='string'||x.length<25)||
+    !Array.isArray(entry.originals)||entry.originals.length!==2||new Set(entry.originals.map(x=>x.id)).size!==2||
+    entry.originals.some(x=>!/^\d{12}$/.test(String(x.id))||!publishedBlogById.has(String(x.id))||typeof x.note!=='string'||x.note.length<25))
+  throw Error('Invalid source-backed regional article references: '+entry.path);
  const seen=new Set();
  for(const link of entry.related){
   if(!realTaksongPaths.has(link.path)||link.path===entry.path||seen.has(link.path)||!link.label||!link.reason)
@@ -90,7 +94,12 @@ function regionalJourneyNavigation(r,kind){
  return '<section id="verified-region-journey-links"><h2>'+esc(record.heading)+'</h2><p>'+esc(record.summary)+'</p>'+
  '<nav aria-label="'+esc(seoRegionLabel(r))+' 관련 지역별 자동차탁송 안내"><ul>'+
  record.related.map(x=>'<li><a href="'+esc(x.path)+'">'+esc(x.label)+'</a> · '+esc(x.reason)+'</li>').join('')+
- '</ul></nav><p>위 링크는 출발지·도착지별 준비사항을 비교하기 위한 안내이며, 해당 구간의 운행완료·배차 확약 또는 고정요금을 의미하지 않습니다.</p></section>';
+ '</ul></nav><p>위 링크는 출발지·도착지별 준비사항을 비교하기 위한 안내이며, 해당 구간의 운행완료·배차 확약 또는 고정요금을 의미하지 않습니다.</p></section>'+
+ '<section id="regional-original-source-links-20261103"><h2>'+esc(seoRegionLabel(r))+' 기존 원문과 차량 인계 안내</h2>'+
+ '<p>이미 네이버 블로그에 게시된 원문을 직접 연결했습니다. 원문에 등장하는 날짜와 금액은 당시 사례이며 현재 견적·즉시 배차를 뜻하지 않습니다. 네이버 원문은 수정하지 않았습니다.</p>'+
+ '<ol>'+record.handover.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol>'+
+ '<ul>'+record.originals.map(x=>{const post=publishedBlogById.get(String(x.id));return '<li><a href="'+esc(post.url)+'" target="_blank" rel="noopener noreferrer">'+esc(post.title)+'</a><p>'+esc(x.note)+'</p></li>';}).join('')+
+ '</ul></section>';
 }
 
 const rides=load('data/ride-history.json');

@@ -173,6 +173,17 @@ def run():
                         errors.append("missing specific customer question")
                     if html.escape(faq["answer"], quote=False) not in body:
                         errors.append("missing specific customer answer")
+                if 'id="regional-original-source-links-20261103"' not in body:
+                    errors.append("missing source-backed regional customer evidence section")
+                for item in JOURNEY_PLANS[path]["handover"]:
+                    if html.escape(item, quote=False) not in body:
+                        errors.append("missing distinct vehicle handover guidance")
+                for original in JOURNEY_PLANS[path]["originals"]:
+                    expected_link = 'href="https://blog.naver.com/wjdtnr4757/' + original["id"] + '"'
+                    if expected_link not in body:
+                        errors.append("missing published Naver original link " + original["id"])
+                    if html.escape(original["note"], quote=False) not in body:
+                        errors.append("missing source context for Naver original " + original["id"])
             if path == "/taksong/gwangju/" and "광산구·풍암매매단지·송도수출단지 장거리탁송" in body:
                 errors.append("Incheon Songdo incorrectly grouped into Gwangju facilities")
             if path == "/daeri/gwangju/" and re.search(r"<h3>광주시\s*(?:쌍동리|초월읍|곤지암읍)", body):
