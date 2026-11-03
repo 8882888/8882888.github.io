@@ -87,8 +87,10 @@ function naverFocus50Guide(r,kind){
   :[['골프장 대리운전','/service/golf/'],['법인카드·법인 대리운전','/service/corporate/'],['일일기사·왕복 대기','/service/daily-driver/']];
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
  const intro='<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
+ const focusImage='/focus-card/'+r.slug+'-'+kind+'.svg';
+ const focusVisual='<figure style="max-width:600px;margin:16px auto"><a href="'+focusImage+'" target="_blank" rel="noopener noreferrer"><img src="'+focusImage+'" width="1200" height="800" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px" alt="'+esc(info.keyword)+' 키워드가 표시된 지역 맞춤 안내 명함, 상담 1811-4294"></a><figcaption>검색어별 안내 이미지 · 실제 운행사진이나 지역 지점 표시가 아닙니다.</figcaption></figure>';
  return '<section id="naver-focus50-local-guide" aria-label="'+esc(name+' '+kindLabel)+' 지역 상황별 실제 이용 안내">'+
-  '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+
+  '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+focusVisual+
   '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+
   '<h3>예약 전에 필요한 정보</h3><p>'+esc(name)+'의 실제 출발·도착 주소, 시간과 차량 위치를 확인한 뒤 견적 및 기사 수급을 상담합니다. 지역 지점 설치나 기사 상주, 예약 확정 또는 완료 운행을 뜻하지 않습니다.</p>'+
   '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(info.keyword)+' 예상요금</a> · '+
@@ -1450,6 +1452,18 @@ function exactRegionalKeywordCard(r,kind,raw){
 let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
+const focusPosterMatch=pathname.match(/^\/focus-card\/(area-[0-9]+)-(taksong|daeri)\.svg$/);
+if(focusPosterMatch){
+ const [,slug,kind]=focusPosterMatch,r=bySlug.get(slug);
+ const entry=r?focus50ByKey.get(kind+'|'+r.full_name):null;
+ if(!entry)return respond(res,404,'등록된 지역별 키워드 명함이 없습니다');
+ const tel=kind==='taksong'&&r.full_name==='제주특별자치도'?'1877-5245':PHONE;
+ const svg=exactKeywordCard.render({keyword:entry.keyword,region:r.full_name,kind,phone:tel});
+ if(!svg)return respond(res,404,'명함 이미지를 만들 수 없습니다');
+ res.setHeader('cache-control','public, max-age=3600, must-revalidate');
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ return respond(res,200,svg,'image/svg+xml; charset=utf-8');
+}
 const exactKeywordImageMatch=pathname.match(/^\/keyword-card\/exact\/(area-[0-9]+)-(taksong|daeri)\.svg$/);
 if(exactKeywordImageMatch){
  const [,slug,kind]=exactKeywordImageMatch,region=bySlug.get(slug);
