@@ -371,8 +371,11 @@ function regionalCardWebp(r,kind){
  // Render the on-screen WebP directly.  Previously each preview waited for a
  // full 1200px PNG encode and a second WebP encode, delaying mobile cards.
  // The original PNG route remains untouched for zoom and social previews.
- const overlay=cardSvg(seoRegionLabel(r),kind).replace(/<image[^>]+\/>/,'');
+ const overlay=cardSvg(seoRegionLabel(r),kind)
+  .replace(/<image[^>]+\/>/,'')
+  .replace('width="1200" height="800"','width="800" height="533"');
  const render=require('sharp')(serviceCardArt[kind])
+  .resize({width:800})
   .composite([{input:Buffer.from(overlay),left:0,top:0}])
   .webp({quality:78,effort:2}).toBuffer()
   .catch(err=>{regionalCardWebps.delete(key);throw err});
