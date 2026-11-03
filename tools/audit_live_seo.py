@@ -218,9 +218,9 @@ def run():
                     errors.append("cycling hub lacks route-specific historical quote")
             if path.startswith(("/taksong/", "/daeri/")) and path.count("/") >= 3 and path not in ("/taksong/", "/daeri/"):
                 kind = "taksong" if path.startswith("/taksong/") else "daeri"
-                image_match = re.search(r'src="(/card/area-\d+-' + kind + r'-brand-v3\.png)"', body)
+                image_match = re.search(r'src="(/card/area-\d+-' + kind + r'-brand-v5\.png)"', body)
                 if not image_match:
-                    errors.append("region does not display current dynamic PNG v3")
+                    errors.append("region does not display current dynamic PNG v5")
                 else:
                     image_path = image_match.group(1)
                     if 'property="og:image" content="' + BASE + image_path + '"' not in body:
