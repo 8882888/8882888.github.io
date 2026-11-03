@@ -1,0 +1,509 @@
+{
+  "version": 1,
+  "batch": 5,
+  "part": "taksong",
+  "createdOn": "2026-11-04",
+  "purpose": "50 distinct canonical region+taksong guide sections with practical location-specific pickup and handover checks; no claims of branch, completed ride, or fixed fare.",
+  "priority": [
+    {
+      "id": 201,
+      "kind": "taksong",
+      "region": "서울특별시 종로구",
+      "keyword": "종로구탁송",
+      "topic": "광화문·혜화 도심 인계",
+      "pickup": "광화문 업무시설과 혜화동 상권은 건물 주차장 진출입 위치 및 통행 제한을 분리해 확인합니다.",
+      "handover": "도심 인수 시 주차장 출차 승인·차량 열쇠 담당자를 정하고 목적지에서 받을 사람의 도착 가능시간을 확인합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 202,
+      "kind": "taksong",
+      "region": "서울특별시 성동구",
+      "keyword": "성동구탁송",
+      "topic": "성수 정비·시공 차량",
+      "pickup": "성수동 정비·시공 시설 차량과 왕십리 주거차량은 인수 승인 및 실제 주차 위치가 서로 다릅니다.",
+      "handover": "업체 출고는 작업 완료 여부와 차키 인계 담당자를 확인하고 수령지 주차조건을 정해 상담합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 203,
+      "kind": "taksong",
+      "region": "서울특별시 광진구",
+      "keyword": "광진구탁송",
+      "topic": "구의·자양 차량 출고",
+      "pickup": "구의동 업무시설과 자양동 아파트 단지는 주차 출입 절차가 다르므로 차량 보관층을 확인합니다.",
+      "handover": "수령자가 다른 지역에 있다면 인도 가능한 시각과 출차 비용 처리방법까지 미리 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 204,
+      "kind": "taksong",
+      "region": "서울특별시 은평구",
+      "keyword": "은평구탁송",
+      "topic": "불광·진관 차량 회수",
+      "pickup": "불광역 주변 상업시설과 진관동 주거단지에서 차량이 있는 실제 주차장 입구를 확인해 주세요.",
+      "handover": "대단지 출차는 동·층·방문차량 등록을, 외곽 목적지는 기사 복귀 여건을 나눠 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 205,
+      "kind": "taksong",
+      "region": "서울특별시 관악구",
+      "keyword": "관악구탁송",
+      "topic": "봉천·신림 차량 인수",
+      "pickup": "봉천동 경사지 주거지역과 신림역 주변 상업시설은 차량 접근 도로와 주차방법이 달라질 수 있습니다.",
+      "handover": "이중주차 등 출차 제약 여부와 열쇠 위치, 목적지 수령 시각을 확인한 뒤 운행을 상담합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 206,
+      "kind": "taksong",
+      "region": "경기도 광주시",
+      "keyword": "경기광주시탁송",
+      "topic": "경안·오포 외곽 이동",
+      "pickup": "광주 경안동 도심과 오포 생활권의 차량 위치는 도로명만이 아니라 주차장 진입 경로로 구분해야 합니다.",
+      "handover": "외곽 주거시설에서 회수할 차량의 출차 가능 시간과 수령자 연락처, 복귀 교통편을 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 207,
+      "kind": "taksong",
+      "region": "경기도 이천시",
+      "keyword": "이천탁송",
+      "topic": "부발·마장 산업차량",
+      "pickup": "부발읍 업무시설과 마장면 물류시설 차량 출고는 사업장 출입 허가와 반출 시각이 중요합니다.",
+      "handover": "차종·운행 가능 상태·차키 승인 담당자를 확인하고 목적지 인수 시간을 맞춘 뒤 견적을 상담합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 208,
+      "kind": "taksong",
+      "region": "경기도 안성시",
+      "keyword": "안성탁송",
+      "topic": "공도·원곡 산업시설",
+      "pickup": "공도읍 생활권과 원곡면 사업장의 차량은 출입 허용 시간과 실제 보관 장소가 다를 수 있습니다.",
+      "handover": "법인차·정비차 인계는 소유자 승인과 출고 담당자를 확인하고 장거리 이동의 기사 복귀를 상담합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 209,
+      "kind": "taksong",
+      "region": "경기도 양주시",
+      "keyword": "양주탁송",
+      "topic": "옥정·덕정 차량 출고",
+      "pickup": "옥정신도시 공동주택과 덕정역 주변 차량은 주차장 출입 등록과 정확한 출차 위치를 확인해야 합니다.",
+      "handover": "인수자가 현장에 없는 경우 열쇠 전달 절차와 도착 후 인계 담당자 연락방식을 협의합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 210,
+      "kind": "taksong",
+      "region": "경기도 포천시",
+      "keyword": "포천탁송",
+      "topic": "소흘·일동 외곽 회수",
+      "pickup": "소흘읍 생활권과 일동면 외곽 차량은 이동거리가 다르므로 시 이름 대신 정확한 주차 지점을 확인합니다.",
+      "handover": "산간·외곽 출발은 기상과 도로 여건, 기사 복귀 교통편 및 차량 운행 상태를 함께 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 211,
+      "kind": "taksong",
+      "region": "경기도 여주시",
+      "keyword": "여주탁송",
+      "topic": "여주역·가남 차량 인수",
+      "pickup": "여주역 주변 상업시설과 가남읍 산업시설 차량은 주차 위치 및 사업장 출입 시간이 다릅니다.",
+      "handover": "기업 차량이라면 반출 승인·열쇠 담당자와 도착지 수령 가능시간을 명확히 정해야 합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 212,
+      "kind": "taksong",
+      "region": "경기도 구리시",
+      "keyword": "구리탁송",
+      "topic": "갈매·인창 차량 인계",
+      "pickup": "갈매지구 공동주택과 인창동 상가에 있는 차량은 건물 출입구와 주차층 정보를 구분합니다.",
+      "handover": "도심 출차 시 방문등록과 주차권 정산 여부를 확인하고 타지역 수령지 주차 위치를 전달합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 213,
+      "kind": "taksong",
+      "region": "경기도 의왕시",
+      "keyword": "의왕탁송",
+      "topic": "포일·고천 차량 이동",
+      "pickup": "포일동 업무시설과 고천동 생활권은 차량 보관건물의 주차 구역을 상세히 확인할 필요가 있습니다.",
+      "handover": "업무차량 출고 담당자와 인도 수령인의 승인 시각을 확인하고 이동 구간을 상담합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 214,
+      "kind": "taksong",
+      "region": "경기도 군포시",
+      "keyword": "군포탁송",
+      "topic": "산본·금정 차량 인수",
+      "pickup": "산본신도시 주거단지와 금정역 주변 업무시설은 차량 인수 장소와 출차 절차가 서로 다릅니다.",
+      "handover": "방문차량 등록·차량 키 보관 위치, 목적지 수령 가능 시각을 확인한 뒤 운행을 협의합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 215,
+      "kind": "taksong",
+      "region": "경기도 오산시",
+      "keyword": "오산탁송",
+      "topic": "세교·오산역 차량 회수",
+      "pickup": "세교지구 주거단지와 오산역 인근 상업시설에서는 차량이 놓인 건물과 주차층을 정확히 알려주세요.",
+      "handover": "출차가 가능한 시간과 주차료 처리, 장거리 목적지 인계 담당자를 함께 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 216,
+      "kind": "taksong",
+      "region": "경기도 동두천시",
+      "keyword": "동두천탁송",
+      "topic": "송내·지행 차량 출고",
+      "pickup": "송내동 주거지와 지행역 주변 업무시설 차량은 주차장 입구와 실제 인수 지점이 다를 수 있습니다.",
+      "handover": "시외 이동은 열쇠 인계와 도착지 수령 시각, 기사 복귀 교통편을 함께 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 217,
+      "kind": "taksong",
+      "region": "경기도 가평군",
+      "keyword": "가평탁송",
+      "topic": "청평·설악 관광지 회수",
+      "pickup": "청평면과 설악면 관광 숙박시설 출발은 숙소 주차장인지 공용 주차장인지 구분해야 합니다.",
+      "handover": "차량 보관 장소와 체크아웃 시간·주차비를 확인하고 외곽 기사 복귀 여건을 먼저 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 218,
+      "kind": "taksong",
+      "region": "경기도 양평군",
+      "keyword": "양평탁송",
+      "topic": "양평읍·서종 외곽 인계",
+      "pickup": "양평읍 생활권과 서종면 펜션·관광시설은 차량 접근 경로와 인수 가능 시간이 다를 수 있습니다.",
+      "handover": "지방도·외곽 회수라면 도착지와 기사 복귀 경로, 주차장 출차 방법을 미리 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 219,
+      "kind": "taksong",
+      "region": "강원특별자치도 태백시",
+      "keyword": "태백탁송",
+      "topic": "황지·철암 산간 차량",
+      "pickup": "황지동 도심과 철암동 산간 생활권은 출발지 접근 거리 및 차량 보관장소가 다릅니다.",
+      "handover": "눈·결빙 가능 계절에는 도로 상태와 차량 운행 가능 여부, 기사 복귀 일정을 먼저 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 220,
+      "kind": "taksong",
+      "region": "강원특별자치도 철원군",
+      "keyword": "철원탁송",
+      "topic": "동송·갈말 장거리",
+      "pickup": "동송읍과 갈말읍의 주거·업무시설에서 차량 인수 위치를 주차장과 출입구 기준으로 확인합니다.",
+      "handover": "외곽·군부대 인근은 출입 허용 구역을 확인하고, 승인되지 않은 구역 내 인수는 약속하지 않습니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 221,
+      "kind": "taksong",
+      "region": "강원특별자치도 화천군",
+      "keyword": "화천탁송",
+      "topic": "화천읍·사내면 외곽",
+      "pickup": "화천읍 도심과 사내면 외곽 차량 회수는 이동시간과 현장 접근 방법이 다를 수 있습니다.",
+      "handover": "산간 지역 출발은 차종과 실제 차량 위치, 주차장 출입 조건 및 기사 복귀 경로를 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 222,
+      "kind": "taksong",
+      "region": "강원특별자치도 양구군",
+      "keyword": "양구탁송",
+      "topic": "양구읍·국토정중앙면 차량",
+      "pickup": "양구읍과 국토정중앙면은 목적지에 따라 도로 이동 동선이 달라 출발 주소를 세부 확인합니다.",
+      "handover": "산간 도로 운행 가능 여부와 열쇠 전달자, 목적지 수령 시각을 사전에 협의합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 223,
+      "kind": "taksong",
+      "region": "충청북도 보은군",
+      "keyword": "보은탁송",
+      "topic": "보은읍·속리산권 회수",
+      "pickup": "보은읍 도심 출발과 속리산 관광지 주차장 차량은 기사 진입 위치와 출차시간이 다릅니다.",
+      "handover": "관광지에서는 주차권 정산·열쇠 인수 담당자를 확인하고 장거리 수령지 시간을 맞춥니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 224,
+      "kind": "taksong",
+      "region": "충청북도 영동군",
+      "keyword": "영동탁송",
+      "topic": "영동읍·추풍령권",
+      "pickup": "영동읍 생활권과 추풍령면 외곽 차량은 주차장 위치와 기사 접근 동선을 구분합니다.",
+      "handover": "장거리 이동은 차량 운행 가능 상태·출발 시각·도착지 수령자와 복귀 여건을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 225,
+      "kind": "taksong",
+      "region": "충청북도 괴산군",
+      "keyword": "괴산탁송",
+      "topic": "괴산읍·칠성면 출고",
+      "pickup": "괴산읍 도심과 칠성면 관광·주거지역 차량은 도로 접근 경로를 실제 위치로 확인합니다.",
+      "handover": "산행·관광 관련 차량이라면 차량 인수 장소와 고객의 이동 동선을 혼동하지 않도록 별도로 안내합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 226,
+      "kind": "taksong",
+      "region": "충청북도 단양군",
+      "keyword": "단양탁송",
+      "topic": "단양읍·매포읍 차량",
+      "pickup": "단양읍 관광지 주변과 매포읍 사업장 출발은 주차 위치 및 출입 가능 시간에 차이가 있습니다.",
+      "handover": "관광지 주차장 비용과 산업시설 출고 승인 여부를 구분해 차량 인계 일정을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 227,
+      "kind": "taksong",
+      "region": "충청남도 계룡시",
+      "keyword": "계룡탁송",
+      "topic": "엄사·금암 차량 인수",
+      "pickup": "엄사면 생활권과 금암동 업무시설에서는 실제 차량 보관 위치와 건물 출입 조건을 확인합니다.",
+      "handover": "통제구역 출입을 전제로 안내하지 않으며 일반 출발지의 차키 담당자와 수령 위치를 정합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 228,
+      "kind": "taksong",
+      "region": "충청남도 금산군",
+      "keyword": "금산탁송",
+      "topic": "금산읍·추부면 장거리",
+      "pickup": "금산읍 생활권과 추부면 외곽 차량은 실제 출발 위치에 따라 기사 접근 시간이 달라집니다.",
+      "handover": "차량 키 인계와 주차장 출차 가능 시간, 시외 수령자의 인수 시각을 먼저 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 229,
+      "kind": "taksong",
+      "region": "충청남도 부여군",
+      "keyword": "부여탁송",
+      "topic": "규암·부여읍 관광지역",
+      "pickup": "부여읍 관광 상권과 규암면 숙박·생활권 차량의 인수 위치를 구체적인 주차장으로 구분합니다.",
+      "handover": "관광 일정 뒤 차량 회수는 주차비 정산과 차량 열쇠 관리, 목적지 인계 시각을 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 230,
+      "kind": "taksong",
+      "region": "충청남도 서천군",
+      "keyword": "서천탁송",
+      "topic": "장항·서천읍 인계",
+      "pickup": "장항읍 항만·사업장 차량과 서천읍 도심 차량은 반출 승인 및 주차장 출입 방식이 다릅니다.",
+      "handover": "항만 인접 시설은 출입 가능 구역과 담당자를 확인하고 차량 인수 권한을 검증합니다.",
+      "related": "/business/export-port/"
+    },
+    {
+      "id": 231,
+      "kind": "taksong",
+      "region": "충청남도 청양군",
+      "keyword": "청양탁송",
+      "topic": "청양읍·정산 외곽",
+      "pickup": "청양읍 주거시설과 정산면 외곽 차량을 회수하려면 시군 명칭 대신 정확한 주차 지점을 확인합니다.",
+      "handover": "차종·운행 상태와 기사 복귀 여건을 상담하고 목적지 수령자의 시간을 함께 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 232,
+      "kind": "taksong",
+      "region": "전북특별자치도 부안군",
+      "keyword": "부안탁송",
+      "topic": "변산·부안읍 관광차량",
+      "pickup": "변산면 해안 숙박시설과 부안읍 생활권 차량은 체크아웃 시간과 주차장 인수 동선을 구분합니다.",
+      "handover": "관광 숙박시설의 차량 키 인계 권한과 주차요금, 장거리 수령 시각을 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 233,
+      "kind": "taksong",
+      "region": "전북특별자치도 장수군",
+      "keyword": "장수탁송",
+      "topic": "장수읍·장계면 산간",
+      "pickup": "장수읍과 장계면 외곽의 차량 출발은 산간 도로 및 기사 접근 조건을 따로 확인합니다.",
+      "handover": "산행 관련 차량은 산행 시작점과 하산 주차장을 구분하고 차량 인계 방법을 정합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 234,
+      "kind": "taksong",
+      "region": "전북특별자치도 진안군",
+      "keyword": "진안탁송",
+      "topic": "진안읍·마이산권 차량",
+      "pickup": "진안읍 생활권과 마이산 관광지 주차장은 차량 보관 위치와 출입 가능 시간이 다를 수 있습니다.",
+      "handover": "관광 일정 후 회수는 주차권 처리·열쇠 인수자·기사 복귀 교통편을 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 235,
+      "kind": "taksong",
+      "region": "전라남도 영암군",
+      "keyword": "영암탁송",
+      "topic": "삼호·영암읍 업무차량",
+      "pickup": "삼호읍 사업장과 영암읍 생활권 차량은 출고 승인과 주차장 접근 조건을 구분합니다.",
+      "handover": "업무용 차량은 반출 담당자와 도착지 수령자의 가능시간, 장거리 운행 여부를 상담합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 236,
+      "kind": "taksong",
+      "region": "전라남도 곡성군",
+      "keyword": "곡성탁송",
+      "topic": "곡성읍·섬진강권 차량",
+      "pickup": "곡성읍 생활권과 섬진강 관광지 차량 인수는 주차 위치와 고객의 관광 동선을 분리해서 확인합니다.",
+      "handover": "자전거 종주 차량 회수와 일반 탁송은 출발·도착 지점이 달라 정확한 코스와 수령 위치를 알려주세요.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 237,
+      "kind": "taksong",
+      "region": "전라남도 구례군",
+      "keyword": "구례탁송",
+      "topic": "구례읍·성삼재 산행 차량",
+      "pickup": "구례읍 일반 차량 인도와 성삼재 산행 주차장 회수는 기사 접근 경로가 다르므로 구분합니다.",
+      "handover": "지리산 산행 목적이면 차량 주차장과 하산 위치 및 예상 시간을 별도로 확인해야 합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 238,
+      "kind": "taksong",
+      "region": "전라남도 고흥군",
+      "keyword": "고흥탁송",
+      "topic": "고흥읍·녹동항 차량",
+      "pickup": "고흥읍 도심과 녹동항 주변 차량의 출발은 항구 출입구와 실제 차량 인수 지점을 확인합니다.",
+      "handover": "해안 지역 장거리 탁송은 항만 출입 승인 여부와 수령인의 도착시각, 복귀 교통편을 상담합니다.",
+      "related": "/business/export-port/"
+    },
+    {
+      "id": 239,
+      "kind": "taksong",
+      "region": "전라남도 완도군",
+      "keyword": "완도탁송",
+      "topic": "완도항·완도읍 회수",
+      "pickup": "완도항 주변 항만 시설과 완도읍 생활권은 출입 가능한 주차구역 및 반출 절차가 다릅니다.",
+      "handover": "선적 관련 차량인지 육지 내 이동인지 먼저 구분하고 선박 일정·키 전달 담당자를 확인합니다.",
+      "related": "/business/export-port/"
+    },
+    {
+      "id": 240,
+      "kind": "taksong",
+      "region": "경상북도 청도군",
+      "keyword": "청도탁송",
+      "topic": "청도읍·화양 관광차량",
+      "pickup": "청도읍과 화양읍 관광·생활권의 차량은 숙박시설 주차장과 공용 주차장 여부를 구분합니다.",
+      "handover": "관광지 장거리 회수는 출차 시각·차키 인계자·기사 복귀 조건을 먼저 협의합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 241,
+      "kind": "taksong",
+      "region": "경상북도 칠곡군",
+      "keyword": "칠곡탁송",
+      "topic": "왜관·석적 산업차량",
+      "pickup": "왜관읍과 석적읍 산업시설 출고는 사업장 보안 출입과 차량 반출 가능 시간을 확인합니다.",
+      "handover": "회사 차량의 반출 승인 담당자·운행 가능 상태와 수령지의 인계 시각을 지정합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 242,
+      "kind": "taksong",
+      "region": "경상북도 문경시",
+      "keyword": "문경탁송",
+      "topic": "점촌·문경새재 관광",
+      "pickup": "점촌 도심 주차장과 문경새재 관광지 차량은 주차장 입구·출차 시간·기사 접근이 다릅니다.",
+      "handover": "관광 일정과 연결된 차량 인도 시 주차비와 열쇠 수령 권한, 도착지 연락 방법을 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 243,
+      "kind": "taksong",
+      "region": "경상북도 상주시",
+      "keyword": "상주탁송",
+      "topic": "상주 도심·함창 차량",
+      "pickup": "상주 도심의 상업시설과 함창읍 외곽 차량은 도로 접근과 차량 주차 위치를 구분해 안내합니다.",
+      "handover": "지역 간 이동은 차종·출발 시간·차량 열쇠 담당자와 기사 복귀 교통편을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 244,
+      "kind": "taksong",
+      "region": "경상북도 영덕군",
+      "keyword": "영덕탁송",
+      "topic": "영덕읍·강구항 차량",
+      "pickup": "영덕읍 생활권과 강구항 주변 관광 차량의 인수 장소 및 출차 가능 시각을 확인합니다.",
+      "handover": "동해안 자전거 종주 목적이라면 인증센터와 실제 차량 주차 장소를 따로 알려주세요.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 245,
+      "kind": "taksong",
+      "region": "경상북도 울진군",
+      "keyword": "울진탁송",
+      "topic": "후포·죽변 해안권",
+      "pickup": "울진읍 도심과 후포·죽변 해안지역에서 차량을 인수할 때 항구 주변 주차구역을 정확히 확인합니다.",
+      "handover": "장거리 회수는 도착지 수령 시각과 기사 복귀 교통편, 관광지 주차비 처리방법을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 246,
+      "kind": "taksong",
+      "region": "경상남도 사천시",
+      "keyword": "사천탁송",
+      "topic": "사천읍·삼천포 인수",
+      "pickup": "사천읍 산업·업무시설과 삼천포 항만 생활권 차량은 현장 출입과 차량 보관 위치를 구분합니다.",
+      "handover": "사업장 출고 승인과 열쇠 인계 방식, 항만 주변 출입 조건을 확인해 탁송 일정을 정합니다.",
+      "related": "/service/taksong/"
+    },
+    {
+      "id": 247,
+      "kind": "taksong",
+      "region": "경상남도 밀양시",
+      "keyword": "밀양탁송",
+      "topic": "내일동·삼랑진 차량",
+      "pickup": "밀양 내일동 도심과 삼랑진읍 외곽 차량은 접근도로와 주차장 위치가 다를 수 있습니다.",
+      "handover": "시외로 보내는 차량은 출차 시간·차키 담당자·목적지 수령자 정보를 미리 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 248,
+      "kind": "taksong",
+      "region": "경상남도 함양군",
+      "keyword": "함양탁송",
+      "topic": "함양읍·백무동 산행권",
+      "pickup": "함양읍 일반 차량 이동과 지리산 백무동 산행 주차장 회수는 접근 조건이 서로 다릅니다.",
+      "handover": "등산 출발지와 하산지를 정확하게 나누고 차량 인도 주차장 및 기사의 복귀 동선을 상담합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 249,
+      "kind": "taksong",
+      "region": "경상남도 남해군",
+      "keyword": "남해탁송",
+      "topic": "남해읍·독일마을 관광",
+      "pickup": "남해읍 주거차량과 독일마을 관광·숙박차량의 출발지는 도로 접근 및 주차 위치가 다릅니다.",
+      "handover": "숙박객 차량 인계는 주차료·체크아웃 시간·열쇠 인수자와 장거리 기사 복귀를 확인합니다.",
+      "related": "/service/long-distance-taksong/"
+    },
+    {
+      "id": 250,
+      "kind": "taksong",
+      "region": "제주특별자치도 제주시",
+      "keyword": "제주시탁송",
+      "topic": "제주항·제주시내 차량",
+      "pickup": "제주항 차량 인수와 제주시 도심 내 차량 이동은 선적 여부와 항만 출입 절차부터 구분합니다.",
+      "handover": "육지 연계 시 항만 차량 인계 담당자·선박 일정·추가 운행 구간을 별도로 상담합니다.",
+      "related": "/business/rental-car/"
+    }
+  ]
+}
