@@ -214,6 +214,18 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     const page=await (await get(hub)).text();
     assert(page.includes('national-cycling-true-topic-image'),'national topic picture missing '+hub);
     assert(!page.includes('src="/assets/smart24-business-card-inline.webp"'),'misleading generic business card still appears '+hub);
+    if(hub==='/route-taksong/'){
+      assert(page.includes('id="cycling-visible-fare-table-20261103"'),'historical cycling fare table must remain visible');
+      assert(!page.includes('src="/assets/smart24-taksong-brand.webp"'),'wrong Gangneung nationwide card must not appear in cycling fare section');
+      assert(page.includes('id="cycling-route-specific-visuals-20261103"'),'cycling hub route-specific visual group missing');
+      for(const route of ['eastcoast','yeongsan','seomjin'])
+        assert(page.includes('src="/assets/cycling-routes/'+route+'-taksong.svg"'),'missing route-specific image '+route);
+      assert(page.includes('섬진강 생활체육공원 → 배알도')&&page.includes('기존 안내 10만원'),'verified 100k historic Seomjin route quote retained');
+    }
+    if(hub==='/special/cycling-trail-transport/'){
+      assert(page.includes('섬진강 생활체육공원 → 배알도')&&page.includes('기존 안내 10만원'),'special cycling hub keeps the separately verified Seomjin sports-park quote');
+      assert(page.includes('섬진강댐 출발 → 배알도')&&page.includes('별도 출발지·거리 확인 후 상담'),'different dam start must not inherit sports-park price');
+    }
   }
   for(const loc of ['/taksong/busan/','/taksong/daegu/','/taksong/gyeongnam/changwon-si/']){
    const response=await get(loc),html=await response.text();
