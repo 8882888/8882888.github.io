@@ -49,6 +49,8 @@ jobs:
         run: node tests/blog-work-100.test.js
       - name: Verify exact keyword artwork for 20 priority phrases
         run: node tests/exact-keyword-card.test.js
+      - name: Validate 50 localized SEO guides and avoid duplicate or fabricated data
+        run: node tests/naver-regional-focus-50.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
       - name: Ensure curated service and mountain guide preservation

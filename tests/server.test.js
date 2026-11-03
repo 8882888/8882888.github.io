@@ -1449,6 +1449,56 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(ambiguousExact.status,'ambiguous');
   assert.ok(!ambiguousExact.cards.some(c=>c.keywordImage),'no cross-city spoofing');
   console.log('PASS 20/20 exact keyword painted images, region fallback, phone and no ambiguous leakage');
+  // Each of 50 genuinely different localities must be linked from the
+  // national hub, described on the existing canonical page and discoverable
+  // in the appropriate service sitemap. No new thin URL is permitted.
+  const focus50=require('../data/naver-regional-focus-50.json').priority;
+  assert.equal(focus50.length,50);
+  const siteHubs={
+   taksong:await (await get('/taksong/')).text(),
+   daeri:await (await get('/daeri/')).text()
+  };
+  const siteMaps={
+   taksong:await (await get('/sitemap-taksong.xml')).text(),
+   daeri:await (await get('/sitemap-daeri.xml')).text()
+  };
+  const focusPaths=new Set();
+  for(const target of focus50){
+   const regex=new RegExp('<a href="([^"]+)">'+target.keyword+'</a>');
+   const found=siteHubs[target.kind].match(regex);
+   assert.ok(found,'50 regional hub must link exact keyword '+target.keyword);
+   const pagePath=found[1];
+   assert.ok(pagePath.startsWith('/'+target.kind+'/'),'same-service landing '+target.keyword);
+   assert.ok(!focusPaths.has(pagePath),'one unique page per focus item '+pagePath);
+   focusPaths.add(pagePath);
+   assert.ok(siteMaps[target.kind].includes('https://jeongukdaeri.kr'+pagePath),
+    '50 priority pages should be in service sitemap '+target.keyword);
+   const response=await get(pagePath);
+   assert.equal(response.status,200,'priority region HTTP '+target.keyword);
+   const html=await response.text();
+   assert.ok(html.includes('id="naver-focus50-local-guide"'),'contextual guide '+target.keyword);
+   assert.ok(html.includes(target.keyword),'exact regional headline '+target.keyword);
+   assert.ok(html.includes(target.topic)&&html.includes(target.pickup)&&html.includes(target.handover),
+    'two distinctive locality paragraphs and topic '+target.keyword);
+   assert.ok(html.includes('href="/fare/?service='+target.kind),'fare CTA '+target.keyword);
+   assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+pagePath+'"'),
+    'canonical remains unchanged '+target.keyword);
+   assert.ok(!html.includes('<meta name="robots" content="noindex'),
+    'SEO-focus pages must remain indexable '+target.keyword);
+   assert.ok(html.includes('class="regional-responsive-card"'),'regional responsive image '+target.keyword);
+   const api=await get('/api/region-card-preview?q='+encodeURIComponent(target.keyword));
+   assert.equal(api.status,200,'search-to-region API '+target.keyword);
+   const preview=await api.json();
+   assert.equal(preview.status,'matched','keyword API recognized '+target.keyword);
+   assert.equal(preview.region,target.region,'official locality matches '+target.keyword);
+   assert.equal(preview.cards.length,1,'one service card '+target.keyword);
+   assert.equal(preview.cards[0].kind,target.kind,'no driver/taksong mix '+target.keyword);
+   assert.equal(preview.cards[0].url,pagePath,'search box links to canonical region '+target.keyword);
+  }
+  assert.equal(focusPaths.size,50,'50 distinct existing canonical landing pages');
+  assert.ok(siteHubs.taksong.includes('인천서해구탁송'),
+   '2026 Incheon Seohae-gu canonical replaces obsolete Seo-gu locality');
+  console.log('PASS: 50 locally distinct regional SEO pages, 50 home links, official image/API, canonical, sitemap and CTA');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
