@@ -41,6 +41,8 @@ jobs:
         run: node tests/traffic-analytics.test.js
       - name: Check metropolitan and same-name city ride attribution
         run: node tests/regional-history-ambiguity.test.js
+      - name: Verify 63 regional blog keyword suffixes and non-duplicated article guidance
+        run: node tests/regional-blog-keywords.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
       - name: Ensure curated service and mountain guide preservation

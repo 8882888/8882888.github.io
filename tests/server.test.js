@@ -1306,6 +1306,45 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(jsonApi.status,200);
   assert.ok(!jsonApi.headers.get('content-encoding'),'API remains uncompressed');
   console.log('PASS: regional HTML gzip retains original SEO bytes, identity variant and JSON API');
+  // All 63 blog-style combinations retain regional and service identity.
+  for(const [term,place,kind] of [
+   ['부산차량운송','부산광역시','taksong'],
+   ['부산자동차탁송업체','부산광역시','taksong'],
+   ['부산차량탁송업체','부산광역시','taksong'],
+   ['부산탁송비용','부산광역시','taksong'],
+   ['부산탁송기사','부산광역시','taksong'],
+   ['부산대리운전요금','부산광역시','daeri'],
+   ['부산대리운전기사','부산광역시','daeri'],
+   ['부산일일기사업체','부산광역시','daeri'],
+   ['부산골프장왕복기사','부산광역시','daeri'],
+   ['부산수행기사','부산광역시','daeri'],
+   ['부산2.5톤탁송','부산광역시','taksong'],
+   ['부산중고차경매장탁송','부산광역시','taksong'],
+   ['부산자전거종주탁송','부산광역시','taksong'],
+   ['부산골프장탁송','부산광역시','taksong'],
+   ['서울강남차량이동','서울특별시 강남구','taksong'],
+   ['서울강남대리운전비용','서울특별시 강남구','daeri'],
+   ['제주도탁송예약','제주특별자치도','taksong'],
+  ]){
+   const response=await get('/api/region-card-preview?q='+encodeURIComponent(term));
+   assert.equal(response.status,200,term);
+   const data=await response.json();
+   assert.equal(data.status,'matched','blog keyword must be recognized: '+term);
+   assert.equal(data.region,place,'keyword must not point to wrong area: '+term);
+   assert.equal(data.cards.length,1,'single service image '+term);
+   assert.equal(data.cards[0].kind,kind,'service-specific card '+term);
+  }
+  for(const [path,must,excluded] of [
+   ['/taksong/busan/',['id="regional-blog-keyword-guide"','부산탁송업체','부산렌트카탁송','부산중고차경매장탁송'],['부산법인대리운전업체']],
+   ['/daeri/busan/',['id="regional-blog-keyword-guide"','부산심야대리운전','부산법인카드대리운전','부산골프장왕복기사'],['부산2.5톤탁송']],
+   ['/taksong/busan/gijang-gun/',['id="regional-blog-keyword-guide"','기장군탁송요금'],[]],
+  ]){
+   const html=(await (await get(path)).text());
+   for(const phrase of must)assert.ok(html.includes(phrase),'regional blog keyword section missing '+phrase+' on '+path);
+   for(const phrase of excluded)assert.ok(!html.includes(phrase),'irrelevant keyword in other-service page '+path);
+   assert.ok(html.includes('href="/fare/?"')||html.includes('href="/fare/?service='),'fare navigation must stay on '+path);
+  }
+  console.log('PASS: 17 new locality keyword searches and regional blog sections preserve service identity');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
