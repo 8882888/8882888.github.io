@@ -19,7 +19,7 @@ function request(port,pathname,extraHeaders={}){
   const req=http.get({host:'127.0.0.1',port,path:pathname,timeout:15000,headers:extraHeaders},res=>{
    const parts=[];
    res.on('data',chunk=>parts.push(chunk));
-   res.on('end',()=>resolve({status:res.statusCode,headers:res.headers,body:Buffer.concat(parts).toString('utf8')}));
+   res.on('end',()=>{const buffer=Buffer.concat(parts);resolve({status:res.statusCode,headers:res.headers,body:buffer.toString('utf8'),byteLength:buffer.length})});
   });
   req.on('timeout',()=>req.destroy(new Error('HTTP timeout: '+pathname)));
   req.on('error',reject);
@@ -83,7 +83,7 @@ async function main(){
     const png=await request(port,match[1]);
     assert.equal(png.status,200,'dynamic regional image missing '+route);
     assert.equal(png.headers['content-type'],'image/png');
-    assert((Number(png.headers['content-length'])||0)>5000,'regional card too small for Naver image metadata '+route);
+    assert(png.byteLength>5000,'regional card too small for Naver image metadata '+route+' actual bytes='+png.byteLength);
   }
   const preview=await request(port,'/region/?q='+encodeURIComponent('강릉'));
   assert.equal(preview.status,200);
