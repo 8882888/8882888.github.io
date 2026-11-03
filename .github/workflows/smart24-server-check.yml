@@ -184,3 +184,4 @@ jobs:
           node tests/daeri-editorial.test.js
           node tests/site-full-50.test.js http://127.0.0.1:3000/
           node tests/keyword-dynamic-50.test.js http://127.0.0.1:3000/
+          node tests/business-company-keywords.test.js http://127.0.0.1:3000/
