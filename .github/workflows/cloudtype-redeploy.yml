@@ -40,6 +40,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install production image dependencies for dynamic regional cards
+        run: npm install --omit=dev --no-audit --no-fund
       - name: Test REAL Cloudtype Node startup and SEO routes before redeploy
         run: |
           node --check server.js
