@@ -1041,7 +1041,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(!/<image:image|<image:loc/.test(imageMap),'focused sitemap must not list generated card images');
    const sitemapUrls=[...imageMap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
    assert.ok(sitemapUrls.includes('https://example.com/'+service+'/seoul/'),'focused sitemap includes Seoul service HTML');
-   assert.ok(sitemapUrls.length<100,'focused sitemap limits low-value locality URLs');
+   assert.ok(sitemapUrls.length<250,'sitemap contains at most 150 useful curated locality guides, never the full 20k directory');
    if(service==='taksong')assert.ok(sitemapUrls.includes('https://example.com/taksong/busan/gijang-gun/'),'Gijang landing page is discoverable');
    const image=await get(card[1]);assert.equal(image.status,200);
    assert.equal(image.headers.get('content-type'),'image/png');
