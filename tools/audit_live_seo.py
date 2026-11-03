@@ -460,6 +460,18 @@ def run():
                         errors.append("wrong service card image version")
                     elif keyword == "제주도탁송" and cards[0].get("phone") != "1877-5245":
                         errors.append("Jeju dedicated phone not preserved")
+                    if len(cards) == 1 and keyword in ("부산대리운전", "울산탁송"):
+                        preview_path = cards[0].get("previewImage", "")
+                        if not re.fullmatch(r"/card/area-\\d+-(?:daeri|taksong)-brand-v5\\.webp", preview_path):
+                            errors.append("optimized local preview URL missing")
+                        else:
+                            req2 = urllib.request.Request(BASE + preview_path, headers=HEADERS)
+                            with urllib.request.urlopen(req2, timeout=22) as picture:
+                                header = picture.read(12)
+                                etag = picture.headers.get("ETag", "")
+                                if (picture.status != 200 or picture.headers.get("Content-Type", "").split(";")[0] != "image/webp"
+                                        or not header.startswith(b"RIFF") or header[8:12] != b"WEBP" or not etag):
+                                    errors.append("optimized WebP image invalid or missing cache ETag")
                 elif cards:
                     errors.append("ambiguous name unexpectedly selects a card")
         except Exception as ex:
