@@ -1876,7 +1876,9 @@ if(pathname==='/sitemap.xml'){
   ...publicRides.map(rideUrl),
   ...featuredTaksongRoutes.map(r=>'/taksong/route/'+r.slug+'/'),
   ...featuredDaeriRoutes.map(r=>'/daeri/route/'+r.slug+'/'),
-  ...routeKeywordPages.reviewed.entries.slice(0,100).map(e=>routeKeywordPages.reviewed.routePath(e)),
+  // Keep a limited selection of reviewed routes in the main sitemap;
+  // the dedicated reviewed-routes sitemap retains all source-backed routes.
+  ...routeKeywordPages.reviewed.entries.slice(0,50).map(e=>routeKeywordPages.reviewed.routePath(e)),
   ...keywordEngine.activityUrls
  ];
  const urls=[...new Set(focused)];
