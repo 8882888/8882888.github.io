@@ -780,7 +780,7 @@ function seoulEditorialLinks(r,kind){
  return '<section id="seoul-editorial-guide"><h2>서울탁송 25개 구를 3~4개씩 묶은 블로그형 지역 안내 7편</h2>'+
   '<p>출발 차량의 실제 주차 위치, 인수 담당자, 정비시설 출고 시간에 따른 지역별 준비 정보와 이미 발행된 네이버 원문을 한곳에 모았습니다.</p>'+
   '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">'+
-  seoulEditorialGroups.map(g=>'<article style="border:1px solid #c3daed;border-radius:10px;padding:12px;background:#fff"><a href="/blog/seoul-taksong/'+g.slug+'/"><strong>'+esc(g.districts.map(d=>d[0]).join('·'))+'탁송</strong></a><p>'+esc(g.focus)+'</p></article>').join('')+
+  seoulEditorialGroups.map(g=>'<article style="border:1px solid #c3daed;border-radius:10px;padding:12px;background:#fff"><a href="/blog/seoul-taksong/'+g.slug+'/"><strong>'+esc(g.districts.map(d=>d[0]).join('·'))+'탁송</strong></a><p>'+esc(g.theme)+'</p></article>').join('')+
   '</div><p><a href="/blog/seoul-taksong/">서울 지역 전체 7편 목차</a> · <a href="tel:18114294">1811-4294 전화상담</a></p></section>';
 }
 function priorityBlogEvidence(r,kind){
@@ -1500,7 +1500,7 @@ if(pathname==='/health/seo.json'){
   }catch{pages[key]={error:'source unavailable'}}
  }
  res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]))}),'application/json; charset=utf-8');
+ return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,naver_focus_region_count:naverFocus150.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]))}),'application/json; charset=utf-8');
 }
 // Human-readable Cloudtype deployment proof. This page is deliberately not indexable.
 if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){
@@ -1808,7 +1808,7 @@ if(pathname==='/sitemap-priority.xml'){
  const urls=['/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/','/region/gyeonggi-daeri-taksong/','/region/seoul-daeri-taksong/','/region/gangwon-daeri-taksong/','/service/corporate/','/service/heavy-truck-taksong/','/business/rental-car/','/business/used-car/','/business/export-port/','/business/auction/','/blog/taksong-categories/','/blog/archive/gyeongsang-taksong/','/blog/archive/vehicle-taksong/','/blog/archive/general-daeri/','/blog/','/blog/archive/','/blog/archive/categories/','/blog/guides/','/blog/daeri-regions/',...blogHashtagArticlePaths,...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],'/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),'/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),...priorityRegionalPages.map(p=>{
   const region=regions.find(r=>r.full_name===p.region);
   return servicePath(region,p.kind);
- })];
+ }),...naverFocus150.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind))];
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+[...new Set(urls)].map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
@@ -1854,6 +1854,7 @@ if(pathname==='/sitemap.xml'){
   ...vehicleTopics.map(([name])=>vehicleTopicPath(name)),
   ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
   ...priorityRegionalPages.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
+  ...naverFocus150.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
   '/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),
   '/blog/archive/categories/',
   '/blog/daeri-regions/',...blogHashtagArticlePaths,'/blog/taksong-categories/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/',...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],
