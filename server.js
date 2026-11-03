@@ -338,6 +338,12 @@ const cardSvg=(label,kind)=>{
 <defs><linearGradient id="identity-band" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#006179"/><stop offset=".5" stop-color="#0b4a79"/><stop offset="1" stop-color="#006179"/></linearGradient></defs>
 <rect x="0" y="0" width="1200" height="82" fill="url(#identity-band)"/>
 <text x="600" y="56" font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle" stroke="#032d45" stroke-width="2" paint-order="stroke fill" fill="#fff04b">${esc(labelText)}</text>
+${kind==='daeri'? `<rect x="0" y="604" width="1200" height="116" fill="#eef7ff"/>
+<rect x="12" y="610" width="280" height="102" rx="12" fill="#0e518b"/><rect x="310" y="610" width="280" height="102" rx="12" fill="#087b8c"/><rect x="608" y="610" width="280" height="102" rx="12" fill="#16418b"/><rect x="906" y="610" width="280" height="102" rx="12" fill="#0d6288"/>
+<g font-family="sans-serif" font-size="26" font-weight="800" fill="#fff" text-anchor="middle"><text x="152" y="650">일반·심야</text><text x="152" y="686">대리운전</text><text x="450" y="650">장거리·예약</text><text x="450" y="686">대리운전</text><text x="748" y="650">골프장·일일기사</text><text x="748" y="686">왕복·대기 상담</text><text x="1046" y="650">법인·단체</text><text x="1046" y="686">대리운전</text></g>` : ''}
+<rect x="0" y="720" width="1200" height="80" fill="#092548"/>
+<text x="600" y="764" font-family="sans-serif" font-size="28" font-weight="900" fill="#fff" text-anchor="middle">${esc((place||'전국')+' '+(kind==='taksong'?'자동차탁송':'대리운전')+' 예약 상담 · '+phone)}</text>
+<text x="600" y="793" font-family="sans-serif" font-size="19" fill="#dbeafe" text-anchor="middle">지역별 기사 배정 및 확정 요금은 상담 후 확인 · 실제 운행 사진 아님</text>
 </svg>`;
  }
  const first=prefix+'스마트대리운전',second=prefix+'전국탁송';
