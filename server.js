@@ -1541,7 +1541,7 @@ if(pathname==='/api/region-card-preview'){
  const requested=u.searchParams.get('service');
  const blogIntent=regionalBlogKeywords.parse(normalizedKeyword);
  const visualTopic=keywordExpansion.resolve(query);
- const isSpecialVisual=visualTopic&&visualTopic.slug!=='general-daeri'&&visualTopic.slug!=='general-taksong';
+ const isSpecialVisual=visualTopic&&visualTopic.image.startsWith('/keyword-card/')&&visualTopic.slug!=='general-daeri'&&visualTopic.slug!=='general-taksong';
  const inferred=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':blogIntent?.kind||null;
  const kind=['daeri','taksong'].includes(requested)?requested:inferred;
  const locality=clean(blogIntent&&!isSpecialVisual?blogIntent.region:normalizedKeyword.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
@@ -1595,7 +1595,7 @@ if(pathname==='/region/'){
  const normalizedKeyword=keywordExpansion.normalizeCompanyKeyword(rawQuery);
  const blogIntent=regionalBlogKeywords.parse(normalizedKeyword);
  const visualTopic=keywordExpansion.resolve(rawQuery);
- const isSpecialVisual=visualTopic&&visualTopic.slug!=='general-daeri'&&visualTopic.slug!=='general-taksong';
+ const isSpecialVisual=visualTopic&&visualTopic.image.startsWith('/keyword-card/')&&visualTopic.slug!=='general-daeri'&&visualTopic.slug!=='general-taksong';
  const queryRegion=clean(blogIntent&&!isSpecialVisual?blogIntent.region:normalizedKeyword.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
  const searchPlace=queryRegion||rawQuery;
  const inferredService=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':blogIntent?.kind||null;
