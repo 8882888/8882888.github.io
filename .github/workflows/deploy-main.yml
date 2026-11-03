@@ -138,10 +138,12 @@ jobs:
             with urllib.request.urlopen(urllib.request.Request(url,headers={'Cache-Control':'no-cache'}),timeout=15) as response:
               page=response.read().decode('utf-8')
               landing=response.geturl()
-            hero='<body><figure id="original-mountain-fare-visual"'
+            table='<section id="mountain-route-fare-table-202611"'
+            poster='<figure id="original-mountain-fare-visual"'
             picture='/assets/'+mountain+'-taksong-original-fare.png'
-            if quote(route) not in landing or hero not in page or ('src="'+picture+'"') not in page:
-              raise SystemExit('Mobile mountain landing mismatch: '+keyword+' -> '+landing)
+            # Readable original fares must appear BEFORE the tall mobile poster.
+            if quote(route) not in landing or table not in page or poster not in page or page.index(table)>page.index(poster) or ('src="'+picture+'"') not in page:
+              raise SystemExit('Mountain fare-first mobile landing mismatch: '+keyword+' -> '+landing)
             image_req=urllib.request.Request(base+picture+'?release-check='+os.environ['DEPLOYED_COMMIT'],headers={'Cache-Control':'no-cache'})
             with urllib.request.urlopen(image_req,timeout=15) as image_response:
               if image_response.status!=200 or image_response.read(8)!=bytes.fromhex('89504e470d0a1a0a'):
