@@ -4,6 +4,7 @@ const ROOT=__dirname,PORT=Number(process.env.PORT||3000),BRAND='스마트전국�
 const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFileSync(__filename)).digest('hex');
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
+const keywordExpansion=require('./lib/keyword-card-expansion');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const load=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
 const baseRegions=load('data/regions.json').regions||[];
@@ -1208,7 +1209,7 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   if(html.includes('</body>')&&!/src=["']\/assets\/traffic-analytics\.js(?:\?[^"']*)?["']/.test(html)){
    html=html.replace('</body>','<script src="/assets/traffic-analytics.js?v=20261030-count-accuracy" defer></script></body>');
   }
-  body=html;
+  body=keywordExpansion.enhance(html,res._smartPath||'');
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
  // Explicit no-store on deployment diagnostics must survive the common HTML response writer.
@@ -1303,6 +1304,14 @@ const liveCardPublicData=(r,kind)=>({
 });
 let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
+res._smartPath=pathname;
+const keywordImageMatch=pathname.match(/^\/keyword-card\/([a-z0-9-]+)\.svg$/);
+if(keywordImageMatch){
+ const svg=keywordExpansion.svg(keywordImageMatch[1]);
+ if(!svg)return respond(res,404,'해당 키워드 이미지가 없습니다');
+ res.setHeader('cache-control','public, max-age=86400, immutable');
+ return respond(res,200,svg,'image/svg+xml; charset=utf-8');
+}
 // Public diagnostics for deployment freshness; reports source HTML only, not Naver indexing.
 if(pathname==='/health/seo.json'){
  res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
@@ -1474,8 +1483,11 @@ if(pathname==='/api/region-card-preview'){
   candidates=regions.filter(r=>compact(seoRegionBase(r)).startsWith(key)||compact(r.full_name).startsWith(key)).slice(0,8);
   status=candidates.length?'suggestions':'not_found';
  }
- const cards=region?(kind?[liveCardPublicData(region,kind)]:[liveCardPublicData(region,'daeri'),liveCardPublicData(region,'taksong')]):[];
- const destination=region?.full_name||null;
+ const topic=region?null:keywordExpansion.resolve(query);
+ if(topic&&exact.length===0){status='matched';candidates=[]}
+ const cards=region?(kind?[liveCardPublicData(region,kind)]:[liveCardPublicData(region,'daeri'),liveCardPublicData(region,'taksong')]):(topic&&(!kind||kind===topic.kind)?[keywordExpansion.preview(topic)]:[]);
+ const destination=region?.full_name||(topic?topic.label:null);
+ if(topic&&kind&&kind!==topic.kind)status='not_found';
  const data={status,query,locality:locality||query,service:kind,region:destination,
   cards,candidates:candidates.map(r=>({name:r.full_name,query:r.full_name,slug:r.slug})),
   source:'지역별 서비스 소개 이미지이며 실제 배차·운행완료를 의미하지 않습니다.'};
