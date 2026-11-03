@@ -21,7 +21,7 @@ def fetch(path):
     for attempt in range(2):
         try:
             with urllib.request.urlopen(req,timeout=25) as res:
-                return res.status,dict(res.headers),res.read()
+                return res.status,{k.lower(): v for k,v in res.headers.items()},res.read()
         except (urllib.error.URLError,TimeoutError):
             if attempt: raise
             time.sleep(0.4)
@@ -59,9 +59,9 @@ def check(item):
         route="/api/region-card-preview?q="+urllib.parse.quote(query)
         status,headers,body=fetch(route)
         if status!=200: raise AssertionError("HTTP "+str(status))
-        if "application/json" not in headers.get("Content-Type",""):
+        if "application/json" not in headers.get("content-type",""):
             raise AssertionError("Wrong content type")
-        if "noindex" not in headers.get("X-Robots-Tag","").lower():
+        if "noindex" not in headers.get("x-robots-tag","").lower():
             raise AssertionError("Card JSON unexpectedly indexable")
         data=json.loads(body)
         if data.get("status")!="matched" or data.get("region")!=area:
@@ -82,7 +82,7 @@ def check(item):
             raise AssertionError("Invalid consultation number")
         if number%10==0:
             s,h,png=fetch(image)
-            if s!=200 or "image/png" not in h.get("Content-Type","") or not png.startswith(b"\x89PNG\r\n\x1a\n"):
+            if s!=200 or "image/png" not in h.get("content-type","") or not png.startswith(b"\x89PNG\r\n\x1a\n"):
                 raise AssertionError("Actual rendered PNG unavailable")
             result["verified_image_bytes"]=len(png)
         result["image"]=image
