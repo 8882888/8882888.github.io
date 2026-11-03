@@ -96,7 +96,7 @@ function naverFocus50Guide(r,kind){
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
  const intro='<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
  const focusImage='/focus-card/'+r.slug+'-'+kind+'.svg';
- const focusVisual='<figure style="max-width:600px;margin:16px auto"><a href="'+focusImage+'" target="_blank" rel="noopener noreferrer"><img src="'+focusImage+'" width="1200" height="800" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px" alt="'+esc(info.keyword)+' 키워드가 표시된 지역 맞춤 안내 명함, 상담 1811-4294"></a><figcaption>검색어별 안내 이미지 · 실제 운행사진이나 지역 지점 표시가 아닙니다.</figcaption></figure>';
+ const focusVisual='<figure style="max-width:600px;margin:16px auto"><a href="'+focusImage+'" target="_blank" rel="noopener noreferrer"><img src="'+focusImage+'" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px" alt="'+esc(info.keyword)+' 키워드가 표시된 지역 맞춤 안내 명함, 상담 1811-4294"></a><figcaption>검색어별 안내 이미지 · 실제 운행사진이나 지역 지점 표시가 아닙니다.</figcaption></figure>';
  return '<section id="naver-focus50-local-guide" aria-label="'+esc(name+' '+kindLabel)+' 지역 상황별 실제 이용 안내">'+
   '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+focusVisual+
   '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+
