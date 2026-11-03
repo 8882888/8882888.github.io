@@ -1249,6 +1249,33 @@ const dynamicBlogSections=[
 const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',rideHighlights:blogRideHighlights,dynamicSections:dynamicBlogSections});
 const blogArchive=require('./lib/blog-archive');
 const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout,servicePath,label:seoRegionLabel,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',historicalRides});
+// Exact locality lookup for responsive, in-page business-card previews.
+// Only public administrative names are indexed. Ambiguous homonyms are never auto-selected.
+const liveCardAliases=new Map();
+for(const r of regions){
+ const province=regionAncestors(r)[0];
+ const names=new Set([r.full_name,r.name,seoRegionBase(r),seoRegionLabel(r),...regionAliases(r)]);
+ if(province&&province!==r){
+  names.add((provinceSeoLabels[province.name]||shortPlace(province.name))+r.name);
+ }
+ for(const name of names){
+  const key=compact(name);
+  if(key.length<2||key.length>80)continue;
+  let list=liveCardAliases.get(key);
+  if(!list){list=[];liveCardAliases.set(key,list)}
+  if(!list.some(x=>x.slug===r.slug))list.push(r);
+ }
+}
+const liveCardLabel=(r,kind)=>seoRegionLabel(r)+(kind==='daeri'?'스마트대리운전':'전국탁송');
+const liveCardPublicData=(r,kind)=>({
+ kind,label:liveCardLabel(r,kind),
+ image:cardPngPath(r.slug,kind),
+ url:servicePath(r,kind),
+ phone:kind==='taksong'&&r.full_name==='제주특별자치도'?'1877-5245':PHONE,
+ description:kind==='daeri'
+  ?'고객 차량을 대신 운전하는 일반·심야·장거리·골프장 대리운전입니다. 출발시간과 기사 복귀 조건을 상담 후 확인합니다.'
+  :'고객 차량을 인수해 목적지까지 이동·인계하는 자동차탁송입니다. 기존 안내요금은 현재 확정 견적이 아닙니다.'
+});
 let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 // Public diagnostics for deployment freshness; reports source HTML only, not Naver indexing.
@@ -1407,6 +1434,30 @@ const driverTravelMatch=pathname.match(/^\/daeri\/travel\/([a-z-]+)\/?$/);
 if(driverTravelMatch){const canonical='/daeri/travel/'+driverTravelMatch[1]+'/';if(pathname!==canonical){res.writeHead(301,{location:canonical});return res.end()};const article=daeriTravelGuides.page(driverTravelMatch[1],{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});return respond(res,article?200:404,article||'대리운전 지역 여행 안내를 찾을 수 없습니다.')}
 if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return res.end()}
 if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
+if(pathname==='/api/region-card-preview'){
+ const query=clean(u.searchParams.get('q')||'');
+ const requested=u.searchParams.get('service');
+ const inferred=/대리운전$|대리$/.test(compact(query))?'daeri':/(?:자동차|차량)?탁송$/.test(compact(query))?'taksong':null;
+ const kind=['daeri','taksong'].includes(requested)?requested:inferred;
+ const locality=clean(query.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
+ const key=compact(locality||query);
+ const exact=(key.length>=2?liveCardAliases.get(key)||[]:[]).slice().sort((a,b)=>a.full_name.length-b.full_name.length||a.full_name.localeCompare(b.full_name,'ko'));
+ let status='not_found',region=null,candidates=[];
+ if(exact.length===1){status='matched';region=exact[0]}
+ else if(exact.length>1){status='ambiguous';candidates=exact.slice(0,10)}
+ else if(key.length>=2){
+  candidates=regions.filter(r=>compact(seoRegionBase(r)).startsWith(key)||compact(r.full_name).startsWith(key)).slice(0,8);
+  status=candidates.length?'suggestions':'not_found';
+ }
+ const cards=region?(kind?[liveCardPublicData(region,kind)]:[liveCardPublicData(region,'daeri'),liveCardPublicData(region,'taksong')]):[];
+ const destination=region?.full_name||null;
+ const data={status,query,locality:locality||query,service:kind,region:destination,
+  cards,candidates:candidates.map(r=>({name:r.full_name,query:r.full_name,slug:r.slug})),
+  source:'지역별 서비스 소개 이미지이며 실제 배차·운행완료를 의미하지 않습니다.'};
+ res.setHeader('cache-control','private, no-store, max-age=0');
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ return respond(res,200,JSON.stringify(data),'application/json; charset=utf-8');
+}
 if(pathname==='/region'){res.writeHead(301,{location:'/region/'+u.search});return res.end()}
 if(pathname==='/region/'){
  const rawQuery=clean(u.searchParams.get('q')||'');
