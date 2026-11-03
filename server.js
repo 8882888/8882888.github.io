@@ -1423,7 +1423,7 @@ if(pathname==='/region/'){
  const exactMatches=q?matches.filter(r=>compact(seoRegionBase(r))===compact(q)||compact(r.full_name)===compact(q)):[];
  // 광주 is shared by 광주광역시 and 경기도 광주시. Do not silently
  // expand one candidate when an unqualified place name is ambiguous.
- const homonymMatches=q?regions.filter(r=>compact(shortPlace(r.name))===compact(q)):[];
+ const homonymMatches=q?regions.filter(r=>['시도','시','군','구'].includes(r.level)&&compact(shortPlace(r.name))===compact(q)):[];
  const exactPreviewSlug=homonymMatches.length===1&&matches.some(r=>r.slug===homonymMatches[0].slug)
   ?homonymMatches[0].slug
   :(homonymMatches.length===0&&exactMatches.length===1?exactMatches[0].slug:null);
