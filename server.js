@@ -368,8 +368,13 @@ const regionalCardWebps=new Map();
 function regionalCardWebp(r,kind){
  const key=r.slug+'-'+kind;
  if(regionalCardWebps.has(key))return regionalCardWebps.get(key);
- const render=regionalCardPng(r,kind)
-  .then(png=>require('sharp')(png).resize({width:800,withoutEnlargement:true}).webp({quality:78,effort:4}).toBuffer())
+ // Render the on-screen WebP directly.  Previously each preview waited for a
+ // full 1200px PNG encode and a second WebP encode, delaying mobile cards.
+ // The original PNG route remains untouched for zoom and social previews.
+ const overlay=cardSvg(seoRegionLabel(r),kind).replace(/<image[^>]+\\/>/,'');
+ const render=require('sharp')(serviceCardArt[kind])
+  .composite([{input:Buffer.from(overlay),left:0,top:0}])
+  .webp({quality:78,effort:2}).toBuffer()
   .catch(err=>{regionalCardWebps.delete(key);throw err});
  regionalCardWebps.set(key,render);
  if(regionalCardWebps.size>64)regionalCardWebps.delete(regionalCardWebps.keys().next().value);
@@ -858,7 +863,7 @@ async function servicePage(r,kind){
  const regionImagePath=cardPngPath(r.slug,kind);
  const imageUrl=regionImagePath?'https://'+host+regionImagePath:null;
  const displayBrand=seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전');
- const card=regionImagePath?'<figure class="regional-responsive-card" style="width:100%;max-width:700px;margin:16px auto;text-align:center"><a href="'+regionImagePath+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(name)+' '+service+' 지역명 맞춤 명함 이미지 크게 보기"><img src="'+regionImagePath+'" alt="'+esc(displayBrand)+' 지역명 맞춤 명함 · 안내용 그래픽 · 상담 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" style="display:block;width:100%;max-width:100%;height:auto;border-radius:12px"></a></figure>':'';
+ const card=regionImagePath?'<figure class="regional-responsive-card" style="width:100%;max-width:700px;margin:16px auto;text-align:center"><a href="'+regionImagePath+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(name)+' '+service+' 지역명 맞춤 명함 이미지 크게 보기"><picture><source type="image/webp" srcset="'+cardPreviewWebpPath(r.slug,kind)+'"><img src="'+regionImagePath+'" alt="'+esc(displayBrand)+' 지역명 맞춤 명함 · 안내용 그래픽 · 상담 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" style="display:block;width:100%;max-width:100%;height:auto;border-radius:12px"></picture></a></figure>':'';
  const pageUrl='https://'+host+servicePath(r,kind);
  const imageId=imageUrl+'#image';
  const imageData=JSON.stringify({'@context':'https://schema.org','@graph':[{'@type':'WebPage','@id':pageUrl,url:pageUrl,name:focusedTitle,breadcrumb:{'@id':pageUrl+'#breadcrumb'},...(imageUrl?{primaryImageOfPage:{'@id':imageId}}:{})},...(imageUrl?[{'@type':'ImageObject','@id':imageId,contentUrl:imageUrl,url:imageUrl,name:displayBrand+' 지역별 대표 이미지',caption:displayBrand+' 대표전화 '+PHONE,width:1200,height:800,encodingFormat:'image/png'}]:[]),{'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}]}).replace(/</g,'\\u003c');

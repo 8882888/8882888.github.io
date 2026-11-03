@@ -45,3 +45,12 @@ jobs:
           name: smart24-live-locality-100
           path: /tmp/smart24-live-locality-100.json
           if-no-files-found: warn
+      - name: Audit 50 priority SEO and mobile image pages
+        run: python tools/audit_live_seo_mobile_50.py
+      - name: Preserve 50-page SEO and mobile audit findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-live-seo-mobile-50
+          path: /tmp/smart24-live-seo-mobile-50.json
+          if-no-files-found: warn
