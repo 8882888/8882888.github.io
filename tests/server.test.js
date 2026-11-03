@@ -179,9 +179,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   ]){
    const response=await get(url),html=await response.text();
    assert.equal(response.status,200,'mountain canonical page loads: '+url);
-   assert.ok(html.indexOf('<header')<html.indexOf('<section id="mountain-route-fare-table-202611"')&&
-    html.indexOf('<section id="mountain-route-fare-table-202611"')<html.indexOf('<figure id="original-mountain-fare-visual"'),
-    'readable historic fare table and header must precede large mountain image: '+url);
+   assert.ok(html.includes('<body><figure id="original-mountain-fare-visual"')&&
+    html.indexOf('<figure id="original-mountain-fare-visual"')<html.indexOf('<section id="mountain-route-fare-table-202611"')&&
+    html.indexOf('<section id="mountain-route-fare-table-202611"')<html.indexOf('id="mountain-complete-course-guide-20261102"'),
+    'original mountain fare poster should be visually first, readable HTML fares before long guide: '+url);
    const a=html.indexOf('id="mountain-route-fare-table-202611"');
    assert.ok(a>0&&a<html.indexOf('id="mountain-complete-course-guide-20261102"'),
     'readable existing fare table precedes long route guide: '+url);
@@ -190,6 +191,29 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('id="'+requiredSource+'"'),'actual sourced route guidance preserved: '+url);
    assert.ok(html.includes('href="tel:18114294"'),'mountain consultation button works: '+url);
    assert.ok((html.match(/<h2\b/g)||[]).length<=12,'repetitive mountain sections consolidated: '+url);
+  }
+  // A Naver/crawler view of a cycle course must not borrow a Gangneung
+  // driver business card: all six courses need their own topical image.
+  const cycleAreas=[
+    ['yeongsan','영산강길'],['seomjin','섬진강길'],['eastcoast','동해안길'],
+    ['geumgang','금강길'],['ocheon','오천길'],['nakdonggang','낙동강길']
+  ];
+  for(const [id,label] of cycleAreas){
+    const route='/route-taksong/courses/'+id+'/',pic='/assets/cycling-routes/'+id+'-taksong.svg';
+    const res=await get(route),page=await res.text();
+    assert.equal(res.status,200,'cycling canonical: '+route);
+    assert(page.includes('property="og:image" content="https://jeongukdaeri.kr'+pic+'"'),'course og:image is missing '+route);
+    assert(page.includes('src="'+pic+'"')&&page.includes(label+'자전거종주탁송'),'course picture is not topical '+route);
+    assert(page.includes('primaryImageOfPage')&&page.includes(pic),'course structured image absent '+route);
+    assert(!page.includes('src="/assets/smart24-business-card-inline.webp"'),'wrong common business card: '+route);
+    const image=await get(pic);
+    assert.equal(image.status,200,'course picture not served '+pic);
+    assert.match(image.headers.get('content-type')||'',/image\/svg\+xml/,'SVG MIME absent '+pic);
+  }
+  for(const hub of ['/route-taksong/','/special/cycling-trail-transport/']){
+    const page=await (await get(hub)).text();
+    assert(page.includes('national-cycling-true-topic-image'),'national topic picture missing '+hub);
+    assert(!page.includes('src="/assets/smart24-business-card-inline.webp"'),'misleading generic business card still appears '+hub);
   }
   for(const loc of ['/taksong/busan/','/taksong/daegu/','/taksong/gyeongnam/changwon-si/']){
    const response=await get(loc),html=await response.text();
@@ -757,7 +781,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(result.status,200,'search redirects to dedicated page: '+keyword);
     assert.ok(decodeURIComponent(result.url).includes('/'+(mountain==='seoraksan'?'설악산탁송':'지리산탁송')+'/'),'no generic homepage for mountain keyword: '+keyword);
     const body=await result.text();
-    assert.ok(body.startsWith('<!doctype html>')&&body.includes('<body><header')&&body.indexOf('<section id="mountain-route-fare-table-202611"')<body.indexOf('<figure id="original-mountain-fare-visual"'),'mountain original fares precede large visual: '+keyword);
+    assert.ok(body.startsWith('<!doctype html>')&&body.includes('<body><figure id="original-mountain-fare-visual"')&&body.includes('id="mountain-route-fare-table-202611"'),'mountain original poster and fares are both visible: '+keyword);
     assert.ok(body.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct mountain PNG: '+keyword);
     assert.ok(!body.includes('id="mobile-direct-image-priority"'),'no homepage Smart24 hero: '+keyword);
   }
@@ -768,7 +792,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     const seo=await get('/'+encodeURIComponent(segment)+'/');
     assert.equal(seo.status,200,'Korean keyword URL resolves');
     const html=await seo.text();
-    assert.ok(html.includes('<body><header')&&html.indexOf('<section id="mountain-route-fare-table-202611"')<html.indexOf('<figure id="original-mountain-fare-visual"'),'Korean keyword URL shows visible fare table before large poster');
+    assert.ok(html.includes('<body><figure id="original-mountain-fare-visual"')&&html.includes('id="mountain-route-fare-table-202611"'),'Korean keyword URL leads with original fare poster and preserves readable fares');
     assert.ok(html.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct original mountain fare image');
     assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr/'+segment+'/"'),'Korean URL is canonical');
   }

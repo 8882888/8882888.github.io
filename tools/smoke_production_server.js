@@ -50,9 +50,22 @@ async function main(){
     assert.equal(r.status,200,route+' must open');
     const fareAt=r.body.indexOf('<section id="'+tableId+'"');
     const imageAt=r.body.indexOf('<figure id="'+imageId+'"');
-    assert(fareAt>0&&imageAt>fareAt,'fare table should precede the large image: '+route);
+    if(route.includes('탁송/')){
+      assert(imageAt>0&&fareAt>imageAt,'original mountain fare image must be the first visual: '+route);
+      assert(imageAt<r.body.indexOf('<header'),'mountain visual is buried below menu: '+route);
+    }else assert(fareAt>0&&imageAt>fareAt,'cycling fare table should be before banner: '+route);
     assert(r.body.includes('<table')&&r.body.includes('만원'),'real historical fare table missing: '+route);
     assert(r.body.includes('https://jeongukdaeri.kr'+route),'canonical URL missing: '+route);
+  }
+  for(const [id,label] of [['yeongsan','영산강길'],['seomjin','섬진강길'],['eastcoast','동해안길'],['geumgang','금강길'],['ocheon','오천길'],['nakdonggang','낙동강길']]){
+    const route='/route-taksong/courses/'+id+'/',pic='/assets/cycling-routes/'+id+'-taksong.svg';
+    const page=await request(port,route);
+    assert.equal(page.status,200,'cycling course route '+route);
+    assert(page.body.includes('property="og:image" content="https://jeongukdaeri.kr'+pic+'"'),'bad course primary image '+route);
+    assert(page.body.includes('src="'+pic+'"')&&page.body.includes(label+'자전거종주탁송'),'missing contextual image '+route);
+    const image=await request(port,pic);
+    assert.equal(image.status,200,'cycling illustration missing '+pic);
+    assert.equal(image.headers['content-type'],'image/svg+xml','wrong cycling illustration MIME '+pic);
   }
   const cycleHub=await request(port,'/route-taksong/');
   assert.equal(cycleHub.status,200);

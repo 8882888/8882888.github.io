@@ -57,6 +57,10 @@ FARE_VISUAL_ROUTES = {
 for route, (fare_id, visual_id) in FARE_VISUAL_ROUTES.items():
     PATHS[route] = fare_id
 
+CYCLING_COURSE_IDS = ("yeongsan", "seomjin", "eastcoast", "geumgang", "ocheon", "nakdonggang")
+for course_id in CYCLING_COURSE_IDS:
+    PATHS["/route-taksong/courses/" + course_id + "/"] = "cycling-course-primary-visual"
+
 JOURNEY_PLANS = {x["path"]: x for x in json.loads(Path("data/region-journey-links.json").read_text(encoding="utf-8"))["pages"]}
 JOURNEY_KEYWORDS = {
     "/taksong/busan/": "부산탁송",
@@ -204,12 +208,24 @@ def run():
                 visual_pos = body.find('<figure id="' + visual_id + '"') if visual_id else 999999999
                 if fare_pos < 0 or not re.search(r'<table\b', body):
                     errors.append("historical fare table not available on page")
-                elif visual_id and (visual_pos < 0 or fare_pos > visual_pos):
-                    errors.append("large picture hides fare table on first screen")
+                elif visual_id and path in ("/설악산탁송/", "/지리산탁송/") and (visual_pos < 0 or visual_pos > fare_pos or visual_pos > body.find("<header")):
+                    errors.append("original mountain fare poster is not the first visual")
+                elif visual_id and path == "/special/cycling-trail-transport/" and (visual_pos < 0 or fare_pos > visual_pos):
+                    errors.append("cycling fare table is hidden by a large banner")
                 if not re.search(r'<img\b[^>]*src="/assets/', body):
                     errors.append("visible photo/image missing from restored guide")
                 if path == "/route-taksong/" and "생활체육공원 → 배알도" not in body:
                     errors.append("cycling hub lacks route-specific historical quote")
+            if path.startswith("/route-taksong/courses/"):
+                course_id = path.strip("/").split("/")[-1]
+                picture = "/assets/cycling-routes/" + course_id + "-taksong.svg"
+                if 'src="' + picture + '"' not in body or 'property="og:image" content="' + BASE + picture + '"' not in body:
+                    errors.append("course-specific image and OG metadata missing")
+                if 'src="/assets/smart24-business-card-inline.webp"' in body:
+                    errors.append("misleading business card image on cycling course")
+            if path in ("/route-taksong/", "/special/cycling-trail-transport/"):
+                if "national-cycling-true-topic-image" not in body or 'src="/assets/smart24-business-card-inline.webp"' in body:
+                    errors.append("cycling hub retains common business card or lacks topical image")
             if path == "/" and 'id="mountain-cycling-fare-first-20261103"' not in body:
                 errors.append("first-screen mountain/cycling fare and image panel missing")
             if path != "/health/seo-report/":
@@ -348,6 +364,27 @@ def run():
         detail = "; ".join(errors) if errors else "accessible, expected content present"
         print(f"{result}: {path} — {detail}")
         rows.append((path, status, result, detail))
+
+    # Six purpose-specific cycling graphics plus the nationwide hub image.
+    for slug in list(CYCLING_COURSE_IDS) + ["nationwide"]:
+        path = "/assets/cycling-routes/" + slug + "-taksong.svg"
+        errors = []
+        status = "-"
+        try:
+            req = urllib.request.Request(BASE + path, headers=HEADERS)
+            with urllib.request.urlopen(req, timeout=22) as response:
+                status = response.status
+                image_bytes = response.read()
+                if status != 200 or "image/svg+xml" not in response.headers.get("Content-Type", "") or b"<svg " not in image_bytes:
+                    errors.append("cycling image is not valid SVG response")
+                if b"1811-4294" not in image_bytes:
+                    errors.append("graphic lacks official contact")
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:120])
+        result = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        print(f"{result}: {path} — " + ("; ".join(errors) if errors else "topical cycling picture delivered"))
+        rows.append((path, status, result, "; ".join(errors) if errors else "topical cycling illustration and MIME delivered"))
 
     # Live images are checked as bytes, not just as HTML filenames.
     asset_probes = {
