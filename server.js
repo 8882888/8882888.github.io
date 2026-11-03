@@ -1209,6 +1209,7 @@ const dynamicBlogSections=[
 const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',rideHighlights:blogRideHighlights,dynamicSections:dynamicBlogSections});
 const blogArchive=require('./lib/blog-archive');
 const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout,servicePath,label:seoRegionLabel,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',historicalRides});
+let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 // Public diagnostics for deployment freshness; reports source HTML only, not Naver indexing.
 if(pathname==='/health/seo.json'){
@@ -1273,16 +1274,9 @@ const recruitmentMatch=pathname.match(/^\/recruit\/(taksong|daeri)(?:\/([a-z0-9-
 if(recruitmentMatch){const region=recruitmentMatch[2]?bySlug.get(recruitmentMatch[2]):null;if(recruitmentMatch[2]&&(!region||region.level!=='시도'))return respond(res,404,'모집 지역을 찾을 수 없습니다.');if(!pathname.endsWith('/')){res.writeHead(301,{location:pathname+'/'+u.search});return res.end()}return respond(res,200,recruitmentPage(recruitmentMatch[1],region))}
 if(pathname==='/taksongdaeri/'||pathname==='/taksongdaeri'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const guideSchema={'@context':'https://schema.org','@type':'WebPage',name:'전국 자동차탁송·대리운전 예약 안내',url:base+'/taksongdaeri/',description:'전국 자동차탁송·대리운전 예약과 예상요금, 산간·오지·항구의 사전 예약 안내',isPartOf:{'@type':'WebSite',name:'스마트24 전국대리운전·24시탁송',url:base+'/'}};const body='<script type="application/ld+json">'+JSON.stringify(guideSchema)+'</script><h1>전국 자동차탁송·대리운전 예약 안내</h1><p>스마트24는 전국 자동차탁송과 대리운전 예약 상담을 안내합니다. 출발지와 도착지에 따른 예상요금은 도로거리 확인 후 산출하며 실제 배차요금은 기사 수급과 운행 조건에 따라 달라집니다.</p><section><h2>서비스 선택</h2><p><a href="/taksong/">전국 자동차탁송 지역별 안내</a> · <a href="/daeri/">전국 대리운전 지역별 안내</a> · <a href="/fare/">출발지·도착지 예상요금 조회</a></p></section><section><h2>산간·오지·항구 사전 예약</h2><p>산간마을, 오지, 항구·여객선터미널, 관광지와 등산로 입구는 기사 접근·복귀가 어려울 수 있습니다. 당일 또는 심야 긴급 호출은 사전 예약보다 요금이 높아지거나 배차가 지연될 수 있습니다. 실제 추가비용과 배차 가능 여부는 상담 후 확정합니다.</p><p><a href="tel:18114294">예약 상담 1811-4294</a></p></section>';const bookingOriginalGuide=(fs.readFileSync(path.join(ROOT,'taksongdaeri','index.html'),'utf8').match(/<section id="booking-original-ref">[\s\S]*?<\/section>/)||[])[0]||'';return respond(res,200,layout('전국 자동차탁송·대리운전 예약 | 스마트24','전국 자동차탁송·대리운전 지역별 서비스, 예상요금 및 산간·오지·항구 사전 예약 안내',body+bookingOriginalGuide,base+'/taksongdaeri/',base+'/assets/smart24-business-card-inline-v2.png'))}
 if(pathname==='/favicon.ico'){
- if(!faviconPngPromise){
-  // Render from a bundled SVG, not from an expensive dynamically generated business card.
-  faviconPngPromise=require('sharp')(fs.readFileSync(path.join(ROOT,'assets/smart24-business-card.svg'))).resize(64,64,{fit:'contain',background:'#ffffff'}).png().toBuffer().catch(()=>null);
- }
- return faviconPngPromise.then(buf=>{
-  if(buf){res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});return res.end(buf)}
-  // Keep favicon.ico a real icon even if the SVG-to-PNG renderer is unavailable.
-  const fallback=fs.readFileSync(path.join(ROOT,'favicon.ico'));
-  res.writeHead(200,{'content-type':'image/x-icon','cache-control':'public, max-age=3600','x-content-type-options':'nosniff'});res.end(fallback);
- });
+ // Serve the bundled icon instead of rendering Sharp PNG on first page load.
+ res.writeHead(200,{'content-type':'image/x-icon','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});
+ return fs.createReadStream(path.join(ROOT,'favicon.ico')).on('error',()=>res.destroy()).pipe(res);
 }
 const hubCardMatch=pathname.match(/^\/assets\/smart24-(daeri|taksong)-brand\.png$/);
 if(hubCardMatch)return regionalCardPng({slug:'national-'+hubCardMatch[1],full_name:null},hubCardMatch[1]).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'));
@@ -1347,7 +1341,7 @@ const mountainRedirect= (pathname==='/'||pathname==='/index.html'||pathname==='/
 if(mountainRedirect){res.writeHead(302,{location:encodeURI(mountainRedirect),'cache-control':'no-store','vary':'Accept-Encoding'});return res.end();}
 const regionalRedirect=(pathname==='/'||pathname==='/index.html')?regionalTaksongTarget(explicitMountainKeyword):null;
 if(regionalRedirect){res.writeHead(302,{location:regionalRedirect,'cache-control':'no-store'});return res.end();}
-if(pathname==='/'||pathname==='/index.html'){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');return respond(res,200,applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/'))}
+if(pathname==='/'||pathname==='/index.html'){if(!cachedHomepageHtml){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');cachedHomepageHtml=applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/');}return respond(res,200,cachedHomepageHtml)}
 // Redirect regional search clicks to a single service-specific, image-first landing page.
 if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
  const region=String(u.searchParams.get('region')||'').trim(),parent=String(u.searchParams.get('parent')||'').trim();
@@ -1511,5 +1505,23 @@ if(match){
  return respond(res,404,'지역 정보를 찾을 수 없습니다.');
 }
 if(/^\/(?:data(?:\/|$)|server\.js|package(?:-lock)?\.json|HOSTING_SETUP\.md|tests\/|\.github\/|node_modules\/|\.env)/i.test(pathname))return respond(res,403,'접근 불가');
-let p=path.resolve(ROOT,'.'+pathname);if(!p.startsWith(ROOT+path.sep)&&p!==ROOT)return respond(res,403,'접근 불가');try{if(fs.statSync(p).isDirectory())p=path.join(p,'index.html');const ext=path.extname(p).toLowerCase();const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.ico':'image/x-icon'};if(!types[ext])return respond(res,403,'허용되지 않는 형식');return respond(res,200,fs.readFileSync(p),types[ext])}catch{return respond(res,404,'페이지를 찾을 수 없습니다')}
+let p=path.resolve(ROOT,'.'+pathname);
+if(!p.startsWith(ROOT+path.sep)&&p!==ROOT)return respond(res,403,'접근 불가');
+try{
+ if(fs.statSync(p).isDirectory())p=path.join(p,'index.html');
+ const ext=path.extname(p).toLowerCase();
+ const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.ico':'image/x-icon'};
+ if(!types[ext])return respond(res,403,'허용되지 않는 형식');
+ if(['.html','.json','.xml','.txt'].includes(ext)){
+  return fs.readFile(p,(error,data)=>error?respond(res,404,'페이지를 찾을 수 없습니다'):respond(res,200,data,types[ext]));
+ }
+ // Images, CSS and JavaScript need cache validation and nonblocking streaming.
+ // Previously every asset used synchronous readFileSync on the single Node event loop.
+ const stat=fs.statSync(p),etag='"'+stat.size.toString(16)+'-'+Math.round(stat.mtimeMs).toString(16)+'"';
+ const headers={'content-type':types[ext],'cache-control':'public, max-age=3600, must-revalidate','etag':etag,'x-content-type-options':'nosniff'};
+ if(req.headers['if-none-match']===etag){res.writeHead(304,headers);return res.end()}
+ res.writeHead(200,{...headers,'content-length':stat.size});
+ if(req.method==='HEAD')return res.end();
+ return fs.createReadStream(p).on('error',()=>res.destroy()).pipe(res);
+}catch{return respond(res,404,'페이지를 찾을 수 없습니다')}
 }).listen(PORT,'0.0.0.0',()=>console.log('Dynamic website listening on '+PORT));

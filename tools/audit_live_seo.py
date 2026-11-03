@@ -47,6 +47,15 @@ BLOG_HASHTAG_ARTICLES = {
 for route in BLOG_HASHTAG_ARTICLES:
     PATHS[route] = "blog-local-hashtags-30"
 
+FARE_VISUAL_ROUTES = {
+    "/설악산탁송/": ("mountain-route-fare-table-202611", "original-mountain-fare-visual"),
+    "/지리산탁송/": ("mountain-route-fare-table-202611", "original-mountain-fare-visual"),
+    "/special/cycling-trail-transport/": ("cycling-route-fare-table-202611", "keyword-image-first-202611"),
+    "/route-taksong/": ("cycling-visible-fare-table-20261103", None),
+}
+for route, (fare_id, visual_id) in FARE_VISUAL_ROUTES.items():
+    PATHS[route] = fare_id
+
 JOURNEY_PLANS = {x["path"]: x for x in json.loads(Path("data/region-journey-links.json").read_text(encoding="utf-8"))["pages"]}
 JOURNEY_KEYWORDS = {
     "/taksong/busan/": "부산탁송",
@@ -188,6 +197,20 @@ def run():
                 errors.append("Incheon Songdo incorrectly grouped into Gwangju facilities")
             if path == "/daeri/gwangju/" and re.search(r"<h3>광주시\s*(?:쌍동리|초월읍|곤지암읍)", body):
                 errors.append("Gyeonggi Gwangju-si ride wrongly displayed as Gwangju Metropolitan City evidence")
+            if path in FARE_VISUAL_ROUTES:
+                fare_id, visual_id = FARE_VISUAL_ROUTES[path]
+                fare_pos = body.find('<section id="' + fare_id + '"')
+                visual_pos = body.find('<figure id="' + visual_id + '"') if visual_id else 999999999
+                if fare_pos < 0 or not re.search(r'<table\b', body):
+                    errors.append("historical fare table not available on page")
+                elif visual_id and (visual_pos < 0 or fare_pos > visual_pos):
+                    errors.append("large picture hides fare table on first screen")
+                if not re.search(r'<img\b[^>]*src="/assets/', body):
+                    errors.append("visible photo/image missing from restored guide")
+                if path == "/route-taksong/" and "생활체육공원 → 배알도" not in body:
+                    errors.append("cycling hub lacks route-specific historical quote")
+            if path == "/" and 'id="mountain-cycling-fare-first-20261103"' not in body:
+                errors.append("first-screen mountain/cycling fare and image panel missing")
             if path != "/health/seo-report/":
                 if parser.canonical_count != 1:
                     errors.append(f"expected exactly one canonical, got {parser.canonical_count}")
@@ -322,6 +345,36 @@ def run():
         result = "PASS" if not errors else "FAIL"
         failures += bool(errors)
         detail = "; ".join(errors) if errors else "accessible, expected content present"
+        print(f"{result}: {path} — {detail}")
+        rows.append((path, status, result, detail))
+
+    # Live images are checked as bytes, not just as HTML filenames.
+    asset_probes = {
+        "/assets/seoraksan-taksong-original-fare.png": "image/png",
+        "/assets/jirisan-taksong-original-fare.png": "image/png",
+        "/assets/smart24-taksong-brand.webp": "image/webp",
+        "/assets/smart24-business-card-inline.webp": "image/webp",
+    }
+    for path, expected_type in asset_probes.items():
+        errors = []
+        status = "-"
+        try:
+            request = urllib.request.Request(BASE + path, headers=HEADERS)
+            with urllib.request.urlopen(request, timeout=22) as response:
+                status = response.status
+                content_type = response.headers.get("Content-Type", "").split(";")[0]
+                cache_control = response.headers.get("Cache-Control", "")
+                etag = response.headers.get("ETag", "")
+                sample = response.read(64)
+                if status != 200 or content_type != expected_type or not sample:
+                    errors.append("image failed: HTTP/content type/empty response")
+                if "max-age=3600" not in cache_control or not etag:
+                    errors.append("image cache validation headers missing")
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:125])
+        result = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        detail = "; ".join(errors) if errors else "live image delivered with caching and ETag"
         print(f"{result}: {path} — {detail}")
         rows.append((path, status, result, detail))
 

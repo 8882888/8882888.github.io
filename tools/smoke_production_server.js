@@ -14,9 +14,9 @@ function freePort(){
   s.listen(0,'127.0.0.1',()=>{const port=s.address().port;s.close(()=>resolve(port))});
  });
 }
-function request(port,pathname){
+function request(port,pathname,extraHeaders={}){
  return new Promise((resolve,reject)=>{
-  const req=http.get({host:'127.0.0.1',port,path:pathname,timeout:15000},res=>{
+  const req=http.get({host:'127.0.0.1',port,path:pathname,timeout:15000,headers:extraHeaders},res=>{
    const parts=[];
    res.on('data',chunk=>parts.push(chunk));
    res.on('end',()=>resolve({status:res.statusCode,headers:res.headers,body:Buffer.concat(parts).toString('utf8')}));
@@ -40,6 +40,42 @@ async function main(){
    await new Promise(resolve=>setTimeout(resolve,350));
   }
   assert(healthy,'Node server failed to start with nationwide region data; output: '+logs.slice(-5000));
+  // Regression: show the three most important historical fare tables before long prose.
+  for(const [route,tableId,imageId] of [
+    ['/설악산탁송/','mountain-route-fare-table-202611','original-mountain-fare-visual'],
+    ['/지리산탁송/','mountain-route-fare-table-202611','original-mountain-fare-visual'],
+    ['/special/cycling-trail-transport/','cycling-route-fare-table-202611','keyword-image-first-202611']
+  ]){
+    const r=await request(port,encodeURI(route));
+    assert.equal(r.status,200,route+' must open');
+    const fareAt=r.body.indexOf('<section id="'+tableId+'"');
+    const imageAt=r.body.indexOf('<figure id="'+imageId+'"');
+    assert(fareAt>0&&imageAt>fareAt,'fare table should precede the large image: '+route);
+    assert(r.body.includes('<table')&&r.body.includes('만원'),'real historical fare table missing: '+route);
+    assert(r.body.includes('https://jeongukdaeri.kr'+route),'canonical URL missing: '+route);
+  }
+  const cycleHub=await request(port,'/route-taksong/');
+  assert.equal(cycleHub.status,200);
+  assert(cycleHub.body.includes('id="cycling-visible-fare-table-20261103"'),'cycling hub lost its visible fare table');
+  assert(cycleHub.body.includes('생활체육공원 → 배알도'),'cycling price table missing a verified route');
+  const warmAt=Date.now(),homePage=await request(port,'/');
+  const warmMs=Date.now()-warmAt;
+  assert.equal(homePage.status,200,'homepage must open');
+  assert(homePage.body.includes('id="mountain-cycling-fare-first-20261103"'),'homepage first-screen fare links missing');
+  assert(homePage.body.indexOf('id="mountain-cycling-fare-first-20261103"')<12000,'fare/image links buried below long text');
+  for(const path of ['/assets/seoraksan-taksong-original-fare.png','/assets/jirisan-taksong-original-fare.png','/assets/smart24-taksong-brand.webp','/assets/smart24-business-card-inline.webp']){
+    const img=await request(port,path);
+    assert.equal(img.status,200,'image asset HTTP failed: '+path);
+    assert(/^image\//.test(img.headers['content-type']||''),'image MIME missing: '+path);
+    assert((img.headers['cache-control']||'').includes('max-age=3600'),'image caching missing: '+path);
+    assert((Number(img.headers['content-length'])||0)>10000,'image asset too small or empty: '+path);
+    const cached=await request(port,path,{'If-None-Match':img.headers.etag});
+    assert.equal(cached.status,304,'image ETag revalidation failed: '+path);
+  }
+  const favicon=await request(port,'/favicon.ico');
+  assert.equal(favicon.status,200,'favicon must render immediately from bundled file');
+  assert.equal(favicon.headers['content-type'],'image/x-icon');
+  console.log('PASS: mountain and cycling fare tables restored to top, image assets stream/cached, home visual links visible; warm homepage '+warmMs+'ms in local CI');
   const expected=JSON.parse(fs.readFileSync('data/priority-regions.json','utf8')).pages;
   assert(expected.length>=34,'Priority regions unexpectedly reduced');
   const json=await request(port,'/health/seo.json');assert.equal(json.status,200,'Deployment JSON');
