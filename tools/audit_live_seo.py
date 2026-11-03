@@ -216,6 +216,19 @@ def run():
                     errors.append("visible photo/image missing from restored guide")
                 if path == "/route-taksong/" and "생활체육공원 → 배알도" not in body:
                     errors.append("cycling hub lacks route-specific historical quote")
+            if path.startswith(("/taksong/", "/daeri/")) and path.count("/") >= 3 and path not in ("/taksong/", "/daeri/"):
+                kind = "taksong" if path.startswith("/taksong/") else "daeri"
+                image_match = re.search(r'src="(/card/area-\d+-' + kind + r'-brand-v3\.png)"', body)
+                if not image_match:
+                    errors.append("region does not display current dynamic PNG v3")
+                else:
+                    image_path = image_match.group(1)
+                    if 'property="og:image" content="' + BASE + image_path + '"' not in body:
+                        errors.append("og:image does not match the region card")
+                    if 'href="' + image_path + '" target="_blank"' not in body:
+                        errors.append("card lacks full-resolution expand link")
+                    if 'class="regional-responsive-card"' not in body:
+                        errors.append("card does not use responsive sizing")
             if path.startswith("/route-taksong/courses/"):
                 course_id = path.strip("/").split("/")[-1]
                 picture = "/assets/cycling-routes/" + course_id + "-taksong.svg"

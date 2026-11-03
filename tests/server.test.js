@@ -707,8 +707,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     busanEvidence.includes('blog.naver.com/wjdtnr4757/224445300887'),
     'Busan links regional landmarks to existing published source rather than made-up completions');
   for(const [region,html] of [['busan',busanEvidence],['ulsan',ulsanHtml]]){
-    const imagePath=region==='busan'?'/card/area-494-taksong-brand-v2.png':null;
-    assert.equal((html.match(/<img src="\/card\/area-[0-9]+-taksong-brand-v2.png"/g)||[]).length,1,
+    const imagePath=region==='busan'?'/card/area-494-taksong-brand-v3.png':null;
+    assert.equal((html.match(/<img src="\/card\/area-[0-9]+-taksong-brand-v3.png"/g)||[]).length,1,
       'region branded hero image must be shown exactly once: '+region);
     assert.ok(html.includes('href="tel:18114294"')&&html.includes('href="https://open.kakao.com/o/sGV88r7h"'),
       'Busan and Ulsan local booking paths remain accessible: '+region);
@@ -825,9 +825,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(serviceUrl,'dedicated '+kind+' link: '+r.full_name);
     const response=await get(serviceUrl);assert.equal(response.status,200,serviceUrl);
     const html=await response.text();
-    const imagePath='/card/'+r.slug+'-'+kind+'-brand'+(kind==='taksong'?'-v2':'')+'.png';
+    const imagePath='/card/'+r.slug+'-'+kind+'-brand-v3.png';
     assert.ok(html.includes('<figure'),'region image remains visible without an oversized first-view placement: '+serviceUrl);
     assert.ok(html.includes('src="'+imagePath+'"'),'only correct locality and service image is linked: '+serviceUrl);
+    assert.ok(html.includes('class="regional-responsive-card"')&&html.includes('href="'+imagePath+'" target="_blank"'),'card should resize and open its full-resolution version on tap: '+serviceUrl);
+    assert.ok(html.includes('max-width:700px')&&html.includes('height:auto'),'region card must fit phone and desktop viewport: '+serviceUrl);
+    const firstCardAt=html.indexOf('class="regional-responsive-card"'),evidenceAt=html.indexOf('id="priority-verified-rides"');
+    assert(firstCardAt>0&&(evidenceAt<0||firstCardAt<evidenceAt),'regional card buried beneath long evidence: '+serviceUrl);
+    
     assert.ok(html.includes('property="og:image" content="https://example.com'+imagePath+'"'),'search image matches body image: '+serviceUrl);
     const picture=await get(imagePath);assert.equal(picture.status,200,'on-demand PNG exists: '+imagePath);
     assert.ok(picture.headers.get('content-type').includes('image/png'),'image has PNG MIME: '+imagePath);
@@ -849,7 +854,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(new URL(response.url).pathname,canonicalPath,'regional keyword selects matching landing: '+query);
     const html=await response.text();
     assert.ok(html.includes('<figure')&&html.includes(headline),'region+전국탁송 banner and locality identity are visible: '+query);
-    assert.ok(/src="\/card\/area-\d+-taksong-brand-v2\.png"/.test(html),'new image URL avoids previous browser cache: '+query);
+    assert.ok(/src="\/card\/area-\d+-taksong-brand-v3\.png"/.test(html),'new image URL avoids previous browser cache: '+query);
    }
   }
   const ambiguousRegion=await get('/region/?q='+encodeURIComponent('광주탁송'));
@@ -861,7 +866,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const service of ['daeri','taksong']){
    const response=await get('/'+service+'/seoul/');assert.equal(response.status,200);
    const html=await response.text();
-   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-(?:daeri|taksong)-brand(?:-v2)?\.png)"/);
+   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-(?:daeri|taksong)-brand-v3\.png)"/);
    assert.ok(card,'regional '+service+' page must advertise a PNG business card');
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
    const svg=await (await get(card[1].replace('.png','.svg'))).text();
@@ -870,9 +875,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const caption=html.match(/<figcaption[^>]*>(.*?)<\/figcaption>/)[1];assert.ok(caption.includes(expectedBrand),'caption identifies the same service as the displayed card');
    const visibleLabels=svg.replace(/<image[^>]+\/>/g,'');
    assert.ok(!visibleLabels.includes(service==='daeri'?'스마트24시전국탁송':'스마트전국대리운전'),'card headings do not mix the two service brands');
-   assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('x="200" y="7"'),'regional card uses the approved artwork and teal local labels');
+   assert.ok(!svg.includes('data:image/webp;base64,')&&svg.includes('id="regional-bg"')&&svg.includes('x="48" y="38"'),'regional card must be fully locality-generated without a fixed-city photo');
    assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
-   assert.ok(html.includes('<figure>')&&html.includes('class="booking-guide"'),'regional card and customer booking guide are both retained');
+   assert.ok(html.includes('class="regional-responsive-card"')&&html.includes('class="booking-guide"'),'responsive regional card and booking guide are both retained');
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
    assert.ok(metadata.some(x=>x['@graph']?.some(y=>y['@type']==='WebPage'&&y.primaryImageOfPage)),'regional service page identifies its primary image');
    const imageMap=await (await get('/sitemap-'+service+'.xml')).text();

@@ -67,6 +67,23 @@ async function main(){
     assert.equal(image.status,200,'cycling illustration missing '+pic);
     assert.equal(image.headers['content-type'],'image/svg+xml','wrong cycling illustration MIME '+pic);
   }
+  // Dynamic, automatically scaled region cards must be visible near the first
+  // service block and carry the correct locality into the same OG image URL.
+  for(const route of ['/taksong/busan/','/taksong/daegu/','/taksong/incheon/','/taksong/ulsan/','/daeri/busan/','/daeri/seoul/']){
+    const page=await request(port,route);
+    assert.equal(page.status,200,'regional dynamic card page '+route);
+    const kind=route.startsWith('/taksong/')?'taksong':'daeri';
+    const match=page.body.match(new RegExp('src="(/card/area-[0-9]+-'+kind+'-brand-v3\\.png)"'));
+    assert(match,'missing automatically generated regional PNG: '+route);
+    assert(page.body.includes('property="og:image" content="https://jeongukdaeri.kr'+match[1]+'"'),'region OG image not matching visible card '+route);
+    assert(page.body.includes('href="'+match[1]+'" target="_blank"'),'regional card not tap-to-enlarge '+route);
+    assert(page.body.includes('class="regional-responsive-card"'),'regional card not responsive '+route);
+    assert(page.body.indexOf('class="regional-responsive-card"')<page.body.indexOf('<h2>주변 지역'),'card appears only below long local page '+route);
+    const png=await request(port,match[1]);
+    assert.equal(png.status,200,'dynamic regional image missing '+route);
+    assert.equal(png.headers['content-type'],'image/png');
+    assert((Number(png.headers['content-length'])||0)>5000,'regional card too small for Naver image metadata '+route);
+  }
   const cycleHub=await request(port,'/route-taksong/');
   assert.equal(cycleHub.status,200);
   assert(cycleHub.body.includes('id="cycling-visible-fare-table-20261103"'),'cycling hub lost its visible fare table');
