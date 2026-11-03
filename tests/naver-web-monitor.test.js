@@ -70,4 +70,17 @@ assert.equal(targetRows[3].status,'query-failed','API errors must not be interpr
 assert.equal(TARGET_LANDINGS['지리산탁송'],'/지리산탁송/');
 for(const query of ['부산탁송','대구탁송','울산탁송','창원탁송','인천탁송','제주도탁송','렌트카탁송','중고차탁송'])
  assert.ok(planned.includes(query),'daily high-priority Naver monitoring includes '+query);
+const {FOCUS_50}=require('../scripts/naver-web-monitor');
+assert.equal(FOCUS_50.length,50,'monitor all fifty new SEO localities');
+assert.equal(new Set(FOCUS_50).size,50);
+const observed=new Set();
+for(let i=0;i<15;i++){
+ const date=new Date(Date.UTC(2026,10,4+i));
+ const sample=selectQueries(date);
+ assert.equal(sample.length,20,'respect Naver API daily request budget');
+ assert.equal(new Set(sample).size,20,'do not submit repeated search queries');
+ for(const q of sample)if(FOCUS_50.includes(q))observed.add(q);
+ assert.ok(sample.filter(q=>FOCUS_50.includes(q)).length>=3,'sample newly curated regional searches each day');
+}
+assert.equal(observed.size,50,'all 50 focus queries are sampled over 15 days');
 console.log('Naver web result matching passed');

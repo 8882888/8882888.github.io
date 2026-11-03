@@ -46,14 +46,17 @@ function compareBaseline(results,baseline=WEB_BASELINE){
 }
 const LEGACY_DRIVER_URLS = ['/service/daeri/', '/special/nationwide-daeri/'];
 const ALWAYS_CHECK = ['전국대리운전','설악산탁송','지리산탁송','오색탁송','한계령탁송','부산탁송','울산탁송','대구탁송','창원탁송','기장군탁송','성삼재중산리탁송','인천탁송','제주도탁송','렌트카탁송','중고차탁송'];
-// Keep priority locality searches in every run. Rotate the remaining terms
-// instead of sending 150+ requests in one burst and risking API rate limits.
+const FOCUS_50=require('../data/naver-regional-focus-50.json').priority.map(p=>p.keyword);
+if(FOCUS_50.length!==50||new Set(FOCUS_50).size!==50)throw Error('Invalid local SEO tracking inventory');
+const FOCUS_OPTIONAL=FOCUS_50.filter(q=>!ALWAYS_CHECK.includes(q));
+const LEGACY_OPTIONAL=QUERIES.filter(q=>!ALWAYS_CHECK.includes(q)&&!FOCUS_50.includes(q));
+// Keep 15 established searches daily, plus 3 of the new regional keywords
+// and 2 pre-existing long-tail searches. 20 Naver API requests per day,
+// not 50 all at once; the 50 regional queries rotate over 15 days.
 function selectQueries(now = new Date()) {
   const day=Math.floor(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate())/86400000);
-  const optional=QUERIES.filter(q=>!ALWAYS_CHECK.includes(q));
-  const rotateCount=Math.min(Math.max(0,20-ALWAYS_CHECK.length),optional.length);
-  const extra=Array.from({length:rotateCount},(_,i)=>optional[(day*rotateCount+i)%optional.length]);
-  return [...ALWAYS_CHECK,...extra];
+  const pick=(items,count)=>Array.from({length:count},(_,i)=>items[(day*count+i)%items.length]);
+  return [...ALWAYS_CHECK,...pick(FOCUS_OPTIONAL,3),...pick(LEGACY_OPTIONAL,2)];
 }
 
 
@@ -100,7 +103,7 @@ async function main() {
       if(/HTTP 429/.test(error.message))break;
     }
   }
-  const result = {source: 'Naver Search API: web documents', query: QUERY, checkedAt: new Date().toISOString(), queryCatalogCount:QUERIES.length, selectedQueries:selectQueries(), ...results[0], results, pageEvidence: pageEvidence(results), targetLandingEvidence: targetLandingEvidence(results), baselineComparison: compareBaseline(results), legacyDriverCandidates: legacyDriverEvidence(results), limitation: 'Positions are within the returned web-document API results, not Naver integrated search rankings. This API does not expose mobile Naver sitelinks. No match does not prove a page is not indexed.'};
+  const result = {source: 'Naver Search API: web documents', query: QUERY, checkedAt: new Date().toISOString(), queryCatalogCount:new Set([...QUERIES,...FOCUS_50]).size, selectedQueries:selectQueries(), ...results[0], results, pageEvidence: pageEvidence(results), targetLandingEvidence: targetLandingEvidence(results), baselineComparison: compareBaseline(results), legacyDriverCandidates: legacyDriverEvidence(results), limitation: 'Positions are within the returned web-document API results, not Naver integrated search rankings. This API does not expose mobile Naver sitelinks. No match does not prove a page is not indexed.'};
   fs.writeFileSync('naver-web-monitor-result.json', JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify(result, null, 2));
   if (process.env.GITHUB_STEP_SUMMARY) {
@@ -122,4 +125,4 @@ async function main() {
   if (failures) throw new Error(failures + ' selected query checks failed; partial results saved');
 }
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
-module.exports = { inspect, QUERIES, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };
+module.exports = { inspect, QUERIES, FOCUS_50, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };
