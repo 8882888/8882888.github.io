@@ -13,6 +13,7 @@ from pathlib import Path
 import sys
 import urllib.error
 import urllib.request
+from urllib.parse import quote, unquote
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 
@@ -127,7 +128,7 @@ class SEOParser(HTMLParser):
 
 
 def fetch(path):
-    req = urllib.request.Request(BASE + path, headers=HEADERS)
+    req = urllib.request.Request(BASE + quote(path, safe='/%?=&'), headers=HEADERS)
     with urllib.request.urlopen(req, timeout=22) as response:
         return response.status, response.url, response.read(4_000_000).decode("utf-8", "replace"), response.headers
 
@@ -145,7 +146,7 @@ def run():
             parser = SEOParser()
             parser.feed(body)
             expected_title = rules.get(path, {}).get("title")
-            if status != 200 or final_url.rstrip("/") != (BASE + path).rstrip("/"):
+            if status != 200 or unquote(final_url).rstrip("/") != (BASE + path).rstrip("/"):
                 errors.append("unexpected HTTP status or redirect")
             if expected_title and parser.title.strip() != expected_title:
                 errors.append("old/mismatched SEO title: " + parser.title.strip()[:85])
