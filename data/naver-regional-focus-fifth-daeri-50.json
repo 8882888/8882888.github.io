@@ -223,7 +223,7 @@
       "topic": "청평·설악 숙박시설",
       "pickup": "청평·설악면 펜션과 관광 숙박시설의 차량 위치를 숙소 주소만이 아닌 실제 주차구역으로 확인합니다.",
       "handover": "야간 외곽 출발은 기사 접근·복귀가 어려울 수 있어 출발 시간과 인근 목적지를 정확히 상담합니다.",
-      "related": "/service/daily-driver/"
+      "related": "/special/pension-daeri/"
     },
     {
       "id": 273,
@@ -403,7 +403,7 @@
       "topic": "안면도·태안읍 관광 귀가",
       "pickup": "태안읍과 안면도 숙박시설의 주차장 주소·숙소 출입구·기사 만남 장소를 정확히 알려주세요.",
       "handover": "외곽 야간 호출은 기사 수급과 복귀가 어려울 수 있으므로 예약 희망시각을 미리 상담합니다.",
-      "related": "/service/corporate/"
+      "related": "/special/pension-daeri/"
     },
     {
       "id": 291,
