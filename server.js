@@ -1409,35 +1409,56 @@ if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return 
 if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
 if(pathname==='/region'){res.writeHead(301,{location:'/region/'+u.search});return res.end()}
 if(pathname==='/region/'){
- const directRegion=regionalTaksongTarget(u.searchParams.get('q'));
- if(directRegion){res.writeHead(302,{location:directRegion,'cache-control':'no-store'});return res.end()}
- const q=clean(u.searchParams.get('q')||'');
+ const rawQuery=clean(u.searchParams.get('q')||'');
  const requestedService=u.searchParams.get('service');
- const selectedService=requestedService==='daeri'||requestedService==='taksong'?requestedService:/대리운전$/.test(compact(q))?'daeri':/(?:자동차|차량)?탁송$/.test(compact(q))?'taksong':null;
- const matches=q?regions.filter(r=>regionMatches(r,q)).slice(0,100):regions.filter(r=>r.level==='시도');
- const matchedLandmarks=q?landmarks.filter(item=>compact(item[0]).includes(compact(q))).slice(0,20):[];
- const landmarkLinks=matchedLandmarks.length?'<section><h2>혁신도시·철도역 검색 결과</h2><ul>'+matchedLandmarks.map(item=>'<li><a href="/place/'+landmarkSlug(item[0])+'/">'+esc(item[0])+' 대리운전·탁송</a></li>').join('')+'</ul></section>':'';
- // Expand the matched locality's specific PNG; other previews stay collapsed
- // and lazy loaded so browsing up to 100 administrative areas remains fast.
- const exactMatches=q?matches.filter(r=>compact(seoRegionBase(r))===compact(q)||compact(r.full_name)===compact(q)):[];
- // 광주 is shared by 광주광역시 and 경기도 광주시. Do not silently
- // expand one candidate when an unqualified place name is ambiguous.
- const homonymMatches=q?regions.filter(r=>['시도','시','군','구'].includes(r.level)&&compact(shortPlace(r.name))===compact(q)):[];
+ // Strip only a trailing service name. A typed keyword like 부산대리운전
+ // should expand 부산, while an ambiguous 광주 still requires a choice.
+ const queryRegion=clean(rawQuery.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
+ const searchPlace=queryRegion||rawQuery;
+ const inferredService=/대리운전$|대리$/.test(compact(rawQuery))?'daeri':/(?:자동차|차량)?탁송$/.test(compact(rawQuery))?'taksong':null;
+ const selectedService=['daeri','taksong'].includes(requestedService)?requestedService:inferredService;
+ const directRegion=selectedService==='taksong'?regionalTaksongTarget(rawQuery):null;
+ if(directRegion){res.writeHead(302,{location:directRegion,'cache-control':'no-store'});return res.end()}
+ const matches=rawQuery?regions.filter(r=>regionMatches(r,searchPlace)).slice(0,100):regions.filter(r=>r.level==='시도');
+ const matchedLandmarks=rawQuery?landmarks.filter(item=>compact(item[0]).includes(compact(searchPlace))).slice(0,20):[];
+ const landmarkLinks=matchedLandmarks.length?'<section><h2>관련 역·관광지 안내</h2><ul>'+matchedLandmarks.map(item=>'<li><a href="/place/'+landmarkSlug(item[0])+'/">'+esc(item[0])+' 대리운전·탁송</a></li>').join('')+'</ul></section>':'';
+ const key=compact(searchPlace);
+ const exactMatches=rawQuery?matches.filter(r=>compact(seoRegionBase(r))===key||compact(r.full_name)===key||compact(seoRegionLabel(r))===key):[];
+ // Keep names shared by multiple provinces separate, e.g. Gwangju metro vs Gyeonggi.
+ const homonymMatches=rawQuery?regions.filter(r=>['시도','시','군','구'].includes(r.level)&&compact(shortPlace(r.name))===key):[];
  const exactPreviewSlug=homonymMatches.length===1&&matches.some(r=>r.slug===homonymMatches[0].slug)
   ?homonymMatches[0].slug
   :(homonymMatches.length===0&&exactMatches.length===1?exactMatches[0].slug:null);
- const links='<ul class="dynamic-region-card-directory">'+matches.map(r=>{
-  const kind=selectedService||'taksong',image=cardPngPath(r.slug,kind),brand=seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전');
-  const nav=selectedService?'<a href="'+servicePath(r,selectedService)+'">'+esc(r.full_name)+' '+(selectedService==='daeri'?'대리운전':'탁송')+'</a>':'<a href="'+servicePath(r,'daeri')+'">'+esc(r.full_name)+' 대리운전</a> · <a href="'+servicePath(r,'taksong')+'">'+esc(r.full_name)+' 탁송</a>';
-  return '<li>'+nav+'<details class="dynamic-region-card-preview"'+(r.slug===exactPreviewSlug?' open':'')+'><summary style="cursor:pointer;font-weight:700;color:#07539c">'+esc(r.full_name)+' 지역 맞춤 명함 펼치기</summary><figure style="margin:9px 0;max-width:570px"><a href="'+image+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(brand)+' 명함 크게 보기"><img src="'+image+'" width="1200" height="800" alt="'+esc(brand)+' 지역별 상담 이미지" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px"></a><figcaption>'+esc(brand)+' · <a href="'+image+'" target="_blank" rel="noopener noreferrer">큰 이미지 보기</a> · <a href="tel:18114294">전화 1811-4294</a></figcaption></figure></details></li>';
+ const showAllServices=!selectedService;
+ const previewFor=(r,kind)=>{
+  const image=cardPngPath(r.slug,kind),brand=seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전');
+  const isJejuTaksong=kind==='taksong'&&r.full_name==='제주특별자치도';
+  const phone=isJejuTaksong?'1877-5245':PHONE,phoneHref='tel:'+phone.replace(/-/g,'');
+  const open=r.slug===exactPreviewSlug;
+  const description=kind==='taksong'
+   ?'출발지·도착지의 차량 인수·인계와 기사 복귀를 확인하며 기존 요금은 현재 확정 견적이 아닙니다.'
+   :'고객 차량 대리운전의 출발지·도착지·시간과 장거리·골프장·기사 복귀 조건을 확인합니다.';
+  return '<details class="dynamic-region-card-preview"'+(open?' open':'')+'><summary style="cursor:pointer;font-weight:800;color:#07539c;min-height:44px;padding:9px 0">'+esc(brand)+' 명함 '+(open?'펼쳐보기':'열어보기')+'</summary>'+
+   '<figure style="margin:9px auto;max-width:600px;width:100%;text-align:center"><a href="'+image+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(brand)+' 고화질 명함 확대"><img src="'+image+'" width="1200" height="800" alt="'+esc(brand)+' 맞춤 상담 명함 이미지 · '+phone+'" loading="'+(open?'eager':'lazy')+'" decoding="async" style="display:block;width:100%;max-width:100%;height:auto;border-radius:12px" /></a>'+
+   '<figcaption style="line-height:1.6"><strong>'+esc(brand)+'</strong> · '+description+'<p><a href="'+servicePath(r,kind)+'">지역별 '+(kind==='taksong'?'탁송':'대리운전')+' 상세 안내</a> · <a href="'+image+'" target="_blank" rel="noopener noreferrer">큰 이미지로 확대</a> · <a href="'+phoneHref+'">상담 '+phone+'</a></p></figcaption></figure></details>';
+ };
+ const links='<ul class="dynamic-region-card-directory" style="list-style:none;margin:12px 0;padding:0">'+matches.map(r=>{
+  const navigation=showAllServices?'<a href="'+servicePath(r,'daeri')+'">'+esc(r.full_name)+' 대리운전</a> · <a href="'+servicePath(r,'taksong')+'">'+esc(r.full_name)+' 탁송</a>':'<a href="'+servicePath(r,selectedService)+'">'+esc(r.full_name)+' '+(selectedService==='daeri'?'대리운전':'탁송')+'</a>';
+  const previews=showAllServices?previewFor(r,'daeri')+previewFor(r,'taksong'):previewFor(r,selectedService);
+  return '<li style="border:1px solid #c6d8ec;background:#f8fbff;border-radius:12px;padding:12px;margin:10px 0">'+navigation+'<div class="dynamic-region-card-options" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px">'+previews+'</div></li>';
  }).join('')+'</ul>';
- const form='<form method="get" action="/region/">'+(selectedService?'<input type="hidden" name="service" value="'+selectedService+'">':'')+'<label for="q">전국 지역 검색</label> <input id="q" name="q" value="'+esc(q)+'" placeholder="속초·속초시·역삼·역삼동·충북혁신도시·광명역" style="padding:12px;max-width:80%;font-size:17px"> <button style="padding:12px">검색</button></form>';
+ const sel=selectedService||'all';
+ const form='<form method="get" action="/region/" id="region-card-keyword-form" style="display:flex;flex-wrap:wrap;align-items:end;gap:10px">'+
+  '<label for="q" style="flex:2 1 220px">지역명 또는 지역+서비스 키워드<input id="q" name="q" value="'+esc(rawQuery)+'" placeholder="부산대리운전·부산탁송·서울강남구" style="display:block;width:100%;box-sizing:border-box;padding:12px;font-size:17px"></label>'+
+  '<label for="region-card-kind">명함 종류<select id="region-card-kind" name="service" style="display:block;min-height:49px;padding:10px;font-size:16px"><option value=""'+(sel==='all'?' selected':'')+'>대리운전·탁송 모두</option><option value="daeri"'+(sel==='daeri'?' selected':'')+'>대리운전 명함</option><option value="taksong"'+(sel==='taksong'?' selected':'')+'>탁송 명함</option></select></label>'+
+  '<button type="submit" style="min-height:49px;padding:11px 18px;border:0;border-radius:8px;background:#14517e;color:#fff;font-weight:800">지역별 명함 보기</button></form>';
  const regionOriginalGuide=(fs.readFileSync(path.join(ROOT,'region','index.html'),'utf8').match(/<section id="region-original-ref">[\s\S]*?<\/section>/)||[])[0]||'';
- const regionDirectOriginalLinks=q?'':staticOriginalSourceSection('region/index.html','verified-naver-region-links-20261102');
+ const regionDirectOriginalLinks=rawQuery?'':staticOriginalSourceSection('region/index.html','verified-naver-region-links-20261102');
  const regionDirectorySchema=JSON.stringify({'@context':'https://schema.org','@type':'CollectionPage',name:'전국 지역별 자동차탁송·대리운전 검색',url:'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/',description:'전국 행정구역별 자동차탁송·대리운전 안내와 상담'}).replace(/</g,'\\u003c');
- return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section><h2>전국 지역 찾기</h2>'+form+'<p>전체 '+regions.length+'개 지역 중 '+(q?'검색 일치 최대 100개':'시·도 목록')+' 표시</p>' +links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/'),'/region/'));
+ const countNote=rawQuery?(matches.length===0?'해당 지역이 없습니다. 지역명을 다시 확인하세요.':'검색 일치 최대 100개 지역을 표시합니다. 정확히 일치하는 지역의 명함은 자동으로 열립니다.'):'전국 17개 시·도에서 대리운전·탁송 명함을 각각 펼칠 수 있습니다.';
+ return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section><h2>전국 지역명별 대리운전·탁송 명함</h2><p>지역과 서비스에 맞는 명함을 자동으로 생성합니다. 다른 지역명이 표시되지 않도록 서비스별 이미지를 구분합니다. 이미지가 보이면 누르거나 확대 링크로 원본을 열 수 있습니다.</p>'+form+'<p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/'),'/region/'));
 }
- const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
+const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
  const brandCardMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand(?:-v[2345])?\.(png|svg)$/);
  if(brandCardMatch){const [,slug,kind,format]=brandCardMatch,r=bySlug.get(slug);if(!r)return respond(res,404,'명함을 찾을 수 없습니다.');if(format==='svg')return respond(res,200,cardSvg(seoRegionLabel(r),kind),'image/svg+xml; charset=utf-8');return regionalCardPng(r,kind).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','content-length':buf.length,'x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'))}
  const intentCardMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-(fare|long-distance|handover)\.png$/);
