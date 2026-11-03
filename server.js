@@ -1481,10 +1481,11 @@ if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return 
 if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
 if(pathname==='/api/region-card-preview'){
  const query=clean(u.searchParams.get('q')||'');
+ const normalizedKeyword=keywordExpansion.normalizeCompanyKeyword(query);
  const requested=u.searchParams.get('service');
- const inferred=/대리운전$|대리$/.test(compact(query))?'daeri':/(?:자동차|차량)?탁송$/.test(compact(query))?'taksong':null;
+ const inferred=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':null;
  const kind=['daeri','taksong'].includes(requested)?requested:inferred;
- const locality=clean(query.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
+ const locality=clean(normalizedKeyword.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
  const key=compact(locality||query);
  const exact=(key.length>=2?liveCardAliases.get(key)||[]:[]).slice().sort((a,b)=>a.full_name.length-b.full_name.length||a.full_name.localeCompare(b.full_name,'ko'));
  let status='not_found',region=null,candidates=[];
@@ -1499,7 +1500,7 @@ if(pathname==='/api/region-card-preview'){
  // verified legal region AND exact service keyword, never a random same-name city.
  let themedRegion=null,themeSuffix='',themedAmbiguous=false;
  if(topic&&topic.image.startsWith('/keyword-card/')&&exact.length===0){
-  const whole=compact(query);
+  const whole=normalizedKeyword;
   themeSuffix=topic.terms.map(compact).sort((a,b)=>b.length-a.length).find(t=>whole.endsWith(t))||'';
   const regionPrefix=themeSuffix?whole.slice(0,-themeSuffix.length):'';
   const options=regionPrefix.length>=2?(liveCardAliases.get(regionPrefix)||[]):[];
@@ -1517,7 +1518,7 @@ if(pathname==='/api/region-card-preview'){
  const destination=region?.full_name||themedRegion?.full_name||(topic?topic.label:null);
  if(topic&&kind&&kind!==topic.kind){status='not_found';candidates=[]}
  const data={status,query,locality:locality||query,service:kind,region:destination,
-  cards,candidates:candidates.map(r=>({name:r.full_name,query:r.full_name+(themedAmbiguous?themeSuffix:''),slug:r.slug})),
+  cards,candidates:candidates.map(r=>({name:r.full_name,query:r.full_name+(themedAmbiguous?themeSuffix:(kind==='daeri'?'대리운전':kind==='taksong'?'탁송':'')),slug:r.slug})),
   source:'지역별 서비스 소개 이미지이며 실제 배차·운행완료를 의미하지 않습니다.'};
  res.setHeader('cache-control','private, no-store, max-age=0');
  res.setHeader('x-robots-tag','noindex, nofollow');
@@ -1529,9 +1530,10 @@ if(pathname==='/region/'){
  const requestedService=u.searchParams.get('service');
  // Strip only a trailing service name. A typed keyword like 부산대리운전
  // should expand 부산, while an ambiguous 광주 still requires a choice.
- const queryRegion=clean(rawQuery.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
+ const normalizedKeyword=keywordExpansion.normalizeCompanyKeyword(rawQuery);
+ const queryRegion=clean(normalizedKeyword.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
  const searchPlace=queryRegion||rawQuery;
- const inferredService=/대리운전$|대리$/.test(compact(rawQuery))?'daeri':/(?:자동차|차량)?탁송$/.test(compact(rawQuery))?'taksong':null;
+ const inferredService=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':null;
  const selectedService=['daeri','taksong'].includes(requestedService)?requestedService:inferredService;
  const directRegion=selectedService==='taksong'?regionalTaksongTarget(rawQuery):null;
  if(directRegion){res.writeHead(302,{location:directRegion,'cache-control':'no-store'});return res.end()}
