@@ -1249,6 +1249,26 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   headers['surrogate-control']='no-store';
   headers['x-smart24-sitemap-format']='focused-html-only-202611';
  }
+ // Negotiate compression for large HTML only; preserve JSON and image responses.
+ if(isHtml){
+  const vary=res.getHeader('vary');
+  headers['vary']=vary?String(vary)+', Accept-Encoding':'Accept-Encoding';
+  const encoding=String(res.req?.headers['accept-encoding']||'');
+  const acceptsGzip=/\bgzip\b/i.test(encoding)&&!/\bgzip\s*;\s*q=0(?:\.0*)?(?=\s*(?:,|$))/i.test(encoding);
+  if(acceptsGzip){
+   const raw=Buffer.isBuffer(body)?body:Buffer.from(String(body),'utf8');
+   if(raw.length>=4096){
+    return require('node:zlib').gzip(raw,{level:1},(error,packed)=>{
+     if(res.destroyed||res.writableEnded)return;
+     if(error){res.writeHead(status,headers);return res.end(raw)}
+     headers['content-encoding']='gzip';
+     headers['content-length']=packed.length;
+     res.writeHead(status,headers);
+     res.end(packed);
+    });
+   }
+  }
+ }
  res.writeHead(status,headers);
  res.end(body);
 }

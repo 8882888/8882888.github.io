@@ -1284,6 +1284,28 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   const noInferredDaegu=await (await get('/taksong/daegu/')).text();
   assert.ok(!noInferredDaegu.includes('대명동 → 부산서구 토성동 탁송 운행완료'),'do not infer Daegu from unqualified neighborhood name');
+  // Transparent gzip reduces mobile HTML transfer without changing SEO content.
+  const http=require('node:http'),zlib=require('node:zlib');
+  const zipped=await new Promise((resolve,reject)=>{
+   http.get('http://127.0.0.1:'+port+'/taksong/busan/',{headers:{'accept-encoding':'gzip'}},res=>{
+    const parts=[];res.on('data',chunk=>parts.push(chunk));
+    res.on('end',()=>resolve({status:res.statusCode,headers:res.headers,body:Buffer.concat(parts)}));
+    res.on('error',reject);
+   }).on('error',reject);
+  });
+  const identity=await fetch('http://127.0.0.1:'+port+'/taksong/busan/',{headers:{'accept-encoding':'identity'}});
+  const html=await identity.text();
+  assert.equal(zipped.status,200);
+  assert.equal(identity.status,200);
+  assert.equal(zipped.headers['content-encoding'],'gzip');
+  assert.match(zipped.headers.vary,/Accept-Encoding/i);
+  assert.ok(!identity.headers.get('content-encoding'));
+  assert.equal(zlib.gunzipSync(zipped.body).toString('utf8'),html,'gzip must retain full rendered HTML');
+  assert.ok(zipped.body.length<Buffer.byteLength(html,'utf8')*.75,'at least 25% byte savings');
+  const jsonApi=await fetch('http://127.0.0.1:'+port+'/api/region-card-preview?q='+encodeURIComponent('부산탁송'),{headers:{'accept-encoding':'gzip'}});
+  assert.equal(jsonApi.status,200);
+  assert.ok(!jsonApi.headers.get('content-encoding'),'API remains uncompressed');
+  console.log('PASS: regional HTML gzip retains original SEO bytes, identity variant and JSON API');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
