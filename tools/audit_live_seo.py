@@ -462,7 +462,7 @@ def run():
                         errors.append("Jeju dedicated phone not preserved")
                     if len(cards) == 1 and keyword in ("부산대리운전", "울산탁송"):
                         preview_path = cards[0].get("previewImage", "")
-                        if not re.fullmatch(r"/card/area-\\d+-(?:daeri|taksong)-brand-v5\\.webp", preview_path):
+                        if not re.fullmatch(r"/card/area-\d+-(?:daeri|taksong)-brand-v5\.webp", preview_path):
                             errors.append("optimized local preview URL missing")
                         else:
                             req2 = urllib.request.Request(BASE + preview_path, headers=HEADERS)
