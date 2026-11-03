@@ -1,0 +1,31 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const manifest=require('../data/blog-hashtags-priority.json');
+assert.equal(manifest.articles.length,10);
+const slugs=new Set(),titles=new Set();
+const directory=fs.readFileSync('blog/daeri-regions/index.html','utf8');
+for(const item of manifest.articles){
+ assert(!slugs.has(item.slug),'duplicate slug: '+item.slug);slugs.add(item.slug);
+ assert.equal(item.tags.length,30,item.slug+' must have exactly 30 hashtags');
+ assert.equal(new Set(item.tags).size,30,item.slug+' repeats hashtags');
+ for(const tag of item.tags)assert(/^#[가-힣A-Za-z0-9_]+$/.test(tag),'malformed tag: '+tag);
+ const route='/blog/daeri-regions/'+item.slug+'/';
+ assert(directory.includes('href="'+route+'"'),'blog directory missing '+route);
+ const html=fs.readFileSync('blog/daeri-regions/'+item.slug+'/index.html','utf8');
+ assert(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),'canonical wrong: '+route);
+ assert(!/name="robots" content="[^"]*noindex/i.test(html),'accidental noindex: '+route);
+ assert.equal((html.match(/<h1\b/gi)||[]).length,1,'one H1: '+route);
+ const title=(html.match(/<title>(.*?)<\/title>/i)||[])[1];
+ assert(title&&!titles.has(title),'unique title required: '+route);titles.add(title);
+ const begins=[...html.matchAll(/id="blog-local-hashtags-30"/g)];
+ assert.equal(begins.length,1,'one end-of-article tag group: '+route);
+ const tail=html.slice(begins[0].index),match=tail.match(/<p class="tags"[^>]*>([\s\S]*?)<\/p>/);
+ assert(match,'visible tags missing: '+route);
+ assert.deepEqual(match[1].trim().split(/\s+/),item.tags,'tag list mismatch: '+route);
+ assert(html.slice(0,begins[0].index).includes('01040721577'),'direct phone before tags: '+route);
+ assert(/tel:(?:18773015|18110963)/.test(html.slice(0,begins[0].index)),'representative phone before tags: '+route);
+ assert(/<\/p><\/section><\/(?:article|main)>/.test(tail),'hashtags must be last article section: '+route);
+ assert(html.includes('전 직원 100% 보험가입 안전운행'),'fixed safety sentence missing: '+route);
+}
+console.log('PASS: ten published regional articles; exact 30 unique hashtags after contact; canonical, blog directory, insurance notice intact');

@@ -98,6 +98,25 @@ async function main(){
   assert(!kw.body.includes('광산구·풍암매매단지·송도수출단지 장거리탁송'),'misleading Gwangju/remote Incheon location wording');
   for(const file of ['data/priority-regions.json','data/region-journey-links.json'])
     assert.match(diagnostic.deployment_hashes[file],/^[0-9a-f]{64}$/,'missing geographic page source hash: '+file);
+  const blogArticles=JSON.parse(fs.readFileSync('data/blog-hashtags-priority.json','utf8')).articles;
+  assert.equal(blogArticles.length,10);
+  const priorityBlogSitemap=await request(port,'/sitemap-priority.xml');
+  const mainBlogSitemap=await request(port,'/sitemap.xml');
+  assert.equal(priorityBlogSitemap.status,200);assert.equal(mainBlogSitemap.status,200);
+  for(const article of blogArticles){
+    const route='/blog/daeri-regions/'+article.slug+'/';
+    for(const xml of [priorityBlogSitemap.body,mainBlogSitemap.body])
+      assert(xml.includes('https://jeongukdaeri.kr'+route),'updated blog page missing from sitemap: '+route);
+    const page=await request(port,route);
+    assert.equal(page.status,200,'regional blog URL '+route);
+    assert(page.body.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),'wrong blog canonical '+route);
+    assert(!/name="robots" content="[^"]*noindex/i.test(page.body),'blog noindex '+route);
+    const section=page.body.match(/<section id="blog-local-hashtags-30"[\s\S]*?<\/section>/);
+    assert(section,'30-hashtag region section absent: '+route);
+    const p=section[0].match(/<p class="tags"[^>]*>([^<]+)<\/p>/);
+    assert(p,'visible tags paragraph missing: '+route);
+    assert.deepEqual(p[1].trim().split(/\s+/),article.tags,'deployed tag mismatch: '+route);
+  }
   // Twenty concrete high-value routes. Failing any one prevents a bad Cloudtype redeploy.
   // The ten curated region routes must render directly grounded Naver original links.
   const priorityRoutes=[

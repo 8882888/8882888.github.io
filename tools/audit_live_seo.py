@@ -40,6 +40,13 @@ PATHS = {
     "/business/export-port/": "export-b2b-operating-guide-20261103",
     "/business/auction/": "auction-b2b-operating-guide-20261103",
 }
+BLOG_HASHTAG_ARTICLES = {
+    "/blog/daeri-regions/" + item["slug"] + "/": item["tags"]
+    for item in json.loads(Path("data/blog-hashtags-priority.json").read_text(encoding="utf-8"))["articles"]
+}
+for route in BLOG_HASHTAG_ARTICLES:
+    PATHS[route] = "blog-local-hashtags-30"
+
 JOURNEY_PLANS = {x["path"]: x for x in json.loads(Path("data/region-journey-links.json").read_text(encoding="utf-8"))["pages"]}
 JOURNEY_KEYWORDS = {
     "/taksong/busan/": "부산탁송",
@@ -135,6 +142,11 @@ def run():
                 errors.append("old/mismatched SEO title: " + parser.title.strip()[:85])
             if marker not in body:
                 errors.append("expected deployed content marker absent")
+            if path in BLOG_HASHTAG_ARTICLES:
+                tag_match = re.search(r'<p class="tags"[^>]*>([^<]+)</p>', body)
+                tags = tag_match.group(1).strip().split() if tag_match else []
+                if tags != BLOG_HASHTAG_ARTICLES[path]:
+                    errors.append("expected exactly 30 original regional blog keywords")
             for source_id in PROMOTED_REGION_SOURCE_PAGES.get(path, []):
                 if "https://blog.naver.com/wjdtnr4757/"+source_id not in body:
                     errors.append("original Naver blog link not deployed: "+source_id)
@@ -278,6 +290,7 @@ def run():
                     expected = {BASE + "/daeri/", BASE + "/taksong/"}
                     expected |= {BASE + route for route in CURATED_SOURCE_ROUTES}
                     expected |= {BASE + route for route in JOURNEY_PLANS}
+                    expected |= {BASE + route for route in BLOG_HASHTAG_ARTICLES}
                 if path == "/sitemap.xml":
                     expected |= {
                         BASE + "/blog/archive/", BASE + "/설악산탁송/", BASE + "/지리산탁송/",
