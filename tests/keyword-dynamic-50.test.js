@@ -83,11 +83,50 @@ for(const [number,path,topic] of pages)checks.push([number,path+' visible, click
  topic==='cycling'?'/assets/cycling-routes/nationwide-taksong.svg':'/keyword-card/'+topic+'.svg';
  assert.ok(result.body.includes('href="'+exp+'"'),path+' uses '+exp);
 }]);
-checks.push(['48','Keyword image endpoint actually returns valid SVG',async()=>{
+checks.push(['48','Every mountain subroute, cycling itinerary and outside-area driving page matches its correct visual',async()=>{
  const r=await get('/keyword-card/golf-daeri.svg');
  assert.equal(r.res.status,200);assert.match(r.res.headers.get('content-type')||'',/image\/svg\+xml/);
  assert.ok(r.body.includes('<svg')&&r.body.includes('골프장대리운전')&&r.body.includes('1811-4294'));
  assert.ok(!r.body.includes('강릉스마트'),'never retain foreign-city card label');
+ const specific=[
+  ['/special/osaek/','seoraksan'],['/special/hangyeryeong/','seoraksan'],
+  ['/special/baekdamsa/','seoraksan'],['/special/namgyori/','seoraksan'],
+  ['/special/seoraksan/','seoraksan'],
+  ['/special/jirisan/','jirisan'],['/special/seongjung-jongju/','jirisan'],
+  ['/special/seongdae-jongju/','jirisan'],['/special/hwajung-jongju/','jirisan'],
+  ['/special/hwadae-jongju/','jirisan'],['/special/jungsanri/','jirisan'],
+  ['/special/baekmudong/','jirisan'],
+  ['/special/national-cycling-tour/','cycling'],
+  ['/special/pension-daeri/','pension-daeri'],['/special/valley-daeri/','valley-daeri'],
+  ['/special/outskirts-service/','outskirts-daeri'],
+  ['/special/camping-car-transport/','campingcar-taksong'],
+  ['/special/truck-transport/','truck-taksong'],
+  ['/special/24-hour-service/','night-taksong'],
+  ['/special/baekdudaegan/','baekdudaegan-taksong']
+ ];
+ for(const [path,topic] of specific){
+  const p=await get(path);assert.equal(p.res.status,200,path);
+  assert.ok(p.body.includes('id="keyword-intent-dynamic-image"'),path+' missing visible keyword image');
+  const expected=topic==='seoraksan'?'/assets/seoraksan-taksong-fares.svg':
+   topic==='jirisan'?'/assets/jirisan-taksong-fares.svg':
+   topic==='cycling'?'/assets/cycling-routes/nationwide-taksong.svg':'/keyword-card/'+topic+'.svg';
+  assert.ok(p.body.includes('href="'+expected+'"'),path+' should have '+expected);
+  const kind=(topic.endsWith('-daeri'))?'daeri':'taksong';
+  assert.ok(p.body.includes('data-kind="'+kind+'"'),path+' must show '+kind+' not wrong industry');
+ }
+ for(const [q,topic] of [
+  ['펜션대리운전','/keyword-card/pension-daeri.svg'],
+  ['계곡대리운전','/keyword-card/valley-daeri.svg'],
+  ['외곽대리운전','/keyword-card/outskirts-daeri.svg'],
+  ['캠핑카탁송','/keyword-card/campingcar-taksong.svg'],
+  ['백두대간탁송','/keyword-card/baekdudaegan-taksong.svg']
+ ]){
+  const data=JSON.parse((await get('/api/region-card-preview?q='+encodeURIComponent(q))).body);
+  assert.equal(data.status,'matched',q);
+  assert.equal(data.cards[0].image,topic,q);
+ }
+ const cyclingTour=await get('/special/national-cycling-tour/');
+ assert.ok(!cyclingTour.body.includes('smart24-taksong-brand.webp'),'national bicycle tour cannot show Gangneung-specific card');
 }]);
 checks.push(['49','Combined region + purpose yields matching local service image (not another locality)',async()=>{
  for(const [query,kind,region,keyword,phone] of [
