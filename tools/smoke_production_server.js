@@ -85,6 +85,10 @@ async function main(){
     assert.equal(png.headers['content-type'],'image/png');
     assert((Number(png.headers['content-length'])||0)>5000,'regional card too small for Naver image metadata '+route);
   }
+  const preview=await request(port,'/region/?q='+encodeURIComponent('강릉'));
+  assert.equal(preview.status,200);
+  assert(preview.body.includes('class="dynamic-region-card-preview" open'),'Gangneung should auto-expand the correct card');
+  assert(preview.body.includes('-taksong-brand-v3.png'),'preview should use region-specific v3 PNG');
   const cycleHub=await request(port,'/route-taksong/');
   assert.equal(cycleHub.status,200);
   assert(cycleHub.body.includes('id="cycling-visible-fare-table-20261103"'),'cycling hub lost its visible fare table');

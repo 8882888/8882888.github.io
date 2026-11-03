@@ -762,6 +762,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const jejuPage=await (await get('/taksong/jeju/')).text();assert.ok(jejuPage.includes('/fare/jeju/'));assert.ok(jejuPage.includes('275,000원'));
   assert.ok(jejuPage.includes('href="tel:18775245"')&&jejuPage.includes('1877-5245'),'Jeju landing page links its dedicated phone');
   assert.ok(!jejuPage.includes('tel:18114294')&&!jejuPage.includes('1811-4294'),'Jeju landing page contains no conflicting nationwide phone');
+  assert.ok(/property="og:image" content="https:\/\/example\.com\/card\/area-\d+-taksong-brand-v3\.png"/.test(jejuPage),'Jeju card OG image must be locality specific');
+  assert.ok(jejuPage.includes('primaryImageOfPage'),'Jeju JSON-LD should link dedicated phone and locality image');
   const jejuFareHtml=await (await get('/fare/jeju/')).text();
   assert.ok(jejuFareHtml.includes('1877-5245')&&jejuFareHtml.includes('tel:18775245'),'Jeju quote page uses the correct phone');
   const slugs=new Set(regions.map(r=>r.slug));assert.equal(slugs.size,regions.length,'duplicate slugs');
@@ -818,7 +820,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const r of imageSamples){
    const page=await (await get('/region/'+r.slug+'/')).text();
    assert.ok(page.includes('<figure')&&page.includes('alt='),'regional directory retains its local image');
-   const taksongUrl=page.match(/href="(\/taksong\/[^"]+\/)" /)?.[1]||page.match(/href="(\/taksong\/[^"]+\/)" /)?.[1];
+   const taksongUrl=page.match(/href="(\/taksong\/[^"]+\/)"/)?.[1];
    assert.ok(taksongUrl,'region links to dedicated taksong landing: '+r.full_name);
    for(const kind of ['taksong','daeri']){
     const serviceUrl=page.match(new RegExp('href="(/'+kind+'/[^"]+/)"'))?.[1];
@@ -857,6 +859,35 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(/src="\/card\/area-\d+-taksong-brand-v3\.png"/.test(html),'new image URL avoids previous browser cache: '+query);
    }
   }
+  // Sample ten local service destinations: all must use distinct dynamic v3 PNGs.
+  const automaticLocalCards=[
+   ['/taksong/busan/','부산전국탁송'],['/taksong/daegu/','대구전국탁송'],
+   ['/taksong/incheon/','인천전국탁송'],['/taksong/ulsan/','울산전국탁송'],
+   ['/taksong/gyeongnam/changwon-si/','창원전국탁송'],
+   ['/taksong/gyeongnam/gimhae-si/','김해전국탁송'],
+   ['/taksong/gangwon/gangneung-si/','강릉전국탁송'],
+   ['/taksong/gangwon/sokcho-si/','속초전국탁송'],
+   ['/daeri/busan/','부산스마트대리운전'],['/daeri/daegu/','대구스마트대리운전']
+  ];
+  const uniqueCardUrls=new Set();
+  for(const [route,brand] of automaticLocalCards){
+    const html=await (await get(route)).text();
+    const og=html.match(/<meta property="og:image" content="https:\/\/example\.com(\/card\/area-\d+-(?:taksong|daeri)-brand-v3\.png)"/);
+    assert(og,'regional og:image missing: '+route);
+    assert(!uniqueCardUrls.has(og[1]),'generic card reused across localities: '+route);
+    uniqueCardUrls.add(og[1]);
+    assert(html.includes(brand)&&html.includes('src="'+og[1]+'"'),'wrong city or service on image: '+route);
+    assert(html.includes('href="'+og[1]+'" target="_blank"'),'cannot expand regional image: '+route);
+    assert(html.includes('property="og:image:alt"'),'search thumbnail description missing: '+route);
+  }
+  for(const [q,label] of [['부산','부산광역시'],['강릉','강릉시'],['속초','속초시']]){
+    const html=await (await get('/region/?q='+encodeURIComponent(q))).text();
+    assert(html.includes('class="dynamic-region-card-directory"'),'region directory has no image previews');
+    assert(html.includes('class="dynamic-region-card-preview" open'),'unique region should auto-expand: '+q);
+    assert(html.includes(label),'regional search lacks '+label);
+  }
+  const ambiguousCity=await (await get('/region/?q='+encodeURIComponent('광주'))).text();
+  assert(ambiguousCity.includes('지역 맞춤 명함 펼치기')&&!ambiguousCity.includes('class="dynamic-region-card-preview" open'),'ambiguous city must not silently choose a card');
   const ambiguousRegion=await get('/region/?q='+encodeURIComponent('광주탁송'));
   assert.equal(new URL(ambiguousRegion.url).pathname,'/region/','ambiguous city name must show region choices');
   const oldRegion=await get('/region/detail/?region='+encodeURIComponent('창원시')+'&parent='+encodeURIComponent('경상남도')+'&kind=daeri');
