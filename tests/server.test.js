@@ -1345,6 +1345,36 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('href="/fare/?"')||html.includes('href="/fare/?service='),'fare navigation must stay on '+path);
   }
   console.log('PASS: 17 new locality keyword searches and regional blog sections preserve service identity');
+  // Every user-prioritized region+service phrase must resolve to the correct
+  // single regional landing page, not a national card from an unrelated topic.
+  const requestedPriority=require('../data/blog-priority-regional-keywords.json').keywords;
+  assert.equal(requestedPriority.length,25);
+  const seenPriority=new Set();
+  for(const {keyword,region,kind} of requestedPriority){
+   const response=await get('/api/region-card-preview?q='+encodeURIComponent(keyword));
+   assert.equal(response.status,200,'priority API '+keyword);
+   const data=await response.json();
+   assert.equal(data.status,'matched','priority keyword matched: '+keyword);
+   assert.equal(data.region,region,'priority locality identity: '+keyword);
+   assert.equal(data.cards.length,1,'one service-specific card '+keyword);
+   assert.equal(data.cards[0].kind,kind,'correct service '+keyword);
+   const pageUrl=data.cards[0].url;
+   assert.ok(pageUrl.startsWith('/'+kind+'/'),'canonical regional service path '+keyword);
+   const page=await get(pageUrl);
+   assert.equal(page.status,200,'priority regional page '+keyword);
+   const pageHtml=await page.text();
+   assert.ok(pageHtml.includes('id="regional-priority-search-guide"'),'focused blog guide on '+pageUrl);
+   assert.ok(pageHtml.includes(keyword),'exact requested phrase on '+pageUrl+': '+keyword);
+   assert.ok(pageHtml.includes('href="/fare/?service='),'fare link on '+pageUrl);
+   assert.ok(!pageHtml.includes('실제 운행완료 후기입니다'),'no invented trip on '+pageUrl);
+   seenPriority.add(pageUrl);
+  }
+  assert.equal(seenPriority.size,16,'25 keyword phrases converge to 16 canonical locality/service pages');
+  const directory=await (await get('/blog/')).text();
+  assert.ok(directory.includes('요청 지역별 탁송·대리운전 핵심 검색어'),'blog navigation to priority regions');
+  assert.ok(directory.includes('부산기장군탁송')&&directory.includes('강남프리미엄대리운전'),
+   'blog directory contains exact priority phrase labels');
+  console.log('PASS: 25 priority keywords -> 16 canonical locality/service guides and blog navigation');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
