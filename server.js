@@ -361,7 +361,7 @@ function renderCardArtwork(label,kind){
   const overlay=cardSvg(label,kind);
   // Use the already-proven bitmap+SVG compositing pipeline. The new SVG has
   // a completely opaque background, so no old place-name artwork can leak.
-  return require('sharp')(serviceCardArt[kind]).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:true,quality:95,effort:3}).toBuffer();
+  return require('sharp')(serviceCardArt[kind]).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:false,compressionLevel:6}).toBuffer();
  }
  const overlay=cardSvg(label).replace(/<image[^>]+\/>/,'');
  return require('sharp')(cardArtFile).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:true,quality:95,effort:3}).toBuffer();
