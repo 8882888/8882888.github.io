@@ -33,6 +33,8 @@ function loadLegalRegions(){
 const regions=loadLegalRegions();
 const priorityRegionalPages=load('data/priority-regions.json').pages;
 const naverFocus50=load('data/naver-regional-focus-50.json').priority;
+const naverFocusNext50=load('data/naver-regional-focus-next-50.json').priority;
+const naverFocus100=[...naverFocus50,...naverFocusNext50];
 const blogHashtagArticles=load('data/blog-hashtags-priority.json').articles;
 if(blogHashtagArticles.length!==30||new Set(blogHashtagArticles.map(x=>x.slug)).size!==30||
  blogHashtagArticles.some(x=>!/^[-a-z0-9]+$/.test(x.slug)||x.tags.length!==30||new Set(x.tags).size!==30))
@@ -46,12 +48,13 @@ const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
 const daeriTravelGuides=require('./lib/daeri-travel-guides');
 const foodTravelMap=require('./lib/food-travel-map');
 const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]));
-const focus50ByKey=new Map(naverFocus50.map(x=>[x.kind+'|'+x.region,x]));
-if(naverFocus50.length!==50||focus50ByKey.size!==50||
- new Set(naverFocus50.map(x=>x.keyword)).size!==50||
- naverFocus50.some(x=>!['taksong','daeri'].includes(x.kind)||!regions.some(r=>r.full_name===x.region)||
-  !x.keyword||!x.topic||!x.pickup||!x.handover))
- throw Error('Invalid 50 curated regional SEO entries');
+const focus50ByKey=new Map(naverFocus100.map(x=>[x.kind+'|'+x.region,x]));
+if(naverFocus50.length!==50||naverFocusNext50.length!==50||naverFocus100.length!==100||
+ focus50ByKey.size!==100||new Set(naverFocus100.map(x=>x.keyword)).size!==100||
+ naverFocus100.some(x=>!['taksong','daeri'].includes(x.kind)||!regions.some(r=>r.full_name===x.region)||
+  !x.keyword||!x.topic||!x.pickup||!x.handover||
+  (x.related&&!/^\/(?:service|business|fare)\/[a-z0-9\-/]+\/$/.test(x.related))))
+ throw Error('Invalid 100 curated regional SEO entries (2 batches of 50)');
 if(priorityRegionalPages.length<27||priorityByKey.size!==priorityRegionalPages.length)throw Error('Invalid or duplicate priority regional pages: '+priorityRegionalPages.length+' entries, '+priorityByKey.size+' unique');
 for(const guide of priorityRegionalPages){
  if(!['daeri','taksong'].includes(guide.kind)||!regions.some(r=>r.full_name===guide.region)||!guide.topic||!guide.detail)
@@ -91,10 +94,12 @@ function naverFocus50Guide(r,kind){
   '<a href="/reviews/history/?kind='+kind+'&amp;q='+encodeURIComponent(name)+'">이 지역과 일치하는 실제 운행기록 검색</a> · '+
   '<a href="tel:18114294">상담 1811-4294</a></p>'+
   '<nav aria-label="'+esc(info.keyword)+' 관련 이용 방식"><p>'+
-   related.map(([title,url])=>'<a href="'+url+'">'+esc(title)+'</a>').join(' · ')+'</p></nav></section>';
+   related.map(([title,url])=>'<a href="'+url+'">'+esc(title)+'</a>').join(' · ')+
+   (info.related?' · <a href="'+info.related+'">'+esc(info.topic)+' 전문 서비스 안내</a>':'')+
+   '</p></nav></section>';
 }
 function naverFocus50Hub(kind){
- const selected=naverFocus50.filter(x=>x.kind===kind);
+ const selected=naverFocus100.filter(x=>x.kind===kind);
  const grouped=new Map();
  for(const entry of selected){
   const p=entry.region.split(' ')[0];
@@ -108,7 +113,7 @@ function naverFocus50Hub(kind){
    return '<a href="'+servicePath(r,kind)+'">'+esc(entry.keyword)+'</a>';
   }).join(' · ')+'</p></div>'
  ).join('');
- return '<section id="naver-focused-regional-discovery" aria-label="50개 중 '+selected.length+'개 '+label+' 대표 지역 연결">'+
+ return '<section id="naver-focused-regional-discovery" aria-label="100개 중 '+selected.length+'개 '+label+' 대표 지역 연결">'+
   '<h2>'+label+' 주요 지역 서비스 직접 찾기</h2>'+
   '<p>시·군·구별 차량 인수 장소와 예약 조건을 확인할 수 있는 기존 상세 페이지입니다. 지역별 별도 지점 설치나 기사 상주를 의미하지 않습니다.</p>'+
   directory+'</section>';
