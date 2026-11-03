@@ -5,7 +5,11 @@
 .smart24-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px;align-items:start}
 .smart24-card-panel{min-width:0;border:1px solid #c6d7eb;border-radius:12px;padding:12px;background:#f8fbff;box-sizing:border-box}
 .smart24-card-heading{font-size:clamp(17px,2.4vw,21px);line-height:1.4;margin:0 0 8px;color:#102544}
+.smart24-card-picture-link{display:block;max-width:100%;border-radius:8px;cursor:zoom-in;overflow:hidden}
+.smart24-card-picture-link:focus-visible{outline:3px solid #f2aa28;outline-offset:3px}
 .smart24-card-preview-image{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain;border-radius:8px;background:#e9f1fa}
+.smart24-card-picture-link:hover .smart24-card-preview-image{filter:brightness(.97)}
+.smart24-card-error{padding:22px 10px;min-height:70px;background:#edf4fc;border-radius:8px;font-weight:700}
 .smart24-card-description{font-size:15px;line-height:1.6;margin:10px 0;color:#24364a}
 .smart24-card-actions{display:flex;flex-wrap:wrap;gap:8px}
 .smart24-card-actions a,.smart24-card-actions button,.smart24-card-choice{font:inherit;font-weight:750;min-height:44px;padding:9px 11px;border-radius:8px;text-align:center;cursor:pointer;text-decoration:none;border:1px solid #14517e;color:#14517e;background:#fff}
