@@ -257,7 +257,7 @@ async function main(){
     if(sourceLinked)assert(r.body.includes('<loc>https://jeongukdaeri.kr'+regionUrl+'</loc>'),file+' missing original-linked priority region '+regionUrl);
    }
   }
-  console.log('PASS: production server boots with '+expected.length+' priority regions; 20 priority URLs HTTP 200 / H1 / canonical / index / phone checks; 630 original blog links and 10 source groups; XML routes accessible.');
+  console.log('PASS: production server boots with '+expected.length+' priority regions; 20 priority URLs HTTP 200 / H1 / canonical / index / phone checks; '+blogSources.length+' original blog links and 10 source groups; XML routes accessible.');
  }catch(err){
   console.error('SERVER DIAGNOSTIC exit='+exited+'; '+logs.slice(-4000));
   throw err;
