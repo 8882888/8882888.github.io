@@ -13,7 +13,7 @@ from pathlib import Path
 import sys
 import urllib.error
 import urllib.request
-from urllib.parse import quote, unquote
+from urllib.parse import quote, unquote, urlencode
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 
@@ -426,6 +426,47 @@ def run():
         result = "PASS" if not errors else "FAIL"
         failures += bool(errors)
         detail = "; ".join(errors) if errors else "live image delivered with caching and ETag"
+        print(f"{result}: {path} — {detail}")
+        rows.append((path, status, result, detail))
+
+    # Verify the actual production API that powers instant, in-place locality cards.
+    # These are interaction checks only, not search ranking or Naver image-index claims.
+    card_queries = [
+        ("부산대리운전", "daeri", "matched"),
+        ("울산탁송", "taksong", "matched"),
+        ("광주", None, "ambiguous"),
+        ("제주도탁송", "taksong", "matched"),
+    ]
+    for keyword, wanted_service, wanted_status in card_queries:
+        path = "/api/region-card-preview?" + urlencode({"q": keyword})
+        errors = []
+        status = "-"
+        try:
+            req = urllib.request.Request(BASE + path, headers=HEADERS)
+            with urllib.request.urlopen(req, timeout=22) as response:
+                status = response.status
+                payload = json.loads(response.read().decode("utf-8"))
+                if response.headers.get("X-Robots-Tag") != "noindex, nofollow":
+                    errors.append("preview endpoint not set to noindex")
+                if "application/json" not in response.headers.get("Content-Type", ""):
+                    errors.append("preview endpoint must return JSON")
+                if status != 200 or payload.get("status") != wanted_status:
+                    errors.append("keyword locality resolution incorrect")
+                cards = payload.get("cards", [])
+                if wanted_service:
+                    if len(cards) != 1 or cards[0].get("kind") != wanted_service:
+                        errors.append("wrong driver/taksong card returned")
+                    elif not cards[0].get("image", "").endswith("-" + wanted_service + "-brand-v5.png"):
+                        errors.append("wrong service card image version")
+                    elif keyword == "제주도탁송" and cards[0].get("phone") != "1877-5245":
+                        errors.append("Jeju dedicated phone not preserved")
+                elif cards:
+                    errors.append("ambiguous name unexpectedly selects a card")
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:120])
+        result = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        detail = "; ".join(errors) if errors else "correct locality, service-only dynamic image and noindex response"
         print(f"{result}: {path} — {detail}")
         rows.append((path, status, result, detail))
 
