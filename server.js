@@ -57,7 +57,7 @@ if(naverFocus50.length!==50||naverFocusNext50.length!==50||naverFocusThird50.len
  focus50ByKey.size!==300||new Set(naverFocus300.map(x=>x.keyword)).size!==300||
  naverFocus300.some(x=>!['taksong','daeri'].includes(x.kind)||!regions.some(r=>r.full_name===x.region)||
   !x.keyword||!x.topic||!x.pickup||!x.handover||
-  (x.related&&!/^\/(?:service|business|fare|route-taksong)\/[a-z0-9\-/]*$/.test(x.related))))
+  (x.related&&!/^\/(?:service|business|fare|route-taksong|special)\/[a-z0-9\-/]*$/.test(x.related))))
  throw Error('Invalid 300 curated regional SEO entries (4 batches of 50 plus 100)');
 if(priorityRegionalPages.length<27||priorityByKey.size!==priorityRegionalPages.length)throw Error('Invalid or duplicate priority regional pages: '+priorityRegionalPages.length+' entries, '+priorityByKey.size+' unique');
 for(const guide of priorityRegionalPages){
