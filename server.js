@@ -1379,6 +1379,7 @@ for(const r of regions){
  // A user-entered unique shorthand for Seoul Gangnam-gu, not a generic
  // abbreviation for other identical district names.
  if(r.full_name==='서울특별시 강남구')names.add('강남');
+ if(r.full_name==='부산광역시 해운대구')names.add('해운대');
  // Searchers omit the internal Sejong '(직할)' grouping when typing 읍·면·동·리.
  if(r.full_name.includes(' (직할) ')){
   names.add(r.full_name.replace(' (직할) ',' '));
