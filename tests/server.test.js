@@ -919,7 +919,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const cityBoth=(await (await get('/region/?q='+encodeURIComponent('부산'))).text());
   assert.ok(/\/card\/area-\d+-daeri-brand-v5\.png/.test(cityBoth)&&/\/card\/area-\d+-taksong-brand-v5\.png/.test(cityBoth),'unqualified region displays two different service images');
   const requestedTaksong=(await (await get('/region/?q='+encodeURIComponent('울산')+'&service=taksong')).text());
-  assert.ok(requestedTaksong.includes('class="dynamic-region-card-preview" open')&&requestedTaksong.includes('울산전국탁송'),'explicit taksong filter auto-opens taksong only');
+  assert.ok(requestedTaksong.includes('class="dynamic-region-card-preview" open'),'explicit taksong filter should open matching region; markup excerpt '+requestedTaksong.match(/<details[^>]*>/)?.[0]);
+  assert.ok(requestedTaksong.includes('울산전국탁송'),'explicit taksong region label should be correct; nearby text '+requestedTaksong.slice(requestedTaksong.indexOf('dynamic-region-card-directory'),requestedTaksong.indexOf('dynamic-region-card-directory')+500));
   const homeCardSearch=(await (await get('/')).text());
   assert.ok(homeCardSearch.includes('id="dynamic-service-card-search-20261103"')&&homeCardSearch.includes('action="/region/"')&&homeCardSearch.includes('지역별 명함 자동확장 보기'),'homepage offers responsive region service card search');
   assert.ok(homeCardSearch.includes('id="mountain-cycling-fare-first-20261103"')&&homeCardSearch.includes('id="homepage-fare-top"'),'home retains original fare and calculator');
