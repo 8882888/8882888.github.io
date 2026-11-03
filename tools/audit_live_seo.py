@@ -143,6 +143,9 @@ def run():
         rules = {p["path"]: p for p in json.load(stream)["pages"]}
     rows = []
     failures = 0
+    focus_files = ['data/naver-regional-focus-50.json', 'data/naver-regional-focus-next-50.json', 'data/naver-regional-focus-third-50.json', 'data/naver-regional-focus-fourth-50.json']
+    focus_entries = [entry for filename in focus_files for entry in json.loads(Path(filename).read_text(encoding='utf-8'))['priority']]
+    focus_keys = {(entry['kind'], entry['region']) for entry in focus_entries}
     for path, marker in PATHS.items():
         errors = []
         status = "-"
@@ -297,9 +300,6 @@ def run():
         health = json.loads(body)
         source_count = health.get("blog_source_count")
         expected_priority_count = len(json.loads(Path('data/priority-regions.json').read_text(encoding='utf-8'))['pages'])
-        focus_files = ['data/naver-regional-focus-50.json', 'data/naver-regional-focus-next-50.json', 'data/naver-regional-focus-third-50.json', 'data/naver-regional-focus-fourth-50.json']
-        focus_entries = [entry for filename in focus_files for entry in json.loads(Path(filename).read_text(encoding='utf-8'))['priority']]
-        focus_keys = {(entry['kind'], entry['region']) for entry in focus_entries}
         if len(focus_entries) != 200 or len(focus_keys) != 200 or len({entry['keyword'] for entry in focus_entries}) != 200:
             errors.append('200 curated region entries are missing or duplicated in GitHub source')
         if health.get('naver_focus_region_count') != len(focus_entries):
