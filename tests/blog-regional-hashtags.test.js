@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const manifest=require('../data/blog-hashtags-priority.json');
-assert.equal(manifest.articles.length,10);
+assert.equal(manifest.articles.length,20);
 const slugs=new Set(),titles=new Set();
 const directory=fs.readFileSync('blog/daeri-regions/index.html','utf8');
 for(const item of manifest.articles){
@@ -28,4 +28,4 @@ for(const item of manifest.articles){
  assert(/<\/p><\/section><\/(?:article|main)>/.test(tail),'hashtags must be last article section: '+route);
  assert(html.includes('전 직원 100% 보험가입 안전운행'),'fixed safety sentence missing: '+route);
 }
-console.log('PASS: ten published regional articles; exact 30 unique hashtags after contact; canonical, blog directory, insurance notice intact');
+console.log('PASS: twenty published regional articles; exact 30 unique hashtags after contact; canonical, blog directory, insurance notice intact');

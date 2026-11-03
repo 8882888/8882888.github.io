@@ -99,7 +99,7 @@ async function main(){
   for(const file of ['data/priority-regions.json','data/region-journey-links.json'])
     assert.match(diagnostic.deployment_hashes[file],/^[0-9a-f]{64}$/,'missing geographic page source hash: '+file);
   const blogArticles=JSON.parse(fs.readFileSync('data/blog-hashtags-priority.json','utf8')).articles;
-  assert.equal(blogArticles.length,10);
+  assert.equal(blogArticles.length,20);
   const priorityBlogSitemap=await request(port,'/sitemap-priority.xml');
   const mainBlogSitemap=await request(port,'/sitemap.xml');
   assert.equal(priorityBlogSitemap.status,200);assert.equal(mainBlogSitemap.status,200);

@@ -9,7 +9,7 @@ const key='770f921af32e749f64c1d447c607ea42';
 const root=path.resolve(__dirname,'..');
 const priorityPaths=Object.freeze(require('../data/region-journey-links.json').pages.map(p=>p.path));
 const blogHashtagPaths=Object.freeze(require('../data/blog-hashtags-priority.json').articles.map(p=>'/blog/daeri-regions/'+p.slug+'/'));
-if(blogHashtagPaths.length!==10||new Set(blogHashtagPaths).size!==10)throw Error('Expected ten blog canonical URLs');
+if(blogHashtagPaths.length!==20||new Set(blogHashtagPaths).size!==10)throw Error('Expected twenty blog canonical URLs');
 if(priorityPaths.length!==10||new Set(priorityPaths).size!==10)throw Error('Expected ten unique regional source URLs');
 const dryRun=process.argv.includes('--dry-run');
 const base=new URL(dryRun?(process.argv[process.argv.indexOf('--dry-run')+1]||'http://localhost:3000/'):'https://jeongukdaeri.kr/');
@@ -45,9 +45,9 @@ function changedPaths(files,manual=''){
  const input=new Set(files);
  // A content-focused blog update should notify its actual article URLs, not
  // resubmit unrelated service landing pages in the same commit.
- if(input.has('data/blog-hashtags-priority.json'))return [...blogHashtagPaths];
+ if(input.has('data/blog-hashtags-priority.json'))return blogHashtagPaths.slice(-10);
  const changedBlogs=blogHashtagPaths.filter(url=>input.has(url.slice(1)+'index.html'));
- if(changedBlogs.length)return changedBlogs;
+ if(changedBlogs.length)return changedBlogs.slice(0,10);
  const selected=new Set();
  const include=paths=>paths.forEach(p=>selected.add(p));
  if([...input].some(p=>[
