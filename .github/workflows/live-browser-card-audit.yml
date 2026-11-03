@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'tools/audit_live_browser_cards.cjs'
+      - 'assets/cycling-routes/*.svg'
       - '.github/workflows/live-browser-card-audit.yml'
   workflow_dispatch:
 permissions:
@@ -17,6 +18,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify full-resolution dimensions on all seven cycling cards
+        run: |
+          node - <<'NODE'
+          const fs=require('node:fs'),assert=require('node:assert/strict');
+          const files=fs.readdirSync('assets/cycling-routes').filter(x=>x.endsWith('.svg'));
+          assert.equal(files.length,7,'expected seven cycling-route posters');
+          for(const name of files){
+            const svg=fs.readFileSync('assets/cycling-routes/'+name,'utf8');
+            assert.match(svg,/<svg[^>]*width="1200"[^>]*height="630"[^>]*viewBox="0 0 1200 630"/,'missing intrinsic size '+name);
+            assert.match(svg,/<title[^>]*>[^<]+<\/title>/,'accessible title '+name);
+          }
+          console.log('PASS cycling seven intrinsic 1200×630 SVG image dimensions');
+          NODE
       - name: Install isolated browser test tooling
         run: |
           mkdir -p /tmp/smart24-browser-tooling
