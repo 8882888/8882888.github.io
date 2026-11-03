@@ -179,8 +179,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   ]){
    const response=await get(url),html=await response.text();
    assert.equal(response.status,200,'mountain canonical page loads: '+url);
-   assert.ok(html.indexOf('id="original-mountain-fare-visual"')<html.indexOf('<header'),
-    'original mountain fare poster is visually first: '+url);
+   assert.ok(html.indexOf('<header')<html.indexOf('<section id="mountain-route-fare-table-202611"')&&
+    html.indexOf('<section id="mountain-route-fare-table-202611"')<html.indexOf('<figure id="original-mountain-fare-visual"'),
+    'readable historic fare table and header must precede large mountain image: '+url);
    const a=html.indexOf('id="mountain-route-fare-table-202611"');
    assert.ok(a>0&&a<html.indexOf('id="mountain-complete-course-guide-20261102"'),
     'readable existing fare table precedes long route guide: '+url);
@@ -756,7 +757,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(result.status,200,'search redirects to dedicated page: '+keyword);
     assert.ok(decodeURIComponent(result.url).includes('/'+(mountain==='seoraksan'?'설악산탁송':'지리산탁송')+'/'),'no generic homepage for mountain keyword: '+keyword);
     const body=await result.text();
-    assert.ok(body.startsWith('<!doctype html>')&&body.includes('<body><figure id="original-mountain-fare-visual"'),'mountain original image first: '+keyword);
+    assert.ok(body.startsWith('<!doctype html>')&&body.includes('<body><header')&&body.indexOf('<section id="mountain-route-fare-table-202611"')<body.indexOf('<figure id="original-mountain-fare-visual"'),'mountain original fares precede large visual: '+keyword);
     assert.ok(body.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct mountain PNG: '+keyword);
     assert.ok(!body.includes('id="mobile-direct-image-priority"'),'no homepage Smart24 hero: '+keyword);
   }
@@ -767,7 +768,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     const seo=await get('/'+encodeURIComponent(segment)+'/');
     assert.equal(seo.status,200,'Korean keyword URL resolves');
     const html=await seo.text();
-    assert.ok(html.includes('<body><figure id="original-mountain-fare-visual"'),'Korean keyword URL shows original poster before menus');
+    assert.ok(html.includes('<body><header')&&html.indexOf('<section id="mountain-route-fare-table-202611"')<html.indexOf('<figure id="original-mountain-fare-visual"'),'Korean keyword URL shows visible fare table before large poster');
     assert.ok(html.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct original mountain fare image');
     assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr/'+segment+'/"'),'Korean URL is canonical');
   }
