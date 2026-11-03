@@ -987,7 +987,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('src="'+image+'"'),'topic card is still visible even if deep topic guide is not submitted');
   }
   assert.equal(guideImages.size,2,'guides reuse their service basic card instead of topic-specific cards');
-  assert.ok([...guideImages].every(x=>/-(daeri|taksong)-brand(?:-v[23])?\.png$/.test(x)),'all guides point to the requested service-specific basic cards; got '+JSON.stringify([...guideImages]));
+  assert.ok([...guideImages].every(x=>/-(daeri|taksong)-brand(?:-v[234])?\.png$/.test(x)),'all guides point to the requested service-specific basic cards; got '+JSON.stringify([...guideImages]));
   const topicImage=await get([...guideImages][0]);assert.equal(topicImage.status,200);
   const topicBytes=new Uint8Array(await topicImage.arrayBuffer());const topicMeta=await require('sharp')(topicBytes).metadata();assert.equal(topicMeta.width,1200);assert.equal(topicMeta.height,800);
   const topicStats=await require('sharp')(topicBytes).extract({left:0,top:100,width:1200,height:700}).stats();assert.ok(topicStats.channels.some(c=>c.stdev>35),'topic cards retain approved detailed artwork');
