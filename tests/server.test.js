@@ -953,6 +953,51 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(jejuPreview.status,'matched');assert.equal(jejuPreview.cards[0].phone,'1877-5245');
   const missingPreview=await getPreview('존재하지않는지역명');
   assert.equal(missingPreview.status,'not_found');assert.equal(missingPreview.cards.length,0);
+  // Common abbreviated Korea-region combinations must resolve without conflating homonyms.
+  for(const [keyword,kind,expected] of [
+   ['경기광주탁송','taksong','경기도 광주시'],
+   ['서울강남탁송','taksong','서울특별시 강남구'],
+   ['수원영통대리운전','daeri','경기도 수원시 영통구'],
+   ['부산시탁송','taksong','부산광역시'],
+   ['대구시대리운전','daeri','대구광역시'],
+  ]){
+   const data=await getPreview(keyword);
+   assert.equal(data.status,'matched','abbreviated locality not resolved: '+keyword);
+   assert.equal(data.region,expected,'wrong same-name locality: '+keyword);
+   assert.equal(data.cards[0].kind,kind,'wrong service for local search: '+keyword);
+  }
+  const duplicateDistrict=await getPreview('동구탁송');
+  assert.equal(duplicateDistrict.status,'ambiguous','same-name Dong-gu must not auto-choose a province');
+  assert.equal(duplicateDistrict.cards.length,0,'ambiguous district cannot claim a specific local ride');
+  // PNG remains the share/search original; 800-pixel WebP is used only as mobile preview.
+  assert.ok(taksongPreview.cards[0].image.endsWith('.png'));
+  assert.ok(taksongPreview.cards[0].previewImage.endsWith('-taksong-brand-v5.webp'));
+  assert.notEqual(taksongPreview.cards[0].previewImage,taksongPreview.cards[0].image);
+  const previewImagePath=taksongPreview.cards[0].previewImage;
+  const mobileImage=await get(previewImagePath);
+  assert.equal(mobileImage.status,200,'mobile WebP card image must resolve');
+  assert.ok(mobileImage.headers.get('content-type').includes('image/webp'));
+  const etag=mobileImage.headers.get('etag');assert.ok(etag,'versioned preview must have conditional caching');
+  const mobileBytes=Buffer.from(await mobileImage.arrayBuffer());
+  assert.equal(mobileBytes.subarray(0,4).toString(),'RIFF');
+  assert.equal(mobileBytes.subarray(8,12).toString(),'WEBP');
+  const dimensions=await require('sharp')(mobileBytes).metadata();
+  assert.equal(dimensions.width,800);assert.ok(dimensions.height>=530&&dimensions.height<=535);
+  const originalImage=await get(taksongPreview.cards[0].image);
+  assert.equal(originalImage.status,200);assert.ok(originalImage.headers.get('content-type').includes('image/png'));
+  assert.ok(mobileBytes.byteLength<(await originalImage.arrayBuffer()).byteLength,'mobile WebP should use fewer bytes than crawler PNG');
+  const cached=await fetch('http://127.0.0.1:'+port+previewImagePath,{headers:{'if-none-match':etag}});
+  assert.equal(cached.status,304,'WebP conditional cache response should not download image twice');
+  const head=await fetch('http://127.0.0.1:'+port+previewImagePath,{method:'HEAD'});
+  assert.equal(head.status,200);assert.ok(head.headers.get('content-type').includes('image/webp'));
+  const liveScript=await (await get('/assets/region-card-preview.js')).text();
+  const liveCss=await (await get('/assets/region-card-preview.css')).text();
+  assert.ok(liveScript.includes('card.previewImage')&&liveScript.includes('pngFallback'),'browser must prefer WebP and fall back to PNG');
+  assert.ok(liveScript.includes("picture.addEventListener('click'")&&liveScript.includes('openZoom(original,img.alt,picture)'),'tapping actual image should open original zoom');
+  assert.ok(liveScript.includes('lastActivator.focus()')&&liveCss.includes('.smart24-card-picture-link:focus-visible'),'keyboard focus and visible focus ring are retained');
+  assert.ok(liveScript.includes('++sequence')&&liveScript.includes('controller.abort()'),'stale fast-typing requests are cancelled');
+  const currentHome=await (await get('/')).text();
+  assert.ok(currentHome.includes('region-card-preview.js?v=20261103-live2')&&currentHome.includes('region-card-preview.css?v=20261103-live2'),'new frontend assets must bypass stale mobile browser caches');
   for(const asset of ['/assets/region-card-preview.js','/assets/region-card-preview.css']){
    const r=await get(asset);assert.equal(r.status,200,asset);
    const body=await r.text();assert.ok(body.length>600&&/card-(?:preview|dialog)/.test(body),'live card asset has functional code: '+asset);
