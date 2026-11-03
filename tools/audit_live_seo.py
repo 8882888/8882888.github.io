@@ -297,6 +297,13 @@ def run():
         health = json.loads(body)
         source_count = health.get("blog_source_count")
         expected_priority_count = len(json.loads(Path('data/priority-regions.json').read_text(encoding='utf-8'))['pages'])
+        focus_files = ['data/naver-regional-focus-50.json', 'data/naver-regional-focus-next-50.json', 'data/naver-regional-focus-third-50.json', 'data/naver-regional-focus-fourth-50.json']
+        focus_entries = [entry for filename in focus_files for entry in json.loads(Path(filename).read_text(encoding='utf-8'))['priority']]
+        focus_keys = {(entry['kind'], entry['region']) for entry in focus_entries}
+        if len(focus_entries) != 200 or len(focus_keys) != 200 or len({entry['keyword'] for entry in focus_entries}) != 200:
+            errors.append('200 curated region entries are missing or duplicated in GitHub source')
+        if health.get('naver_focus_region_count') != len(focus_entries):
+            errors.append(f"curated regional batch not deployed: live={health.get('naver_focus_region_count')!r}, GitHub={len(focus_entries)}")
         if health.get('priority_region_count') != expected_priority_count:
             errors.append(f"priority region count not deployed: live={health.get('priority_region_count')!r}, GitHub={expected_priority_count}")
         group_count = health.get("curated_source_groups")
@@ -363,6 +370,8 @@ def run():
                         BASE + "/business/rental-car/", BASE + "/business/used-car/",
                         BASE + "/business/export-port/", BASE + "/business/auction/",
                     }
+                if path == '/sitemap-priority.xml' and len(locs) < len(focus_entries):
+                    errors.append(f'priority sitemap has fewer URLs ({len(locs)}) than curated region targets ({len(focus_entries)})')
                 missing = expected - locs
                 if missing:
                     errors.append("required canonical URLs missing: " + ", ".join(sorted(missing)[:6]))
