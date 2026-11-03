@@ -865,7 +865,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    ['/taksong/incheon/','인천전국탁송'],['/taksong/ulsan/','울산전국탁송'],
    ['/taksong/gyeongnam/changwon-si/','창원전국탁송'],
    ['/taksong/gyeongnam/gimhae-si/','김해전국탁송'],
-   ['/taksong/gangwon/gangneung-si/','강릉전국탁송'],
+   ['/taksong/gangwon/gangreung-si/','강릉전국탁송'],
    ['/taksong/gangwon/sokcho-si/','속초전국탁송'],
    ['/daeri/busan/','부산스마트대리운전'],['/daeri/daegu/','대구스마트대리운전']
   ];
