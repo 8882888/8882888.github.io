@@ -1500,6 +1500,46 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(siteHubs.taksong.includes('인천서해구탁송'),
    '2026 Incheon Seohae-gu canonical replaces obsolete Seo-gu locality');
   console.log('PASS: 50 locally distinct regional SEO pages, 50 home links, official image/API, canonical, sitemap and CTA');
+  // New non-overlapping batch: 30 additional taksong + 20 daeri regions.
+  const focusNext50=require('../data/naver-regional-focus-next-50.json').priority;
+  assert.equal(focusNext50.length,50);
+  let additionalVerified=0;
+  const allRegionPaths=new Set(focusPaths);
+  for(const entry of focusNext50){
+   const linked=siteHubs[entry.kind].match(new RegExp('<a href="([^"]+)">'+entry.keyword+'</a>'));
+   assert.ok(linked,'second 50 locality navigation '+entry.keyword);
+   const url=linked[1];
+   assert.ok(!allRegionPaths.has(url),'100 focus pages must be distinct '+entry.keyword);
+   allRegionPaths.add(url);
+   assert.ok(siteMaps[entry.kind].includes('https://example.com'+url),'50 new regional sitemap URLs '+entry.keyword);
+   const page=await get(url);
+   assert.equal(page.status,200,'second 50 local page HTTP '+entry.keyword);
+   const html=await page.text();
+   assert.ok(html.includes('id="naver-focus50-local-guide"'),'existing guide component '+entry.keyword);
+   assert.ok(html.includes(entry.keyword)&&html.includes(entry.topic),'exact phrase and differentiated customer focus '+entry.keyword);
+   assert.ok(html.includes(entry.pickup)&&html.includes(entry.handover),'unique pickup and handover guidance '+entry.keyword);
+   assert.ok(html.includes('href="'+entry.related+'"'),'service-appropriate related link '+entry.keyword);
+   assert.ok(html.includes('rel="canonical" href="https://example.com'+url+'"'),'canonical locality URL preserved '+entry.keyword);
+   assert.ok(!html.includes('<meta name="robots" content="noindex'),'indexable key region '+entry.keyword);
+   assert.ok(html.includes('class="regional-responsive-card"'),'correct responsive region image '+entry.keyword);
+   const response=await get('/api/region-card-preview?q='+encodeURIComponent(entry.keyword));
+   assert.equal(response.status,200);
+   const data=await response.json();
+   assert.equal(data.status,'matched','second 50 search query resolves '+entry.keyword);
+   assert.equal(data.region,entry.region,'not wrong city or county '+entry.keyword);
+   assert.equal(data.cards.length,1,'single targeted service '+entry.keyword);
+   assert.equal(data.cards[0].kind,entry.kind,'correct service category '+entry.keyword);
+   assert.equal(data.cards[0].url,url,'search lands on the correct existing region page '+entry.keyword);
+   assert.equal(data.cards[0].displayKeyword,entry.keyword,'dynamic card heading exactly matches '+entry.keyword);
+   assert.ok(data.cards[0].keywordImage.startsWith('/keyword-card/exact/'),'exact regional card '+entry.keyword);
+   const img=await get(data.cards[0].keywordImage);
+   assert.equal(img.status,200,'exact image generated '+entry.keyword);
+   assert.ok((await img.text()).includes('>'+entry.keyword+'</text>'),'exact phrase actually painted on image '+entry.keyword);
+   additionalVerified++;
+  }
+  assert.equal(additionalVerified,50);
+  assert.equal(allRegionPaths.size,100);
+  console.log('PASS second 50 SEO regions + previous 50 = 100 distinct canonical pages, proper service images, exact phrases, site maps and handover detail');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
