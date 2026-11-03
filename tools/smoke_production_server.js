@@ -62,7 +62,7 @@ async function main(){
   const warmMs=Date.now()-warmAt;
   assert.equal(homePage.status,200,'homepage must open');
   assert(homePage.body.includes('id="mountain-cycling-fare-first-20261103"'),'homepage first-screen fare links missing');
-  assert(homePage.body.indexOf('id="mountain-cycling-fare-first-20261103"')<12000,'fare/image links buried below long text');
+  assert(homePage.body.indexOf('id="mountain-cycling-fare-first-20261103"')-homePage.body.indexOf('<body')<5500,'fare/image links buried below long body text');
   for(const path of ['/assets/seoraksan-taksong-original-fare.png','/assets/jirisan-taksong-original-fare.png','/assets/smart24-taksong-brand.webp','/assets/smart24-business-card-inline.webp']){
     const img=await request(port,path);
     assert.equal(img.status,200,'image asset HTTP failed: '+path);
