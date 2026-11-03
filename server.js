@@ -42,7 +42,8 @@ const naverFocusSixth100=load('data/naver-regional-focus-sixth-100.json').priori
 const naverFocusSeventh100=load('data/naver-regional-focus-seventh-100.json').priority;
 const naverFocusEighth100=load('data/naver-regional-focus-eighth-100.json').priority;
 const naverFocusNinth100=load('data/naver-regional-focus-ninth-100.json').priority;
-const naverFocus700=[...naverFocus50,...naverFocusNext50,...naverFocusThird50,...naverFocusFourth50,...naverFocusFifthTaksong50,...naverFocusFifthDaeri50,...naverFocusSixth100,...naverFocusSeventh100,...naverFocusEighth100,...naverFocusNinth100];
+const naverFocusTenth100=load('data/naver-regional-focus-tenth-100.json').priority;
+const naverFocus800=[...naverFocus50,...naverFocusNext50,...naverFocusThird50,...naverFocusFourth50,...naverFocusFifthTaksong50,...naverFocusFifthDaeri50,...naverFocusSixth100,...naverFocusSeventh100,...naverFocusEighth100,...naverFocusNinth100,...naverFocusTenth100];
 const blogHashtagArticles=load('data/blog-hashtags-priority.json').articles;
 if(blogHashtagArticles.length!==30||new Set(blogHashtagArticles.map(x=>x.slug)).size!==30||
  blogHashtagArticles.some(x=>!/^[-a-z0-9]+$/.test(x.slug)||x.tags.length!==30||new Set(x.tags).size!==30))
@@ -56,13 +57,13 @@ const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
 const daeriTravelGuides=require('./lib/daeri-travel-guides');
 const foodTravelMap=require('./lib/food-travel-map');
 const priorityByKey=new Map(priorityRegionalPages.map(x=>[x.kind+'|'+x.region,x]));
-const focus50ByKey=new Map(naverFocus700.map(x=>[x.kind+'|'+x.region,x]));
-if(naverFocus50.length!==50||naverFocusNext50.length!==50||naverFocusThird50.length!==50||naverFocusFourth50.length!==50||naverFocusFifthTaksong50.length!==50||naverFocusFifthDaeri50.length!==50||naverFocusSixth100.length!==100||naverFocusSeventh100.length!==100||naverFocusEighth100.length!==100||naverFocusNinth100.length!==100||naverFocus700.length!==700||
- focus50ByKey.size!==700||new Set(naverFocus700.map(x=>x.keyword)).size!==700||
- naverFocus700.some(x=>!['taksong','daeri'].includes(x.kind)||!regions.some(r=>r.full_name===x.region)||
+const focus50ByKey=new Map(naverFocus800.map(x=>[x.kind+'|'+x.region,x]));
+if(naverFocus50.length!==50||naverFocusNext50.length!==50||naverFocusThird50.length!==50||naverFocusFourth50.length!==50||naverFocusFifthTaksong50.length!==50||naverFocusFifthDaeri50.length!==50||naverFocusSixth100.length!==100||naverFocusSeventh100.length!==100||naverFocusEighth100.length!==100||naverFocusNinth100.length!==100||naverFocusTenth100.length!==100||naverFocus800.length!==800||
+ focus50ByKey.size!==800||new Set(naverFocus800.map(x=>x.keyword)).size!==800||
+ naverFocus800.some(x=>!['taksong','daeri'].includes(x.kind)||!regions.some(r=>r.full_name===x.region)||
   !x.keyword||!x.topic||!x.pickup||!x.handover||
   (x.related&&!/^\/(?:service|business|fare|route-taksong|special)\/[a-z0-9\-/]*$/.test(x.related))))
- throw Error('Invalid 700 curated regional SEO entries (9 batches, last 5 of 100)');
+ throw Error('Invalid 800 curated regional SEO entries (10 batches, last 6 of 100)');
 if(priorityRegionalPages.length<27||priorityByKey.size!==priorityRegionalPages.length)throw Error('Invalid or duplicate priority regional pages: '+priorityRegionalPages.length+' entries, '+priorityByKey.size+' unique');
 for(const guide of priorityRegionalPages){
  if(!['daeri','taksong'].includes(guide.kind)||!regions.some(r=>r.full_name===guide.region)||!guide.topic||!guide.detail)
@@ -109,7 +110,7 @@ function naverFocus50Guide(r,kind){
    '</p></nav></section>';
 }
 function naverFocus50Hub(kind){
- const selected=naverFocus700.filter(x=>x.kind===kind);
+ const selected=naverFocus800.filter(x=>x.kind===kind);
  const grouped=new Map();
  for(const entry of selected){
   const p=entry.region.split(' ')[0];
@@ -123,7 +124,7 @@ function naverFocus50Hub(kind){
    return '<a href="'+servicePath(r,kind)+'">'+esc(entry.keyword)+'</a>';
   }).join(' · ')+'</p></div>'
  ).join('');
- return '<section id="naver-focused-regional-discovery" aria-label="700개 중 '+selected.length+'개 '+label+' 대표 지역 연결">'+
+ return '<section id="naver-focused-regional-discovery" aria-label="800개 중 '+selected.length+'개 '+label+' 대표 지역 연결">'+
   '<h2>'+label+' 주요 지역 서비스 직접 찾기</h2>'+
   '<p>시·군·구별 차량 인수 장소와 예약 조건을 확인할 수 있는 기존 상세 페이지입니다. 지역별 별도 지점 설치나 기사 상주를 의미하지 않습니다.</p>'+
   directory+'</section>';
@@ -1447,7 +1448,7 @@ const liveCardPublicData=(r,kind)=>({
 // Build exact-phrase visuals only after proving the legal locality and service.
 // This prevents a string like 광주탁송회사 from silently selecting the wrong city.
 // Curated search phrases resolve to their canonical legal region without inventing a branch or completed trip.
-const focusKeywordByPhrase=new Map(naverFocus700.map(entry=>[compact(entry.keyword),entry]));
+const focusKeywordByPhrase=new Map(naverFocus800.map(entry=>[compact(entry.keyword),entry]));
 function exactRegionalKeywordCard(r,kind,raw){
  if(!r||!['taksong','daeri'].includes(kind))return null;
  const phrase=String(raw||'').trim();
@@ -1525,7 +1526,7 @@ if(pathname==='/health/seo.json'){
   }catch{pages[key]={error:'source unavailable'}}
  }
  res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,naver_focus_region_count:naverFocus700.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]))}),'application/json; charset=utf-8');
+ return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,naver_focus_region_count:naverFocus800.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]))}),'application/json; charset=utf-8');
 }
 // Human-readable Cloudtype deployment proof. This page is deliberately not indexable.
 if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){
@@ -1834,7 +1835,7 @@ if(pathname==='/sitemap-priority.xml'){
  const urls=['/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/','/region/gyeonggi-daeri-taksong/','/region/seoul-daeri-taksong/','/region/gangwon-daeri-taksong/','/service/corporate/','/service/heavy-truck-taksong/','/business/rental-car/','/business/used-car/','/business/export-port/','/business/auction/','/blog/taksong-categories/','/blog/archive/gyeongsang-taksong/','/blog/archive/vehicle-taksong/','/blog/archive/general-daeri/','/blog/','/blog/archive/','/blog/archive/categories/','/blog/guides/','/blog/daeri-regions/',...blogHashtagArticlePaths,...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],'/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),'/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),...priorityRegionalPages.map(p=>{
   const region=regions.find(r=>r.full_name===p.region);
   return servicePath(region,p.kind);
- }),...naverFocus700.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind))];
+ }),...naverFocus800.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind))];
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+[...new Set(urls)].map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
@@ -1880,7 +1881,7 @@ if(pathname==='/sitemap.xml'){
   ...vehicleTopics.map(([name])=>vehicleTopicPath(name)),
   ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
   ...priorityRegionalPages.map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
-  ...naverFocus700.slice(0,200).map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
+  ...naverFocus800.slice(0,200).map(p=>servicePath(regions.find(r=>r.full_name===p.region),p.kind)),
   '/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),
   '/blog/archive/categories/',
   '/blog/daeri-regions/',...blogHashtagArticlePaths,'/blog/taksong-categories/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/',...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],
