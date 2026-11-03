@@ -45,6 +45,10 @@ jobs:
         run: node tests/server.test.js
       - name: Ensure curated service and mountain guide preservation
         run: python3 tests/static-generator-preservation.test.py
+      - name: Verify scheduled archive rebuild preserves all factual source sections
+        run: |
+          python3 scripts/build_ride_record_stories.py
+          python3 scripts/check_core_content.py
       - name: Start and smoke-test HTTP service
         shell: bash
         run: |
@@ -177,3 +181,5 @@ jobs:
           node -e "const fs=require('fs');const rows=JSON.parse(fs.readFileSync('/tmp/smart24-rides.json','utf8'));if(!Array.isArray(rows)||rows.some(r=>('time' in r)||('departure_time' in r)))process.exit(1)"
           if grep -Eq '시간 비공개|시간 미공개|출발 시간' /tmp/smart24-home.html; then echo 'Public homepage leaks time labels'; exit 1; fi
           echo 'Smart24 local HTTP smoke checks passed'
+          node tests/daeri-editorial.test.js
+          node tests/site-full-50.test.js http://127.0.0.1:3000/
