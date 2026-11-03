@@ -916,11 +916,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
    const svg=await (await get(card[1].replace('.png','.svg'))).text();
    const expectedBrand=service==='daeri'?'스마트전국대리운전':'스마트24시전국탁송';
-   assert.ok(svg.includes('서울 '+expectedBrand),'card uses the requested regional service brand');
+   const expectedCardLabel=service==='daeri'?'서울스마트대리운전':'서울전국탁송';
+   assert.ok(svg.includes(expectedCardLabel),'service-card heading must show the actual Seoul locality and right service');
    const caption=html.match(/<figcaption[^>]*>(.*?)<\/figcaption>/)[1];assert.ok(caption.includes(expectedBrand),'caption identifies the same service as the displayed card');
    const visibleLabels=svg.replace(/<image[^>]+\/>/g,'');
-   assert.ok(!visibleLabels.includes(service==='daeri'?'스마트24시전국탁송':'스마트전국대리운전'),'card headings do not mix the two service brands');
-   assert.ok(!svg.includes('data:image/webp;base64,')&&svg.includes('id="regional-bg"')&&svg.includes('x="48" y="38"'),'regional card must be fully locality-generated without a fixed-city photo');
+   assert.ok(!visibleLabels.includes(service==='daeri'?'스마트24시전국탁송':'스마트전국대리운전'),'card headings do not mix two service brands');
+   assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('id="identity-band"')&&svg.includes('height="82"'),'custom local banner covers the obsolete city text but preserves matching service artwork');
    assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
    assert.ok(html.includes('class="regional-responsive-card"')&&html.includes('class="booking-guide"'),'responsive regional card and booking guide are both retained');
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
