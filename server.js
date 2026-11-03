@@ -362,6 +362,17 @@ function renderCardArtwork(label,kind){
  return require('sharp')(cardArtFile).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:true,quality:95,effort:3}).toBuffer();
 }
 const regionalCardPngs=new Map();
+const regionalCardWebps=new Map();
+function regionalCardWebp(r,kind){
+ const key=r.slug+'-'+kind;
+ if(regionalCardWebps.has(key))return regionalCardWebps.get(key);
+ const render=regionalCardPng(r,kind)
+  .then(png=>require('sharp')(png).resize({width:800,withoutEnlargement:true}).webp({quality:78,effort:4}).toBuffer())
+  .catch(err=>{regionalCardWebps.delete(key);throw err});
+ regionalCardWebps.set(key,render);
+ if(regionalCardWebps.size>64)regionalCardWebps.delete(regionalCardWebps.keys().next().value);
+ return render;
+}
 function regionalCardPng(r,kind,topic){
  const key=r.slug+(kind?'-'+kind:'');
  if(regionalCardPngs.has(key))return regionalCardPngs.get(key);
@@ -373,6 +384,7 @@ function regionalCardPng(r,kind,topic){
 const cardPath=(slug)=>'/card/'+encodeURIComponent(slug)+'.svg';
 // Version the new locality-first taksong image to bypass 24-hour cached old cards.
 const cardPngPath=(slug,kind)=>'/card/'+encodeURIComponent(slug)+(kind?'-'+kind+'-brand-v5.png':'-inline-v2.png');
+const cardPreviewWebpPath=(slug,kind)=>'/card/'+encodeURIComponent(slug)+'-'+kind+'-brand-v5.webp';
 const canonical=(slug)=>'/region/'+encodeURIComponent(slug)+'/';
 const link=(slug)=>'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+canonical(slug);
 const compactTrafficPanel="<aside class=\"traffic-stats\" id=\"traffic-stats-panel\" aria-label=\"스마트24 접속 기록 및 전화 버튼 통계\">\n <div class=\"traffic-stats-lines\" aria-live=\"polite\">\n  <span class=\"traffic-stat\" title=\"검색 노출 수가 아닌 브라우저 접속 기록입니다. 점검 방문이 포함될 수 있습니다.\">오늘 접속 <strong id=\"today-visit-number\">—</strong></span>\n  <span class=\"traffic-stat\" title=\"집계 시작 이후 기록된 브라우저 접속 횟수입니다.\">누적 기록 <strong id=\"total-visit-number\">—</strong></span>\n  <button type=\"button\" class=\"traffic-call-trigger\" id=\"traffic-call-trigger\" aria-controls=\"traffic-sources-detail\" aria-expanded=\"false\" title=\"누적 전화 버튼 클릭과 접속 집계 기준 확인\">누적 전화클릭 <strong id=\"phone-click-number\">—</strong> ▾</button>\n </div>\n <div class=\"traffic-sources\" id=\"traffic-sources-detail\" hidden>\n  <strong class=\"traffic-source-heading\">접속 집계 안내</strong>\n  <p>오늘·누적 수치는 실제 네이버 검색 노출이나 순방문자가 아닙니다. 직접 작업·점검한 방문도 포함될 수 있으며, 전화 클릭은 통화 연결 건수가 아닙니다.</p>\n  <label class=\"traffic-optout-label\"><input type=\"checkbox\" id=\"exclude-my-visits\"> 이 브라우저의 내 점검 방문·전화 버튼 클릭 집계 제외</label>\n  <small class=\"traffic-mode-note\" id=\"traffic-mode-note\">이 설정은 이후 접속부터 적용됩니다. 이미 기록된 수치는 자동 차감되지 않습니다.</small>\n  <strong class=\"traffic-source-heading\">전화 버튼 클릭 경로</strong>\n  <ol id=\"phone-source-list\" aria-live=\"polite\"><li>확인 중입니다.</li></ol>\n  <small class=\"traffic-source-note\">정확한 네이버 검색 노출·클릭 수는 네이버 서치어드바이저에서 확인해야 합니다.</small>\n </div>\n</aside>";
@@ -1256,7 +1268,18 @@ for(const r of regions){
  const province=regionAncestors(r)[0];
  const names=new Set([r.full_name,r.name,seoRegionBase(r),seoRegionLabel(r),...regionAliases(r)]);
  if(province&&province!==r){
-  names.add((provinceSeoLabels[province.name]||shortPlace(province.name))+r.name);
+  const provinceShort=provinceSeoLabels[province.name]||shortPlace(province.name);
+  names.add(provinceShort+r.name);
+  names.add(provinceShort+shortPlace(r.name));
+ }
+ // Local shorthand such as 수원영통구·수원영통, without falsely merging
+ // same-name districts of different cities or provinces.
+ if(r.parent_slug){
+  const parent=bySlug.get(r.parent_slug);
+  if(parent&&parent.level!=='시도'){
+   names.add(shortPlace(parent.name)+r.name);
+   names.add(shortPlace(parent.name)+shortPlace(r.name));
+  }
  }
  for(const name of names){
   const key=compact(name);
@@ -1270,6 +1293,7 @@ const liveCardLabel=(r,kind)=>seoRegionLabel(r)+(kind==='daeri'?'스마트대리
 const liveCardPublicData=(r,kind)=>({
  kind,label:liveCardLabel(r,kind),
  image:cardPngPath(r.slug,kind),
+ previewImage:cardPreviewWebpPath(r.slug,kind),
  url:servicePath(r,kind),
  phone:kind==='taksong'&&r.full_name==='제주특별자치도'?'1877-5245':PHONE,
  description:kind==='daeri'
@@ -1522,6 +1546,18 @@ if(pathname==='/region/'){
  return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section><h2>전국 지역명별 대리운전·탁송 명함</h2><p>지역과 서비스에 맞는 명함을 자동으로 생성합니다. 다른 지역명이 표시되지 않도록 서비스별 이미지를 구분합니다. 이미지가 보이면 누르거나 확대 링크로 원본을 열 수 있습니다.</p>'+form+'<div class="region-card-live" data-card-preview-output hidden aria-label="지역별 실시간 명함 미리보기"></div><p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/').replace('</head>','<link rel="stylesheet" href="/assets/region-card-preview.css?v=20261103-live1"></head>').replace('</body>','<script src="/assets/region-card-preview.js?v=20261103-live1" defer></script></body>'),'/region/'));
 }
 const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
+ const previewWebpMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand-v5\.webp$/);
+ if(previewWebpMatch){
+  const [,slug,kind]=previewWebpMatch,r=bySlug.get(slug);
+  if(!r)return respond(res,404,'명함을 찾을 수 없습니다');
+  return regionalCardWebp(r,kind).then(buf=>{
+   const etag='"'+require('node:crypto').createHash('sha256').update(buf).digest('hex').slice(0,24)+'"';
+   const headers={'content-type':'image/webp','cache-control':'public, max-age=86400, immutable','etag':etag,'x-content-type-options':'nosniff'};
+   if(req.headers['if-none-match']===etag){res.writeHead(304,headers);return res.end()}
+   res.writeHead(200,{...headers,'content-length':buf.length});
+   return req.method==='HEAD'?res.end():res.end(buf);
+  }).catch(()=>respond(res,500,'이미지 생성 오류'));
+ }
  const brandCardMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand(?:-v[2345])?\.(png|svg)$/);
  if(brandCardMatch){const [,slug,kind,format]=brandCardMatch,r=bySlug.get(slug);if(!r)return respond(res,404,'명함을 찾을 수 없습니다.');if(format==='svg')return respond(res,200,cardSvg(seoRegionLabel(r),kind),'image/svg+xml; charset=utf-8');return regionalCardPng(r,kind).then(buf=>{res.writeHead(200,{'content-type':'image/png','cache-control':'public, max-age=86400','content-length':buf.length,'x-content-type-options':'nosniff'});res.end(buf)}).catch(()=>respond(res,500,'이미지 생성 오류'))}
  const intentCardMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-(fare|long-distance|handover)\.png$/);
