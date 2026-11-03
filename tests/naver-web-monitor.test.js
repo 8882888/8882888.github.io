@@ -70,18 +70,19 @@ assert.equal(targetRows[3].status,'query-failed','API errors must not be interpr
 assert.equal(TARGET_LANDINGS['지리산탁송'],'/지리산탁송/');
 for(const query of ['부산탁송','대구탁송','울산탁송','창원탁송','인천탁송','제주도탁송','렌트카탁송','중고차탁송'])
  assert.ok(planned.includes(query),'daily high-priority Naver monitoring includes '+query);
-const {FOCUS_50,FOCUS_NEXT_50,FOCUS_100}=require('../scripts/naver-web-monitor');
+const {FOCUS_50,FOCUS_NEXT_50,FOCUS_THIRD_50,FOCUS_150}=require('../scripts/naver-web-monitor');
 assert.equal(FOCUS_50.length,50,'retain original 50 SEO localities');
 assert.equal(FOCUS_NEXT_50.length,50,'add 50 more SEO localities');
-assert.equal(new Set(FOCUS_100).size,100,'no duplicate search intent in the 100 SEO focus targets');
+assert.equal(FOCUS_THIRD_50.length,50,'third 50 keyword batch');
+assert.equal(new Set(FOCUS_150).size,150,'no duplicate search intent in the 150 SEO focus targets');
 const observed=new Set();
-for(let i=0;i<25;i++){
+for(let i=0;i<45;i++){
  const date=new Date(Date.UTC(2026,10,4+i));
  const sample=selectQueries(date);
  assert.equal(sample.length,20,'respect Naver API daily request budget');
  assert.equal(new Set(sample).size,20,'do not submit repeated search queries');
- for(const q of sample)if(FOCUS_100.includes(q))observed.add(q);
- assert.ok(sample.filter(q=>FOCUS_100.includes(q)).length>=4,'sample 4 curated regional searches each day');
+ for(const q of sample)if(FOCUS_150.includes(q))observed.add(q);
+ assert.ok(sample.filter(q=>FOCUS_150.includes(q)).length>=4,'sample 4 curated regional searches each day');
 }
-assert.equal(observed.size,100,'all 100 focused queries rotate through 25 days');
+assert.equal(observed.size,150,'all 150 focused queries rotate through 45 days');
 console.log('Naver web result matching passed');

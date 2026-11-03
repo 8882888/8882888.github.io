@@ -53,6 +53,8 @@ jobs:
         run: node tests/naver-regional-focus-50.test.js
       - name: Validate next 50 SEO guides, no overlap with existing 50
         run: node tests/naver-regional-focus-next-50.test.js
+      - name: Validate third 50 SEO guides and booking-specific regional value
+        run: node tests/naver-regional-focus-third-50.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
       - name: Ensure curated service and mountain guide preservation

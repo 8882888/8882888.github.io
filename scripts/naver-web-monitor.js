@@ -48,14 +48,15 @@ const LEGACY_DRIVER_URLS = ['/service/daeri/', '/special/nationwide-daeri/'];
 const ALWAYS_CHECK = ['전국대리운전','설악산탁송','지리산탁송','오색탁송','한계령탁송','부산탁송','울산탁송','대구탁송','창원탁송','기장군탁송','성삼재중산리탁송','인천탁송','제주도탁송','렌트카탁송','중고차탁송'];
 const FOCUS_50=require('../data/naver-regional-focus-50.json').priority.map(p=>p.keyword);
 const FOCUS_NEXT_50=require('../data/naver-regional-focus-next-50.json').priority.map(p=>p.keyword);
-const FOCUS_100=[...FOCUS_50,...FOCUS_NEXT_50];
-if(FOCUS_50.length!==50||FOCUS_NEXT_50.length!==50||new Set(FOCUS_100).size!==100)
- throw Error('Invalid 100-keyword local SEO tracking inventory');
-const FOCUS_OPTIONAL=FOCUS_100.filter(q=>!ALWAYS_CHECK.includes(q));
-const LEGACY_OPTIONAL=QUERIES.filter(q=>!ALWAYS_CHECK.includes(q)&&!FOCUS_100.includes(q));
+const FOCUS_THIRD_50=require('../data/naver-regional-focus-third-50.json').priority.map(p=>p.keyword);
+const FOCUS_150=[...FOCUS_50,...FOCUS_NEXT_50,...FOCUS_THIRD_50];
+if(FOCUS_50.length!==50||FOCUS_NEXT_50.length!==50||FOCUS_THIRD_50.length!==50||new Set(FOCUS_150).size!==150)
+ throw Error('Invalid 150-keyword local SEO tracking inventory');
+const FOCUS_OPTIONAL=FOCUS_150.filter(q=>!ALWAYS_CHECK.includes(q));
+const LEGACY_OPTIONAL=QUERIES.filter(q=>!ALWAYS_CHECK.includes(q)&&!FOCUS_150.includes(q));
 // Maintain 20 Naver Web Document API checks/day: 15 established search terms,
-// 4 rotating region keywords from 100 curated pages, 1 long-tail. Every
-// new focus term is checked within a full 25-day rotation, without API floods.
+// 4 rotating region keywords from 150 curated pages, 1 long-tail. Every
+// new focus term is checked within a full 45-day rotation, without API floods.
 function selectQueries(now = new Date()) {
   const day=Math.floor(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate())/86400000);
   const pick=(items,count)=>Array.from({length:count},(_,i)=>items[(day*count+i)%items.length]);
@@ -106,8 +107,8 @@ async function main() {
       if(/HTTP 429/.test(error.message))break;
     }
   }
-  const focusedResults=results.filter(r=>FOCUS_100.includes(r.query)).map(r=>({query:r.query,checkedAt:r.checkedAt,bestApiResultPosition:r.matches?.length?Math.min(...r.matches.map(x=>x.position)):null,matchedSitePages:(r.matches||[]).map(x=>x.url),error:r.error||null,limitation:'Web-document API top 100 only; not Naver unified/mobile ranking or indexing proof'}));
-  const result = {source: 'Naver Search API: web documents', query: QUERY, checkedAt: new Date().toISOString(), queryCatalogCount:new Set([...QUERIES,...FOCUS_100]).size, selectedQueries:selectQueries(), focusKeywordInventoryCount:FOCUS_100.length, focusedResults, ...results[0], results, pageEvidence: pageEvidence(results), targetLandingEvidence: targetLandingEvidence(results), baselineComparison: compareBaseline(results), legacyDriverCandidates: legacyDriverEvidence(results), limitation: 'Positions are within the returned web-document API results, not Naver integrated search rankings. This API does not expose mobile Naver sitelinks. No match does not prove a page is not indexed.'};
+  const focusedResults=results.filter(r=>FOCUS_150.includes(r.query)).map(r=>({query:r.query,checkedAt:r.checkedAt,bestApiResultPosition:r.matches?.length?Math.min(...r.matches.map(x=>x.position)):null,matchedSitePages:(r.matches||[]).map(x=>x.url),error:r.error||null,limitation:'Web-document API top 100 only; not Naver unified/mobile ranking or indexing proof'}));
+  const result = {source: 'Naver Search API: web documents', query: QUERY, checkedAt: new Date().toISOString(), queryCatalogCount:new Set([...QUERIES,...FOCUS_150]).size, selectedQueries:selectQueries(), focusKeywordInventoryCount:FOCUS_150.length, focusedResults, ...results[0], results, pageEvidence: pageEvidence(results), targetLandingEvidence: targetLandingEvidence(results), baselineComparison: compareBaseline(results), legacyDriverCandidates: legacyDriverEvidence(results), limitation: 'Positions are within the returned web-document API results, not Naver integrated search rankings. This API does not expose mobile Naver sitelinks. No match does not prove a page is not indexed.'};
   fs.writeFileSync('naver-web-monitor-result.json', JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify(result, null, 2));
   if (process.env.GITHUB_STEP_SUMMARY) {
@@ -120,7 +121,7 @@ async function main() {
   }
   if (process.env.GITHUB_STEP_SUMMARY) {
     const rows=focusedResults.map(r=>'| '+r.query+' | '+(r.error || (r.bestApiResultPosition ?? '상위 100개 결과 미발견'))+' | '+r.matchedSitePages.length+' |');
-    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '\n## 100개 지역 키워드 순환 실측\n\n네이버 웹문서 API의 결과 순번만 의미하며 통합검색 노출·색인 등급·실제 고객 클릭을 의미하지 않습니다.\n\n| 검색어 | API 순번 | 사이트 결과 수 |\n|---|---:|---:|\n'+rows.join('\n')+'\n');
+    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '\n## 150개 지역 키워드 순환 실측\n\n네이버 웹문서 API의 결과 순번만 의미하며 통합검색 노출·색인 등급·실제 고객 클릭을 의미하지 않습니다.\n\n| 검색어 | API 순번 | 사이트 결과 수 |\n|---|---:|---:|\n'+rows.join('\n')+'\n');
   }
   if (process.env.GITHUB_STEP_SUMMARY) {
     const rows=result.targetLandingEvidence.map(x=>'| '+x.query+' | '+x.targetPath+' | '+(x.position??'미발견')+' | '+x.status+' | '+x.otherSitePages.map(p=>p.position).join(', ')+' |');
@@ -133,4 +134,4 @@ async function main() {
   if (failures) throw new Error(failures + ' selected query checks failed; partial results saved');
 }
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
-module.exports = { inspect, QUERIES, FOCUS_50, FOCUS_NEXT_50, FOCUS_100, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };
+module.exports = { inspect, QUERIES, FOCUS_50, FOCUS_NEXT_50, FOCUS_THIRD_50, FOCUS_150, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };

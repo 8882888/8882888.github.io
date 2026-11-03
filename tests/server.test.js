@@ -1248,7 +1248,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(archiveSitemap.includes('https://example.com/blog/archive/'),'directory in sitemap');
   for(const group of archiveData.groups)assert.ok(archiveSitemap.includes('/blog/archive/'+group.id+'/'),'category in sitemap');
   const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);const priorityDaeri=require('../data/priority-regions.json').pages.filter(p=>p.kind==='daeri');
- const focusedDaeri=[...require('../data/naver-regional-focus-50.json').priority,...require('../data/naver-regional-focus-next-50.json').priority].filter(p=>p.kind==='daeri');
+ const focusedDaeri=[...require('../data/naver-regional-focus-50.json').priority,...require('../data/naver-regional-focus-next-50.json').priority,...require('../data/naver-regional-focus-third-50.json').priority].filter(p=>p.kind==='daeri');
  const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityDaeri.some(p=>p.region===r.full_name)||focusedDaeri.some(p=>p.region===r.full_name));
  assert.equal((daeriXml.match(/<loc>/g)||[]).length,discoveryRegions.length+1+require('../lib/daeri-travel-guides').destinations.length,'driver sitemap contains curated provinces, priority regions and four verified-source travel guides');
  assert.ok(discoveryRegions.length<100,'driver sitemap must be a curated 100-page-scale collection, not a 20k-page generated directory');
@@ -1540,6 +1540,43 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(additionalVerified,50);
   assert.equal(allRegionPaths.size,100);
   console.log('PASS second 50 SEO regions + previous 50 = 100 distinct canonical pages, proper service images, exact phrases, site maps and handover detail');
+  // Validate the 50 newly curated customer-facing regions in real server HTTP,
+  // including exact dynamic text shown on each area's individual SVG.
+  const third50=require('../data/naver-regional-focus-third-50.json').priority;
+  assert.equal(third50.length,50);
+  let thirdVerified=0;
+  for(const target of third50){
+   const found=siteHubs[target.kind].match(new RegExp('<a href="([^"]+)">'+target.keyword+'</a>'));
+   assert.ok(found,'third batch links on hub '+target.keyword);
+   const url=found[1];
+   assert.ok(!allRegionPaths.has(url),'canonical unique from earlier 100 '+target.keyword);
+   allRegionPaths.add(url);
+   assert.ok(siteMaps[target.kind].includes('https://example.com'+url),'curated sitemap '+target.keyword);
+   const res=await get(url);
+   assert.equal(res.status,200,'regional page '+target.keyword);
+   const html=await res.text();
+   assert.ok(html.includes('id="naver-focus50-local-guide"')&&html.includes(target.topic),'local section '+target.keyword);
+   assert.ok(html.includes(target.pickup)&&html.includes(target.handover),'unique region handover guidance '+target.keyword);
+   assert.ok(html.includes('href="'+target.related+'"'),'specialized service cross link '+target.keyword);
+   assert.ok(html.includes('rel="canonical" href="https://example.com'+url+'"'),'stable original canonical '+target.keyword);
+   assert.ok(html.includes('class="regional-responsive-card"'),'per-region brand image '+target.keyword);
+   const response=await get('/api/region-card-preview?q='+encodeURIComponent(target.keyword));
+   assert.equal(response.status,200);
+   const result=await response.json();
+   assert.equal(result.status,'matched','region recognized '+target.keyword);
+   assert.equal(result.region,target.region,'no misattributed city '+target.keyword);
+   assert.equal(result.cards.length,1);
+   assert.equal(result.cards[0].kind,target.kind);
+   assert.equal(result.cards[0].url,url,'correct canonical '+target.keyword);
+   assert.equal(result.cards[0].displayKeyword,target.keyword,'keyword visual label '+target.keyword);
+   const image=await get(result.cards[0].keywordImage);
+   assert.equal(image.status,200,'SVG preview '+target.keyword);
+   assert.ok((await image.text()).includes('>'+target.keyword+'</text>'),'SVG exact keyword pixels '+target.keyword);
+   thirdVerified++;
+  }
+  assert.equal(thirdVerified,50);
+  assert.equal(allRegionPaths.size,150);
+  console.log('PASS third 50 SEO pages, 150 distinct canonical regions, relevant service images and exact keyword display');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
