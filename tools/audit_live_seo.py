@@ -550,6 +550,71 @@ def run():
         print(f"{result}: {path} — {detail}")
         rows.append((path, status, result, detail))
 
+    # Locality + company-intent and four high-value driving services.
+    # Verifies actual service-specific image delivery, not Naver rankings.
+    business_queries = [
+        ("골프대리운전", "daeri", "/keyword-card/golf-daeri.svg", None, "1811-4294"),
+        ("일일기사", "daeri", "/keyword-card/daily-driver.svg", None, "1811-4294"),
+        ("법인대리운전", "daeri", "/keyword-card/corporate-daeri.svg", None, "1811-4294"),
+        ("법인카드대리운전", "daeri", "/keyword-card/corporate-card-daeri.svg", None, "1811-4294"),
+        ("부산골프대리운전", "daeri", "/keyword-card/golf-daeri/area-", "부산광역시", "1811-4294"),
+        ("부산탁송업체", "taksong", "-taksong-brand-v5.png", "부산광역시", "1811-4294"),
+        ("제주도탁송회사", "taksong", "-taksong-brand-v5.png", "제주특별자치도", "1877-5245"),
+        ("서울강남법인카드대리운전회사", "daeri", "/keyword-card/corporate-card-daeri/area-", "서울특별시 강남구", "1811-4294"),
+    ]
+    for keyword, expected_kind, image_fragment, expected_region, expected_phone in business_queries:
+        path = "/api/region-card-preview?" + urlencode({"q": keyword})
+        errors = []
+        status = "-"
+        try:
+            with urllib.request.urlopen(urllib.request.Request(BASE + path, headers=HEADERS), timeout=22) as response:
+                status = response.status
+                data = json.loads(response.read().decode("utf-8"))
+            cards = data.get("cards") or []
+            if data.get("status") != "matched" or len(cards) != 1:
+                errors.append("wrong or ambiguous professional-company keyword")
+            else:
+                card = cards[0]
+                if card.get("kind") != expected_kind:
+                    errors.append("wrong taksong/daeri service")
+                if image_fragment not in card.get("image", ""):
+                    errors.append("wrong company/service keyword image")
+                if expected_region and data.get("region") != expected_region:
+                    errors.append("wrong legal locality")
+                if card.get("phone") != expected_phone:
+                    errors.append("regional phone wrong")
+                with urllib.request.urlopen(urllib.request.Request(BASE + card.get("image", ""), headers=HEADERS), timeout=22) as img:
+                    if img.status != 200:
+                        errors.append("missing dynamic company image")
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:120])
+        verdict = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        description = "; ".join(errors) if errors else "live company/driver keyword and image match"
+        print(f"{verdict}: {path} — {description}")
+        rows.append((path, status, verdict, description))
+    for path, heading in [
+        ("/service/corporate/", "법인카드대리운전"),
+        ("/service/golf/", "골프대리운전"),
+        ("/service/daily-driver/", "일일기사"),
+        ("/daeri/", "four-specialized-driver-services"),
+    ]:
+        errors = []
+        status = "-"
+        try:
+            with urllib.request.urlopen(urllib.request.Request(BASE + path, headers=HEADERS), timeout=22) as response:
+                status = response.status
+                page = response.read().decode("utf-8")
+                if heading not in page:
+                    errors.append("targeted service landing link or text missing")
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:120])
+        verdict = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        description = "; ".join(errors) if errors else "live dedicated driver SEO content visible"
+        print(f"{verdict}: {path} — {description}")
+        rows.append((path, status, verdict, description))
+
     lines = [
         "## Production SEO deployment audit",
         "",
