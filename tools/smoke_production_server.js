@@ -79,6 +79,7 @@ async function main(){
     assert(page.body.includes('href="'+match[1]+'" target="_blank"'),'regional card not tap-to-enlarge '+route);
     assert(page.body.includes('class="regional-responsive-card"'),'regional card not responsive '+route);
     assert(page.body.indexOf('class="regional-responsive-card"')<page.body.indexOf('<h2>주변 지역'),'card appears only below long local page '+route);
+    console.log('CHECK dynamic regional PNG',route,match[1]);
     const png=await request(port,match[1]);
     assert.equal(png.status,200,'dynamic regional image missing '+route);
     assert.equal(png.headers['content-type'],'image/png');
@@ -251,6 +252,9 @@ async function main(){
    }
   }
   console.log('PASS: production server boots with '+expected.length+' priority regions; 20 priority URLs HTTP 200 / H1 / canonical / index / phone checks; 630 original blog links and 10 source groups; XML routes accessible.');
+ }catch(err){
+  console.error('SERVER DIAGNOSTIC exit='+exited+'; '+logs.slice(-4000));
+  throw err;
  }finally{
   srv.kill('SIGTERM');
  }

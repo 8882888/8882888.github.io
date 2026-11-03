@@ -340,13 +340,13 @@ const cardSvg=(label,kind)=>{
 <rect width="1200" height="800" fill="url(#regional-bg)"/>
 <path d="M0 420 C250 332 360 535 620 428 S920 316 1200 390" fill="none" stroke="#a9e4ed" stroke-width="24" opacity=".23"/>
 <rect x="48" y="38" width="1104" height="112" rx="22" fill="url(#regional-panel)" stroke="#daf4fb" stroke-width="3"/>
-<text x="600" y="110" fill="#fff04b" font-family="Noto Sans CJK KR,Malgun Gothic,sans-serif" font-weight="900" font-size="${size}" text-anchor="middle" stroke="#002b3a" stroke-width="1.4" paint-order="stroke fill">${heading}</text>
-<text x="70" y="237" fill="#ffffff" font-family="Noto Sans CJK KR,Malgun Gothic,sans-serif" font-weight="800" font-size="41">${esc(purpose)}</text>
-<text x="72" y="291" fill="#d9f4ff" font-family="Noto Sans CJK KR,Malgun Gothic,sans-serif" font-weight="600" font-size="31">${esc(serviceLine)}</text>
+<text x="600" y="110" fill="#fff04b" font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle" stroke="#002b3a" stroke-width="1.4" paint-order="stroke fill">${heading}</text>
+<text x="70" y="237" fill="#ffffff" font-family="sans-serif" font-weight="800" font-size="41">${esc(purpose)}</text>
+<text x="72" y="291" fill="#d9f4ff" font-family="sans-serif" font-weight="600" font-size="31">${esc(serviceLine)}</text>
 <g transform="translate(138 365)" stroke="#e9f9ff" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 106 L48 55 Q63 37 83 37 H322 Q346 37 365 68 L398 106 L409 157 H0 Z"/><path d="M59 109 L88 57 H311 L354 109Z"/><circle cx="91" cy="163" r="28" fill="#0d385c"/><circle cx="322" cy="163" r="28" fill="#0d385c"/></g>
 <rect x="60" y="626" width="1080" height="120" rx="25" fill="#eaf6ff"/>
-<text x="600" y="705" fill="#082f5c" font-family="Noto Sans CJK KR,Malgun Gothic,sans-serif" font-weight="900" font-size="69" text-anchor="middle">☎ ${phone}</text>
-<text x="600" y="777" fill="#ecfaff" font-family="Noto Sans CJK KR,Malgun Gothic,sans-serif" font-size="19" text-anchor="middle">스마트24 지역별 전화 상담 · 차량 위치와 일정 확인 후 배차 · 기존 요금은 현재 확정 견적이 아닙니다</text>
+<text x="600" y="705" fill="#082f5c" font-family="sans-serif" font-weight="900" font-size="69" text-anchor="middle">☎ ${phone}</text>
+<text x="600" y="777" fill="#ecfaff" font-family="sans-serif" font-size="19" text-anchor="middle">스마트24 지역별 전화 상담 · 차량 위치와 일정 확인 후 배차 · 기존 요금은 현재 확정 견적이 아닙니다</text>
 </svg>`;
 
  }
@@ -357,7 +357,12 @@ const cardSvg=(label,kind)=>{
 function renderCardArtwork(label,kind){
  // Full region and service identity is generated in the SVG, with no baked-in
  // source-city text. The PNG size is 1200x800 for crawler preview support.
- if(kind)return require('sharp')(Buffer.from(cardSvg(label,kind))).png({palette:true,quality:95,effort:3}).toBuffer();
+ if(kind){
+  const overlay=cardSvg(label,kind);
+  // Use the already-proven bitmap+SVG compositing pipeline. The new SVG has
+  // a completely opaque background, so no old place-name artwork can leak.
+  return require('sharp')(serviceCardArt[kind]).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:true,quality:95,effort:3}).toBuffer();
+ }
  const overlay=cardSvg(label).replace(/<image[^>]+\/>/,'');
  return require('sharp')(cardArtFile).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:true,quality:95,effort:3}).toBuffer();
 }
@@ -926,7 +931,7 @@ function regionPage(r){
  ${children.length?'<section><h2>인접 행정 단계의 하위 지역 찾기</h2><ul>'+children.map(x=>'<li><a href="'+canonical(x.slug)+'">'+esc(x.name)+' 지역 안내</a> · <a href="'+servicePath(x,'taksong')+'">'+esc(x.name)+'탁송</a> · <a href="'+servicePath(x,'daeri')+'">'+esc(x.name)+'대리운전</a></li>').join('')+'</ul></section>':''}`;
  const imageUrl="https://"+(process.env.PUBLIC_HOST||"jeongukdaeri.kr")+cardPngPath(r.slug,'taksong');
  const imageData=JSON.stringify({"@context":"https://schema.org","@type":"ImageObject",contentUrl:imageUrl,url:imageUrl,name:fullName+" 스마트탁송 지역 대표 이미지",description:fullName+" 자동차탁송과 상담 대표번호 1811-4294",width:1200,height:800,encodingFormat:"image/png",representativeOfPage:true}).replace(/</g,"\\u003c");
- const regionHero=`<figure class="regional-responsive-card" style="width:100%;margin:14px auto;max-width:700px;text-align:center"><a href="${cardPngPath(r.slug,'taksong')}" target="_blank" rel="noopener noreferrer" aria-label="${full} 자동차탁송 명함 이미지 크게 보기"><img src="${cardPngPath(r.slug,'taksong')}" loading="eager" fetchpriority="high" decoding="async" alt="${full} 자동차탁송 지역명 맞춤 대표 이미지 · 안내용 그래픽" width="1200" height="800" style="display:block;width:100%;max-width:100%;height:auto;border-radius:12px"></a><figcaption style="text-align:center">지역별 명함 · 이미지 클릭 시 확대 · ${full} 자동차탁송 · <a href="${servicePath(r,'daeri')}">${full} 대리운전</a> · <a href="tel:18114294">${PHONE}</a></figcaption></figure>`;
+ const regionHero=`<figure class="regional-responsive-card" style="width:100%;margin:14px auto;max-width:700px;text-align:center"><a href="${cardPngPath(r.slug,'taksong')}" target="_blank" rel="noopener noreferrer" aria-label="${full} 자동차탁송 명함 이미지 크게 보기"><img src="${cardPngPath(r.slug,'taksong')}" loading="eager" fetchpriority="high" decoding="async" alt="${full} 자동차탁송 지역명 맞춤 대표 이미지 · 안내용 그래픽" width="1200" height="800" style="display:block;width:100%;max-width:100%;height:auto;border-radius:12px"></a><figcaption style="text-align:center">지역별 명함 · 이미지 클릭 시 확대 · ${full} 자동차탁송 · <a href="${servicePath(r,'taksong')}" aria-label="${full} 자동차탁송 서비스 자세히 보기">${full} 자동차탁송</a> · <a href="${servicePath(r,'daeri')}">${full} 대리운전</a> · <a href="tel:18114294">${PHONE}</a></figcaption></figure>`;
  const page=layout(title,intro,`<script type="application/ld+json">${imageData}</script>`+serviceLinks+regionalIntentNav(r)+body,link(r.slug),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+cardPngPath(r.slug,'taksong'));
  // Preserve the regional promo card, but place it after substantive local guide content.
  const withCard=placeRegionalCardAfterIntro(page,regionHero,regionHero.replace('loading="eager" fetchpriority="high"',r.level==='리'?'loading="lazy"':'loading="eager" fetchpriority="high"'));
