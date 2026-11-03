@@ -419,8 +419,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.equal(redirect.headers.get('location'),'/daeri/','legacy driver canonical consolidation: '+oldPath);
   }
   const homepageRegionalNavigation=(seoHome.match(/<nav class="top-nav"[^>]*>[\s\S]*?<\/nav>/)||[])[0]||'';
-  for(const keyword of ['설악산탁송','지리산탁송','부산탁송','창원탁송','대구탁송'])
-   assert.ok(homepageRegionalNavigation.includes('>'+keyword+'</a>'),'homepage primary GNB prioritizes '+keyword);
+  for(const keyword of ['전국대리운전','전국자동차탁송','법인대리운전','골프장대리운전','카카오상담'])
+   assert.ok(homepageRegionalNavigation.includes('>'+keyword+'</a>'),'core service navigation retains '+keyword);
+  const mountainMetroShortcuts=(seoHome.match(/<section id="priority-region-shortcuts-20261103"[\s\S]*?<\/section>/)||[])[0]||'';
+  for(const keyword of ['설악산탁송','지리산탁송','부산탁송','울산탁송','창원탁송','대구탁송'])
+   assert.ok(mountainMetroShortcuts.includes('>'+keyword+'</a>'),'regional mountain and metro shortcuts retain '+keyword);
   assert.ok(seoHome.includes('href="/daeri/" rel="nosublink"'),
    'duplicate nationwide-driver navigation links opt out of Naver sitelink candidates');
   const duplicateDaeriService=await (await get('/service/daeri/')).text();
