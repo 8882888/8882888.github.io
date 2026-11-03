@@ -482,6 +482,74 @@ def run():
         print(f"{result}: {path} — {detail}")
         rows.append((path, status, result, detail))
 
+    # Live checks for keyword-specific expanded imagery; this catches a stale
+    # production library even when server.js itself has not changed.
+    keyword_cases = [
+        ("설악산탁송", "/assets/seoraksan-taksong-fares.svg"),
+        ("지리산탁송", "/assets/jirisan-taksong-fares.svg"),
+        ("영산강길종주탁송", "/assets/cycling-routes/yeongsan-taksong.svg"),
+        ("섬진강종주탁송", "/assets/cycling-routes/seomjin-taksong.svg"),
+        ("골프장대리운전", "/keyword-card/golf-daeri.svg"),
+        ("법인대리운전", "/keyword-card/corporate-daeri.svg"),
+        ("부산렌트카탁송", "/keyword-card/rent-taksong/area-"),
+        ("대구법인대리운전", "/keyword-card/corporate-daeri/area-"),
+        ("제주도렌터카탁송", "/keyword-card/rent-taksong/area-"),
+    ]
+    for keyword, expected_image in keyword_cases:
+        path = "/api/region-card-preview?" + urlencode({"q": keyword})
+        errors = []
+        status = "-"
+        try:
+            with urllib.request.urlopen(urllib.request.Request(BASE + path, headers=HEADERS), timeout=22) as response:
+                status = response.status
+                payload = json.loads(response.read().decode("utf-8"))
+            cards = payload.get("cards") or []
+            if payload.get("status") != "matched" or len(cards) != 1:
+                errors.append("exact keyword image not matched")
+            else:
+                image_path = cards[0].get("image", "")
+                if expected_image not in image_path:
+                    errors.append("service- or route-specific image mismatch")
+                if keyword == "제주도렌터카탁송" and cards[0].get("phone") != "1877-5245":
+                    errors.append("Jeju-specific phone missing")
+                with urllib.request.urlopen(urllib.request.Request(BASE + image_path, headers=HEADERS), timeout=22) as img:
+                    head = img.read(3500)
+                    if img.status != 200 or not ("image/svg+xml" in img.headers.get("Content-Type", "")):
+                        errors.append("keyword image HTTP/MIME invalid")
+                    if image_path.startswith("/keyword-card/") and keyword in ("골프장대리운전", "법인대리운전"):
+                        if keyword.encode("utf-8") not in head:
+                            errors.append("visible keyword not present in dynamically generated SVG")
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:120])
+        result = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        detail = "; ".join(errors) if errors else "service and route matched, actual matching SVG served"
+        print(f"{result}: {path} — {detail}")
+        rows.append((path, status, result, detail))
+    for path, keyword_marker in [
+        ("/special/pension-daeri/", "data-kind=\\\"daeri\\\""),
+        ("/special/osaek/", "seoraksan-taksong-fares.svg"),
+        ("/special/seongjung-jongju/", "jirisan-taksong-fares.svg"),
+        ("/special/national-cycling-tour/", "cycling-routes/nationwide-taksong.svg"),
+    ]:
+        errors = []
+        status = "-"
+        try:
+            with urllib.request.urlopen(urllib.request.Request(BASE + path, headers=HEADERS), timeout=22) as response:
+                status = response.status
+                body = response.read().decode("utf-8")
+                if "id=\\\"keyword-intent-dynamic-image\\\"" not in body or keyword_marker.replace("\\\"", '"') not in body:
+                    errors.append("keyword-matched image missing from public landing page")
+                if "smart24-taksong-brand.webp" in body and "national-cycling-tour" in path:
+                    errors.append("old Gangneung-branded image remains")
+        except Exception as ex:
+            errors.append(type(ex).__name__ + ": " + str(ex)[:120])
+        result = "PASS" if not errors else "FAIL"
+        failures += bool(errors)
+        detail = "; ".join(errors) if errors else "keyword image visible on public page"
+        print(f"{result}: {path} — {detail}")
+        rows.append((path, status, result, detail))
+
     lines = [
         "## Production SEO deployment audit",
         "",
