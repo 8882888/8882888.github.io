@@ -1421,7 +1421,10 @@ if(pathname==='/region/'){
  // Expand the matched locality's specific PNG; other previews stay collapsed
  // and lazy loaded so browsing up to 100 administrative areas remains fast.
  const exactMatches=q?matches.filter(r=>compact(seoRegionBase(r))===compact(q)||compact(r.full_name)===compact(q)):[];
- const exactPreviewSlug=exactMatches.length===1?exactMatches[0].slug:null;
+ // 광주 is shared by 광주광역시 and 경기도 광주시. Do not silently
+ // expand one candidate when an unqualified place name is ambiguous.
+ const homonymMatches=q?regions.filter(r=>compact(shortPlace(r.name))===compact(q)):[];
+ const exactPreviewSlug=exactMatches.length===1&&homonymMatches.length<=1?exactMatches[0].slug:null;
  const links='<ul class="dynamic-region-card-directory">'+matches.map(r=>{
   const kind=selectedService||'taksong',image=cardPngPath(r.slug,kind),brand=seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전');
   const nav=selectedService?'<a href="'+servicePath(r,selectedService)+'">'+esc(r.full_name)+' '+(selectedService==='daeri'?'대리운전':'탁송')+'</a>':'<a href="'+servicePath(r,'daeri')+'">'+esc(r.full_name)+' 대리운전</a> · <a href="'+servicePath(r,'taksong')+'">'+esc(r.full_name)+' 탁송</a>';
