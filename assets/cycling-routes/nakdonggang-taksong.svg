@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
 <title id="title">낙동강길자전거종주탁송 · 안동댐 → 낙동강하구둑</title><desc id="desc">안동댐·상주보·구미보·창녕함안보 종주 출발지에 세워둔 고객 자동차를 종료지로 이동하는 탁송 서비스, 상담 1811-4294. 안내용 그래픽으로 실제 차량 사진 아님.</desc>
 <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102544"/><stop offset=".65" stop-color="#176b76"/><stop offset="1" stop-color="#0b315b"/></linearGradient></defs>
 <rect width="1200" height="630" fill="url(#g)"/><path d="M0 485 Q170 430 330 495 T660 470 T980 465 T1220 500" fill="none" stroke="#a9d8ef" stroke-width="16" opacity=".27"/>
