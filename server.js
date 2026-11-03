@@ -759,7 +759,7 @@ async function servicePage(r,kind){
   neighborhood:['대리운전예약','주차장대리운전']
  };
  const locationIntent=localIntentByScope[scope];
- const blogKeywordGuide=regionalBlogKeywords.render({name:preciseLocality,kind,scope,esc});
+ const blogKeywordGuide=regionalBlogKeywords.render({name:r.level==='군'?r.name:preciseLocality,kind,scope,esc});
  const localIntentLinks='<section><h2>'+esc(preciseLocality)+' '+(kind==='taksong'?'차량탁송 이용 목적':'대리운전 이용 목적')+'</h2><p>'+locationIntent.map(term=>esc(preciseLocality+term)).join(' · ')+' 등은 '+esc(name)+' 출발·도착지와 실제 이용 조건을 확인해 상담합니다. 해당 업종과 제휴하거나 해당 지역에 기사가 상주한다는 뜻은 아닙니다.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역별 예상요금 조회</a> · <a href="tel:18114294">1811-4294 전화 상담</a></p></section>';
  const companyWords=kind==='taksong'
   ?[preciseLocality+'탁송업체',preciseLocality+'탁송회사',preciseLocality+'자동차탁송']
