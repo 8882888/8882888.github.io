@@ -172,6 +172,8 @@ def run():
             if path == "/health/seo-report/":
                 if "noindex" not in parser.robots.lower() or "noindex" not in headers.get("X-Robots-Tag", "").lower():
                     errors.append("diagnostic page must be noindex in HTML and X-Robots-Tag")
+                if "no-store" not in headers.get("Cache-Control", "").lower():
+                    errors.append("diagnostic HTML must have no-store Cache-Control")
             elif "noindex" in parser.robots.lower() or "noindex" in headers.get("X-Robots-Tag", "").lower():
                 errors.append("noindex found in HTML or HTTP header on priority page")
             if parser.h1 != 1:
@@ -195,6 +197,8 @@ def run():
         expected_source = hashlib.sha256(Path("server.js").read_bytes()).hexdigest()[:16]
         if status != 200 or health_basic.get("ok") is not True:
             errors.append("health endpoint is not ready")
+        if "no-store" not in headers.get("Cache-Control", "").lower():
+            errors.append("/health must have no-store Cache-Control")
         if actual_release != "sha256-" + expected_source:
             errors.append(f"stale running Node process, release={actual_release!r}, expected sha256-{expected_source}")
         if health_basic.get("regions", 0) < 20000:
@@ -221,6 +225,8 @@ def run():
         link_count = health.get("curated_source_links")
         if status != 200:
             errors.append("health route did not return HTTP 200")
+        if "no-store" not in headers.get("Cache-Control", "").lower():
+            errors.append("/health/seo.json must have no-store Cache-Control")
         if source_count != 630:
             errors.append(f"published Naver source data mismatch: {source_count!r}")
         curated_entries = json.loads(Path("data/priority-blog-links.json").read_text(encoding="utf-8"))["pages"]
