@@ -68,6 +68,20 @@ def main():
     cases.sort(key=lambda r: r["date"], reverse=True)
     taksong = [r for r in cases if r["service"] == "taksong"][:12]
     daeri = [r for r in cases if r["service"] == "daeri"][:8]
+    # Only verified completed cases appear here; never infer a new ride or a new fare.
+    taksong_shortlist = "".join(
+        "<li>" + esc(r["date"]) + " · " + esc(r["departure"]) + " → "
+        + esc(r["destination"]) + " · 당시 " + esc(r["fare"]) + "</li>"
+        for r in taksong[:5]
+    )
+    shortlist_html = (
+        '<section id="review-taksong-shortlist-202611" aria-label="확인된 자동차탁송 구간 요약">'
+        '<h2>최근 확인된 자동차탁송 완료 구간 빠른 확인</h2>'
+        '<p>완료로 확인된 구간 중 일부이며, 당시 요금은 현재 확정요금이 아닙니다.</p>'
+        '<ol>' + taksong_shortlist + '</ol>'
+        '<p><a href="#verified-taksong-section">아래 완료 기록 상세보기</a> · '
+        '<a href="/reviews/history/?kind=taksong">전체 탁송 완료 기록</a></p></section>'
+    )
     large = [r for r in history if re.search(r"25\s*톤|9[.]8톤", r.get("departure", ""))][:12]
     style = """body{font-family:system-ui,sans-serif;color:#142b46;margin:0;background:#f6f9fd}
 main{max-width:1050px;margin:auto;padding:25px 18px 65px}h1{font-size:clamp(27px,4vw,38px)}
@@ -85,7 +99,8 @@ header a{color:white}footer{margin-top:40px}"""
             '<header><a href="/">스마트24 홈</a> · <a href="/reviews/history/">기존 운행기록</a></header><main>'
             '<h1>출발지 → 도착지 중심 탁송·대리운전 운행기록</h1>'
             '<p>실제 출발지역에서 도착지역까지의 차량 이동을 찾는 고객을 위해 운행일·운행구간·당시 요금을 정리했습니다. 기존 자료를 새로운 운행처럼 재발행하지 않으며, 차종은 확인된 경우만 표시합니다.</p><p><a href="/fare/">출발지·도착지 요금 상담</a> · <a href="/blog/">기존 네이버 공개 후기</a></p>'
-            '<h2>자동차탁송 운행완료 기록</h2>' + "".join(map(case, taksong))
+            + shortlist_html
+            + '<h2 id="verified-taksong-section">자동차탁송 운행완료 기록</h2>' + "".join(map(case, taksong))
             + '<h2>대리운전 운행완료 기록</h2>' + "".join(map(case, daeri))
             + '<h2>25톤·대형 화물차 배차기록 (완료 여부 추가 확인 필요)</h2>' +
             "".join(map(big_vehicle_case, large)) +
