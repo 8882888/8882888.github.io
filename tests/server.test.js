@@ -308,12 +308,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(ownerBlog.length>=630,'do not lose any of the 630 preserved Naver source posts when new originals are imported');
   assert.equal(sourceArchive.originalCategories.length,52,'all 52 original Naver categories are retained');
   assert.equal(sourceArchive.categoryTopics.length,11,'usable editorial subjects replace redundant raw-category indexes');
-  assert.equal(sourceArchive.originalCategories.reduce((sum,c)=>sum+c.count,0),630,'every post remains accounted for');
+  assert.equal(sourceArchive.originalCategories.reduce((sum,c)=>sum+c.count,0),ownerBlog.length,'every current published original post remains accounted for');
   assert.equal(sourceArchive.categoryTopics.flatMap(g=>g.categories).length,52,
     'no original Naver category is discarded or duplicated during editorial grouping');
   const archiveHub=await get('/blog/archive/categories/'),archiveMarkup=await archiveHub.text();
   assert.equal(archiveHub.status,200,'complete original-category portal must load');
-  assert.ok(archiveMarkup.includes('52개 카테고리')&&archiveMarkup.includes('630편')&&archiveMarkup.includes('중고차탁송')&&archiveMarkup.includes('인증센터탁송 종주탁송'),
+  assert.ok(archiveMarkup.includes('52개 카테고리')&&archiveMarkup.includes(ownerBlog.length+'편')&&archiveMarkup.includes('중고차탁송')&&archiveMarkup.includes('인증센터탁송 종주탁송'),
     'all original source categories are visible under grouped editorial themes');
   assert.ok(archiveMarkup.includes('rel="canonical" href="https://example.com/blog/archive/categories/"'),
     'category portal has a stable canonical and is indexable');
