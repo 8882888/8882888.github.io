@@ -912,8 +912,20 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert(html.includes('class="dynamic-region-card-preview" open'),'unique region should auto-expand: '+q);
     assert(html.includes(label),'regional search lacks '+label);
   }
+  const inferredServiceKeyword=await (await get('/region/?q='+encodeURIComponent('부산대리운전'))).text();
+  assert.ok(inferredServiceKeyword.includes('class="dynamic-region-card-preview" open'),'region+대리운전 query automatically expands an exact-locality driver card');
+  assert.ok(inferredServiceKeyword.includes('id="region-card-keyword-form"')&&inferredServiceKeyword.includes('name="service"'),'dynamic search has an explicit service selector');
+  assert.ok(/\/card\/area-\d+-daeri-brand-v5\.png/.test(inferredServiceKeyword)&&!inferredServiceKeyword.includes('/card/area-494-taksong-brand-v5.png'),'typed driver keyword must not show a taksong card');
+  const cityBoth=(await (await get('/region/?q='+encodeURIComponent('부산'))).text());
+  assert.ok(/\/card\/area-\d+-daeri-brand-v5\.png/.test(cityBoth)&&/\/card\/area-\d+-taksong-brand-v5\.png/.test(cityBoth),'unqualified region displays two different service images');
+  const requestedTaksong=(await (await get('/region/?q='+encodeURIComponent('울산')+'&service=taksong')).text());
+  assert.ok(requestedTaksong.includes('class="dynamic-region-card-preview" open')&&requestedTaksong.includes('울산전국탁송'),'explicit taksong filter auto-opens taksong only');
+  const homeCardSearch=(await (await get('/')).text());
+  assert.ok(homeCardSearch.includes('id="dynamic-service-card-search-20261103"')&&homeCardSearch.includes('action="/region/"')&&homeCardSearch.includes('지역별 명함 자동확장 보기'),'homepage offers responsive region service card search');
+  assert.ok(homeCardSearch.includes('id="mountain-cycling-fare-first-20261103"')&&homeCardSearch.includes('id="homepage-fare-top"'),'home retains original fare and calculator');
+
   const ambiguousCity=await (await get('/region/?q='+encodeURIComponent('광주'))).text();
-  assert(ambiguousCity.includes('지역 맞춤 명함 펼치기')&&!ambiguousCity.includes('class="dynamic-region-card-preview" open'),'ambiguous city must not silently choose a card');
+  assert(ambiguousCity.includes('class="dynamic-region-card-preview"')&&!ambiguousCity.includes('class="dynamic-region-card-preview" open'),'ambiguous city must not silently choose a card');
   const ambiguousRegion=await get('/region/?q='+encodeURIComponent('광주탁송'));
   assert.equal(new URL(ambiguousRegion.url).pathname,'/region/','ambiguous city name must show region choices');
   const oldRegion=await get('/region/detail/?region='+encodeURIComponent('창원시')+'&parent='+encodeURIComponent('경상남도')+'&kind=daeri');
