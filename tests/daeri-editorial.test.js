@@ -257,12 +257,20 @@ async function get(p){
   'national taksong gives Jeju-only consultation for Jeju service');
 
  const sevenBatch=[
- {path:'/service/daeri/',marker:'daeri-service-original-guide',source:['224445451429','224431732696'],archive:'/blog/archive/general-daeri/',canonical:'https://jeongukdaeri.kr/daeri/'},
- {path:'/special/nationwide-daeri/',marker:'national-daeri-original-guide',source:['224453006635','224445451429'],archive:'/blog/archive/general-daeri/',canonical:'https://jeongukdaeri.kr/daeri/'},
  {path:'/special/nationwide-transport/',marker:'nationwide-transport-original-guide',source:['224431721391','224452072174'],archive:'/blog/archive/capital-taksong/',canonical:'https://jeongukdaeri.kr/special/nationwide-transport/'},
  {path:'/special/outskirts-service/',marker:'outskirts-daeri-original-guide',source:['224453006635','224452992697','224452987205'],archive:'/blog/archive/general-daeri/',canonical:'https://jeongukdaeri.kr/special/outskirts-service/'},
  {path:'/special/truck-transport/',marker:'truck-transport-original-guide',source:['224418501595','224446313248','224431721391'],archive:'/blog/archive/vehicle-taksong/',canonical:'https://jeongukdaeri.kr/special/truck-transport/'}
  ];
+ // Both nationwide driver aliases are intentional 301 redirects to the canonical /daeri/ hub.
+ for(const alias of ['/service/daeri/','/special/nationwide-daeri/']){
+  const res=await fetch('http://127.0.0.1:3000'+alias,{redirect:'manual'});
+  assert.equal(res.status,301,'legacy daeri alias redirects: '+alias);
+  assert.equal(res.headers.get('location'),'/daeri/');
+  const html=await get(alias);
+  assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr/daeri/"')&&
+   html.includes('href="/blog/archive/general-daeri/"')&&html.includes('national-daeri-blog-archive'),
+   'canonicalized driver page keeps original published blog archive');
+ }
  for(const entry of sevenBatch){
   const response=await fetch('http://127.0.0.1:3000'+entry.path);
   assert.equal(response.status,200,entry.path+' must render HTTP 200');
