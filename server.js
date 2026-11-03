@@ -751,6 +751,20 @@ async function servicePage(r,kind){
  };
  const locationIntent=localIntentByScope[scope];
  const localIntentLinks='<section><h2>'+esc(preciseLocality)+' '+(kind==='taksong'?'차량탁송 이용 목적':'대리운전 이용 목적')+'</h2><p>'+locationIntent.map(term=>esc(preciseLocality+term)).join(' · ')+' 등은 '+esc(name)+' 출발·도착지와 실제 이용 조건을 확인해 상담합니다. 해당 업종과 제휴하거나 해당 지역에 기사가 상주한다는 뜻은 아닙니다.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역별 예상요금 조회</a> · <a href="tel:18114294">1811-4294 전화 상담</a></p></section>';
+ const companyWords=kind==='taksong'
+  ?[preciseLocality+'탁송업체',preciseLocality+'탁송회사',preciseLocality+'자동차탁송']
+  :[preciseLocality+'대리운전업체',preciseLocality+'대리운전회사',preciseLocality+'대리업체'];
+ const companyIntro=kind==='taksong'
+  ?'탁송업체·탁송회사 검색 시 차량 인수·운송·인계 방식, 차종, 운행 가능 상태 및 정확한 예상요금을 구분해 확인하세요.'
+  :'대리운전업체·대리운전회사 검색 시 출발 시각·차량 위치·기사 접근과 복귀, 예약 및 결제 방식을 확인하세요.';
+ const specialtyLinks=kind==='daeri'
+  ?[['골프대리운전','/service/golf/'],['일일기사','/service/daily-driver/'],['법인대리운전','/service/corporate/'],['법인카드대리운전','/service/corporate/']]
+  :[['장거리탁송','/service/long-distance-taksong/'],['서비스센터탁송','/service/taksong/']];
+ const companySection='<section id="regional-provider-keywords" aria-label="'+esc(name)+' 업체 및 전문 서비스 선택 안내"><h2>'+esc(preciseLocality)+' '+(kind==='taksong'?'탁송업체·탁송회사':'대리운전업체·대리운전회사')+' 선택 안내</h2><p>'+
+  companyWords.map(esc).join(' · ')+' 등의 검색은 '+esc(name)+' '+(r.level==='시도'?'광역 지역':r.level==='리'?'마을':r.level+' 지역')+'에서 이용할 서비스를 비교하기 위한 표현입니다. '+companyIntro+
+  ' 특정 지역의 기사 상주·지점 설치·제휴·즉시 배차를 보장하지 않습니다.</p><p>'+
+  specialtyLinks.map(([term,url])=>'<a href="'+url+'">'+esc(preciseLocality+term)+'</a>').join(' · ')+
+  '</p><p>법인카드 이용은 결제수단 등록·승인 여부를 사전에 확인해야 합니다. 현재 금액은 출발지·도착지·시간·차종을 상담한 후 확정합니다. <a href="/fare/?service='+kind+'">예상요금 확인</a> · <a href="tel:18114294">상담 1811-4294</a></p></section>';
  const crumbItems=[{name:'홈',item:'https://'+host+'/'},{name:'전국 '+service,item:'https://'+host+'/'+kind+'/'},...regionAncestors(r).map(a=>({name:seoRegionLabel(a)+service,item:'https://'+host+servicePath(a,kind)}))].map((a,i)=>({'@type':'ListItem',position:i+1,...a}));
  const priorityMeta=priorityByKey.get(kind+'|'+r.full_name);
  const focusedTitle=priorityMeta?keyword+' | '+priorityMeta.topic:keyword+' | '+(scope==='neighborhood'?(kind==='taksong'?'차량 인수·인계·예약':'이용 위치·예약·요금'):scope==='town'?(kind==='taksong'?'장거리 차량탁송·예약':'예약 대리운전·장거리'):kind==='taksong'?'자동차탁송·장거리 요금·예약':'대리운전·장거리 요금·예약');
@@ -854,7 +868,7 @@ async function servicePage(r,kind){
  const gangwonArchiveLead=kind==='taksong'&&r.name==='강원특별자치도'?'<section id="gangwon-source-archive" aria-labelledby="gangwon-source-archive-heading"><h2 id="gangwon-source-archive-heading">강원도탁송 영동·영서 실제 블로그 글과 차량 인수 안내</h2><p>영동의 속초·양양·주문진·강릉·동해·삼척, 영서의 춘천·원주·홍천·횡성·평창·정선은 차량 인수 위치와 기사 복귀 여건이 서로 다릅니다. 별도 지역 홍보글을 반복하기보다 실제 공개된 원문과 주차장·인계 준비사항을 함께 확인할 수 있도록 정리했습니다.</p><p><a href="/blog/archive/gangwon-taksong/">강원도탁송 영동·영서 블로그 자료실 읽기</a> · <a href="/blog/archive/mountain-cycle/">설악산 종주 차량회수 관련 글</a> · <a href="tel:18114294">전국탁송 상담 1811-4294</a></p></section>':'';
  const jejuPageSchema=jejuSearchPage?JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:searchTitle,description:searchDesc,url:pageUrl,primaryImageOfPage:{'@type':'ImageObject',url:imageUrl,contentUrl:imageUrl,name:'제주도탁송 지역명 맞춤 명함',width:1200,height:800,encodingFormat:'image/png'},about:{'@type':'Service',name:'제주탁송',provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}}).replace(/</g,'\\u003c'):'';
  const jejuContact=jejuSearchPage?'<section id="jeju-dedicated-contact"><h2>제주탁송 대표번호 1877-5245</h2><p>제주도 차량 선적·항구 인계 및 육지 연계 탁송은 제주탁송 전용 번호로 상담해 주세요.</p><p><a class="cta" href="tel:18775245">제주탁송 전화 상담 1877-5245</a></p></section>':'';
- const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+visibleCard+(jejuSearchPage?jejuContact:'')+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
+ const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+visibleCard+(jejuSearchPage?jejuContact:'')+companySection+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Show useful local service information and a phone CTA before a generic promotional card.
@@ -1112,8 +1126,15 @@ function serviceHub(kind){
  const hubDescription=isT
   ?'고객 차량만 출발지에서 인수하여 목적지까지 이동하고 차량 상태와 키를 확인해 인계합니다. 현재 요금과 기사 배정은 출발·도착 위치, 차종 및 시간 상담 후 확정합니다.'
   :'고객의 차량을 기사가 대신 운전하는 서비스입니다. 일반·심야·장거리·골프장 대리운전은 탑승·대기·복귀 조건과 최종 요금을 상담 후 확인합니다.';
+ const primaryDriverLinks=isT?'':[
+  ['골프대리운전','/service/golf/','골프장 편도·왕복·대기·복귀 조건'],
+  ['일일기사','/service/daily-driver/','업무·골프 일일 운전의 시간·식대·대기 조건'],
+  ['법인대리운전','/service/corporate/','법인 정기·단체 운행과 정산 방식'],
+  ['법인카드대리운전','/service/corporate/','사전 승인·등록된 법인카드 결제수단 확인']
+ ].map(([word,url,detail])=>'<li><a href="'+url+'"><strong>'+word+'</strong></a> — '+detail+'</li>').join('');
+ const focusedDriverSection=isT?'':'<section id="four-specialized-driver-services"><h2>골프대리운전·일일기사·법인대리운전·법인카드대리운전</h2><p>서비스별 운행·기사 대기·복귀·정산 방식을 구분합니다. 법인카드는 모든 결제수단을 무조건 받는다는 의미가 아니며 등록·승인 여부를 상담해야 합니다.</p><ul>'+primaryDriverLinks+'</ul><p><a href="/region/">시·도·시·군·구·읍·면·동·리 지역별 대리운전업체·회사 검색</a></p></section>';
  const serviceCardSection='<section id="national-'+kind+'-business-card" aria-label="전국 '+label+' 전용 대표 명함" style="max-width:700px;margin:15px auto"><h2>전국 '+label+' 대표 명함 · '+PHONE+'</h2><p>'+hubDescription+'</p><figure style="margin:12px auto;max-width:640px"><a href="'+hubImage+'" target="_blank" rel="noopener noreferrer" aria-label="전국 '+label+' 전용 명함 크게 보기"><img src="'+hubImage+'" width="1200" height="800" alt="전국 '+label+' 스마트24 전용 상담 명함, 대표전화 '+PHONE+'" loading="eager" decoding="async" fetchpriority="high" style="display:block;width:100%;height:auto;border-radius:12px"></a><figcaption>전국 '+label+' 상담 대표번호 <a href="tel:18114294">'+PHONE+'</a> · 안내용 디자인 이미지(실제 운행사진 아님)</figcaption></figure></section>';
- return layout(isT?'전국자동차탁송·장거리탁송 예약·요금 | 스마트24':'전국대리운전 예약·예상요금 | 장거리·골프·일일기사',isT?'전국 '+label+' 예약과 예상요금, 장거리 운행 및 지역별 배차 조건 안내. '+PHONE:'전국대리운전 예상요금 조회와 예약 상담. 장거리·골프장·일일기사·법인 서비스와 실제 운행기록을 확인하세요. '+PHONE,body.replace('</section>','</section>'+serviceCardSection+hubCard),'https://'+host+'/'+kind+'/','https://'+host+hubImage);
+ return layout(isT?'전국자동차탁송·장거리탁송 예약·요금 | 스마트24':'전국대리운전 예약·예상요금 | 장거리·골프·일일기사',isT?'전국 '+label+' 예약과 예상요금, 장거리 운행 및 지역별 배차 조건 안내. '+PHONE:'전국대리운전 예상요금 조회와 예약 상담. 장거리·골프장·일일기사·법인 서비스와 실제 운행기록을 확인하세요. '+PHONE,body.replace('</section>','</section>'+focusedDriverSection+serviceCardSection+hubCard),'https://'+host+'/'+kind+'/','https://'+host+hubImage);
 }
 function regionKeywordLabel(r,kind,short=false){
  const parts=r.full_name.split(' ');
