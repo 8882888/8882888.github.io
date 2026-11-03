@@ -9,7 +9,7 @@ const key='770f921af32e749f64c1d447c607ea42';
 const root=path.resolve(__dirname,'..');
 const priorityPaths=Object.freeze(require('../data/region-journey-links.json').pages.map(p=>p.path));
 const blogHashtagPaths=Object.freeze(require('../data/blog-hashtags-priority.json').articles.map(p=>'/blog/daeri-regions/'+p.slug+'/'));
-if(blogHashtagPaths.length!==20||new Set(blogHashtagPaths).size!==10)throw Error('Expected twenty blog canonical URLs');
+if(blogHashtagPaths.length!==20||new Set(blogHashtagPaths).size!==20)throw Error('Expected twenty blog canonical URLs');
 if(priorityPaths.length!==10||new Set(priorityPaths).size!==10)throw Error('Expected ten unique regional source URLs');
 const dryRun=process.argv.includes('--dry-run');
 const base=new URL(dryRun?(process.argv[process.argv.indexOf('--dry-run')+1]||'http://localhost:3000/'):'https://jeongukdaeri.kr/');

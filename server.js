@@ -30,7 +30,7 @@ function loadLegalRegions(){
 const regions=loadLegalRegions();
 const priorityRegionalPages=load('data/priority-regions.json').pages;
 const blogHashtagArticles=load('data/blog-hashtags-priority.json').articles;
-if(blogHashtagArticles.length!==20||new Set(blogHashtagArticles.map(x=>x.slug)).size!==10||
+if(blogHashtagArticles.length!==20||new Set(blogHashtagArticles.map(x=>x.slug)).size!==20||
  blogHashtagArticles.some(x=>!/^[-a-z0-9]+$/.test(x.slug)||x.tags.length!==30||new Set(x.tags).size!==30))
  throw Error('Invalid regional blog 30-hashtag collection');
 const blogHashtagArticlePaths=blogHashtagArticles.map(x=>'/blog/daeri-regions/'+x.slug+'/');
