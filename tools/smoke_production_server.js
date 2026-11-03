@@ -120,7 +120,9 @@ async function main(){
   const curatedSources=JSON.parse(fs.readFileSync('data/priority-blog-links.json','utf8')).pages;
   assert.equal(diagnostic.curated_source_groups,curatedSources.length);
   assert.equal(diagnostic.curated_source_links,curatedSources.reduce((count,item)=>count+item.ids.length,0));
-  assert.equal(diagnostic.blog_source_count,630);
+  const blogSources=JSON.parse(fs.readFileSync('blog/posts.json','utf8')).filter(p=>p&&typeof p.title==='string'&&/^https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+$/.test(p.url));
+  assert.ok(blogSources.length>=630,'retain original published Naver source URLs');
+  assert.equal(diagnostic.blog_source_count,blogSources.length,'SEO health must track newly imported original blog links');
   for(const name of ['server.js','index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js'])
    assert.match(diagnostic.deployment_hashes[name],/^[0-9a-f]{64}$/);
   const checks=[
