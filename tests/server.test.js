@@ -925,6 +925,43 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(homeCardSearch.includes('id="dynamic-service-card-search-20261103"')&&homeCardSearch.includes('action="/region/"')&&homeCardSearch.includes('지역별 명함 자동확장 보기'),'homepage offers responsive region service card search');
   assert.ok(homeCardSearch.includes('id="mountain-cycling-fare-first-20261103"')&&homeCardSearch.includes('id="homepage-fare-top"'),'home retains original fare and calculator');
 
+  // Live business-card previews must work without a second page load.
+  const getPreview=async(q,service='')=>{
+   const params=new URLSearchParams({q});if(service)params.set('service',service);
+   const response=await get('/api/region-card-preview?'+params.toString());
+   assert.equal(response.status,200,'card-preview endpoint reachable');
+   assert.ok(response.headers.get('content-type').includes('application/json'),'card-preview API uses JSON only');
+   assert.ok(response.headers.get('x-robots-tag').includes('noindex'),'search API itself must not be indexed');
+   return response.json();
+  };
+  const driverPreview=await getPreview('부산대리운전');
+  assert.equal(driverPreview.status,'matched');assert.equal(driverPreview.service,'daeri');
+  assert.equal(driverPreview.cards.length,1);assert.equal(driverPreview.cards[0].kind,'daeri');
+  assert.ok(driverPreview.cards[0].image.endsWith('-daeri-brand-v5.png'));
+  const taksongPreview=await getPreview('울산탁송');
+  assert.equal(taksongPreview.status,'matched');assert.equal(taksongPreview.region,'울산광역시');
+  assert.equal(taksongPreview.cards.length,1);assert.equal(taksongPreview.cards[0].kind,'taksong');
+  const seoulDistrict=await getPreview('서울 강남구','taksong');
+  assert.equal(seoulDistrict.status,'matched');assert.equal(seoulDistrict.cards[0].kind,'taksong');
+  const bothPreview=await getPreview('부산');
+  assert.equal(bothPreview.cards.length,2);assert.deepEqual(bothPreview.cards.map(x=>x.kind),['daeri','taksong']);
+  assert.notEqual(bothPreview.cards[0].image,bothPreview.cards[1].image);
+  const homonyms=await getPreview('광주');
+  assert.equal(homonyms.status,'ambiguous');assert.equal(homonyms.cards.length,0);
+  assert.ok(homonyms.candidates.some(c=>c.name==='광주광역시')&&homonyms.candidates.some(c=>c.name.includes('경기도 광주시')));
+  const jejuPreview=await getPreview('제주도탁송');
+  assert.equal(jejuPreview.status,'matched');assert.equal(jejuPreview.cards[0].phone,'1877-5245');
+  const missingPreview=await getPreview('존재하지않는지역명');
+  assert.equal(missingPreview.status,'not_found');assert.equal(missingPreview.cards.length,0);
+  for(const asset of ['/assets/region-card-preview.js','/assets/region-card-preview.css']){
+   const r=await get(asset);assert.equal(r.status,200,asset);
+   const body=await r.text();assert.ok(body.length>600&&/card-(?:preview|dialog)/.test(body),'live card asset has functional code: '+asset);
+  }
+  const regionInteractive=await (await get('/region/?q='+encodeURIComponent('부산'))).text();
+  assert.ok(regionInteractive.includes('data-card-preview-form')&&regionInteractive.includes('data-card-preview-output'),'region result page offers in-place live switching');
+  assert.ok(regionInteractive.includes('region-card-preview.js')&&regionInteractive.includes('region-card-preview.css'),'region page loads live preview assets');
+  assert.ok(homeCardSearch.includes('data-card-preview-form')&&homeCardSearch.includes('data-card-preview-output')&&homeCardSearch.includes('region-card-preview.js'),'homepage supports instant no-navigation preview');
+
   const ambiguousCity=await (await get('/region/?q='+encodeURIComponent('광주'))).text();
   assert(ambiguousCity.includes('class="dynamic-region-card-preview"')&&!ambiguousCity.includes('class="dynamic-region-card-preview" open'),'ambiguous city must not silently choose a card');
   const ambiguousRegion=await get('/region/?q='+encodeURIComponent('광주탁송'));
