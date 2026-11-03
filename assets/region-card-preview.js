@@ -54,19 +54,20 @@
    output.hidden=!reason;output.removeAttribute('aria-busy');
   }
   function renderCard(card){
-   const original=imagePath(card.image);
-   const preview=imagePath(card.previewImage);
+   const original=imagePath(card.keywordImage)||imagePath(card.image);
+   const preview=imagePath(card.keywordImage)||imagePath(card.previewImage);
+   const legacy=imagePath(card.image);
    const page=guidePath(card.url);
    if(!original||!page)return null;
    const article=node('article','smart24-card-panel');
-   const title=node('h3','smart24-card-heading',card.label||'지역별 상담 명함');
+   const title=node('h3','smart24-card-heading',card.displayKeyword||card.label||'지역별 상담 명함');
    const img=node('img','smart24-card-preview-image');
    img.src=preview||original;
-   img.alt=(card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 전용 명함';
+   img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 전용 명함';
    img.width=1200;img.height=800;img.loading='eager';img.decoding='async';
    let pngFallback=false;
    img.addEventListener('error',()=>{
-    if(!pngFallback&&preview){pngFallback=true;img.src=original;return}
+    if(!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
     img.replaceWith(node('p','smart24-card-error','명함 이미지를 불러오지 못했습니다. 아래 지역 안내에서 확인해 주세요.'));
    });
    const picture=node('a','smart24-card-picture-link');

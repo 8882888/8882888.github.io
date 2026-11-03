@@ -1413,6 +1413,42 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(workBlog.includes('요청 지역별 탁송·대리운전 핵심 검색어'));
   assert.ok(workBlog.includes('창원탁송')&&workBlog.includes('인천탁송'),'new priority region navigation');
   console.log('PASS: 100 new locality SEO intents -> 20 canonical pages, proper regional images and actual article context');
+  // Twenty different combinations must paint the *entire typed query* on
+  // the live preview/zoom SVG while original canonical PNG cards remain stable.
+  const exactTerms=require('../data/exact-image-priority-20.json');
+  assert.equal(exactTerms.length,20);
+  for(const phrase of exactTerms){
+   const parsed=require('../lib/regional-blog-keywords').parse(phrase);
+   const api=await get('/api/region-card-preview?q='+encodeURIComponent(phrase));
+   assert.equal(api.status,200,'exact image API '+phrase);
+   const result=await api.json();
+   assert.equal(result.status,'matched','exact image region match '+phrase);
+   assert.equal(result.cards.length,1,'exact image single card '+phrase);
+   const card=result.cards[0];
+   assert.equal(card.kind,parsed.kind,'exact service '+phrase);
+   assert.equal(card.displayKeyword,phrase,'exact keyword label '+phrase);
+   assert.ok(card.keywordImage.startsWith('/keyword-card/exact/'),'custom visual for '+phrase);
+   assert.ok(card.keywordImage.includes(encodeURIComponent(phrase)),'escaped query '+phrase);
+   // Legacy canonical card URL stays untouched for SEO and old article embeds.
+   assert.ok(card.image.startsWith('/card/')||card.image.startsWith('/keyword-card/'));
+   const visual=await get(card.keywordImage);
+   assert.equal(visual.status,200,'exact SVG loads '+phrase);
+   assert.match(visual.headers.get('content-type'),/image\/svg\+xml/);
+   assert.equal(visual.headers.get('x-robots-tag'),'noindex, nofollow');
+   const svg=await visual.text();
+   assert.ok(svg.includes('<title id="title">'+phrase+' | 스마트24'),'exact SVG title '+phrase);
+   assert.ok(svg.includes('>'+phrase+'</text>'),'exact visible painted phrase '+phrase);
+   const page=await get('/region/?q='+encodeURIComponent(phrase));
+   assert.equal(page.status,200,'keyword search result page '+phrase);
+   const pageHtml=await page.text();
+   assert.ok(pageHtml.includes(phrase),'exact query in server fallback '+phrase);
+  }
+  const badImage=await get('/keyword-card/exact/area-1-taksong.svg?q='+encodeURIComponent('부산대리운전회사'));
+  assert.equal(badImage.status,404,'reject wrong locality/service combinations');
+  const ambiguousExact=await (await get('/api/region-card-preview?q='+encodeURIComponent('광주탁송회사'))).json();
+  assert.equal(ambiguousExact.status,'ambiguous');
+  assert.ok(!ambiguousExact.cards.some(c=>c.keywordImage),'no cross-city spoofing');
+  console.log('PASS 20/20 exact keyword painted images, region fallback, phone and no ambiguous leakage');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();

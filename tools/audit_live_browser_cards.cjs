@@ -10,14 +10,14 @@ const BASE=(process.env.SMART24_AUDIT_BASE||'https://jeongukdaeri.kr').replace(/
 const OUT=path.join(process.cwd(),'artifacts','live-browser-cards');
 fs.mkdirSync(OUT,{recursive:true});
 const cases=[
- {q:'부산탁송회사',region:'부산광역시',kind:'taksong',image:'png',screen:'desktop'},
+ {q:'부산탁송회사',region:'부산광역시',kind:'taksong',image:'svg',screen:'desktop'},
  {q:'부산렌트카탁송',region:'부산광역시',kind:'taksong',image:'svg',screen:'desktop'},
  {q:'서울법인카드대리운전',region:'서울특별시',kind:'daeri',image:'svg',screen:'desktop'},
- {q:'부산기장군탁송업체',region:'부산광역시 기장군',kind:'taksong',image:'png',screen:'mobile'},
+ {q:'부산기장군탁송업체',region:'부산광역시 기장군',kind:'taksong',image:'svg',screen:'mobile'},
  {q:'평택5톤탁송',region:'경기도 평택시',kind:'taksong',image:'svg',screen:'mobile'},
  {q:'설악산탁송',region:'설악산탁송',kind:'taksong',image:'svg',screen:'mobile'},
  {q:'영산강길종주탁송',region:'영산강길종주탁송',kind:'taksong',image:'svg',screen:'mobile'},
- {q:'제주도대리운전',region:'제주특별자치도',kind:'daeri',image:'png',screen:'mobile'}
+ {q:'제주도대리운전',region:'제주특별자치도',kind:'daeri',image:'svg',screen:'mobile'}
 ];
 const results=[];
 (async()=>{
@@ -77,6 +77,11 @@ try{
    entry.original=original;
    entry.visible_label=label;
    entry.exact_keyword_painted=label.includes(caseData.q);
+   if(caseData.q!=='설악산탁송'&&caseData.q!=='영산강길종주탁송'){
+     assert.equal(label,caseData.q,'visible card title matches entered phrase exactly');
+     const art=await page.evaluate(async source=>(await fetch(source,{cache:'no-store'})).text(),imageStatus.src);
+     assert.ok(art.includes('>'+caseData.q+'</text>'),'SVG itself contains exact painted keyword');
+   }
    entry.passed=true;
    await page.locator('#dynamic-service-card-search-20261103').screenshot({path:path.join(OUT,String(index+1).padStart(2,'0')+'-'+caseData.screen+'.png')});
    console.log('PASS '+(index+1)+'/'+cases.length+' '+caseData.q+' | '+label+' | image '+imageStatus.width+'x'+imageStatus.height+' | zoom verified');

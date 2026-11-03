@@ -6,6 +6,7 @@ const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-eviden
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
 const keywordExpansion=require('./lib/keyword-card-expansion');
 const regionalBlogKeywords=require('./lib/regional-blog-keywords');
+const exactKeywordCard=require('./lib/exact-keyword-card');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const load=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
 const baseRegions=load('data/regions.json').regions||[];
@@ -1367,9 +1368,34 @@ const liveCardPublicData=(r,kind)=>({
   ?'고객 차량을 대신 운전하는 일반·심야·장거리·골프장 대리운전입니다. 출발시간과 기사 복귀 조건을 상담 후 확인합니다.'
   :'고객 차량을 인수해 목적지까지 이동·인계하는 자동차탁송입니다. 기존 안내요금은 현재 확정 견적이 아닙니다.'
 });
+// Build exact-phrase visuals only after proving the legal locality and service.
+// This prevents a string like 광주탁송회사 from silently selecting the wrong city.
+function exactRegionalKeywordCard(r,kind,raw){
+ if(!r||!['taksong','daeri'].includes(kind))return null;
+ const phrase=String(raw||'').trim();
+ if(phrase.length<4||phrase.length>55||!/^[가-힣A-Za-z0-9.\s·_-]+$/u.test(phrase))return null;
+ const intent=regionalBlogKeywords.parse(phrase);
+ if(!intent||intent.kind!==kind)return null;
+ const candidates=liveCardAliases.get(compact(intent.region))||[];
+ if(candidates.length!==1||candidates[0].slug!==r.slug)return null;
+ return {displayKeyword:phrase,keywordImage:'/keyword-card/exact/'+r.slug+'-'+kind+'.svg?q='+encodeURIComponent(phrase)};
+}
 let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
+const exactKeywordImageMatch=pathname.match(/^\/keyword-card\/exact\/(area-[0-9]+)-(taksong|daeri)\.svg$/);
+if(exactKeywordImageMatch){
+ const [,slug,kind]=exactKeywordImageMatch,region=bySlug.get(slug);
+ const q=clean(u.searchParams.get('q')||'');
+ const valid=exactRegionalKeywordCard(region,kind,q);
+ if(!valid)return respond(res,404,'지역과 서비스가 일치하는 검색어가 아닙니다');
+ const phone=kind==='taksong'&&region.full_name==='제주특별자치도'?'1877-5245':PHONE;
+ const svg=exactKeywordCard.render({keyword:valid.displayKeyword,region:region.full_name,kind,phone});
+ if(!svg)return respond(res,404,'검색어 이미지를 만들 수 없습니다');
+ res.setHeader('cache-control','private, no-store, max-age=0');
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ return respond(res,200,svg,'image/svg+xml; charset=utf-8');
+}
 const regionalKeywordImageMatch=pathname.match(/^\/keyword-card\/([a-z0-9-]+)\/(area-[0-9]+)\.svg$/);
 if(regionalKeywordImageMatch){
  const [,topicSlug,regionSlug]=regionalKeywordImageMatch,region=bySlug.get(regionSlug);
@@ -1586,6 +1612,10 @@ if(pathname==='/api/region-card-preview'){
  }:null;
  const cards=region?(kind?[liveCardPublicData(region,kind)]:[liveCardPublicData(region,'daeri'),liveCardPublicData(region,'taksong')]):
   (topic&&!themedAmbiguous&&(!kind||kind===topic.kind)?[keywordExpansion.preview(topic,themedInfo)]:[]);
+ for(const card of cards){
+  const exact=exactRegionalKeywordCard(region||themedRegion,card.kind,query);
+  if(exact)Object.assign(card,exact);
+ }
  const destination=region?.full_name||themedRegion?.full_name||(topic?topic.label:null);
  if(topic&&kind&&kind!==topic.kind){status='not_found';candidates=[]}
  const data={status,query,locality:locality||query,service:kind,region:destination,
@@ -1635,7 +1665,8 @@ if(pathname==='/region/'){
   :(homonymMatches.length===0&&exactMatches.length===1?exactMatches[0].slug:null);
  const showAllServices=!selectedService;
  const previewFor=(r,kind)=>{
-  const image=cardPngPath(r.slug,kind),brand=seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전');
+  const matched=exactRegionalKeywordCard(r,kind,rawQuery);
+  const image=matched?.keywordImage||cardPngPath(r.slug,kind),brand=matched?.displayKeyword||(seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전'));
   const isJejuTaksong=kind==='taksong'&&r.full_name==='제주특별자치도';
   const phone=isJejuTaksong?'1877-5245':PHONE,phoneHref='tel:'+phone.replace(/-/g,'');
   const open=r.slug===exactPreviewSlug;

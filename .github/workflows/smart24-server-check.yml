@@ -47,6 +47,8 @@ jobs:
         run: node tests/blog-priority-25.test.js
       - name: Verify 100 new regional keywords across 20 canonical blog guides
         run: node tests/blog-work-100.test.js
+      - name: Verify exact keyword artwork for 20 priority phrases
+        run: node tests/exact-keyword-card.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
       - name: Ensure curated service and mountain guide preservation

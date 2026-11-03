@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - 'tools/audit_live_browser_cards.cjs'
+      - 'assets/region-card-preview.js'
+      - 'lib/exact-keyword-card.js'
+      - 'server.js'
       - 'assets/cycling-routes/*.svg'
       - '.github/workflows/live-browser-card-audit.yml'
   workflow_dispatch:
@@ -48,6 +51,23 @@ jobs:
                   print('Cloudtype image check:',str(error))
               if attempt==23: raise SystemExit('Cycling SVG on public site is still stale after deployment')
               time.sleep(5)
+          PY
+      - name: Confirm exact keyword image API is deployed on the public site
+        run: |
+          python3 - <<'PY'
+          import json,time,urllib.request
+          u='https://jeongukdaeri.kr/api/region-card-preview?q=%EB%B6%80%EC%82%B0%ED%83%81%EC%86%A1%ED%9A%8C%EC%82%AC'
+          for n in range(30):
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(u,headers={'Cache-Control':'no-cache'}),timeout=15) as r:
+                      d=json.load(r)
+                      c=(d.get('cards') or [{}])[0]
+                      if c.get('displayKeyword')=='부산탁송회사' and '/keyword-card/exact/' in c.get('keywordImage',''):
+                          print('PASS exact production keyword image deployed')
+                          break
+              except Exception as exc: print('still deploying',str(exc))
+              if n==29: raise SystemExit('The live API still uses older generic keyword images')
+              time.sleep(6)
           PY
       - name: Install isolated browser test tooling
         run: |
