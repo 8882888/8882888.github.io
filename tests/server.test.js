@@ -305,7 +305,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   // Preserve all original Naver blog categories, without copying article bodies.
   const ownerBlog=require('../blog/posts.json'),sourceArchive=require('../lib/blog-archive');
-  assert.equal(ownerBlog.length,630,'owner source inventory contains 630 published original posts');
+  assert.ok(ownerBlog.length>=630,'do not lose any of the 630 preserved Naver source posts when new originals are imported');
   assert.equal(sourceArchive.originalCategories.length,52,'all 52 original Naver categories are retained');
   assert.equal(sourceArchive.categoryTopics.length,11,'usable editorial subjects replace redundant raw-category indexes');
   assert.equal(sourceArchive.originalCategories.reduce((sum,c)=>sum+c.count,0),630,'every post remains accounted for');
