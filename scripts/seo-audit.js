@@ -113,7 +113,14 @@ async function inspect(route){
  const expectedDaeriRegions=new Set(priority.filter(x=>x.kind==='daeri').map(x=>x.region));
  const travelGuides=require('../lib/daeri-travel-guides');
  const expectedTravelUrls=travelGuides.destinations.map(x=>new URL(travelGuides.pathFor(x),new URL(config.site)).href);
- const expectedDaeriCount=1+17+priority.filter(x=>x.kind==='daeri'&&x.region.includes(' ')).length+expectedTravelUrls.length;
+ // Include both curated 50-page batches in discovery expectations. The
+ // province hubs stay 17; only unique municipality pages count as additions.
+ const localFocus=[...require('../data/naver-regional-focus-50.json').priority,...require('../data/naver-regional-focus-next-50.json').priority];
+ const selectedDaeri=new Set([
+  ...priority.filter(x=>x.kind==='daeri'&&x.region.includes(' ')).map(x=>x.region),
+  ...localFocus.filter(x=>x.kind==='daeri'&&x.region.includes(' ')).map(x=>x.region)
+ ]);
+ const expectedDaeriCount=1+17+selectedDaeri.size+expectedTravelUrls.length;
  const daeriIssues=[];
  if(daeriDiscovery.status!==200)daeriIssues.push('Driver sitemap HTTP '+daeriDiscovery.status);
  if(daeriUrls.length!==expectedDaeriCount)daeriIssues.push('Driver discovery sitemap count '+daeriUrls.length+'/'+expectedDaeriCount);
