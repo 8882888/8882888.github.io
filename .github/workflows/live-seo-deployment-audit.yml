@@ -22,7 +22,7 @@ jobs:
     name: Compare production SEO with GitHub
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 22
     steps:
       - name: Checkout exact revision verified by deployment
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Syntax-check production SEO audit
-        run: python -m py_compile tools/audit_live_seo.py tools/audit_live_500.py
+        run: python -m py_compile tools/audit_live_seo.py tools/audit_live_1000.py
       - name: Check actual public website, sitemap and SEO freshness
         run: python tools/audit_live_seo.py
       - name: Audit 100 live localities and separate service images
@@ -54,6 +54,15 @@ jobs:
           name: smart24-live-seo-mobile-50
           path: /tmp/smart24-live-seo-mobile-50.json
           if-no-files-found: warn
+      - name: Audit 1000 live locality SEO pages and actual WebP cards
+        run: python tools/audit_live_500.py
+      - name: Store 1000-point production audit details
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-live-seo-mobile-1000
+          path: /tmp/smart24-live-1000.json
+          if-no-files-found: warn
       - name: Measure 20 live HTML mobile transfer sizes
         run: python tools/audit_live_html_compression.py
       - name: Save 20-route gzip report
@@ -62,13 +71,4 @@ jobs:
         with:
           name: smart24-live-mobile-gzip-20
           path: /tmp/smart24-live-gzip-20.json
-          if-no-files-found: warn
-      - name: Audit 500 live locality SEO pages and actual WebP cards
-        run: python tools/audit_live_500.py
-      - name: Store 500-point production audit details
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: smart24-live-seo-mobile-500
-          path: /tmp/smart24-live-500.json
           if-no-files-found: warn
