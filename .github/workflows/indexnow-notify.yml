@@ -24,7 +24,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validate notifier
-        run: node --check scripts/indexnow-notify.js
+      - name: Validate notifier and changed-page selection
+        run: |
+          node --check scripts/indexnow-notify.js
+          node tests/indexnow-targeting.test.js
       - name: Wait for Cloudtype live key and notify Naver once
         run: node scripts/indexnow-notify.js

@@ -41,6 +41,19 @@ PATHS = {
     "/business/auction/": "auction-b2b-operating-guide-20261103",
 }
 JOURNEY_PLANS = {x["path"]: x for x in json.loads(Path("data/region-journey-links.json").read_text(encoding="utf-8"))["pages"]}
+JOURNEY_KEYWORDS = {
+    "/taksong/busan/": "부산탁송",
+    "/taksong/busan/gijang-gun/": "기장군탁송",
+    "/taksong/daegu/": "대구탁송",
+    "/taksong/ulsan/": "울산탁송",
+    "/taksong/incheon/": "인천탁송",
+    "/taksong/gwangju/": "광주탁송",
+    "/taksong/daejeon/": "대전탁송",
+    "/taksong/gyeongnam/changwon-si/": "창원탁송",
+    "/taksong/gyeongnam/gimhae-si/": "김해탁송",
+    "/taksong/jeju/": "제주도탁송",
+}
+assert len(JOURNEY_PLANS) == len(JOURNEY_KEYWORDS) == 10, "Ten canonical regional landing pages must match"
 for route in JOURNEY_PLANS:
     PATHS.setdefault(route, "verified-region-journey-links")
 
@@ -71,6 +84,7 @@ class SEOParser(HTMLParser):
         self.canonical = ""
         self.canonical_count = 0
         self.robots = ""
+        self.description = ""
         self.h1 = 0
 
     def handle_starttag(self, tag, attrs):
@@ -82,6 +96,8 @@ class SEOParser(HTMLParser):
             self.canonical_count += 1
         elif tag == "meta" and d.get("name", "").lower() == "robots":
             self.robots = d.get("content", "")
+        elif tag == "meta" and d.get("name", "").lower() == "description":
+            self.description = d.get("content", "")
         elif tag == "h1":
             self.h1 += 1
 
@@ -123,6 +139,17 @@ def run():
                 if "https://blog.naver.com/wjdtnr4757/"+source_id not in body:
                     errors.append("original Naver blog link not deployed: "+source_id)
             if path in JOURNEY_PLANS:
+                keyword = JOURNEY_KEYWORDS[path]
+                if keyword not in parser.title:
+                    errors.append("regional title lacks main locality keyword: " + keyword)
+                if not 45 <= len(parser.description.strip()) <= 175:
+                    errors.append("regional description length outside 45-175 characters: " + str(len(parser.description.strip())))
+                if not parser.description.strip():
+                    errors.append("regional description missing")
+                if not re.search(r'<a\b[^>]*href="tel:' + ('18775245' if path == "/taksong/jeju/" else '18114294') + '"', body):
+                    errors.append("regional customer phone action missing")
+                if "noindex" in parser.robots.lower() or "noindex" in headers.get("X-Robots-Tag", "").lower():
+                    errors.append("important regional page accidentally excluded from index")
                 if 'id="verified-region-journey-links"' not in body:
                     errors.append("curated inter-region customer navigation missing")
                 for link in JOURNEY_PLANS[path]["related"]:
@@ -225,8 +252,9 @@ def run():
 
     # XML endpoints can fail in text-extraction tools; test actual HTTP and XML here.
     for path, required in [
-        ("/robots.txt", "Sitemap: " + BASE + "/sitemap.xml"),
+        ("/robots.txt", "Sitemap: " + BASE + "/sitemap-taksong.xml"),
         ("/sitemap-priority.xml", "<urlset"),
+        ("/sitemap-taksong.xml", "<urlset"),
         ("/sitemap.xml", "<urlset"),
     ]:
         errors = []
@@ -238,8 +266,12 @@ def run():
             if path.endswith(".xml") and status == 200:
                 root = ET.fromstring(body)
                 locs = {node.text for node in root.iter() if node.tag.endswith("loc") and node.text}
-                expected = {BASE + "/daeri/", BASE + "/taksong/"}
-                expected |= {BASE + route for route in CURATED_SOURCE_ROUTES}
+                if path == "/sitemap-taksong.xml":
+                    expected = {BASE + "/taksong/"} | {BASE + route for route in JOURNEY_PLANS}
+                else:
+                    expected = {BASE + "/daeri/", BASE + "/taksong/"}
+                    expected |= {BASE + route for route in CURATED_SOURCE_ROUTES}
+                    expected |= {BASE + route for route in JOURNEY_PLANS}
                 if path == "/sitemap.xml":
                     expected |= {
                         BASE + "/blog/archive/", BASE + "/설악산탁송/", BASE + "/지리산탁송/",

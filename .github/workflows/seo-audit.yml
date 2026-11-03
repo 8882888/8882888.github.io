@@ -43,6 +43,8 @@ jobs:
       - name: Validate audit script and configuration
         run: |
           node --check scripts/seo-audit.js
+          node --check scripts/indexnow-notify.js
+          node tests/indexnow-targeting.test.js
           node --check assets/traffic-analytics.js
           node tests/traffic-analytics.test.js
           node tests/traffic-optout.test.js
