@@ -36,3 +36,12 @@ jobs:
         run: python -m py_compile tools/audit_live_seo.py
       - name: Check actual public website, sitemap and SEO freshness
         run: python tools/audit_live_seo.py
+      - name: Audit 100 live localities and separate service images
+        run: python tools/audit_live_100_regional_cards.py
+      - name: Preserve 100-check failure details and timing
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-live-locality-100
+          path: /tmp/smart24-live-locality-100.json
+          if-no-files-found: warn
