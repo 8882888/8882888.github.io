@@ -18,12 +18,13 @@ import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 
 BASE = "https://jeongukdaeri.kr"
+EXPECTED_NAVER_SOURCE_COUNT = len(json.loads(Path("blog/posts.json").read_text(encoding="utf-8")))
 PATHS = {
     "/": "special-business-top-links-20261103",
     "/taksong/": "specialized-business-taksong-hub",
     "/daeri/": "real-original-daeri-links-20261102",
     "/region/": "verified-naver-region-links-20261102",
-    "/blog/archive/": "630",
+    "/blog/archive/": str(EXPECTED_NAVER_SOURCE_COUNT),
     "/health/seo-report/": "서버 파일 지문:",
     "/taksong/busan/": "local-naver-originals",
     "/taksong/daegu/": "local-naver-originals",
@@ -304,7 +305,7 @@ def run():
             errors.append("health route did not return HTTP 200")
         if "no-store" not in headers.get("Cache-Control", "").lower():
             errors.append("/health/seo.json must have no-store Cache-Control")
-        if source_count != 630:
+        if source_count != EXPECTED_NAVER_SOURCE_COUNT:
             errors.append(f"published Naver source data mismatch: {source_count!r}")
         curated_entries = json.loads(Path("data/priority-blog-links.json").read_text(encoding="utf-8"))["pages"]
         expected_groups = len(curated_entries)
@@ -329,7 +330,7 @@ def run():
         errors.append(type(ex).__name__ + ": " + str(ex)[:125])
     result = "PASS" if not errors else "FAIL"
     failures += bool(errors)
-    detail = "; ".join(errors) if errors else "630 posts and all curated original-source regions, SEO titles and source SHA256 fingerprints match"
+    detail = "; ".join(errors) if errors else f"{EXPECTED_NAVER_SOURCE_COUNT} posts and all curated original-source regions, SEO titles and source SHA256 fingerprints match"
     print(f"{result}: /health/seo.json — {detail}")
     rows.append(("/health/seo.json", status, result, detail))
 
