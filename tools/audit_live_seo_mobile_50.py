@@ -33,7 +33,7 @@ HUBS=[
 ]
 assert len(AREAS)==20 and len(HUBS)==10
 def fetch(route):
-    u=BASE+quote(route,safe="/%?=&")
+    u=BASE+quote(route,safe="/%?=&+")  # Retain form-encoded + as a query separator for spaces
     req=Request(u,headers=HEADERS)
     t0=time.monotonic()
     with urlopen(req,timeout=26) as response:
@@ -110,6 +110,15 @@ def inspect_case(t):
         if c.get("image") not in parsed.links:raise ValueError("PNG zoom link unavailable")
         if "tel:"+str(c.get("phone","")).replace("-","") not in parsed.links:
             raise ValueError("missing local call link")
+        if number%5==0:
+            image_code,_,image_headers,image_bytes,image_ms=fetch(c.get("previewImage",""))
+            if image_code!=200 or "image/webp" not in image_headers.get("content-type",""):
+                raise ValueError("WebP mobile image was not served")
+            if image_bytes[:4]!=b"RIFF" or image_bytes[8:12]!=b"WEBP":
+                raise ValueError("Invalid mobile WebP bytes")
+            if len(image_bytes)>1_000_000:
+                raise ValueError("Mobile preview exceeds 1 MB")
+            result.update({"webp_bytes":len(image_bytes),"webp_ms":image_ms})
         if "/fare/" not in body:raise ValueError("missing fare navigation")
         if "href" not in body or "운행" not in body:raise ValueError("missing service information")
         result.update({"passed":True,"page":path,"title":parsed.title,"api_ms":api_ms,"html_ms":page_ms,"html_bytes":len(payload)})
