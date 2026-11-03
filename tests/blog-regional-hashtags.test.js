@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const manifest=require('../data/blog-hashtags-priority.json');
-assert.equal(manifest.articles.length,20);
+assert.equal(manifest.articles.length,30);
 const slugs=new Set(),titles=new Set();
 const directory=fs.readFileSync('blog/daeri-regions/index.html','utf8');
 for(const item of manifest.articles){
@@ -28,4 +28,11 @@ for(const item of manifest.articles){
  assert(/<\/p><\/section><\/(?:article|main)>/.test(tail),'hashtags must be last article section: '+route);
  assert(html.includes('전 직원 100% 보험가입 안전운행'),'fixed safety sentence missing: '+route);
 }
-console.log('PASS: twenty published regional articles; exact 30 unique hashtags after contact; canonical, blog directory, insurance notice intact');
+const nextTen=manifest.articles.slice(-10);
+for(const item of nextTen){
+ const html=fs.readFileSync('blog/daeri-regions/'+item.slug+'/index.html','utf8');
+ assert(html.length>4000,'new local guide is too thin: '+item.slug);
+ assert((html.match(/<h2>/g)||[]).length>=6,'new local guide needs useful distinct sections: '+item.slug);
+ assert(html.includes('https://blog.naver.com/wjdtnr4757'),'preserve source navigation: '+item.slug);
+}
+console.log('PASS: thirty published regional articles; exact 30 unique hashtags after contact; canonical, blog directory, insurance notice intact');

@@ -31,7 +31,7 @@ jobs:
         run: npm install --omit=dev --no-audit --no-fund
       - name: Verify Naver notification targets and prevent duplicate URL floods
         run: node tests/indexnow-targeting.test.js
-      - name: Check twenty regional blog posts have thirty unique local hashtags
+      - name: Check thirty regional blog posts have thirty unique local hashtags
         run: node tests/blog-regional-hashtags.test.js
       - name: Verify road and ferry quote calculations
         run: node tests/fare-rules.test.js

@@ -3,8 +3,8 @@ const assert=require('node:assert/strict');
 const {changedPaths,priorityPaths,blogHashtagPaths}=require('../scripts/indexnow-notify');
 assert.equal(priorityPaths.length,10);
 assert.equal(new Set(priorityPaths).size,10);
-assert.equal(blogHashtagPaths.length,20);
-assert.equal(new Set(blogHashtagPaths).size,20);
+assert.equal(blogHashtagPaths.length,30);
+assert.equal(new Set(blogHashtagPaths).size,30);
 assert.equal(changedPaths(['README.md']).length,0,'docs-only commits must not repeat 115 IndexNow URLs');
 assert.deepEqual(changedPaths(['scripts/indexnow-notify.js','.github/workflows/indexnow-notify.yml']),[],'notifier-only changes have no published page changes');
 for(const file of ['server.js','data/region-journey-links.json','data/priority-regions.json','data/priority-blog-links.json','lib/regional-history-evidence.js']){
