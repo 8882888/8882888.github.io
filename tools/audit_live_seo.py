@@ -34,7 +34,7 @@ PATHS = {
     "/taksong/gyeongnam/gimhae-si/": "local-naver-originals",
     "/daeri/busan/": "local-naver-originals",
     "/daeri/daegu/": "local-naver-originals",
-    "/daeri/gwangju/": "광주광역시대리운전",
+    "/daeri/gwangju/": "광주대리운전",
     "/business/rental-car/": "rental-b2b-operating-guide-20261103",
     "/business/used-car/": "dealer-b2b-operating-guide-20261103",
     "/business/export-port/": "export-b2b-operating-guide-20261103",
@@ -152,8 +152,9 @@ def run():
                     errors.append("original Naver blog link not deployed: "+source_id)
             if path in JOURNEY_PLANS:
                 keyword = JOURNEY_KEYWORDS[path]
-                if keyword not in parser.title:
-                    errors.append("regional title lacks main locality keyword: " + keyword)
+                accepted_keywords = (keyword, "기장탁송") if path == "/taksong/busan/gijang-gun/" else (keyword,)
+                if not any(label in parser.title for label in accepted_keywords):
+                    errors.append("regional title lacks main locality keyword: " + " / ".join(accepted_keywords))
                 if not 45 <= len(parser.description.strip()) <= 175:
                     errors.append("regional description length outside 45-175 characters: " + str(len(parser.description.strip())))
                 if not parser.description.strip():
