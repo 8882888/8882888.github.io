@@ -8,6 +8,8 @@ const {execFileSync}=require('node:child_process');
 const key='770f921af32e749f64c1d447c607ea42';
 const root=path.resolve(__dirname,'..');
 const priorityPaths=Object.freeze(require('../data/region-journey-links.json').pages.map(p=>p.path));
+const blogHashtagPaths=Object.freeze(require('../data/blog-hashtags-priority.json').articles.map(p=>'/blog/daeri-regions/'+p.slug+'/'));
+if(blogHashtagPaths.length!==10||new Set(blogHashtagPaths).size!==10)throw Error('Expected ten blog canonical URLs');
 if(priorityPaths.length!==10||new Set(priorityPaths).size!==10)throw Error('Expected ten unique regional source URLs');
 const dryRun=process.argv.includes('--dry-run');
 const base=new URL(dryRun?(process.argv[process.argv.indexOf('--dry-run')+1]||'http://localhost:3000/'):'https://jeongukdaeri.kr/');
@@ -41,6 +43,11 @@ function changedPaths(files,manual=''){
   return chosen;
  }
  const input=new Set(files);
+ // A content-focused blog update should notify its actual article URLs, not
+ // resubmit unrelated service landing pages in the same commit.
+ if(input.has('data/blog-hashtags-priority.json'))return [...blogHashtagPaths];
+ const changedBlogs=blogHashtagPaths.filter(url=>input.has(url.slice(1)+'index.html'));
+ if(changedBlogs.length)return changedBlogs;
  const selected=new Set();
  const include=paths=>paths.forEach(p=>selected.add(p));
  if([...input].some(p=>[
@@ -75,7 +82,7 @@ async function verify(){
   if(parsed.protocol!=='https:'||parsed.hostname!=='jeongukdaeri.kr'||parsed.search||parsed.hash)
    throw Error('Invalid canonical URL in sitemap: '+url);
  }
- for(const route of [...fixedPriorityPaths,...priorityPaths]){
+ for(const route of [...fixedPriorityPaths,...priorityPaths,...blogHashtagPaths]){
   const canonical=new URL(route,'https://jeongukdaeri.kr').href;
   if(!normalizedUrls.includes(canonical))throw Error('Missing priority route: '+canonical);
  }
@@ -113,4 +120,4 @@ async function main(){
  console.log('Submission acknowledgement only; real crawler requests, URL indexing and ranking are unconfirmed.');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
-module.exports={priorityPaths,changedPaths,filesInRevision,verify};
+module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify};

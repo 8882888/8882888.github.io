@@ -362,5 +362,9 @@
         "#부여대리운전상담"
       ]
     }
+  ],
+  "discovery_sitemaps": [
+    "/sitemap-priority.xml",
+    "/sitemap.xml"
   ]
 }

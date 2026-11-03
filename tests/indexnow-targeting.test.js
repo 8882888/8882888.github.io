@@ -1,13 +1,17 @@
 'use strict';
 const assert=require('node:assert/strict');
-const {changedPaths,priorityPaths}=require('../scripts/indexnow-notify');
+const {changedPaths,priorityPaths,blogHashtagPaths}=require('../scripts/indexnow-notify');
 assert.equal(priorityPaths.length,10);
 assert.equal(new Set(priorityPaths).size,10);
+assert.equal(blogHashtagPaths.length,10);
+assert.equal(new Set(blogHashtagPaths).size,10);
 assert.equal(changedPaths(['README.md']).length,0,'docs-only commits must not repeat 115 IndexNow URLs');
 assert.deepEqual(changedPaths(['scripts/indexnow-notify.js','.github/workflows/indexnow-notify.yml']),[],'notifier-only changes have no published page changes');
 for(const file of ['server.js','data/region-journey-links.json','data/priority-regions.json','data/priority-blog-links.json','lib/regional-history-evidence.js']){
  assert.deepEqual(changedPaths([file]),priorityPaths,'changing '+file+' selects ten canonical region pages');
 }
+assert.deepEqual(changedPaths(['data/blog-hashtags-priority.json','server.js']),blogHashtagPaths);
+for(const url of blogHashtagPaths)assert.deepEqual(changedPaths([url.slice(1)+'index.html']),[url],'one updated article maps to one submitted URL');
 assert.deepEqual(changedPaths(['index.html']),['/']);
 assert.deepEqual(changedPaths(['data/seo-pages.json']),['/','/taksong/','/daeri/','/region/']);
 assert.deepEqual(changedPaths(['blog/posts.json']),['/blog/','/blog/archive/']);
