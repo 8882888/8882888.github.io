@@ -38,7 +38,7 @@ def case(entry):
     guide = ("차량을 맡기는 탁송은 출발지 인수 위치, 차량 운행 가능 상태, 차키 전달, 도착지 인계 담당자를 확인합니다."
              if service == "taksong" else
              "대리운전은 차량 주차 위치, 목적지, 희망 출발 시각, 동승·경유 여부를 확인합니다.")
-    return ("<article class='case'><h3>" + esc(title) + "</h3>"
+    return ("<article class=\"case\"><h3>" + esc(title) + "</h3>"
             "<p><strong>기존 운행완료 자료를 재구성한 사실 기반 후기</strong>입니다. 이용자가 직접 작성한 평점·증언이나 현장 취재를 뜻하지 않습니다.</p>"
             "<dl class='facts'><dt>출발지</dt><dd>" + esc(departure) +
             "</dd><dt>도착지</dt><dd>" + esc(destination) +
@@ -62,7 +62,7 @@ def big_vehicle_case(record):
     # Strip operational shorthand but retain original uncertainty and source trace.
     description = re.sub(r"^(?:탁/확대/|스/탁/확대/)", "", origin).split("/")
     vehicle = next((x for x in description if re.search(r"25\s*톤|9[.]8톤", x)), "대형차")
-    return ("<article class='case'><h3>" + esc(vehicle) + " 탁송 배차기록</h3>"
+    return ("<article class=\"dispatch-case\"><h3>" + esc(vehicle) + " 탁송 배차기록</h3>"
             "<p>기록일 " + esc(record["date"]) + " · 기록요금 " + esc(record["fare"]) + "</p>"
             "<p>기록상 출발정보: " + esc(origin) + "</p><p>기록상 도착정보: " + esc(dest)
             + "</p><p><strong>배차기록 기반 자료</strong>이며 운행완료 여부는 이 원본에서 확인되지 않습니다. "
@@ -95,8 +95,8 @@ def main():
     style = """body{font-family:system-ui,sans-serif;color:#142b46;margin:0;background:#f6f9fd}
 main{max-width:1050px;margin:auto;padding:25px 18px 65px}h1{font-size:clamp(27px,4vw,38px)}
 h2{margin-top:42px;border-bottom:2px solid #cbdcf0;padding-bottom:10px}
-.case{background:white;border:1px solid #d3dfef;border-radius:13px;padding:18px;margin:12px 0;line-height:1.65}
-.case h3{margin-top:0;color:#1553a3}.tags{font-size:14px;color:#185b91}.facts{display:grid;grid-template-columns:90px 1fr;gap:8px 12px}.facts dt{font-weight:700}.facts dd{margin:0}
+.case,.dispatch-case{background:white;border:1px solid #d3dfef;border-radius:13px;padding:18px;margin:12px 0;line-height:1.65}
+.case h3,.dispatch-case h3{margin-top:0;color:#1553a3}.tags{font-size:14px;color:#185b91}.facts{display:grid;grid-template-columns:90px 1fr;gap:8px 12px}.facts dt{font-weight:700}.facts dd{margin:0}
 a{color:#0757ae}header{padding:15px 24px;background:#104f96;color:white}
 header a{color:white}footer{margin-top:40px}"""
     page = ('<!doctype html><html lang="ko"><head><meta charset="utf-8">'
@@ -114,7 +114,7 @@ header a{color:white}footer{margin-top:40px}"""
             + '<h2>25톤·대형 화물차 배차기록 (완료 여부 추가 확인 필요)</h2>' +
             "".join(map(big_vehicle_case, large)) +
             '<footer><p>새로운 확인 기록이 데이터 파일에 추가될 때 목록이 갱신됩니다. '
-            '콘텐츠 확인일과 운행일은 구분됩니다. 상담은 <a href="tel:18114294">1811-4294</a>.</p></footer>'
+            '전체 2,591건의 원시 배차기록이 모두 운행완료로 검증됐다는 뜻은 아닙니다. 콘텐츠 확인일과 운행일은 구분됩니다. 상담은 <a href="tel:18114294">1811-4294</a>.</p></footer>'
             '</main></body></html>')
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != page:
