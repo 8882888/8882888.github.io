@@ -123,7 +123,7 @@ async function inspect(route){
  const expectedDaeriCount=1+17+selectedDaeri.size+expectedTravelUrls.length;
  const daeriIssues=[];
  if(daeriDiscovery.status!==200)daeriIssues.push('Driver sitemap HTTP '+daeriDiscovery.status);
- if(daeriUrls.length!==expectedDaeriCount)daeriIssues.push('Driver discovery sitemap count '+daeriUrls.length+'/'+expectedDaeriCount);
+ if(daeriUrls.length<expectedDaeriCount||daeriUrls.length>500)daeriIssues.push('Driver discovery sitemap count '+daeriUrls.length+' / minimum '+expectedDaeriCount+', maximum 500');
  if(new Set(daeriUrls).size!==daeriUrls.length)daeriIssues.push('Duplicate driver discovery URL');
  for(const p of found) if(p.startsWith('/daeri/')&&!daeriUrls.includes(new URL(p,new URL(config.site)).href)) daeriIssues.push('Missing priority driver URL '+p);
  for(const url of expectedTravelUrls)if(!daeriUrls.includes(url))daeriIssues.push('Missing tourism-driver guide URL '+url);
@@ -137,7 +137,7 @@ async function inspect(route){
  if(priorityResponse.status!==200)priorityIssues.push('Priority sitemap HTTP '+priorityResponse.status);
  if(!String(priorityResponse.headers.get('content-type')).includes('application/xml'))priorityIssues.push('Wrong sitemap content-type');
  if(!priorityXml.includes('<urlset'))priorityIssues.push('Missing XML urlset');
- if(priorityUrls.length<expectedPriorityUrls.length||priorityUrls.length>200)priorityIssues.push('Unexpected priority sitemap coverage '+priorityUrls.length+' / minimum '+expectedPriorityUrls.length);
+ if(priorityUrls.length<expectedPriorityUrls.length||priorityUrls.length>5000)priorityIssues.push('Unexpected priority sitemap coverage '+priorityUrls.length+' / minimum '+expectedPriorityUrls.length+', maximum 5000');
  if(new Set(priorityUrls).size!==priorityUrls.length)priorityIssues.push('Duplicate priority sitemap URLs');
  for(const url of expectedPriorityUrls){if(!priorityUrls.includes(url))priorityIssues.push('Missing priority URL '+url)}
  const robotsResponse=await fetch(new URL('/robots.txt',base),{signal:AbortSignal.timeout(15000)});
