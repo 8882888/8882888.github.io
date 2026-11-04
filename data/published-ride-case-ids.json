@@ -8,5 +8,10 @@
     "id": "91e97331e770acef",
     "service": "taksong",
     "published_at": "2026-11-03T20:08:59.406504+00:00"
+  },
+  {
+    "id": "df8a51b8d91f2c0a",
+    "service": "daeri",
+    "published_at": "2026-11-04T07:32:53.599594+00:00"
   }
 ]
