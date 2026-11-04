@@ -1642,6 +1642,22 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const ganghwaPriority=await (await get('/sitemap-priority.xml')).text();
   assert(ganghwaPriority.includes('https://example.com'+ganghwaUrl),'Ganghwa SEO route in priority sitemap');
   console.log('PASS Ganghwa region HTTP 200, canonical, real reviews, indexable meta and sitemap');
+  // Each archived completion has a review title and regional index path; never invent case details.
+  const firstHistory=await get('/reviews/history/excel-0001/');
+  assert.equal(firstHistory.status,200);
+  const firstHistoryHtml=await firstHistory.text();
+  assert(firstHistoryHtml.includes('운행완료 후기') || firstHistoryHtml.includes('완료내역 기반 후기'),'first archive record has review-first title');
+  const regionArchive=await get('/reviews/history/?region='+encodeURIComponent('area-494')+'&kind=taksong');
+  assert.equal(regionArchive.status,200);
+  const regionArchiveHtml=await regionArchive.text();
+  assert(regionArchiveHtml.includes('부산광역시 자동차탁송 실제 운행완료 후기'),'region-specific completed cases');
+  assert(regionArchiveHtml.includes('name="region" value="area-494"'),'filter survives search');
+  assert(regionArchiveHtml.includes('/reviews/history/excel-'),'region lists linked source case details');
+  const invalidRegionArchive=await get('/reviews/history/?region=area-999999999');
+  assert.equal(invalidRegionArchive.status,404,'invalid region must not claim completed records');
+  const busanTransport=await(await get('/taksong/busan/')).text();
+  assert(busanTransport.includes('/reviews/history/?region=area-494&amp;kind=taksong'),'region page links archive cases');
+  assert.equal(require('../data/ride-history.json').length,2591,'all 2,591 raw records preserved');
   // Region finder is a single useful canonical page, never a million thin pages.
   const finder=await get('/find/?q='+encodeURIComponent('부산 해운대구')+'&service=daeri&intent=late-night');
   assert.equal(finder.status,200);
