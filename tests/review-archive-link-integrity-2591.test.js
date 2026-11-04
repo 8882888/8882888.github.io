@@ -46,9 +46,9 @@ for(const token of [
  '/fare/?service='
 ])assert(server.includes(token),'Review-region-booking route missing '+token);
 assert(server.includes('regionSlug?bySlug.get(regionSlug):null'),'History region filter must resolve a legal region slug');
-assert(server.includes("esc(old.date)+' · <a href=\\"/fare/?service='+kind"),'Regional ride cards need direct fare links');
+assert(server.includes(`esc(old.date)+' · <a href="/fare/?service='+kind`),'Regional ride cards need direct fare links');
 assert(server.includes('encodeURIComponent(old.departure'), 'Regional fare links need case origin');
 assert(server.includes('encodeURIComponent(old.destination'), 'Regional fare links need case destination');
-assert(server.includes('>예상요금 조회</a> · <a href=\\"tel:18114294\\">예약상담'), 'Regional cards need one-tap booking');
+assert(server.includes(`>예상요금 조회</a> · <a href="tel:18114294">예약상담`),'Regional cards need one-tap booking');
 
 console.log('PASS: 2,591 distinct source-linked reviews, 9 archive batches, privacy/region safeguards and fare/booking paths');
