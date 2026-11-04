@@ -64,6 +64,20 @@ function selectQueries(now = new Date()) {
 }
 
 
+function summarizeVisibility(results) {
+ const valid=results.filter(r=>!r.error && Number.isInteger(r.inspected));
+ const siteObserved=valid.filter(r=>(r.matches||[]).length>0);
+ const compareCounts=Object.fromEntries(COMPARISONS.map(domain=>[domain,valid.filter(r=>(r.comparisons?.[domain]||[]).length>0).length]));
+ return {
+  checkedQueries:valid.length,
+  siteObservedQueries:siteObserved.length,
+  siteUnobservedQueries:valid.length-siteObserved.length,
+  siteObservedTerms:siteObserved.map(r=>r.query),
+  comparisonObservedQueries:compareCounts,
+  severity:valid.length && !siteObserved.length?'web-document-visibility-warning':'monitoring-only',
+  limitation:'Only Naver web-document API first 100 per searched query; not all Naver search surfaces or proof of index exclusion.'
+ };
+}
 function inspect(items, domain = DOMAIN) {
   return items.map((item, index) => {
     try {
@@ -108,8 +122,9 @@ async function main() {
     }
   }
   const focusedResults=results.filter(r=>FOCUS_150.includes(r.query)).map(r=>({query:r.query,checkedAt:r.checkedAt,bestApiResultPosition:r.matches?.length?Math.min(...r.matches.map(x=>x.position)):null,matchedSitePages:(r.matches||[]).map(x=>x.url),error:r.error||null,limitation:'Web-document API top 100 only; not Naver unified/mobile ranking or indexing proof'}));
-  const result = {source: 'Naver Search API: web documents', query: QUERY, checkedAt: new Date().toISOString(), queryCatalogCount:new Set([...QUERIES,...FOCUS_150]).size, selectedQueries:selectQueries(), focusKeywordInventoryCount:FOCUS_150.length, focusedResults, ...results[0], results, pageEvidence: pageEvidence(results), targetLandingEvidence: targetLandingEvidence(results), baselineComparison: compareBaseline(results), legacyDriverCandidates: legacyDriverEvidence(results), limitation: 'Positions are within the returned web-document API results, not Naver integrated search rankings. This API does not expose mobile Naver sitelinks. No match does not prove a page is not indexed.'};
+  const result = {source: 'Naver Search API: web documents', query: QUERY, checkedAt: new Date().toISOString(), queryCatalogCount:new Set([...QUERIES,...FOCUS_150]).size, selectedQueries:selectQueries(), focusKeywordInventoryCount:FOCUS_150.length, focusedResults, ...results[0], results, pageEvidence: pageEvidence(results), targetLandingEvidence: targetLandingEvidence(results), baselineComparison: compareBaseline(results), visibilitySummary: summarizeVisibility(results), legacyDriverCandidates: legacyDriverEvidence(results), limitation: 'Positions are within the returned web-document API results, not Naver integrated search rankings. This API does not expose mobile Naver sitelinks. No match does not prove a page is not indexed.'};
   fs.writeFileSync('naver-web-monitor-result.json', JSON.stringify(result, null, 2) + '\n');
+  if(result.visibilitySummary.severity==='web-document-visibility-warning') console.warn('::warning::Naver web-document API: zero Smart24 site matches across '+result.visibilitySummary.checkedQueries+' inspected queries. This is not proof of delisting.');
   console.log(JSON.stringify(result, null, 2));
   if (process.env.GITHUB_STEP_SUMMARY) {
     const rows = results.map(r => '| ' + r.query + ' | ' + (r.error ? 'ERROR' : r.matches.length ? r.matches.map(x => x.position).join(', ') : 'Not found in first ' + r.inspected) + ' | ' + (r.error || COMPARISONS.map(d => d + ': ' + (r.comparisons[d].map(x => x.position).join(', ') || '—')).join('; ')) + ' |');
@@ -134,4 +149,4 @@ async function main() {
   if (failures) throw new Error(failures + ' selected query checks failed; partial results saved');
 }
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
-module.exports = { inspect, COMPARISONS, QUERIES, FOCUS_50, FOCUS_NEXT_50, FOCUS_THIRD_50, FOCUS_150, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };
+module.exports = { inspect, summarizeVisibility, COMPARISONS, QUERIES, FOCUS_50, FOCUS_NEXT_50, FOCUS_THIRD_50, FOCUS_150, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };
