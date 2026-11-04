@@ -65,6 +65,29 @@ for(const [file,anchor,image] of farePages){
 for(const file of ['service/golf/index.html','service/corporate/index.html','service/daily-driver/index.html']){
  assert(read(file).includes('1811-4294'),file+' phone missing');
 }
+const busanEditorial=read('region/busan-daeri-taksong/index.html');
+const busanTitle='부산연산동탁송 후기';
+assert(busanEditorial.includes('<title>'+busanTitle),'Busan regional title should lead with a true review topic');
+const busanFirstReview=busanEditorial.indexOf('id="busan-taksong-real-review-first-20261104"');
+assert(busanEditorial.indexOf('<h1>')<busanFirstReview&&
+ busanFirstReview<busanEditorial.indexOf('id="keyword-image-first-202611"')&&
+ busanFirstReview<busanEditorial.indexOf('id="busan-intent-reviews-partners-20261102"'),
+ 'Busan original reviews must precede generic service copy and promotional image');
+const busanHash=busanEditorial.match(/<p class="busan-local-taksong-tags">([^<]+)<\\/p>/);
+assert(busanHash,'Busan region-local hash tags absent');
+assert.equal(busanHash[1].trim().split(/\\s+/).length,30,'Exactly 30 Busan taksong hashtags');
+assert(new Set(busanHash[1].trim().split(/\\s+/)).size===30,'Duplicate Busan hashtags');
+for(const tag of ['#부산탁송','#부산시탁송','#부산기장군탁송','#부산강서구탁송','#부산연산동탁송'])
+ assert(busanHash[1].includes(tag),'Essential Busan keyword tag missing '+tag);
+for(const id of ['224445300887','224433939509','224452085535']){
+ assert(busanEditorial.includes('https://blog.naver.com/wjdtnr4757/'+id),'Published Busan review missing '+id);
+}
+const serverBusan=read('server.js');
+assert(serverBusan.includes('busanReviewPage?busanReviewTitle:focusedTitle'),
+ 'Dynamic canonical Busan page must display a genuine review topic in title and H1');
+assert(serverBusan.includes("busanReviewLead+companySection"),
+ 'Canonical Busan actual reviews must appear above generic company keyword sections');
+assert(serverBusan.includes('busan-local-taksong-tags'),'Canonical Busan hashtags missing');
 const rides=JSON.parse(read('data/ride-history.json'));
 assert(Array.isArray(rides)&&rides.length===2591,'The 2,591 original ride records must be preserved');
 const rideStart=home.indexOf('<section id="ride-history"');
