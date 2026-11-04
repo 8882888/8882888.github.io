@@ -171,8 +171,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    'long-distance-five-routes','keyword-topics','core-search-services','cycle-second-five-home'])
    assert.ok(!seoHome.includes('id="'+id+'"'),'duplicate homepage section removed: '+id);
   assert.ok(seoHome.indexOf('<header')<seoHome.indexOf('id="mobile-direct-image-priority"'),'general service header must precede mountain poster on homepage');
-  assert.ok(seoHome.includes('id="homepage-mountain-fare-shortcuts-202611"')&&seoHome.includes('id="real-completed-service-hubs-202611"'),
-   'homepage retains fare first then genuine ride-history journey');
+  const heroStart=seoHome.indexOf('<div class="hero hero-with-photo">');
+  const fareStart=seoHome.indexOf('<section id="mountain-cycling-fare-first-20261103"');
+  const completedStart=seoHome.indexOf('<section id="real-completed-service-hubs-202611"');
+  assert.ok(heroStart>=0&&heroStart<fareStart&&fareStart<completedStart,
+   'homepage must present immediate booking, one consolidated fare section, then real completed rides');
+  assert.ok(!seoHome.includes('id="homepage-mountain-fare-shortcuts-202611"'),
+   'removed duplicate mountain shortcuts must not return');
+  assert.ok(seoHome.includes('href="tel:18114294"')&&seoHome.includes('href="/fare/"'),
+   'homepage must retain the phone and estimated fare actions');
   for(const [url,expectedFare,requiredSource] of [
    ['/설악산탁송/','오색 → 소공원','real-route-proof-202610'],
    ['/지리산탁송/','성삼재 → 중산리','jirisan-real-source-guide']
