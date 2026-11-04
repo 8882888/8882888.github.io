@@ -41,7 +41,7 @@ jobs:
           set -uo pipefail
           base="${PRODUCTION_URL%/}"
           failed=0
-          for route in / /health /assets/smart24-business-card.svg /region/ /places/ /places/%EC%BA%A0%ED%95%91%EC%9E%A5/ /taksong/types/ /fare/ /sitemap.xml /sitemap-daeri.xml /sitemap-taksong.xml /robots.txt /taksongdaeri/ /favicon.ico /blog/; do
+          for route in / /health /find/ '/api/find-regions?q=%EA%B0%95%ED%99%94&service=daeri&intent=history' /assets/smart24-business-card.svg /region/ /places/ /places/%EC%BA%A0%ED%95%91%EC%9E%A5/ /taksong/types/ /fare/ /sitemap.xml /sitemap-daeri.xml /sitemap-taksong.xml /robots.txt /taksongdaeri/ /favicon.ico /blog/; do
             url="$base$route"
             code=$(curl -L -sS -o /tmp/smart24-response -w '%{http_code}' --connect-timeout 10 --max-time 25 "$url") || code=000
             echo "$code $url"
@@ -51,6 +51,36 @@ jobs:
             fi
           done
           exit "$failed"
+
+      - name: Verify million-choice regional finder and protected search results on production
+        shell: bash
+        env:
+          PRODUCTION_URL: ${{ vars.CLOUDTYPE_PRODUCTION_URL || 'https://jeongukdaeri.kr' }}
+        run: |
+          python3 - <<'PYREGION'
+          import os, urllib.request, json
+          from urllib.parse import urlencode
+          base=os.environ['PRODUCTION_URL'].rstrip('/')
+          headers={'User-Agent':'Mozilla/5.0 (compatible; Smart24HealthCheck/1.0)', 'Cache-Control':'no-cache'}
+          def load(path):
+              request=urllib.request.Request(base+path,headers=headers)
+              with urllib.request.urlopen(request,timeout=25) as response:
+                  assert response.status==200,(path,response.status)
+                  return response.read().decode('utf-8')
+          page=load('/find/')
+          assert '1,028,100' in page, 'Million option count missing'
+          assert '<meta name="robots" content="index,follow">' in page, 'Canonical finder must be indexable'
+          q=urlencode({'q':'강화군','service':'daeri','intent':'history'})
+          selected=load('/find/?'+q)
+          assert 'noindex,follow' in selected, 'Parameterized lookup must not be indexed'
+          assert '인천광역시 강화군' in selected, 'Exact Ganghwa administrative match missing'
+          assert '공개 운행후기' in selected, 'Selected review intent missing'
+          data=json.loads(load('/api/find-regions?'+q))
+          assert data['count']==1028100 and data['selectedIntent']=='history'
+          assert any(item['name']=='인천광역시 강화군' for item in data['results'])
+          assert 'tel:18114294' in page, 'Phone CTA missing'
+          print('PASS: live production /find/, parameterized noindex, verified-region search, intent and JSON API')
+          PYREGION
 
       - name: Verify live mobile homepage original mountain fare posters
         shell: bash
