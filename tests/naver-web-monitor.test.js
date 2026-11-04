@@ -5,6 +5,15 @@ const items = [{link:'https://example.com/',title:'other'},{link:'https://jeongu
 assert.deepEqual(inspect(items).map(x => x.position), [2,5]);
 assert.equal(inspect(items)[0].title, '전국 대리운전');
 assert.deepEqual(inspect([]), []);
+const {summarizeVisibility}=require('../scripts/naver-web-monitor');
+const zero=summarizeVisibility([{query:'부산탁송',inspected:100,matches:[],comparisons:{'daerigo.com':[{'position':1}]}}]);
+assert.equal(zero.siteObservedQueries,0);
+assert.equal(zero.severity,'web-document-visibility-warning');
+assert.equal(zero.comparisonObservedQueries['daerigo.com'],1);
+assert.equal(zero.checkedQueries,1);
+assert.equal(summarizeVisibility([{query:'인천탁송',inspected:100,matches:[{position:60}],comparisons:{}}]).siteObservedQueries,1);
+assert.equal(summarizeVisibility([{query:'부산탁송',error:'HTTP 429'}]).checkedQueries,0);
+
 assert.deepEqual(inspect([{link:'https://gosudaeri.com/'},{link:'https://gosudaeri.com.evil.test/'}], 'gosudaeri.com').map(x=>x.position),[1]);
 const {COMPARISONS}=require('../scripts/naver-web-monitor');
 for(const domain of ['gosudaeri.com','gosudaeri.kr','daerigo.com','daerigo.co.kr']){
