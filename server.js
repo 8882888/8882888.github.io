@@ -1978,7 +1978,9 @@ if(pathname==='/sitemap.xml'){
  const focused=[
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
   '/','/taksongdaeri/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/fare/','/fare/jeju/',
-  '/reviews/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/blog/','/blog/archive/',
+  '/reviews/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/blog/','/blog/archive/','/find/',
+  // Search value comes from publicly verified completed rides, not mass-generated localities.
+  ...publicRides.slice(0,60).map(rideUrl),
   '/route-taksong/','/route-taksong/centers/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/',
    ...blogArchive.groups.map(g=>'/blog/archive/'+g.id+'/'),'/region/',
   '/service/golf/','/service/taksong/','/recruit/daeri/','/recruit/taksong/',
@@ -1996,7 +1998,7 @@ if(pathname==='/sitemap.xml'){
   '/blog/archive/categories/',
   '/blog/daeri-regions/',...blogHashtagArticlePaths,'/blog/taksong-categories/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/',...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],
   '/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],
-  ...publicRides.map(rideUrl),
+  // Additional completed trips are already linked from /reviews/verified/ and route sitemaps.
   ...featuredTaksongRoutes.map(r=>'/taksong/route/'+r.slug+'/'),
   ...featuredDaeriRoutes.map(r=>'/daeri/route/'+r.slug+'/'),
   // Keep a limited selection of reviewed routes in the main sitemap;
