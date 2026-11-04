@@ -1,0 +1,1507 @@
+{
+  "schema_version": 1,
+  "scope": "nationwide-reviewed-first-300",
+  "note": "Target selection only: links to verified completed rides are rendered by server; empty regions must never impersonate real reviews.",
+  "pages": [
+    {
+      "rank": 1,
+      "region": "서울특별시",
+      "path": "/taksong/area-1/"
+    },
+    {
+      "rank": 2,
+      "region": "부산광역시",
+      "path": "/taksong/area-494/"
+    },
+    {
+      "rank": 3,
+      "region": "대구광역시",
+      "path": "/taksong/area-765/"
+    },
+    {
+      "rank": 4,
+      "region": "인천광역시",
+      "path": "/taksong/area-1174/"
+    },
+    {
+      "rank": 5,
+      "region": "광주광역시",
+      "path": "/taksong/area-1464/"
+    },
+    {
+      "rank": 6,
+      "region": "대전광역시",
+      "path": "/taksong/area-1672/"
+    },
+    {
+      "rank": 7,
+      "region": "울산광역시",
+      "path": "/taksong/area-1855/"
+    },
+    {
+      "rank": 8,
+      "region": "세종특별자치시",
+      "path": "/taksong/area-2063/"
+    },
+    {
+      "rank": 9,
+      "region": "경기도",
+      "path": "/taksong/area-2215/"
+    },
+    {
+      "rank": 10,
+      "region": "강원특별자치도",
+      "path": "/taksong/area-4433/"
+    },
+    {
+      "rank": 11,
+      "region": "충청북도",
+      "path": "/taksong/area-5906/"
+    },
+    {
+      "rank": 12,
+      "region": "충청남도",
+      "path": "/taksong/area-7541/"
+    },
+    {
+      "rank": 13,
+      "region": "전북특별자치도",
+      "path": "/taksong/area-9816/"
+    },
+    {
+      "rank": 14,
+      "region": "전라남도",
+      "path": "/taksong/area-11707/"
+    },
+    {
+      "rank": 15,
+      "region": "경상북도",
+      "path": "/taksong/area-14704/"
+    },
+    {
+      "rank": 16,
+      "region": "경상남도",
+      "path": "/taksong/area-17946/"
+    },
+    {
+      "rank": 17,
+      "region": "제주특별자치도",
+      "path": "/taksong/area-20348/"
+    },
+    {
+      "rank": 18,
+      "region": "서울특별시 강남구",
+      "path": "/taksong/area-2/"
+    },
+    {
+      "rank": 19,
+      "region": "부산광역시 강서구",
+      "path": "/taksong/area-495/"
+    },
+    {
+      "rank": 20,
+      "region": "대구광역시 군위군",
+      "path": "/taksong/area-766/"
+    },
+    {
+      "rank": 21,
+      "region": "인천광역시 강화군",
+      "path": "/taksong/area-1175/"
+    },
+    {
+      "rank": 22,
+      "region": "광주광역시 광산구",
+      "path": "/taksong/area-1465/"
+    },
+    {
+      "rank": 23,
+      "region": "대전광역시 대덕구",
+      "path": "/taksong/area-1673/"
+    },
+    {
+      "rank": 24,
+      "region": "울산광역시 남구",
+      "path": "/taksong/area-1856/"
+    },
+    {
+      "rank": 25,
+      "region": "세종특별자치시 (직할)",
+      "path": "/taksong/area-2064/"
+    },
+    {
+      "rank": 26,
+      "region": "경기도 가평군",
+      "path": "/taksong/area-2216/"
+    },
+    {
+      "rank": 27,
+      "region": "강원특별자치도 강릉시",
+      "path": "/taksong/area-4434/"
+    },
+    {
+      "rank": 28,
+      "region": "충청북도 괴산군",
+      "path": "/taksong/area-5907/"
+    },
+    {
+      "rank": 29,
+      "region": "충청남도 계룡시",
+      "path": "/taksong/area-7542/"
+    },
+    {
+      "rank": 30,
+      "region": "전북특별자치도 고창군",
+      "path": "/taksong/area-9817/"
+    },
+    {
+      "rank": 31,
+      "region": "전라남도 강진군",
+      "path": "/taksong/area-11708/"
+    },
+    {
+      "rank": 32,
+      "region": "경상북도 경산시",
+      "path": "/taksong/area-14705/"
+    },
+    {
+      "rank": 33,
+      "region": "경상남도 거제시",
+      "path": "/taksong/area-17947/"
+    },
+    {
+      "rank": 34,
+      "region": "제주특별자치도 서귀포시",
+      "path": "/taksong/area-20349/"
+    },
+    {
+      "rank": 35,
+      "region": "서울특별시 강동구",
+      "path": "/taksong/area-17/"
+    },
+    {
+      "rank": 36,
+      "region": "부산광역시 금정구",
+      "path": "/taksong/area-518/"
+    },
+    {
+      "rank": 37,
+      "region": "대구광역시 남구",
+      "path": "/taksong/area-867/"
+    },
+    {
+      "rank": 38,
+      "region": "인천광역시 검단구",
+      "path": "/taksong/area-1285/"
+    },
+    {
+      "rank": 39,
+      "region": "광주광역시 남구",
+      "path": "/taksong/area-1545/"
+    },
+    {
+      "rank": 40,
+      "region": "대전광역시 동구",
+      "path": "/taksong/area-1700/"
+    },
+    {
+      "rank": 41,
+      "region": "울산광역시 동구",
+      "path": "/taksong/area-1876/"
+    },
+    {
+      "rank": 42,
+      "region": "세종특별자치시 (직할) 반곡동",
+      "path": "/taksong/area-2065/"
+    },
+    {
+      "rank": 43,
+      "region": "경기도 고양시",
+      "path": "/taksong/area-2284/"
+    },
+    {
+      "rank": 44,
+      "region": "강원특별자치도 고성군",
+      "path": "/taksong/area-4547/"
+    },
+    {
+      "rank": 45,
+      "region": "충청북도 단양군",
+      "path": "/taksong/area-6045/"
+    },
+    {
+      "rank": 46,
+      "region": "충청남도 공주시",
+      "path": "/taksong/area-7561/"
+    },
+    {
+      "rank": 47,
+      "region": "전북특별자치도 군산시",
+      "path": "/taksong/area-10021/"
+    },
+    {
+      "rank": 48,
+      "region": "전라남도 고흥군",
+      "path": "/taksong/area-11832/"
+    },
+    {
+      "rank": 49,
+      "region": "경상북도 경주시",
+      "path": "/taksong/area-14879/"
+    },
+    {
+      "rank": 50,
+      "region": "경상남도 거창군",
+      "path": "/taksong/area-18046/"
+    },
+    {
+      "rank": 51,
+      "region": "제주특별자치도 제주시",
+      "path": "/taksong/area-20428/"
+    },
+    {
+      "rank": 52,
+      "region": "서울특별시 강북구",
+      "path": "/taksong/area-27/"
+    },
+    {
+      "rank": 53,
+      "region": "부산광역시 기장군",
+      "path": "/taksong/area-532/"
+    },
+    {
+      "rank": 54,
+      "region": "대구광역시 달서구",
+      "path": "/taksong/area-871/"
+    },
+    {
+      "rank": 55,
+      "region": "인천광역시 계양구",
+      "path": "/taksong/area-1296/"
+    },
+    {
+      "rank": 56,
+      "region": "광주광역시 동구",
+      "path": "/taksong/area-1576/"
+    },
+    {
+      "rank": 57,
+      "region": "대전광역시 서구",
+      "path": "/taksong/area-1746/"
+    },
+    {
+      "rank": 58,
+      "region": "울산광역시 북구",
+      "path": "/taksong/area-1885/"
+    },
+    {
+      "rank": 59,
+      "region": "세종특별자치시 (직할) 소담동",
+      "path": "/taksong/area-2066/"
+    },
+    {
+      "rank": 60,
+      "region": "경기도 과천시",
+      "path": "/taksong/area-2341/"
+    },
+    {
+      "rank": 61,
+      "region": "강원특별자치도 동해시",
+      "path": "/taksong/area-4642/"
+    },
+    {
+      "rank": 62,
+      "region": "충청북도 보은군",
+      "path": "/taksong/area-6162/"
+    },
+    {
+      "rank": 63,
+      "region": "충청남도 금산군",
+      "path": "/taksong/area-7760/"
+    },
+    {
+      "rank": 64,
+      "region": "전북특별자치도 김제시",
+      "path": "/taksong/area-10161/"
+    },
+    {
+      "rank": 65,
+      "region": "전라남도 곡성군",
+      "path": "/taksong/area-11980/"
+    },
+    {
+      "rank": 66,
+      "region": "경상북도 고령군",
+      "path": "/taksong/area-15078/"
+    },
+    {
+      "rank": 67,
+      "region": "경상남도 고성군",
+      "path": "/taksong/area-18153/"
+    },
+    {
+      "rank": 68,
+      "region": "제주특별자치도 서귀포시 서귀동",
+      "path": "/taksong/area-20350/"
+    },
+    {
+      "rank": 69,
+      "region": "서울특별시 강서구",
+      "path": "/taksong/area-32/"
+    },
+    {
+      "rank": 70,
+      "region": "부산광역시 남구",
+      "path": "/taksong/area-600/"
+    },
+    {
+      "rank": 71,
+      "region": "대구광역시 달성군",
+      "path": "/taksong/area-896/"
+    },
+    {
+      "rank": 72,
+      "region": "인천광역시 남동구",
+      "path": "/taksong/area-1320/"
+    },
+    {
+      "rank": 73,
+      "region": "광주광역시 북구",
+      "path": "/taksong/area-1611/"
+    },
+    {
+      "rank": 74,
+      "region": "대전광역시 유성구",
+      "path": "/taksong/area-1774/"
+    },
+    {
+      "rank": 75,
+      "region": "울산광역시 울주군",
+      "path": "/taksong/area-1913/"
+    },
+    {
+      "rank": 76,
+      "region": "세종특별자치시 (직할) 보람동",
+      "path": "/taksong/area-2067/"
+    },
+    {
+      "rank": 77,
+      "region": "경기도 광명시",
+      "path": "/taksong/area-2352/"
+    },
+    {
+      "rank": 78,
+      "region": "강원특별자치도 삼척시",
+      "path": "/taksong/area-4679/"
+    },
+    {
+      "rank": 79,
+      "region": "충청북도 영동군",
+      "path": "/taksong/area-6348/"
+    },
+    {
+      "rank": 80,
+      "region": "충청남도 논산시",
+      "path": "/taksong/area-7877/"
+    },
+    {
+      "rank": 81,
+      "region": "전북특별자치도 남원시",
+      "path": "/taksong/area-10328/"
+    },
+    {
+      "rank": 82,
+      "region": "전라남도 광양시",
+      "path": "/taksong/area-12117/"
+    },
+    {
+      "rank": 83,
+      "region": "경상북도 구미시",
+      "path": "/taksong/area-15183/"
+    },
+    {
+      "rank": 84,
+      "region": "경상남도 김해시",
+      "path": "/taksong/area-18287/"
+    },
+    {
+      "rank": 85,
+      "region": "제주특별자치도 서귀포시 법환동",
+      "path": "/taksong/area-20351/"
+    },
+    {
+      "rank": 86,
+      "region": "서울특별시 관악구",
+      "path": "/taksong/area-46/"
+    },
+    {
+      "rank": 87,
+      "region": "부산광역시 동구",
+      "path": "/taksong/area-607/"
+    },
+    {
+      "rank": 88,
+      "region": "대구광역시 동구",
+      "path": "/taksong/area-1001/"
+    },
+    {
+      "rank": 89,
+      "region": "인천광역시 미추홀구",
+      "path": "/taksong/area-1332/"
+    },
+    {
+      "rank": 90,
+      "region": "광주광역시 서구",
+      "path": "/taksong/area-1653/"
+    },
+    {
+      "rank": 91,
+      "region": "대전광역시 중구",
+      "path": "/taksong/area-1828/"
+    },
+    {
+      "rank": 92,
+      "region": "울산광역시 중구",
+      "path": "/taksong/area-2044/"
+    },
+    {
+      "rank": 93,
+      "region": "세종특별자치시 (직할) 대평동",
+      "path": "/taksong/area-2068/"
+    },
+    {
+      "rank": 94,
+      "region": "경기도 광주시",
+      "path": "/taksong/area-2361/"
+    },
+    {
+      "rank": 95,
+      "region": "강원특별자치도 속초시",
+      "path": "/taksong/area-4816/"
+    },
+    {
+      "rank": 96,
+      "region": "충청북도 옥천군",
+      "path": "/taksong/area-6491/"
+    },
+    {
+      "rank": 97,
+      "region": "충청남도 당진시",
+      "path": "/taksong/area-8076/"
+    },
+    {
+      "rank": 98,
+      "region": "전북특별자치도 무주군",
+      "path": "/taksong/area-10525/"
+    },
+    {
+      "rank": 99,
+      "region": "전라남도 구례군",
+      "path": "/taksong/area-12194/"
+    },
+    {
+      "rank": 100,
+      "region": "경상북도 김천시",
+      "path": "/taksong/area-15320/"
+    },
+    {
+      "rank": 101,
+      "region": "경상남도 남해군",
+      "path": "/taksong/area-18396/"
+    },
+    {
+      "rank": 102,
+      "region": "제주특별자치도 서귀포시 서호동",
+      "path": "/taksong/area-20352/"
+    },
+    {
+      "rank": 103,
+      "region": "서울특별시 광진구",
+      "path": "/taksong/area-50/"
+    },
+    {
+      "rank": 104,
+      "region": "부산광역시 동래구",
+      "path": "/taksong/area-612/"
+    },
+    {
+      "rank": 105,
+      "region": "대구광역시 북구",
+      "path": "/taksong/area-1047/"
+    },
+    {
+      "rank": 106,
+      "region": "인천광역시 부평구",
+      "path": "/taksong/area-1340/"
+    },
+    {
+      "rank": 107,
+      "region": "광주광역시 광산구 송정동",
+      "path": "/taksong/area-1466/"
+    },
+    {
+      "rank": 108,
+      "region": "대전광역시 대덕구 오정동",
+      "path": "/taksong/area-1674/"
+    },
+    {
+      "rank": 109,
+      "region": "울산광역시 남구 무거동",
+      "path": "/taksong/area-1857/"
+    },
+    {
+      "rank": 110,
+      "region": "세종특별자치시 (직할) 가람동",
+      "path": "/taksong/area-2069/"
+    },
+    {
+      "rank": 111,
+      "region": "경기도 구리시",
+      "path": "/taksong/area-2450/"
+    },
+    {
+      "rank": 112,
+      "region": "강원특별자치도 양구군",
+      "path": "/taksong/area-4830/"
+    },
+    {
+      "rank": 113,
+      "region": "충청북도 음성군",
+      "path": "/taksong/area-6626/"
+    },
+    {
+      "rank": 114,
+      "region": "충청남도 보령시",
+      "path": "/taksong/area-8237/"
+    },
+    {
+      "rank": 115,
+      "region": "전북특별자치도 부안군",
+      "path": "/taksong/area-10580/"
+    },
+    {
+      "rank": 116,
+      "region": "전라남도 나주시",
+      "path": "/taksong/area-12272/"
+    },
+    {
+      "rank": 117,
+      "region": "경상북도 문경시",
+      "path": "/taksong/area-15506/"
+    },
+    {
+      "rank": 118,
+      "region": "경상남도 밀양시",
+      "path": "/taksong/area-18486/"
+    },
+    {
+      "rank": 119,
+      "region": "제주특별자치도 서귀포시 호근동",
+      "path": "/taksong/area-20353/"
+    },
+    {
+      "rank": 120,
+      "region": "서울특별시 구로구",
+      "path": "/taksong/area-58/"
+    },
+    {
+      "rank": 121,
+      "region": "부산광역시 부산진구",
+      "path": "/taksong/area-622/"
+    },
+    {
+      "rank": 122,
+      "region": "대구광역시 서구",
+      "path": "/taksong/area-1079/"
+    },
+    {
+      "rank": 123,
+      "region": "인천광역시 서해구",
+      "path": "/taksong/area-1350/"
+    },
+    {
+      "rank": 124,
+      "region": "광주광역시 광산구 도산동",
+      "path": "/taksong/area-1467/"
+    },
+    {
+      "rank": 125,
+      "region": "대전광역시 대덕구 대화동",
+      "path": "/taksong/area-1675/"
+    },
+    {
+      "rank": 126,
+      "region": "울산광역시 남구 옥동",
+      "path": "/taksong/area-1858/"
+    },
+    {
+      "rank": 127,
+      "region": "세종특별자치시 (직할) 한솔동",
+      "path": "/taksong/area-2070/"
+    },
+    {
+      "rank": 128,
+      "region": "경기도 군포시",
+      "path": "/taksong/area-2458/"
+    },
+    {
+      "rank": 129,
+      "region": "강원특별자치도 양양군",
+      "path": "/taksong/area-4896/"
+    },
+    {
+      "rank": 130,
+      "region": "충청북도 제천시",
+      "path": "/taksong/area-6751/"
+    },
+    {
+      "rank": 131,
+      "region": "충청남도 부여군",
+      "path": "/taksong/area-8360/"
+    },
+    {
+      "rank": 132,
+      "region": "전북특별자치도 순창군",
+      "path": "/taksong/area-10693/"
+    },
+    {
+      "rank": 133,
+      "region": "전라남도 담양군",
+      "path": "/taksong/area-12474/"
+    },
+    {
+      "rank": 134,
+      "region": "경상북도 봉화군",
+      "path": "/taksong/area-15646/"
+    },
+    {
+      "rank": 135,
+      "region": "경상남도 사천시",
+      "path": "/taksong/area-18625/"
+    },
+    {
+      "rank": 136,
+      "region": "제주특별자치도 서귀포시 동홍동",
+      "path": "/taksong/area-20354/"
+    },
+    {
+      "rank": 137,
+      "region": "서울특별시 금천구",
+      "path": "/taksong/area-69/"
+    },
+    {
+      "rank": 138,
+      "region": "부산광역시 북구",
+      "path": "/taksong/area-634/"
+    },
+    {
+      "rank": 139,
+      "region": "대구광역시 수성구",
+      "path": "/taksong/area-1089/"
+    },
+    {
+      "rank": 140,
+      "region": "인천광역시 연수구",
+      "path": "/taksong/area-1362/"
+    },
+    {
+      "rank": 141,
+      "region": "광주광역시 광산구 도호동",
+      "path": "/taksong/area-1468/"
+    },
+    {
+      "rank": 142,
+      "region": "대전광역시 대덕구 읍내동",
+      "path": "/taksong/area-1676/"
+    },
+    {
+      "rank": 143,
+      "region": "울산광역시 남구 두왕동",
+      "path": "/taksong/area-1859/"
+    },
+    {
+      "rank": 144,
+      "region": "세종특별자치시 (직할) 나성동",
+      "path": "/taksong/area-2071/"
+    },
+    {
+      "rank": 145,
+      "region": "경기도 김포시",
+      "path": "/taksong/area-2468/"
+    },
+    {
+      "rank": 146,
+      "region": "강원특별자치도 영월군",
+      "path": "/taksong/area-5023/"
+    },
+    {
+      "rank": 147,
+      "region": "충청북도 증평군",
+      "path": "/taksong/area-6901/"
+    },
+    {
+      "rank": 148,
+      "region": "충청남도 서산시",
+      "path": "/taksong/area-8568/"
+    },
+    {
+      "rank": 149,
+      "region": "전북특별자치도 완주군",
+      "path": "/taksong/area-10836/"
+    },
+    {
+      "rank": 150,
+      "region": "전라남도 목포시",
+      "path": "/taksong/area-12627/"
+    },
+    {
+      "rank": 151,
+      "region": "경상북도 상주시",
+      "path": "/taksong/area-15729/"
+    },
+    {
+      "rank": 152,
+      "region": "경상남도 산청군",
+      "path": "/taksong/area-18751/"
+    },
+    {
+      "rank": 153,
+      "region": "제주특별자치도 서귀포시 서홍동",
+      "path": "/taksong/area-20355/"
+    },
+    {
+      "rank": 154,
+      "region": "서울특별시 노원구",
+      "path": "/taksong/area-73/"
+    },
+    {
+      "rank": 155,
+      "region": "부산광역시 사상구",
+      "path": "/taksong/area-640/"
+    },
+    {
+      "rank": 156,
+      "region": "대구광역시 중구",
+      "path": "/taksong/area-1116/"
+    },
+    {
+      "rank": 157,
+      "region": "인천광역시 영종구",
+      "path": "/taksong/area-1369/"
+    },
+    {
+      "rank": 158,
+      "region": "광주광역시 광산구 신촌동",
+      "path": "/taksong/area-1469/"
+    },
+    {
+      "rank": 159,
+      "region": "대전광역시 대덕구 연축동",
+      "path": "/taksong/area-1677/"
+    },
+    {
+      "rank": 160,
+      "region": "울산광역시 남구 신정동",
+      "path": "/taksong/area-1860/"
+    },
+    {
+      "rank": 161,
+      "region": "세종특별자치시 (직할) 새롬동",
+      "path": "/taksong/area-2072/"
+    },
+    {
+      "rank": 162,
+      "region": "경기도 남양주시",
+      "path": "/taksong/area-2541/"
+    },
+    {
+      "rank": 163,
+      "region": "강원특별자치도 원주시",
+      "path": "/taksong/area-5090/"
+    },
+    {
+      "rank": 164,
+      "region": "충청북도 진천군",
+      "path": "/taksong/area-6931/"
+    },
+    {
+      "rank": 165,
+      "region": "충청남도 서천군",
+      "path": "/taksong/area-8718/"
+    },
+    {
+      "rank": 166,
+      "region": "전북특별자치도 익산시",
+      "path": "/taksong/area-10956/"
+    },
+    {
+      "rank": 167,
+      "region": "전라남도 무안군",
+      "path": "/taksong/area-12692/"
+    },
+    {
+      "rank": 168,
+      "region": "경상북도 성주군",
+      "path": "/taksong/area-15984/"
+    },
+    {
+      "rank": 169,
+      "region": "경상남도 양산시",
+      "path": "/taksong/area-18882/"
+    },
+    {
+      "rank": 170,
+      "region": "제주특별자치도 서귀포시 상효동",
+      "path": "/taksong/area-20356/"
+    },
+    {
+      "rank": 171,
+      "region": "서울특별시 도봉구",
+      "path": "/taksong/area-79/"
+    },
+    {
+      "rank": 172,
+      "region": "부산광역시 사하구",
+      "path": "/taksong/area-649/"
+    },
+    {
+      "rank": 173,
+      "region": "대구광역시 군위군 군위읍",
+      "path": "/taksong/area-767/"
+    },
+    {
+      "rank": 174,
+      "region": "인천광역시 옹진군",
+      "path": "/taksong/area-1378/"
+    },
+    {
+      "rank": 175,
+      "region": "광주광역시 광산구 서봉동",
+      "path": "/taksong/area-1470/"
+    },
+    {
+      "rank": 176,
+      "region": "대전광역시 대덕구 신대동",
+      "path": "/taksong/area-1678/"
+    },
+    {
+      "rank": 177,
+      "region": "울산광역시 남구 달동",
+      "path": "/taksong/area-1861/"
+    },
+    {
+      "rank": 178,
+      "region": "세종특별자치시 (직할) 다정동",
+      "path": "/taksong/area-2073/"
+    },
+    {
+      "rank": 179,
+      "region": "경기도 동두천시",
+      "path": "/taksong/area-2611/"
+    },
+    {
+      "rank": 180,
+      "region": "강원특별자치도 인제군",
+      "path": "/taksong/area-5178/"
+    },
+    {
+      "rank": 181,
+      "region": "충청북도 청주시",
+      "path": "/taksong/area-7022/"
+    },
+    {
+      "rank": 182,
+      "region": "충청남도 아산시",
+      "path": "/taksong/area-8904/"
+    },
+    {
+      "rank": 183,
+      "region": "전북특별자치도 임실군",
+      "path": "/taksong/area-11122/"
+    },
+    {
+      "rank": 184,
+      "region": "전라남도 보성군",
+      "path": "/taksong/area-12806/"
+    },
+    {
+      "rank": 185,
+      "region": "경상북도 안동시",
+      "path": "/taksong/area-16106/"
+    },
+    {
+      "rank": 186,
+      "region": "경상남도 의령군",
+      "path": "/taksong/area-18946/"
+    },
+    {
+      "rank": 187,
+      "region": "제주특별자치도 서귀포시 하효동",
+      "path": "/taksong/area-20357/"
+    },
+    {
+      "rank": 188,
+      "region": "서울특별시 동대문구",
+      "path": "/taksong/area-84/"
+    },
+    {
+      "rank": 189,
+      "region": "부산광역시 서구",
+      "path": "/taksong/area-658/"
+    },
+    {
+      "rank": 190,
+      "region": "대구광역시 군위군 소보면",
+      "path": "/taksong/area-785/"
+    },
+    {
+      "rank": 191,
+      "region": "인천광역시 제물포구",
+      "path": "/taksong/area-1412/"
+    },
+    {
+      "rank": 192,
+      "region": "광주광역시 광산구 운수동",
+      "path": "/taksong/area-1471/"
+    },
+    {
+      "rank": 193,
+      "region": "대전광역시 대덕구 와동",
+      "path": "/taksong/area-1679/"
+    },
+    {
+      "rank": 194,
+      "region": "울산광역시 남구 삼산동",
+      "path": "/taksong/area-1862/"
+    },
+    {
+      "rank": 195,
+      "region": "세종특별자치시 (직할) 어진동",
+      "path": "/taksong/area-2074/"
+    },
+    {
+      "rank": 196,
+      "region": "경기도 부천시",
+      "path": "/taksong/area-2624/"
+    },
+    {
+      "rank": 197,
+      "region": "강원특별자치도 정선군",
+      "path": "/taksong/area-5229/"
+    },
+    {
+      "rank": 198,
+      "region": "충청북도 충주시",
+      "path": "/taksong/area-7365/"
+    },
+    {
+      "rank": 199,
+      "region": "충청남도 예산군",
+      "path": "/taksong/area-9079/"
+    },
+    {
+      "rank": 200,
+      "region": "전북특별자치도 장수군",
+      "path": "/taksong/area-11266/"
+    },
+    {
+      "rank": 201,
+      "region": "전라남도 순천시",
+      "path": "/taksong/area-12945/"
+    },
+    {
+      "rank": 202,
+      "region": "경상북도 영덕군",
+      "path": "/taksong/area-16338/"
+    },
+    {
+      "rank": 203,
+      "region": "경상남도 진주시",
+      "path": "/taksong/area-19076/"
+    },
+    {
+      "rank": 204,
+      "region": "제주특별자치도 서귀포시 신효동",
+      "path": "/taksong/area-20358/"
+    },
+    {
+      "rank": 205,
+      "region": "서울특별시 동작구",
+      "path": "/taksong/area-95/"
+    },
+    {
+      "rank": 206,
+      "region": "부산광역시 수영구",
+      "path": "/taksong/area-683/"
+    },
+    {
+      "rank": 207,
+      "region": "대구광역시 군위군 효령면",
+      "path": "/taksong/area-800/"
+    },
+    {
+      "rank": 208,
+      "region": "인천광역시 강화군 강화읍",
+      "path": "/taksong/area-1176/"
+    },
+    {
+      "rank": 209,
+      "region": "광주광역시 광산구 선암동",
+      "path": "/taksong/area-1472/"
+    },
+    {
+      "rank": 210,
+      "region": "대전광역시 대덕구 송촌동",
+      "path": "/taksong/area-1680/"
+    },
+    {
+      "rank": 211,
+      "region": "울산광역시 남구 여천동",
+      "path": "/taksong/area-1863/"
+    },
+    {
+      "rank": 212,
+      "region": "세종특별자치시 (직할) 종촌동",
+      "path": "/taksong/area-2075/"
+    },
+    {
+      "rank": 213,
+      "region": "경기도 성남시",
+      "path": "/taksong/area-2652/"
+    },
+    {
+      "rank": 214,
+      "region": "강원특별자치도 철원군",
+      "path": "/taksong/area-5298/"
+    },
+    {
+      "rank": 215,
+      "region": "충청북도 괴산군 괴산읍",
+      "path": "/taksong/area-5908/"
+    },
+    {
+      "rank": 216,
+      "region": "충청남도 천안시",
+      "path": "/taksong/area-9269/"
+    },
+    {
+      "rank": 217,
+      "region": "전북특별자치도 전주시",
+      "path": "/taksong/area-11347/"
+    },
+    {
+      "rank": 218,
+      "region": "전라남도 신안군",
+      "path": "/taksong/area-13153/"
+    },
+    {
+      "rank": 219,
+      "region": "경상북도 영양군",
+      "path": "/taksong/area-16466/"
+    },
+    {
+      "rank": 220,
+      "region": "경상남도 창녕군",
+      "path": "/taksong/area-19250/"
+    },
+    {
+      "rank": 221,
+      "region": "제주특별자치도 서귀포시 보목동",
+      "path": "/taksong/area-20359/"
+    },
+    {
+      "rank": 222,
+      "region": "서울특별시 마포구",
+      "path": "/taksong/area-105/"
+    },
+    {
+      "rank": 223,
+      "region": "부산광역시 연제구",
+      "path": "/taksong/area-689/"
+    },
+    {
+      "rank": 224,
+      "region": "대구광역시 군위군 부계면",
+      "path": "/taksong/area-816/"
+    },
+    {
+      "rank": 225,
+      "region": "인천광역시 강화군 선원면",
+      "path": "/taksong/area-1186/"
+    },
+    {
+      "rank": 226,
+      "region": "광주광역시 광산구 소촌동",
+      "path": "/taksong/area-1473/"
+    },
+    {
+      "rank": 227,
+      "region": "대전광역시 대덕구 법동",
+      "path": "/taksong/area-1681/"
+    },
+    {
+      "rank": 228,
+      "region": "울산광역시 남구 야음동",
+      "path": "/taksong/area-1864/"
+    },
+    {
+      "rank": 229,
+      "region": "세종특별자치시 (직할) 고운동",
+      "path": "/taksong/area-2076/"
+    },
+    {
+      "rank": 230,
+      "region": "경기도 수원시",
+      "path": "/taksong/area-2700/"
+    },
+    {
+      "rank": 231,
+      "region": "강원특별자치도 춘천시",
+      "path": "/taksong/area-5390/"
+    },
+    {
+      "rank": 232,
+      "region": "충청북도 괴산군 감물면",
+      "path": "/taksong/area-5920/"
+    },
+    {
+      "rank": 233,
+      "region": "충청남도 청양군",
+      "path": "/taksong/area-9463/"
+    },
+    {
+      "rank": 234,
+      "region": "전북특별자치도 정읍시",
+      "path": "/taksong/area-11433/"
+    },
+    {
+      "rank": 235,
+      "region": "전라남도 여수시",
+      "path": "/taksong/area-13311/"
+    },
+    {
+      "rank": 236,
+      "region": "경상북도 영주시",
+      "path": "/taksong/area-16547/"
+    },
+    {
+      "rank": 237,
+      "region": "경상남도 창원시",
+      "path": "/taksong/area-19404/"
+    },
+    {
+      "rank": 238,
+      "region": "제주특별자치도 서귀포시 토평동",
+      "path": "/taksong/area-20360/"
+    },
+    {
+      "rank": 239,
+      "region": "서울특별시 서대문구",
+      "path": "/taksong/area-132/"
+    },
+    {
+      "rank": 240,
+      "region": "부산광역시 영도구",
+      "path": "/taksong/area-692/"
+    },
+    {
+      "rank": 241,
+      "region": "대구광역시 군위군 우보면",
+      "path": "/taksong/area-825/"
+    },
+    {
+      "rank": 242,
+      "region": "인천광역시 강화군 불은면",
+      "path": "/taksong/area-1194/"
+    },
+    {
+      "rank": 243,
+      "region": "광주광역시 광산구 우산동",
+      "path": "/taksong/area-1474/"
+    },
+    {
+      "rank": 244,
+      "region": "대전광역시 대덕구 중리동",
+      "path": "/taksong/area-1682/"
+    },
+    {
+      "rank": 245,
+      "region": "울산광역시 남구 선암동",
+      "path": "/taksong/area-1865/"
+    },
+    {
+      "rank": 246,
+      "region": "세종특별자치시 (직할) 아름동",
+      "path": "/taksong/area-2077/"
+    },
+    {
+      "rank": 247,
+      "region": "경기도 시흥시",
+      "path": "/taksong/area-2761/"
+    },
+    {
+      "rank": 248,
+      "region": "강원특별자치도 태백시",
+      "path": "/taksong/area-5508/"
+    },
+    {
+      "rank": 249,
+      "region": "충청북도 괴산군 장연면",
+      "path": "/taksong/area-5928/"
+    },
+    {
+      "rank": 250,
+      "region": "충청남도 태안군",
+      "path": "/taksong/area-9589/"
+    },
+    {
+      "rank": 251,
+      "region": "전북특별자치도 진안군",
+      "path": "/taksong/area-11618/"
+    },
+    {
+      "rank": 252,
+      "region": "전라남도 영광군",
+      "path": "/taksong/area-13433/"
+    },
+    {
+      "rank": 253,
+      "region": "경상북도 영천시",
+      "path": "/taksong/area-16665/"
+    },
+    {
+      "rank": 254,
+      "region": "경상남도 통영시",
+      "path": "/taksong/area-19727/"
+    },
+    {
+      "rank": 255,
+      "region": "제주특별자치도 서귀포시 중문동",
+      "path": "/taksong/area-20361/"
+    },
+    {
+      "rank": 256,
+      "region": "서울특별시 서초구",
+      "path": "/taksong/area-153/"
+    },
+    {
+      "rank": 257,
+      "region": "부산광역시 중구",
+      "path": "/taksong/area-714/"
+    },
+    {
+      "rank": 258,
+      "region": "대구광역시 군위군 의흥면",
+      "path": "/taksong/area-835/"
+    },
+    {
+      "rank": 259,
+      "region": "인천광역시 강화군 길상면",
+      "path": "/taksong/area-1203/"
+    },
+    {
+      "rank": 260,
+      "region": "광주광역시 광산구 황룡동",
+      "path": "/taksong/area-1475/"
+    },
+    {
+      "rank": 261,
+      "region": "대전광역시 대덕구 비래동",
+      "path": "/taksong/area-1683/"
+    },
+    {
+      "rank": 262,
+      "region": "울산광역시 남구 상개동",
+      "path": "/taksong/area-1866/"
+    },
+    {
+      "rank": 263,
+      "region": "세종특별자치시 (직할) 도담동",
+      "path": "/taksong/area-2078/"
+    },
+    {
+      "rank": 264,
+      "region": "경기도 안산시",
+      "path": "/taksong/area-2793/"
+    },
+    {
+      "rank": 265,
+      "region": "강원특별자치도 평창군",
+      "path": "/taksong/area-5526/"
+    },
+    {
+      "rank": 266,
+      "region": "충청북도 괴산군 연풍면",
+      "path": "/taksong/area-5936/"
+    },
+    {
+      "rank": 267,
+      "region": "충청남도 홍성군",
+      "path": "/taksong/area-9663/"
+    },
+    {
+      "rank": 268,
+      "region": "전북특별자치도 고창군 고창읍",
+      "path": "/taksong/area-9818/"
+    },
+    {
+      "rank": 269,
+      "region": "전라남도 영암군",
+      "path": "/taksong/area-13572/"
+    },
+    {
+      "rank": 270,
+      "region": "경상북도 예천군",
+      "path": "/taksong/area-16886/"
+    },
+    {
+      "rank": 271,
+      "region": "경상남도 하동군",
+      "path": "/taksong/area-19802/"
+    },
+    {
+      "rank": 272,
+      "region": "제주특별자치도 서귀포시 회수동",
+      "path": "/taksong/area-20362/"
+    },
+    {
+      "rank": 273,
+      "region": "서울특별시 성동구",
+      "path": "/taksong/area-164/"
+    },
+    {
+      "rank": 274,
+      "region": "부산광역시 해운대구",
+      "path": "/taksong/area-756/"
+    },
+    {
+      "rank": 275,
+      "region": "대구광역시 군위군 산성면",
+      "path": "/taksong/area-847/"
+    },
+    {
+      "rank": 276,
+      "region": "인천광역시 강화군 화도면",
+      "path": "/taksong/area-1210/"
+    },
+    {
+      "rank": 277,
+      "region": "광주광역시 광산구 박호동",
+      "path": "/taksong/area-1476/"
+    },
+    {
+      "rank": 278,
+      "region": "대전광역시 대덕구 석봉동",
+      "path": "/taksong/area-1684/"
+    },
+    {
+      "rank": 279,
+      "region": "울산광역시 남구 부곡동",
+      "path": "/taksong/area-1867/"
+    },
+    {
+      "rank": 280,
+      "region": "세종특별자치시 (직할) 산울동",
+      "path": "/taksong/area-2079/"
+    },
+    {
+      "rank": 281,
+      "region": "경기도 안성시",
+      "path": "/taksong/area-2826/"
+    },
+    {
+      "rank": 282,
+      "region": "강원특별자치도 홍천군",
+      "path": "/taksong/area-5624/"
+    },
+    {
+      "rank": 283,
+      "region": "충청북도 괴산군 칠성면",
+      "path": "/taksong/area-5946/"
+    },
+    {
+      "rank": 284,
+      "region": "충청남도 계룡시 금암동",
+      "path": "/taksong/area-7543/"
+    },
+    {
+      "rank": 285,
+      "region": "전북특별자치도 고창군 고수면",
+      "path": "/taksong/area-9837/"
+    },
+    {
+      "rank": 286,
+      "region": "전라남도 완도군",
+      "path": "/taksong/area-13705/"
+    },
+    {
+      "rank": 287,
+      "region": "경상북도 울릉군",
+      "path": "/taksong/area-17072/"
+    },
+    {
+      "rank": 288,
+      "region": "경상남도 함안군",
+      "path": "/taksong/area-19924/"
+    },
+    {
+      "rank": 289,
+      "region": "제주특별자치도 서귀포시 대포동",
+      "path": "/taksong/area-20363/"
+    },
+    {
+      "rank": 290,
+      "region": "서울특별시 성북구",
+      "path": "/taksong/area-182/"
+    },
+    {
+      "rank": 291,
+      "region": "부산광역시 강서구 대저1동",
+      "path": "/taksong/area-496/"
+    },
+    {
+      "rank": 292,
+      "region": "대구광역시 군위군 삼국유사면",
+      "path": "/taksong/area-855/"
+    },
+    {
+      "rank": 293,
+      "region": "인천광역시 강화군 양도면",
+      "path": "/taksong/area-1220/"
+    },
+    {
+      "rank": 294,
+      "region": "광주광역시 광산구 비아동",
+      "path": "/taksong/area-1477/"
+    },
+    {
+      "rank": 295,
+      "region": "대전광역시 대덕구 목상동",
+      "path": "/taksong/area-1685/"
+    },
+    {
+      "rank": 296,
+      "region": "울산광역시 남구 고사동",
+      "path": "/taksong/area-1868/"
+    },
+    {
+      "rank": 297,
+      "region": "세종특별자치시 (직할) 해밀동",
+      "path": "/taksong/area-2080/"
+    },
+    {
+      "rank": 298,
+      "region": "경기도 안양시",
+      "path": "/taksong/area-3030/"
+    },
+    {
+      "rank": 299,
+      "region": "강원특별자치도 화천군",
+      "path": "/taksong/area-5740/"
+    },
+    {
+      "rank": 300,
+      "region": "충청북도 괴산군 문광면",
+      "path": "/taksong/area-5959/"
+    }
+  ]
+}
