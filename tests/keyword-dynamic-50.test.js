@@ -72,16 +72,35 @@ for(const [number,query,kind,image] of samples)checks.push([number,query+' match
  assert.ok(data.cards[0].description.includes('실제 운행완료 사진이 아닙니다')||
   data.cards[0].description.includes('실제 운행사진이 아닙니다'),'illustrative provenance '+query);
 }]);
-for(const [number,path,topic] of pages)checks.push([number,path+' visible, click-expandable matching image',async()=>{
+// Original mountain fare posters and existing specialist illustrations have
+// deliberate image priority. Do not force a duplicate dynamic card above them.
+const establishedVisuals={
+ '/설악산탁송/':'/assets/seoraksan-taksong-original-fare.png',
+ '/지리산탁송/':'/assets/jirisan-taksong-original-fare.png',
+ '/special/cycling-trail-transport/':'/assets/cycling-routes/nationwide-taksong.svg',
+ '/service/golf/':'/assets/service-golf-visual.svg',
+ '/service/corporate/':'/assets/service-daeri-visual.svg',
+ '/service/daily-driver/':'/assets/service-golf-visual.svg'
+};
+for(const [number,path,topic] of pages)checks.push([number,path+' visible topic image, original poster or expandable card',async()=>{
  const result=await get(path);
  assert.equal(result.res.status,200,path);
+ const original=establishedVisuals[path];
+ if(original){
+  assert.ok(result.body.includes('src="'+original+'"'),path+' must visibly render its original or specialist image');
+  assert.ok(!result.body.includes('id="keyword-intent-dynamic-image"'),path+' must not duplicate imagery and obscure existing fares');
+  assert.ok(result.body.includes('width:100%')&&result.body.includes('height:auto'),path+' image must remain mobile responsive');
+  if(path==='/설악산탁송/'||path==='/지리산탁송/')
+   assert.ok(result.body.includes('fetchpriority="high"'),path+' original fare image must load first');
+  return;
+ }
  assert.match(result.body,/id="keyword-intent-dynamic-image"/,path);
  assert.match(result.body,/class="keyword-image-enlarge"/,path);
- assert.match(result.body,/loading="eager"/,path);
  assert.match(result.body,/width:100%;height:auto/,path);
- const exp=topic==='seoraksan'?'/assets/seoraksan-taksong-fares.svg':topic==='jirisan'?'/assets/jirisan-taksong-fares.svg':
- topic==='cycling'?'/assets/cycling-routes/nationwide-taksong.svg':'/keyword-card/'+topic+'.svg';
- assert.ok(result.body.includes('href="'+exp+'"'),path+' uses '+exp);
+ const exp=topic==='cycling'?'/assets/cycling-routes/nationwide-taksong.svg':'/keyword-card/'+topic+'.svg';
+ assert.ok(result.body.includes('href="'+exp+'"'),path+' links the matching service image');
+ // Below-the-fold keyword cards are lazy by design; do not compete with the hero image.
+ assert.ok(result.body.includes('loading="lazy"'),path+' avoids delaying first screen imagery');
 }]);
 checks.push(['48','Every mountain subroute, cycling itinerary and outside-area driving page matches its correct visual',async()=>{
  const r=await get('/keyword-card/golf-daeri.svg');
