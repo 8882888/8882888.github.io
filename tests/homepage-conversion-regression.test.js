@@ -12,13 +12,14 @@ const intro=home.indexOf('<div class="hero hero-with-photo">');
 const firstFares=home.indexOf('id="mountain-cycling-fare-first-20261103"');
 const search=home.indexOf('id="dynamic-service-card-search-20261103"');
 assert(intro>0&&intro<firstFares&&firstFares<search,'Home should show booking hero, fares, then dynamic card search');
-assert.equal((home.match(/<h1\\b/g)||[]).length,1,'Home should have a single primary heading');
+assert.equal(home.split('<h1').length-1,1,'Home should have a single primary heading');
 assert(home.includes('href="tel:18114294"'),'Homepage must link to phone consultation');
 assert(home.includes('class="mobile-consult-actions"'),'Mobile call/fare actions missing');
 assert(home.includes('<a href="/fare/">예상요금 바로보기</a>'),'Mobile fare shortcut missing');
 assert(home.includes('data-card-preview-form'),'Dynamic keyword card search missing');
 assert(home.includes('/assets/vehicles/santafe-1811.webp'),'Homepage hero visual missing');
-assert(/src="\\/assets\\/vehicles\\/santafe-1811\\.webp"[^>]*loading="eager"[^>]*fetchpriority="high"/.test(home),'Hero visual must be requested promptly on mobile');
+const heroImage=home.slice(home.indexOf('src="/assets/vehicles/santafe-1811.webp"'),home.indexOf('>',home.indexOf('src="/assets/vehicles/santafe-1811.webp"'))+1);
+assert(heroImage.includes('loading="eager"')&&heroImage.includes('fetchpriority="high"'),'Hero visual must be requested promptly on mobile');
 assert(!home.includes('id="homepage-mountain-fare-shortcuts-202611"'),'Repeated mountain shortcut section returned');
 assert(!home.includes('id="regional-taksong-search-guide"'),'Repeated regional route block returned');
 for(const img of ['/assets/seoraksan-taksong-fares.svg','/assets/jirisan-taksong-fares.svg','/assets/cycling-routes/nationwide-taksong.svg']){
