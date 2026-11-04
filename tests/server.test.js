@@ -1145,13 +1145,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.match(noCacheHome.headers.get('cache-control')||'',/no-cache/,
     'production HTML should revalidate after phone source UI deployments');
 
-  // Top navigation -> functional calculator -> vehicle imagery, on every viewport.
+  // Actual first-view flow: visible hero call buttons and eager vehicle image,
+  // then consolidated fare shortcuts and a functional detailed calculator.
   const statsNavPos=statsHome.indexOf('</nav>');
   const statsFarePos=statsHome.indexOf('id="top-fare-calculator"');
+  const statsFareShortcutPos=statsHome.indexOf('id="homepage-fare-top"');
   const statsHeroPos=statsHome.indexOf('class="hero hero-with-photo"');
   const statsImagePos=statsHome.indexOf('src="/assets/vehicles/santafe-1811.webp"');
-  assert.ok(statsNavPos>=0&&statsNavPos<statsFarePos&&statsFarePos<statsHeroPos&&statsHeroPos<statsImagePos,
-    'calculator must be immediately after navigation and above vehicle photo');
+  assert.ok(statsHeroPos>=0&&statsHeroPos<statsNavPos&&statsNavPos<statsImagePos&&
+    statsImagePos<statsFareShortcutPos&&statsFareShortcutPos<statsFarePos,
+    'call and eager vehicle image must precede fare shortcuts and detailed calculator');
   assert.equal((statsHome.match(/class="quick-booking"/g)||[]).length,1,'fare form must not be duplicated');
   assert.ok(statsHome.includes('name="from"')&&statsHome.includes('name="to"')&&statsHome.includes('action="/fare/"'),
     'top fare calculator still submits the real fare lookup');
