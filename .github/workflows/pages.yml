@@ -85,6 +85,8 @@ jobs:
         run: node tests/nationwide-review-first-300.test.js
       - name: Verify all confirmed nationwide ride stories
         run: node tests/nationwide-verified-story-23.test.js
+      - name: Verify first 500 five-service regional review pages
+        run: node tests/review-first-500-services.test.js
       - name: Generate regional pages if verified region data exists
         shell: bash
         run: |
