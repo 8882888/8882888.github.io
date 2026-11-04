@@ -8,6 +8,8 @@ const root=path.resolve(__dirname,'..');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 const home=read('index.html');
 const server=read('server.js');
+assert(!home.includes('출발지의 탁 표시')&&!home.includes('도착지의 톨포'),'Corrupted ride history guidance must not appear on homepage');
+assert(!home.includes('시·도·시·군·구')&&!server.includes('시·도·시·군·구'),'Duplicated administrative-region wording must not reappear');
 const intro=home.indexOf('<div class="hero hero-with-photo">');
 const firstFares=home.indexOf('id="mountain-cycling-fare-first-20261103"');
 const search=home.indexOf('id="dynamic-service-card-search-20261103"');
