@@ -32,6 +32,16 @@ assert(home.includes('id="top-fare-calculator"')&&home.includes('class="quick-bo
 const oldRepeat=home.slice(home.indexOf('id="long-distance-intercity-five-two"'),home.indexOf('id="field-notes"'));
 assert(oldRepeat.length<2200,'Repeated long-distance keyword guide must remain consolidated');
 
+const proofChoice=home.indexOf('id="service-choice-advantages-20261105"');
+assert(proofChoice>quickFare&&proofChoice<firstFares,
+ 'Comparison-friendly factual evidence must follow instant booking and precede specialist routes');
+for(const link of ['/reviews/history/?kind=taksong','/reviews/history/?kind=daeri','/reviews/ride-record-stories/','/special/cycling-trail-transport/']){
+ assert(home.includes('href="'+link+'"'),'Customer must find verified cases or specialist route: '+link);
+}
+assert(home.includes('실제 기록부터 비교하세요')&&home.includes('전화상담 1811-4294'),
+ 'First-screen customer choice must retain visible call and verifiable ride evidence');
+assert(!home.includes('업계 1위')&&!home.includes('고수대리운전보다'),
+ 'Do not invent comparative market rank or unsupported competitor superiority');
 assert.equal(home.split('<h1').length-1,1,'Home should have a single primary heading');
 assert(home.includes('href="tel:18114294"'),'Homepage must link to phone consultation');
 assert(home.includes('class="mobile-consult-actions"'),'Mobile call/fare actions missing');
