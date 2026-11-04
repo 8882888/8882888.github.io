@@ -54,8 +54,9 @@
    output.hidden=!reason;output.removeAttribute('aria-busy');
   }
   function renderCard(card){
-   const original=imagePath(card.keywordImage)||imagePath(card.image);
-   const preview=imagePath(card.keywordImage)||imagePath(card.previewImage);
+   const exact=imagePath(card.keywordImage);
+   const original=exact||imagePath(card.image);
+   const preview=exact||imagePath(card.previewImage);
    const legacy=imagePath(card.image);
    const page=guidePath(card.url);
    if(!original||!page)return null;
@@ -67,7 +68,8 @@
    img.width=1200;img.height=800;img.loading='eager';img.decoding='async';
    let pngFallback=false;
    img.addEventListener('error',()=>{
-    if(!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
+    // Never replace a requested exact-region image with a different region's generic art.
+    if(!exact&&!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
     img.replaceWith(node('p','smart24-card-error','명함 이미지를 불러오지 못했습니다. 아래 지역 안내에서 확인해 주세요.'));
    });
    const picture=node('a','smart24-card-picture-link');
