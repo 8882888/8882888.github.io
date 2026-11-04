@@ -103,7 +103,7 @@ def verified_regional_review(location, level, service, region, posts):
     for post in posts:
         title = post.get("title", "")
         url = post.get("url", "")
-        if not re.fullmatch(r"https://blog\\.naver\\.com/[A-Za-z0-9_-]+/[0-9]+", url):
+        if not re.fullmatch(r"https://blog\.naver\.com/[A-Za-z0-9_-]+/[0-9]+", url):
             continue
         if not any(term in title for term in ("운행완료", "탁송완료", "운행 후기", "실제 운행후기")):
             continue
