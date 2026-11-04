@@ -36,6 +36,8 @@ jobs:
         run: python -m py_compile tools/audit_live_seo.py tools/audit_live_1000.py
       - name: Check actual public website, sitemap and SEO freshness
         run: python tools/audit_live_seo.py
+      - name: Audit seven live Seoul editorial pages for undefined SEO titles
+        run: python tools/audit_live_seoul_editorial.py
       - name: Audit 100 live localities and separate service images
         run: python tools/audit_live_100_regional_cards.py
       - name: Preserve 100-check failure details and timing
