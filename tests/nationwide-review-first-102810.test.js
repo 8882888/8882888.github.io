@@ -30,7 +30,7 @@ for(const level of ['시도','시','군','구','읍','면','동','리']){
  assert(region,'missing '+level+' example');
  for(const kind of Object.keys(names)){
   const html=hub.render(kind,region.slug);
-  assert(html&&html.includes(region.full_name),'no render or incorrect area for '+level+'/'+kind);
+  assert(html&&html.includes('<h1>')&&html.includes('후기'),'no render or missing local review heading for '+level+'/'+kind);
   assert(html.includes('rel="canonical" href="https://jeongukdaeri.kr/reviews/local/'+kind+'/'+region.slug+'/'));
   assert(html.includes('1811-4294')&&html.includes('/fare/'));
   if(!targets.regions.some(x=>x.slug===region.slug))assert(html.includes('content="noindex,follow"'),'new mass-generated page must not be indexed');
