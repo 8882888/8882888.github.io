@@ -81,7 +81,9 @@ jobs:
         run: python tools/generate_seo_keywords.py
       - name: Protect curated pages from the static backup generator
         run: python tests/static-generator-preservation.test.py
-      - name: Verify nationwide original review prioritization\n        run: python tests/test_nationwide_review_first.py\n      - name: Verify 300 nationwide review-first regional targets
+      - name: Verify nationwide original review prioritization
+        run: python tests/test_nationwide_review_first.py
+      - name: Verify 300 nationwide review-first regional targets
         run: node tests/nationwide-review-first-300.test.js
       - name: Verify all confirmed nationwide ride stories
         run: node tests/nationwide-verified-story-23.test.js
