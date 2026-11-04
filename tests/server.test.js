@@ -1619,6 +1619,19 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(thirdVerified,50);
   assert.equal(allRegionPaths.size,150);
   console.log('PASS third 50 SEO pages, 150 distinct canonical regions, relevant service images and exact keyword display');
+  // Ganghwa search-recovery page must serve a specific, indexable canonical URL.
+  const ganghwaUrl='/daeri/incheon/ganghwa-gun/';
+  const ganghwaResponse=await get(ganghwaUrl);
+  assert.equal(ganghwaResponse.status,200,'Ganghwa local designated driver returns HTTP 200');
+  const ganghwaHtml=await ganghwaResponse.text();
+  assert(ganghwaHtml.includes('id="ganghwa-daeri-verified-editorial-20261104"'),'verified Ganghwa reviews visible');
+  assert(ganghwaHtml.includes('강화읍')&&ganghwaHtml.includes('검단아라동'),'actual Ganghwa case retained');
+  assert(ganghwaHtml.includes('강화대리운전 실제 후기'),'Ganghwa title matches local search');
+  assert(ganghwaHtml.includes('content="index,follow,max-image-preview:large"'),'Ganghwa indexed regional service (not noindex)');
+  assert(ganghwaHtml.includes('rel="canonical" href="https://example.com'+ganghwaUrl+'"'),'canonical matches live route');
+  const ganghwaPriority=await (await get('/sitemap-priority.xml')).text();
+  assert(ganghwaPriority.includes('https://example.com'+ganghwaUrl),'Ganghwa SEO route in priority sitemap');
+  console.log('PASS Ganghwa region HTTP 200, canonical, real reviews, indexable meta and sitemap');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
