@@ -86,7 +86,45 @@ h1{{line-height:1.35;font-size:clamp(28px,5vw,42px)}}h2{{margin-top:32px}}
 </main><button type="button" class="back-to-top" id="back-to-top" aria-label="맨 위로 이동">↑ TOP</button><script>(function(){{var b=document.getElementById('back-to-top');b.addEventListener('click',function(){{window.scrollTo({{top:0,behavior:'smooth'}})}})}})();</script><footer>{BRAND}<br>대표 상담 전화: {PHONE}<br><a href="/">홈페이지 첫 화면</a></footer>
 </body></html>"""
 
-def service_body(location, level, service, region):
+def verified_regional_review(location, level, service, region, posts):
+    """Link only already-published, clearly located completion posts; no invented local trips."""
+    import re
+    suffix = "탁송" if service["slug"] != "daeri" else "대리운전"
+    name = region["name"]
+    # Unqualified 동구/서구/중구 and neighborhood names are geographically ambiguous.
+    # Require the parent and child together for these pages.
+    ambiguous = level in ("구", "동", "읍", "면", "리") or name in ("광주시",)
+    parent = region.get("parent_name", "")
+    parent_short = re.sub(r"(특별자치도|특별자치시|특별시|광역시|도|시)$", "", parent)
+    alias = re.sub(r"(특별자치도|특별자치시|특별시|광역시|도)$", "", name)
+    names = [name, alias] if not ambiguous else [parent + name, parent_short + name]
+    names = [n for n in dict.fromkeys(names) if len(n) >= 3]
+    selected = []
+    for post in posts:
+        title = post.get("title", "")
+        url = post.get("url", "")
+        if not re.fullmatch(r"https://blog\\.naver\\.com/[A-Za-z0-9_-]+/[0-9]+", url):
+            continue
+        if not any(term in title for term in ("운행완료", "탁송완료", "운행 후기", "실제 운행후기")):
+            continue
+        if suffix not in title or not any(term in title for term in names):
+            continue
+        selected.append((title, url))
+        if len(selected) == 3:
+            break
+    heading = esc(location) + " " + suffix
+    if selected:
+        rows = "".join('<li><a href="' + esc(url) + '" rel="noopener noreferrer">' + esc(title) + "</a></li>" for title, url in selected)
+        evidence = "<p>아래는 기존에 공개된 완료 운행 글 제목입니다. 구간·요금은 원문에서 확인하며 다른 행정구역의 실적으로 확대하지 않습니다.</p><ul>" + rows + "</ul>"
+    else:
+        evidence = "<p>이 지역과 운행완료가 함께 확인되는 공개 원문은 현재 연결되지 않았습니다. 인접 지역의 실적을 이 지역 후기처럼 표시하지 않습니다.</p>"
+    return ('<section class="card" id="verified-region-reviews-first" aria-label="' + heading + ' 실제 공개 후기 확인">'
+            '<h2>' + heading + ' 실제 공개 운행후기 확인</h2>' + evidence
+            + '<p><a class="btn" href="/reviews/history/">전체 기존 운행기록</a>'
+              '<a class="btn" href="/fare/">예상요금 조회</a>'
+              '<a class="btn" href="tel:18114294">전화상담 1811-4294</a></p></section>')
+
+def service_body(location, level, service, region, posts=None):
     slug = service["slug"]
     if slug == "daeri":
         intro = f"{location}에서 모임이나 식사, 업무를 마친 뒤 차량을 직접 운전하기 어려운 상황이라면 출발 위치와 목적지를 정리해 대리운전을 상담할 수 있습니다."
@@ -150,7 +188,7 @@ def service_body(location, level, service, region):
     local_html = ""
     if local_notes:
         local_html = "<h2>지역 이용 참고사항</h2><ul>" + "".join(f"<li>{esc(note)}</li>" for note in local_notes) + "</ul>"
-    return f"""<p class="muted">전국 지역별 서비스 안내 · {esc(level)}</p>
+    return f"""<p class="muted">전국 지역별 서비스 안내 · {esc(level)}</p>\n{verified_regional_review(location, level, service, region, posts or [])}
 <h1>{esc(location)} {esc(service["keyword"])}</h1>
 <p>{esc(intro)}</p>
 {sections}
@@ -495,7 +533,7 @@ def generate_topic_pages(urls):
 
 def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
-    regions = data.get("regions", [])
+    regions = data.get("regions", [])\n    posts_path = ROOT / "blog" / "posts.json"\n    posts = json.loads(posts_path.read_text(encoding="utf-8")) if posts_path.exists() else []
     if not regions:
         raise SystemExit("data/regions.json에 지역을 입력해야 합니다.")
     urls = {SITE_URL + "/"}
@@ -557,7 +595,7 @@ def main():
             links.append(f'<div class="card"><h3><a href="{href}">{esc(location)} {esc(s["keyword"])}</a></h3><p>{esc(location)} 지역의 이용 상황, 상담 전 확인사항과 진행 순서를 안내합니다.</p></div>')
             service_url = f"{SITE_URL}/region/{slug}/{s['slug']}/"
             urls.add(service_url)
-            body = service_body(location, level, s, r)
+            body = service_body(location, level, s, r, posts)
             title = f"{location} {s['keyword']} 이용 안내 | {BRAND}"
             description = f"{location} {s['keyword']} 이용 상황과 상담 전 확인사항 안내. 대표 전화 {PHONE}."
             out = ROOT / "region" / slug / s["slug"] / "index.html"
