@@ -66,7 +66,7 @@ for(const file of ['service/golf/index.html','service/corporate/index.html','ser
  assert(read(file).includes('1811-4294'),file+' phone missing');
 }
 const busanEditorial=read('region/busan-daeri-taksong/index.html');
-const busanTitle='부산연산동탁송 후기';
+const busanTitle='부산탁송 후기';
 assert(busanEditorial.includes('<title>'+busanTitle),'Busan regional title should lead with a true review topic');
 const busanFirstReview=busanEditorial.indexOf('id="busan-taksong-real-review-first-20261104"');
 assert(busanEditorial.indexOf('<h1>')<busanFirstReview&&
