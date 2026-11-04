@@ -245,6 +245,23 @@ def run():
                     errors.append("cycling hub retains common business card or lacks topical image")
             if path == "/" and 'id="mountain-cycling-fare-first-20261103"' not in body:
                 errors.append("first-screen mountain/cycling fare and image panel missing")
+            if path == "/":
+                hero_pos = body.find('<div class="hero hero-with-photo">')
+                fares_pos = body.find('id="mountain-cycling-fare-first-20261103"')
+                if hero_pos < 0 or fares_pos < 0 or hero_pos > fares_pos:
+                    errors.append("latest conversion-first hero not before fare table (possibly stale Cloudtype release)")
+                if 'class="mobile-consult-actions"' not in body or 'href="tel:18114294"' not in body:
+                    errors.append("mobile phone/fare conversion bar missing")
+                if 'id="home-business-service-links-20261104"' not in body:
+                    errors.append("consolidated homepage B2B links missing (possibly older deployed revision)")
+                for stale_id in ("service-center-home-priority-20261102",
+                                 "fleet-export-dealer-home-20261102",
+                                 "rental-capital-special-home-20261102",
+                                 "homepage-mountain-fare-shortcuts-202611"):
+                    if 'id="' + stale_id + '"' in body:
+                        errors.append("repeated old homepage section still deployed: " + stale_id)
+                if 'src="/assets/vehicles/santafe-1811.webp"' not in body:
+                    errors.append("primary vehicle image missing from homepage")
             if path != "/health/seo-report/":
                 if parser.canonical_count != 1:
                     errors.append(f"expected exactly one canonical, got {parser.canonical_count}")
