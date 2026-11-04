@@ -55,6 +55,8 @@ jobs:
         run: node tests/naver-regional-focus-next-50.test.js
       - name: Validate third 50 SEO guides and booking-specific regional value
         run: node tests/naver-regional-focus-third-50.test.js
+      - name: Verify next 200 unique regional SEO and image targets
+        run: node tests/naver-regional-focus-twenty-first-200.test.js
       - name: Protect homepage image, booking actions, fares, dynamic cards and 2,591 rides
         run: node tests/homepage-conversion-regression.test.js
       - name: Verify nationwide dynamic routes
