@@ -14,6 +14,24 @@ const intro=home.indexOf('<div class="hero hero-with-photo">');
 const firstFares=home.indexOf('id="mountain-cycling-fare-first-20261103"');
 const search=home.indexOf('id="dynamic-service-card-search-20261103"');
 assert(intro>0&&intro<firstFares&&firstFares<search,'Home should show booking hero, fares, then dynamic card search');
+const quickFare=home.indexOf('id="homepage-fare-top"');
+const specialistNav=home.indexOf('id="four-driver-intents-20261103"');
+assert(intro<firstFares&&firstFares<quickFare&&quickFare<specialistNav&&specialistNav<search,
+ 'Actual departure/destination fare inputs must appear immediately after protected mountain/cycling fare tables');
+assert.equal((home.match(/<form action="\/fare\/" method="get"/g)||[]).length,1,
+ 'Do not render two identical fare calculators on mobile');
+assert(home.includes('<link rel="preload" as="image" href="/assets/vehicles/santafe-1811.webp" fetchpriority="high">'),
+ 'Preload the above-fold vehicle LCP image');
+assert(home.includes('id="homepage-mobile-render-perf-20261104"')&&
+ home.includes('content-visibility:auto;contain-intrinsic-size:auto 480px;'),
+ 'Large offscreen editorial sections should not delay mobile rendering');
+assert((home.match(/id="general-taksong-service-focus-20261102"/g)||[]).length===1,
+ 'One concise regional and B2B resource navigation must remain');
+assert(home.includes('id="top-fare-calculator"')&&home.includes('class="quick-booking"'),
+ 'Keep legacy fare anchors while removing the duplicate middle calculator');
+const oldRepeat=home.slice(home.indexOf('id="long-distance-intercity-five-two"'),home.indexOf('id="field-notes"'));
+assert(oldRepeat.length<2200,'Repeated long-distance keyword guide must remain consolidated');
+
 assert.equal(home.split('<h1').length-1,1,'Home should have a single primary heading');
 assert(home.includes('href="tel:18114294"'),'Homepage must link to phone consultation');
 assert(home.includes('class="mobile-consult-actions"'),'Mobile call/fare actions missing');
