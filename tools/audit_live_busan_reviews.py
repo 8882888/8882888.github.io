@@ -44,9 +44,9 @@ def audit(route):
         text=resp.read().decode("utf-8")
     p=BusanParser()
     p.feed(text)
-    if not html.unescape(p.title).startswith("부산연산동탁송 후기"):
+    if not html.unescape(p.title).startswith("부산탁송 후기"):
         raise AssertionError(f"{route}: title is not review-first: {p.title!r}")
-    if not html.unescape(p.h1).startswith("부산연산동탁송 후기"):
+    if not html.unescape(p.h1).startswith("부산탁송 후기"):
         raise AssertionError(f"{route}: H1 is not review-first: {p.h1!r}")
     if not p.sections or p.sections[0]!="busan-taksong-real-review-first-20261104":
         raise AssertionError(f"{route}: initial content is not original review: {p.sections[:4]!r}")
