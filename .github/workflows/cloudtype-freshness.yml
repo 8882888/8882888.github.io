@@ -1,9 +1,14 @@
 name: Verify official Cloudtype release matches GitHub main
 
 on:
-  push:
+  workflow_run:
+    workflows: [Deploy to Cloudtype]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Daily 09:10 KST independent production drift check
+    - cron: '10 0 * * *'
 
 permissions:
   contents: read
@@ -18,8 +23,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
-      - name: Check out source of truth
+      - name: Require successful Cloudtype deployment before comparing hashes
+        if: github.event_name == 'workflow_run'
+        shell: bash
+        env:
+          DEPLOY_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+        run: |
+          if [ "$DEPLOY_CONCLUSION" != "success" ]; then
+            echo "::error::Cloudtype deployment did not succeed ($DEPLOY_CONCLUSION); do not claim the running server is fresh."
+            exit 1
+          fi
+      - name: Check out the exact commit attempted by Cloudtype
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - name: Use Node 22
         uses: actions/setup-node@v4
         with:
