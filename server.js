@@ -1891,7 +1891,10 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  // Keep each discovery sitemap focused (<=500 entries) even as curated SEO
  // inventory grows. All 2,700 curated pages stay accessible and are not deleted.
  const baseRoutes=['/'+service+'/',...(service==='daeri'?daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor):['/service/taksong/','/service/long-distance-taksong/'])];
- const primaryRegions=regions.filter(r=>r.level==='시도'||priorityByKey.has(service+'|'+r.full_name)||(service==='taksong'&&focusTaksongAreas.has(r.full_name)));
+ // Always retain the first three verified 50-keyword batches in discovery,
+ // before rotating through the remaining curated 2,700 locality targets.
+ const originalFocusNames=new Set(naverFocus2700.slice(0,150).filter(x=>x.kind===service).map(x=>x.region));
+ const primaryRegions=regions.filter(r=>r.level==='시도'||priorityByKey.has(service+'|'+r.full_name)||originalFocusNames.has(r.full_name)||(service==='taksong'&&focusTaksongAreas.has(r.full_name)));
  const primarySlugs=new Set(primaryRegions.map(r=>r.slug));
  const additionalCurated=regions.filter(r=>!primarySlugs.has(r.slug)&&focus50ByKey.has(service+'|'+r.full_name));
  const discoveryRegions=[...primaryRegions,...additionalCurated].slice(0,Math.max(0,500-baseRoutes.length));
