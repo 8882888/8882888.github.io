@@ -878,7 +878,7 @@ async function servicePage(r,kind){
   :name+' '+(kind==='taksong'?'자동차탁송':'대리운전')+' 예상요금·예약 안내. '+(provinceSpecificGuide?provinceSpecificGuide+' ':'')+(kind==='taksong'?'차량 인수·인계 장소, 차종, 이동 시간과 기사 접근·복귀 여건을 확인합니다.':'출발·도착지, 동승·경유·대기 여부와 기사 복귀 여건을 확인합니다.')+' 최종요금과 배차 가능 여부는 상담 후 안내합니다. '+PHONE+'.'+riContext;
  const jejuSearchPage=kind==='taksong'&&r.name==='제주특별자치도';
  const busanReviewPage=kind==='taksong'&&r.full_name==='부산광역시';
- const busanReviewTitle='부산연산동탁송 후기｜부산 연산동→경산 중산동 실제 자동차탁송';
+ const busanReviewTitle='부산탁송 후기｜부산 연산동→경산 중산동 실제 자동차탁송';
  const searchTitle=jejuSearchPage?'제주도탁송 · 차량선적·실제후기':busanReviewPage?busanReviewTitle:focusedTitle;
  const searchDesc=jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':busanReviewPage?'부산탁송 후기 먼저 보기. 부산 연산동·신평동·기장군 자동차탁송 공개 원문, 부산 구·군별 탁송 안내와 지역 해시태그 30개. 상담 1811-4294.':focusedDesc;
  const hierarchyNote='행정구역 경로: '+regionAncestors(r).map(a=>a.name).join(' → ')+'. '+(r.level==='리'?'마을 단위 상세 위치와 차량 인수 지점을 확인합니다.':r.level==='동'?'건물 출입구와 주차 위치를 확인합니다.':r.level==='면'?'면 소재지와 외곽의 기사 이동 여건을 확인합니다.':'지역별 출발지와 목적지의 이동 조건을 확인합니다.');
