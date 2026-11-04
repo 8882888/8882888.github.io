@@ -73,10 +73,10 @@ assert(busanEditorial.indexOf('<h1>')<busanFirstReview&&
  busanFirstReview<busanEditorial.indexOf('id="keyword-image-first-202611"')&&
  busanFirstReview<busanEditorial.indexOf('id="busan-intent-reviews-partners-20261102"'),
  'Busan original reviews must precede generic service copy and promotional image');
-const busanHash=busanEditorial.match(/<p class="busan-local-taksong-tags">([^<]+)<\\/p>/);
+const busanHash=busanEditorial.match(/<p class="busan-local-taksong-tags">([^<]+)<\/p>/);
 assert(busanHash,'Busan region-local hash tags absent');
-assert.equal(busanHash[1].trim().split(/\\s+/).length,30,'Exactly 30 Busan taksong hashtags');
-assert(new Set(busanHash[1].trim().split(/\\s+/)).size===30,'Duplicate Busan hashtags');
+assert.equal(busanHash[1].trim().split(/\s+/).length,30,'Exactly 30 Busan taksong hashtags');
+assert(new Set(busanHash[1].trim().split(/\s+/)).size===30,'Duplicate Busan hashtags');
 for(const tag of ['#부산탁송','#부산시탁송','#부산기장군탁송','#부산강서구탁송','#부산연산동탁송'])
  assert(busanHash[1].includes(tag),'Essential Busan keyword tag missing '+tag);
 for(const id of ['224445300887','224433939509','224452085535']){
