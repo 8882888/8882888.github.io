@@ -992,7 +992,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <footer>스마트전국대리운전 스마트24탁송<br>대표 상담 전화: 1811-4294<br><a href="https://jeongukdaeri.kr/">공식 홈페이지 jeongukdaeri.kr</a><br>전국 지역별 서비스 안내를 단계적으로 확장하고 있습니다.</footer>
 
 <script>
-(async function(){
+async function loadTripTicker(){
  const target=document.getElementById('trip-flow-track');if(!target||target.querySelector('a[href^="/reviews/"]'))return;
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const phone=/(?:01[016789]|02|0[3-9][0-9])[- .]?\d{3,4}[- .]?\d{4}/;
@@ -1011,6 +1011,20 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  const body=document.getElementById('ride-history-rows');if(!body){target.innerHTML='<a class="trip-flow-card" href="#ride-history">운행 기록을 확인해 주세요.</a>';return;}
  const render=()=>{const rows=[...body.querySelectorAll('tr')].filter(tr=>tr.cells.length>=4&&!tr.querySelector('[colspan]')).map(tr=>[...tr.cells].slice(0,4).map(c=>c.textContent.trim()));if(!draw(rows)&&!body.textContent.includes('불러오는 중'))target.innerHTML='<a class="trip-flow-card" href="#ride-history">완료 운행 기록 보기</a>';};
  new MutationObserver(render).observe(body,{childList:true});render();
+}
+(function(){
+ const ticker=document.getElementById('trip-flow-track');
+ if(!ticker)return;
+ let started=false;
+ function start(){if(started)return;started=true;void loadTripTicker()}
+ if('IntersectionObserver' in window){
+  const observer=new IntersectionObserver(entries=>{
+   if(entries.some(item=>item.isIntersecting)){observer.disconnect();start()}
+  },{rootMargin:'450px 0px'});
+  observer.observe(ticker);
+ }else{
+  window.addEventListener('load',start,{once:true});
+ }
 })();
 </script>
 
