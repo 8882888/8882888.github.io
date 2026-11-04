@@ -1935,8 +1935,10 @@ if(pathname==='/sitemap.xml'){
   ...routeKeywordPages.reviewed.entries.slice(0,50).map(e=>routeKeywordPages.reviewed.routePath(e)),
   ...keywordEngine.activityUrls
  ];
- const urls=[...new Set(focused)];
- const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
+ // The primary discovery map stays intentionally under 500 URLs; deeper regional
+ // and completed-route pages remain reachable in their dedicated sitemaps.
+ const urls=[...new Set(focused)].slice(0,499);
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset';
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
