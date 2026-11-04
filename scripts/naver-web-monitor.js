@@ -134,4 +134,4 @@ async function main() {
   if (failures) throw new Error(failures + ' selected query checks failed; partial results saved');
 }
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
-module.exports = { inspect, QUERIES, FOCUS_50, FOCUS_NEXT_50, FOCUS_THIRD_50, FOCUS_150, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };
+module.exports = { inspect, COMPARISONS, QUERIES, FOCUS_50, FOCUS_NEXT_50, FOCUS_THIRD_50, FOCUS_150, CORE_PAGES, pageEvidence, targetLandingEvidence, TARGET_LANDINGS, compareBaseline, legacyDriverEvidence, selectQueries };
