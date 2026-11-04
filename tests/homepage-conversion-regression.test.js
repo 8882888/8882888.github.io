@@ -22,6 +22,10 @@ const heroImage=home.slice(home.indexOf('src="/assets/vehicles/santafe-1811.webp
 assert(heroImage.includes('loading="eager"')&&heroImage.includes('fetchpriority="high"'),'Hero visual must be requested promptly on mobile');
 assert(!home.includes('id="homepage-mountain-fare-shortcuts-202611"'),'Repeated mountain shortcut section returned');
 assert(!home.includes('id="regional-taksong-search-guide"'),'Repeated regional route block returned');
+assert(home.includes('id="home-business-service-links-20261104"'),'Consolidated B2B service navigation missing');
+for(const oldId of ['service-center-home-priority-20261102','fleet-export-dealer-home-20261102','rental-capital-special-home-20261102']){
+ assert(!home.includes('id="'+oldId+'"'),'Repeated B2B block returned: '+oldId);
+}
 for(const img of ['/assets/seoraksan-taksong-fares.svg','/assets/jirisan-taksong-fares.svg','/assets/cycling-routes/nationwide-taksong.svg']){
  assert(home.includes(img),'Homepage original fare visual missing: '+img);
 }
