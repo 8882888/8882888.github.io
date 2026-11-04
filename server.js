@@ -74,8 +74,7 @@ if(blogHashtagArticles.length!==30||new Set(blogHashtagArticles.map(x=>x.slug)).
 const blogHashtagArticlePaths=blogHashtagArticles.map(x=>'/blog/daeri-regions/'+x.slug+'/');
 const seoulEditorialGroups=load('data/seoul-taksong-editorial.json').groups;
 const publishedBlogPosts=load('blog/posts.json').filter(p=>p&&typeof p.title==='string'&&/^https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+$/.test(p.url));
-const localReviewHub=require('./lib/review-first-500').create(regions,reviewedRides,publishedBlogPosts,process.env.PUBLIC_HOST||'jeongukdaeri.kr');
-const localReviewHubSlugs=new Set(localReviewHub?require('./lib/review-first-500').targets.regions.map(x=>x.slug):[]);
+
 const publishedBlogById=new Map(publishedBlogPosts.map(p=>[String(p.id),p]));
 const priorityBlogLinksByKey=new Map(load('data/priority-blog-links.json').pages.map(p=>[p.kind+'|'+p.region,p]));
 const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
@@ -197,6 +196,8 @@ const rides=load('data/ride-history.json');
 const excelReviewFiles=['data/daeri-review-drafts-202610.json','data/taksong-review-drafts-202610.json'];
 const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);const service=({'대리운전':'daeri','탁송':'taksong','daeri':'daeri','taksong':'taksong'})[String(doc.service||'').trim()];if(!service)return [];return (doc.items||[]).filter(x=>x.publication_status==='사용자 확인 운행완료').map(x=>({...x,service,status:'completed',verified:true,verification_source:'user-confirmed Excel'}))}catch{return []}});
 const reviewedRides=load('data/public-reviewed-rides-202610.json');
+const localReviewHub=require('./lib/review-first-500').create(regions,reviewedRides,publishedBlogPosts,process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+const localReviewHubSlugs=new Set(localReviewHub?require('./lib/review-first-500').targets.regions.map(x=>x.slug):[]);
 const verifiedRides=[...reviewedRides,...(Array.isArray(rides)?rides.filter(x=>x.verified===true&&['completed','종료','운행종료'].includes(String(x.status||'').trim())):[]),...excelCompleted];
 const publicRides=verifiedRides.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))&&String(x.departure||'').trim()&&String(x.destination||'').trim()&&['taksong','daeri'].includes(x.service)).map(x=>({...x,publicId:require('node:crypto').createHash('sha256').update([x.date,x.service,x.departure,x.destination].join('|')).digest('hex').slice(0,16)}));
 const publicRideById=new Map(publicRides.map(x=>[x.publicId,x]));
