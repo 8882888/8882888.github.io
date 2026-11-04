@@ -143,7 +143,7 @@ def run():
         rules = {p["path"]: p for p in json.load(stream)["pages"]}
     rows = []
     failures = 0
-    focus_files = ['data/naver-regional-focus-50.json', 'data/naver-regional-focus-next-50.json', 'data/naver-regional-focus-third-50.json', 'data/naver-regional-focus-fourth-50.json', 'data/naver-regional-focus-fifth-taksong-50.json', 'data/naver-regional-focus-fifth-daeri-50.json', 'data/naver-regional-focus-sixth-100.json', 'data/naver-regional-focus-seventh-100.json', 'data/naver-regional-focus-eighth-100.json', 'data/naver-regional-focus-ninth-100.json', 'data/naver-regional-focus-tenth-100.json', 'data/naver-regional-focus-eleventh-taksong-50.json', 'data/naver-regional-focus-eleventh-daeri-50.json', 'data/naver-regional-focus-twelfth-taksong-100.json', 'data/naver-regional-focus-twelfth-daeri-100.json']
+    focus_files = ['data/naver-regional-focus-50.json', 'data/naver-regional-focus-next-50.json', 'data/naver-regional-focus-third-50.json', 'data/naver-regional-focus-fourth-50.json', 'data/naver-regional-focus-fifth-taksong-50.json', 'data/naver-regional-focus-fifth-daeri-50.json', 'data/naver-regional-focus-sixth-100.json', 'data/naver-regional-focus-seventh-100.json', 'data/naver-regional-focus-eighth-100.json', 'data/naver-regional-focus-ninth-100.json', 'data/naver-regional-focus-tenth-100.json', 'data/naver-regional-focus-eleventh-taksong-50.json', 'data/naver-regional-focus-eleventh-daeri-50.json', 'data/naver-regional-focus-twelfth-taksong-100.json', 'data/naver-regional-focus-twelfth-daeri-100.json', 'data/naver-regional-focus-thirteenth-taksong-100.json', 'data/naver-regional-focus-thirteenth-daeri-100.json']
     focus_entries = [entry for filename in focus_files for entry in json.loads(Path(filename).read_text(encoding='utf-8'))['priority']]
     focus_keys = {(entry['kind'], entry['region']) for entry in focus_entries}
     for path, marker in PATHS.items():
@@ -300,8 +300,8 @@ def run():
         health = json.loads(body)
         source_count = health.get("blog_source_count")
         expected_priority_count = len(json.loads(Path('data/priority-regions.json').read_text(encoding='utf-8'))['pages'])
-        if len(focus_entries) != 1100 or len(focus_keys) != 1100 or len({entry['keyword'] for entry in focus_entries}) != 1100:
-            errors.append('1100 curated region entries are missing or duplicated in GitHub source')
+        if len(focus_entries) != 1300 or len(focus_keys) != 1300 or len({entry['keyword'] for entry in focus_entries}) != 1300:
+            errors.append('1300 curated region entries are missing or duplicated in GitHub source')
         if health.get('naver_focus_region_count') != len(focus_entries):
             errors.append(f"curated regional batch not deployed: live={health.get('naver_focus_region_count')!r}, GitHub={len(focus_entries)}")
         if health.get('priority_region_count') != expected_priority_count:
