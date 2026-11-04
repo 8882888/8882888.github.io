@@ -795,7 +795,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const [place,short] of [['인구해수욕장','인구'],['소래포구','소래'],['해운대해수욕장','해운대'],['협재해수욕장','협재']]){const x=coast.items.find(x=>x.term===place);assert.ok(x.aliases.includes(short));const h=await (await get('/daeri/coast/'+x.id+'/')).text();assert.ok(h.includes(short+'대리 · '+short+'대리운전'));assert.ok(h.includes(short+'탁송'));for(const suffix of ['대리','대리운전','탁송']){const k=suffix==='탁송'?'taksong':'daeri',result=await (await get('/keyword-search/?q='+encodeURIComponent(short+suffix))).text();assert.ok(result.includes('/'+k+'/coast/'+x.id+'/'));}}
   const unknownKeyword=await get('/visit/00000000000000000000/');assert.equal(unknownKeyword.status,404);
   const topicCatalog=require('../data/keywords/catalog.json');const mountain=topicCatalog.items.find(x=>x.term==='설악산');const mountainRes=await get('/visit/'+mountain.id+'/');assert.equal(mountainRes.status,200);const mountainHtml=await mountainRes.text();assert.ok(mountainHtml.includes('차키'));assert.ok(mountainHtml.includes('tel:18114294'));assert.ok(mountainHtml.includes('name="from"'));assert.ok(mountainHtml.includes('name="to"'));const mountainImage=mountainHtml.match(/property="og:image" content="([^"]+)/)[1];assert.ok(mountainHtml.includes('src="'+mountainImage+'"'),'guide primary image must actually be visible');
-  const eupHtml=await (await get('/daeri/incheon/ganghwa-gun/ganghwa-eup/')).text();assert.ok(eupHtml.includes('<title>강화읍대리운전'));assert.ok(eupHtml.includes('href="/daeri/incheon/"'));assert.ok(eupHtml.includes('href="/daeri/incheon/ganghwa-gun/"'));
+  const eupResponse=await get('/daeri/incheon/ganghwa-gun/ganghwa-eup/');
+  assert.equal(eupResponse.status,200,'Ganghwa-eup canonical page must be available');
+  const eupHtml=await eupResponse.text();
+  const eupTitle=(eupHtml.match(/<title>([^<]+)<\/title>/)||[])[1]||'';
+  assert.ok(eupTitle.includes('강화읍')&&eupTitle.includes('대리운전'),
+   'Ganghwa-eup title must identify the actual locality and driver service: '+eupTitle);
+  assert.ok(eupHtml.includes('href="/daeri/incheon/"')&&eupHtml.includes('href="/daeri/incheon/ganghwa-gun/"'),
+   'Ganghwa-eup breadcrumbs must link to correct Incheon ancestors');
   const ganghwa=await (await get('/daeri/incheon/ganghwa-gun/')).text();assert.ok(ganghwa.includes('id="destination-guide"'));assert.ok(ganghwa.includes('/keyword-search/'));
   for(const p of ['/fare/jeju/','/assets/road-fare.js','/assets/jeju-quote.js','/assets/jeju-ferry-rates.json'])assert.equal((await get(p)).status,200,p);
   const jejuPage=await (await get('/taksong/jeju/')).text();assert.ok(jejuPage.includes('/fare/jeju/'));assert.ok(jejuPage.includes('275,000원'));
