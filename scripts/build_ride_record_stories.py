@@ -32,7 +32,7 @@ def case(entry):
     departure, destination = entry["departure"], entry["destination"]
     service = entry["service"]
     label = "자동차탁송" if service == "taksong" else "대리운전"
-    title = f"{departure} → {destination} {label} 운행기록"
+    title = f"{departure} → {destination} {label} 실제 운행완료 후기"
     vehicle = entry.get("vehicle")
     vehicle_row = ("<dt>차종</dt><dd>" + esc(vehicle) + "</dd>") if vehicle else ""
     guide = ("차량을 맡기는 탁송은 출발지 인수 위치, 차량 운행 가능 상태, 차키 전달, 도착지 인계 담당자를 확인합니다."
@@ -101,12 +101,12 @@ a{color:#0757ae}header{padding:15px 24px;background:#104f96;color:white}
 header a{color:white}footer{margin-top:40px}"""
     page = ('<!doctype html><html lang="ko"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            '<title>실제 출발지 도착지 탁송·대리운전 운행기록 | 스마트24</title>'
+            '<title>실제 출발지·도착지 자동차탁송·대리운전 운행완료 후기 | 스마트24</title>'
             '<meta name="description" content="운행기록으로 확인된 자동차탁송·장거리대리운전 실제 출발지와 도착지, 기록요금, 25톤 대형차 배차기록을 구분해 소개합니다.">'
             '<link rel="canonical" href="https://jeongukdaeri.kr/reviews/ride-record-stories/">'
             '<style>' + style + '</style></head><body>'
             '<header><a href="/">스마트24 홈</a> · <a href="/reviews/history/">기존 운행기록</a></header><main>'
-            '<h1>출발지 → 도착지 중심 탁송·대리운전 운행기록</h1>'
+            '<h1>출발지 → 도착지 실제 탁송·대리운전 운행완료 후기</h1>'
             '<p>실제 출발지역에서 도착지역까지의 차량 이동을 찾는 고객을 위해 운행일·운행구간·당시 요금을 정리했습니다. 기존 자료를 새로운 운행처럼 재발행하지 않으며, 차종은 확인된 경우만 표시합니다.</p><p><a href="/fare/">출발지·도착지 요금 상담</a> · <a href="/blog/">기존 네이버 공개 후기</a></p>'
             + shortlist_html
             + '<h2 id="verified-taksong-section">자동차탁송 운행완료 기록</h2>' + "".join(map(case, taksong))
