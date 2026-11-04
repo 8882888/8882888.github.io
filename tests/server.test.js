@@ -306,6 +306,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   const seoulPriorityMap=await (await get('/sitemap-priority.xml')).text();
   const seoulMainMap=await (await get('/sitemap.xml')).text();
+  // Regional link volume must not crowd out verifiable completed rides in the main sitemap.
+  const crypto=require('node:crypto');
+  const firstRide=require('../data/public-reviewed-rides-202610.json')[0];
+  const firstId=crypto.createHash('sha256').update([firstRide.date,firstRide.service,firstRide.departure,firstRide.destination].join('|')).digest('hex').slice(0,16);
+  assert.ok(seoulMainMap.includes('https://example.com/reviews/'+firstId+'/'),
+    'main sitemap must retain verified completed trip, not only templated location pages');
+  assert.ok(seoulMainMap.includes('https://example.com/find/'), 'discoverable canonical region finder');
+  assert.ok(seoulMainMap.includes('https://example.com/daeri/'), 'national designated driver canonical');
+  assert.ok(seoulMainMap.includes('https://example.com/taksong/'), 'national vehicle transfer canonical');
+
   for(const path of ['/blog/seoul-taksong/',...seoulEditorial.map(g=>'/blog/seoul-taksong/'+g.slug+'/')]){
     assert.ok(seoulPriorityMap.includes('https://example.com'+path),'priority sitemap: '+path);
     assert.ok(seoulMainMap.includes('https://example.com'+path),'main sitemap: '+path);
