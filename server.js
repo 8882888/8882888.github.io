@@ -1545,10 +1545,10 @@ let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
 if(pathname==='/find/'||pathname==='/find'){
- return respond(res,200,millionServiceFinder.page(u.searchParams.get('q')||'',u.searchParams.get('service')||''));
+ return respond(res,200,millionServiceFinder.page(u.searchParams.get('q')||'',u.searchParams.get('service')||'',u.searchParams.get('intent')||''));
 }
 if(pathname==='/api/find-regions'){
- const data=millionServiceFinder.search(u.searchParams.get('q')||'',u.searchParams.get('service')||'');
+ const data=millionServiceFinder.search(u.searchParams.get('q')||'',u.searchParams.get('service')||'',u.searchParams.get('intent')||'');
  res.setHeader('cache-control','public, max-age=120');
  return respond(res,200,JSON.stringify(data),'application/json; charset=utf-8');
 }
