@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'tools/audit_live_browser_cards.cjs'
+      - 'tools/audit_live_home_mobile.cjs'
+      - 'index.html'
       - 'assets/region-card-preview.js'
       - 'lib/exact-keyword-card.js'
       - 'server.js'
@@ -81,6 +83,11 @@ jobs:
           NODE_PATH: /tmp/smart24-browser-tooling/node_modules
           SMART24_AUDIT_BASE: https://jeongukdaeri.kr
         run: node tools/audit_live_browser_cards.cjs
+      - name: Audit first-screen mobile performance and scroll-triggered ride records
+        env:
+          NODE_PATH: /tmp/smart24-browser-tooling/node_modules
+          SMART24_AUDIT_BASE: https://jeongukdaeri.kr
+        run: node tools/audit_live_home_mobile.cjs
       - name: Upload browser screenshots and JSON results
         if: always()
         uses: actions/upload-artifact@v4
