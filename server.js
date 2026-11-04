@@ -1473,14 +1473,28 @@ const focusKeywordByPhrase=new Map(naverFocus2700.map(entry=>[compact(entry.keyw
 function exactRegionalKeywordCard(r,kind,raw){
  if(!r||!['taksong','daeri'].includes(kind))return null;
  const phrase=String(raw||'').trim();
- if(phrase.length<4||phrase.length>55||!/^[가-힣A-Za-z0-9.\s·_-]+$/u.test(phrase))return null;
+ if(phrase.length<2||phrase.length>55||!/^[가-힣A-Za-z0-9.\s·_-]+$/u.test(phrase))return null;
+ const sameOne=(query)=>{
+  const matches=resolvedLiveCardAliases(compact(query));
+  return matches.length===1&&matches[0].slug===r.slug;
+ };
+ const make=(label)=>({displayKeyword:label,keywordImage:'/keyword-card/exact/'+r.slug+'-'+kind+'.svg?q='+encodeURIComponent(phrase)});
  const curated=focusKeywordByPhrase.get(compact(phrase));
- if(curated&&curated.region===r.full_name&&curated.kind===kind)return {displayKeyword:phrase,keywordImage:'/keyword-card/exact/'+r.slug+'-'+kind+'.svg?q='+encodeURIComponent(phrase)};
+ if(curated&&curated.region===r.full_name&&curated.kind===kind)return make(phrase);
+ // A bare legal place name needs the same region-specific service artwork as a full phrase.
+ // Keep q as originally typed so the actual SVG endpoint rechecks the same region.
+ if(sameOne(phrase))return make(seoRegionLabel(r)+(kind==='daeri'?'대리운전':'탁송'));
  const intent=regionalBlogKeywords.parse(phrase);
- if(!intent||intent.kind!==kind)return null;
- const candidates=resolvedLiveCardAliases(intent.region);
- if(candidates.length!==1||candidates[0].slug!==r.slug)return null;
- return {displayKeyword:phrase,keywordImage:'/keyword-card/exact/'+r.slug+'-'+kind+'.svg?q='+encodeURIComponent(phrase)};
+ if(intent&&intent.kind===kind&&sameOne(intent.region))return make(phrase);
+ // Preserve the service suffix in compound phrases such as 부산렌트카탁송.
+ // Require a single verified legal locality: never draw a different city's business card.
+ const theme=keywordExpansion.resolve(phrase);
+ if(theme&&theme.kind===kind&&theme.image.startsWith('/keyword-card/')){
+  const normalized=compact(keywordExpansion.normalizeCompanyKeyword(phrase));
+  const suffix=theme.terms.map(compact).sort((a,b)=>b.length-a.length).find(t=>normalized.endsWith(t));
+  if(suffix&&normalized.length>suffix.length&&sameOne(normalized.slice(0,-suffix.length)))return make(phrase);
+ }
+ return null;
 }
 let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
