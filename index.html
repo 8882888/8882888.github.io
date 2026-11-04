@@ -767,16 +767,16 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <h2>운행 기록</h2>
 <p>완료된 운행 기록을 날짜·출발지·도착지·요금으로 확인할 수 있습니다. 개인정보는 공개하지 않습니다.</p>
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0"><label for="ride-search" style="font-weight:700;align-self:center">운행 기록 검색</label><input id="ride-search" type="search" placeholder="출발지·도착지·날짜 검색" style="flex:1;min-width:220px;padding:12px;border:1px solid #ccd5e0;border-radius:8px"><button id="ride-search-clear" type="button" class="btn" style="border:0;cursor:pointer">검색 초기화</button></div>
-<p id="ride-search-status" aria-live="polite">전체 기록을 표시합니다.</p>
+<p id="ride-search-status" aria-live="polite">해당 구역에 도착하거나 검색을 시작하면 공개 운행기록을 불러옵니다.</p><p><a href="/reviews/history/">전체 2,591건 운행기록 검색하기</a> · 메인 화면에는 검색 결과 최대 80건을 표시합니다.</p>
 <div style="overflow-x:auto">
 <table style="width:100%;border-collapse:collapse;min-width:620px">
 <thead><tr><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">날짜</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">출발지</th><th style="text-align:left;padding:12px;border-bottom:2px solid #ccd5e0">도착지</th><th style="text-align:right;padding:12px;border-bottom:2px solid #ccd5e0">금액</th></tr></thead>
-<tbody id="ride-history-rows"><tr><td colspan="4" style="padding:14px">운행 기록을 불러오는 중입니다.</td></tr></tbody>
+<tbody id="ride-history-rows"><tr><td colspan="4" style="padding:14px">목록을 열면 공개 운행기록을 불러옵니다.</td></tr></tbody>
 </table>
 </div>
 </section>
 <script>
-(async function(){
+(function(){
   const body = document.getElementById('ride-history-rows');
 
   const publicHistorySource = location.hostname === '8882888.github.io' ? './data/ride-history-upload-202610.json' : '/api/public-rides';
@@ -797,13 +797,14 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
     const query = (document.getElementById('ride-search')?.value || '').trim().toLocaleLowerCase('ko-KR');
     const filtered = clean.filter(r => !query || [r.date,r.departure,r.destination,r.fare].some(v => String(v ?? '').toLocaleLowerCase('ko-KR').includes(query)));
     const searchStatus = document.getElementById('ride-search-status');
-    if (searchStatus) searchStatus.textContent = `검색 결과 ${filtered.length}건 / 전체 공개 가능 기록 ${clean.length}건`;
+    const visible=filtered.slice(0,80);
+    if (searchStatus) searchStatus.textContent = `검색 결과 ${filtered.length}건 / 전체 공개 가능 기록 ${clean.length}건 · ${visible.length}건 표시`;
     if (!filtered.length) {
       body.innerHTML = '<tr><td colspan="4" style="padding:14px">공개 가능한 완료 운행 기록이 없습니다.</td></tr>';
       return;
     }
-    body.replaceChildren();
-    filtered.forEach(record => {
+    const fragment=document.createDocumentFragment();
+    visible.forEach(record => {
       const tr = document.createElement('tr');
       [record.date, record.departure, record.destination, record.fare].forEach((value, index) => {
         const td = document.createElement('td');
@@ -813,13 +814,27 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
         if (index === 3) td.style.textAlign = 'right';
         tr.appendChild(td);
       });
-      body.appendChild(tr);
+      fragment.appendChild(tr);
     });
+    body.replaceChildren(fragment);
   }
 
-  document.getElementById('ride-search')?.addEventListener('input', () => renderRecords(allRecords));
-  document.getElementById('ride-search-clear')?.addEventListener('click', () => { document.getElementById('ride-search').value=''; renderRecords(allRecords); });
-  // Paint bundled verified records before the optional external service responds.
+  let historyRequested=false;
+  function requestHistory(){
+    if(historyRequested)return;
+    historyRequested=true;
+    const status=document.getElementById('ride-search-status');
+    if(status)status.textContent='공개 운행기록을 불러오는 중입니다.';
+    void loadHistory();
+  }
+  document.getElementById('ride-search')?.addEventListener('focus',requestHistory);
+  document.getElementById('ride-search')?.addEventListener('input',()=>{
+    requestHistory();
+    if(allRecords.length)renderRecords(allRecords);
+  });
+  document.getElementById('ride-search-clear')?.addEventListener('click', () => { document.getElementById('ride-search').value='';requestHistory();if(allRecords.length)renderRecords(allRecords); });
+  async function loadHistory(){
+  // Load detailed public history only after visible or explicitly requested.
   try {
     const local = await fetch(publicHistorySource, {cache:'no-store', signal:AbortSignal.timeout(8000)});
     if (local.ok) renderRecords(await local.json());
@@ -864,6 +879,16 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
     } catch (fallbackError) {
       body.innerHTML = '<tr><td colspan="4" style="padding:14px">운행 내역을 불러오지 못했습니다.</td></tr>';
     }
+  }
+  }
+  const panel=document.getElementById('ride-history');
+  if('IntersectionObserver' in window && panel){
+    const observer=new IntersectionObserver(entries=>{
+      if(entries.some(x=>x.isIntersecting)){observer.disconnect();requestHistory();}
+    },{rootMargin:'500px 0px'});
+    observer.observe(panel);
+  }else{
+    window.addEventListener('load',requestHistory,{once:true});
   }
 })();
 </script>
