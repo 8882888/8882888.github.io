@@ -82,7 +82,7 @@ assert(rideScript.includes('visible=filtered.slice(0,80)')&&
  'Homepage must cap the rendered rows and use one fragment while retaining all searchable records');
 assert(home.includes('/reviews/history/">전체 2,591건 운행기록 검색하기'),
  'Full completed-trip search must remain accessible even when homepage table is limited');
-const tickerStart=home.indexOf("<script>\\nasync function loadTripTicker()");
+const tickerStart=home.lastIndexOf('<script>',home.indexOf('async function loadTripTicker()'));
 const tickerEnd=home.indexOf('</script>',tickerStart);
 assert(tickerStart>0&&tickerEnd>tickerStart,'Deferred completed-ride ticker script must exist');
 const tickerScript=home.slice(tickerStart+'<script>'.length,tickerEnd);
