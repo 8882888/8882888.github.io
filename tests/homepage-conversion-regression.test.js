@@ -54,7 +54,7 @@ for(const [keyword,region,kind] of [
  assert(svg.includes(keyword)&&svg.includes(region)&&svg.includes('1811-4294'),keyword+' exact card incorrect');
  assert(!svg.includes('강릉스마트대리운전'),keyword+' wrong legacy brand in image');
 }
-assert(server.includes('naverFocus2700.length!==2700'),'Curated keyword count guard missing');
+assert(server.includes('naverFocus2900.length!==2900'),'Curated keyword count guard missing');
 assert(server.includes("if(sameOne(phrase))return make("),'Exact locality card coverage missing');
 assert(read('assets/region-card-preview.js').includes('if(!exact&&!pngFallback'),'Never use a wrong fallback image for an exact search');
 const dynamic=require(path.join(root,'lib/keyword-card-expansion.js'));
