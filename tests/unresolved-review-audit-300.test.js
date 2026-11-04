@@ -16,13 +16,13 @@ for(let i=1;i<=17;i++){
  }
 }
 const byFull=new Map(regions.map(r=>[r.full_name,r]));
-const past=new Set([...first.items,...second.items].map(x=>x.id));
+const past=new Set([...first.items,...second.items].filter(x=>x.region).map(x=>x.id));
 assert.equal(audit.items.length,300);
 assert.equal(new Set(audit.items.map(x=>x.id)).size,300);
 let confirmed=0,rejected=0;
 for(const row of audit.items){
  assert(!past.has(row.id),'audited source was previously region-labeled');
- assert(/^excel-\\d{4}$/.test(row.id));
+ assert(/^excel-\d{4}$/.test(row.id));
  const idx=Number(row.id.slice(6))-1,sourceRow=source[idx];
  assert(sourceRow,'missing original ride '+row.id);
  assert.equal(row.date,sourceRow.date);
