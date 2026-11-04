@@ -1,0 +1,413 @@
+{
+  "version": 1,
+  "description": "100 real administrative areas × 5 distinct service pages; targets do not imply completed rides",
+  "services": [
+    "taksong",
+    "daeri",
+    "corporate",
+    "daily-driver",
+    "golf"
+  ],
+  "regions": [
+    {
+      "slug": "area-1",
+      "full_name": "서울특별시"
+    },
+    {
+      "slug": "area-494",
+      "full_name": "부산광역시"
+    },
+    {
+      "slug": "area-765",
+      "full_name": "대구광역시"
+    },
+    {
+      "slug": "area-1174",
+      "full_name": "인천광역시"
+    },
+    {
+      "slug": "area-1464",
+      "full_name": "광주광역시"
+    },
+    {
+      "slug": "area-1672",
+      "full_name": "대전광역시"
+    },
+    {
+      "slug": "area-1855",
+      "full_name": "울산광역시"
+    },
+    {
+      "slug": "area-2063",
+      "full_name": "세종특별자치시"
+    },
+    {
+      "slug": "area-2215",
+      "full_name": "경기도"
+    },
+    {
+      "slug": "area-4433",
+      "full_name": "강원특별자치도"
+    },
+    {
+      "slug": "area-5906",
+      "full_name": "충청북도"
+    },
+    {
+      "slug": "area-7541",
+      "full_name": "충청남도"
+    },
+    {
+      "slug": "area-9816",
+      "full_name": "전북특별자치도"
+    },
+    {
+      "slug": "area-11707",
+      "full_name": "전라남도"
+    },
+    {
+      "slug": "area-14704",
+      "full_name": "경상북도"
+    },
+    {
+      "slug": "area-17946",
+      "full_name": "경상남도"
+    },
+    {
+      "slug": "area-20348",
+      "full_name": "제주특별자치도"
+    },
+    {
+      "slug": "area-2",
+      "full_name": "서울특별시 강남구"
+    },
+    {
+      "slug": "area-495",
+      "full_name": "부산광역시 강서구"
+    },
+    {
+      "slug": "area-766",
+      "full_name": "대구광역시 군위군"
+    },
+    {
+      "slug": "area-1175",
+      "full_name": "인천광역시 강화군"
+    },
+    {
+      "slug": "area-1465",
+      "full_name": "광주광역시 광산구"
+    },
+    {
+      "slug": "area-1673",
+      "full_name": "대전광역시 대덕구"
+    },
+    {
+      "slug": "area-1856",
+      "full_name": "울산광역시 남구"
+    },
+    {
+      "slug": "area-2216",
+      "full_name": "경기도 가평군"
+    },
+    {
+      "slug": "area-4434",
+      "full_name": "강원특별자치도 강릉시"
+    },
+    {
+      "slug": "area-5907",
+      "full_name": "충청북도 괴산군"
+    },
+    {
+      "slug": "area-7542",
+      "full_name": "충청남도 계룡시"
+    },
+    {
+      "slug": "area-9817",
+      "full_name": "전북특별자치도 고창군"
+    },
+    {
+      "slug": "area-11708",
+      "full_name": "전라남도 강진군"
+    },
+    {
+      "slug": "area-14705",
+      "full_name": "경상북도 경산시"
+    },
+    {
+      "slug": "area-17947",
+      "full_name": "경상남도 거제시"
+    },
+    {
+      "slug": "area-20349",
+      "full_name": "제주특별자치도 서귀포시"
+    },
+    {
+      "slug": "area-17",
+      "full_name": "서울특별시 강동구"
+    },
+    {
+      "slug": "area-518",
+      "full_name": "부산광역시 금정구"
+    },
+    {
+      "slug": "area-867",
+      "full_name": "대구광역시 남구"
+    },
+    {
+      "slug": "area-1285",
+      "full_name": "인천광역시 검단구"
+    },
+    {
+      "slug": "area-1545",
+      "full_name": "광주광역시 남구"
+    },
+    {
+      "slug": "area-1700",
+      "full_name": "대전광역시 동구"
+    },
+    {
+      "slug": "area-1876",
+      "full_name": "울산광역시 동구"
+    },
+    {
+      "slug": "area-2284",
+      "full_name": "경기도 고양시"
+    },
+    {
+      "slug": "area-4547",
+      "full_name": "강원특별자치도 고성군"
+    },
+    {
+      "slug": "area-6045",
+      "full_name": "충청북도 단양군"
+    },
+    {
+      "slug": "area-7561",
+      "full_name": "충청남도 공주시"
+    },
+    {
+      "slug": "area-10021",
+      "full_name": "전북특별자치도 군산시"
+    },
+    {
+      "slug": "area-11832",
+      "full_name": "전라남도 고흥군"
+    },
+    {
+      "slug": "area-14879",
+      "full_name": "경상북도 경주시"
+    },
+    {
+      "slug": "area-18046",
+      "full_name": "경상남도 거창군"
+    },
+    {
+      "slug": "area-20428",
+      "full_name": "제주특별자치도 제주시"
+    },
+    {
+      "slug": "area-27",
+      "full_name": "서울특별시 강북구"
+    },
+    {
+      "slug": "area-532",
+      "full_name": "부산광역시 기장군"
+    },
+    {
+      "slug": "area-871",
+      "full_name": "대구광역시 달서구"
+    },
+    {
+      "slug": "area-1296",
+      "full_name": "인천광역시 계양구"
+    },
+    {
+      "slug": "area-1576",
+      "full_name": "광주광역시 동구"
+    },
+    {
+      "slug": "area-1746",
+      "full_name": "대전광역시 서구"
+    },
+    {
+      "slug": "area-1885",
+      "full_name": "울산광역시 북구"
+    },
+    {
+      "slug": "area-2285",
+      "full_name": "경기도 고양시 덕양구"
+    },
+    {
+      "slug": "area-4642",
+      "full_name": "강원특별자치도 동해시"
+    },
+    {
+      "slug": "area-6162",
+      "full_name": "충청북도 보은군"
+    },
+    {
+      "slug": "area-7760",
+      "full_name": "충청남도 금산군"
+    },
+    {
+      "slug": "area-10161",
+      "full_name": "전북특별자치도 김제시"
+    },
+    {
+      "slug": "area-11980",
+      "full_name": "전라남도 곡성군"
+    },
+    {
+      "slug": "area-15078",
+      "full_name": "경상북도 고령군"
+    },
+    {
+      "slug": "area-18153",
+      "full_name": "경상남도 고성군"
+    },
+    {
+      "slug": "area-32",
+      "full_name": "서울특별시 강서구"
+    },
+    {
+      "slug": "area-600",
+      "full_name": "부산광역시 남구"
+    },
+    {
+      "slug": "area-896",
+      "full_name": "대구광역시 달성군"
+    },
+    {
+      "slug": "area-1320",
+      "full_name": "인천광역시 남동구"
+    },
+    {
+      "slug": "area-1611",
+      "full_name": "광주광역시 북구"
+    },
+    {
+      "slug": "area-1774",
+      "full_name": "대전광역시 유성구"
+    },
+    {
+      "slug": "area-1913",
+      "full_name": "울산광역시 울주군"
+    },
+    {
+      "slug": "area-2318",
+      "full_name": "경기도 고양시 일산동구"
+    },
+    {
+      "slug": "area-4679",
+      "full_name": "강원특별자치도 삼척시"
+    },
+    {
+      "slug": "area-6348",
+      "full_name": "충청북도 영동군"
+    },
+    {
+      "slug": "area-7877",
+      "full_name": "충청남도 논산시"
+    },
+    {
+      "slug": "area-10328",
+      "full_name": "전북특별자치도 남원시"
+    },
+    {
+      "slug": "area-12117",
+      "full_name": "전라남도 광양시"
+    },
+    {
+      "slug": "area-15183",
+      "full_name": "경상북도 구미시"
+    },
+    {
+      "slug": "area-18287",
+      "full_name": "경상남도 김해시"
+    },
+    {
+      "slug": "area-46",
+      "full_name": "서울특별시 관악구"
+    },
+    {
+      "slug": "area-607",
+      "full_name": "부산광역시 동구"
+    },
+    {
+      "slug": "area-1001",
+      "full_name": "대구광역시 동구"
+    },
+    {
+      "slug": "area-1332",
+      "full_name": "인천광역시 미추홀구"
+    },
+    {
+      "slug": "area-1653",
+      "full_name": "광주광역시 서구"
+    },
+    {
+      "slug": "area-1828",
+      "full_name": "대전광역시 중구"
+    },
+    {
+      "slug": "area-2044",
+      "full_name": "울산광역시 중구"
+    },
+    {
+      "slug": "area-2332",
+      "full_name": "경기도 고양시 일산서구"
+    },
+    {
+      "slug": "area-4816",
+      "full_name": "강원특별자치도 속초시"
+    },
+    {
+      "slug": "area-6491",
+      "full_name": "충청북도 옥천군"
+    },
+    {
+      "slug": "area-8076",
+      "full_name": "충청남도 당진시"
+    },
+    {
+      "slug": "area-10525",
+      "full_name": "전북특별자치도 무주군"
+    },
+    {
+      "slug": "area-12194",
+      "full_name": "전라남도 구례군"
+    },
+    {
+      "slug": "area-15320",
+      "full_name": "경상북도 김천시"
+    },
+    {
+      "slug": "area-18396",
+      "full_name": "경상남도 남해군"
+    },
+    {
+      "slug": "area-50",
+      "full_name": "서울특별시 광진구"
+    },
+    {
+      "slug": "area-612",
+      "full_name": "부산광역시 동래구"
+    },
+    {
+      "slug": "area-1047",
+      "full_name": "대구광역시 북구"
+    },
+    {
+      "slug": "area-1340",
+      "full_name": "인천광역시 부평구"
+    },
+    {
+      "slug": "area-2341",
+      "full_name": "경기도 과천시"
+    },
+    {
+      "slug": "area-4830",
+      "full_name": "강원특별자치도 양구군"
+    }
+  ]
+}
