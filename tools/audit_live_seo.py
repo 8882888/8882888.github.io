@@ -319,8 +319,8 @@ def run():
         health = json.loads(body)
         source_count = health.get("blog_source_count")
         expected_priority_count = len(json.loads(Path('data/priority-regions.json').read_text(encoding='utf-8'))['pages'])
-        if len(focus_entries) != 2700 or len(focus_keys) != 2700 or len({entry['keyword'] for entry in focus_entries}) != 2700:
-            errors.append('2700 curated region entries are missing or duplicated in GitHub source')
+        if len(focus_entries) != 2900 or len(focus_keys) != 2900 or len({entry['keyword'] for entry in focus_entries}) != 2900:
+            errors.append('2900 curated region entries are missing or duplicated in GitHub source')
         if health.get('naver_focus_region_count') != len(focus_entries):
             errors.append(f"curated regional batch not deployed: live={health.get('naver_focus_region_count')!r}, GitHub={len(focus_entries)}")
         if health.get('priority_region_count') != expected_priority_count:
