@@ -1938,7 +1938,7 @@ if(pathname==='/sitemap.xml'){
  // The primary discovery map stays intentionally under 500 URLs; deeper regional
  // and completed-route pages remain reachable in their dedicated sitemaps.
  const urls=[...new Set(focused)].slice(0,499);
- const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset';
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
