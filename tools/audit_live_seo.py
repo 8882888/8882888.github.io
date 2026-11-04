@@ -145,7 +145,7 @@ def run():
     failures = 0
     # Discover every published 50/100-region batch, including new additions,
     # rather than freezing the SEO deploy comparison at the old 1,500 pages.
-    focus_files = [str(path) for path in sorted(Path('data').glob('naver-regional-focus*.json'))]
+    focus_files = [str(path) for path in sorted(Path('data').glob('naver-regional-focus*.json')) if 'candidates' not in path.name]
     focus_entries = [entry for filename in focus_files for entry in json.loads(Path(filename).read_text(encoding='utf-8'))['priority']]
     focus_keys = {(entry['kind'], entry['region']) for entry in focus_entries}
     for path, marker in PATHS.items():
