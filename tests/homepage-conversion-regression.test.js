@@ -65,6 +65,22 @@ for(const file of ['service/golf/index.html','service/corporate/index.html','ser
 }
 const rides=JSON.parse(read('data/ride-history.json'));
 assert(Array.isArray(rides)&&rides.length===2591,'The 2,591 original ride records must be preserved');
+const rideStart=home.indexOf('<section id="ride-history"');
+const rideScriptStart=home.indexOf('<script>',rideStart);
+const rideScriptEnd=home.indexOf('</script>',rideScriptStart);
+assert(rideStart>=0&&rideScriptStart>rideStart&&rideScriptEnd>rideScriptStart,
+ 'Home ride history script must be present after preserved records section');
+const rideScript=home.slice(rideScriptStart+'<script>'.length,rideScriptEnd);
+new (require('node:vm').Script)(rideScript,{filename:'homepage-inline-ride-history.js'});
+assert(rideScript.includes("const observer=new IntersectionObserver")&&
+ rideScript.includes("void loadHistory()")&&rideScript.includes("rootMargin:'500px 0px'"),
+ 'Expensive public records should be loaded only near the history section or on search');
+assert(rideScript.includes('visible=filtered.slice(0,80)')&&
+ rideScript.includes('body.replaceChildren(fragment)'),
+ 'Homepage must cap the rendered rows and use one fragment while retaining all searchable records');
+assert(home.includes('/reviews/history/">전체 2,591건 운행기록 검색하기'),
+ 'Full completed-trip search must remain accessible even when homepage table is limited');
+
 const exact=require(path.join(root,'lib/exact-keyword-card.js'));
 for(const [keyword,region,kind] of [
  ['부산렌트카탁송','부산광역시','taksong'],
