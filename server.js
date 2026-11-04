@@ -193,8 +193,18 @@ function regionalJourneyNavigation(r,kind){
 }
 
 const rides=load('data/ride-history.json');
-const regionalReviewBatch300=[...load('data/regional-review-links-batch-001-300.json').items,...load('data/regional-review-links-batch-002-300.json').items];
-if(regionalReviewBatch300.length!==600||new Set(regionalReviewBatch300.map(x=>x.id)).size!==600)throw Error('Regional reviewed-ride batches must hold 600 distinct archive references');
+const regionalReviewBatch300=[
+ ...load('data/regional-review-links-batch-001-300.json').items,
+ ...load('data/regional-review-links-batch-002-300.json').items,
+ ...load('data/regional-review-links-batch-003-300.json').items,
+ ...load('data/regional-review-links-batch-004-300.json').items,
+ ...load('data/regional-review-links-batch-005-300.json').items,
+ ...load('data/regional-review-links-batch-006-300.json').items,
+ ...load('data/regional-review-links-batch-007-300.json').items,
+ ...load('data/regional-review-links-batch-008-300.json').items,
+ ...load('data/regional-review-links-batch-009-191.json').items
+];
+if(regionalReviewBatch300.length!==2591||new Set(regionalReviewBatch300.map(x=>x.id)).size!==2591)throw Error('All 2,591 archived ride references must be complete and distinct');
 const excelReviewFiles=['data/daeri-review-drafts-202610.json','data/taksong-review-drafts-202610.json'];
 const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);const service=({'대리운전':'daeri','탁송':'taksong','daeri':'daeri','taksong':'taksong'})[String(doc.service||'').trim()];if(!service)return [];return (doc.items||[]).filter(x=>x.publication_status==='사용자 확인 운행완료').map(x=>({...x,service,status:'completed',verified:true,verification_source:'user-confirmed Excel'}))}catch{return []}});
 const reviewedRides=load('data/public-reviewed-rides-202610.json');
