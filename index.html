@@ -283,6 +283,14 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 @media(max-width:400px){
  .header-phone-actions .traffic-call-trigger{font-size:10px}
 }
+/* Search-first mobile redesign: keep the actual fare form and historical data intact. */
+.hero-local-finder{margin:14px 0 2px;padding:14px;background:#fff;color:#133451;border:1px solid #bad1e7;border-radius:14px;max-width:780px;box-shadow:0 6px 24px rgba(19,52,81,.08)}
+.hero-local-finder>label{display:block;font-weight:800;margin:0 0 7px}
+.hero-local-fields{display:grid;grid-template-columns:minmax(155px,1fr) minmax(128px,180px) 112px;gap:8px}
+.hero-local-fields input,.hero-local-fields select,.hero-local-fields button{min-width:0;min-height:48px;border-radius:8px;padding:8px 11px;font:inherit;border:1px solid #a9c1d7}
+.hero-local-fields button{background:#075c9d;color:#fff;border:0;font-weight:800;cursor:pointer}
+.hero-local-finder small{display:block;font-size:12px;line-height:1.5;margin:7px 0 0;color:#55697b}
+@media(max-width:650px){.hero-local-finder{margin:10px 0;padding:12px}.hero-local-fields{grid-template-columns:1fr 1fr}.hero-local-fields input{grid-column:1/-1}.hero-local-fields button{width:100%}.hero-actions a{min-height:46px}}
 </style>
 <style>
 .smart24-split{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:24px 6%;background:#071d40}
@@ -442,7 +450,8 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <a href="/taksong/seoul/">서울탁송</a><a href="/taksong/busan/">부산탁송</a><a href="/taksong/daegu/">대구탁송</a><a href="/taksong/ulsan/">울산탁송</a><a href="/taksong/jeju/">제주도탁송</a><a href="/region/">전국 지역별 검색</a>
 </nav>
 <p>차량 인수·인계 주소와 차종, 희망 시간을 알려주시면 탁송·대리운전 이용 조건을 확인합니다. 실제 배차·요금은 별도 상담으로 확정합니다.</p>
-<nav class="hero-actions" aria-label="빠른 상담 및 요금 확인"><a class="btn" href="tel:18114294">☎ 바로 전화상담 1811-4294</a><a class="btn" href="#homepage-fare-top">출발·도착 예상요금</a><a class="btn" href="/region/">지역별 서비스 찾기</a><a class="btn" href="/service/corporate/">법인·법인카드 상담</a></nav>
+<nav class="hero-actions" aria-label="빠른 상담 및 요금 확인"><a class="btn" href="tel:18114294">☎ 바로 전화상담 1811-4294</a><a class="btn" href="#homepage-fare-top">출발·도착 예상요금</a><a class="btn" href="/find/">내 지역·5개 서비스 찾기</a><a class="btn" href="/reviews/history/">실제 운행후기</a></nav>
+<form action="/find/" method="get" role="search" class="hero-local-finder" aria-label="전국 지역별 5개 운행 서비스 조회"><label for="hero-local-q">지역명 입력해 서비스 찾기</label><div class="hero-local-fields"><input type="search" id="hero-local-q" name="q" placeholder="예: 강화군, 부산 해운대구, 속초시" maxlength="60" autocomplete="off"><select name="service" aria-label="서비스 선택"><option value="">5개 서비스 전체</option><option value="daeri">대리운전</option><option value="taksong">자동차탁송</option><option value="corporate">법인대리운전</option><option value="daily-driver">일일기사</option><option value="golf">골프대리운전</option></select><button type="submit">지역 검색</button></div><small>실제 행정구역 20,562개 기반. 검색 결과는 기사 상주나 운행완료를 뜻하지 않습니다.</small></form>
 
 </div><figure class="hero-vehicle"><img src="/assets/vehicles/santafe-1811.webp" width="1448" height="1086" alt="산타페 차량 이미지, 스마트24 상담 1811-4294" loading="eager" fetchpriority="high" decoding="async"><figcaption>승용차·SUV·화물차 이동 상담 1811-4294</figcaption></figure></div>
 
