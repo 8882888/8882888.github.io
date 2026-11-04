@@ -42,6 +42,15 @@ assert(home.includes('실제 기록부터 비교하세요')&&home.includes('전�
  'First-screen customer choice must retain visible call and verifiable ride evidence');
 assert(!home.includes('업계 1위')&&!home.includes('고수대리운전보다'),
  'Do not invent comparative market rank or unsupported competitor superiority');
+assert(home.includes('/service/corporate/#corporate-postpaid-guide-20261105'),'Homepage must link conditional corporate postpaid guidance');
+const corp=read('service/corporate/index.html');
+assert(corp.includes('id="corporate-postpaid-guide-20261105"'),'Corporate page must show postpaid guidance first');
+assert(corp.indexOf('id="corporate-postpaid-guide-20261105"')<corp.indexOf('id="corporate-image-and-consult-1811"'),'Postpaid process must appear before general corporate guide');
+assert(corp.includes('후불 정산은 자동 승인되는 상품이 아닙니다'),'Never guarantee corporate credit or postpaid billing');
+for(const t of ['후불 정산 전화문의 1811-4294','/fare/?service=daeri','/reviews/history/?kind=daeri'])assert(corp.includes(t),'Corporate decision path missing '+t);
+for(const t of ['id="ride-review-direct-booking-20261105"','id="verified-ride-booking-shortcuts-20261105"','법인 후불 정산 조건 확인','전화 예약상담 1811-4294']){
+ assert(server.includes(t),'Review-to-booking path missing '+t);
+}
 assert.equal(home.split('<h1').length-1,1,'Home should have a single primary heading');
 assert(home.includes('href="tel:18114294"'),'Homepage must link to phone consultation');
 assert(home.includes('class="mobile-consult-actions"'),'Mobile call/fare actions missing');
