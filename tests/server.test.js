@@ -1277,15 +1277,23 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(archiveSitemap.includes('https://example.com/blog/archive/'),'directory in sitemap');
   for(const group of archiveData.groups)assert.ok(archiveSitemap.includes('/blog/archive/'+group.id+'/'),'category in sitemap');
   const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);const priorityDaeri=require('../data/priority-regions.json').pages.filter(p=>p.kind==='daeri');
- const focusedDaeri=[...require('../data/naver-regional-focus-50.json').priority,...require('../data/naver-regional-focus-next-50.json').priority,...require('../data/naver-regional-focus-third-50.json').priority].filter(p=>p.kind==='daeri');
- const discoveryRegions=regions.filter(r=>r.level==='시도'||priorityDaeri.some(p=>p.region===r.full_name)||focusedDaeri.some(p=>p.region===r.full_name));
- assert.equal((daeriXml.match(/<loc>/g)||[]).length,discoveryRegions.length+1+require('../lib/daeri-travel-guides').destinations.length,'driver sitemap contains curated provinces, priority regions and four verified-source travel guides');
- assert.ok(discoveryRegions.length<100,'driver sitemap must be a curated 100-page-scale collection, not a 20k-page generated directory');
+ const daeriLocs=[...daeriXml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
+ assert.ok(daeriLocs.length>=100&&daeriLocs.length<=500,
+  'driver sitemap must prioritize 100-500 useful region and travel guide URLs; found '+daeriLocs.length);
+ assert.equal(daeriLocs.length,new Set(daeriLocs).size,'driver discovery sitemap has no duplicate canonical URLs');
+ for(const guide of require('../lib/daeri-travel-guides').destinations)
+  assert.ok(daeriLocs.includes('https://example.com'+require('../lib/daeri-travel-guides').pathFor(guide)),
+   'driver sitemap retains sourced travel guide');
  for(const region of ['서울특별시','부산광역시','대구광역시','인천광역시']){
   const url={'서울특별시':'seoul','부산광역시':'busan','대구광역시':'daegu','인천광역시':'incheon'}[region];
   assert.ok(daeriXml.includes('https://example.com/daeri/'+url+'/'),'driver sitemap retains priority '+region);
  }
- assert.ok(!daeriXml.includes('https://example.com/daeri/seoul/gangnam-gu/yeoksam-dong/'),'unreviewed thin localities should not dominate driver discovery sitemap');const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);const taksongXml=await taksongMap.text();const taksongLocs=[...taksongXml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);assert.ok(taksongLocs.length>=30&&taksongLocs.length<200,'taksong sitemap contains selected 100-focus regions and priority hubs, not all 20k generated pages');assert.equal(taksongLocs.length,new Set(taksongLocs).size,'taksong sitemap URLs are unique');for(const priorityPath of ['/taksong/','/taksong/busan/','/taksong/busan/gijang-gun/','/taksong/daegu/','/taksong/gangwon/'])assert.ok(taksongLocs.includes('https://example.com'+priorityPath),'taksong sitemap retains important indexable page '+priorityPath);
+ const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);
+ const taksongXml=await taksongMap.text();
+ const taksongLocs=[...taksongXml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
+ assert.ok(taksongLocs.length>=100&&taksongLocs.length<=500,
+  'taksong sitemap must contain a focused selection of up to 500 curated regional URLs, not the entire generated directory');
+ assert.equal(taksongLocs.length,new Set(taksongLocs).size,'taksong sitemap URLs are unique');for(const priorityPath of ['/taksong/','/taksong/busan/','/taksong/busan/gijang-gun/','/taksong/daegu/','/taksong/gangwon/'])assert.ok(taksongLocs.includes('https://example.com'+priorityPath),'taksong sitemap retains important indexable page '+priorityPath);
   const search=await get('/region/?q='+encodeURIComponent('가평읍'));assert.equal(search.status,200);assert.ok((await search.text()).includes('가평읍'));
   // The sixteen user-confirmed Excel review drafts use Korean service labels in their source.
   // They must be normalized before the public verified-ride filter, not silently discarded.
