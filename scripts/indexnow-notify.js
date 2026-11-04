@@ -131,4 +131,4 @@ async function main(){
  console.log('Submission acknowledgement only; real crawler requests, URL indexing and ranking are unconfirmed.');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
-module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify};
+module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,sitemapWindow:{focusCount,minimumCount,maximumCount}};
