@@ -6,6 +6,13 @@ assert.deepEqual(inspect(items).map(x => x.position), [2,5]);
 assert.equal(inspect(items)[0].title, '전국 대리운전');
 assert.deepEqual(inspect([]), []);
 assert.deepEqual(inspect([{link:'https://gosudaeri.com/'},{link:'https://gosudaeri.com.evil.test/'}], 'gosudaeri.com').map(x=>x.position),[1]);
+const {COMPARISONS}=require('../scripts/naver-web-monitor');
+for(const domain of ['gosudaeri.com','gosudaeri.kr','daerigo.com','daerigo.co.kr']){
+ assert.ok(COMPARISONS.includes(domain),'monitor directly competing Daerigo/Gosu domain: '+domain);
+ const links=[{link:'https://'+domain+'/local/'},{link:'https://shop.'+domain+'/'},{link:'https://'+domain+'.malicious.test/'}];
+ assert.deepEqual(inspect(links,domain).map(x=>x.position),[1,2],'secure competitor-domain matching '+domain);
+}
+
 const {QUERIES} = require('../scripts/naver-web-monitor');
 for (const query of ['전국대리운전', '24시탁송', '전국대리운전·24시탁송']) assert.ok(QUERIES.includes(query));
 assert.equal(new Set(QUERIES).size, QUERIES.length);
