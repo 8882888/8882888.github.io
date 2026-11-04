@@ -61,6 +61,8 @@ jobs:
         run: node tests/homepage-conversion-regression.test.js
       - name: Verify nationwide dynamic routes
         run: node tests/server.test.js
+      - name: Verify 500 nationwide five-service review routes
+        run: node tests/review-first-500-services.test.js
       - name: Ensure curated service and mountain guide preservation
         run: python3 tests/static-generator-preservation.test.py
       - name: Verify scheduled archive rebuild preserves all factual source sections
