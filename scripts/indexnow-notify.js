@@ -26,7 +26,7 @@ const fixedPriorityPaths=[
 // Scale the coverage window with the published guide count; do not reject valid
 // 2,900+ URL sitemaps against an obsolete 200-URL ceiling.
 const focusFiles=fs.readdirSync(path.join(root,'data')).filter(name=>
- /^naver-regional-focus.*\\.json$/.test(name)&&!name.includes('candidates'));
+ /^naver-regional-focus.*\.json$/.test(name)&&!name.includes('candidates'));
 const focusCount=focusFiles.reduce((total,name)=>{
  const doc=JSON.parse(fs.readFileSync(path.join(root,'data',name),'utf8'));
  if(!Array.isArray(doc.priority))throw Error('Missing live priority list in '+name);
