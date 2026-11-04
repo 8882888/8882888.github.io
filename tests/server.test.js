@@ -1632,6 +1632,23 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const ganghwaPriority=await (await get('/sitemap-priority.xml')).text();
   assert(ganghwaPriority.includes('https://example.com'+ganghwaUrl),'Ganghwa SEO route in priority sitemap');
   console.log('PASS Ganghwa region HTTP 200, canonical, real reviews, indexable meta and sitemap');
+  // Region finder is a single useful canonical page, never a million thin pages.
+  const finder=await get('/find/?q='+encodeURIComponent('부산 해운대구')+'&service=daeri&intent=late-night');
+  assert.equal(finder.status,200);
+  const finderHtml=await finder.text();
+  assert(finderHtml.includes('부산광역시 해운대구'),'compact region lookup');
+  assert(finderHtml.includes('1,028,100'),'one million legitimate inquiry combinations');
+  assert(finderHtml.includes('content="noindex,follow"'),'query results should not be mass indexed');
+  assert(finderHtml.includes('상담 목적: 야간·새벽'),'selected intent affects page content');
+  const finderApi=await get('/api/find-regions?q='+encodeURIComponent('강화대리운전')+'&service=taksong&intent=fare');
+  assert.equal(finderApi.status,200);
+  const finderData=await finderApi.json();
+  assert.equal(finderData.count,1028100);
+  assert.equal(finderData.selectedIntent,'fare');
+  assert(finderData.results.some(x=>x.name==='인천광역시 강화군'),'Ganghwa lookup includes official region');
+  const finderSitemap=await(await get('/sitemap-priority.xml')).text();
+  assert(finderSitemap.includes('https://example.com/find/'),'finder has one discoverable canonical');
+  console.log('PASS million-query finder HTTP, search, intent, API and noindex guard');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
 })();
