@@ -5,12 +5,15 @@ on:
     paths:
       - 'tools/audit_live_browser_cards.cjs'
       - 'tools/audit_live_home_mobile.cjs'
+      - 'tools/audit_mobile_100.cjs'
       - 'index.html'
       - 'assets/region-card-preview.js'
       - 'lib/exact-keyword-card.js'
       - 'server.js'
       - 'assets/cycling-routes/*.svg'
       - '.github/workflows/live-browser-card-audit.yml'
+  schedule:
+    - cron: '15 21 * * *' # 06:15 Asia/Seoul daily live browser smoke + 100 mobile checks
   workflow_dispatch:
 permissions:
   contents: read
@@ -88,6 +91,11 @@ jobs:
           NODE_PATH: /tmp/smart24-browser-tooling/node_modules
           SMART24_AUDIT_BASE: https://jeongukdaeri.kr
         run: node tools/audit_live_home_mobile.cjs
+      - name: Run 100 real mobile conversion and below-fold loading checks
+        env:
+          NODE_PATH: /tmp/smart24-browser-tooling/node_modules
+          SMART24_AUDIT_BASE: https://jeongukdaeri.kr
+        run: node tools/audit_mobile_100.cjs
       - name: Upload browser screenshots and JSON results
         if: always()
         uses: actions/upload-artifact@v4
