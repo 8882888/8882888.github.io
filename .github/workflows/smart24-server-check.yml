@@ -67,6 +67,8 @@ jobs:
         run: node tests/nationwide-review-first-102810.test.js
       - name: Verify Ganghwa canonical search recovery with true rides
         run: node tests/ganghwa-daeri-search-recovery.test.js
+      - name: Verify nationwide million-choice search and preserved rides
+        run: node tests/service-finder-million.test.js
       - name: Ensure curated service and mountain guide preservation
         run: python3 tests/static-generator-preservation.test.py
       - name: Verify scheduled archive rebuild preserves all factual source sections
