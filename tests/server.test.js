@@ -720,7 +720,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(priorityRegions.some(p=>p.kind==='taksong'&&p.region==='울산광역시'),
     'Ulsan is an actual curated taksong priority, not a generic province directory');
   const ulsanHtml=await (await get('/taksong/ulsan/')).text();
-  assert.ok(ulsanHtml.includes('<title>울산탁송 | 남구 삼산동·동구 방어진'),
+  assert.ok(ulsanHtml.includes('<title>울산탁송 후기') && ulsanHtml.includes('남구 삼산동·동구 방어진'),
     'Ulsan title gives locality-first service intent');
   assert.ok(ulsanHtml.includes('id="southeast-taksong-local-evidence"') &&
     ulsanHtml.includes('href="/taksong/ulsan/ulju-gun/"'),
