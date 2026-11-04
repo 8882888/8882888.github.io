@@ -8,9 +8,11 @@ const base=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,
 const sha=name=>crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'..',name))).digest('hex');
 const serverHash=sha('server.js'),homeHash=sha('index.html');
 const serverSource=fs.readFileSync(path.join(__dirname,'..','server.js'),'utf8');
-const m=serverSource.match(/naverFocus(\d+)\.length!==(\d+)/);
-if(!m||m[1]!==m[2])throw Error('Cannot determine current curated guide count from source');
-const expectedCount=Number(m[1]);
+const guardCounts=[...serverSource.matchAll(/naverFocus(\d+)\.length!==(\d+)/g)]
+ .filter(match=>match[1]===match[2])
+ .map(match=>Number(match[1]));
+const expectedCount=Math.max(...guardCounts);
+if(!Number.isInteger(expectedCount)||expectedCount<500)throw Error('Cannot determine complete curated guide count from source');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function check(){
  const u=base+'/health/seo.json?deploy_check='+serverHash.slice(0,14);
