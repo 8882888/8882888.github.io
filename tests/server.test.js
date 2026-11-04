@@ -1020,7 +1020,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(liveScript.includes('lastActivator.focus()')&&liveCss.includes('.smart24-card-picture-link:focus-visible'),'keyboard focus and visible focus ring are retained');
   assert.ok(liveScript.includes('++sequence')&&liveScript.includes('controller.abort()'),'stale fast-typing requests are cancelled');
   const currentHome=await (await get('/')).text();
-  assert.ok(currentHome.includes('region-card-preview.js?v=20261103-keyword3')&&currentHome.includes('region-card-preview.css?v=20261103-keyword3'),'new frontend assets must bypass stale mobile browser caches');
+  const previewScriptVersion=(currentHome.match(/region-card-preview\.js\?v=([^"]+)/)||[])[1];
+  const previewCssVersion=(currentHome.match(/region-card-preview\.css\?v=([^"]+)/)||[])[1];
+  assert.ok(previewScriptVersion&&previewCssVersion&&
+   previewScriptVersion==='20261104-exact-region'&&previewCssVersion==='20261103-keyword3',
+   'versioned, updated JS and CSS must bypass stale mobile browser caches');
   for(const asset of ['/assets/region-card-preview.js','/assets/region-card-preview.css']){
    const r=await get(asset);assert.equal(r.status,200,asset);
    const body=await r.text();assert.ok(body.length>600&&/card-(?:preview|dialog)/.test(body),'live card asset has functional code: '+asset);
