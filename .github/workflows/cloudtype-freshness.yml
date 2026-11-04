@@ -1,0 +1,31 @@
+name: Verify official Cloudtype release matches GitHub main
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smart24-cloudtype-release-check
+  cancel-in-progress: true
+
+jobs:
+  verify-cloudtype:
+    name: Compare deployed server, homepage and SEO guide count
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check out source of truth
+        uses: actions/checkout@v4
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check the REAL Cloudtype server (not the Pages backup)
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+          DEPLOY_CHECK_ATTEMPTS: '4'
+        run: node tools/check_cloudtype_freshness.js
