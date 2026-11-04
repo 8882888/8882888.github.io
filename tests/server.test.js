@@ -397,7 +397,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>'+require('../data/seo-pages.json').pages.find(x=>x.path==='/').title+'</title>'),'homepage title matches the centrally configured SEO title');
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
-  const visibleHeading=(seoHome.match(/<h1\\b[^>]*>([\\s\\S]*?)<\\/h1>/)||[])[1]||'';
+  const visibleHeading=(seoHome.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)||[])[1]||'';
   assert.ok(visibleHeading.includes('전국자동차탁송')&&visibleHeading.includes('전국대리운전')&&
    visibleHeading.includes('href="tel:18114294"')&&seoHome.includes('전국 지역별 자동차탁송·대리운전 예약 안내'),
    'visible H1, call button and SEO description consistently identify nationwide and regional services');
