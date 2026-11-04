@@ -35,17 +35,26 @@ def case(entry):
     title = f"{departure} → {destination} {label} 운행기록"
     vehicle = entry.get("vehicle")
     vehicle_row = ("<dt>차종</dt><dd>" + esc(vehicle) + "</dd>") if vehicle else ""
+    guide = ("차량을 맡기는 탁송은 출발지 인수 위치, 차량 운행 가능 상태, 차키 전달, 도착지 인계 담당자를 확인합니다."
+             if service == "taksong" else
+             "대리운전은 차량 주차 위치, 목적지, 희망 출발 시각, 동승·경유 여부를 확인합니다.")
     return ("<article class='case'><h3>" + esc(title) + "</h3>"
+            "<p><strong>기존 운행완료 자료를 재구성한 사실 기반 후기</strong>입니다. 이용자가 직접 작성한 평점·증언이나 현장 취재를 뜻하지 않습니다.</p>"
             "<dl class='facts'><dt>출발지</dt><dd>" + esc(departure) +
             "</dd><dt>도착지</dt><dd>" + esc(destination) +
             "</dd><dt>운행일</dt><dd>" + esc(entry["date"]) +
-            "</dd><dt>기록요금</dt><dd>" + esc(entry["fare"]) +
+            "</dd><dt>당시 기록요금</dt><dd>" + esc(entry["fare"]) +
             "</dd>" + vehicle_row + "</dl>"
-            "<p>기존 운행완료 분류 자료에 근거한 " + label + " 운행사례입니다. "
-            "당시 요금은 현재 견적이 아니며 기록에 없는 차종, 시간과 상황은 추가하지 않았습니다.</p>"
+            "<h4>실제 이동구간과 당시 배차금액</h4>"
+            "<p>" + esc(entry["date"]) + " 완료로 확인된 " + label + " 기록에서 "
+            + esc(departure) + " 출발, " + esc(destination) + " 도착, 당시 "
+            + esc(entry["fare"]) + "이 확인됩니다. 상담 시점과 실제 운행일은 다르며 "
+            "해당 요금이 지금도 동일하게 적용된다는 뜻은 아닙니다.</p>"
+            "<h4>같은 구간 예약 전 확인사항</h4><p>" + esc(guide) +
+            " 실제 운행 당시의 기사 대기시간, 구체적 경유지, 날씨 및 차량 종류는 자료에 없으면 단정하지 않습니다.</p>"
             "<p class='tags' aria-label='출발지 도착지 지역 검색어'>" +
             tags(departure, destination, service) + "</p>"
-            "<p><a href='tel:18114294'>이 구간 탁송·대리운전 상담 1811-4294</a></p></article>")
+            "<p><a href='/fare/'>출발지·도착지 예상요금</a> · <a href='tel:18114294'>이 구간 상담 1811-4294</a></p></article>")
 
 def big_vehicle_case(record):
     origin = record["departure"]
@@ -66,8 +75,8 @@ def main():
              and r.get("service") in ("taksong", "daeri")
              and all(r.get(k) for k in ("date", "departure", "destination", "fare"))]
     cases.sort(key=lambda r: r["date"], reverse=True)
-    taksong = [r for r in cases if r["service"] == "taksong"][:12]
-    daeri = [r for r in cases if r["service"] == "daeri"][:8]
+    taksong = [r for r in cases if r["service"] == "taksong"]
+    daeri = [r for r in cases if r["service"] == "daeri"]
     # Only verified completed cases appear here; never infer a new ride or a new fare.
     taksong_shortlist = "".join(
         "<li>" + esc(r["date"]) + " · " + esc(r["departure"]) + " → "
