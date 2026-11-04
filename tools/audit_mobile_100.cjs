@@ -64,7 +64,7 @@ async function run(){
    });
    await check('11 estimate form ahead of mountain fare',async()=>{
     const p=await page.evaluate(()=>({a:document.getElementById('homepage-fare-top')?.compareDocumentPosition(document.getElementById('mountain-cycling-fare-first-20261103'))}));
-    assert(p.a&Node.DOCUMENT_POSITION_FOLLOWING,'fare form must precede posters');
+    assert((p.a&4)===4,'fare form must precede posters');
    });
    await check('12 only one complete fare form',async()=>assert.equal(await page.locator('form[action="/fare/"]').count(),1));
    await check('13 departure address required',async()=>{
