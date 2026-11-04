@@ -1525,6 +1525,10 @@ function exactRegionalKeywordCard(r,kind,raw){
 let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
+if(pathname==='/reviews/local/nationwide/'||pathname==='/reviews/local/nationwide'){
+ const page=localReviewHub.nationwideIndex(u.searchParams.get('page')||1);
+ return page?respond(res,200,page,'text/html; charset=utf-8'):respond(res,404,'지역 목록 페이지가 없습니다');
+}
 if(pathname==='/reviews/local/'||pathname==='/reviews/local'){
  return respond(res,200,localReviewHub.index(),'text/html; charset=utf-8');
 }
