@@ -22,7 +22,18 @@ const fixedPriorityPaths=[
  '/blog/', '/route-taksong/centers/', '/travel/food-map/', '/taksong/jeju/',
  '/recruit/daeri/', '/recruit/taksong/'
 ];
-const minimumCount=fixedPriorityPaths.length+require('../data/priority-regions.json').pages.length;
+// New curated locality guides are also indexed in sitemap-priority.xml.
+// Scale the coverage window with the published guide count; do not reject valid
+// 2,900+ URL sitemaps against an obsolete 200-URL ceiling.
+const focusFiles=fs.readdirSync(path.join(root,'data')).filter(name=>
+ /^naver-regional-focus.*\\.json$/.test(name)&&!name.includes('candidates'));
+const focusCount=focusFiles.reduce((total,name)=>{
+ const doc=JSON.parse(fs.readFileSync(path.join(root,'data',name),'utf8'));
+ if(!Array.isArray(doc.priority))throw Error('Missing live priority list in '+name);
+ return total+doc.priority.length;
+},0);
+const minimumCount=Math.max(fixedPriorityPaths.length+require('../data/priority-regions.json').pages.length,focusCount);
+const maximumCount=focusCount+500;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function get(rel){
  return fetch(new URL(rel,base),{
@@ -75,7 +86,7 @@ async function verify(){
  const xml=await xmlResponse.text();
  const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);
  const normalizedUrls=urls.map(value=>new URL(value).href);
- if(urls.length<minimumCount||urls.length>200||new Set(normalizedUrls).size!==urls.length)
+ if(urls.length<minimumCount||urls.length>maximumCount||new Set(normalizedUrls).size!==urls.length)
   throw Error('Unexpected priority sitemap coverage or duplicates: '+urls.length);
  for(const url of urls){
   const parsed=new URL(url);
