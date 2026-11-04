@@ -74,6 +74,8 @@ if(blogHashtagArticles.length!==30||new Set(blogHashtagArticles.map(x=>x.slug)).
 const blogHashtagArticlePaths=blogHashtagArticles.map(x=>'/blog/daeri-regions/'+x.slug+'/');
 const seoulEditorialGroups=load('data/seoul-taksong-editorial.json').groups;
 const publishedBlogPosts=load('blog/posts.json').filter(p=>p&&typeof p.title==='string'&&/^https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+$/.test(p.url));
+const localReviewHub=require('./lib/review-first-500').create(regions,reviewedRides,publishedBlogPosts,process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+const localReviewHubSlugs=new Set(localReviewHub?require('./lib/review-first-500').targets.regions.map(x=>x.slug):[]);
 const publishedBlogById=new Map(publishedBlogPosts.map(p=>[String(p.id),p]));
 const priorityBlogLinksByKey=new Map(load('data/priority-blog-links.json').pages.map(p=>[p.kind+'|'+p.region,p]));
 const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
@@ -1035,6 +1037,7 @@ function regionPage(r){
  const ancestors=regionAncestors(r);
  const breadcrumb='<nav aria-label="지역 경로"><a href="/region/">전국 지역</a> / '+ancestors.map((x,i)=>i===ancestors.length-1?'<strong>'+esc(x.name)+'</strong>':'<a href="'+canonical(x.slug)+'">'+esc(x.name)+'</a>').join(' / ')+'</nav>';
  const title=fullName+' 대리운전·탁송 | '+shortPlace(r.name)+' 대리운전·탁송 상담';
+ const localReviewLinks=localReviewHubSlugs.has(r.slug)?'<section><h2>'+full+' 후기·운행기록 우선 확인</h2><ul>'+Object.entries(require('./lib/review-first-500').names).map(([kind,label])=>'<li><a href="/reviews/local/'+kind+'/'+r.slug+'/">'+full+' '+esc(label)+' 후기·예약 안내</a></li>').join('')+'</ul></section>':'';
  const serviceLinks='<section><h2>지역별 서비스 상세 안내</h2><p><a href="'+servicePath(r,'daeri')+'">'+full+' 대리운전</a> · <a href="'+servicePath(r,'taksong')+'">'+full+' 탁송</a> · <a href="/places/">펜션·캠핑장·관광지·행사장 등 장소별 안내</a> · <a href="/taksong/types/">렉카·암롤·윙바디 등 차종별 탁송</a></p></section>';
  const shortDaeri=r.name.replace(/(특별자치시|특별시|광역시|특별자치도|자치시|시|군|구)$/,'')+'대리';
  const localDaeri=r.name+'대리';
@@ -1521,6 +1524,15 @@ function exactRegionalKeywordCard(r,kind,raw){
 let cachedHomepageHtml=null;
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
+if(pathname==='/reviews/local/'||pathname==='/reviews/local'){
+ return respond(res,200,localReviewHub.index(),'text/html; charset=utf-8');
+}
+const localReviewMatch=pathname.match(/^\/reviews\/local\/(taksong|daeri|corporate|daily-driver|golf)\/(area-\d+)\/?$/);
+if(localReviewMatch){
+ const content=localReviewHub.render(localReviewMatch[1],localReviewMatch[2]);
+ return content?respond(res,200,content,'text/html; charset=utf-8'):respond(res,404,'지역별 서비스 정보를 찾을 수 없습니다');
+}
+
 const focusPosterMatch=pathname.match(/^\/focus-card\/(area-[0-9]+)-(taksong|daeri)\.svg$/);
 if(focusPosterMatch){
  const [,slug,kind]=focusPosterMatch,r=bySlug.get(slug);
