@@ -13,11 +13,11 @@ assert(!home.includes('시·도·시·군·구')&&!server.includes('시·도·�
 const intro=home.indexOf('<div class="hero hero-with-photo">');
 const firstFares=home.indexOf('id="mountain-cycling-fare-first-20261103"');
 const search=home.indexOf('id="dynamic-service-card-search-20261103"');
-assert(intro>0&&intro<firstFares&&firstFares<search,'Home should show booking hero, fares, then dynamic card search');
+assert(intro>0&&intro<firstFares&&firstFares<search,'Home should show booking hero, protected fares, then dynamic card search');
 const quickFare=home.indexOf('id="homepage-fare-top"');
 const specialistNav=home.indexOf('id="four-driver-intents-20261103"');
-assert(intro<firstFares&&firstFares<quickFare&&quickFare<specialistNav&&specialistNav<search,
- 'Actual departure/destination fare inputs must appear immediately after protected mountain/cycling fare tables');
+assert(intro<quickFare&&quickFare<firstFares&&firstFares<specialistNav&&specialistNav<search,
+ 'One-step departure/destination fare inputs must precede specialist mountain/cycling fare visuals');
 assert.equal((home.match(/<form action="\/fare\/" method="get"/g)||[]).length,1,
  'Do not render two identical fare calculators on mobile');
 assert(home.includes('<link rel="preload" as="image" href="/assets/vehicles/santafe-1811.webp" fetchpriority="high">'),
@@ -35,7 +35,9 @@ assert(oldRepeat.length<2200,'Repeated long-distance keyword guide must remain c
 assert.equal(home.split('<h1').length-1,1,'Home should have a single primary heading');
 assert(home.includes('href="tel:18114294"'),'Homepage must link to phone consultation');
 assert(home.includes('class="mobile-consult-actions"'),'Mobile call/fare actions missing');
-assert(home.includes('<a href="/fare/">예상요금 바로보기</a>'),'Mobile fare shortcut missing');
+assert(home.includes('<a href="#homepage-fare-top">출발·도착지 요금입력</a>'),'One-tap mobile fare form anchor missing');
+assert(home.includes('<a class="btn" href="#homepage-fare-top">출발·도착 예상요금</a>'),'Hero quote CTA must open same-page form');
+assert(home.includes('id="mobile-conversion-first-100-20261104"'),'Compact mobile conversion layout must be present');
 assert(home.includes('data-card-preview-form'),'Dynamic keyword card search missing');
 assert(home.includes('/assets/vehicles/santafe-1811.webp'),'Homepage hero visual missing');
 const heroImage=home.slice(home.indexOf('src="/assets/vehicles/santafe-1811.webp"'),home.indexOf('>',home.indexOf('src="/assets/vehicles/santafe-1811.webp"'))+1);
@@ -80,6 +82,14 @@ assert(rideScript.includes('visible=filtered.slice(0,80)')&&
  'Homepage must cap the rendered rows and use one fragment while retaining all searchable records');
 assert(home.includes('/reviews/history/">전체 2,591건 운행기록 검색하기'),
  'Full completed-trip search must remain accessible even when homepage table is limited');
+const tickerStart=home.indexOf("<script>\\nasync function loadTripTicker()");
+const tickerEnd=home.indexOf('</script>',tickerStart);
+assert(tickerStart>0&&tickerEnd>tickerStart,'Deferred completed-ride ticker script must exist');
+const tickerScript=home.slice(tickerStart+'<script>'.length,tickerEnd);
+new (require('node:vm').Script)(tickerScript,{filename:'homepage-lazy-trip-ticker.js'});
+assert(tickerScript.includes("observer.observe(ticker)")&&
+ tickerScript.includes("rootMargin:'450px 0px'"),'Below-fold trip ticker must not fetch before scrolling');
+
 
 const exact=require(path.join(root,'lib/exact-keyword-card.js'));
 for(const [keyword,region,kind] of [
