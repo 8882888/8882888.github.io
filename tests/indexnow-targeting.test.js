@@ -1,6 +1,9 @@
 'use strict';
 const assert=require('node:assert/strict');
-const {changedPaths,priorityPaths,blogHashtagPaths}=require('../scripts/indexnow-notify');
+const {changedPaths,priorityPaths,blogHashtagPaths,sitemapWindow}=require('../scripts/indexnow-notify');
+assert(sitemapWindow.focusCount>=2900,'All curated locality SEO guides must be included in priority sitemap size guard');
+assert.equal(sitemapWindow.maximumCount,sitemapWindow.focusCount+500,'IndexNow ceiling must scale with the guide count');
+assert(sitemapWindow.minimumCount<=sitemapWindow.focusCount,'IndexNow minimum must accommodate curated guide URLs');
 assert.equal(priorityPaths.length,10);
 assert.equal(new Set(priorityPaths).size,10);
 assert.equal(blogHashtagPaths.length,30);
