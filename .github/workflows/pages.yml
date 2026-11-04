@@ -213,6 +213,7 @@ jobs:
       - name: Validate 630-source SEO links and production settings
         run: |
           node --check server.js
+          node tests/naver-regional-focus-twenty-first-200.test.js
           node tests/homepage-conversion-regression.test.js
           node tests/blog-regional-hashtags.test.js
           node tests/regional-history-ambiguity.test.js
