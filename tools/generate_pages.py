@@ -98,7 +98,7 @@ def verified_regional_review(location, level, service, region, posts):
     parent_short = re.sub(r"(특별자치도|특별자치시|특별시|광역시|도|시)$", "", parent)
     alias = re.sub(r"(특별자치도|특별자치시|특별시|광역시|도)$", "", name)
     names = [name, alias] if not ambiguous else [parent + name, parent_short + name]
-    names = [n for n in dict.fromkeys(names) if len(n) >= 3]
+    names = [n for n in dict.fromkeys(names) if len(n) >= (2 if level == '시도' else 3)]
     selected = []
     for post in posts:
         title = post.get("title", "")
