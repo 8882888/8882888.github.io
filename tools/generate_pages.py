@@ -533,7 +533,9 @@ def generate_topic_pages(urls):
 
 def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
-    regions = data.get("regions", [])\n    posts_path = ROOT / "blog" / "posts.json"\n    posts = json.loads(posts_path.read_text(encoding="utf-8")) if posts_path.exists() else []
+    regions = data.get("regions", [])
+    posts_path = ROOT / "blog" / "posts.json"
+    posts = json.loads(posts_path.read_text(encoding="utf-8")) if posts_path.exists() else []
     if not regions:
         raise SystemExit("data/regions.json에 지역을 입력해야 합니다.")
     urls = {SITE_URL + "/"}
