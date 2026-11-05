@@ -28,5 +28,7 @@ jobs:
         run: npm install --omit=dev --no-audit --no-fund
       - name: Verify phone conversion and referral expansion without real clicks
         run: node tests/traffic-analytics.test.js
+      - name: Verify innovation-city search pages and evidence boundaries
+        run: node tests/innovation-search-focus.test.js
       - name: Run real HTTP smoke tests
         run: node tests/server.test.js
