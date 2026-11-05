@@ -1098,7 +1098,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const previewScriptVersion=(currentHome.match(/region-card-preview\.js\?v=([^"]+)/)||[])[1];
   const previewCssVersion=(currentHome.match(/region-card-preview\.css\?v=([^"]+)/)||[])[1];
   assert.ok(previewScriptVersion&&previewCssVersion&&
-   previewScriptVersion==='20261105-image-error-guard'&&previewCssVersion==='20261103-keyword3',
+   previewScriptVersion==='20261106-fare-card-first'&&previewCssVersion==='20261103-keyword3',
    'versioned, updated JS and CSS must bypass stale mobile browser caches');
   for(const asset of ['/assets/region-card-preview.js','/assets/region-card-preview.css']){
    const r=await get(asset);assert.equal(r.status,200,asset);
@@ -1227,9 +1227,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const statsFareShortcutPos=statsHome.indexOf('id="homepage-fare-top"');
   const statsHeroPos=statsHome.indexOf('class="hero hero-with-photo"');
   const statsImagePos=statsHome.indexOf('src="/assets/vehicles/santafe-1811.webp"');
-  assert.ok(statsHeroPos>=0&&statsHeroPos<statsNavPos&&statsNavPos<statsImagePos&&
-    statsImagePos<statsFareShortcutPos&&statsFareShortcutPos<statsFarePos,
-    'call and eager vehicle image must precede fare shortcuts and detailed calculator');
+  assert.ok(statsFareShortcutPos>=0&&statsFareShortcutPos<statsHome.indexOf('id="dynamic-service-card-search-20261103"')&&statsFareShortcutPos<statsHeroPos&&statsHeroPos<statsImagePos&&statsImagePos<statsFarePos,
+    'fare inputs and regional card search must precede the vehicle introduction');
   assert.equal((statsHome.match(/class="quick-booking"/g)||[]).length,1,'fare form must not be duplicated');
   assert.ok(statsHome.includes('name="from"')&&statsHome.includes('name="to"')&&statsHome.includes('action="/fare/"'),
     'top fare calculator still submits the real fare lookup');

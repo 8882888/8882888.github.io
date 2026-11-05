@@ -13,10 +13,10 @@ assert(!home.includes('시·도·시·군·구')&&!server.includes('시·도·�
 const intro=home.indexOf('<div class="hero hero-with-photo">');
 const firstFares=home.indexOf('id="mountain-cycling-fare-first-20261103"');
 const search=home.indexOf('id="dynamic-service-card-search-20261103"');
-assert(intro>0&&intro<firstFares&&firstFares<search,'Home should show booking hero, protected fares, then dynamic card search');
+assert(search>0&&search<intro&&intro<firstFares,'Dynamic regional cards precede introduction and protected mountain fares');
 const quickFare=home.indexOf('id="homepage-fare-top"');
 const specialistNav=home.indexOf('id="four-driver-intents-20261103"');
-assert(intro<quickFare&&quickFare<firstFares&&firstFares<specialistNav&&specialistNav<search,
+assert(quickFare<search&&search<intro&&intro<firstFares&&firstFares<specialistNav,
  'One-step departure/destination fare inputs must precede specialist mountain/cycling fare visuals');
 assert.equal((home.match(/<form action="\/fare\/" method="get"/g)||[]).length,1,
  'Do not render two identical fare calculators on mobile');

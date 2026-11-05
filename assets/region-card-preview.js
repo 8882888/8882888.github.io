@@ -48,6 +48,7 @@
    compact.includes('대리운전')?['daeri']:compact.includes('탁송')?['taksong']:['daeri','taksong'];
   return {status:'matched',region:city.name,cards:kinds.map(kind=>({
    kind,displayKeyword:city.name+(kind==='daeri'?'대리운전':'탁송'),
+   keywordImage:'/keyword-card/exact/area-'+city.id+'-'+kind+'.svg?q='+encodeURIComponent(city.name+(kind==='daeri'?'대리운전':'탁송')),
    image:'/card/area-'+city.id+'-'+kind+'-brand-v5.png',
    url:'/'+kind+'/'+city.slug+'/',
    description:city.name+' '+(kind==='daeri'?'대리운전':'자동차탁송')+' 지역 상담 안내입니다. 실제 배차와 요금은 별도 확인합니다.',
@@ -191,6 +192,9 @@
    if(pending){clearTimeout(pending);pending=null}
    if(controller)controller.abort();
    const query=input.value.trim();
+   // An explicit region+service phrase determines the service, even after an earlier selection.
+   const inferred=/대리운전(?:업체|회사)?$|대리$/.test(query.replace(/\s+/g,''))?'daeri':/탁송(?:업체|회사)?$/.test(query.replace(/\s+/g,''))?'taksong':null;
+   if(inferred&&select)select.value=inferred;
    if(query.replace(/\s+/g,'').length<2){
     reset(query?'지역명을 두 글자 이상 입력해 주세요.':'');return;
    }
@@ -200,6 +204,7 @@
    if(route){show(route);return;}
    // Confirmed production images resolve immediately without relying on API availability.
    // A GitHub Pages backup must not assume these Cloudtype-generated assets exist there.
+   // Show lightweight exact-keyword SVGs immediately for verified city routes.
    if(location.hostname==='jeongukdaeri.kr'||location.hostname==='www.jeongukdaeri.kr'){
     const city=liveCityMatch(query,select?.value||'');
     if(city){show(city);return;}
@@ -245,7 +250,12 @@
    if(immediate)lookup();else pending=setTimeout(lookup,420);
   }
   input.addEventListener('input',()=>run(false));
-  select?.addEventListener('change',()=>run(true));
+  select?.addEventListener('change',()=>{
+   if(select.value&&/(?:대리운전|탁송)(?:업체|회사)?$/.test(input.value.trim())){
+    input.value=input.value.trim().replace(/(?:대리운전|(?:자동차|차량)?탁송)(업체|회사)?$/,(_,suffix)=>(select.value==='daeri'?'대리운전':'탁송')+(suffix||''));
+   }
+   run(true);
+  });
   form.addEventListener('submit',event=>{event.preventDefault();run(true)});
   if(input.value.trim().length>=2)run(false);
  });
