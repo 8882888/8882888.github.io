@@ -742,6 +742,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const gyeongsan=await (await get('/taksong/gyeongbuk/gyeongsan-si/')).text();
   assert.ok(gyeongsan.includes('실제 완료 운행내역에서 작성한 후기'));
   assert.ok(gyeongsan.includes('excel-0001/'),'region-specific reviewed historical dispatch linked');
+  assert.ok(gyeongsan.includes('id="regional-archive-matched-ride-links"'),'verified original archive visibly linked');
+  assert.equal((gyeongsan.match(/id="regional-archive-matched-ride-links"/g)||[]).length,1,'region archive is not duplicated');
+  assert.ok(gyeongsan.indexOf('id="regional-archive-matched-ride-links"')<gyeongsan.indexOf('지역별 탁송 경로'),'actual evidence should precede generic regional navigation');
+  assert.ok(!gyeongsan.includes('<h2>예약·예상요금·빠른배차</h2>'),'remove duplicate generic booking block from regional output');
+
 
   // Regional review links must point to published records with real IDs.
   let regionalReviewCount=0;
