@@ -12,3 +12,7 @@ const reverse=c.pair('낙동강하구둑인증센터 안동댐인증센터 탁�
 assert(forward&&reverse);assert.equal(forward.from.id,reverse.to.id);assert.equal(forward.to.id,reverse.from.id);
 assert.equal(c.pair('없는인증센터에서 가짜인증센터탁송'),null);
 console.log('PASS 10 keywords, separate mountain/bicycle intents, 87 official-list locations and '+count+' directed center pairs');
+
+const html=c.page(new URLSearchParams(),{layout:(a,b,body)=>body,esc:s=>String(s),host:'example.com'});
+assert(html.includes('cycling-centers-original-guide'));
+for(const id of ['224445317658','224430900352','224452067282'])assert(html.includes(id),'preserve published original '+id);
