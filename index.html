@@ -423,6 +423,18 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  .trip-flow,#field-notes{content-visibility:auto;contain-intrinsic-size:auto 430px}
 }
 </style>
+<style id="below-fold-mobile-render-20261105">
+/* Only lower informational sections may skip offscreen rendering.
+   Keep the hero, fare form, fare tables and fixed booking actions eager. */
+@media(max-width:768px){
+ #four-driver-intents-20261103,
+ #dynamic-service-card-search-20261103,
+ #secondary-search-and-traffic-20261105{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 600px;
+ }
+}
+</style>
 </head>
 <body>
 
