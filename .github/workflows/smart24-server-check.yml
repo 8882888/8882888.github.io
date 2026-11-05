@@ -69,6 +69,8 @@ jobs:
         run: node tests/naver-regional-focus-third-50.test.js
       - name: Verify next 200 unique regional SEO and image targets
         run: node tests/naver-regional-focus-twenty-first-200.test.js
+      - name: Protect source-backed national homepage authority and single-step booking
+        run: node tests/national-authority-homepage.test.js
       - name: Protect homepage image, booking actions, fares, dynamic cards and 2,591 rides
         run: node tests/homepage-conversion-regression.test.js
       - name: Validate all 2,591 historical ride links and quote paths
