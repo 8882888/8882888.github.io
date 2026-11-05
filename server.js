@@ -900,6 +900,33 @@ function priorityBlogEvidence(r,kind){
  const pickupGuidance=entry.handoff?'<h3>'+esc(entry.label||seoRegionLabel(r)+' '+label)+' 지역 차량 인수·인계 안내</h3><p>'+esc(entry.handoff)+'</p>':'';
  return '<section id="local-naver-originals" aria-label="기존 발행 원문 링크"><h2>'+esc(seoRegionLabel(r))+' '+label+' 관련 네이버 블로그 원문</h2><p>'+esc(entry.focus)+'</p>'+pickupGuidance+'<ol>'+items+'</ol><p>이 목록은 번개탁송대리운전이 이미 발행한 글의 제목·원문 링크입니다. 원문 본문·사진을 무단 복사하지 않았으며, 제목만으로 운행완료나 현재 요금을 확인한 것으로 표시하지 않습니다.</p><p><a href="/blog/archive/">공개 원문 630편 자료실</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">'+esc(r.name)+' 출발 예상요금</a> · <a href="tel:18114294">상담 1811-4294</a></p></section>';
 }
+// Customer-first controls are assembled from the requested administrative region.
+// No fictional fare amount, trip, local branch, or instantaneous dispatch is implied.
+function regionalDecisionPanel(r,kind,verified,history){
+ const label=seoRegionLabel(r),service=kind==='daeri'?'대리운전':'자동차탁송';
+ const from=encodeURIComponent(r.full_name),fare='/fare/?service='+kind+'&amp;from='+from;
+ const local=childrenByParent.get(r.slug)||[];
+ const siblings=r.parent_slug?(childrenByParent.get(r.parent_slug)||[]).filter(x=>x.slug!==r.slug):[];
+ const related=(local.length?local:siblings).slice(0,8);
+ const source=[...verified.map(x=>({date:x.date,departure:x.departure,destination:x.destination,fare:x.fare,url:rideUrl(x)})),
+  ...history.map(x=>({date:x.date,departure:x.departure,destination:x.destination,fare:x.fare,url:'/reviews/history/'+x.id+'/'}))]
+  .filter(x=>x.departure&&x.destination&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개');
+ const distinct=[...new Map(source.map(x=>[x.date+'|'+x.departure+'|'+x.destination,x])).values()].slice(0,3);
+ const tripItems=distinct.length?'<ol>'+distinct.map(x=>'<li><a href="'+esc(x.url)+'">'+esc(x.departure+' → '+x.destination)+'</a> · '+esc(x.date||'운행일 미기록')+' · 당시 요금 '+esc(x.fare||'미기록')+'</li>').join('')+'</ol>':
+  '<p>이 지역과 출발·도착지가 모두 확인된 공개 운행기록은 현재 표시할 수 없습니다. 임의의 완료 후기를 만들지 않습니다.</p>';
+ const childLinks=related.length?'<nav aria-label="'+esc(label)+' 인근 세부 지역"><strong>가까운 지역 상세 안내</strong><p>'+related.map(x=>'<a href="'+servicePath(x,kind)+'">'+esc(seoRegionLabel(x)+service)+'</a>').join(' · ')+'</p></nav>':'';
+ const instructions=kind==='daeri'?'출발 주차 위치·목적지·출발 시각·경유 여부를 알려주세요.':'차량 인수·인계 위치·차종·희망 시각·열쇠 전달 방법을 알려주세요.';
+ return '<section id="regional-booking-first" aria-label="'+esc(label+' '+service)+' 요금·후기·상담 바로가기" style="border:2px solid #1764a3;border-radius:15px;padding:18px;margin:12px 0 22px;background:#f5faff">'+
+  '<h2 style="margin-top:0">'+esc(label+service)+' 요금·실제 운행·예약</h2>'+
+  '<p>'+esc(instructions)+' <strong>현재 요금과 배차 가능 여부는 상담 후 확정</strong>됩니다.</p>'+
+  '<nav aria-label="빠른 예약 메뉴" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px">'+
+  '<a href="'+fare+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#0755a3;color:#fff;font-weight:800;text-decoration:none">출발지 예상요금 조회</a>'+
+  '<a href="/reviews/history/?kind='+kind+'&amp;q='+from+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">지역 실제 후기 검색</a>'+
+  '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
+  '<h3>공개된 실제 완료 운행 '+distinct.length+'건</h3>'+tripItems+
+  '<p style="font-size:.93em">위 금액은 해당 운행 당시 요금이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>'+
+  childLinks+'</section>';
+}
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const keyword=seoRegionLabel(r)+service;
@@ -978,7 +1005,7 @@ async function servicePage(r,kind){
  })[r.level]||'정확한 출발 주소와 차량 위치를 확인합니다.';
  const regionalLocalityChecklist=priorityMeta?
   '<section id="priority-locality-customer-checklist-20261105"><h2>'+esc(keyword)+' 예약 전 지역별 확인사항</h2><p>'+esc(localitySpecificAdvice)+'</p><p>'+(kind==='taksong'?'차량 운행 가능 상태와 인수·인계 담당자, 열쇠 전달 방법을 확인합니다.':'고객 동승·경유·대기 여부와 목적지 주차 위치를 확인합니다.')+' 희망 날짜와 시각, 차종, 실제 출발·도착 주소를 알려주시면 현재 요금과 배차 가능 여부를 확인합니다.</p><p>해당 지역의 과거 운행이 기록되지 않았다면 완료 후기를 임의로 만들지 않습니다.</p><p><a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">'+esc(keyword)+' 확인된 지역 후기</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">출발지 요금조회</a> · <a href="tel:18114294">1811-4294 예약상담</a></p></section>':'';
- const regionalBatchMatches=historicalRides.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)).slice(0,20);
+ const regionalBatchMatches=historicalRides.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개').slice(0,20);
  // Resolve geography from the original dispatch fields, not provisional batch labels.
  // Unqualified neighborhoods and same-name cities must pass the shared locality matcher.
  const regionalBatchLinks=regionalBatchMatches.length?'<section id="regional-archive-matched-ride-links"><h2>'+esc(keyword)+' 실제 운행완료 후기 · 지역별 연결</h2><p>기존 2,591건 중 해당 행정구역이 확인된 운행기록을 연결했습니다. 고객정보와 원본 배차 메모는 공개하지 않습니다.</p><ul>'+regionalBatchMatches.map(old=>'<li><a href="/reviews/history/'+old.id+'/">'+esc(keyword+' 운행완료 후기｜'+old.departure+' → '+old.destination)+'</a> · '+esc(old.date)+' · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(old.departure==='지역 비공개'?'':old.departure)+'&amp;to='+encodeURIComponent(old.destination==='지역 비공개'?'':old.destination)+'">예상요금 조회</a> · <a href="tel:18114294">예약상담</a></li>').join('')+'</ul><p><a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">이 지역 실제 운행완료 후기 전체 보기</a></p></section>':'';
@@ -1100,7 +1127,7 @@ async function servicePage(r,kind){
  const gangwonArchiveLead=kind==='taksong'&&r.name==='강원특별자치도'?'<section id="gangwon-source-archive" aria-labelledby="gangwon-source-archive-heading"><h2 id="gangwon-source-archive-heading">강원도탁송 영동·영서 실제 블로그 글과 차량 인수 안내</h2><p>영동의 속초·양양·주문진·강릉·동해·삼척, 영서의 춘천·원주·홍천·횡성·평창·정선은 차량 인수 위치와 기사 복귀 여건이 서로 다릅니다. 별도 지역 홍보글을 반복하기보다 실제 공개된 원문과 주차장·인계 준비사항을 함께 확인할 수 있도록 정리했습니다.</p><p><a href="/blog/archive/gangwon-taksong/">강원도탁송 영동·영서 블로그 자료실 읽기</a> · <a href="/blog/archive/mountain-cycle/">설악산 종주 차량회수 관련 글</a> · <a href="tel:18114294">전국탁송 상담 1811-4294</a></p></section>':'';
  const jejuPageSchema=jejuSearchPage?JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:searchTitle,description:searchDesc,url:pageUrl,primaryImageOfPage:{'@type':'ImageObject',url:imageUrl,contentUrl:imageUrl,name:'제주도탁송 지역명 맞춤 명함',width:1200,height:800,encodingFormat:'image/png'},about:{'@type':'Service',name:'제주탁송',provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}}).replace(/</g,'\\u003c'):'';
  const jejuContact=jejuSearchPage?'<section id="jeju-dedicated-contact"><h2>제주탁송 대표번호 1877-5245</h2><p>제주도 차량 선적·항구 인계 및 육지 연계 탁송은 제주탁송 전용 번호로 상담해 주세요.</p><p><a class="cta" href="tel:18775245">제주탁송 전화 상담 1877-5245</a></p></section>':'';
- const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+companySection+blogKeywordGuide+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
+ const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+regionalDecisionPanel(r,kind,matches,historicalMatches)+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+companySection+blogKeywordGuide+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Show useful local service information and a phone CTA before a generic promotional card.
