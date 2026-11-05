@@ -74,6 +74,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 (async()=>{
  try{
   for(let i=0;i<50;i++){try{const r=await get('/health');if(r.ok)break}catch{}await delay(100)}
+  const coverageResponse=await get('/coverage/');
+  assert.equal(coverageResponse.status,200,'Nationwide province hub must return HTTP 200');
+  const coverageHTML=await coverageResponse.text();
+  assert(coverageHTML.includes('nationwide-seventeen-province-coverage-20261105'),'National coverage content must be rendered');
+  assert(coverageHTML.includes('https://example.com/coverage/'),'National coverage page must have canonical URL');
+  for(const title of ['서울','부산','대구','인천','대전','광주','울산','세종','경기','강원','충북','충남','전북','전남','경북','경남','제주']){
+   assert(coverageHTML.includes(title),'National coverage must mention '+title);
+  }
   for(const kind of ['daeri','taksong']){
    const hub=await (await get('/'+kind+'/')).text();
    assert.ok(hub.includes('id="vehicle-guide"'),'national vehicle guide anchor');
