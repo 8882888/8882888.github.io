@@ -25,7 +25,7 @@ const source=fs.readFileSync(path.join(__dirname,'../server.js'),'utf8');
 assert(source.includes('const taksongReviewTitle='),'regional taksong title must use review-first logic');
 assert(source.includes('kind===\'taksong\'?taksongReviewTitle:daeriReviewTitle'),'all dynamic taksong titles must use review-first while retaining verified daeri headings');
 assert(source.includes("const body=mobileReviewBookingBar(kind,name)+daeguTaksongGuide"),'mobile booking must precede regional service content while verified reviews remain first');
-assert(source.includes("ganghwaReviewLead+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard"),'verified review evidence must precede visual card with dedicated Ganghwa and Busan editorials');
+assert(source.includes("ganghwaReviewLead+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard"),'verified review evidence must precede visual card with dedicated Ganghwa and Busan editorials');
 assert(source.includes("tripMatchesRegion(x,r)"),'verified region matching is required');
 assert(source.includes("제주도탁송 후기｜"),'Jeju review-first heading required');
 assert(source.includes("const busanReviewLead="),'preserve existing verified Busan original references');
