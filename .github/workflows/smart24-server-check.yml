@@ -43,6 +43,8 @@ jobs:
         run: node tests/regional-history-ambiguity.test.js
       - name: Verify 63 regional blog keyword suffixes and non-duplicated article guidance
         run: node tests/regional-blog-keywords.test.js
+      - name: Validate 1,000 customer journey quality gates across 50 regional targets
+        run: node tests/competitive-conversion-1000.test.js
       - name: Verify user priority 25 locality keywords
         run: node tests/blog-priority-25.test.js
       - name: Verify 100 new regional keywords across 20 canonical blog guides
