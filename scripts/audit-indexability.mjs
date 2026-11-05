@@ -3,7 +3,7 @@
 // All sitemap URLs are checked, including recursively linked sitemap indexes.
 import {writeFileSync} from 'node:fs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
-const sitemapPaths=['/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
+const sitemapPaths=['/sitemap-all.xml','/sitemap-history.xml','/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
 const unescapeXml=s=>s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 const all=new Map(),sitemapErrors=[],processed=new Set();
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
@@ -33,7 +33,7 @@ async function scanSitemap(url,depth=0){
 for(const path of sitemapPaths)await scanSitemap(origin+path);
 const list=[...all.values()];
 console.log('Sitemap URLs discovered:',list.length,'Sitemap errors:',sitemapErrors.length);
-let current=0;const results=Array(list.length);
+let current=0,done=0;const results=Array(list.length);
 async function worker(){
  while(true){
   const i=current++;if(i>=list.length)return;
@@ -61,7 +61,8 @@ async function worker(){
    }
   }catch(e){problem.push(e?.name==='AbortError'?'timeout':'fetch_error:'+String(e).slice(0,100))}
   results[i]={...item,status,finalUrl,canonical,robots,title,problems:problem};
-  if((i+1)%100===0)console.log('Checked',i+1,'/',list.length);
+  done++;
+  if(done%500===0)console.log('Checked',done,'/',list.length);
   await delay(100);
  }
 }
@@ -69,7 +70,7 @@ await Promise.all(Array.from({length:4},worker));
 const titles=new Map();
 for(const r of results){if(!r?.title)continue;let a=titles.get(r.title)||[];a.push(r.url);titles.set(r.title,a)}
 for(const r of results){if(r.title&&titles.get(r.title).length>1)r.problems.push('duplicate_title')}
-const counts={discovered:list.length,checked:results.length,passed:results.filter(r=>r.problems.length===0).length,
+const counts={discovered:list.length,checked:results.length,listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,passed:results.filter(r=>r.problems.length===0).length,
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
