@@ -12,6 +12,30 @@
  };
  const safePath=(value,prefix)=>typeof value==='string'&&value.startsWith(prefix)&&!value.startsWith('//')&&!value.includes('..')?value:null;
  const imagePath=value=>['/card/','/assets/','/keyword-card/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
+ // These eight image paths were checked against the live site's /region/ page.
+ // Local resolution is limited to unambiguous metropolitan-city terms.
+ const verifiedCities=[
+  {name:'서울',aliases:['서울','서울특별시'],id:'1',slug:'seoul'},
+  {name:'부산',aliases:['부산','부산광역시'],id:'494',slug:'busan'},
+  {name:'대구',aliases:['대구','대구광역시'],id:'765',slug:'daegu'},
+  {name:'울산',aliases:['울산','울산광역시'],id:'1855',slug:'ulsan'}
+ ];
+ function verifiedCityCards(query,service){
+  const compact=query.replace(/\\s+/g,'');
+  const city=verifiedCities.find(c=>c.aliases.some(n=>
+   compact===n||compact===n+'탁송'||compact===n+'자동차탁송'||compact===n+'대리운전'
+  ));
+  if(!city)return null;
+  const kinds=service==='daeri'?['daeri']:service==='taksong'?['taksong']:
+   /대리운전/.test(compact)?['daeri']:/탁송/.test(compact)?['taksong']:['daeri','taksong'];
+  return {status:'matched',region:city.name,cards:kinds.map(kind=>({
+   kind,displayKeyword:city.name+(kind==='daeri'?'대리운전':'탁송'),
+   image:'/card/area-'+city.id+'-'+kind+'-brand-v5.png',
+   url:'/'+kind+'/'+city.slug+'/',
+   description:city.name+' '+(kind==='daeri'?'대리운전':'차량탁송')+' 안내. 실제 배차 가능 여부와 요금은 상담 후 확인합니다.',
+   phone:'1811-4294'
+  }))};
+ }
  const guidePath=value=>['/daeri/','/taksong/','/service/','/special/','/business/','/설악산탁송/','/지리산탁송/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
  const addLink=(parent,href,text,cls)=>{
   const a=node('a',cls,text);a.href=href;parent.append(a);return a;
@@ -128,6 +152,8 @@
     reset(query?'지역명을 두 글자 이상 입력해 주세요.':'');return;
    }
    const seq=++sequence;
+   const verified=verifiedCityCards(query,select?.value||'');
+   if(verified){show(verified);message.textContent=verified.region+' 지역 명함을 표시했습니다. 이미지가 보이지 않는 경우 지역 상세 안내를 이용해 주세요.';return;}
    async function lookup(){
     controller=new AbortController();
     let timedOut=false;
