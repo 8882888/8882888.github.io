@@ -246,6 +246,7 @@ const historicalRides=(Array.isArray(rides)?rides:[]).map((x,i)=>{
  const place=completedRidePublicPlace;
  return {id:'excel-'+String(i+1).padStart(4,'0'),date:x.date,service,departure:place(dep),destination:place(dest),fare:x.fare||'',rawDeparture:dep,rawDestination:dest};
 });
+const historicalRideById=new Map(historicalRides.map(x=>[x.id,x]));
 const historyCounts=Object.freeze({taksong:historicalRides.filter(x=>x.service==='taksong').length,daeri:historicalRides.filter(x=>x.service==='daeri').length,mixed:historicalRides.filter(x=>x.service==='mixed').length});
 if(historicalRides.length!==2591||historyCounts.taksong!==804||historyCounts.daeri!==1786||historyCounts.mixed!==1)throw Error('Completed ride classification changed unexpectedly');
 function vehicleGuideLink(kind){
@@ -1724,7 +1725,7 @@ const routeResult=routeKeywordPages.handle(pathname,u);if(routeResult){if(routeR
 if(pathname==='/fare/routes/'||pathname==='/fare/routes')return respond(res,200,routeGuides.index());
 const fareRouteMatch=pathname.match(/^\/fare\/route\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/(seoul|incheon|daejeon|daegu|busan)\/?$/);
 if(fareRouteMatch){if(!pathname.endsWith('/')){res.writeHead(301,{location:pathname+'/'});return res.end()}return routeGuides.page(fareRouteMatch[1],fareRouteMatch[2]).then(html=>html?respond(res,200,html):respond(res,404,'구간을 찾을 수 없습니다.')).catch(err=>{console.error('fare route error',err);respond(res,500,'요금 안내를 불러올 수 없습니다.')})}
-const historicalDetail=pathname.match(new RegExp('^/reviews/history/(excel-[0-9]{4})/?$'));if(historicalDetail){const x=historicalRides.find(v=>v.id===historicalDetail[1]);return x?respond(res,200,historyDetailPage(x)):respond(res,404,'운행기록을 찾을 수 없습니다.');}
+const historicalDetail=pathname.match(new RegExp('^/reviews/history/(excel-[0-9]{4})/?$'));if(historicalDetail){const x=historicalRideById.get(historicalDetail[1]);return x?respond(res,200,historyDetailPage(x)):respond(res,404,'운행기록을 찾을 수 없습니다.');}
 if(pathname==='/blog/archive'){res.writeHead(301,{location:'/blog/archive/'+u.search});return res.end()}
 const archivePage=blogArchive.handle(pathname,u,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});if(archivePage){if(archivePage.noindex)res.setHeader('X-Robots-Tag','noindex, follow');return respond(res,archivePage.status,archivePage.html);}
  if(pathname==='/blog'){res.writeHead(301,{location:'/blog/'+u.search});return res.end()}
