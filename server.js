@@ -2301,7 +2301,6 @@ if(pathname==='/sitemap.xml'){
   ...vehicleTopics.map(([name])=>vehicleTopicPath(name)),
   ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
   ...priorityRegionalPages.map(p=>servicePath(regionByFullName.get(p.region),p.kind)),
-  ...naverFocus2900.slice(0,200).map(p=>servicePath(regionByFullName.get(p.region),p.kind)),
   '/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),
   '/blog/archive/categories/',
   '/blog/daeri-regions/',...blogHashtagArticlePaths,'/blog/taksong-categories/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/',...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],
@@ -2311,7 +2310,9 @@ if(pathname==='/sitemap.xml'){
   // Keep a limited selection of reviewed routes in the main sitemap;
   // the dedicated reviewed-routes sitemap retains all source-backed routes.
   ...routeKeywordPages.reviewed.entries.slice(0,50).map(e=>routeKeywordPages.reviewed.routePath(e)),
-  ...keywordEngine.activityUrls
+  ...keywordEngine.activityUrls,
+  // Curated guides and verified routes remain ahead of rotating locality entries.
+  ...naverFocus2900.slice(0,200).map(p=>servicePath(regionByFullName.get(p.region),p.kind))
  ];
  // The primary discovery map stays intentionally under 500 URLs; deeper regional
  // and completed-route pages remain reachable in their dedicated sitemaps.
