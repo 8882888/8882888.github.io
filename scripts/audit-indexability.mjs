@@ -98,6 +98,29 @@ const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
 writeFileSync('indexability-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,counts,results},null,2));
 writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,body_hash,has_ride_link,problems,listed_in',
  ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.bodyHash,r.hasRideLink,r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
+const criticalTypes=new Set(['http_error','x_robots_noindex','meta_noindex','missing_canonical','canonical_mismatch','timeout','not_html']);
+const critical=results.filter(r=>r.problems.some(p=>criticalTypes.has(p)||p.startsWith('fetch_error')));
+const review=results.filter(r=>r.problems.length&&!critical.includes(r));
+const lines=[
+ '# Smart24 URL technical indexability audit',
+ '',
+ 'Generated: '+new Date().toISOString(),
+ 'Discovered: '+counts.discovered+' | Checked: '+counts.checked+' | Critical: '+critical.length+' | Review: '+review.length,
+ '',
+ '> This audit measures technical indexability, not Naver confirmed index inclusion.',
+ '',
+ '## Critical URLs (first 100)',
+ ...critical.slice(0,100).map(r=>'- '+r.url+' — '+r.problems.join(', ')),
+ '',
+ '## Review candidates (first 100)',
+ ...review.slice(0,100).map(r=>'- '+r.url+' — '+r.problems.join(', ')),
+ '',
+ '## Sitemap and robots findings',
+ ...[...sitemapErrors,...crawlerDiagnostics].map(x=>'- '+x),
+ ''
+];
+writeFileSync('indexability-summary.md',lines.join('\\n'));
+console.log('Critical:',critical.length,'Review:',review.length);
 console.log(JSON.stringify(counts,null,2));
 console.log('NOTE: 100% technical URL checks cannot establish Naver indexing. Check Naver Search Advisor URL inspection and site diagnosis separately.');
 if(counts.issues||counts.sitemapErrors.length||counts.crawlerDiagnostics.length||counts.discovered===0)process.exitCode=1;
