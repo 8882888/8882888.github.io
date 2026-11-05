@@ -7,6 +7,7 @@ on:
       - 'tools/audit_live_home_mobile.cjs'
       - 'tools/audit_mobile_100.cjs'
       - 'tools/audit_review_mobile_cta.cjs'
+      - 'tools/audit_five_journeys_mobile.cjs'
       - 'index.html'
       - 'assets/region-card-preview.js'
       - 'lib/exact-keyword-card.js'
@@ -102,6 +103,11 @@ jobs:
           NODE_PATH: /tmp/smart24-browser-tooling/node_modules
           SMART24_AUDIT_BASE: https://jeongukdaeri.kr
         run: node tools/audit_review_mobile_cta.cjs
+      - name: Measure and validate mobile search, booking, corporate and purpose journeys
+        env:
+          NODE_PATH: /tmp/smart24-browser-tooling/node_modules
+          SMART24_AUDIT_BASE: https://jeongukdaeri.kr
+        run: node tools/audit_five_journeys_mobile.cjs
       - name: Upload browser screenshots and JSON results
         if: always()
         uses: actions/upload-artifact@v4
