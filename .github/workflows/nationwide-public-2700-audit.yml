@@ -1,0 +1,33 @@
+name: Audit 2700 nationwide public URLs
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/audit_public_2700_urls.cjs'
+      - '.github/workflows/nationwide-public-2700-audit.yml'
+jobs:
+  nationwide-public:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify script syntax and immutable ride count
+        run: |
+          node --check tools/audit_public_2700_urls.cjs
+          node -e "const r=require('./data/ride-history.json');if(r.length!==2591)process.exit(1)"
+      - name: Audit all 2700 real public URLs with bounded concurrency
+        env:
+          SMART24_AUDIT_BASE: https://jeongukdaeri.kr
+          SMART24_AUDIT_OUTPUT: /tmp/smart24-2700-public-pages.json
+        run: node tools/audit_public_2700_urls.cjs
+      - name: Upload all 2700 URL outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-2700-public-url-audit
+          path: /tmp/smart24-2700-public-pages.json
+          if-no-files-found: warn
