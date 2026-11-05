@@ -1,0 +1,25 @@
+name: Full sitemap URL indexability audit
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Read-only full sitemap audit
+        run: node scripts/audit-indexability.mjs
+      - name: Upload full audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-indexability-audit
+          path: |
+            indexability-audit.json
+            indexability-audit.csv
+          if-no-files-found: warn
