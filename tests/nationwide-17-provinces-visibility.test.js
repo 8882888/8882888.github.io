@@ -17,6 +17,8 @@ assert(home.includes('href="/coverage/"'),'Homepage must link to nationwide prov
 assert(server.includes("servicePath(r,'taksong')")&&server.includes("servicePath(r,'daeri')"),'Province hub must link both services');
 assert(server.includes('matchingHistoryRegion(x,matchedRegion,regions)'),'Region ride matching must stay evidence-backed');
 assert(server.includes('href="/reviews/history/?region=\'+encodeURIComponent(r.slug)'),'Province links must filter verified records');
+assert(server.includes("&amp;kind=daeri\">확인된 완료기록"),'Province hub must link designated-driver evidence');
+assert(server.includes('href="/fare/?service=daeri&amp;from=\'+encodeURIComponent(r.full_name)'),'Province hub must link driver fare');
 assert(server.includes('href="/fare/?service=taksong&amp;from=\'+encodeURIComponent(r.full_name)'),'Province must link prepared fare search');
 assert(seo.includes('"/coverage/": "nationwide-seventeen-province-coverage-20261105"'),'Production SEO must check the new national index');
 console.log('PASS: 17 real administrative provinces, homepage/sitemap/SEO routes and evidence-only review links');
