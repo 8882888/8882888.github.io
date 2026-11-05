@@ -47,6 +47,12 @@ const corp=read('service/corporate/index.html');
 assert(corp.includes('id="corporate-postpaid-guide-20261105"'),'Corporate page must show postpaid guidance first');
 assert(corp.indexOf('id="corporate-postpaid-guide-20261105"')<corp.indexOf('id="corporate-image-and-consult-1811"'),'Postpaid process must appear before general corporate guide');
 assert(corp.includes('후불 정산은 자동 승인되는 상품이 아닙니다'),'Never guarantee corporate credit or postpaid billing');
+assert(corp.includes('id="corporate-inquiry-shortcuts-20261105"'),'Corporate page needs intent-first inquiry');
+for(const t of ['/reviews/history/?kind=taksong','/reviews/history/?kind=daeri','/fare/?service=taksong','/service/daily-driver/']){
+ assert(corp.includes(t),'Corporate customers need evidence, fare and service links: '+t);
+}
+assert(home.includes('/service/corporate/#corporate-inquiry-shortcuts-20261105'),'Homepage must offer direct corporate inquiry shortcut');
+
 for(const t of ['후불 정산 전화문의 1811-4294','/fare/?service=daeri','/reviews/history/?kind=daeri'])assert(corp.includes(t),'Corporate decision path missing '+t);
 for(const t of ['id="ride-review-direct-booking-20261105"','id="verified-ride-booking-shortcuts-20261105"','법인 후불 정산 조건 확인','전화 예약상담 1811-4294']){
  assert(server.includes(t),'Review-to-booking path missing '+t);
