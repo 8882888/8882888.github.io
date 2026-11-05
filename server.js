@@ -34,7 +34,7 @@ const regions=loadLegalRegions();
 const regionByFullName=new Map(regions.map(r=>[r.full_name,r]));
 const priorityRegionalPages=load('data/priority-regions.json').pages;
 const innovationCity100=load('data/innovation-city-100.json').entries;
-const {getFocus:innovationSearchFocus,matchesFocus:matchesInnovationFocus}=require('./lib/innovation-search-focus');
+const {getFocus:innovationSearchFocus,matchesFocus:matchesInnovationFocus,findFocus:findInnovationFocus,areas:innovationFocusAreas,entries:innovationFocusEntries}=require('./lib/innovation-search-focus');
 const naverFocus50=load('data/naver-regional-focus-50.json').priority;
 const naverFocusNext50=load('data/naver-regional-focus-next-50.json').priority;
 const naverFocusThird50=load('data/naver-regional-focus-third-50.json').priority;
@@ -956,7 +956,7 @@ function innovationCityPanel(r,kind){
  const uniqueEvidence=[...new Map(evidence.map(x=>[x.row.date+'|'+x.row.departure+'|'+x.row.destination,x])).values()].slice(0,3);
  const evidenceHtml=focus?'<h3>'+esc(focus.keyword)+' 실제 운행정보 확인</h3>'+(uniqueEvidence.length?
   '<p>출발 또는 도착 장소가 확인된 기존 운행정보입니다. 당시 요금은 현재 견적과 다릅니다.</p><ul>'+uniqueEvidence.map(({row,url})=>'<li><a href="'+esc(url)+'">'+esc(row.departure+' → '+row.destination)+'</a> · '+esc(row.date||'운행일 미기록')+' · 당시 요금 '+esc(row.fare||'미기록')+'</li>').join('')+'</ul>':
-  '<p>현재 공개 자료에서 '+esc(focus.keyword)+'에 해당하는 완료 운행정보는 확인되지 않아 후기를 연결하지 않았습니다. 아래 시 전체 운행기록은 혁신도시 실적과 구분해 확인해 주세요.</p>'):'';
+  '<p>현재 공개 자료에서 '+esc(focus.keyword)+'에 해당하는 완료 운행정보는 확인되지 않아 후기를 연결하지 않았습니다. 아래 행정구역 전체 운행기록은 혁신도시·혁신지구 실적과 구분해 확인해 주세요.</p>'):'';
  const service=kind==='daeri'?'대리운전':'자동차탁송',from=encodeURIComponent(r.full_name);
  const links=nearby.map(name=>{
   const region=regionByFullName.get(name);
@@ -969,8 +969,9 @@ function innovationCityPanel(r,kind){
   '<h2>'+esc(focus?focus.keyword+' 요금·예약 안내':title+' '+service+' 이용 안내')+'</h2><p>'+esc(practical)+'</p>'+
   (focus?'<p>출발 위치: '+esc(focus.pickup)+'. 희망 날짜·시각과 목적지를 알려주시면 기사 접근·복귀 여건을 확인해 배차 가능 여부와 요금을 안내합니다.</p>':'')+
   '<h3>'+esc(service)+' 예약할 때 필요한 정보</h3><p>'+esc(steps)+'</p>'+
-  '<p><a href="/fare/?service='+kind+'&amp;from='+from+'">이 지역 출발 예상요금 조회</a> · <a href="/reviews/history/?kind='+kind+'&amp;region='+encodeURIComponent(r.slug)+'">시 전체 실제 운행기록 확인</a> · <a href="tel:18114294">상담 1811-4294</a></p>'+
+  '<p><a href="/fare/?service='+kind+'&amp;from='+from+'">이 지역 출발 예상요금 조회</a> · <a href="/reviews/history/?kind='+kind+'&amp;region='+encodeURIComponent(r.slug)+'">행정구역 전체 실제 운행기록 확인</a> · <a href="tel:18114294">상담 1811-4294</a></p>'+
   evidenceHtml+
+  '<p><a href="/region/innovation-cities/">세종·지방 혁신도시 전체 안내</a></p>'+
   (links?'<nav aria-label="인근 지역 '+esc(service)+' 안내"><strong>인접 지역 연결</strong><p>'+links+'</p></nav>':'')+
   '<p><small>지역 내 지점·상주기사·특정 기관과의 제휴를 의미하지 않으며, 실제 배차와 요금은 상담 후 확인합니다.</small></p></section>';
 }
@@ -1998,6 +1999,15 @@ const traverseTopic=(pathname==='/'||pathname==='/index.html')&&explicitMountain
 if(traverseTopic&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route'].includes(traverseTopic.slug)){
  res.writeHead(302,{location:encodeURI(traverseTopic.url),'cache-control':'no-store'});return res.end();
 }
+const innovationSearchRoute=pathname==='/'||pathname==='/index.html'||pathname==='/region/';
+if(innovationSearchRoute&&/^(?:전북|충북)혁신도시(?:대리운전|탁송)$/.test(compact(u.searchParams.get('q')||''))){
+ res.writeHead(302,{location:'/region/innovation-cities/','cache-control':'no-store'});return res.end();
+}
+const innovationQuery=innovationSearchRoute?findInnovationFocus(u.searchParams.get('q')):null;
+const innovationKind=u.searchParams.get('service');
+if(innovationQuery&&(!innovationKind||innovationKind===innovationQuery.kind)){
+ res.writeHead(302,{location:servicePath(regionByFullName.get(innovationQuery.region),innovationQuery.kind),'cache-control':'no-store'});return res.end();
+}
 const regionalRedirect=(pathname==='/'||pathname==='/index.html')?regionalTaksongTarget(explicitMountainKeyword):null;
 if(regionalRedirect){res.writeHead(302,{location:regionalRedirect,'cache-control':'no-store'});return res.end();}
 if(pathname==='/'||pathname==='/index.html'){if(!cachedHomepageHtml){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');cachedHomepageHtml=applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/');}return respond(res,200,cachedHomepageHtml)}
@@ -2082,6 +2092,17 @@ if(pathname==='/api/region-card-preview'){
  res.setHeader('cache-control','private, no-store, max-age=0');
  res.setHeader('x-robots-tag','noindex, nofollow');
  return respond(res,200,JSON.stringify(data),'application/json; charset=utf-8');
+}
+if(pathname==='/region/innovation-cities'){
+ res.writeHead(301,{location:'/region/innovation-cities/'});return res.end();
+}
+if(pathname==='/region/innovation-cities/'){
+ const cards=innovationFocusAreas.map(area=>{
+  const r=regionByFullName.get(area.region),guide=innovationAreas[area.region];
+  return '<section><h2>'+esc(area.pickup)+'</h2><p>'+esc(guide[1])+'</p><p>'+['daeri','taksong'].map(kind=>'<a href="'+servicePath(r,kind)+'">'+esc(innovationSearchFocus(area.region,kind).keyword)+'</a>').join(' · ')+'</p></section>';
+ }).join('');
+ const body='<section><h1>세종·지방 혁신도시 대리운전·탁송</h1><p>전주·완주, 진천·음성처럼 여러 시·군에 걸친 혁신도시는 실제 차량이 있는 행정구역을 선택해 주세요. 아래는 세종과 혁신도시·혁신지구가 있는 12개 행정구역의 안내입니다.</p><p>대리운전은 고객 동승·출발 시각·목적지·경유 여부를, 탁송은 차종·차량 상태·열쇠 인수인·도착지 수령인을 확인합니다. 요금은 거리·시간대·기사 접근과 복귀 여건에 따라 상담 후 확정합니다.</p><p><a class="cta" href="tel:18114294">예약 상담 1811-4294</a></p></section>'+cards+'<section><h2>운행정보 확인 기준</h2><p>혁신도시·혁신지구의 출발 또는 도착이 확인되는 실제 운행정보만 해당 구역의 후기로 연결합니다. 시·군·구 전체 기록은 구역별 실적과 구분합니다. 과거 요금은 현재 예약 견적이 아닙니다.</p></section>';
+ return respond(res,200,layout('세종·지방 혁신도시 대리운전·탁송 지역 안내','세종·원주·진주·나주·김천·전주·완주·진천·음성·대구 신서·울산 우정·부산 동삼의 차량 위치별 대리운전·탁송 예약 안내.',body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/innovation-cities/'));
 }
 if(pathname==='/region'){res.writeHead(301,{location:'/region/'+u.search});return res.end()}
 if(pathname==='/region/'){
@@ -2217,7 +2238,7 @@ if(historySitemapMatch){
 }
 if(pathname==='/sitemap-priority.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const urls=['/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/','/find/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/daeri/incheon/ganghwa-gun/','/region/incheon-daeri-taksong/','/region/gyeonggi-daeri-taksong/','/region/seoul-daeri-taksong/','/region/gangwon-daeri-taksong/','/service/corporate/','/service/heavy-truck-taksong/','/business/rental-car/','/business/used-car/','/business/export-port/','/business/auction/','/blog/taksong-categories/','/blog/archive/gyeongsang-taksong/','/blog/archive/vehicle-taksong/','/blog/archive/general-daeri/','/blog/','/blog/archive/','/blog/archive/categories/','/blog/guides/','/blog/daeri-regions/',...blogHashtagArticlePaths,...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],'/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),'/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),...priorityRegionalPages.map(p=>{
+ const urls=['/region/innovation-cities/',...innovationFocusEntries.map(x=>servicePath(regionByFullName.get(x.region),x.kind)),'/','/daeri/','/taksong/','/route-taksong/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/long-distance-taksong/','/fare/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/region/','/find/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/daeri/incheon/ganghwa-gun/','/region/incheon-daeri-taksong/','/region/gyeonggi-daeri-taksong/','/region/seoul-daeri-taksong/','/region/gangwon-daeri-taksong/','/service/corporate/','/service/heavy-truck-taksong/','/business/rental-car/','/business/used-car/','/business/export-port/','/business/auction/','/blog/taksong-categories/','/blog/archive/gyeongsang-taksong/','/blog/archive/vehicle-taksong/','/blog/archive/general-daeri/','/blog/','/blog/archive/','/blog/archive/categories/','/blog/guides/','/blog/daeri-regions/',...blogHashtagArticlePaths,...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],'/route-taksong/centers/','/travel/food-map/','/taksong/jeju/','/recruit/daeri/','/recruit/taksong/',...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/'),'/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),...priorityRegionalPages.map(p=>{
   const region=regionByFullName.get(p.region);
   return servicePath(region,p.kind);
  }),...naverFocus2900.map(p=>servicePath(regionByFullName.get(p.region),p.kind))];
@@ -2260,6 +2281,7 @@ if(pathname==='/sitemap.xml'){
  // All historic URLs remain reachable; this is a crawl-discovery change only.
  const provinceRegions=regions.filter(r=>r.level==='시도');
  const focused=[
+  '/region/innovation-cities/',...innovationFocusEntries.map(x=>servicePath(regionByFullName.get(x.region),x.kind)),
   '/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],
   '/daeri/sejong/','/taksong/sejong/','/daeri/gangwon/wonju-si/','/taksong/gyeongnam/jinju-si/','/daeri/jeonnam/naju-si/','/taksong/gyeongbuk/gimcheon-si/',
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
