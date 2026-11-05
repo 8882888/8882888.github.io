@@ -61,6 +61,8 @@ jobs:
         run: node tests/naver-regional-focus-twenty-first-200.test.js
       - name: Protect homepage image, booking actions, fares, dynamic cards and 2,591 rides
         run: node tests/homepage-conversion-regression.test.js
+      - name: Validate all 2,591 historical ride links and quote paths
+        run: node tests/review-archive-link-integrity-2591.test.js
       - name: Verify 300 unresolved ride records against legal regions
         run: node tests/unresolved-review-audit-300.test.js
       - name: Verify nationwide dynamic routes
