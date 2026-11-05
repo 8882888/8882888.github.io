@@ -43,6 +43,24 @@ PATHS = {
     "/business/export-port/": "export-b2b-operating-guide-20261103",
     "/business/auction/": "auction-b2b-operating-guide-20261103",
 }
+# Batch 1: 20 nationwide public URLs. Check crawlable HTML and ride-to-booking
+# content; do not treat a successful HTTP response as Naver indexing.
+NATIONWIDE_BATCH_20 = [
+    "/taksong/seoul/", "/taksong/busan/", "/taksong/incheon/",
+    "/taksong/daegu/", "/taksong/gwangju/", "/taksong/daejeon/",
+    "/taksong/ulsan/", "/taksong/sejong/", "/taksong/gyeonggi/",
+    "/taksong/gangwon/", "/taksong/chungbuk/", "/taksong/chungnam/",
+    "/taksong/jeonbuk/", "/taksong/jeonnam/", "/taksong/gyeongbuk/",
+    "/taksong/gyeongnam/", "/taksong/jeju/",
+    "/reviews/history/", "/fare/", "/coverage/",
+]
+assert len(NATIONWIDE_BATCH_20) == len(set(NATIONWIDE_BATCH_20)) == 20
+for url in NATIONWIDE_BATCH_20:
+    PATHS.setdefault(url, "review-mobile-booking-bar" if url.startswith("/taksong/") else
+                     "history-filtered-completed-reviews-202611" if url == "/reviews/history/" else
+                     'id="quote-form"' if url == "/fare/" else
+                     "nationwide-seventeen-province-coverage-20261105")
+
 BLOG_HASHTAG_ARTICLES = {
     "/blog/daeri-regions/" + item["slug"] + "/": item["tags"]
     for item in json.loads(Path("data/blog-hashtags-priority.json").read_text(encoding="utf-8"))["articles"]
