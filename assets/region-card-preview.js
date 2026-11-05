@@ -57,6 +57,9 @@
  }
  // Existing SVGs verified in the repository; these are route guides, not trip photos.
  const verifiedRouteVisuals=[
+  {name:'영산강길종주탁송',aliases:['영산강길종주탁송','영산강종주탁송'],image:'/assets/cycling-routes/yeongsan-taksong.svg',url:'/special/cycling-trail-transport/',description:'영산강 자전거길 종주 차량 회수 안내. 출발·도착 주차장과 배차 조건은 상담으로 확인합니다.'},
+  {name:'섬진강종주탁송',aliases:['섬진강종주탁송'],image:'/assets/cycling-routes/seomjin-taksong.svg',url:'/special/cycling-trail-transport/',description:'섬진강 자전거길 종주 차량 회수 안내. 차량 인수·인계 장소는 상담으로 확인합니다.'},
+  {name:'동해안종주탁송',aliases:['동해안종주탁송'],image:'/assets/cycling-routes/eastcoast-taksong.svg',url:'/special/cycling-trail-transport/',description:'동해안 자전거길 종주 차량 회수 안내. 코스와 날짜에 따른 배차 조건은 상담으로 확인합니다.'},
   {name:'설악산탁송',aliases:['설악산','설악산탁송','오색탁송','한계령탁송','백담사탁송'],image:'/assets/seoraksan-taksong-fares.svg',url:'/설악산탁송/',description:'설악산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
   {name:'지리산탁송',aliases:['지리산','지리산탁송','성삼재탁송','중산리탁송','대원사탁송'],image:'/assets/jirisan-taksong-fares.svg',url:'/지리산탁송/',description:'지리산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
   {name:'자전거길종주탁송',aliases:['자전거종주','자전거종주탁송','자전거길종주탁송','영산강길종주탁송','영산강종주탁송','섬진강종주탁송','동해안종주탁송'],image:'/assets/cycling-routes/nationwide-taksong.svg',url:'/special/cycling-trail-transport/',description:'자전거길 종주 차량 회수 안내 이미지. 세부 코스별 요금과 배차는 별도 확인합니다.'}
