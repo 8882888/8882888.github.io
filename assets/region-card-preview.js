@@ -29,6 +29,31 @@
   // Only the static taksong routes are verified in the homepage; other services use region search.
   return kind==='taksong'?{url:'/taksong/'+r.slug+'/',label:r.name+'탁송 지역 안내 바로 보기'}:null;
  }
+ // Images verified on the live jeongukdaeri.kr /region/ page (2026-11-05).
+ // They are served by the production site, not necessarily the GitHub Pages mirror.
+ const liveCityCards=[
+  {name:'서울',aliases:['서울','서울특별시'],id:'1',slug:'seoul'},
+  {name:'부산',aliases:['부산','부산광역시'],id:'494',slug:'busan'},
+  {name:'대구',aliases:['대구','대구광역시'],id:'765',slug:'daegu'},
+  {name:'울산',aliases:['울산','울산광역시'],id:'1855',slug:'ulsan'}
+ ];
+ function liveCityMatch(query,service){
+  // Never imply that a different ward or town has its own confirmed image.
+  const compact=String(query||'').replace(/\\s+/g,'');
+  const city=liveCityCards.find(c=>c.aliases.some(a=>
+   [a,a+'탁송',a+'자동차탁송',a+'대리운전'].includes(compact)
+  ));
+  if(!city)return null;
+  const kinds=service==='daeri'?['daeri']:service==='taksong'?['taksong']:
+   compact.includes('대리운전')?['daeri']:compact.includes('탁송')?['taksong']:['daeri','taksong'];
+  return {status:'matched',region:city.name,cards:kinds.map(kind=>({
+   kind,displayKeyword:city.name+(kind==='daeri'?'대리운전':'탁송'),
+   image:'/card/area-'+city.id+'-'+kind+'-brand-v5.png',
+   url:'/'+kind+'/'+city.slug+'/',
+   description:city.name+' '+(kind==='daeri'?'대리운전':'자동차탁송')+' 지역 상담 안내입니다. 실제 배차와 요금은 별도 확인합니다.',
+   phone:'1811-4294'
+  }))};
+ }
  const guidePath=value=>['/daeri/','/taksong/','/service/','/special/','/business/','/설악산탁송/','/지리산탁송/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
  const addLink=(parent,href,text,cls)=>{
   const a=node('a',cls,text);a.href=href;parent.append(a);return a;
@@ -145,6 +170,12 @@
     reset(query?'지역명을 두 글자 이상 입력해 주세요.':'');return;
    }
    const seq=++sequence;
+   // Confirmed production images resolve immediately without relying on API availability.
+   // A GitHub Pages backup must not assume these Cloudtype-generated assets exist there.
+   if(location.hostname==='jeongukdaeri.kr'||location.hostname==='www.jeongukdaeri.kr'){
+    const city=liveCityMatch(query,select?.value||'');
+    if(city){show(city);return;}
+   }
    async function lookup(){
     controller=new AbortController();
     let timedOut=false;
