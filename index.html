@@ -426,22 +426,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 </head>
 <body>
 
-<header><strong>스마트24 전국대리운전·24시탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 접속 기록 및 전화 버튼 통계">
- <div class="traffic-stats-lines" aria-live="polite">
-  <span class="traffic-stat" title="검색 노출 수가 아닌 브라우저 접속 기록입니다. 점검 방문이 포함될 수 있습니다.">오늘 접속 <strong id="today-visit-number">—</strong></span>
-  <span class="traffic-stat" title="집계 시작 이후 기록된 브라우저 접속 횟수입니다.">누적 기록 <strong id="total-visit-number">—</strong></span>
-  <button type="button" class="traffic-call-trigger" id="traffic-call-trigger" aria-controls="traffic-sources-detail" aria-expanded="false" title="누적 전화 버튼 클릭과 접속 집계 기준 확인">누적 전화클릭 <strong id="phone-click-number">—</strong> ▾</button>
- </div>
- <div class="traffic-sources" id="traffic-sources-detail" hidden>
-  <strong class="traffic-source-heading">접속 집계 안내</strong>
-  <p>오늘·누적 방문은 네이버 검색 노출이나 순방문자가 아닙니다. 현재 전화클릭 집계는 대표번호 1811-4294 버튼만 기록하며, 제주탁송 1877-5245·블로그 1877-3015 등 다른 번호는 포함하지 않습니다. 전화 버튼 클릭은 실제 통화 연결이나 상담 완료 건수가 아닙니다.</p>
-  <label class="traffic-optout-label"><input type="checkbox" id="exclude-my-visits"> 이 브라우저의 내 점검 방문·전화 버튼 클릭 집계 제외</label>
-  <small class="traffic-mode-note" id="traffic-mode-note">이 설정은 이후 접속부터 적용됩니다. 이미 기록된 수치는 자동 차감되지 않습니다.</small>
-  <strong class="traffic-source-heading">전화 버튼 클릭 경로</strong>
-  <ol id="phone-source-list" aria-live="polite"><li>확인 중입니다.</li></ol>
-  <small class="traffic-source-note">정확한 네이버 검색 노출·클릭 수는 네이버 서치어드바이저에서 확인해야 합니다.</small>
- </div>
-</aside></div></header>
+<header><strong>스마트24 전국대리운전·24시탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a></div></div></header>
 <div class="hero hero-with-photo"><div class="hero-copy">
 
 <p>차량만 이동하는 탁송 · 고객이 동승하는 대리운전 · 법인·골프·일일기사</p>
@@ -451,7 +436,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 </nav>
 <p>차량 인수·인계 주소와 차종, 희망 시간을 알려주시면 탁송·대리운전 이용 조건을 확인합니다. 실제 배차·요금은 별도 상담으로 확정합니다.</p>
 <nav class="hero-actions" aria-label="빠른 상담 및 요금 확인"><a class="btn" href="tel:18114294">☎ 바로 전화상담 1811-4294</a><a class="btn" href="#homepage-fare-top">출발·도착 예상요금</a><a class="btn" href="/find/">내 지역·5개 서비스 찾기</a><a class="btn" href="/reviews/history/">실제 운행후기</a></nav>
-<form action="/find/" method="get" role="search" class="hero-local-finder" aria-label="전국 지역별 5개 운행 서비스 조회"><label for="hero-local-q">지역명 입력해 서비스 찾기</label><div class="hero-local-fields"><input type="search" id="hero-local-q" name="q" placeholder="예: 강화군, 부산 해운대구, 속초시" maxlength="60" autocomplete="off"><select name="service" aria-label="서비스 선택"><option value="">5개 서비스 전체</option><option value="daeri">대리운전</option><option value="taksong">자동차탁송</option><option value="corporate">법인대리운전</option><option value="daily-driver">일일기사</option><option value="golf">골프대리운전</option></select><button type="submit">지역 검색</button></div><small>실제 행정구역 20,562개 기반. 검색 결과는 기사 상주나 운행완료를 뜻하지 않습니다.</small></form>
+
 
 </div><figure class="hero-vehicle"><img src="/assets/vehicles/santafe-1811.webp" width="1448" height="1086" alt="산타페 차량 이미지, 스마트24 상담 1811-4294" loading="eager" fetchpriority="high" decoding="async"><figcaption>승용차·SUV·화물차 이동 상담 1811-4294</figcaption></figure></div>
 
@@ -482,7 +467,22 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 <article><a href="/설악산탁송/#mountain-route-fare-table-202611"><img src="/assets/seoraksan-taksong-fares.svg" width="900" height="856" loading="lazy" decoding="async" fetchpriority="low" alt="설악산탁송 기존 안내 요금표 이미지 · 오색→소공원 7만원, 한계령·백담사→소공원 8만원"></a><strong>설악산탁송 · 오색·한계령·백담사</strong><a href="/설악산탁송/#mountain-route-fare-table-202611">전체 구간별 요금·실제후기</a></article>
 <article><a href="/지리산탁송/#mountain-route-fare-table-202611"><img src="/assets/jirisan-taksong-fares.svg" width="900" height="742" loading="lazy" decoding="async" alt="지리산탁송 기존 안내 요금표 이미지 · 성삼재→중산리 12만원, 화엄사→대원사 10만원"></a><strong>지리산탁송 · 성삼재·중산리·대원사</strong><a href="/지리산탁송/#mountain-route-fare-table-202611">전체 구간별 요금·실제후기</a></article>
 <article><a href="/special/cycling-trail-transport/#cycling-route-fare-table-202611"><img src="/assets/cycling-routes/nationwide-taksong.svg" width="1200" height="630" loading="lazy" decoding="async" alt="전국 자전거길종주탁송 · 동해안·영산강·섬진강 종주 출발지 고객 차량회수 안내"></a><strong>자전거길종주탁송 · 동해안·영산강·섬진강</strong><a href="/special/cycling-trail-transport/#cycling-route-fare-table-202611">코스별 구간요금·실제후기</a></article>
-</div></div></section>
+</div></div></sectio<section id="secondary-search-and-traffic-20261105" aria-label="상세 지역 검색과 접속 통계" style="max-width:1160px;margin:12px auto;padding:12px 5%"><h2 style="font-size:18px">지역별 상세 검색·접속 통계</h2><form action="/find/" method="get" role="search" class="hero-local-finder" aria-label="전국 지역별 5개 운행 서비스 조회"><label for="hero-local-q">지역명 입력해 서비스 찾기</label><div class="hero-local-fields"><input type="search" id="hero-local-q" name="q" placeholder="예: 강화군, 부산 해운대구, 속초시" maxlength="60" autocomplete="off"><select name="service" aria-label="서비스 선택"><option value="">5개 서비스 전체</option><option value="daeri">대리운전</option><option value="taksong">자동차탁송</option><option value="corporate">법인대리운전</option><option value="daily-driver">일일기사</option><option value="golf">골프대리운전</option></select><button type="submit">지역 검색</button></div><small>실제 행정구역 20,562개 기반. 검색 결과는 기사 상주나 운행완료를 뜻하지 않습니다.</small></form><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 접속 기록 및 전화 버튼 통계">
+ <div class="traffic-stats-lines" aria-live="polite">
+  <span class="traffic-stat" title="검색 노출 수가 아닌 브라우저 접속 기록입니다. 점검 방문이 포함될 수 있습니다.">오늘 접속 <strong id="today-visit-number">—</strong></span>
+  <span class="traffic-stat" title="집계 시작 이후 기록된 브라우저 접속 횟수입니다.">누적 기록 <strong id="total-visit-number">—</strong></span>
+  <button type="button" class="traffic-call-trigger" id="traffic-call-trigger" aria-controls="traffic-sources-detail" aria-expanded="false" title="누적 전화 버튼 클릭과 접속 집계 기준 확인">누적 전화클릭 <strong id="phone-click-number">—</strong> ▾</button>
+ </div>
+ <div class="traffic-sources" id="traffic-sources-detail" hidden>
+  <strong class="traffic-source-heading">접속 집계 안내</strong>
+  <p>오늘·누적 방문은 네이버 검색 노출이나 순방문자가 아닙니다. 현재 전화클릭 집계는 대표번호 1811-4294 버튼만 기록하며, 제주탁송 1877-5245·블로그 1877-3015 등 다른 번호는 포함하지 않습니다. 전화 버튼 클릭은 실제 통화 연결이나 상담 완료 건수가 아닙니다.</p>
+  <label class="traffic-optout-label"><input type="checkbox" id="exclude-my-visits"> 이 브라우저의 내 점검 방문·전화 버튼 클릭 집계 제외</label>
+  <small class="traffic-mode-note" id="traffic-mode-note">이 설정은 이후 접속부터 적용됩니다. 이미 기록된 수치는 자동 차감되지 않습니다.</small>
+  <strong class="traffic-source-heading">전화 버튼 클릭 경로</strong>
+  <ol id="phone-source-list" aria-live="polite"><li>확인 중입니다.</li></ol>
+  <small class="traffic-source-note">정확한 네이버 검색 노출·클릭 수는 네이버 서치어드바이저에서 확인해야 합니다.</small>
+ </div>
+</aside></section>n>
 
 
 <section id="four-driver-intents-20261103" aria-label="골프대리운전 일일기사 법인대리운전 법인카드대리운전 예약" style="max-width:1180px;margin:14px auto;padding:18px 5%;border:1px solid #bbd2e9;border-radius:12px;background:#f8fbff">
