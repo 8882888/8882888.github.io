@@ -26,7 +26,9 @@ jobs:
         with:
           node-version: '22'
       - name: Syntax check
-        run: node --check server.js
+        run: |
+          node --check server.js
+          node tests/cycling-centers.test.js
       - name: Install production dependencies
         run: npm install --omit=dev --no-audit --no-fund
       - name: Verify Naver notification targets and prevent duplicate URL floods

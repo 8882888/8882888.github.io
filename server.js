@@ -1718,6 +1718,10 @@ if(regionalKeywordImageMatch){
  res.setHeader('cache-control','public, max-age=86400, immutable');
  return respond(res,200,svg,'image/svg+xml; charset=utf-8');
 }
+if(pathname==='/keyword-card/cycling-route.svg'){
+ const centers=require('./lib/cycling-centers'),from=centers.find(u.searchParams.get('from')),to=centers.find(u.searchParams.get('to'));
+ return from&&to&&from.id!==to.id?respond(res,200,centers.svg(from,to,esc),'image/svg+xml; charset=utf-8'):respond(res,404,'출발·도착 인증센터를 확인하세요.');
+}
 const keywordImageMatch=pathname.match(/^\/keyword-card\/([a-z0-9-]+)\.svg$/);
 if(keywordImageMatch){
  const svg=keywordExpansion.svg(keywordImageMatch[1]);
@@ -1891,6 +1895,7 @@ const driverTravelMatch=pathname.match(/^\/daeri\/travel\/([a-z-]+)\/?$/);
 if(driverTravelMatch){const canonical='/daeri/travel/'+driverTravelMatch[1]+'/';if(pathname!==canonical){res.writeHead(301,{location:canonical});return res.end()};const article=daeriTravelGuides.page(driverTravelMatch[1],{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});return respond(res,article?200:404,article||'대리운전 지역 여행 안내를 찾을 수 없습니다.')}
 if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return res.end()}
 if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
+if(pathname==='/route-taksong/centers/'||pathname==='/route-taksong/centers')return respond(res,200,require('./lib/cycling-centers').page(u.searchParams,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'}));
 if(pathname==='/api/region-card-preview'){
  const query=clean(u.searchParams.get('q')||'');
  const curated=focusKeywordByPhrase.get(compact(query));
@@ -1899,7 +1904,7 @@ if(pathname==='/api/region-card-preview'){
  const blogIntent=regionalBlogKeywords.parse(normalizedKeyword);
  const visualTopic=keywordExpansion.resolve(query);
  const isSpecialVisual=visualTopic&&visualTopic.image.startsWith('/keyword-card/')&&visualTopic.slug!=='general-daeri'&&visualTopic.slug!=='general-taksong';
- const inferred=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':blogIntent?.kind||null;
+ const inferred=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':blogIntent?.kind||visualTopic?.kind||null;
  const kind=inferred||(['daeri','taksong'].includes(requested)?requested:null);
  const locality=clean(blogIntent&&!isSpecialVisual?blogIntent.region:normalizedKeyword.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
  const key=compact(locality||query);
@@ -1957,7 +1962,7 @@ if(pathname==='/region/'){
  const isSpecialVisual=visualTopic&&visualTopic.image.startsWith('/keyword-card/')&&visualTopic.slug!=='general-daeri'&&visualTopic.slug!=='general-taksong';
  const queryRegion=clean(blogIntent&&!isSpecialVisual?blogIntent.region:normalizedKeyword.replace(/(?:전국)?(?:자동차|차량)?탁송$|대리운전$|대리$/,''));
  const searchPlace=queryRegion||rawQuery;
- const inferredService=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':blogIntent?.kind||null;
+ const inferredService=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':blogIntent?.kind||visualTopic?.kind||null;
  const selectedService=['daeri','taksong'].includes(requestedService)?requestedService:inferredService;
  const directRegion=selectedService==='taksong'?regionalTaksongTarget(rawQuery):null;
  if(directRegion){res.writeHead(302,{location:directRegion,'cache-control':'no-store'});return res.end()}
@@ -2011,7 +2016,7 @@ if(pathname==='/region/'){
  const regionDirectOriginalLinks=rawQuery?'':staticOriginalSourceSection('region/index.html','verified-naver-region-links-20261102');
  const regionDirectorySchema=JSON.stringify({'@context':'https://schema.org','@type':'CollectionPage',name:'전국 지역별 자동차탁송·대리운전 검색',url:'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/',description:'전국 행정구역별 자동차탁송·대리운전 안내와 상담'}).replace(/</g,'\\u003c');
  const countNote=rawQuery?(matches.length===0?(keywordExpansion.resolve(rawQuery)?'코스·서비스 키워드에 맞는 이미지를 아래에 자동 표시합니다.':'일치하는 행정구역이 없습니다. 지역명을 다시 확인하거나 서비스 키워드를 입력해 주세요.'):'검색 일치 최대 100개 지역을 표시합니다. 정확히 일치하는 지역의 명함은 자동으로 열립니다.'):'지역명·산행 코스·자전거길·대리운전·탁송 서비스별 이미지를 자동 펼침으로 확인할 수 있습니다.';
- return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section><h2>전국 지역·코스·서비스 키워드별 자동 이미지</h2><p>부산대리운전·부산렌트카탁송·영산강길종주탁송·설악산탁송·골프장대리운전 등 키워드마다 해당 지역·코스·서비스의 이미지를 자동 표시합니다. 이미지를 누르거나 확대 링크로 크게 볼 수 있습니다.</p>'+form+'<div class="region-card-live" data-card-preview-output hidden aria-label="지역별 실시간 명함 미리보기"></div><p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/').replace('</head>','<link rel="stylesheet" href="/assets/region-card-preview.css?v=20261103-keyword3"></head>').replace('</body>','<script src="/assets/region-card-preview.js?v=20261106-fare-card-first2" defer></script></body>'),'/region/'));
+ return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section><h2>전국 지역·코스·서비스 키워드별 자동 이미지</h2><p>부산대리운전·부산렌트카탁송·영산강길종주탁송·설악산탁송·골프장대리운전 등 키워드마다 해당 지역·코스·서비스의 이미지를 자동 표시합니다. 이미지를 누르거나 확대 링크로 크게 볼 수 있습니다.</p>'+form+'<div class="region-card-live" data-card-preview-output hidden aria-label="지역별 실시간 명함 미리보기"></div><p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/').replace('</head>','<link rel="stylesheet" href="/assets/region-card-preview.css?v=20261103-keyword3"></head>').replace('</body>','<script src="/assets/region-card-preview.js?v=20261106-cycling-centers" defer></script></body>'),'/region/'));
 }
 const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
  const previewWebpMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand-v5\.webp$/);

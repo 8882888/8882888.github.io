@@ -1098,7 +1098,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const previewScriptVersion=(currentHome.match(/region-card-preview\.js\?v=([^"]+)/)||[])[1];
   const previewCssVersion=(currentHome.match(/region-card-preview\.css\?v=([^"]+)/)||[])[1];
   assert.ok(previewScriptVersion&&previewCssVersion&&
-   previewScriptVersion==='20261106-fare-card-first2'&&previewCssVersion==='20261103-keyword3',
+   previewScriptVersion==='20261106-cycling-centers'&&previewCssVersion==='20261103-keyword3',
    'versioned, updated JS and CSS must bypass stale mobile browser caches');
   for(const asset of ['/assets/region-card-preview.js','/assets/region-card-preview.css']){
    const r=await get(asset);assert.equal(r.status,200,asset);

@@ -1,0 +1,545 @@
+{
+  "source": "https://bike.go.kr/content.do?key=2006176999425",
+  "checkedOn": "2026-11-06",
+  "scope": "공식 안내에 열거된 장소명; 차량 진입·주차 및 운영 여부는 별도 확인",
+  "centers": [
+    {
+      "id": "center-01",
+      "course": "아라뱃길",
+      "name": "아라서해갑문",
+      "aliases": []
+    },
+    {
+      "id": "center-02",
+      "course": "아라뱃길",
+      "name": "아라한강갑문",
+      "aliases": []
+    },
+    {
+      "id": "center-03",
+      "course": "한강",
+      "name": "여의도",
+      "aliases": []
+    },
+    {
+      "id": "center-04",
+      "course": "한강",
+      "name": "뚝섬전망콤플렉스",
+      "aliases": []
+    },
+    {
+      "id": "center-05",
+      "course": "한강",
+      "name": "광나루 자전거공원",
+      "aliases": []
+    },
+    {
+      "id": "center-06",
+      "course": "한강",
+      "name": "능내역",
+      "aliases": []
+    },
+    {
+      "id": "center-07",
+      "course": "한강",
+      "name": "양평자전거쉼터",
+      "aliases": []
+    },
+    {
+      "id": "center-08",
+      "course": "한강",
+      "name": "이포보",
+      "aliases": []
+    },
+    {
+      "id": "center-09",
+      "course": "한강",
+      "name": "여주보",
+      "aliases": []
+    },
+    {
+      "id": "center-10",
+      "course": "한강",
+      "name": "강천보",
+      "aliases": []
+    },
+    {
+      "id": "center-11",
+      "course": "한강",
+      "name": "비내섬",
+      "aliases": []
+    },
+    {
+      "id": "center-12",
+      "course": "한강",
+      "name": "충주댐",
+      "aliases": []
+    },
+    {
+      "id": "center-13",
+      "course": "북한강",
+      "name": "밝은광장",
+      "aliases": []
+    },
+    {
+      "id": "center-14",
+      "course": "북한강",
+      "name": "샛터삼거리",
+      "aliases": []
+    },
+    {
+      "id": "center-15",
+      "course": "북한강",
+      "name": "경강교",
+      "aliases": []
+    },
+    {
+      "id": "center-16",
+      "course": "북한강",
+      "name": "신매대교",
+      "aliases": []
+    },
+    {
+      "id": "center-17",
+      "course": "새재",
+      "name": "충주탄금대",
+      "aliases": []
+    },
+    {
+      "id": "center-18",
+      "course": "새재",
+      "name": "수안보온천",
+      "aliases": []
+    },
+    {
+      "id": "center-19",
+      "course": "새재",
+      "name": "이화령휴게소",
+      "aliases": []
+    },
+    {
+      "id": "center-20",
+      "course": "새재",
+      "name": "문경불정역",
+      "aliases": []
+    },
+    {
+      "id": "center-21",
+      "course": "새재",
+      "name": "상주상풍교",
+      "aliases": []
+    },
+    {
+      "id": "center-22",
+      "course": "오천",
+      "name": "행촌교차로",
+      "aliases": []
+    },
+    {
+      "id": "center-23",
+      "course": "오천",
+      "name": "괴강교",
+      "aliases": []
+    },
+    {
+      "id": "center-24",
+      "course": "오천",
+      "name": "백로공원",
+      "aliases": []
+    },
+    {
+      "id": "center-25",
+      "course": "오천",
+      "name": "무심천교",
+      "aliases": []
+    },
+    {
+      "id": "center-26",
+      "course": "오천",
+      "name": "합강공원",
+      "aliases": []
+    },
+    {
+      "id": "center-27",
+      "course": "낙동강",
+      "name": "안동댐",
+      "aliases": []
+    },
+    {
+      "id": "center-28",
+      "course": "낙동강",
+      "name": "상주보",
+      "aliases": []
+    },
+    {
+      "id": "center-29",
+      "course": "낙동강",
+      "name": "낙단보",
+      "aliases": []
+    },
+    {
+      "id": "center-30",
+      "course": "낙동강",
+      "name": "구미보",
+      "aliases": []
+    },
+    {
+      "id": "center-31",
+      "course": "낙동강",
+      "name": "칠곡보",
+      "aliases": []
+    },
+    {
+      "id": "center-32",
+      "course": "낙동강",
+      "name": "강정고령보",
+      "aliases": []
+    },
+    {
+      "id": "center-33",
+      "course": "낙동강",
+      "name": "달성보",
+      "aliases": []
+    },
+    {
+      "id": "center-34",
+      "course": "낙동강",
+      "name": "합천창녕보",
+      "aliases": []
+    },
+    {
+      "id": "center-35",
+      "course": "낙동강",
+      "name": "창녕함안보",
+      "aliases": []
+    },
+    {
+      "id": "center-36",
+      "course": "낙동강",
+      "name": "양산물문화관",
+      "aliases": []
+    },
+    {
+      "id": "center-37",
+      "course": "낙동강",
+      "name": "낙동강하굿둑",
+      "aliases": [
+        "낙동강하구둑"
+      ]
+    },
+    {
+      "id": "center-38",
+      "course": "금강",
+      "name": "대청댐",
+      "aliases": []
+    },
+    {
+      "id": "center-39",
+      "course": "금강",
+      "name": "세종보",
+      "aliases": []
+    },
+    {
+      "id": "center-40",
+      "course": "금강",
+      "name": "공주보",
+      "aliases": []
+    },
+    {
+      "id": "center-41",
+      "course": "금강",
+      "name": "백제보",
+      "aliases": []
+    },
+    {
+      "id": "center-42",
+      "course": "금강",
+      "name": "익산 성당포구",
+      "aliases": []
+    },
+    {
+      "id": "center-43",
+      "course": "금강",
+      "name": "금강하굿둑 (철새조망대)",
+      "aliases": [
+        "금강하구둑 (철새조망대)"
+      ]
+    },
+    {
+      "id": "center-44",
+      "course": "금강",
+      "name": "금강하굿둑 (조류생태전시관)",
+      "aliases": [
+        "금강하구둑 (조류생태전시관)"
+      ]
+    },
+    {
+      "id": "center-45",
+      "course": "영산강",
+      "name": "담양댐",
+      "aliases": []
+    },
+    {
+      "id": "center-46",
+      "course": "영산강",
+      "name": "메타세콰이아길",
+      "aliases": []
+    },
+    {
+      "id": "center-47",
+      "course": "영산강",
+      "name": "담양대나무숲",
+      "aliases": []
+    },
+    {
+      "id": "center-48",
+      "course": "영산강",
+      "name": "승촌보",
+      "aliases": []
+    },
+    {
+      "id": "center-49",
+      "course": "영산강",
+      "name": "죽산보",
+      "aliases": []
+    },
+    {
+      "id": "center-50",
+      "course": "영산강",
+      "name": "느러지 전망관람대",
+      "aliases": []
+    },
+    {
+      "id": "center-51",
+      "course": "영산강",
+      "name": "영산강하굿둑",
+      "aliases": [
+        "영산강하구둑"
+      ]
+    },
+    {
+      "id": "center-52",
+      "course": "섬진강",
+      "name": "섬진강댐",
+      "aliases": []
+    },
+    {
+      "id": "center-53",
+      "course": "섬진강",
+      "name": "장군목",
+      "aliases": []
+    },
+    {
+      "id": "center-54",
+      "course": "섬진강",
+      "name": "향가유원지",
+      "aliases": []
+    },
+    {
+      "id": "center-55",
+      "course": "섬진강",
+      "name": "횡탄정",
+      "aliases": []
+    },
+    {
+      "id": "center-56",
+      "course": "섬진강",
+      "name": "사성암",
+      "aliases": []
+    },
+    {
+      "id": "center-57",
+      "course": "섬진강",
+      "name": "남도대교",
+      "aliases": []
+    },
+    {
+      "id": "center-58",
+      "course": "섬진강",
+      "name": "매화마을",
+      "aliases": []
+    },
+    {
+      "id": "center-59",
+      "course": "섬진강",
+      "name": "배알도 수변공원",
+      "aliases": [
+        "배알도"
+      ]
+    },
+    {
+      "id": "center-60",
+      "course": "동해안(강원)",
+      "name": "통일전망대",
+      "aliases": []
+    },
+    {
+      "id": "center-61",
+      "course": "동해안(강원)",
+      "name": "북천철교",
+      "aliases": []
+    },
+    {
+      "id": "center-62",
+      "course": "동해안(강원)",
+      "name": "봉포해변",
+      "aliases": []
+    },
+    {
+      "id": "center-63",
+      "course": "동해안(강원)",
+      "name": "영금정",
+      "aliases": []
+    },
+    {
+      "id": "center-64",
+      "course": "동해안(강원)",
+      "name": "동호해변",
+      "aliases": []
+    },
+    {
+      "id": "center-65",
+      "course": "동해안(강원)",
+      "name": "지경공원",
+      "aliases": []
+    },
+    {
+      "id": "center-66",
+      "course": "동해안(강원)",
+      "name": "경포해변",
+      "aliases": [
+        "경포대"
+      ]
+    },
+    {
+      "id": "center-67",
+      "course": "동해안(강원)",
+      "name": "정동진",
+      "aliases": []
+    },
+    {
+      "id": "center-68",
+      "course": "동해안(강원)",
+      "name": "망상해변",
+      "aliases": []
+    },
+    {
+      "id": "center-69",
+      "course": "동해안(강원)",
+      "name": "추암촛대바위",
+      "aliases": []
+    },
+    {
+      "id": "center-70",
+      "course": "동해안(강원)",
+      "name": "한재공원",
+      "aliases": []
+    },
+    {
+      "id": "center-71",
+      "course": "동해안(강원)",
+      "name": "임원",
+      "aliases": [
+        "임원항"
+      ]
+    },
+    {
+      "id": "center-72",
+      "course": "동해안(경북)",
+      "name": "울진은어다리",
+      "aliases": []
+    },
+    {
+      "id": "center-73",
+      "course": "동해안(경북)",
+      "name": "망양휴게소",
+      "aliases": []
+    },
+    {
+      "id": "center-74",
+      "course": "동해안(경북)",
+      "name": "월송정",
+      "aliases": []
+    },
+    {
+      "id": "center-75",
+      "course": "동해안(경북)",
+      "name": "고래불해변",
+      "aliases": []
+    },
+    {
+      "id": "center-76",
+      "course": "동해안(경북)",
+      "name": "해맞이공원",
+      "aliases": [
+        "영덕해맞이공원"
+      ]
+    },
+    {
+      "id": "center-77",
+      "course": "제주환상",
+      "name": "용두암",
+      "aliases": []
+    },
+    {
+      "id": "center-78",
+      "course": "제주환상",
+      "name": "다락쉼터",
+      "aliases": []
+    },
+    {
+      "id": "center-79",
+      "course": "제주환상",
+      "name": "해거름마을공원",
+      "aliases": []
+    },
+    {
+      "id": "center-80",
+      "course": "제주환상",
+      "name": "송악산",
+      "aliases": []
+    },
+    {
+      "id": "center-81",
+      "course": "제주환상",
+      "name": "법환바당",
+      "aliases": []
+    },
+    {
+      "id": "center-82",
+      "course": "제주환상",
+      "name": "쇠소깍",
+      "aliases": []
+    },
+    {
+      "id": "center-83",
+      "course": "제주환상",
+      "name": "표선해변",
+      "aliases": []
+    },
+    {
+      "id": "center-84",
+      "course": "제주환상",
+      "name": "성산일출봉",
+      "aliases": []
+    },
+    {
+      "id": "center-85",
+      "course": "제주환상",
+      "name": "김녕성세기해변",
+      "aliases": []
+    },
+    {
+      "id": "center-86",
+      "course": "제주환상",
+      "name": "제주공항",
+      "aliases": []
+    },
+    {
+      "id": "center-87",
+      "course": "제주환상",
+      "name": "함덕서우봉해변",
+      "aliases": []
+    }
+  ]
+}
