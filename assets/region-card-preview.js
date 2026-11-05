@@ -12,28 +12,6 @@
  };
  const safePath=(value,prefix)=>typeof value==='string'&&value.startsWith(prefix)&&!value.startsWith('//')&&!value.includes('..')?value:null;
  const imagePath=value=>['/card/','/assets/','/keyword-card/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
- // Confirmed static city cards from the published /region/ links.
- // These are available independently of Cloudtype's preview API.
- const cityCards=[
-  {names:['서울','서울특별시'],id:'1',name:'서울',slug:'seoul'},
-  {names:['부산','부산광역시'],id:'494',name:'부산',slug:'busan'},
-  {names:['대구','대구광역시'],id:'765',name:'대구',slug:'daegu'},
-  {names:['울산','울산광역시'],id:'1855',name:'울산',slug:'ulsan'}
- ];
- function knownCityFallback(query,service){
-  const compact=query.replace(/\\s+/g,'');
-  const matches=cityCards.filter(city=>city.names.some(name=>[name,name+'탁송',name+'대리운전',name+'자동차탁송'].includes(compact)));
-  if(matches.length!==1)return null;
-  const city=matches[0];
-  const kinds=service==='daeri'?['daeri']:service==='taksong'?['taksong']:['taksong','daeri'];
-  return {status:'matched',region:city.name,cards:kinds.map(kind=>({
-   kind,displayKeyword:city.name+(kind==='daeri'?'대리운전':'탁송'),
-   image:'/card/area-'+city.id+'-'+kind+'-brand-v5.png',
-   url:'/'+kind+'/'+city.slug+'/',
-   description:city.name+' '+(kind==='daeri'?'대리운전':'자동차탁송')+' 지역별 안내. 실제 배차·요금은 상담 시 확인합니다.',
-   phone:'1811-4294'
-  }))};
- }
  const guidePath=value=>['/daeri/','/taksong/','/service/','/special/','/business/','/설악산탁송/','/지리산탁송/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
  const addLink=(parent,href,text,cls)=>{
   const a=node('a',cls,text);a.href=href;parent.append(a);return a;
@@ -149,15 +127,15 @@
     reset(query?'지역명을 두 글자 이상 입력해 주세요.':'');return;
    }
    const seq=++sequence;
-   // Exact major-city searches resolve locally, without a network dependency.
-   const local=knownCityFallback(query,select?.value||'');
-   if(local){show(local);message.textContent=local.region+' 지역 서비스 명함입니다. 지역을 변경하면 자동 전환됩니다.';return;}
    async function lookup(){
     controller=new AbortController();
     let timedOut=false;
     timeoutId=setTimeout(()=>{timedOut=true;controller.abort()},6500);
     output.hidden=false;output.setAttribute('aria-busy','true');
     results.replaceChildren();message.textContent='지역에 맞는 명함을 확인하고 있습니다.';
+    const direct=new URLSearchParams({q:query});
+    if(select?.value)direct.set('service',select.value);
+    addLink(results,'/region/?'+direct.toString(),'지역 검색 결과 바로 보기','smart24-card-choice');
     const params=new URLSearchParams({q:query});
     if(select?.value)params.set('service',select.value);
     try{
@@ -170,8 +148,6 @@
      if(seq!==sequence||(error.name==='AbortError'&&!timedOut))return;
      // A missing/slow Cloudtype preview API must not leave the search looking broken.
      // The existing /region/ page runs from static region data independently.
-     const cached=knownCityFallback(query,select?.value||'');
-     if(cached){show(cached);message.textContent=cached.region+' 지역 명함을 자동 표시했습니다. (서버 응답 지연으로 확인된 정적 이미지 사용)';return;}
      reset('이미지 자동보기 서버에 연결할 수 없습니다. 지역별 검색과 상담은 계속 이용할 수 있습니다.');
      output.hidden=false;
      const p=new URLSearchParams({q:query});
