@@ -21,6 +21,7 @@ BASE = "https://jeongukdaeri.kr"
 EXPECTED_NAVER_SOURCE_COUNT = len(json.loads(Path("blog/posts.json").read_text(encoding="utf-8")))
 PATHS = {
     "/": "special-business-top-links-20261103",
+    "/coverage/": "nationwide-seventeen-province-coverage-20261105",
     "/taksong/": "specialized-business-taksong-hub",
     "/daeri/": "real-original-daeri-links-20261102",
     "/region/": "verified-naver-region-links-20261102",
