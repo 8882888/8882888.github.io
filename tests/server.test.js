@@ -744,7 +744,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(recordHtml.includes('자료에 예약 여부') ,'do not invent booking status');
   const gyeongsan=await (await get('/taksong/gyeongbuk/gyeongsan-si/')).text();
   assert.ok(gyeongsan.includes('실제 완료 운행내역에서 작성한 후기'));
-  assert.ok(gyeongsan.includes('excel-0001/'),'region-specific reviewed historical dispatch linked');
+  const gyeongsanEvidence=gyeongsan.split('id="regional-archive-matched-ride-links"')[1].split('</section>')[0];
+  const gyeongsanIds=[...gyeongsanEvidence.matchAll(/href="\/reviews\/history\/(excel-\d{4})\/"/g)].map(x=>x[1]);
+  assert.ok(gyeongsanIds.length,'region-specific reviewed historical dispatch linked');
+  const originalHistory=require('../data/ride-history.json');
+  for(const id of gyeongsanIds){
+   const row=originalHistory[Number(id.slice(6))-1];
+   assert(matchingHistoryRegion({rawDeparture:row.departure,rawDestination:row.destination},region('경산시','경상북도 경산시','시'),regions.map(x=>({...x,level:/시$/.test(x.name)?'시':/군$/.test(x.name)?'군':x.level}))),'linked ride belongs to Gyeongsan: '+id);
+  }
+  assert(!gyeongsan.includes('href="/reviews/history/excel-0001/"'),'do not require a record with an undisclosed endpoint as regional evidence');
   assert.ok(gyeongsan.includes('id="regional-archive-matched-ride-links"'),'verified original archive visibly linked');
   assert.equal((gyeongsan.match(/id="regional-archive-matched-ride-links"/g)||[]).length,1,'region archive is not duplicated');
   assert.ok(gyeongsan.indexOf('id="regional-archive-matched-ride-links"')<gyeongsan.indexOf('지역별 탁송 경로'),'actual evidence should precede generic regional navigation');
@@ -790,7 +798,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(priorityRegions.some(p=>p.kind==='taksong'&&p.region==='울산광역시'),
     'Ulsan is an actual curated taksong priority, not a generic province directory');
   const ulsanHtml=await (await get('/taksong/ulsan/')).text();
-  assert.ok(ulsanHtml.includes('<title>울산탁송 후기') && ulsanHtml.includes('남구 삼산동·동구 방어진'),
+  assert.ok(ulsanHtml.includes('<title>울산탁송 후기') && ulsanHtml.includes('남구 삼산동') && ulsanHtml.includes('동구 방어진'),
     'Ulsan title gives locality-first service intent');
   assert.ok(ulsanHtml.includes('id="southeast-taksong-local-evidence"') &&
     ulsanHtml.includes('href="/taksong/ulsan/ulju-gun/"'),

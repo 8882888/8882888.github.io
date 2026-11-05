@@ -25,7 +25,9 @@ let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>out
   for(let n=0;n<100&&!output.includes('listening');n++)await new Promise(r=>setTimeout(r,100));
   assert(output.includes('listening'),output);
   const home=await (await fetch('http://127.0.0.1:3136/')).text();
+  const sitemap=await (await fetch('http://127.0.0.1:3136/sitemap.xml')).text();
   for(const [keyword,path] of cases){
+   assert(sitemap.includes('https://jeongukdaeri.kr'+path+'</loc>'),keyword+' sitemap discovery');
    assert(home.includes('href="'+path+'">'+keyword+'</a>'),keyword+' home link');
    const response=await fetch('http://127.0.0.1:3136'+path);
    assert.equal(response.status,200,path);

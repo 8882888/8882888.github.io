@@ -2260,6 +2260,8 @@ if(pathname==='/sitemap.xml'){
  // All historic URLs remain reachable; this is a crawl-discovery change only.
  const provinceRegions=regions.filter(r=>r.level==='시도');
  const focused=[
+  '/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],
+  '/daeri/sejong/','/taksong/sejong/','/daeri/gangwon/wonju-si/','/taksong/gyeongnam/jinju-si/','/daeri/jeonnam/naju-si/','/taksong/gyeongbuk/gimcheon-si/',
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
   '/','/coverage/','/taksongdaeri/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/fare/','/fare/jeju/',
   '/reviews/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/blog/','/blog/archive/','/find/',
@@ -2281,7 +2283,6 @@ if(pathname==='/sitemap.xml'){
   '/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),
   '/blog/archive/categories/',
   '/blog/daeri-regions/',...blogHashtagArticlePaths,'/blog/taksong-categories/','/region/busan-daeri-taksong/','/region/daegu-daeri-taksong/','/region/incheon-daeri-taksong/',...["/blog/daeri-regions/sanjeong-lake/","/blog/daeri-regions/baegun-valley/","/blog/daeri-regions/jangheung-valley/","/blog/daeri-regions/namhansanseong/","/blog/daeri-regions/gapyeong-hyeonri/","/blog/daeri-regions/gapyeong-seorak/","/blog/daeri-regions/ilyeong-valley/","/blog/daeri-regions/bukhansan-valley/","/blog/daeri-regions/buyeo-daeri/","/blog/daeri-regions/daegu-daeri/"],
-  '/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],
   // Additional completed trips are already linked from /reviews/verified/ and route sitemaps.
   ...featuredTaksongRoutes.map(r=>'/taksong/route/'+r.slug+'/'),
   ...featuredDaeriRoutes.map(r=>'/daeri/route/'+r.slug+'/'),
