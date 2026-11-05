@@ -1,0 +1,14 @@
+{
+  "scope": "identical publicly rendered historical records; source records are preserved",
+  "canonicalById": {
+    "excel-0799": "excel-0798",
+    "excel-1595": "excel-1594",
+    "excel-1596": "excel-1594",
+    "excel-1760": "excel-1759",
+    "excel-1956": "excel-1955",
+    "excel-2223": "excel-2222",
+    "excel-2224": "excel-2222",
+    "excel-2321": "excel-2320",
+    "excel-2322": "excel-2320"
+  }
+}

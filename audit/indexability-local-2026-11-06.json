@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-11-05T17:24:53.510Z",
+  "origin": "https://jeongukdaeri.kr",
+  "transportOrigin": "http://127.0.0.1:3015",
+  "scope": "local source responses; not production verification",
+  "counts": {
+    "discovered": 5876,
+    "checked": 5876,
+    "listedMultipleTimes": 1123,
+    "regionalPagesWithoutReviewLink": 107,
+    "passed": 5876,
+    "issues": 0,
+    "sitemapErrors": [],
+    "crawlerDiagnostics": [],
+    "byType": {}
+  }
+}

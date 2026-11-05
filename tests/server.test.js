@@ -321,16 +321,19 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const historyIndex=await (await get('/sitemap-history.xml')).text();
   const shards=[...historyIndex.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
   assert.equal(shards.length,6,'2,591 rides require exactly six bounded sitemap shards');
-  const expected=new Set(Array.from({length:2591},(_,i)=>'https://example.com/reviews/history/excel-'+String(i+1).padStart(4,'0')+'/'));
+  const duplicateCanonical=require('../data/seo-history-duplicates.json').canonicalById;
+  const expected=new Set(Array.from({length:2591},(_,i)=>'https://example.com/reviews/history/excel-'+String(i+1).padStart(4,'0')+'/').filter(url=>!duplicateCanonical[url.split('/').at(-2)]));
   for(let index=1;index<=6;index++){
    const response=await get('/sitemap-history-'+index+'.xml');
    assert.equal(response.status,200,'history sitemap shard '+index+' exists');
    const xml=await response.text();
    const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
-   assert.equal(urls.length,index<6?500:91,'sitemap shard has correct number of verified rides');
+   const omitted=Object.keys(duplicateCanonical).filter(id=>Math.ceil(Number(id.slice(6))/500)===index).length;
+   assert.equal(urls.length,(index<6?500:91)-omitted,'sitemap omits only exact public duplicates');
    for(const url of urls)assert(expected.delete(url),'sitemap contains each source ride exactly once: '+url);
   }
-  assert.equal(expected.size,0,'all 2,591 original rides are discoverable, no omitted ride');
+  assert.equal(expected.size,0,'all representative ride URLs are discoverable; original records remain accessible');
+  for(const [id,representative] of Object.entries(duplicateCanonical)){const r=await get('/reviews/history/'+id+'/');assert.equal(r.status,200);const html=await r.text();assert(html.includes('href="https://example.com/reviews/history/'+representative+'/"'));assert(html.includes('원본 운행기록 번호: '+id));}
   assert.equal((await get('/sitemap-history-7.xml')).status,404,'out of-range sitemap shards do not exist');
   const indexedRobots=await (await get('/robots.txt')).text();
   assert(indexedRobots.includes('Sitemap: https://example.com/sitemap-all.xml'),'robots advertises complete sitemap index');
@@ -1095,7 +1098,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const previewScriptVersion=(currentHome.match(/region-card-preview\.js\?v=([^"]+)/)||[])[1];
   const previewCssVersion=(currentHome.match(/region-card-preview\.css\?v=([^"]+)/)||[])[1];
   assert.ok(previewScriptVersion&&previewCssVersion&&
-   previewScriptVersion==='20261104-exact-region'&&previewCssVersion==='20261103-keyword3',
+   previewScriptVersion==='20261105-image-error-guard'&&previewCssVersion==='20261103-keyword3',
    'versioned, updated JS and CSS must bypass stale mobile browser caches');
   for(const asset of ['/assets/region-card-preview.js','/assets/region-card-preview.css']){
    const r=await get(asset);assert.equal(r.status,200,asset);
