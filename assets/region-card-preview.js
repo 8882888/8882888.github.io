@@ -22,7 +22,7 @@
  ];
  function knownCityFallback(query,service){
   const compact=query.replace(/\\s+/g,'');
-  const matches=cityCards.filter(city=>city.names.some(name=>compact.includes(name)));
+  const matches=cityCards.filter(city=>city.names.some(name=>[name,name+'탁송',name+'대리운전',name+'자동차탁송'].includes(compact)));
   if(matches.length!==1)return null;
   const city=matches[0];
   const kinds=service==='daeri'?['daeri']:service==='taksong'?['taksong']:['taksong','daeri'];
@@ -149,6 +149,9 @@
     reset(query?'지역명을 두 글자 이상 입력해 주세요.':'');return;
    }
    const seq=++sequence;
+   // Exact major-city searches resolve locally, without a network dependency.
+   const local=knownCityFallback(query,select?.value||'');
+   if(local){show(local);message.textContent=local.region+' 지역 서비스 명함입니다. 지역을 변경하면 자동 전환됩니다.';return;}
    async function lookup(){
     controller=new AbortController();
     let timedOut=false;
