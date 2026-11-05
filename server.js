@@ -1686,8 +1686,36 @@ function exactRegionalKeywordCard(r,kind,raw){
 }
 const millionServiceFinder=require('./lib/service-finder-million').create(regions,servicePath,process.env.PUBLIC_HOST||'jeongukdaeri.kr');
 let cachedHomepageHtml=null;
+// Read-only quality diagnostics: no advertising claims, no customer data.
+// This endpoint reports software structure, NOT Naver index or visitor performance.
+function publicSiteQuality(){
+ const focused=naverFocus2900;
+ const uniqueKeywords=new Set(focused.map(x=>x.keyword));
+ const uniquePairs=new Set(focused.map(x=>x.kind+'|'+x.region));
+ const missing=focused.filter(x=>!x.keyword||!x.topic||!x.pickup||!x.handover);
+ const provinces=regions.filter(x=>x.level==='시도');
+ return {
+  ok:focused.length===2900&&uniqueKeywords.size===focused.length&&uniquePairs.size===focused.length&&missing.length===0&&provinces.length===17,
+  version:'2026-11-06',
+  checks:{
+   priorityRegionEntries:focused.length,
+   uniquePriorityKeywords:uniqueKeywords.size,
+   uniquePriorityServiceRegions:uniquePairs.size,
+   incompletePriorityEntries:missing.length,
+   administrativeProvinces:provinces.length,
+   publishedBlogLinks:publishedBlogPosts.length,
+   historicalRideRecords:historicalRides.length
+  },
+  scope:'Repository-level structural checks only; no claim about live uptime, page speed, search ranking, bookings, or revenue.'
+ };
+}
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
+if(pathname==='/api/site-quality'){
+ res.setHeader('X-Robots-Tag','noindex, nofollow');
+ res.setHeader('Cache-Control','public, max-age=60');
+ return respond(res,200,JSON.stringify(publicSiteQuality()),'application/json; charset=utf-8');
+}
 if(pathname==='/find/'||pathname==='/find'){
  return respond(res,200,millionServiceFinder.page(u.searchParams.get('q')||'',u.searchParams.get('service')||'',u.searchParams.get('intent')||''));
 }
