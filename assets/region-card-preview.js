@@ -62,7 +62,7 @@
  ];
  function routeVisualMatch(query,service){
   if(service==='daeri')return null;
-  const term=String(query||'').replace(/\\s+/g,'');
+  const term=String(query||'').replace(/\s+/g,'');
   const route=verifiedRouteVisuals.find(r=>r.aliases.includes(term));
   if(!route)return null;
   return {status:'matched',region:route.name,cards:[{
