@@ -2,6 +2,7 @@
 // Run: node scripts/audit-indexability.mjs [https://jeongukdaeri.kr]
 // All sitemap URLs are checked, including recursively linked sitemap indexes.
 import {writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const sitemapPaths=['/sitemap-all.xml','/sitemap-history.xml','/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
 const unescapeXml=s=>s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
@@ -37,7 +38,7 @@ let current=0,done=0;const results=Array(list.length);
 async function worker(){
  while(true){
   const i=current++;if(i>=list.length)return;
-  const item=list[i];let status=0,finalUrl='',canonical='',robots='',title='',problem=[];
+  const item=list[i];let status=0,finalUrl='',canonical='',robots='',title='',bodyHash='',hasRideLink=false,problem=[];
   try{
    const r=await get(item.url);status=r.status;finalUrl=r.url;
    const type=r.headers.get('content-type')||'';
@@ -48,6 +49,9 @@ async function worker(){
    if(/noindex/i.test(robots))problem.push('x_robots_noindex');
    if(/text\/html/i.test(type)){
     const html=await r.text();
+    hasRideLink=/href=["'][^"']*\/reviews\/(?:history|local|ride-record-stories|verified)/i.test(html);
+    const visible=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    if(visible.length>150)bodyHash=createHash('sha256').update(visible).digest('hex').slice(0,20);
     const cm=html.match(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*\bhref=["']([^"']+)["']/i)
       ||html.match(/<link\b(?=[^>]*\bhref=["']([^"']+)["'])[^>]*\brel=["']canonical["']/i);
     canonical=cm?new URL(cm[1],r.url).href:'';
@@ -60,7 +64,7 @@ async function worker(){
     if(/<meta\b[^>]*http-equiv=["']refresh["']/i.test(html))problem.push('meta_refresh');
    }
   }catch(e){problem.push(e?.name==='AbortError'?'timeout':'fetch_error:'+String(e).slice(0,100))}
-  results[i]={...item,status,finalUrl,canonical,robots,title,problems:problem};
+  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,problems:problem};
   done++;
   if(done%500===0)console.log('Checked',done,'/',list.length);
   await delay(100);
@@ -70,13 +74,16 @@ await Promise.all(Array.from({length:4},worker));
 const titles=new Map();
 for(const r of results){if(!r?.title)continue;let a=titles.get(r.title)||[];a.push(r.url);titles.set(r.title,a)}
 for(const r of results){if(r.title&&titles.get(r.title).length>1)r.problems.push('duplicate_title')}
-const counts={discovered:list.length,checked:results.length,listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,passed:results.filter(r=>r.problems.length===0).length,
+const bodies=new Map();
+for(const r of results){if(!r.bodyHash)continue;const group=bodies.get(r.bodyHash)||[];group.push(r.url);bodies.set(r.bodyHash,group)}
+for(const r of results){if(r.bodyHash&&bodies.get(r.bodyHash).length>1)r.problems.push('duplicate_exact_body')}
+const counts={discovered:list.length,checked:results.length,listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,regionalPagesWithoutReviewLink:results.filter(r=>/\/(?:region|taksong|daeri)\//.test(new URL(r.url).pathname)&&!r.hasRideLink).length,passed:results.filter(r=>r.problems.length===0).length,
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
 writeFileSync('indexability-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,counts,results},null,2));
-writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,problems,listed_in',
- ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
+writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,body_hash,has_ride_link,problems,listed_in',
+ ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.bodyHash,r.hasRideLink,r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
 console.log(JSON.stringify(counts,null,2));
 console.log('NOTE: 100% technical URL checks cannot establish Naver indexing. Check Naver Search Advisor URL inspection and site diagnosis separately.');
 if(counts.issues||counts.sitemapErrors.length||counts.discovered===0)process.exitCode=1;
