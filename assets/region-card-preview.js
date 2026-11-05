@@ -21,7 +21,7 @@
   {name:'울산',aliases:['울산','울산광역시'],id:'1855',slug:'ulsan'}
  ];
  function verifiedCityCards(query,service){
-  const compact=query.replace(/\\s+/g,'');
+  const compact=query.split(' ').join('');
   const city=verifiedCities.find(c=>c.aliases.some(n=>
    compact===n||compact===n+'탁송'||compact===n+'자동차탁송'||compact===n+'대리운전'
   ));
