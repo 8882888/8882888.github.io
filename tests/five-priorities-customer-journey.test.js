@@ -5,7 +5,7 @@ const server=read('server.js'),fare=read('fare/index.html'),corp=read('service/c
 const home=read('index.html'),purpose=read('service/taksong-purpose/index.html');
 assert(server.includes('id="history-advanced-filters-20261105"'),'History needs actual filters');
 for(const key of ['minFare','maxFare','destination','origin'])assert(server.includes(key),'Missing historical fare or location filter '+key);
-assert(server.includes('Number(String(x.fare).replace(/[^0-9]/g')), 'Fare filter must parse stored won amounts');
+assert(server.includes("Number(String(x.fare).replace(/[^0-9]/g,''))"),'Fare filter must parse stored won amounts');
 assert(server.includes('원본 자료에 차종이 구조화되어 있지 않아'),'Do not fabricate vehicle model data');
 assert(server.includes('minFare:u.searchParams.get(\'minFare\')'),'GET price filter must reach the history engine');
 assert(fare.includes('id="fare-consult-after-result-20261105"'),'Fare results need direct booking');
