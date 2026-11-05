@@ -121,8 +121,11 @@ for(const id of ['224445300887','224433939509','224452085535']){
 const serverBusan=read('server.js');
 assert(serverBusan.includes('busanReviewPage?busanReviewTitle:kind===\'taksong\'?taksongReviewTitle:daeriReviewTitle'),
  'Dynamic canonical Busan page must display a genuine review topic in title and H1');
-assert(serverBusan.includes("busanReviewLead+companySection"),
- 'Canonical Busan actual reviews must appear above generic company keyword sections');
+const busanRender=serverBusan.slice(serverBusan.indexOf('const rendered=layout(searchTitle,searchDesc,'));
+assert(busanRender.indexOf('+busanReviewLead+')>=0 &&
+ busanRender.indexOf('+busanReviewLead+')<busanRender.indexOf('+regionHistoryAllLink+') &&
+ busanRender.indexOf('+busanReviewLead+')<busanRender.indexOf('+companySection+'),
+ 'Canonical Busan actual reviews must precede archive links and generic company keyword sections');
 assert(serverBusan.includes('busan-local-taksong-tags'),'Canonical Busan hashtags missing');
 const rides=JSON.parse(read('data/ride-history.json'));
 assert(Array.isArray(rides)&&rides.length===2591,'The 2,591 original ride records must be preserved');
