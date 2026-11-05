@@ -117,7 +117,9 @@
    addLink(p,'/region/?'+params.toString(),'전체 지역 검색 결과 보기');
    results.append(p);
   }
+  let timeoutId=null;
   function run(immediate){
+   if(timeoutId){clearTimeout(timeoutId);timeoutId=null}
    if(pending){clearTimeout(pending);pending=null}
    if(controller)controller.abort();
    const query=input.value.trim();
@@ -127,6 +129,8 @@
    const seq=++sequence;
    async function lookup(){
     controller=new AbortController();
+    let timedOut=false;
+    timeoutId=setTimeout(()=>{timedOut=true;controller.abort()},6500);
     output.hidden=false;output.setAttribute('aria-busy','true');
     results.replaceChildren();message.textContent='지역에 맞는 명함을 확인하고 있습니다.';
     const params=new URLSearchParams({q:query});
@@ -138,7 +142,7 @@
      const data=await response.json();if(seq!==sequence)return;
      show(data);
     }catch(error){
-     if(error.name==='AbortError'||seq!==sequence)return;
+     if(seq!==sequence||(error.name==='AbortError'&&!timedOut))return;
      // A missing/slow Cloudtype preview API must not leave the search looking broken.
      // The existing /region/ page runs from static region data independently.
      reset('이미지 자동보기 서버에 연결할 수 없습니다. 지역별 검색과 상담은 계속 이용할 수 있습니다.');
@@ -151,7 +155,7 @@
      const note=node('p','smart24-card-description','명함 이미지 연결에 문제가 있어도 기존 지역 안내와 운행기록은 삭제되지 않습니다.');
      results.append(note);
     }finally{
-     if(seq===sequence)output.removeAttribute('aria-busy');
+     if(seq===sequence){clearTimeout(timeoutId);timeoutId=null;output.removeAttribute('aria-busy');}
     }
    }
    if(immediate)lookup();else pending=setTimeout(lookup,420);
