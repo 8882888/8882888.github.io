@@ -33,8 +33,8 @@ const oldRepeat=home.slice(home.indexOf('id="long-distance-intercity-five-two"')
 assert(oldRepeat.length<2200,'Repeated long-distance keyword guide must remain consolidated');
 
 const proofChoice=home.indexOf('id="service-choice-advantages-20261105"');
-assert(proofChoice>quickFare&&proofChoice<firstFares,
- 'Comparison-friendly factual evidence must follow instant booking and precede specialist routes');
+assert(proofChoice>firstFares&&proofChoice<specialistNav,
+ 'Actual fares must appear before comparison evidence, while specialist routes follow');
 for(const link of ['/reviews/history/?kind=taksong','/reviews/history/?kind=daeri','/reviews/ride-record-stories/','/special/cycling-trail-transport/']){
  assert(home.includes('href="'+link+'"'),'Customer must find verified cases or specialist route: '+link);
 }
