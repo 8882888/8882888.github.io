@@ -125,10 +125,17 @@
    img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 전용 명함';
    img.width=1200;img.height=800;img.loading='eager';img.decoding='async';
    let pngFallback=false;
+   let zoomButton=null,fullLink=null;
    img.addEventListener('error',()=>{
     // Never replace a requested exact-region image with a different region's generic art.
     if(!exact&&!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
-    img.replaceWith(node('p','smart24-card-error','명함 이미지를 불러오지 못했습니다. 아래 지역 안내에서 확인해 주세요.'));
+    failed=true;
+    picture.removeAttribute('href');
+    picture.removeAttribute('target');
+    picture.style.cursor='default';
+    img.replaceWith(node('p','smart24-card-error','이미지 연결을 확인할 수 없습니다. 아래 지역 상세 안내를 이용해 주세요.'));
+    if(zoomButton)zoomButton.remove();
+    if(fullLink)fullLink.remove();
    });
    const picture=node('a','smart24-card-picture-link');
    picture.href=original;picture.target='_blank';picture.rel='noopener noreferrer';
@@ -141,10 +148,12 @@
    const actions=node('div','smart24-card-actions');
    if(zoom){
     const button=node('button','smart24-card-zoom','명함 화면에서 확대');
+    zoomButton=button;
     button.type='button';button.addEventListener('click',()=>openZoom(original,img.alt,button));
     actions.append(button);
    }
    const full=addLink(actions,original,'명함 원본 보기');
+   fullLink=full;
    full.target='_blank';full.rel='noopener noreferrer';
    addLink(actions,page,'지역 상세 안내');
    const tel=String(card.phone||'1811-4294').replace(/[^0-9]/g,'');
