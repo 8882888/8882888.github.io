@@ -51,4 +51,14 @@ assert(server.includes('encodeURIComponent(old.departure'), 'Regional fare links
 assert(server.includes('encodeURIComponent(old.destination'), 'Regional fare links need case destination');
 assert(server.includes(`>예상요금 조회</a> · <a href="tel:18114294">예약상담`),'Regional cards need one-tap booking');
 
+for(const token of [
+ 'function mobileReviewBookingBar(kind',
+ 'min-height:48px',
+ 'class="review-mobile-booking-bar"',
+ 'aria-label="모바일 운행후기 바로 예약"',
+ "mobileReviewBookingBar(x.service,x.departure",
+ "mobileReviewBookingBar(kind,matchedRegion?matchedRegion.full_name:'')",
+ "const body=mobileReviewBookingBar(kind,name)+daeguTaksongGuide",
+ 'href="tel:18114294">전화 예약상담'
+])assert(server.includes(token),'Mobile conversion regression: '+token);
 console.log('PASS: 2,591 distinct source-linked reviews, 9 archive batches, privacy/region safeguards and fare/booking paths');
