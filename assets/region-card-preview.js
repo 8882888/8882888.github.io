@@ -39,7 +39,7 @@
  ];
  function liveCityMatch(query,service){
   // Never imply that a different ward or town has its own confirmed image.
-  const compact=String(query||'').replace(/\\s+/g,'');
+  const compact=String(query||'').replace(/\s+/g,'');
   const city=liveCityCards.find(c=>c.aliases.some(a=>
    [a,a+'탁송',a+'자동차탁송',a+'대리운전'].includes(compact)
   ));
