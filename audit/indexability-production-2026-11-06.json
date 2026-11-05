@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-11-06T03:08:01+09:00",
+  "scope": "production sitemap HTTP technical checks; not Naver confirmed index inclusion",
+  "workflowRun": "https://github.com/8882888/8882888.github.io/actions/runs/42078673863",
+  "counts": {
+    "discovered": 5876,
+    "checked": 5876,
+    "passed": 5876,
+    "issues": 0,
+    "sitemapErrors": [],
+    "crawlerDiagnostics": [],
+    "regionalPagesWithoutReviewLink": 107
+  },
+  "remaining": "107 regional pages lack a matching review link in the audit; do not fabricate rides. Search Advisor indexing/impressions/clicks remain unverified."
+}
