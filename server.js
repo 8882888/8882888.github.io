@@ -294,13 +294,20 @@ function verifiedRideSituation(x){
   [/아파트|아파트단지|힐스테이트|푸르지오|자이|더샵|아이파크/,'주거단지 관련 위치가 기록돼 있습니다. 단지 출입 가능 여부와 차량 인수·도착 지점을 예약할 때 확인하면 좋습니다.'],
   [/역\b|KTX|기차역|고속버스터미널/,'역 또는 대중교통 거점 관련 장소가 기록돼 있습니다. 기사와 만날 위치는 역 출구나 주차장 등으로 구체화해야 합니다.']
  ];
+ const landmarkLabels=[
+  [/백담사/,'백담사'],[/한계령/,'한계령'],[/소공원/,'설악산 소공원'],[/오색/,'오색'],
+  [/성삼재/,'성삼재'],[/중산리/,'중산리'],[/인천공항|인천국제공항/,'인천국제공항'],
+  [/김포공항/,'김포공항'],[/기아강서서비스/,'기아 강서서비스센터'],
+  [/경포대/,'경포대'],[/통일전망대/,'통일전망대']
+ ].filter(([pattern])=>pattern.test(source)).map(([,label])=>label);
+ const recordedLandmarks=landmarkLabels.length?'<p><strong>기록에서 확인되는 주요 장소:</strong> '+esc([...new Set(landmarkLabels)].join(' · '))+'</p>':'';
  const identified=contexts.filter(([pattern])=>pattern.test(source)).slice(0,2);
  const specific=identified.length?identified.map(([,note])=>'<p>'+esc(note)+'</p>').join('')
   :'<p>기록에는 출발지·도착지와 당시 요금이 확인됩니다. 차량 인수 위치, 기사 접근과 복귀 경로 등은 자료만으로 특정할 수 없습니다.</p>';
  const sourceTime=x.recordedTime?'<p>운행자료의 <strong>기록 시각은 '+esc(x.recordedTime)+'</strong>입니다. 출발·도착 시각으로 단정하지 않습니다.</p>':'';
  return '<section id="verified-ride-specific-context"><h2>이 운행기록에서 읽히는 실제 현장 정보</h2>'+
   '<p><strong>확인된 이동:</strong> '+esc(x.departure)+' → '+esc(x.destination)+' · '+esc(x.date)+
-  ' · 당시 기록요금 '+esc(x.fare)+'.</p>'+sourceTime+specific+
+  ' · 당시 기록요금 '+esc(x.fare)+'.</p>'+recordedLandmarks+sourceTime+specific+
   '<p>이 페이지는 운행 종료 후 남은 배차기록에 기반한 후기입니다. 기록에 없는 고객 발언, 실제 이동 경로, 현장 사진, 기사 대기시간과 인수·인계 방법은 만들어 넣지 않습니다.</p></section>';
 }
 function historyDetailPage(x){
