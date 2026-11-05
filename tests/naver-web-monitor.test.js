@@ -35,7 +35,7 @@ assert.equal(pageEvidence([{query:'부산탁송',matches:[{url:'https://jeongukd
 for(const keyword of ['서울대리운전','부산대리운전','해운대대리운전','대구대리운전','인천대리운전','용인대리운전','속초대리운전','강원도대리운전']) assert.ok(QUERIES.includes(keyword),'monitor nationwide regional driver search '+keyword);
 assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes('/daeri/daegu/'));
 assert.ok(require('../scripts/naver-web-monitor').QUERIES.includes('강원도탁송'));
-for(const q of ['설악산탁송','지리산탁송','자전거길종주탁송','동해안자전거길종주탁송','섬진강자전거길종주탁송','영산강자전거길종주탁송','금강자전거길종주탁송','낙동강자전거길종주탁송']) assert.ok(QUERIES.includes(q),'monitor priority route: '+q);
+for(const q of ['강화대리운전','설악산탁송','지리산탁송','자전거길종주탁송','동해안자전거길종주탁송','섬진강자전거길종주탁송','영산강자전거길종주탁송','금강자전거길종주탁송','낙동강자전거길종주탁송']) assert.ok(QUERIES.includes(q),'monitor priority route: '+q);
 for(const page of ['/설악산탁송/','/지리산탁송/','/taksong/gyeongnam/changwon-si/','/route-taksong/','/route-taksong/centers/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(page),'monitor dedicated page: '+page);
 
 for(const path of ['/reviews/history/','/reviews/ride-record-stories/','/reviews/verified/','/special/cycling-trail-transport/','/service/long-distance-taksong/']) assert.ok(require('../scripts/naver-web-monitor').CORE_PAGES.includes(path),'high-intent page search evidence '+path);
@@ -63,13 +63,14 @@ assert.deepEqual(legacy.map(x=>x.position),[1,5]);
 
 const {selectQueries}=require('../scripts/naver-web-monitor');
 const planned=selectQueries(new Date('2026-11-02T00:00:00Z'));
-assert.equal(planned.length,20,'daily Naver checks use 10 priority and 10 rotating keywords');
+assert.equal(planned.length,20,'daily Naver checks use 16 priority and 4 rotating keywords');
 assert.equal(new Set(planned).size,planned.length,'all daily Naver queries are distinct');
-for(const key of ['설악산탁송','지리산탁송','오색탁송','한계령탁송','부산탁송','대구탁송','창원탁송','기장군탁송'])
+for(const key of ['강화대리운전','설악산탁송','지리산탁송','오색탁송','한계령탁송','부산탁송','대구탁송','창원탁송','기장군탁송'])
  assert.ok(planned.includes(key),'always check critical route: '+key);
 const nextDay=selectQueries(new Date('2026-11-03T00:00:00Z'));
 assert.ok(nextDay.some(x=>!planned.includes(x)),'nonpriority checks must rotate over days');
 const {targetLandingEvidence,TARGET_LANDINGS}=require('../scripts/naver-web-monitor');
+assert.equal(TARGET_LANDINGS['강화대리운전'],'/daeri/incheon/ganghwa-gun/');
 const targetRows=targetLandingEvidence([
  {query:'설악산탁송',matches:[{url:'https://jeongukdaeri.kr/',position:14,title:'홈페이지'}]},
  {query:'부산탁송',matches:[{url:'https://jeongukdaeri.kr/taksong/busan/',position:7,title:'부산탁송'}]},

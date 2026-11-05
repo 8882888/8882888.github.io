@@ -1,11 +1,10 @@
 name: Full sitemap URL indexability audit
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: ['Deploy to Cloudtype']
+    types: [completed]
     branches: [main]
-    paths:
-      - 'scripts/audit-indexability.mjs'
-      - '.github/workflows/audit-indexability.yml'
   schedule:
     - cron: '30 2 * * *'
 permissions:
@@ -15,10 +14,13 @@ concurrency:
   cancel-in-progress: false
 jobs:
   audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
