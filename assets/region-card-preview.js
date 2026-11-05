@@ -139,11 +139,17 @@
      show(data);
     }catch(error){
      if(error.name==='AbortError'||seq!==sequence)return;
-     reset('미리보기를 불러오지 못했습니다. 전체 지역 안내 페이지에서 확인할 수 있습니다.');
+     // A missing/slow Cloudtype preview API must not leave the search looking broken.
+     // The existing /region/ page runs from static region data independently.
+     reset('이미지 자동보기 서버에 연결할 수 없습니다. 지역별 검색과 상담은 계속 이용할 수 있습니다.');
      output.hidden=false;
      const p=new URLSearchParams({q:query});
      if(select?.value)p.set('service',select.value);
-     addLink(results,'/region/?'+p.toString(),'지역 검색 페이지 열기');
+     const fallback=node('p','smart24-card-full-search');
+     addLink(fallback,'/region/?'+p.toString(),query+' 지역 검색 결과 확인');
+     results.append(fallback);
+     const note=node('p','smart24-card-description','명함 이미지 연결에 문제가 있어도 기존 지역 안내와 운행기록은 삭제되지 않습니다.');
+     results.append(note);
     }finally{
      if(seq===sequence)output.removeAttribute('aria-busy');
     }
