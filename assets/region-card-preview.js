@@ -36,6 +36,23 @@
    phone:'1811-4294'
   }))};
  }
+ // Verified representative routes already linked in the homepage markup.
+ // Provide a useful result immediately while the image API is checked.
+ const representativeRoutes=[
+  {name:'서울',words:['서울','서울특별시'],slug:'seoul'},
+  {name:'부산',words:['부산','부산광역시'],slug:'busan'},
+  {name:'대구',words:['대구','대구광역시'],slug:'daegu'},
+  {name:'울산',words:['울산','울산광역시'],slug:'ulsan'},
+  {name:'제주도',words:['제주도','제주특별자치도','제주'],slug:'jeju'}
+ ];
+ function nearbyRoute(query,service){
+  const normalized=String(query||'').replace(/\\s+/g,'');
+  const found=representativeRoutes.filter(r=>r.words.some(w=>normalized===w||normalized.startsWith(w+'탁송')||normalized.startsWith(w+'자동차탁송')||normalized.startsWith(w+'대리운전')));
+  if(found.length!==1)return null;
+  const r=found[0],kind=service==='daeri'||(service!=='taksong'&&normalized.includes('대리운전'))?'daeri':'taksong';
+  // Only the static taksong routes are verified in the homepage; other services use region search.
+  return kind==='taksong'?{url:'/taksong/'+r.slug+'/',label:r.name+'탁송 지역 안내 바로 보기'}:null;
+ }
  const guidePath=value=>['/daeri/','/taksong/','/service/','/special/','/business/','/설악산탁송/','/지리산탁송/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
  const addLink=(parent,href,text,cls)=>{
   const a=node('a',cls,text);a.href=href;parent.append(a);return a;
@@ -163,6 +180,8 @@
     const direct=new URLSearchParams({q:query});
     if(select?.value)direct.set('service',select.value);
     addLink(results,'/region/?'+direct.toString(),'지역 검색 결과 바로 보기','smart24-card-choice');
+    const known=nearbyRoute(query,select?.value||'');
+    if(known)addLink(results,known.url,known.label,'smart24-card-choice');
     const params=new URLSearchParams({q:query});
     if(select?.value)params.set('service',select.value);
     try{
@@ -179,6 +198,8 @@
      output.hidden=false;
      const p=new URLSearchParams({q:query});
      if(select?.value)p.set('service',select.value);
+     const known=nearbyRoute(query,select?.value||'');
+     if(known)addLink(results,known.url,known.label,'smart24-card-choice');
      const fallback=node('p','smart24-card-full-search');
      addLink(fallback,'/region/?'+p.toString(),query+' 지역 검색 결과 확인');
      results.append(fallback);
