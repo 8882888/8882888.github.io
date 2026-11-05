@@ -4,6 +4,9 @@ const {changedPaths,priorityPaths,blogHashtagPaths,sitemapWindow}=require('../sc
 assert(sitemapWindow.focusCount>=2900,'All curated locality SEO guides must be included in priority sitemap size guard');
 assert.equal(sitemapWindow.maximumCount,sitemapWindow.focusCount+500,'IndexNow ceiling must scale with the guide count');
 assert(sitemapWindow.minimumCount<=sitemapWindow.focusCount,'IndexNow minimum must accommodate curated guide URLs');
+assert.equal(sitemapWindow.sparseVillageAllowance,140,'all 140 potentially noindex village targets may be omitted');
+assert.equal(sitemapWindow.minimumCount,sitemapWindow.focusCount-140,'noindex village guides must not block valid sitemap notification');
+assert(2865>=sitemapWindow.minimumCount&&2865<=sitemapWindow.maximumCount,'current focused sitemap fits the guarded coverage window');
 assert.equal(priorityPaths.length,10);
 assert.equal(new Set(priorityPaths).size,10);
 assert.equal(blogHashtagPaths.length,30);

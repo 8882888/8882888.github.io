@@ -32,7 +32,10 @@ const focusCount=focusFiles.reduce((total,name)=>{
  if(!Array.isArray(doc.priority))throw Error('Missing live priority list in '+name);
  return total+doc.priority.length;
 },0);
-const minimumCount=Math.max(fixedPriorityPaths.length+require('../data/priority-regions.json').pages.length,focusCount);
+// Village guides without confirmed local trips intentionally remain noindex.
+// They must not be required for sitemap coverage or IndexNow notification.
+const sparseVillageAllowance=focusFiles.reduce((total,name)=>total+JSON.parse(fs.readFileSync(path.join(root,'data',name),'utf8')).priority.filter(entry=>entry.region.endsWith('리')).length,0);
+const minimumCount=Math.max(fixedPriorityPaths.length+require('../data/priority-regions.json').pages.length,focusCount-sparseVillageAllowance);
 const maximumCount=focusCount+500;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function get(rel){
@@ -131,4 +134,4 @@ async function main(){
  console.log('Submission acknowledgement only; real crawler requests, URL indexing and ranking are unconfirmed.');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
-module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,sitemapWindow:{focusCount,minimumCount,maximumCount}};
+module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,sitemapWindow:{focusCount,sparseVillageAllowance,minimumCount,maximumCount}};

@@ -427,8 +427,10 @@ def run():
                         BASE + "/business/rental-car/", BASE + "/business/used-car/",
                         BASE + "/business/export-port/", BASE + "/business/auction/",
                     }
-                if path == '/sitemap-priority.xml' and len(locs) < len(focus_entries):
-                    errors.append(f'priority sitemap has fewer URLs ({len(locs)}) than curated region targets ({len(focus_entries)})')
+                # Sparse village pages are deliberately noindex and excluded from sitemaps.
+                minimum_focus_count = sum(not entry['region'].endswith('리') for entry in focus_entries)
+                if path == '/sitemap-priority.xml' and len(locs) < minimum_focus_count:
+                    errors.append(f'priority sitemap has fewer URLs ({len(locs)}) than non-village curated targets ({minimum_focus_count})')
                 missing = expected - locs
                 if missing:
                     errors.append("required canonical URLs missing: " + ", ".join(sorted(missing)[:6]))
