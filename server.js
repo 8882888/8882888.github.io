@@ -277,7 +277,7 @@ function completedReviewRegionLinks(x){
 }
 function mobileReviewBookingBar(kind,from='',to=''){
  const service=kind==='daeri'?'daeri':'taksong';
- const params='service='+service+(from?'&amp;from='+encodeURIComponent(from):'')+(to?'&amp;to='+encodeURIComponent(to):'');
+ const params=(kind==='daeri'||kind==='taksong'?'service='+service:'')+(from?(kind==='daeri'||kind==='taksong'?'&amp;':'')+'from='+encodeURIComponent(from):'')+(to?'&amp;to='+encodeURIComponent(to):'');
  return '<style id="review-mobile-booking-style-20261105">@media(max-width:640px){body:has(.review-mobile-booking-bar){padding-bottom:calc(84px + env(safe-area-inset-bottom))!important}.review-mobile-booking-bar{position:fixed;bottom:0;left:0;right:0;z-index:9999;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:9px max(10px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));background:#102544;box-shadow:0 -4px 16px #10254435}.review-mobile-booking-bar a{min-height:48px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:8px;text-align:center;border-radius:9px;font-size:15px;font-weight:800;background:#ffe16b;color:#102544;text-decoration:none}.review-mobile-booking-bar a:first-child{background:#fff;color:#124c80}}@media(min-width:641px){.review-mobile-booking-bar{display:none}}</style><nav class="review-mobile-booking-bar" aria-label="모바일 운행후기 바로 예약"><a href="/fare/?'+params+'">예상요금 조회</a><a href="tel:18114294">전화 예약상담</a></nav>';
 }
 function historyDetailPage(x){
