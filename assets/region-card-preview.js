@@ -54,6 +54,22 @@
    phone:'1811-4294'
   }))};
  }
+ // Existing SVGs verified in the repository; these are route guides, not trip photos.
+ const verifiedRouteVisuals=[
+  {name:'설악산탁송',aliases:['설악산','설악산탁송','오색탁송','한계령탁송','백담사탁송'],image:'/assets/seoraksan-taksong-fares.svg',url:'/설악산탁송/',description:'설악산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
+  {name:'지리산탁송',aliases:['지리산','지리산탁송','성삼재탁송','중산리탁송','대원사탁송'],image:'/assets/jirisan-taksong-fares.svg',url:'/지리산탁송/',description:'지리산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
+  {name:'자전거길종주탁송',aliases:['자전거종주','자전거종주탁송','자전거길종주탁송','영산강길종주탁송','영산강종주탁송','섬진강종주탁송','동해안종주탁송'],image:'/assets/cycling-routes/nationwide-taksong.svg',url:'/special/cycling-trail-transport/',description:'자전거길 종주 차량 회수 안내 이미지. 세부 코스별 요금과 배차는 별도 확인합니다.'}
+ ];
+ function routeVisualMatch(query,service){
+  if(service==='daeri')return null;
+  const term=String(query||'').replace(/\\s+/g,'');
+  const route=verifiedRouteVisuals.find(r=>r.aliases.includes(term));
+  if(!route)return null;
+  return {status:'matched',region:route.name,cards:[{
+   kind:'taksong',displayKeyword:route.name+' · 기존 안내 이미지',
+   image:route.image,url:route.url,description:route.description,phone:'1811-4294'
+  }]};
+ }
  const guidePath=value=>['/daeri/','/taksong/','/service/','/special/','/business/','/설악산탁송/','/지리산탁송/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
  const addLink=(parent,href,text,cls)=>{
   const a=node('a',cls,text);a.href=href;parent.append(a);return a;
@@ -170,6 +186,9 @@
     reset(query?'지역명을 두 글자 이상 입력해 주세요.':'');return;
    }
    const seq=++sequence;
+   // Route illustrations in the repository work on both Cloudtype and GitHub Pages.
+   const route=routeVisualMatch(query,select?.value||'');
+   if(route){show(route);return;}
    // Confirmed production images resolve immediately without relying on API availability.
    // A GitHub Pages backup must not assume these Cloudtype-generated assets exist there.
    if(location.hostname==='jeongukdaeri.kr'||location.hostname==='www.jeongukdaeri.kr'){
