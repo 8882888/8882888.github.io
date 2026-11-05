@@ -33,4 +33,5 @@ jobs:
           path: |
             indexability-audit.json
             indexability-audit.csv
+            indexability-summary.md
           if-no-files-found: warn
