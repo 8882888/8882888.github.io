@@ -35,6 +35,8 @@ jobs:
         run: node tests/blog-regional-hashtags.test.js
       - name: Validate ten source-backed regional taksong guides
         run: node tests/regional-originals.test.js
+      - name: Validate second 20 nationwide designated-driver SEO targets
+        run: node tests/nationwide-daeri-batch-20.test.js
       - name: Validate first 20 nationwide search visibility targets
         run: node tests/nationwide-search-batch-20.test.js
       - name: Verify nationwide 17-province search discoverability
