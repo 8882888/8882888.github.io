@@ -100,7 +100,8 @@
     message.textContent=(data.region||'선택 키워드')+'에 맞는 '+(data.cards.length===2?'대리운전·자동차탁송':'서비스 전용')+' 이미지입니다. 이미지를 누르면 크게 볼 수 있습니다.';
     const grid=node('div','smart24-card-grid');
     data.cards.forEach(card=>{const el=renderCard(card);if(el)grid.append(el)});
-    results.append(grid);
+    if(grid.childElementCount){results.append(grid)}
+    else message.textContent='검색 결과는 있지만 연결된 명함 이미지 또는 지역 상세 주소를 확인할 수 없습니다. 아래 지역 검색 결과를 이용해 주세요.';
    }else if((data.status==='ambiguous'||data.status==='suggestions')&&Array.isArray(data.candidates)){
     message.textContent=data.status==='ambiguous'?'동일한 이름의 지역이 있습니다. 정확한 지역을 선택하세요.':'지역명을 확인하고 아래 후보 중 선택하세요.';
     const list=node('div','smart24-card-choices');
