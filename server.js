@@ -1828,7 +1828,7 @@ const mountainTarget=(value)=>{
  const q=String(value||'').replace(/\s+/g,'').replace(/[+_-]/g,'').toLowerCase();
  if(!q||q.length>100)return null;
  if(/(설악산|오색|한계령|백담사|남교리|소공원)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/설악산탁송/';
- if(/(지리산|성삼재|중산리|대원사|화엄사|백무동|성중종주|성대종주|화중종주|화대종주)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/지리산탁송/';
+ if(/(지리산|성삼재|중산리|대원사|화엄사|백무동|성중종주|성대종주|화중종주|화대종주|백중종주|백대종주|중삼종주)/.test(q)&&/(탁송|차량회수|종주|요금표|요금)/.test(q))return '/지리산탁송/';
  return null;
 };
 const explicitMountainKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
@@ -1866,6 +1866,10 @@ const regionalTaksongTarget=(value)=>{
 const mountainRedirect= (pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search')
  ?mountainTarget(explicitMountainKeyword||searchReferrerKeyword):null;
 if(mountainRedirect){res.writeHead(302,{location:encodeURI(mountainRedirect),'cache-control':'no-store','vary':'Accept-Encoding'});return res.end();}
+const traverseTopic=(pathname==='/'||pathname==='/index.html')&&explicitMountainKeyword?keywordExpansion.resolve(explicitMountainKeyword):null;
+if(traverseTopic&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route'].includes(traverseTopic.slug)){
+ res.writeHead(302,{location:encodeURI(traverseTopic.url),'cache-control':'no-store'});return res.end();
+}
 const regionalRedirect=(pathname==='/'||pathname==='/index.html')?regionalTaksongTarget(explicitMountainKeyword):null;
 if(regionalRedirect){res.writeHead(302,{location:regionalRedirect,'cache-control':'no-store'});return res.end();}
 if(pathname==='/'||pathname==='/index.html'){if(!cachedHomepageHtml){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');cachedHomepageHtml=applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/');}return respond(res,200,cachedHomepageHtml)}
@@ -1938,6 +1942,7 @@ if(pathname==='/api/region-card-preview'){
  const cards=region?(kind?[liveCardPublicData(region,kind)]:[liveCardPublicData(region,'daeri'),liveCardPublicData(region,'taksong')]):
   (topic&&!themedAmbiguous&&(!kind||kind===topic.kind)?[keywordExpansion.preview(topic,themedInfo)]:[]);
  for(const card of cards){
+  if(topic&&!region&&!themedRegion&&!/탁송$/.test(compact(query)))card.displayKeyword=query+' · 코스·차량회수 안내';
   const exact=exactRegionalKeywordCard(region||themedRegion,card.kind,query);
   if(exact)Object.assign(card,exact);
  }
@@ -2016,7 +2021,7 @@ if(pathname==='/region/'){
  const regionDirectOriginalLinks=rawQuery?'':staticOriginalSourceSection('region/index.html','verified-naver-region-links-20261102');
  const regionDirectorySchema=JSON.stringify({'@context':'https://schema.org','@type':'CollectionPage',name:'전국 지역별 자동차탁송·대리운전 검색',url:'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/',description:'전국 행정구역별 자동차탁송·대리운전 안내와 상담'}).replace(/</g,'\\u003c');
  const countNote=rawQuery?(matches.length===0?(keywordExpansion.resolve(rawQuery)?'코스·서비스 키워드에 맞는 이미지를 아래에 자동 표시합니다.':'일치하는 행정구역이 없습니다. 지역명을 다시 확인하거나 서비스 키워드를 입력해 주세요.'):'검색 일치 최대 100개 지역을 표시합니다. 정확히 일치하는 지역의 명함은 자동으로 열립니다.'):'지역명·산행 코스·자전거길·대리운전·탁송 서비스별 이미지를 자동 펼침으로 확인할 수 있습니다.';
- return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section><h2>전국 지역·코스·서비스 키워드별 자동 이미지</h2><p>부산대리운전·부산렌트카탁송·영산강길종주탁송·설악산탁송·골프장대리운전 등 키워드마다 해당 지역·코스·서비스의 이미지를 자동 표시합니다. 이미지를 누르거나 확대 링크로 크게 볼 수 있습니다.</p>'+form+'<div class="region-card-live" data-card-preview-output hidden aria-label="지역별 실시간 명함 미리보기"></div><p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/').replace('</head>','<link rel="stylesheet" href="/assets/region-card-preview.css?v=20261103-keyword3"></head>').replace('</body>','<script src="/assets/region-card-preview.js?v=20261106-cycling-centers" defer></script></body>'),'/region/'));
+ return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section><h2>전국 지역·코스·서비스 키워드별 자동 이미지</h2><p>부산대리운전·부산렌트카탁송·영산강길종주탁송·설악산탁송·골프장대리운전 등 키워드마다 해당 지역·코스·서비스의 이미지를 자동 표시합니다. 이미지를 누르거나 확대 링크로 크게 볼 수 있습니다.</p>'+form+'<div class="region-card-live" data-card-preview-output hidden aria-label="지역별 실시간 명함 미리보기"></div><p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/').replace('</head>','<link rel="stylesheet" href="/assets/region-card-preview.css?v=20261103-keyword3"></head>').replace('</body>','<script src="/assets/region-card-preview.js?v=20261106-traverse-information" defer></script></body>'),'/region/'));
 }
 const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
  const previewWebpMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand-v5\.webp$/);

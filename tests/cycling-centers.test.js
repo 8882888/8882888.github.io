@@ -16,3 +16,9 @@ console.log('PASS 10 keywords, separate mountain/bicycle intents, 87 official-li
 const html=c.page(new URLSearchParams(),{layout:(a,b,body)=>body,esc:s=>String(s),host:'example.com'});
 assert(html.includes('cycling-centers-original-guide'));
 for(const id of ['224445317658','224430900352','224452067282'])assert(html.includes(id),'preserve published original '+id);
+
+const infoTerms=['동해안자전거길종주','자전거길종주','자전거길완벽정리','국토종주자전거길종주','설악산종주','설악산종주완벽정리','지리산종주','지리산종주완벽정리','설악산코스별탁송','지리산코스별탁송','성대종주','성중종주','화대종주','화중종주','백중종주','백대종주','중삼종주'];
+for(const q of infoTerms)assert(k.resolve(q),'informational keyword '+q);
+for(const course of ['동해안','낙동강','영산강','섬진강','금강','오천'])for(const suffix of ['자전거길종주','자전거길종주완벽정리','길종주탁송'])assert(k.resolve(course+suffix),'course intent '+course+suffix);
+for(const suffix of ['자전거길종주','자전거길종주 및 탁송']){const p=c.pair('고성통일전망대인증센터에서 영덕해맞이공원인증센터 '+suffix);assert.equal(p?.from.name,'통일전망대');assert.equal(p?.to.name,'해맞이공원');}
+console.log('PASS informational traverse terms, six cycling courses and Goseong-to-Yeongdeok phrases without taksong');
