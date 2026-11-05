@@ -61,6 +61,25 @@ for url in NATIONWIDE_BATCH_20:
                      'id="quote-form"' if url == "/fare/" else
                      "nationwide-seventeen-province-coverage-20261105")
 
+# Batch 2: 17 metropolitan/provincial designated-driver landings plus
+# corporate, golf and daily-driver service guides (20 distinct URLs).
+# Public HTML validation is not an assertion of ranking or indexing.
+NATIONWIDE_DAERI_BATCH_20 = [
+    "/daeri/seoul/", "/daeri/busan/", "/daeri/incheon/",
+    "/daeri/daegu/", "/daeri/gwangju/", "/daeri/daejeon/",
+    "/daeri/ulsan/", "/daeri/sejong/", "/daeri/gyeonggi/",
+    "/daeri/gangwon/", "/daeri/chungbuk/", "/daeri/chungnam/",
+    "/daeri/jeonbuk/", "/daeri/jeonnam/", "/daeri/gyeongbuk/",
+    "/daeri/gyeongnam/", "/daeri/jeju/",
+    "/service/corporate/", "/service/golf/", "/service/daily-driver/",
+]
+assert len(NATIONWIDE_DAERI_BATCH_20) == len(set(NATIONWIDE_DAERI_BATCH_20)) == 20
+assert not set(NATIONWIDE_DAERI_BATCH_20) & set(NATIONWIDE_BATCH_20)
+for url in NATIONWIDE_DAERI_BATCH_20:
+    PATHS.setdefault(url, "review-mobile-booking-bar" if url.startswith("/daeri/") else
+                     "corporate-postpaid-guide-20261105" if url == "/service/corporate/" else
+                     "골프" if url == "/service/golf/" else "일일기사")
+
 BLOG_HASHTAG_ARTICLES = {
     "/blog/daeri-regions/" + item["slug"] + "/": item["tags"]
     for item in json.loads(Path("data/blog-hashtags-priority.json").read_text(encoding="utf-8"))["articles"]
