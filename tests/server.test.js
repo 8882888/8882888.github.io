@@ -312,6 +312,28 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
         'article links recorded published original '+postId);
     assert.ok(seoIndexText.includes(route),'index links all 7 editorial pages');
   }
+  // All 2,591 original rides are now discoverable in six bounded XML sitemap shards.
+  const sitemapIndexRes=await get('/sitemap-all.xml');
+  assert.equal(sitemapIndexRes.status,200,'complete sitemap index is accessible');
+  const sitemapIndex=await sitemapIndexRes.text();
+  assert(sitemapIndex.includes('<sitemapindex'),'complete sitemap is a proper sitemap index');
+  assert(sitemapIndex.includes('https://example.com/sitemap-history.xml'),'all sitemap references original ride archive index');
+  const historyIndex=await (await get('/sitemap-history.xml')).text();
+  const shards=[...historyIndex.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
+  assert.equal(shards.length,6,'2,591 rides require exactly six bounded sitemap shards');
+  const expected=new Set(Array.from({length:2591},(_,i)=>'https://example.com/reviews/history/excel-'+String(i+1).padStart(4,'0')+'/'));
+  for(let index=1;index<=6;index++){
+   const response=await get('/sitemap-history-'+index+'.xml');
+   assert.equal(response.status,200,'history sitemap shard '+index+' exists');
+   const xml=await response.text();
+   const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
+   assert.equal(urls.length,index<6?500:91,'sitemap shard has correct number of verified rides');
+   for(const url of urls)assert(expected.delete(url),'sitemap contains each source ride exactly once: '+url);
+  }
+  assert.equal(expected.size,0,'all 2,591 original rides are discoverable, no omitted ride');
+  assert.equal((await get('/sitemap-history-7.xml')).status,404,'out of-range sitemap shards do not exist');
+  const indexedRobots=await (await get('/robots.txt')).text();
+  assert(indexedRobots.includes('Sitemap: https://example.com/sitemap-all.xml'),'robots advertises complete sitemap index');
   const seoulPriorityMap=await (await get('/sitemap-priority.xml')).text();
   const seoulMainMap=await (await get('/sitemap.xml')).text();
   // Regional link volume must not crowd out verifiable completed rides in the main sitemap.
