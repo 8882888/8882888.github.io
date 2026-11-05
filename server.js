@@ -1103,6 +1103,19 @@ function placeRegionalCardAfterIntro(page,originalCard,visibleCard=originalCard)
  }
  return without.replace('<main>','<main>'+visibleCard);
 }
+function nationwideCoveragePage(){
+ const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
+ const provinces=regions.filter(r=>r.level==='시도');
+ const unique=new Set(provinces.map(x=>x.full_name));
+ if(provinces.length!==17||unique.size!==17)throw Error('Nationwide coverage must preserve 17 provinces');
+ const cards=provinces.map(r=>{
+  const nearby=childrenByParent.get(r.slug)||[];
+  const children=nearby.slice(0,6).map(x=>'<a href="'+servicePath(x,'taksong')+'">'+esc(x.name)+'탁송</a>').join(' · ');
+  return '<article style="border:1px solid #cbd8ea;border-radius:12px;padding:15px;background:#fff"><h2>'+esc(seoRegionLabel(r))+' 탁송·대리운전</h2><p>차량 위치·출발시각·목적지와 인수·인계 조건을 지역별로 확인하세요. 기사 상주·실제 운행완료 보장은 아닙니다.</p><p><a href="'+servicePath(r,'taksong')+'">지역 자동차탁송 안내</a> · <a href="'+servicePath(r,'daeri')+'">대리운전 안내</a></p><p>'+children+'</p><p><a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind=taksong">이 지역 실제 완료기록만 보기</a> · <a href="/fare/?service=taksong&amp;from='+encodeURIComponent(r.full_name)+'">출발지 요금조회</a></p></article>';
+ }).join('');
+ const body='<section id="nationwide-seventeen-province-coverage-20261105"><h1>전국 17개 시·도 자동차탁송·대리운전 지역별 안내</h1><p>서울·경기·인천부터 강원·충청·호남·영남·제주까지 실제 행정구역으로 찾을 수 있습니다. 아래 연결은 서비스 안내이며 해당 지역 운행 실적을 의미하지 않습니다. 실제 완료 운행은 각 지역 후기 화면에서 별도로 확인합니다.</p><p><a href="/reviews/history/">전국 2,591건 운행내역</a> · <a href="/fare/">출발·도착 예상요금</a> · <a href="tel:18114294">예약상담 1811-4294</a></p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">'+cards+'</div></section>';
+ return layout('전국 17개 시·도 탁송·대리운전 지역 안내','서울·경기·인천·강원·충청·호남·영남·제주 자동차탁송과 대리운전 지역별 정보, 확인된 운행기록 및 예상요금 안내.',body,'https://'+host+'/coverage/');
+}
 function regionPage(r){
  const fullName=r.full_name||[r.parent_name==='대한민국'?'':r.parent_name,r.name].filter(Boolean).join(' ');
  const full=esc(fullName),short=esc(r.name),context=esc(regionContext(r));
@@ -1807,6 +1820,7 @@ const placeCategoryMatch=pathname.match(/^\/places\/([^/]+)\/?$/);
 if(placeCategoryMatch){const category=placeCategories.find(x=>x[0]===placeCategoryMatch[1]);return category?respond(res,200,placeCategoryPage(category)):respond(res,404,'장소 분류를 찾을 수 없습니다.')}
 const featuredRouteMatch=pathname.match(/^\/taksong\/route\/([a-z-]+)\/?$/);if(featuredRouteMatch){const route=featuredTaksongRoutes.find(x=>x.slug===featuredRouteMatch[1]);return route?respond(res,200,featuredTaksongRoutePage(route)):respond(res,404,'해당 구간을 찾을 수 없습니다.')}
 if(pathname==='/taksong'){res.writeHead(301,{location:'/taksong/'+u.search});return res.end()}
+if(pathname==='/coverage/'||pathname==='/coverage')return respond(res,200,nationwideCoveragePage());
 if(pathname==='/taksong/')return respond(res,200,applySeo(serviceHub('taksong'),'/taksong/'));
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
@@ -2030,7 +2044,7 @@ if(pathname==='/sitemap.xml'){
  const provinceRegions=regions.filter(r=>r.level==='시도');
  const focused=[
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
-  '/','/taksongdaeri/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/fare/','/fare/jeju/',
+  '/','/coverage/','/taksongdaeri/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/fare/','/fare/jeju/',
   '/reviews/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/blog/','/blog/archive/','/find/',
   // Search value comes from publicly verified completed rides, not mass-generated localities.
   ...publicRides.slice(0,60).map(rideUrl),
