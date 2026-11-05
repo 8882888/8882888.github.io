@@ -31,6 +31,20 @@ async function scanSitemap(url,depth=0){
   }
  }catch(e){sitemapErrors.push(url+': '+String(e))}
 }
+// A disallow rule or unavailable robots.txt can suppress crawl even when pages return 200.
+const crawlerDiagnostics=[];
+try{
+ const robotsResponse=await get(origin+'/robots.txt');
+ const robotsBody=await robotsResponse.text();
+ if(!robotsResponse.ok) crawlerDiagnostics.push('robots_http_'+robotsResponse.status);
+ const lines=robotsBody.split(/\r?\n/).map(x=>x.trim());
+ let group='';let relevant=false;
+ for(const line of lines){
+  if(/^user-agent\s*:/i.test(line)){group=line.split(':').slice(1).join(':').trim().toLowerCase();relevant=group==='*'||group==='yeti';}
+  if(relevant&&/^disallow\s*:\s*\/\s*(?:#.*)?$/i.test(line))crawlerDiagnostics.push('robots_disallow_all_for_'+group);
+ }
+ if(!/sitemap\s*:/i.test(robotsBody))crawlerDiagnostics.push('robots_missing_sitemap_declaration');
+}catch(error){crawlerDiagnostics.push('robots_fetch_error:'+String(error).slice(0,120))}
 for(const path of sitemapPaths)await scanSitemap(origin+path);
 const list=[...all.values()];
 console.log('Sitemap URLs discovered:',list.length,'Sitemap errors:',sitemapErrors.length);
@@ -77,8 +91,8 @@ for(const r of results){if(r.title&&titles.get(r.title).length>1)r.problems.push
 const bodies=new Map();
 for(const r of results){if(!r.bodyHash)continue;const group=bodies.get(r.bodyHash)||[];group.push(r.url);bodies.set(r.bodyHash,group)}
 for(const r of results){if(r.bodyHash&&bodies.get(r.bodyHash).length>1)r.problems.push('duplicate_exact_body')}
-const counts={discovered:list.length,checked:results.length,listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,regionalPagesWithoutReviewLink:results.filter(r=>/\/(?:region|taksong|daeri)\//.test(new URL(r.url).pathname)&&!r.hasRideLink).length,passed:results.filter(r=>r.problems.length===0).length,
- issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,
+const counts={discovered:list.length,checked:results.length,listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,regionalPagesWithoutReviewLink:results.filter(r=>r.status===200&&r.title&&/\/(?:region|taksong|daeri)\//.test(new URL(r.url).pathname)&&!r.hasRideLink).length,passed:results.filter(r=>r.problems.length===0).length,
+ issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,crawlerDiagnostics,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
 writeFileSync('indexability-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,counts,results},null,2));
@@ -86,4 +100,4 @@ writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,bo
  ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.bodyHash,r.hasRideLink,r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
 console.log(JSON.stringify(counts,null,2));
 console.log('NOTE: 100% technical URL checks cannot establish Naver indexing. Check Naver Search Advisor URL inspection and site diagnosis separately.');
-if(counts.issues||counts.sitemapErrors.length||counts.discovered===0)process.exitCode=1;
+if(counts.issues||counts.sitemapErrors.length||counts.crawlerDiagnostics.length||counts.discovered===0)process.exitCode=1;
