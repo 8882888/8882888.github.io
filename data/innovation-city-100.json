@@ -1,0 +1,1006 @@
+{
+  "version": "2026-11-06",
+  "purpose": "Innovation city customer logistics guides, not verified trips or fixed prices",
+  "entries": [
+    {
+      "id": 1,
+      "region": "세종특별자치시",
+      "locality": "정부세종청사",
+      "kind": "daeri",
+      "keyword": "정부세종청사대리운전",
+      "title": "정부세종청사 대리운전 예약 준비",
+      "detail": "청사 방문차량은 출입 가능한 주차 구역과 출차 담당자를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 2,
+      "region": "세종특별자치시",
+      "locality": "정부세종청사",
+      "kind": "taksong",
+      "keyword": "정부세종청사탁송",
+      "title": "정부세종청사 차량탁송 인수·인계 준비",
+      "detail": "청사 방문차량은 출입 가능한 주차 구역과 출차 담당자를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 3,
+      "region": "세종특별자치시",
+      "locality": "나성동",
+      "kind": "daeri",
+      "keyword": "나성동대리운전",
+      "title": "나성동 대리운전 예약 준비",
+      "detail": "상업시설 출발은 건물 주차장 출구와 고객이 있는 위치를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 4,
+      "region": "세종특별자치시",
+      "locality": "나성동",
+      "kind": "taksong",
+      "keyword": "나성동탁송",
+      "title": "나성동 차량탁송 인수·인계 준비",
+      "detail": "상업시설 출발은 건물 주차장 출구와 고객이 있는 위치를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 5,
+      "region": "세종특별자치시",
+      "locality": "어진동",
+      "kind": "daeri",
+      "keyword": "어진동대리운전",
+      "title": "어진동 대리운전 예약 준비",
+      "detail": "업무시설 차량은 방문등록과 차량 키 인수 가능 시각을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 6,
+      "region": "세종특별자치시",
+      "locality": "어진동",
+      "kind": "taksong",
+      "keyword": "어진동탁송",
+      "title": "어진동 차량탁송 인수·인계 준비",
+      "detail": "업무시설 차량은 방문등록과 차량 키 인수 가능 시각을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 7,
+      "region": "세종특별자치시",
+      "locality": "도담동",
+      "kind": "daeri",
+      "keyword": "도담동대리운전",
+      "title": "도담동 대리운전 예약 준비",
+      "detail": "아파트·상가 출발은 주차층과 정확한 차량 위치를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 8,
+      "region": "세종특별자치시",
+      "locality": "도담동",
+      "kind": "taksong",
+      "keyword": "도담동탁송",
+      "title": "도담동 차량탁송 인수·인계 준비",
+      "detail": "아파트·상가 출발은 주차층과 정확한 차량 위치를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 9,
+      "region": "세종특별자치시",
+      "locality": "조치원읍",
+      "kind": "daeri",
+      "keyword": "조치원읍대리운전",
+      "title": "조치원읍 대리운전 예약 준비",
+      "detail": "세종 신도심과 이동거리가 다르므로 출발 위치와 목적지를 별도로 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 10,
+      "region": "세종특별자치시",
+      "locality": "조치원읍",
+      "kind": "taksong",
+      "keyword": "조치원읍탁송",
+      "title": "조치원읍 차량탁송 인수·인계 준비",
+      "detail": "세종 신도심과 이동거리가 다르므로 출발 위치와 목적지를 별도로 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 11,
+      "region": "강원특별자치도 원주시",
+      "locality": "반곡동",
+      "kind": "daeri",
+      "keyword": "반곡동대리운전",
+      "title": "반곡동 대리운전 예약 준비",
+      "detail": "혁신도시 업무시설 차량은 주차구역과 인수 담당자를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 12,
+      "region": "강원특별자치도 원주시",
+      "locality": "반곡동",
+      "kind": "taksong",
+      "keyword": "반곡동탁송",
+      "title": "반곡동 차량탁송 인수·인계 준비",
+      "detail": "혁신도시 업무시설 차량은 주차구역과 인수 담당자를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 13,
+      "region": "강원특별자치도 원주시",
+      "locality": "관설동",
+      "kind": "daeri",
+      "keyword": "관설동대리운전",
+      "title": "관설동 대리운전 예약 준비",
+      "detail": "주거지 차량은 출입구와 도착지 수령 가능시간을 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 14,
+      "region": "강원특별자치도 원주시",
+      "locality": "관설동",
+      "kind": "taksong",
+      "keyword": "관설동탁송",
+      "title": "관설동 차량탁송 인수·인계 준비",
+      "detail": "주거지 차량은 출입구와 도착지 수령 가능시간을 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 15,
+      "region": "강원특별자치도 원주시",
+      "locality": "무실동",
+      "kind": "daeri",
+      "keyword": "무실동대리운전",
+      "title": "무실동 대리운전 예약 준비",
+      "detail": "상업시설과 관공서의 주차장 출입 동선을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 16,
+      "region": "강원특별자치도 원주시",
+      "locality": "무실동",
+      "kind": "taksong",
+      "keyword": "무실동탁송",
+      "title": "무실동 차량탁송 인수·인계 준비",
+      "detail": "상업시설과 관공서의 주차장 출입 동선을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 17,
+      "region": "강원특별자치도 원주시",
+      "locality": "지정면",
+      "kind": "daeri",
+      "keyword": "지정면대리운전",
+      "title": "지정면 대리운전 예약 준비",
+      "detail": "기업도시 이동 시 실제 차량 인수 위치와 기사 복귀 이동을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 18,
+      "region": "강원특별자치도 원주시",
+      "locality": "지정면",
+      "kind": "taksong",
+      "keyword": "지정면탁송",
+      "title": "지정면 차량탁송 인수·인계 준비",
+      "detail": "기업도시 이동 시 실제 차량 인수 위치와 기사 복귀 이동을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 19,
+      "region": "강원특별자치도 원주시",
+      "locality": "원주역",
+      "kind": "daeri",
+      "keyword": "원주역대리운전",
+      "title": "원주역 대리운전 예약 준비",
+      "detail": "역 주변 승하차 지점과 차량이 세워진 주차구역을 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 20,
+      "region": "강원특별자치도 원주시",
+      "locality": "원주역",
+      "kind": "taksong",
+      "keyword": "원주역탁송",
+      "title": "원주역 차량탁송 인수·인계 준비",
+      "detail": "역 주변 승하차 지점과 차량이 세워진 주차구역을 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 21,
+      "region": "경상남도 진주시",
+      "locality": "충무공동",
+      "kind": "daeri",
+      "keyword": "충무공동대리운전",
+      "title": "충무공동 대리운전 예약 준비",
+      "detail": "혁신도시 업무동과 거주지의 차량 위치를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 22,
+      "region": "경상남도 진주시",
+      "locality": "충무공동",
+      "kind": "taksong",
+      "keyword": "충무공동탁송",
+      "title": "충무공동 차량탁송 인수·인계 준비",
+      "detail": "혁신도시 업무동과 거주지의 차량 위치를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 23,
+      "region": "경상남도 진주시",
+      "locality": "평거동",
+      "kind": "daeri",
+      "keyword": "평거동대리운전",
+      "title": "평거동 대리운전 예약 준비",
+      "detail": "음식점 출발과 아파트 주차장의 위치를 따로 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 24,
+      "region": "경상남도 진주시",
+      "locality": "평거동",
+      "kind": "taksong",
+      "keyword": "평거동탁송",
+      "title": "평거동 차량탁송 인수·인계 준비",
+      "detail": "음식점 출발과 아파트 주차장의 위치를 따로 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 25,
+      "region": "경상남도 진주시",
+      "locality": "상대동",
+      "kind": "daeri",
+      "keyword": "상대동대리운전",
+      "title": "상대동 대리운전 예약 준비",
+      "detail": "사업장 차량은 인수 허가와 키 전달자를 사전 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 26,
+      "region": "경상남도 진주시",
+      "locality": "상대동",
+      "kind": "taksong",
+      "keyword": "상대동탁송",
+      "title": "상대동 차량탁송 인수·인계 준비",
+      "detail": "사업장 차량은 인수 허가와 키 전달자를 사전 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 27,
+      "region": "경상남도 진주시",
+      "locality": "가좌동",
+      "kind": "daeri",
+      "keyword": "가좌동대리운전",
+      "title": "가좌동 대리운전 예약 준비",
+      "detail": "상가·주거지 출발은 주차 가능 구역과 출차 시간을 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 28,
+      "region": "경상남도 진주시",
+      "locality": "가좌동",
+      "kind": "taksong",
+      "keyword": "가좌동탁송",
+      "title": "가좌동 차량탁송 인수·인계 준비",
+      "detail": "상가·주거지 출발은 주차 가능 구역과 출차 시간을 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 29,
+      "region": "경상남도 진주시",
+      "locality": "진주역",
+      "kind": "daeri",
+      "keyword": "진주역대리운전",
+      "title": "진주역 대리운전 예약 준비",
+      "detail": "역 출입구 대신 실제 차량 주차 장소를 기준으로 안내합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 30,
+      "region": "경상남도 진주시",
+      "locality": "진주역",
+      "kind": "taksong",
+      "keyword": "진주역탁송",
+      "title": "진주역 차량탁송 인수·인계 준비",
+      "detail": "역 출입구 대신 실제 차량 주차 장소를 기준으로 안내합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 31,
+      "region": "전라남도 나주시",
+      "locality": "빛가람동",
+      "kind": "daeri",
+      "keyword": "빛가람동대리운전",
+      "title": "빛가람동 대리운전 예약 준비",
+      "detail": "혁신도시 공공기관과 주거지 차량의 실제 주차 위치를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 32,
+      "region": "전라남도 나주시",
+      "locality": "빛가람동",
+      "kind": "taksong",
+      "keyword": "빛가람동탁송",
+      "title": "빛가람동 차량탁송 인수·인계 준비",
+      "detail": "혁신도시 공공기관과 주거지 차량의 실제 주차 위치를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 33,
+      "region": "전라남도 나주시",
+      "locality": "나주역",
+      "kind": "daeri",
+      "keyword": "나주역대리운전",
+      "title": "나주역 대리운전 예약 준비",
+      "detail": "역 인근 대기장소와 차량 주차장을 별도로 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 34,
+      "region": "전라남도 나주시",
+      "locality": "나주역",
+      "kind": "taksong",
+      "keyword": "나주역탁송",
+      "title": "나주역 차량탁송 인수·인계 준비",
+      "detail": "역 인근 대기장소와 차량 주차장을 별도로 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 35,
+      "region": "전라남도 나주시",
+      "locality": "송월동",
+      "kind": "daeri",
+      "keyword": "송월동대리운전",
+      "title": "송월동 대리운전 예약 준비",
+      "detail": "도심 업무시설의 주차장 출입 절차를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 36,
+      "region": "전라남도 나주시",
+      "locality": "송월동",
+      "kind": "taksong",
+      "keyword": "송월동탁송",
+      "title": "송월동 차량탁송 인수·인계 준비",
+      "detail": "도심 업무시설의 주차장 출입 절차를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 37,
+      "region": "전라남도 나주시",
+      "locality": "남평읍",
+      "kind": "daeri",
+      "keyword": "남평읍대리운전",
+      "title": "남평읍 대리운전 예약 준비",
+      "detail": "광주 방향과 나주 도심 방향의 목적지를 정확히 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 38,
+      "region": "전라남도 나주시",
+      "locality": "남평읍",
+      "kind": "taksong",
+      "keyword": "남평읍탁송",
+      "title": "남평읍 차량탁송 인수·인계 준비",
+      "detail": "광주 방향과 나주 도심 방향의 목적지를 정확히 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 39,
+      "region": "전라남도 나주시",
+      "locality": "금천면",
+      "kind": "daeri",
+      "keyword": "금천면대리운전",
+      "title": "금천면 대리운전 예약 준비",
+      "detail": "외곽 차량 이동은 기사 접근과 복귀 조건을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 40,
+      "region": "전라남도 나주시",
+      "locality": "금천면",
+      "kind": "taksong",
+      "keyword": "금천면탁송",
+      "title": "금천면 차량탁송 인수·인계 준비",
+      "detail": "외곽 차량 이동은 기사 접근과 복귀 조건을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 41,
+      "region": "경상북도 김천시",
+      "locality": "율곡동",
+      "kind": "daeri",
+      "keyword": "율곡동대리운전",
+      "title": "율곡동 대리운전 예약 준비",
+      "detail": "혁신도시 업무시설 출고 담당자와 차량 주차 위치를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 42,
+      "region": "경상북도 김천시",
+      "locality": "율곡동",
+      "kind": "taksong",
+      "keyword": "율곡동탁송",
+      "title": "율곡동 차량탁송 인수·인계 준비",
+      "detail": "혁신도시 업무시설 출고 담당자와 차량 주차 위치를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 43,
+      "region": "경상북도 김천시",
+      "locality": "김천구미역",
+      "kind": "daeri",
+      "keyword": "김천구미역대리운전",
+      "title": "김천구미역 대리운전 예약 준비",
+      "detail": "역 승하차 구역과 실제 인수 주차장을 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 44,
+      "region": "경상북도 김천시",
+      "locality": "김천구미역",
+      "kind": "taksong",
+      "keyword": "김천구미역탁송",
+      "title": "김천구미역 차량탁송 인수·인계 준비",
+      "detail": "역 승하차 구역과 실제 인수 주차장을 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 45,
+      "region": "경상북도 김천시",
+      "locality": "평화동",
+      "kind": "daeri",
+      "keyword": "평화동대리운전",
+      "title": "평화동 대리운전 예약 준비",
+      "detail": "도심 상가 출발 차량의 주차장 출입구를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 46,
+      "region": "경상북도 김천시",
+      "locality": "평화동",
+      "kind": "taksong",
+      "keyword": "평화동탁송",
+      "title": "평화동 차량탁송 인수·인계 준비",
+      "detail": "도심 상가 출발 차량의 주차장 출입구를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 47,
+      "region": "경상북도 김천시",
+      "locality": "부곡동",
+      "kind": "daeri",
+      "keyword": "부곡동대리운전",
+      "title": "부곡동 대리운전 예약 준비",
+      "detail": "아파트 차량은 주차층과 기사 만남 장소를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 48,
+      "region": "경상북도 김천시",
+      "locality": "부곡동",
+      "kind": "taksong",
+      "keyword": "부곡동탁송",
+      "title": "부곡동 차량탁송 인수·인계 준비",
+      "detail": "아파트 차량은 주차층과 기사 만남 장소를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 49,
+      "region": "경상북도 김천시",
+      "locality": "아포읍",
+      "kind": "daeri",
+      "keyword": "아포읍대리운전",
+      "title": "아포읍 대리운전 예약 준비",
+      "detail": "구미 방향 장거리 운행은 목적지와 이동시각을 사전 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 50,
+      "region": "경상북도 김천시",
+      "locality": "아포읍",
+      "kind": "taksong",
+      "keyword": "아포읍탁송",
+      "title": "아포읍 차량탁송 인수·인계 준비",
+      "detail": "구미 방향 장거리 운행은 목적지와 이동시각을 사전 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 51,
+      "region": "전북특별자치도 전주시",
+      "locality": "혁신도시",
+      "kind": "daeri",
+      "keyword": "혁신도시대리운전",
+      "title": "혁신도시 대리운전 예약 준비",
+      "detail": "전주·완주 경계를 먼저 확인하고 실제 차량 위치를 특정합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 52,
+      "region": "전북특별자치도 전주시",
+      "locality": "혁신도시",
+      "kind": "taksong",
+      "keyword": "혁신도시탁송",
+      "title": "혁신도시 차량탁송 인수·인계 준비",
+      "detail": "전주·완주 경계를 먼저 확인하고 실제 차량 위치를 특정합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 53,
+      "region": "전북특별자치도 전주시",
+      "locality": "효자동",
+      "kind": "daeri",
+      "keyword": "효자동대리운전",
+      "title": "효자동 대리운전 예약 준비",
+      "detail": "업무시설·상가의 주차장 출입구와 담당자를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 54,
+      "region": "전북특별자치도 전주시",
+      "locality": "효자동",
+      "kind": "taksong",
+      "keyword": "효자동탁송",
+      "title": "효자동 차량탁송 인수·인계 준비",
+      "detail": "업무시설·상가의 주차장 출입구와 담당자를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 55,
+      "region": "전북특별자치도 전주시",
+      "locality": "만성동",
+      "kind": "daeri",
+      "keyword": "만성동대리운전",
+      "title": "만성동 대리운전 예약 준비",
+      "detail": "법인차량 인수 시 출고 승인과 수령인을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 56,
+      "region": "전북특별자치도 전주시",
+      "locality": "만성동",
+      "kind": "taksong",
+      "keyword": "만성동탁송",
+      "title": "만성동 차량탁송 인수·인계 준비",
+      "detail": "법인차량 인수 시 출고 승인과 수령인을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 57,
+      "region": "전북특별자치도 전주시",
+      "locality": "서신동",
+      "kind": "daeri",
+      "keyword": "서신동대리운전",
+      "title": "서신동 대리운전 예약 준비",
+      "detail": "상가 주변 도로 정차 가능 위치와 차고지를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 58,
+      "region": "전북특별자치도 전주시",
+      "locality": "서신동",
+      "kind": "taksong",
+      "keyword": "서신동탁송",
+      "title": "서신동 차량탁송 인수·인계 준비",
+      "detail": "상가 주변 도로 정차 가능 위치와 차고지를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 59,
+      "region": "전북특별자치도 전주시",
+      "locality": "전주역",
+      "kind": "daeri",
+      "keyword": "전주역대리운전",
+      "title": "전주역 대리운전 예약 준비",
+      "detail": "역 광장 출입구보다 실제 주차 위치를 기준으로 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 60,
+      "region": "전북특별자치도 전주시",
+      "locality": "전주역",
+      "kind": "taksong",
+      "keyword": "전주역탁송",
+      "title": "전주역 차량탁송 인수·인계 준비",
+      "detail": "역 광장 출입구보다 실제 주차 위치를 기준으로 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 61,
+      "region": "전북특별자치도 완주군",
+      "locality": "이서면",
+      "kind": "daeri",
+      "keyword": "이서면대리운전",
+      "title": "이서면 대리운전 예약 준비",
+      "detail": "전북혁신도시 업무시설의 전주·완주 주소 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 62,
+      "region": "전북특별자치도 완주군",
+      "locality": "이서면",
+      "kind": "taksong",
+      "keyword": "이서면탁송",
+      "title": "이서면 차량탁송 인수·인계 준비",
+      "detail": "전북혁신도시 업무시설의 전주·완주 주소 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 63,
+      "region": "전북특별자치도 완주군",
+      "locality": "봉동읍",
+      "kind": "daeri",
+      "keyword": "봉동읍대리운전",
+      "title": "봉동읍 대리운전 예약 준비",
+      "detail": "사업장 출입 허가와 차량 인계 담당자를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 64,
+      "region": "전북특별자치도 완주군",
+      "locality": "봉동읍",
+      "kind": "taksong",
+      "keyword": "봉동읍탁송",
+      "title": "봉동읍 차량탁송 인수·인계 준비",
+      "detail": "사업장 출입 허가와 차량 인계 담당자를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 65,
+      "region": "전북특별자치도 완주군",
+      "locality": "삼례읍",
+      "kind": "daeri",
+      "keyword": "삼례읍대리운전",
+      "title": "삼례읍 대리운전 예약 준비",
+      "detail": "읍내 주차 위치와 전주 이동 목적지를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 66,
+      "region": "전북특별자치도 완주군",
+      "locality": "삼례읍",
+      "kind": "taksong",
+      "keyword": "삼례읍탁송",
+      "title": "삼례읍 차량탁송 인수·인계 준비",
+      "detail": "읍내 주차 위치와 전주 이동 목적지를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 67,
+      "region": "전북특별자치도 완주군",
+      "locality": "용진읍",
+      "kind": "daeri",
+      "keyword": "용진읍대리운전",
+      "title": "용진읍 대리운전 예약 준비",
+      "detail": "주거지 인수와 외곽 도로 접근 동선을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 68,
+      "region": "전북특별자치도 완주군",
+      "locality": "용진읍",
+      "kind": "taksong",
+      "keyword": "용진읍탁송",
+      "title": "용진읍 차량탁송 인수·인계 준비",
+      "detail": "주거지 인수와 외곽 도로 접근 동선을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 69,
+      "region": "전북특별자치도 완주군",
+      "locality": "소양면",
+      "kind": "daeri",
+      "keyword": "소양면대리운전",
+      "title": "소양면 대리운전 예약 준비",
+      "detail": "산간·외곽 이동은 출발시각과 기사 복귀를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 70,
+      "region": "전북특별자치도 완주군",
+      "locality": "소양면",
+      "kind": "taksong",
+      "keyword": "소양면탁송",
+      "title": "소양면 차량탁송 인수·인계 준비",
+      "detail": "산간·외곽 이동은 출발시각과 기사 복귀를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 71,
+      "region": "충청북도 진천군",
+      "locality": "덕산읍",
+      "kind": "daeri",
+      "keyword": "덕산읍대리운전",
+      "title": "덕산읍 대리운전 예약 준비",
+      "detail": "충북혁신도시 내 공공기관과 주거지 차량 위치를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 72,
+      "region": "충청북도 진천군",
+      "locality": "덕산읍",
+      "kind": "taksong",
+      "keyword": "덕산읍탁송",
+      "title": "덕산읍 차량탁송 인수·인계 준비",
+      "detail": "충북혁신도시 내 공공기관과 주거지 차량 위치를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 73,
+      "region": "충청북도 진천군",
+      "locality": "진천읍",
+      "kind": "daeri",
+      "keyword": "진천읍대리운전",
+      "title": "진천읍 대리운전 예약 준비",
+      "detail": "읍내 주차 위치와 목적지 방향을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 74,
+      "region": "충청북도 진천군",
+      "locality": "진천읍",
+      "kind": "taksong",
+      "keyword": "진천읍탁송",
+      "title": "진천읍 차량탁송 인수·인계 준비",
+      "detail": "읍내 주차 위치와 목적지 방향을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 75,
+      "region": "충청북도 진천군",
+      "locality": "광혜원면",
+      "kind": "daeri",
+      "keyword": "광혜원면대리운전",
+      "title": "광혜원면 대리운전 예약 준비",
+      "detail": "산업시설 출고 담당자와 키 전달 방법을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 76,
+      "region": "충청북도 진천군",
+      "locality": "광혜원면",
+      "kind": "taksong",
+      "keyword": "광혜원면탁송",
+      "title": "광혜원면 차량탁송 인수·인계 준비",
+      "detail": "산업시설 출고 담당자와 키 전달 방법을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 77,
+      "region": "충청북도 진천군",
+      "locality": "이월면",
+      "kind": "daeri",
+      "keyword": "이월면대리운전",
+      "title": "이월면 대리운전 예약 준비",
+      "detail": "외곽 출발 차량의 진입도로와 기사 복귀를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 78,
+      "region": "충청북도 진천군",
+      "locality": "이월면",
+      "kind": "taksong",
+      "keyword": "이월면탁송",
+      "title": "이월면 차량탁송 인수·인계 준비",
+      "detail": "외곽 출발 차량의 진입도로와 기사 복귀를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 79,
+      "region": "충청북도 진천군",
+      "locality": "초평면",
+      "kind": "daeri",
+      "keyword": "초평면대리운전",
+      "title": "초평면 대리운전 예약 준비",
+      "detail": "주차 위치와 실제 인수 가능시각을 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 80,
+      "region": "충청북도 진천군",
+      "locality": "초평면",
+      "kind": "taksong",
+      "keyword": "초평면탁송",
+      "title": "초평면 차량탁송 인수·인계 준비",
+      "detail": "주차 위치와 실제 인수 가능시각을 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 81,
+      "region": "충청북도 음성군",
+      "locality": "맹동면",
+      "kind": "daeri",
+      "keyword": "맹동면대리운전",
+      "title": "맹동면 대리운전 예약 준비",
+      "detail": "충북혁신도시 건물별 차량 주차층과 출입구를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 82,
+      "region": "충청북도 음성군",
+      "locality": "맹동면",
+      "kind": "taksong",
+      "keyword": "맹동면탁송",
+      "title": "맹동면 차량탁송 인수·인계 준비",
+      "detail": "충북혁신도시 건물별 차량 주차층과 출입구를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 83,
+      "region": "충청북도 음성군",
+      "locality": "금왕읍",
+      "kind": "daeri",
+      "keyword": "금왕읍대리운전",
+      "title": "금왕읍 대리운전 예약 준비",
+      "detail": "상업시설과 산업시설의 출고 가능 시각을 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 84,
+      "region": "충청북도 음성군",
+      "locality": "금왕읍",
+      "kind": "taksong",
+      "keyword": "금왕읍탁송",
+      "title": "금왕읍 차량탁송 인수·인계 준비",
+      "detail": "상업시설과 산업시설의 출고 가능 시각을 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 85,
+      "region": "충청북도 음성군",
+      "locality": "대소면",
+      "kind": "daeri",
+      "keyword": "대소면대리운전",
+      "title": "대소면 대리운전 예약 준비",
+      "detail": "산업단지 차량 인수 담당자와 출입 절차를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 86,
+      "region": "충청북도 음성군",
+      "locality": "대소면",
+      "kind": "taksong",
+      "keyword": "대소면탁송",
+      "title": "대소면 차량탁송 인수·인계 준비",
+      "detail": "산업단지 차량 인수 담당자와 출입 절차를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 87,
+      "region": "충청북도 음성군",
+      "locality": "음성읍",
+      "kind": "daeri",
+      "keyword": "음성읍대리운전",
+      "title": "음성읍 대리운전 예약 준비",
+      "detail": "읍내 출발 장소와 시외 목적지 방향을 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 88,
+      "region": "충청북도 음성군",
+      "locality": "음성읍",
+      "kind": "taksong",
+      "keyword": "음성읍탁송",
+      "title": "음성읍 차량탁송 인수·인계 준비",
+      "detail": "읍내 출발 장소와 시외 목적지 방향을 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 89,
+      "region": "충청북도 음성군",
+      "locality": "삼성면",
+      "kind": "daeri",
+      "keyword": "삼성면대리운전",
+      "title": "삼성면 대리운전 예약 준비",
+      "detail": "외곽 사업장 차량은 기사 접근과 복귀 가능성을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 90,
+      "region": "충청북도 음성군",
+      "locality": "삼성면",
+      "kind": "taksong",
+      "keyword": "삼성면탁송",
+      "title": "삼성면 차량탁송 인수·인계 준비",
+      "detail": "외곽 사업장 차량은 기사 접근과 복귀 가능성을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 91,
+      "region": "대구광역시 동구",
+      "locality": "신서혁신도시",
+      "kind": "daeri",
+      "keyword": "신서혁신도시대리운전",
+      "title": "신서혁신도시 대리운전 예약 준비",
+      "detail": "혁신도시 업무시설의 출고 담당자와 방문주차 구역을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 92,
+      "region": "대구광역시 동구",
+      "locality": "신서혁신도시",
+      "kind": "taksong",
+      "keyword": "신서혁신도시탁송",
+      "title": "신서혁신도시 차량탁송 인수·인계 준비",
+      "detail": "혁신도시 업무시설의 출고 담당자와 방문주차 구역을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 93,
+      "region": "대구광역시 동구",
+      "locality": "동대구역",
+      "kind": "daeri",
+      "keyword": "동대구역대리운전",
+      "title": "동대구역 대리운전 예약 준비",
+      "detail": "역 출입구와 차량 주차 장소를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 94,
+      "region": "대구광역시 동구",
+      "locality": "동대구역",
+      "kind": "taksong",
+      "keyword": "동대구역탁송",
+      "title": "동대구역 차량탁송 인수·인계 준비",
+      "detail": "역 출입구와 차량 주차 장소를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 95,
+      "region": "대구광역시 동구",
+      "locality": "신암동",
+      "kind": "daeri",
+      "keyword": "신암동대리운전",
+      "title": "신암동 대리운전 예약 준비",
+      "detail": "도심 주거지와 정비시설의 인수 위치를 구분합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 96,
+      "region": "대구광역시 동구",
+      "locality": "신암동",
+      "kind": "taksong",
+      "keyword": "신암동탁송",
+      "title": "신암동 차량탁송 인수·인계 준비",
+      "detail": "도심 주거지와 정비시설의 인수 위치를 구분합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 97,
+      "region": "대구광역시 동구",
+      "locality": "안심",
+      "kind": "daeri",
+      "keyword": "안심대리운전",
+      "title": "안심 대리운전 예약 준비",
+      "detail": "외곽 이동 목적지와 정확한 출발 장소를 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 98,
+      "region": "대구광역시 동구",
+      "locality": "안심",
+      "kind": "taksong",
+      "keyword": "안심탁송",
+      "title": "안심 차량탁송 인수·인계 준비",
+      "detail": "외곽 이동 목적지와 정확한 출발 장소를 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 99,
+      "region": "대구광역시 동구",
+      "locality": "효목동",
+      "kind": "daeri",
+      "keyword": "효목동대리운전",
+      "title": "효목동 대리운전 예약 준비",
+      "detail": "상업시설 차량의 주차장 출차 가능 시각을 확인합니다. 대리운전은 출발 희망시각·도착지·경유 여부를 함께 확인하고 법인 결제방식은 사전 협의합니다.",
+      "status": "service_guide_not_trip"
+    },
+    {
+      "id": 100,
+      "region": "대구광역시 동구",
+      "locality": "효목동",
+      "kind": "taksong",
+      "keyword": "효목동탁송",
+      "title": "효목동 차량탁송 인수·인계 준비",
+      "detail": "상업시설 차량의 주차장 출차 가능 시각을 확인합니다. 탁송은 차종·차키 수령인·도착지 인계시간을 확인하고 차량 운행 가능 여부를 먼저 상담합니다.",
+      "status": "service_guide_not_trip"
+    }
+  ]
+}
