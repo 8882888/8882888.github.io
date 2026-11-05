@@ -902,6 +902,41 @@ function priorityBlogEvidence(r,kind){
 }
 // Customer-first controls are assembled from the requested administrative region.
 // No fictional fare amount, trip, local branch, or instantaneous dispatch is implied.
+// Innovation-city first-view guide. These are local customer logistics, not claims
+// of public-agency contracts, permanent drivers, completed journeys, or fixed fares.
+const innovationAreas={
+ '세종특별자치시':['세종 정부청사·나성동·어진동·조치원','업무용 차량은 방문주차 위치와 출차 담당자를, 저녁 귀가는 목적지와 출발 예정 시간을 구분해 전달하세요.',['대전광역시','충청북도 청주시']],
+ '강원특별자치도 원주시':['원주 반곡관설동 혁신도시·기업도시','공공기관 인근 주차장과 차량 인수 담당자를 확인하고 원주 도심·기업도시 간 출발 위치를 구분하세요.',['강원특별자치도 강릉시','강원특별자치도 춘천시']],
+ '경상남도 진주시':['진주 충무공동 혁신도시·상대동','충무공동 업무시설에서 출발하는 차량은 건물별 출차 위치와 목적지 수령 가능 시각을 함께 확인하세요.',['경상남도 창원시','경상남도 사천시']],
+ '전라남도 나주시':['나주 빛가람동 혁신도시·나주역','빛가람동 기관 업무시설과 나주역 인근 주차장은 위치가 다르므로 주소·주차층·인계 시간을 확인하세요.',['광주광역시','전라남도 목포시']],
+ '경상북도 김천시':['김천 율곡동 혁신도시·김천구미역','율곡동 업무시설과 김천구미역의 차량 위치를 구분하고 타지역 이동 때 기사 복귀 여건을 확인하세요.',['경상북도 구미시','대구광역시']],
+ '전북특별자치도 전주시':['전북혁신도시·효자동·만성동','혁신도시는 전주·완주에 걸쳐 있으므로 실제 차량이 있는 시·군과 주차장을 먼저 확인하세요.',['전북특별자치도 완주군','전북특별자치도 익산시']],
+ '전북특별자치도 완주군':['완주 이서면 전북혁신도시·봉동','이서면 혁신도시와 봉동 산업시설은 출입 절차가 다를 수 있으므로 인수 담당자와 희망 시간을 확인하세요.',['전북특별자치도 전주시','전북특별자치도 익산시']],
+ '충청북도 진천군':['진천 덕산읍 충북혁신도시','덕산읍 혁신도시와 진천읍은 출발 위치가 다릅니다. 목적지와 주차 구역을 정확히 전달해 주세요.',['충청북도 음성군','충청북도 청주시']],
+ '충청북도 음성군':['음성 맹동면 충북혁신도시·금왕','맹동면 혁신도시와 금왕읍의 차량 위치를 구분하고 야간·시외 이동은 기사 접근·복귀를 확인하세요.',['충청북도 진천군','충청북도 충주시']],
+ '대구광역시 동구':['대구 신서혁신도시·동대구역','신서동 업무시설과 동대구역 인근 주차 위치를 구분하고 정비 출고 시에는 수령 가능 시간을 확인하세요.',['대구광역시 수성구','경상북도 경산시']],
+ '울산광역시 중구':['울산 우정혁신도시·태화강·성남동','혁신도시 업무시설과 태화강·성남동 상권 출발은 주차 위치와 배차 시각을 나누어 상담하세요.',['울산광역시 남구','울산광역시 북구']],
+ '부산광역시 영도구':['부산 동삼혁신지구·영도·태종대','동삼동 업무시설과 영도 해안 지역은 차량 주차 위치와 기사 접근 동선이 다를 수 있습니다.',['부산광역시 중구','부산광역시 서구']]
+};
+function innovationCityPanel(r,kind){
+ const entry=innovationAreas[r.full_name];
+ if(!entry)return '';
+ const [title,practical,nearby]=entry;
+ const service=kind==='daeri'?'대리운전':'자동차탁송',from=encodeURIComponent(r.full_name);
+ const links=nearby.map(name=>{
+  const region=regionByFullName.get(name);
+  return region?'<a href="'+servicePath(region,kind)+'">'+esc(seoRegionLabel(region)+service)+'</a>':'';
+ }).filter(Boolean).join(' · ');
+ const steps=kind==='daeri'
+  ?'회식·업무 종료 후 출발은 차량 주차층·목적지·희망시각·경유 여부를 알려주세요. 법인카드 결제는 사용 가능 여부를 사전 확인합니다.'
+  :'법인·공공기관 업무차량은 인수 권한, 차량 열쇠 전달, 정비 완료 시각과 도착지 인계 담당자를 확인하세요.';
+ return '<section id="innovation-city-guide" style="background:#fff;border:1px solid #b5cce5;border-radius:12px;padding:18px;margin:14px 0">'+
+  '<h2>'+esc(title+' '+service)+' 이용 안내</h2><p>'+esc(practical)+'</p>'+
+  '<h3>'+esc(service)+' 예약할 때 필요한 정보</h3><p>'+esc(steps)+'</p>'+
+  '<p><a href="/fare/?service='+kind+'&amp;from='+from+'">이 지역 출발 예상요금 조회</a> · <a href="/reviews/history/?kind='+kind+'&amp;q='+from+'">실제 운행기록 확인</a> · <a href="tel:18114294">상담 1811-4294</a></p>'+
+  (links?'<nav aria-label="인근 지역 '+esc(service)+' 안내"><strong>인접 지역 연결</strong><p>'+links+'</p></nav>':'')+
+  '<p><small>지역 내 지점·상주기사·특정 기관과의 제휴를 의미하지 않으며, 실제 배차와 요금은 상담 후 확인합니다.</small></p></section>';
+}
 function regionalDecisionPanel(r,kind,verified,history){
  const label=seoRegionLabel(r),service=kind==='daeri'?'대리운전':'자동차탁송';
  const from=encodeURIComponent(r.full_name),fare='/fare/?service='+kind+'&amp;from='+from;
@@ -1127,7 +1162,7 @@ async function servicePage(r,kind){
  const gangwonArchiveLead=kind==='taksong'&&r.name==='강원특별자치도'?'<section id="gangwon-source-archive" aria-labelledby="gangwon-source-archive-heading"><h2 id="gangwon-source-archive-heading">강원도탁송 영동·영서 실제 블로그 글과 차량 인수 안내</h2><p>영동의 속초·양양·주문진·강릉·동해·삼척, 영서의 춘천·원주·홍천·횡성·평창·정선은 차량 인수 위치와 기사 복귀 여건이 서로 다릅니다. 별도 지역 홍보글을 반복하기보다 실제 공개된 원문과 주차장·인계 준비사항을 함께 확인할 수 있도록 정리했습니다.</p><p><a href="/blog/archive/gangwon-taksong/">강원도탁송 영동·영서 블로그 자료실 읽기</a> · <a href="/blog/archive/mountain-cycle/">설악산 종주 차량회수 관련 글</a> · <a href="tel:18114294">전국탁송 상담 1811-4294</a></p></section>':'';
  const jejuPageSchema=jejuSearchPage?JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:searchTitle,description:searchDesc,url:pageUrl,primaryImageOfPage:{'@type':'ImageObject',url:imageUrl,contentUrl:imageUrl,name:'제주도탁송 지역명 맞춤 명함',width:1200,height:800,encodingFormat:'image/png'},about:{'@type':'Service',name:'제주탁송',provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}}).replace(/</g,'\\u003c'):'';
  const jejuContact=jejuSearchPage?'<section id="jeju-dedicated-contact"><h2>제주탁송 대표번호 1877-5245</h2><p>제주도 차량 선적·항구 인계 및 육지 연계 탁송은 제주탁송 전용 번호로 상담해 주세요.</p><p><a class="cta" href="tel:18775245">제주탁송 전화 상담 1877-5245</a></p></section>':'';
- const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+regionalDecisionPanel(r,kind,matches,historicalMatches)+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+companySection+blogKeywordGuide+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
+ const rendered=layout(searchTitle,searchDesc,'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+regionalDecisionPanel(r,kind,matches,historicalMatches)+innovationCityPanel(r,kind)+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+companySection+blogKeywordGuide+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+keywordEngine.regionSection(r,kind)+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Show useful local service information and a phone CTA before a generic promotional card.
