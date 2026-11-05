@@ -53,6 +53,17 @@ for(const t of ['/reviews/history/?kind=taksong','/reviews/history/?kind=daeri',
 }
 assert(home.includes('/service/corporate/#corporate-inquiry-shortcuts-20261105'),'Homepage must offer direct corporate inquiry shortcut');
 
+assert(corp.includes('id="corporate-first-action-20261105"'),'Corporate customer must have an immediate contract inquiry');
+assert(corp.indexOf('id="corporate-first-action-20261105"')<corp.indexOf('id="corporate-postpaid-guide-20261105"'),'Corporate first action must precede lengthy conditions');
+assert(corp.includes('https://open.kakao.com/o/sGV88r7h'),'Corporate visitors need a second verified contact option');
+assert(server.includes('id="priority-locality-customer-checklist-20261105"'),'Priority regions need distinct practical advice');
+assert(server.includes('localitySpecificAdvice'),'Locality checklist must adapt to actual administrative level');
+assert(server.includes('aria-label="실제 완료 운행후기 검색"'),'Archived review lookup must be accessible');
+assert(server.includes('type="search" maxlength="40" autocomplete="off"'),'Mobile review lookup should be a native search input');
+assert(home.includes('id="below-fold-mobile-render-20261105"'),'Mobile rendering must protect first screen');
+assert(home.includes('#secondary-search-and-traffic-20261105'),'Secondary widgets may defer offscreen rendering');
+
+
 for(const t of ['후불 정산 전화문의 1811-4294','/fare/?service=daeri','/reviews/history/?kind=daeri'])assert(corp.includes(t),'Corporate decision path missing '+t);
 for(const t of ['id="ride-review-direct-booking-20261105"','id="verified-ride-booking-shortcuts-20261105"','법인 후불 정산 조건 확인','전화 예약상담 1811-4294']){
  assert(server.includes(t),'Review-to-booking path missing '+t);
