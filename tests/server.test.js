@@ -654,6 +654,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.equal(faviconResponse.status,200,'favicon URL returns 200');
    assert.ok(/^image\//.test(faviconResponse.headers.get('content-type')||''),'favicon has an image MIME type');
    assert.ok((await faviconResponse.arrayBuffer()).byteLength>=100,'favicon is a nonempty image');
+   assert.equal(faviconResponse.headers.get('content-type'),'image/x-icon','favicon uses explicit ICO MIME');
+   const faviconSize=Number(faviconResponse.headers.get('content-length'));
+   assert.ok(faviconSize>=100,'favicon has a stable content length');
+   const faviconHead=await fetch('http://127.0.0.1:'+port+'/favicon.ico',{method:'HEAD'});
+   assert.equal(faviconHead.status,200,'favicon HEAD request succeeds for search crawlers');
+   assert.equal(Number(faviconHead.headers.get('content-length')),faviconSize,'favicon HEAD and GET sizes agree');
+   assert.equal((await faviconHead.arrayBuffer()).byteLength,0,'HEAD favicon response has no body');
+   const homepageMarkup=await (await get('/')).text();
+   assert.ok(homepageMarkup.includes('rel="icon"'),'homepage explicitly exposes favicon');
+   const regionMarkup=await (await get('/taksong/busan/')).text();
+   assert.ok(regionMarkup.includes('rel="icon"'),'region pages expose favicon in head');
   for(const [source,target] of [['/index.html','/'],['/daeri/index.html?ref=a','/daeri/?ref=a'],['/taksong/index.html','/taksong/']]){
    const response=await fetch('http://127.0.0.1:'+port+source,{redirect:'manual'});assert.equal(response.status,301);assert.equal(response.headers.get('location'),target);
   }
