@@ -725,6 +725,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(recordHtml.includes('class="service-journey"'));
   assert.ok(recordHtml.includes('2026-10-16'));
   assert.ok(recordHtml.includes('70,000원'));
+  assert.ok(recordHtml.includes('이 운행기록에서 읽히는 실제 현장 정보'),'all completed rides describe record-specific conditions');
+  assert.ok(recordHtml.includes('08:04:23'),'first record explicitly shows logged time without inventing departure time');
+  assert.ok(recordHtml.includes('출발·도착 시각으로 단정하지 않습니다'),'logged timestamp cannot be represented as drive time');
+  assert.ok(recordHtml.includes('주거단지 관련 위치가 기록돼 있습니다'),'original route-specific residence context is recognized');
+  assert.ok(recordHtml.includes('실제 출발·도착 지역 연결'),'verified region links stay attached to each ride');
+  const mountainRide=await (await get('/reviews/history/excel-0012/')).text();
+  assert.ok(mountainRide.includes('산행 출발지·하산지 관련 지명이 운행기록에 포함돼 있습니다'),'mountain rides use recorded place clues');
+  assert.ok(mountainRide.includes('백담사'),'original mountain location survives in the review');
+  const serviceCenterRide=await (await get('/reviews/history/excel-0008/')).text();
+  assert.ok(serviceCenterRide.includes('정비·서비스센터 관련 장소가 기록돼 있습니다'),'service-center journeys use verified source-specific context');
+
   assert.ok(recordHtml.includes('2배 이상의 금액'));
   assert.ok(recordHtml.includes('100% 배차·운행완료'));
   assert.ok(recordHtml.includes('자료에 예약 여부') ,'do not invent booking status');
