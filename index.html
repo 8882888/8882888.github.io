@@ -409,8 +409,10 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
 #homepage-fare-top{scroll-margin-top:12px}
 #homepage-fare-top button{touch-action:manipulation}
 @media(max-width:700px){
- html{scroll-behavior:auto} /* Instant one-tap jump to the quote fields on narrow screens. */
- .header-phone-actions .traffic-stats{display:none}
+ html{scroll-behavior:auto} /* Keep the mobile hero focused on the service name and contact actions. */
+  .hero-copy > p:first-child{display:none!important}
+  /* Instant one-tap jump to the quote fields on narrow screens. */
+ .header-phone-actions .traffic-stats{display:block!important;width:100%;visibility:visible!important}
  .hero-with-photo{padding-bottom:9px!important}
  .hero-vehicle{max-width:340px!important}
  .hero-vehicle img{width:100%;height:auto;max-height:170px;object-fit:contain}
