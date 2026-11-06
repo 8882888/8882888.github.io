@@ -1577,12 +1577,23 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
  const isHtml=status===200&&type.startsWith('text/html;');
  if(isHtml){
   let html=Buffer.isBuffer(body)?body.toString('utf8'):String(body);
+  // The four primary service links are a permanent part of the homepage.
+  // Recover from an older/generated homepage file rather than silently dropping them.
+  if(res._smartPath==='/'&&html.includes('</header>')){
+   const start='<nav id="homepage-primary-services-20261106"';
+   const fixedNav='<nav id="homepage-primary-services-20261106" aria-label="주요 운전 서비스 바로가기" style="position:sticky;top:0;z-index:1100;background:#fff;border-bottom:2px solid #c4d9ee;padding:10px 4%;box-shadow:0 4px 15px #10254420"><div class="homepage-primary-service-grid" style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px"><a href="/daeri/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">대리운전</a><a href="/taksong/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#0754a0;color:#fff;font-weight:900">자동차탁송</a><a href="/service/corporate/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">법인대리운전</a><a href="/service/golf/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">골프대리운전</a></div></nav>';
+   if(!html.includes(start))html=html.replace('</header>','</header>'+fixedNav);
+   if(!html.includes('id="smart24-permanent-nav-fallback-style"')){
+    html=html.replace('</head>','<style id="smart24-permanent-nav-fallback-style">@media(min-width:740px){#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}#homepage-primary-services-20261106{isolation:isolate}#homepage-primary-services-20261106 a{box-sizing:border-box;text-align:center;text-decoration:none;padding:8px;line-height:1.3}#homepage-primary-services-20261106 a:focus-visible{outline:3px solid #e6a900;outline-offset:2px}</style></head>');
+   }
+  }
   if(html.includes('</body>')&&!/src=["']\/assets\/traffic-analytics\.js(?:\?[^"']*)?["']/.test(html)){
    html=html.replace('</body>','<script src="/assets/traffic-analytics.js?v=20261030-count-accuracy" defer></script></body>');
   }
   body=keywordExpansion.enhance(html,res._smartPath||'');
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
+ if(res._smartPath==='/'){headers['cache-control']='no-store, max-age=0, must-revalidate';headers['surrogate-control']='no-store';headers['x-smart24-primary-nav']='four-services-sticky-20261106';}
  // Explicit no-store on deployment diagnostics must survive the common HTML response writer.
  if((isHtml||type.startsWith('text/plain;'))&&!res.getHeader('cache-control'))headers['cache-control']='no-cache, max-age=0, must-revalidate';
  // XML sitemaps must never be served from a stale intermediary cache after rollout.
@@ -1763,6 +1774,7 @@ function exactRegionalKeywordCard(r,kind,raw){
 }
 const millionServiceFinder=require('./lib/service-finder-million').create(regions,servicePath,process.env.PUBLIC_HOST||'jeongukdaeri.kr');
 let cachedHomepageHtml=null;
+let cachedHomepageSignature='';
 // Read-only quality diagnostics: no advertising claims, no customer data.
 // This endpoint reports software structure, NOT Naver index or visitor performance.
 function publicSiteQuality(){
@@ -2013,7 +2025,7 @@ if(innovationQuery&&(!innovationKind||innovationKind===innovationQuery.kind)){
 }
 const regionalRedirect=(pathname==='/'||pathname==='/index.html')?regionalTaksongTarget(explicitMountainKeyword):null;
 if(regionalRedirect){res.writeHead(302,{location:regionalRedirect,'cache-control':'no-store'});return res.end();}
-if(pathname==='/'||pathname==='/index.html'){if(!cachedHomepageHtml){const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');cachedHomepageHtml=applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/');}return respond(res,200,cachedHomepageHtml)}
+if(pathname==='/'||pathname==='/index.html'){const homepageStat=fs.statSync(path.join(ROOT,'index.html'));const signature=homepageStat.size+':'+homepageStat.mtimeMs;if(!cachedHomepageHtml||cachedHomepageSignature!==signature){cachedHomepageSignature=signature;const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');cachedHomepageHtml=applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/');}return respond(res,200,cachedHomepageHtml)}
 // Redirect regional search clicks to a single service-specific, image-first landing page.
 if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
  const region=String(u.searchParams.get('region')||'').trim(),parent=String(u.searchParams.get('parent')||'').trim();
