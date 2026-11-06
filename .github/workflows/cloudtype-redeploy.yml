@@ -132,6 +132,21 @@ jobs:
             echo "::error::Cloudtype redeploy request may have been accepted, but the official public site did not confirm the latest Node release."
             exit 1
           fi
+          # Verify the actual served homepage, not only the unchanged server.js release.
+          # An older Cloudtype build can expose the same server.js hash while
+          # missing newly updated index.html and fixed navigation.
+          homepage="$(curl --fail --silent --show-error --connect-timeout 8 --max-time 20 -H 'Cache-Control: no-cache' 'https://jeongukdaeri.kr/?verify=regional-quick-entry-20261106')"
+          if ! grep -Fq 'id="regional-quick-entry-20261106"' <<<"$homepage"; then
+            echo '### Cloudtype homepage content NOT verified' >> "$GITHUB_STEP_SUMMARY"
+            echo 'The live homepage is missing the provincial entry grid committed to index.html.' >> "$GITHUB_STEP_SUMMARY"
+            echo '::error::Live Cloudtype homepage is stale even if /health reports the server.js hash.'
+            exit 1
+          fi
+          if ! grep -Fq 'id="homepage-primary-services-20261106"' <<<"$homepage" || ! grep -Fq '2,591' <<<"$homepage"; then
+            echo '::error::Fixed primary services or verified ride-history summary missing from live homepage.'
+            exit 1
+          fi
+          echo 'Live homepage provincial links, fixed primary services and verified ride-history label confirmed.' >> "$GITHUB_STEP_SUMMARY"
           echo '### Cloudtype live deployment verified' >> "$GITHUB_STEP_SUMMARY"
           echo "Production /health release matches GitHub server.js sha256-$expected." >> "$GITHUB_STEP_SUMMARY"
           echo 'Live deployment verified. Naver Search Advisor indexing and search ranking remain separate checks.' >> "$GITHUB_STEP_SUMMARY"
