@@ -227,6 +227,7 @@ jobs:
           node tests/innovation-city-100.test.js
           node tests/innovation-search-focus.test.js
           node tests/search-intent-discovery.test.js
+          node tests/food-district-discovery.test.js
           node tests/homepage-conversion-regression.test.js
           node tests/blog-regional-hashtags.test.js
           node tests/regional-history-ambiguity.test.js
