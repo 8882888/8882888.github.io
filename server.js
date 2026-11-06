@@ -1390,13 +1390,20 @@ function regionServiceLinks(items,kind){const label=kind==='taksong'?'탁송':'�
 function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=childrenByParent.get(r.slug)||[];return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
 
 function homepagePriorityLinks(){
- const selected=['부산광역시','울산광역시','대구광역시','인천광역시','강원특별자치도','서울특별시','경기도'];
+ // Generate genuine region + service combinations from the existing region registry.
+ // "대리" is an alternate search intent, not a duplicate page.
+ const preferred=['부산광역시','대구광역시','울산광역시','대전광역시','세종특별자치시','경상남도','경상북도','강원특별자치도','전라남도','전북특별자치도','충청남도','충청북도','광주광역시','제주특별자치도','인천광역시','서울특별시','경기도'];
+ const selected=preferred.map(n=>regions.find(r=>r.full_name===n)).filter(Boolean);
  const groups=['taksong','daeri'].map(kind=>{
-  const label=kind==='taksong'?'자동차탁송':'대리운전';
-  const links=selected.map(n=>regions.find(r=>r.full_name===n)).filter(Boolean).map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(seoRegionLabel(r)+label)+'</a></li>').join('');
-  return '<div><h3>주요 지역 '+label+'</h3><ul>'+links+'</ul></div>';
+  const label=kind==='taksong'?'탁송':'대리운전';
+  const links=selected.map(r=>{
+   const name=seoRegionLabel(r),url=servicePath(r,kind);
+   const variants=kind==='taksong'?[name+'탁송',name+'자동차탁송']:[name+'대리운전',name+'대리'];
+   return '<li><a href="'+url+'">'+esc(variants[0])+'</a> <small>('+esc(variants[1])+')</small></li>';
+  }).join('');
+  return '<div><h3>지역별 '+label+' 안내</h3><ul>'+links+'</ul></div>';
  }).join('');
- return '<section id="home-priority-regions"><h2>지역별 주요 자동차탁송·대리운전</h2><p>각 지역의 실제 예약 준비 정보와 확인된 운행후기를 찾아보세요. 모든 지역에 상주 기사가 있다는 뜻은 아닙니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+groups+'</div></section>';
+ return '<section id="home-priority-regions"><h2>지역 + 탁송 · 대리운전 · 대리 서비스 찾기</h2><p>지역별 자동차탁송과 대리운전 정보를 자동 연결합니다. 지역명+대리 검색어는 같은 대리운전 안내 페이지로 연결하여 중복 페이지를 만들지 않습니다. 실제 배차·요금은 상담으로 확인합니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+groups+'</div><p><a href="/region/">읍·면·동 지역별 서비스 전체 찾기</a> · <a href="/fare/">출발·도착 예상요금</a></p></section>';
 }
 function nationwideLinks(){return '<section id="nationwide-service-links" aria-label="전국 지역별 서비스"><h2>전국 지역별 탁송·대리운전 바로가기</h2><p><a href="/fare/routes/">전국 1,000개 구간 예상요금·예약 안내</a></p><p>전국 주요 도시의 개별 안내 페이지로 이동합니다. 실제 기사 배정과 요금은 출발지·목적지·시간에 따라 상담 후 확인합니다.</p><h3>전국 대리운전 지역 안내</h3>'+regionServiceLinks(quickRegions,'daeri')+'<h3>전국 자동차탁송 지역 안내</h3>'+regionServiceLinks(quickRegions,'taksong')+'<p><a href="/taksong/types/">차종·톤급·서비스센터별 탁송 안내</a> · <a href="/region/">전국 읍·면·동 상세 지역 찾기</a></p><p><a href="/taksong/">전국 탁송 지역 전체 보기</a> · <a href="/daeri/">전국 대리운전 지역 전체 보기</a></p></section>'}
 const featuredTaksongRoutes=[
