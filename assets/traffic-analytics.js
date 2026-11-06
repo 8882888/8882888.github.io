@@ -64,11 +64,11 @@
   }
   function acquisition(){
     const cached=readSession('smart24_traffic_source');
-    if(cached)return cached;
+    if(cached)return cached==='네이버 검색'?'네이버 경유(검색 여부 미확인)':cached;
     const url=new URL(location.href);
     const utm=(url.searchParams.get('utm_source')||'').toLowerCase();
     let source='직접 방문';
-    if(/naver|네이버/.test(utm))source='네이버 검색';
+    if(/naver|네이버/.test(utm))source='네이버 경유(검색 여부 미확인)';
     else if(/google|구글/.test(utm))source='구글 검색';
     else if(/daum|kakao-search|다음/.test(utm))source='다음 검색';
     else if(/kakao|카카오/.test(utm))source='카카오톡';
@@ -78,7 +78,7 @@
       try{
         const h=new URL(document.referrer).hostname.toLowerCase();
         if(h===location.hostname)source='사이트 내부 이동';
-        else if(h==='naver.com'||h.endsWith('.naver.com'))source='네이버 검색';
+        else if(h==='naver.com'||h.endsWith('.naver.com'))source='네이버 경유(검색 여부 미확인)';
         else if(h==='google.com'||h.startsWith('google.')||h.includes('.google.'))source='구글 검색';
         else if(h==='daum.net'||h.endsWith('.daum.net'))source='다음 검색';
         else if(h==='kakao.com'||h.endsWith('.kakao.com'))source='카카오톡';
@@ -100,7 +100,7 @@
     }
     for(const row of rows.slice(0,12)){
       const item=document.createElement('li');
-      const source=String(row.source||'유입 경로 미확인');
+      const source=String(row.source||'유입 경로 미확인').replace(/^네이버 검색$/,'네이버 경유(검색 여부 미확인)');
       const page=String(row.page||'');
       const day=String(row.day||'');
       // Old click totals predate source tracking. Do not mislabel them as direct traffic.
