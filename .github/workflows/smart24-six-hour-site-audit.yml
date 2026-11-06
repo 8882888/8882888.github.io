@@ -102,6 +102,20 @@ jobs:
                   actual=unquote(urlsplit(e.headers.get('Location','')).path)
                   if actual!=expected:errors.append(phrase+' redirect mismatch: '+actual+' != '+expected)
               except Exception as e:errors.append(phrase+' request failed: '+str(e))
+          # Confirm the actual original mountain posters and primary service destinations.
+          for asset in ('/assets/seoraksan-taksong-original-fare.png',
+                        '/assets/jirisan-taksong-original-fare.png'):
+              try:
+                  with urlopen(Request(base+asset,headers=h),timeout=20) as response:
+                      header=response.read(8)
+                      if response.status!=200 or header!=bytes.fromhex('89504e470d0a1a0a'):
+                          errors.append('Original PNG missing or invalid: '+asset)
+              except Exception as e:errors.append('Original fare poster unreachable '+asset+': '+str(e))
+          for route in ('/daeri/','/taksong/','/service/corporate/','/service/golf/','/service/long-distance-daeri/'):
+              try:
+                  with urlopen(Request(base+route,headers=h),timeout=20) as response:
+                      if response.status!=200:errors.append('Service unavailable '+route)
+              except Exception as e:errors.append('Service unavailable '+route+': '+str(e))
           summary=pathlib.Path(__import__('os').environ['GITHUB_STEP_SUMMARY'])
           if errors:
               summary.open('a').write('\n### Cloudtype production still needs attention\n'+''.join('- '+e+'\n' for e in errors))
