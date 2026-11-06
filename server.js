@@ -2033,6 +2033,23 @@ const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicl
 const daeriRouteMatch=pathname.match(/^\/daeri\/route\/([a-z-]+)\/?$/);if(daeriRouteMatch){const route=featuredDaeriRoutes.find(x=>x.slug===daeriRouteMatch[1]);return route?respond(res,200,featuredDaeriRoutePage(route)):respond(res,404,'해당 대리운전 구간을 찾을 수 없습니다.')}
 if(pathname==='/travel/food-map'){res.writeHead(301,{location:'/travel/food-map/'+u.search});return res.end()}
 if(pathname==='/travel/food-map/')return respond(res,200,foodTravelMap.page({layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',regions,servicePath}));
+if(pathname==='/daeri/gangnam-food-guide/'){
+ const host='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const title='강남역·역삼·신사 음식점 안내와 대리운전 귀가 준비 | 스마트24';
+ const desc='강남역·역삼동·신사동의 공개 음식점 상호와 주요 메뉴, 차량 주차 위치·귀가 준비를 함께 안내합니다. 음식점과 제휴하거나 해당 식당에서 운행을 완료했다는 의미는 아닙니다.';
+ const places=[
+  {name:'양산도 역삼점',area:'역삼동 논현로85길',food:'장어덮밥·히츠마부시'},
+  {name:'을지다락 강남역',area:'강남대로96길',food:'오므라이스·파스타'},
+  {name:'꾸아 강남역CGV점',area:'강남대로102길',food:'쌀국수·베트남 음식'},
+  {name:'신사 모소리',area:'신사동 도산대로1길',food:'돼지고기 구이'},
+  {name:'순남시래기 역삼점',area:'테헤란로34길',food:'시래기국·한식'},
+  {name:'짬뽕지존 역삼점',area:'테헤란로10길',food:'짬뽕·중식'}
+ ];
+ const rows=places.map(p=>'<li><strong>'+esc(p.name)+'</strong> — '+esc(p.area)+' / '+esc(p.food)+'. 방문 전 영업·주차 정보는 지도에서 다시 확인하세요.</li>').join('');
+ const body='<article><h1>강남역·역삼동·신사동 음식점과 귀가 대리운전 안내</h1><p>음식점 위치와 음식 종류를 찾는 분을 위한 지역 정보입니다. 아래 상호는 공개된 매장 목록을 참고한 것이며 당사 제휴 매장, 추천 순위, 실제 출발 운행 후기 또는 주차 가능 보증이 아닙니다.</p><h2>강남역·역삼동·신사동 음식점과 대표 음식</h2><ul>'+rows+'</ul><p>상호·메뉴·영업 상태는 변동될 수 있습니다. 상호 검색 후 공식 매장 안내와 지도 서비스를 확인하세요.</p><h2>식사 후 대리운전 부를 때 확인할 사항</h2><ol><li>식당 이름 대신 실제 자동차가 있는 주차장 주소와 출구를 확인합니다.</li><li>강남역·역삼역·신사역 주변은 길 건너편이나 지하주차장 출차 동선이 다를 수 있어 구체적 만남 장소를 전달합니다.</li><li>목적지·출발 희망 시각·경유지·차종을 알려주고 요금과 배차 가능 여부를 상담합니다.</li><li>음주했다면 직접 운전하지 않고 대리운전이나 대중교통을 이용하세요.</li></ol><h2>음식점 상권별 지역 안내</h2><p><a href="/daeri/seoul/gangnam-gu/">강남구 대리운전</a> · <a href="/daeri/">전국 대리운전</a> · <a href="/travel/food-map/">전국 음식·관광지 안내</a> · <a href="/recruit/daeri/">대리운전기사 지원 안내</a></p><p><a href="tel:18114294">차량 위치 확인·대리운전 상담 1811-4294</a></p><p><small>공개 음식점 정보 확인 기준: 2026년 11월. 당사의 음식점 방문 경험이나 제휴·특정 식당 고객 운행 기록은 주장하지 않습니다.</small></p></article>';
+ return respond(res,200,layout(title,desc,body,host+'/daeri/gangnam-food-guide/'));
+}
+
 const driverTravelMatch=pathname.match(/^\/daeri\/travel\/([a-z-]+)\/?$/);
 if(driverTravelMatch){const canonical='/daeri/travel/'+driverTravelMatch[1]+'/';if(pathname!==canonical){res.writeHead(301,{location:canonical});return res.end()};const article=daeriTravelGuides.page(driverTravelMatch[1],{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});return respond(res,article?200:404,article||'대리운전 지역 여행 안내를 찾을 수 없습니다.')}
 if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return res.end()}
