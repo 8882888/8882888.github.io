@@ -1,0 +1,49 @@
+name: Audit official Cloudtype deployment and taksong SEO
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '25 22 * * *'
+  push:
+    branches: [main]
+    paths:
+      - server.js
+      - index.html
+      - data/seo-pages.json
+      - tools/check_live_taksong_deploy.py
+      - .github/workflows/official-production-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify-official-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compare live Cloudtype deployment with GitHub files
+        shell: bash
+        run: |
+          mkdir -p audit
+          # Cloudtype and GitHub backup deploy independently. Give webhook-based
+          # production builds time to finish before declaring the deployment stale.
+          sleep 45
+          set +e
+          python tools/check_live_taksong_deploy.py > audit/live-taksong-audit.json
+          code=$?
+          cat audit/live-taksong-audit.json
+          if [ "$code" -ne 0 ]; then
+            echo "::error::Official production site is stale, unavailable or has SEO/canonical/sitemap failures. GitHub Pages backup success is NOT Cloudtype success."
+          fi
+          exit "$code"
+      - name: Keep production audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-production-seo-audit
+          path: audit/live-taksong-audit.json
+          if-no-files-found: warn
+          retention-days: 14
