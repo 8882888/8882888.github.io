@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const baseline=JSON.parse(fs.readFileSync(path.join(root,'data/naver-search-baseline-20261105.json'),'utf8'));
+const track=fs.readFileSync(path.join(root,'assets/traffic-analytics.js'),'utf8');
+assert.equal(baseline.last_updated,'2026-11-05');
+assert.equal(baseline.totals.clicks,69);
+assert.equal(baseline.totals.impressions_approx,1800);
+assert(baseline.limitations.some(x=>x.includes('소유자')),'owner clicks must be disclosed');
+const taksong=baseline.pages.find(p=>p[0]==='/taksong/');
+assert.deepEqual(taksong,['/taksong/',3,163]);
+assert(track.includes("source='네이버 경유(검색 여부 미확인)'"),'Naver referral must not be mislabeled verified organic');
+assert(track.includes("String(row.source||'유입 경로 미확인').replace(/^네이버 검색$/"),'legacy source label must be corrected on dashboard');
+console.log('PASS: Naver baseline snapshot and conservative acquisition attribution');
