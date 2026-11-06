@@ -2045,7 +2045,7 @@ const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/ke
 const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
 const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):null;
 if(searchIntent){
- const normalized=String(searchIntent).replace(/[\\s·_+-]/g,'').toLowerCase();
+ const normalized=compact(searchIntent).toLowerCase();
  const mountain=mountainTarget(searchIntent);
  const cycle=/((?:자전거|자전)길|자전거종주|국토종주|동해안|섬진강|영산강|낙동강|금강|오천).*(?:종주|탁송|완벽정리|코스|인증센터)|(?:전국)?자전길탁송/.test(normalized);
  const named=keywordExpansion.resolve(searchIntent);
@@ -2203,7 +2203,7 @@ if(pathname==='/region/'){
  const searchPlace=queryRegion||rawQuery;
  const inferredService=/대리운전$|대리$/.test(normalizedKeyword)?'daeri':/(?:자동차|차량)?탁송$/.test(normalizedKeyword)?'taksong':blogIntent?.kind||visualTopic?.kind||null;
  const selectedService=['daeri','taksong'].includes(requestedService)?requestedService:inferredService;
- const directRegion=selectedService==='taksong'?regionalTaksongTarget(rawQuery):null;
+ const directRegion=selectedService?regionalServiceTarget(rawQuery):null;
  if(directRegion){res.writeHead(302,{location:directRegion,'cache-control':'no-store'});return res.end()}
  const key=compact(searchPlace);
  // Prefer matching town/province names before generic landmark associations.
