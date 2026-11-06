@@ -28,5 +28,10 @@
     "id": "af91622449ff8e53",
     "service": "taksong",
     "published_at": "2026-11-05T20:42:02.974129+00:00"
+  },
+  {
+    "id": "1b61f52d07a2340b",
+    "service": "daeri",
+    "published_at": "2026-11-06T07:58:20.481308+00:00"
   }
 ]
