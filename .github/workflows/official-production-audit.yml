@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate production audit script syntax
+        run: python -m py_compile tools/check_live_taksong_deploy.py
       - name: Compare live Cloudtype deployment with GitHub files
         shell: bash
         run: |
