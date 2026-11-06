@@ -2197,6 +2197,10 @@ if(pathname==='/region/innovation-cities/'){
 if(pathname==='/region'){res.writeHead(301,{location:'/region/'+u.search});return res.end()}
 if(pathname==='/region/'){
  const rawQuery=clean(u.searchParams.get('q')||'');
+ // Legacy region search links must obey the same explicit service and course intent.
+ const directTopic=rawQuery?keywordExpansion.resolve(rawQuery):null;
+ const directTarget=rawQuery?(mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
+ if(directTarget){res.writeHead(302,{location:encodeURI(directTarget),'cache-control':'no-store'});return res.end()}
  const requestedService=u.searchParams.get('service');
  // Strip only a trailing service name. A typed keyword like 부산대리운전
  // should expand 부산, while an ambiguous 광주 still requires a choice.
