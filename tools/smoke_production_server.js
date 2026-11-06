@@ -85,14 +85,12 @@ async function main(){
     assert(r.body.includes('https://jeongukdaeri.kr'+route),'canonical URL missing: '+route);
   }
   for(const [id,label] of [['yeongsan','영산강길'],['seomjin','섬진강길'],['eastcoast','동해안길'],['geumgang','금강길'],['ocheon','오천길'],['nakdonggang','낙동강길']]){
-    const route='/route-taksong/courses/'+id+'/',pic='/assets/cycling-routes/'+id+'-taksong.svg';
+    const route='/route-taksong/courses/'+id+'/';
     const page=await request(port,route);
     assert.equal(page.status,200,'cycling course route '+route);
-    assert(page.body.includes('property="og:image" content="https://jeongukdaeri.kr'+pic+'"'),'bad course primary image '+route);
-    assert(page.body.includes('src="'+pic+'"')&&page.body.includes(label+'자전거종주탁송'),'missing contextual image '+route);
-    const image=await request(port,pic);
-    assert.equal(image.status,200,'cycling illustration missing '+pic);
-    assert.equal(image.headers['content-type'],'image/svg+xml','wrong cycling illustration MIME '+pic);
+    assert(page.body.includes(label+'자전거종주탁송'),'Missing original cycling course text '+route);
+    assert(!page.body.includes('/assets/cycling-routes/')&&!page.body.includes('cycling-course-primary-visual'),'Illustration must not return to cycling guide '+route);
+    assert(page.body.includes('1811-4294'),'Original consultation line missing '+route);
   }
   // Dynamic, automatically scaled region cards must be visible near the first
   // service block and carry the correct locality into the same OG image URL.
