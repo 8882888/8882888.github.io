@@ -423,7 +423,7 @@ const rules=[
     "group": "seo",
     "path": "data/seo-pages.json",
     "name": "primary SEO metadata links to verified ride history",
-    "needle": "실제 운행기록"
+    "needle": "실제 운행후기"
   },
   {
     "group": "corporate",
