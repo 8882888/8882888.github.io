@@ -32,7 +32,7 @@ assert(home.includes('position:sticky!important;top:0!important'),'Homepage nav 
 assert(server.includes("serviceKeywordEntry.enhance(html,res._smartPath||'')"),'Server must inject service-specific first screen on dynamic/static routes');
 assert(server.includes("'/service/long-distance-daeri/'".replaceAll('\\',''))||server.includes("'/service/long-distance-daeri/'"),'Fallback menu missing fifth link');
 assert(long.includes('<link rel="canonical" href="https://jeongukdaeri.kr/service/long-distance-daeri/"'),'Long-distance canonical missing');
-assert(long.includes('장거리대리운전 예약·요금')&&long.includes('기사 복귀'),'Unique long-distance content missing');
+assert(long.includes('장거리대리운전 실제 운행후기 확인')&&long.includes('기사 복귀'),'Unique long-distance content missing');
 assert(long.includes('href="/reviews/history/?kind=daeri"'),'Verified ride records link missing');
 assert(!long.includes('100% 배차')&&!long.includes('확정 요금'),'Do not fabricate dispatch outcomes');
 console.log('PASS: five distinct keyword entry points, fixed menu, selected state, booking CTAs, original content and canonical');
