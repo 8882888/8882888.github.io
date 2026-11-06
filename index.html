@@ -502,6 +502,14 @@ html{scroll-padding-top:95px}
 .regional-quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.regional-quick-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;border-radius:9px;background:#e5eef8;color:#103f6a;font-weight:800;text-decoration:none}.regional-quick-actions .regional-quick-call{background:#0754a0;color:white}
 @media(max-width:700px){.regional-quick-entry{margin:10px 3%;padding:18px 4%}.regional-quick-links{grid-template-columns:repeat(2,minmax(0,1fr))}.regional-quick-actions a{width:100%}}
 .back-to-top{opacity:1!important;visibility:visible!important;transform:none!important;z-index:2147483000!important;pointer-events:auto!important;text-decoration:none}
+/* 2026-11-06: clean service-first homepage, existing photos and nav preserved. */
+.keyword-service-navigation{background:#f5f9fe;border-block:1px solid #c8d9eb;padding:22px 5%;color:#172b43}
+.keyword-service-inner{max-width:1160px;margin:auto}.keyword-service-navigation h2{font-size:clamp(22px,3vw,29px);margin:0 0 7px}.keyword-service-navigation p{margin:0 0 13px}
+.keyword-service-form{display:grid;grid-template-columns:minmax(180px,1fr) minmax(180px,3fr) auto;align-items:center;gap:10px}
+.keyword-service-form label{font-weight:800}.keyword-service-form input{min-height:50px;border:1px solid #96b4d0;border-radius:9px;padding:11px;font-size:16px;min-width:0}
+.keyword-service-form button{min-height:50px;padding:10px 18px;border:0;border-radius:9px;background:#0754a0;color:white;font-weight:900;font-size:16px;cursor:pointer}
+.keyword-service-shortcuts{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.keyword-service-shortcuts a{display:inline-flex;min-height:44px;align-items:center;padding:8px 12px;background:#fff;border:1px solid #b8cee5;border-radius:8px;color:#13446b;font-weight:800;text-decoration:none}
+@media(max-width:680px){.keyword-service-form{grid-template-columns:1fr}.keyword-service-form button{width:100%}.keyword-service-shortcuts a{flex:1 1 44%;justify-content:center;text-align:center}}
 </style></head>
 <body id="page-start">
 
@@ -530,29 +538,20 @@ html{scroll-padding-top:95px}
   <a href="/service/long-distance-daeri/" style="display:flex;justify-content:center;align-items:center;min-height:54px;padding:8px 12px;border:1px solid #b6cfe7;border-radius:11px;background:#f1f7ff;text-align:center;font-weight:900;color:#17436b;text-decoration:none;font-size:clamp(15px,2vw,19px)">장거리대리운전</a>
  </div>
 </nav>
-<section id="smart24-service-first-20261106" aria-label="스마트24 서비스와 상담 첫 화면">
- <div class="first-inner">
-  <div>
-   <div class="eyebrow">SMART24 · 전국대리운전 · 24시탁송</div>
-   <h2>전국대리운전 실제 운행후기 · 24시탁송 안내</h2>
-   <p>전국대리운전과 전국자동차탁송, 24시탁송·심야탁송, 법인·골프·장거리대리운전을 안내합니다. 출발지·도착지·희망 시간을 확인하고 기사 배차 가능 여부와 예상요금을 상담하세요.</p>
-   <div class="first-actions"><a href="tel:18114294" aria-label="대표전화 1811-4294로 상담">☎ 1811-4294 상담</a><a class="secondary" href="#homepage-fare-top">출발·도착 요금조회</a></div>
-   <div class="first-note">실제 운행기록과 과거 요금은 확인용 자료입니다. 최종 요금과 배차 가능 여부는 상담 후 안내합니다.</div>
-  </div>
-  <div class="first-card">
-   <strong>원하는 서비스를 선택하세요</strong>
-   <p>메뉴를 선택하면 상세 안내·운행정보·예약 조건으로 이동합니다.</p>
-   <div class="shortcut-links">
-    <a href="/taksong/">자동차탁송 <span aria-hidden="true">→</span></a>
-    <a href="/daeri/">대리운전 <span aria-hidden="true">→</span></a>
-    <a href="/service/corporate/">법인대리운전 <span aria-hidden="true">→</span></a>
-    <a href="/service/golf/">골프대리운전 <span aria-hidden="true">→</span></a>
-    <a href="/service/long-distance-daeri/">장거리대리운전 <span aria-hidden="true">→</span></a>
-   </div>
-   <p><a href="/reviews/history/" style="padding:6px;border:0;color:#164e79;min-height:32px">확인된 운행기록 보기 →</a></p>
-  </div>
- </div>
-</section>
+<div class="hero hero-with-photo"><div class="hero-copy">
+
+<p>실제 운행완료 2,591건 확인 · 전국 차량탁송 · 대리운전 · 법인·골프·일일기사</p>
+<h1>전국자동차탁송 · 전국대리운전 <span class="title-last"><a class="hero-phone" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 1811-4294</a></span></h1>
+<nav id="homepage-region-keywords" aria-label="전국 주요 지역별 서비스">
+<a href="/taksong/seoul/">서울탁송</a><a href="/taksong/busan/">부산탁송</a><a href="/taksong/daegu/">대구탁송</a><a href="/taksong/ulsan/">울산탁송</a><a href="/taksong/jeju/">제주도탁송</a><a href="/coverage/">전국 17개 시·도 탁송</a><a href="/region/">전국 지역별 검색</a>
+</nav>
+<p>실제 운행일·출발지·도착지·당시 요금을 먼저 확인할 수 있습니다. 차량 인수·인계 주소와 차종, 희망 시간을 알려주시면 이용 조건을 상담합니다. 실제 배차·최종 요금은 별도 확정합니다.</p>
+<nav class="hero-actions" aria-label="빠른 상담 및 요금 확인"><a class="btn" href="tel:18114294">☎ 바로 전화상담 1811-4294</a><a class="btn" href="#homepage-fare-top">출발·도착 예상요금</a><a class="btn" href="/find/">내 지역·5개 서비스 찾기</a><a class="btn" href="/reviews/history/">2,591건 실제 운행후기</a></nav>
+
+
+</div><figure class="hero-vehicle"><img src="/assets/vehicles/santafe-1811.webp" width="1448" height="1086" alt="산타페 차량 이미지, 스마트24 상담 1811-4294" loading="eager" fetchpriority="high" decoding="async"><figcaption>승용차·SUV·화물차 이동 상담 1811-4294</figcaption></figure></div>
+
+
 <section id="homepage-verified-reviews-first-20261106" aria-label="전국대리운전 자동차탁송 실제 운행후기 먼저 확인" style="background:#fffdf4;padding:17px 5%;border-bottom:2px solid #e0c86d">
  <div style="max-width:1160px;margin:auto">
   <h2 style="font-size:clamp(21px,2.8vw,28px);color:#162d48;margin:0 0 8px">전국대리운전 실제 운행후기 · 자동차탁송 완료기록</h2>
@@ -561,18 +560,6 @@ html{scroll-padding-top:95px}
    <a href="/reviews/history/?kind=daeri" style="padding:11px 14px;border-radius:8px;background:#173b62;color:#fff;text-decoration:none;font-weight:900">대리운전 실제 운행후기</a>
    <a href="/reviews/history/?kind=taksong" style="padding:11px 14px;border-radius:8px;background:#173b62;color:#fff;text-decoration:none;font-weight:900">자동차탁송 실제 운행후기</a>
    <a href="/fare/" style="padding:11px 14px;border:1px solid #173b62;border-radius:8px;color:#173b62;text-decoration:none;font-weight:900">출발·도착 요금조회</a>
-  </nav>
- </div>
-</section>
-<section id="nationwide-24h-keyword-guide-20261106" aria-label="전국대리운전 24시탁송 주요 서비스 안내" style="background:#fff;padding:18px 5%;border-bottom:1px solid #dce7f0">
- <div style="max-width:1160px;margin:auto">
-  <h2 style="font-size:clamp(20px,2.8vw,27px);color:#143553;margin:0 0 9px">전국대리운전 · 24시탁송 서비스 안내</h2>
-  <p style="color:#3c526b;margin:0 0 12px">전국대리운전은 고객 차량을 대신 운전하는 서비스이며, 전국자동차탁송은 고객 차량을 지정 장소에서 인수해 목적지에 인계하는 서비스입니다. 24시탁송·야간탁송은 야간 상담 대상이지만 실제 배차 여부와 시간은 출발 지역 및 기사 수급에 따라 달라집니다.</p>
-  <nav aria-label="대리운전 탁송 핵심 검색어 바로가기" style="display:flex;gap:8px;flex-wrap:wrap">
-   <a href="/daeri/" style="display:inline-flex;padding:10px 13px;border:1px solid #b8d2e8;border-radius:8px;color:#15507b;font-weight:800;text-decoration:none">전국대리운전</a>
-   <a href="/taksong/" style="display:inline-flex;padding:10px 13px;border:1px solid #b8d2e8;border-radius:8px;color:#15507b;font-weight:800;text-decoration:none">전국자동차탁송</a>
-   <a href="/special/24-hour-service/" style="display:inline-flex;padding:10px 13px;border:1px solid #b8d2e8;border-radius:8px;color:#15507b;font-weight:800;text-decoration:none">24시탁송 · 야간탁송</a>
-   <a href="/service/long-distance-daeri/" style="display:inline-flex;padding:10px 13px;border:1px solid #b8d2e8;border-radius:8px;color:#15507b;font-weight:800;text-decoration:none">장거리대리운전</a>
   </nav>
  </div>
 </section>
@@ -593,36 +580,15 @@ html{scroll-padding-top:95px}
  </div>
 </section>
 <section id="homepage-fare-top" aria-label="첫 화면 출발지 도착지 요금조회" style="background:#eff6ff;padding:17px 5%;border-bottom:2px solid #b9d5ef"><h2 style="max-width:1160px;margin:0 auto 9px;font-size:clamp(19px,2.7vw,25px);color:#123c63">출발지·도착지 바로 입력해 예상요금 확인</h2><form action="/fare/" method="get" style="max-width:1160px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:end"><label style="font-weight:800;color:#163b65">출발지<input name="from" required placeholder="출발지 입력" style="display:block;width:100%;min-height:48px;padding:10px;border:2px solid #9cb9d8;border-radius:9px;box-sizing:border-box"></label><label style="font-weight:800;color:#163b65">도착지<input name="to" required placeholder="도착지 입력" style="display:block;width:100%;min-height:48px;padding:10px;border:2px solid #9cb9d8;border-radius:9px;box-sizing:border-box"></label><label style="font-weight:800;color:#163b65">서비스<select name="service" style="display:block;width:100%;min-height:48px;padding:8px;border:2px solid #9cb9d8;border-radius:9px"><option value="taksong">탁송</option><option value="daeri">대리운전</option></select></label><button type="submit" style="min-height:48px;background:#0754a0;color:white;border:0;border-radius:9px;font-weight:900;font-size:17px;cursor:pointer">출발·도착 예상요금 조회</button></form><div style="max-width:1160px;margin:9px auto 0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><small>참고요금이며 실제 배차요금은 상담 시 확인합니다.</small><a href="tel:18114294" style="font-weight:900">☎ 1811-4294 전화상담</a></div></section>
-<section id="dynamic-service-card-search-20261103" aria-label="지역명과 서비스에 맞춘 명함 자동 펼치기" style="padding:20px 5%;background:#eaf3ff;border-block:1px solid #b8d0ee">
-<div style="max-width:1160px;margin:auto">
-<h2 style="font-size:clamp(21px,3vw,28px);margin:0 0 6px;color:#123c63">지역·코스·서비스 키워드별 동적 이미지 자동보기</h2>
-<p style="margin:0 0 12px">부산대리운전·부산렌트카탁송·설악산탁송·영산강길종주탁송·골프장대리운전처럼 검색어를 입력하면 지역과 서비스·코스에 맞는 이미지를 같은 화면에 자동으로 펼칩니다. 이미지를 눌러 크게 볼 수 있습니다.</p>
-<form action="/region/" method="get" data-card-preview-form style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px;align-items:end">
-<label style="font-weight:800;color:#173e63">지역·코스·서비스 키워드
-<input name="q" value="서울탁송" required placeholder="예: 동해안자전거길종주, 성중종주, 부산탁송" autocomplete="off" style="display:block;width:100%;box-sizing:border-box;min-height:48px;padding:10px;border:1px solid #8aa9c8;border-radius:8px;font-size:16px"></label>
-<label style="font-weight:800;color:#173e63">명함 구분
-<select name="service" style="display:block;width:100%;min-height:48px;padding:10px;border:1px solid #8aa9c8;border-radius:8px;font-size:16px">
-<option value="">대리운전·탁송 모두</option><option value="daeri">대리운전 명함</option><option value="taksong">자동차탁송 명함</option>
-</select></label>
-<button type="submit" style="min-height:48px;border:0;border-radius:8px;background:#0754a0;color:#fff;font-weight:900;font-size:17px;cursor:pointer">지역별 명함 자동확장 보기</button>
-</form>
-<p><a href="/route-taksong/centers/"><strong>전국 자전거 인증센터 출발·도착 선택 ↔ 반대 방향 탁송</strong></a></p>
-<div class="region-card-live" data-card-preview-output hidden aria-label="입력한 지역과 서비스의 명함 미리보기"></div>
-<p style="margin:10px 0 0;font-size:14px"><a href="/region/?q=부산대리운전">부산대리운전 명함</a> · <a href="/region/?q=부산&amp;service=taksong">부산탁송 명함</a> · <a href="/region/?q=대구&amp;service=daeri">대구대리운전 명함</a> · <a href="/region/?q=울산&amp;service=taksong">울산탁송 명함</a> · <a href="/region/?q=영산강길종주탁송">영산강 종주 이미지</a> · <a href="/region/?q=설악산탁송">설악산탁송 이미지</a> · <a href="/region/?q=골프장대리운전">골프장대리운전 이미지</a></p>
-</div></section>
-<div class="hero hero-with-photo"><div class="hero-copy">
-
-<p>실제 운행완료 2,591건 확인 · 전국 차량탁송 · 대리운전 · 법인·골프·일일기사</p>
-<h1>전국자동차탁송 · 전국대리운전 <span class="title-last"><a class="hero-phone" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 1811-4294</a></span></h1>
-<nav id="homepage-region-keywords" aria-label="전국 주요 지역별 서비스">
-<a href="/taksong/seoul/">서울탁송</a><a href="/taksong/busan/">부산탁송</a><a href="/taksong/daegu/">대구탁송</a><a href="/taksong/ulsan/">울산탁송</a><a href="/taksong/jeju/">제주도탁송</a><a href="/coverage/">전국 17개 시·도 탁송</a><a href="/region/">전국 지역별 검색</a>
-</nav>
-<p>실제 운행일·출발지·도착지·당시 요금을 먼저 확인할 수 있습니다. 차량 인수·인계 주소와 차종, 희망 시간을 알려주시면 이용 조건을 상담합니다. 실제 배차·최종 요금은 별도 확정합니다.</p>
-<nav class="hero-actions" aria-label="빠른 상담 및 요금 확인"><a class="btn" href="tel:18114294">☎ 바로 전화상담 1811-4294</a><a class="btn" href="#homepage-fare-top">출발·도착 예상요금</a><a class="btn" href="/find/">내 지역·5개 서비스 찾기</a><a class="btn" href="/reviews/history/">2,591건 실제 운행후기</a></nav>
-
-
-</div><figure class="hero-vehicle"><img src="/assets/vehicles/santafe-1811.webp" width="1448" height="1086" alt="산타페 차량 이미지, 스마트24 상담 1811-4294" loading="eager" fetchpriority="high" decoding="async"><figcaption>승용차·SUV·화물차 이동 상담 1811-4294</figcaption></figure></div>
-
+<section id="keyword-service-navigation-20261106" aria-label="키워드별 서비스 전용 홈페이지 찾기" class="keyword-service-navigation">
+<div class="keyword-service-inner"><h2>지역·산행·자전거 종주 전용 홈페이지 찾기</h2>
+<p>검색어를 입력하면 대리운전·자동차탁송·설악산·지리산·자전거 종주에 맞는 전용 페이지로 이동합니다.</p>
+<form action="/keyword-search/" method="get" class="keyword-service-form">
+<label for="service-keyword-q">서비스·지역·코스</label><input id="service-keyword-q" name="q" required maxlength="100" placeholder="예: 부산탁송, 설악산종주, 동해안자전거길종주" autocomplete="off">
+<button type="submit">전용 홈페이지 이동</button></form>
+<nav aria-label="산행과 자전거 종주 바로가기" class="keyword-service-shortcuts">
+<a href="/설악산탁송/">설악산 종주탁송</a><a href="/지리산탁송/">지리산 종주탁송</a><a href="/special/cycling-trail-transport/">자전거길 종주탁송</a><a href="/route-taksong/centers/">전국 자전거 인증센터</a>
+</nav></div></section>
 <section id="regional-quick-entry-20261106" aria-labelledby="regional-quick-title" class="regional-quick-entry">
 <h2 id="regional-quick-title">지방 대리운전·자동차탁송 지역 바로가기</h2>
 <p>부산·대구·울산·창원·대전·속초·강릉·세종에서 출발하는 대리운전과 자동차탁송 안내를 지역별로 확인하세요. 현재 배차 가능 여부와 최종 요금은 출발·도착지 및 이용 시간을 확인해 상담합니다.</p>
