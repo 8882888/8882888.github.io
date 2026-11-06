@@ -442,7 +442,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
   const visibleHeading=(seoHome.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)||[])[1]||'';
   assert.ok(visibleHeading.includes('전국자동차탁송')&&visibleHeading.includes('전국대리운전')&&
-   visibleHeading.includes('href="tel:18114294"')&&seoHome.includes('전국 지역별 자동차탁송·대리운전 예약 안내'),
+   visibleHeading.includes('href="tel:18114294"')&&seoHome.includes(require('../data/seo-pages.json').pages.find(x=>x.path==='/').description),
    'visible H1, call button and SEO description consistently identify nationwide and regional services');
   const schemaNodes=[...seoHome.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m=>JSON.parse(m[1]));
   const homeWebsite=schemaNodes.find(x=>x['@type']==='WebSite');
