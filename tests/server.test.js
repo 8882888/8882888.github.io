@@ -1216,7 +1216,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const malformed=await get('/%25ZZ');assert.ok([400,404].includes(malformed.status));
   // Homepage statistics show KST today/yesterday visits and phone click provenance.
   const statsHome=await (await get('/')).text();
-  assert.ok(statsHome.includes('누적 전화클릭 <strong id="phone-click-number"'),
+  assert.ok(statsHome.includes('전화버튼 클릭 <strong id="phone-click-number"'),
     'lifetime phone-button click label must appear in the top-right header panel');
   assert.ok(statsHome.includes('id="priority-verified-routes"')&&
     statsHome.includes('/routes/taksong/area-494/area-1174/')&&
@@ -1225,7 +1225,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     statsHome.includes('/routes/reviewed/'),
     'homepage must link natural-language priority route pages and real ride evidence');
   const noCacheHome=await get('/');
-  assert.match(noCacheHome.headers.get('cache-control')||'',/no-cache/,
+  assert.match(noCacheHome.headers.get('cache-control')||'',/no-store|no-cache/,
     'production HTML should revalidate after phone source UI deployments');
 
   // Actual first-view flow: visible hero call buttons and eager vehicle image,
@@ -1246,8 +1246,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(trafficCss.status,200,'traffic summary stylesheet must be served');
   assert.ok((await trafficCss.text()).includes('.traffic-stats .traffic-stats-lines'),
     'traffic counters are styled in a compact header row');
-  assert.ok(statsHome.includes('오늘 접속')&&statsHome.includes('누적 기록')&&
-    statsHome.includes('누적 전화클릭')&&statsHome.includes('접속 집계 안내')&&
+  assert.ok(statsHome.includes('오늘 접속기록')&&statsHome.includes('누적 접속기록')&&
+    statsHome.includes('전화버튼 클릭')&&statsHome.includes('접속 집계 안내')&&
     statsHome.includes('이미 기록된 수치는 자동 차감되지 않습니다.'),
     'header labels distinguish browser records from search impressions and actual calls');
   assert.ok(statsHome.includes('id="traffic-sources-detail" hidden') &&
