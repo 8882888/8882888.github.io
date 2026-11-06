@@ -1,0 +1,112 @@
+name: Smart24 six-hour production audit (no artwork or content mutation)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/smart24-six-hour-site-audit.yml'
+  workflow_dispatch:
+  schedule:
+    # 2026-11-06 12:30–18:30 UTC, every 30 minutes.
+    # A strict 2026 UTC guard below prevents reactivation on later years.
+    - cron: '0,30 12-18 6 11 *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smart24-six-hour-production-audit
+  cancel-in-progress: true
+
+jobs:
+  source-and-production-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Enforce the user-authorized six-hour monitoring window
+        shell: bash
+        run: |
+          set -euo pipefail
+          now=$(date -u +%s)
+          start=$(date -u -d '2026-11-06T12:29:00Z' +%s)
+          end=$(date -u -d '2026-11-06T18:29:43Z' +%s)
+          if [ "$now" -lt "$start" ] || [ "$now" -gt "$end" ]; then
+            touch /tmp/smart24-audit-window-inactive
+            echo 'Monitoring window has ended; no network or deployment actions run.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Smart24 source and production audit started (read-only).' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Checkout nationwide service source
+        uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate original menu, fares, route links and source integrity
+        shell: bash
+        run: |
+          if [ -f /tmp/smart24-audit-window-inactive ]; then exit 0; fi
+          set -euo pipefail
+          node --check server.js
+          node tools/check_cloudtype_20_point_readiness.js
+          node tools/check_cloudtype_100_point_release.js
+          node tests/kstyle-five-primary-services-20261106.test.js
+          node tests/homepage-service-first-20261106.test.js
+          node tests/cycling-original-assets-only-20261106.test.js
+          echo 'Source and no-new-illustration gates passed.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Check real Cloudtype content and canonical keyword routes
+        shell: bash
+        run: |
+          if [ -f /tmp/smart24-audit-window-inactive ]; then exit 0; fi
+          python3 - <<'PY'
+          import hashlib
+          import pathlib
+          from urllib.request import Request, build_opener, HTTPRedirectHandler, urlopen
+          from urllib.error import HTTPError
+          from urllib.parse import quote, urlsplit, unquote
+          base='https://jeongukdaeri.kr'
+          h={'User-Agent':'Smart24SixHourAudit/1.0','Cache-Control':'no-cache','X-Smart24-Monitor':'github-audit'}
+          def fetch(path):
+              with urlopen(Request(base+path,headers=h),timeout=20) as r:
+                  return r.read().decode('utf-8',errors='replace')
+          errors=[]
+          try:
+              homepage=fetch('/?monitor=six-hour-20261106')
+              for item in ('id="homepage-primary-services-20261106"','id="keyword-service-navigation-20261106"','id="mobile-direct-image-priority"'):
+                  if item not in homepage:errors.append('Homepage missing '+item)
+              if 'id="dynamic-service-card-search-20261103"' in homepage:
+                  errors.append('Old illustration preview still on live homepage')
+          except Exception as e:errors.append('Home unreachable: '+str(e))
+          try:
+              import json
+              live=json.loads(fetch('/health'))
+              local='sha256-'+hashlib.sha256(pathlib.Path('server.js').read_bytes()).hexdigest()[:16]
+              if live.get('release')!=local:errors.append('Live Cloudtype server.js release differs from checked-out GitHub code')
+          except Exception as e:errors.append('Production health unavailable: '+str(e))
+          class NoRedirect(HTTPRedirectHandler):
+              def redirect_request(self,*args,**kwargs):return None
+          opener=build_opener(NoRedirect())
+          for phrase,expected in (
+              ('울산탁송','/taksong/ulsan/'),
+              ('설악산탁송','/설악산탁송/'),
+              ('지리산탁송','/지리산탁송/'),
+              ('자전거길종주탁송','/special/cycling-trail-transport/')
+          ):
+              url=base+'/keyword-search/?q='+quote(phrase)
+              try:
+                  with opener.open(Request(url,headers=h),timeout=20) as r:
+                      errors.append(phrase+' stayed on an intermediate search page (HTTP '+str(r.status)+')')
+              except HTTPError as e:
+                  if e.code not in (301,302,303,307,308):
+                      errors.append(phrase+' returned HTTP '+str(e.code));continue
+                  actual=unquote(urlsplit(e.headers.get('Location','')).path)
+                  if actual!=expected:errors.append(phrase+' redirect mismatch: '+actual+' != '+expected)
+              except Exception as e:errors.append(phrase+' request failed: '+str(e))
+          summary=pathlib.Path(__import__('os').environ['GITHUB_STEP_SUMMARY'])
+          if errors:
+              summary.open('a').write('\n### Cloudtype production still needs attention\n'+''.join('- '+e+'\n' for e in errors))
+              for e in errors:print('::error::'+e)
+              raise SystemExit(1)
+          summary.open('a').write('\n### PASS: verified live homepage, release and keyword destinations\n')
+          print('PASS: Live Cloudtype deployment and four representative keyword routes')
+          PY
