@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const page=fs.readFileSync(path.join(__dirname,'..','special/cycling-trail-transport/index.html'),'utf8');
+assert(!page.includes('nationwide-taksong.svg'),'Generated cycling SVG must not appear on customer page');
+assert(!page.includes('keyword-image-first-202611'),'Decorative keyword image section must not return');
+assert(page.includes('id="cycling-route-fare-table-202611"'),'Preserve original route fare table');
+assert(page.includes('id="cycling-verified-course-visual-20261106"'),'Verified route graphic layout missing');
+assert(page.includes('id="cycling-four-major-keyword-intents-20261106"'),'Existing cycling keywords must be preserved');
+for(const value of ['경포대 → 고성 통일전망대','과거 8만~9만원','은어다리 → 영덕해맞이공원','담양댐 → 영산강하구둑','생활체육공원 → 배알도','기존 안내 10만원','개별 상담','차량탁송 예약방법','/route-taksong/centers/'])assert(page.includes(value),'Verified content missing: '+value);
+assert(page.includes('tel:18114294'),'Preserve the official booking telephone');
+console.log('PASS: original cycling fare facts, booking method and no generated SVG images');
