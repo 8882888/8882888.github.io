@@ -10,25 +10,39 @@ GitHub 소스: `8882888/8882888.github.io` (`main`)
 - 이미 운영 중인 Cloudtype 앱의 서비스 설정·커스텀 도메인·데이터를 덮어쓰지 말고 **기존 앱 재배포**만 요청합니다.
 - 2,591건 운행기록, 네이버 원문 630개 연결, 전화번호 및 기존 산행 페이지는 변경하지 않습니다.
 
-## 기존 Cloudtype 앱의 자동 재배포 연결 (1회 설정)
+## 기존 Cloudtype 앱 자동 재배포 연결 — 공식 액션 방식
 
-이 저장소에는 `.github/workflows/cloudtype-redeploy.yml`가 준비되어 있습니다.
+현재 `.github/workflows/cloudtype-redeploy.yml`은 Cloudtype 공식 `cloudtype-github-actions/deploy@v1`을 사용합니다. 이전에 사용하던 검증되지 않은 `api.cloudtype.io/webhooks/deploy` 직접 호출은 제거했습니다. **GitHub Actions의 기존 녹색 실행이 배포 성공을 보장하지 않았다는 문제가 확인되어, 이제 설정 누락 시 명시적으로 실패합니다.**
 
-GitHub 저장소의 **Settings → Secrets and variables → Actions**에서 아래 항목을 지정해야 활성화됩니다.
+### 기존 앱에서만 가져올 설정
 
-| 종류 | 이름 | 값 |
+1. [Cloudtype 관리 화면](https://cloudtype.dev/)에 로그인합니다.
+2. 공식 도메인 `jeongukdaeri.kr`에 연결된 **기존 서비스**를 선택합니다. 새 프로젝트나 앱을 만들지 않습니다.
+3. 해당 서비스의 **CLI 탭**에서 배포 설정 YAML을 확인합니다. 서비스 이름, 프레임워크, 환경변수 참조, 포트, Git 저장소 및 배포환경을 원래 앱 그대로 유지합니다.
+4. GitHub 저장소 **Settings → Secrets and variables → Actions**에서 아래 항목을 설정합니다.
+
+| 구분 | 이름 | 입력값 |
 | --- | --- | --- |
-| Repository secret | `CLOUDTYPE_TOKEN` | Cloudtype API 키 — 채팅이나 공개 코드에 넣지 않습니다 |
-| Repository variable | `CLOUDTYPE_PROJECT` | 현재 서비스가 속한 **기존** Cloudtype 프로젝트명 |
-| Repository variable | `CLOUDTYPE_APP` | 현재 도메인에 연결된 **기존** 앱 이름 |
-| Repository variable | `CLOUDTYPE_STAGE` | 현재 앱의 배포 환경명(예: `main`) |
+| Secret | `CLOUDTYPE_TOKEN` | 기존 Cloudtype 계정의 API 키 |
+| Secret | `CLOUDTYPE_DEPLOY_YAML` | 기존 Cloudtype 서비스의 CLI 탭에서 복사한 배포 설정 YAML 전체 |
+| Variable | `CLOUDTYPE_PROJECT` | 기존 Cloudtype 프로젝트의 정확한 식별자(필요 시 스페이스/프로젝트 형식) |
+| Variable | `CLOUDTYPE_APP` | 기존 배포 YAML 최상단 `name:`과 동일한 서비스 이름 |
+| Variable | `CLOUDTYPE_STAGE` | 기존 서비스의 배포환경 이름(현재 운영환경 그대로) |
 
-이 항목이 하나라도 없으면 워크플로우는 배포 요청을 **건너뛰고** GitHub Actions 로그에 안내를 남깁니다. 값을 추측해 임의의 새 앱을 배포하지 않습니다.
+`CLOUDTYPE_DEPLOY_YAML`에는 환경변수나 비밀 참조가 들어갈 수 있으니 **Repository secret**으로만 등록하고 채팅이나 공개 코드에 붙이지 마세요. `CLOUDTYPE_APP`과 YAML의 `name:`이 일치하지 않으면 안전하게 배포를 중단합니다. 새로운 앱 이름을 임의로 넣어서는 안 됩니다.
 
-모두 설정되면 `main` 브랜치의 서비스 소스 변경 시 Cloudtype 배포 웹훅에 기존 앱의 재배포를 요청합니다. 재배포 요청에 성공해도 **운영 HTML 반영 성공**과는 구분해야 합니다. 앱/프로젝트/배포환경을 잘못 적으면 다른 서비스에 영향을 줄 수 있으므로 실제 운영 앱 정보로만 지정합니다.
+Cloudtype의 원래 서비스가 이미 GitHub 저장소를 연결한 상태를 전제로 배포 액션만 사용합니다. 기존 연결이 없거나 Deploy Key 권한 오류가 난다면 Cloudtype의 서비스별 **CLI → GitHub Actions** 자동 생성 워크플로우를 참고해 GitHub 접근을 별도로 복구해야 합니다. 이때 공식 문서의 `GHP_TOKEN` / `cloudtype-github-actions/connect@v1` 절차가 필요할 수 있습니다. 기존 연결을 함부로 덮어쓰지 않습니다.
 
-> Cloudtype 문서: https://docs.cloudtype.dev/ko/developers/githubactions (GitHub Actions 연동)  
-> 기존 배포 웹훅 안내: https://docs.cloudtype.io/guide/cicd/webhooks (제공 문서 URL이 변경되었을 수 있으므로, 사용 중인 Cloudtype 플랜/버전에서 웹훅 지원 여부를 확인)
+### 실행과 검증
+
+- GitHub Actions의 **Redeploy official Cloudtype site on verified repository changes** → **Run workflow**를 사용합니다. 또는 `main`의 서비스 관련 파일 변경에 반응합니다.
+- 실행의 **Check original Cloudtype application binding safely**에서 누락된 항목을 확인합니다. 연결이 안 된 상태를 성공으로 처리하지 않습니다.
+- 이어지는 **Deploy existing Cloudtype application using OFFICIAL action**이 성공하면 배포 요청이 수락된 것입니다.
+- 마지막 **Confirm LIVE Cloudtype release matches GitHub source**에서 운영 서버 `/health`의 `release` 값과 GitHub `server.js` SHA-256 앞 16자리를 비교합니다. 이 단계까지 통과해야 *코드 배포 확인*이라고 판정합니다.
+- 배포 직후에도 상단 메뉴 4개가 실제 브라우저 스크롤 중 고정되는지 별도 확인합니다.
+
+> Cloudtype 공식 배포 방법: https://docs.cloudtype.dev/ko/developers/githubactions  
+> 기존 서비스 설정/CLI: https://docs.cloudtype.dev/ko/developers/service
 
 ## 실제 운영 반영 확인
 
