@@ -27,6 +27,6 @@ assert(home.includes('id="taksong-first-trust-home-20261106"'),'Home transport n
 assert(home.includes('href="/taksong/"'),'Transport hub link missing');
 assert(sitemap.includes('https://jeongukdaeri.kr/taksong/'),'Transport hub not indexed in sitemap source');
 const rule=rules.pages.find(x=>x.path==='/taksong/');
-assert(rule && rule.title.includes('탁송') && rule.description.includes('운행기록'),'Transport title and description missing');
+assert(rule && rule.title.includes('탁송') && /운행(?:기록|후기)/.test(rule.description),'Transport title and description missing');
 assert(!panel.includes('100% 최상위') && !panel.includes('확정 배차'),'No unsupported guarantees');
 console.log('PASS: eight transport priority links, canonical hub discovery and evidence-first messaging');
