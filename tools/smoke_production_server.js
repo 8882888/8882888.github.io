@@ -40,6 +40,33 @@ async function main(){
    await new Promise(resolve=>setTimeout(resolve,350));
   }
   assert(healthy,'Node server failed to start with nationwide region data; output: '+logs.slice(-5000));
+  // Search terms must select their own canonical landing page, not generic /.
+  // These checks exercise the real Node server used in Cloudtype.
+  for(const [term,expected] of [
+    ['대리운전','/daeri/'],
+    ['전국탁송','/taksong/'],
+    ['울산탁송','/taksong/ulsan/'],
+    ['울산대리운전','/daeri/ulsan/'],
+    ['부산렌트카탁송','/taksong/busan/'],
+    ['설악산탁송','/설악산탁송/'],
+    ['오색소공원탁송','/설악산탁송/'],
+    ['지리산탁송','/지리산탁송/'],
+    ['성중종주','/지리산탁송/'],
+    ['자전거길종주탁송','/special/cycling-trail-transport/'],
+    ['동해안자전거길종주탁송','/special/cycling-trail-transport/'],
+    ['골프대리운전','/service/golf/'],
+    ['법인대리운전','/service/corporate/'],
+    ['24시탁소','/special/24-hour-service/']
+  ]){
+    const response=await request(port,'/keyword-search/?q='+encodeURIComponent(term));
+    assert.equal(response.status,302,'Search term must redirect: '+term);
+    assert.equal(decodeURI(response.headers.location||''),expected,'Wrong dedicated page: '+term);
+  }
+  const fromHome=await request(port,'/?q='+encodeURIComponent('울산탁송'));
+  assert.equal(fromHome.status,302,'Homepage search must redirect to Ulsan taksong');
+  assert.equal(fromHome.headers.location,'/taksong/ulsan/');
+  const bareHome=await request(port,'/');
+  assert.equal(bareHome.status,200,'Bare homepage must remain navigable without keyword');
   // Regression: show the three most important historical fare tables before long prose.
   for(const [route,tableId,imageId] of [
     ['/설악산탁송/','mountain-route-fare-table-202611','original-mountain-fare-visual'],
