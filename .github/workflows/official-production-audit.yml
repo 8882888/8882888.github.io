@@ -33,6 +33,7 @@ jobs:
           node tools/check_cloudtype_100_point_release.js
           node tests/homepage-top-services.test.js
           node tests/five-keyword-landing-20261106.test.js
+          node tests/kstyle-five-primary-services-20261106.test.js
           node tests/taksong-priority-seo-links.test.js
       - name: Compare live Cloudtype deployment with GitHub files
         shell: bash
