@@ -36,6 +36,7 @@ jobs:
           node tests/kstyle-five-primary-services-20261106.test.js
           node tests/nationwide-daeri-24h-taksong-keywords.test.js
           node tests/review-first-search-titles-20261106.test.js
+          node tests/night-taksong-intent-alias-and-proof.test.js
           node tests/taksong-priority-seo-links.test.js
       - name: Compare live Cloudtype deployment with GitHub files
         shell: bash
