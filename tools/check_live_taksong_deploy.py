@@ -120,5 +120,21 @@ if sm["status"] == 200:
         test(len(urls) == len(set(urls)), "Priority sitemap has duplicate URLs")
     except ET.ParseError as ex:
         test(False, "Priority sitemap XML invalid: " + str(ex))
+# Distinguish network failures, stale deployments and SEO content errors.
+# The Actions job summary publishes these categories instead of one generic red cross.
+health_status=report["checks"].get("health",{}).get("status")
+page_statuses=[report["checks"].get("page_"+p,{}).get("status") for p in ["/","/taksong/"]]
+hashes=[report["checks"].get("deploy_hash_"+p,{}).get("matches") for p in ["server.js","index.html","data/seo-pages.json"]]
+if health_status == 0 and all(code == 0 for code in page_statuses):
+    diagnosis="NETWORK_OR_DNS_UNREACHABLE_FROM_GITHUB_RUNNER"
+elif health_status != 200:
+    diagnosis="LIVE_HEALTH_ENDPOINT_MISSING_OR_BLOCKED"
+elif False in hashes:
+    diagnosis="CLOUDTYPE_SERVING_OUTDATED_OR_DIFFERENT_FILES"
+elif failures:
+    diagnosis="SEO_OR_LIVE_CONTENT_MISMATCH"
+else:
+    diagnosis="LIVE_SOURCE_AND_SEO_CHECKS_PASS"
+report["diagnosis"]=diagnosis
 print(json.dumps(report, ensure_ascii=False, indent=2))
 sys.exit(1 if failures else 0)
