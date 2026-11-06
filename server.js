@@ -4,6 +4,7 @@ const ROOT=__dirname,PORT=Number(process.env.PORT||3000),BRAND='스마트전국�
 const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFileSync(__filename)).digest('hex');
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
+const serviceKeywordEntry=require('./lib/service-keyword-entry');
 const keywordExpansion=require('./lib/keyword-card-expansion');
 const regionalBlogKeywords=require('./lib/regional-blog-keywords');
 const exactKeywordCard=require('./lib/exact-keyword-card');
@@ -1577,27 +1578,28 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
  const isHtml=status===200&&type.startsWith('text/html;');
  if(isHtml){
   let html=Buffer.isBuffer(body)?body.toString('utf8'):String(body);
-  // The four primary service links are a permanent part of the homepage.
+  // Five primary service links are permanent parts of the homepage.
   // Recover from an older/generated homepage file rather than silently dropping them.
   if(res._smartPath==='/'&&html.includes('</header>')){
    const start='<nav id="homepage-primary-services-20261106"';
-   const fixedNav='<nav id="homepage-primary-services-20261106" aria-label="주요 운전 서비스 바로가기" style="position:sticky;top:0;z-index:1100;background:#fff;border-bottom:2px solid #c4d9ee;padding:10px 4%;box-shadow:0 4px 15px #10254420"><div class="homepage-primary-service-grid" style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px"><a href="/daeri/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">대리운전</a><a href="/taksong/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#0754a0;color:#fff;font-weight:900">자동차탁송</a><a href="/service/corporate/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">법인대리운전</a><a href="/service/golf/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">골프대리운전</a></div></nav>';
+   const fixedNav='<nav id="homepage-primary-services-20261106" aria-label="주요 운전 서비스 바로가기" style="position:sticky;top:0;z-index:1100;background:#fff;border-bottom:2px solid #c4d9ee;padding:10px 4%;box-shadow:0 4px 15px #10254420"><div class="homepage-primary-service-grid" style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px"><a href="/daeri/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">대리운전</a><a href="/taksong/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#0754a0;color:#fff;font-weight:900">자동차탁송</a><a href="/service/corporate/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">법인대리운전</a><a href="/service/golf/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">골프대리운전</a><a href="/service/long-distance-daeri/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">장거리대리운전</a></div></nav>';
    if(!html.includes(start))html=html.replace('</header>','</header>'+fixedNav);
    else {
     const from=html.indexOf(start),end=html.indexOf('</nav>',from);
     if(end>from){
      const present=html.slice(from,end);
-     const complete=['/daeri/','/taksong/','/service/corporate/','/service/golf/'].every(link=>present.includes('href="'+link+'"'));
+     const complete=['/daeri/','/taksong/','/service/corporate/','/service/golf/','/service/long-distance-daeri/'].every(link=>present.includes('href="'+link+'"'));
      if(!complete||!present.includes('position:sticky'))html=html.slice(0,from)+fixedNav+html.slice(end+6);
     }
    }
    if(!html.includes('id="smart24-permanent-nav-fallback-style"')){
-    html=html.replace('</head>','<style id="smart24-permanent-nav-fallback-style">@media(min-width:740px){#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}#homepage-primary-services-20261106{isolation:isolate}#homepage-primary-services-20261106 a{box-sizing:border-box;text-align:center;text-decoration:none;padding:8px;line-height:1.3}#homepage-primary-services-20261106 a:focus-visible{outline:3px solid #e6a900;outline-offset:2px}</style></head>');
+    html=html.replace('</head>','<style id="smart24-permanent-nav-fallback-style">@media(min-width:740px){#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}}#homepage-primary-services-20261106{isolation:isolate}#homepage-primary-services-20261106 a{box-sizing:border-box;text-align:center;text-decoration:none;padding:8px;line-height:1.3}#homepage-primary-services-20261106 a:focus-visible{outline:3px solid #e6a900;outline-offset:2px}</style></head>');
    }
   }
   if(html.includes('</body>')&&!/src=["']\/assets\/traffic-analytics\.js(?:\?[^"']*)?["']/.test(html)){
    html=html.replace('</body>','<script src="/assets/traffic-analytics.js?v=20261030-count-accuracy" defer></script></body>');
   }
+  html=serviceKeywordEntry.enhance(html,res._smartPath||'');
   body=keywordExpansion.enhance(html,res._smartPath||'');
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
