@@ -44,6 +44,33 @@ Cloudtype의 원래 서비스가 이미 GitHub 저장소를 연결한 상태를 
 > Cloudtype 공식 배포 방법: https://docs.cloudtype.dev/ko/developers/githubactions  
 > 기존 서비스 설정/CLI: https://docs.cloudtype.dev/ko/developers/service
 
+## 20개 배포 안전점검 (소스·설정 단계)
+
+저장소에는 `tools/check_cloudtype_20_point_readiness.js`가 있으며, Cloudtype 배포 작업과 공식 운영 서버 감사 작업에서 **배포 전에 자동 실행**합니다. 검사 대상은 아래 20개입니다.
+
+1. `main` 코드 변경 감지
+2. 수동 재배포 실행 가능
+3. 동시 배포 충돌 방지
+4. 인증정보 누락 시 배포 중단
+5. Cloudtype API 토큰을 비공개 Secret에서만 참조
+6. 기존 서비스의 배포 YAML을 비공개 Secret에서 참조
+7. 기존 프로젝트를 변수로 지정
+8. 기존 앱 이름을 변수로 지정
+9. 기존 운영 스테이지를 변수로 지정
+10. 기존 앱 이름과 YAML 설정 일치 검사
+11. 공식 Cloudtype 배포 액션 사용
+12. 미검증 직접 웹훅 호출 제거
+13. 전체 스테이지 일괄 배포 금지
+14. Node 실제 구동·핵심 URL 검사
+15. 배포 서버 파일의 SHA256 지문 일치 검사
+16. 공식 도메인 /health를 기준으로 확인
+17. 별도의 라이브 SEO 감사 및 해시 검사
+18. 상단 4개 메뉴의 누락·배치 위치 검사
+19. 상단 고정과 반응형 레이아웃 검사
+20. 홈페이지 파일 캐시 갱신·메뉴 누락 자동 복구 검사
+
+**주의:** 20/20 통과는 GitHub 저장소의 배포 준비 상태를 의미합니다. 실제 배포는 Cloudtype 인증/앱 설정과 공식 액션 성공, 운영 `/health` 지문 일치, 실제 PC·모바일 화면 확인까지 통과해야 정상화됩니다. 이 중 하나라도 증명되지 않으면 완료로 표시하지 않습니다.
+
 ## 실제 운영 반영 확인
 
 - 상태 확인: https://jeongukdaeri.kr/health/seo.json
