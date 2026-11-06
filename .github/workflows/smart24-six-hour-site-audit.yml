@@ -76,6 +76,22 @@ jobs:
                   if item not in homepage:errors.append('Homepage missing '+item)
               if 'id="dynamic-service-card-search-20261103"' in homepage:
                   errors.append('Old illustration preview still on live homepage')
+              # Check the rendered live menu, not just a marker elsewhere in HTML.
+              import re
+              nav=re.search(r'<nav\\b[^>]*id="homepage-primary-services-20261106"[^>]*>(.*?)</nav>',homepage,re.S)
+              expected_services=('/daeri/','/taksong/','/service/corporate/','/service/golf/','/service/long-distance-daeri/')
+              if not nav:
+                  errors.append('Five-service primary navigation missing')
+              else:
+                  links=re.findall(r'<a\\b[^>]*href="([^"]+)"',nav.group(1))
+                  if tuple(links)!=expected_services:
+                      errors.append('Five-service menu order or destinations changed: '+str(links))
+              if 'id="back-to-top"' not in homepage:
+                  errors.append('Mobile/desktop TOP button missing')
+              if '2,591' not in homepage:
+                  errors.append('Verified 2,591 trip-history label missing')
+              if 'blog.naver.com/wjdtnr4757/' not in homepage:
+                  errors.append('Published Naver blog source links missing')
           except Exception as e:errors.append('Home unreachable: '+str(e))
           try:
               import json
