@@ -2033,6 +2033,12 @@ const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicl
 const daeriRouteMatch=pathname.match(/^\/daeri\/route\/([a-z-]+)\/?$/);if(daeriRouteMatch){const route=featuredDaeriRoutes.find(x=>x.slug===daeriRouteMatch[1]);return route?respond(res,200,featuredDaeriRoutePage(route)):respond(res,404,'해당 대리운전 구간을 찾을 수 없습니다.')}
 if(pathname==='/travel/food-map'){res.writeHead(301,{location:'/travel/food-map/'+u.search});return res.end()}
 if(pathname==='/travel/food-map/')return respond(res,200,foodTravelMap.page({layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',regions,servicePath}));
+const foodDistrictMatch=pathname.match(/^\/daeri\/food-district\/(busan|daegu|ulsan|changwon|daejeon)\/$/);
+if(foodDistrictMatch){
+ const html=require('./lib/food-district-discovery').page(foodDistrictMatch[1],{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});
+ return respond(res,html?200:404,html||'해당 지역 정보를 찾을 수 없습니다.');
+}
+
 if(pathname==='/daeri/gangnam-food-guide/'){
  const host='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const title='강남역·역삼·신사 음식점 안내와 대리운전 귀가 준비 | 스마트24';
