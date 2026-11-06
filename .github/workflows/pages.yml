@@ -233,6 +233,7 @@ jobs:
           node tests/taksong-priority-seo-links.test.js
           node tests/naver-search-baseline.test.js
           node tests/homepage-top-services.test.js
+          node tools/check_cloudtype_100_point_release.js
           node tests/homepage-conversion-regression.test.js
           node tests/blog-regional-hashtags.test.js
           node tests/regional-history-ambiguity.test.js
