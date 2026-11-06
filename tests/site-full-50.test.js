@@ -51,7 +51,7 @@ const card=async(query,service)=>{
 // A — hosting and search-engine entrypoints
 check('01 Homepage HTTP 200 and HTML',async()=>{const {res,body}=await page('/');assert.equal(res.status,200);has(body,'<html')});
 check('02 Homepage canonical primary domain',async()=>{has(await home(),'<link rel="canonical" href="https://jeongukdaeri.kr/">')});
-check('03 Homepage nonempty SEO title',async()=>{assert.match(await home(),/<title>[^<]*자동차탁송[^<]*대리운전[^<]*<\/title>/)});
+check('03 Homepage nonempty SEO title',async()=>{assert.match(await home(),/<title>[^<]*전국대리운전[^<]*운행후기[^<]*24시탁송[^<]*<\/title>/)});
 check('04 Homepage description',async()=>{assert.match(await home(),/<meta name="description" content="[^"]{40,}"/)});
 check('05 Homepage robots not blocked',async()=>{const head=(await home()).split('</head>')[0];assert.doesNotMatch(head,/<meta[^>]*name="robots"[^>]*noindex/i)});
 check('06 Robots public HTTP 200',async()=>{const r=await page('/robots.txt');assert.equal(r.res.status,200);has(r.body,'User-agent:')});
@@ -106,7 +106,7 @@ check('45 Completed rides explicitly separated from Naver posts',async()=>{const
 check('46 Naver blog archive directory works',async()=>{const r=await page('/blog/');assert.equal(r.res.status,200);has(r.body,'네이버 블로그')});
 check('47 Taksong historical reviews filter works',async()=>{const r=await page('/reviews/history/?kind=taksong');assert.equal(r.res.status,200);has(r.body,'자동차탁송')});
 check('48 Daeri historical reviews filter works',async()=>{const r=await page('/reviews/history/?kind=daeri');assert.equal(r.res.status,200);has(r.body,'대리운전')});
-check('49 Homepage counters labelled, not called search impressions',async()=>{const h=await home();hasAll(h,['오늘 접속','누적 기록','누적 전화클릭','네이버 검색'])});
+check('49 Homepage counters labelled, not called search impressions',async()=>{const h=await home();hasAll(h,['오늘 접속기록','누적 접속기록','전화버튼 클릭','네이버 검색'])});
 check('50 Public rides API excludes precise departure times',async()=>{const data=await json('/api/public-rides');assert.ok(Array.isArray(data));assert.ok(data.every(r=>!('time' in r)&&!('departure_time' in r)))});
 async function main(){
  assert.equal(checks.length,50,'Exactly 50 independent checks');
