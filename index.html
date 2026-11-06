@@ -501,8 +501,9 @@ html{scroll-padding-top:95px}
 .regional-quick-links a:hover,.regional-quick-links a:focus-visible{background:#e6f1ff;border-color:#0754a0;text-decoration:underline}
 .regional-quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.regional-quick-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;border-radius:9px;background:#e5eef8;color:#103f6a;font-weight:800;text-decoration:none}.regional-quick-actions .regional-quick-call{background:#0754a0;color:white}
 @media(max-width:700px){.regional-quick-entry{margin:10px 3%;padding:18px 4%}.regional-quick-links{grid-template-columns:repeat(2,minmax(0,1fr))}.regional-quick-actions a{width:100%}}
+.back-to-top{opacity:1!important;visibility:visible!important;transform:none!important;z-index:2147483000!important;pointer-events:auto!important;text-decoration:none}
 </style></head>
-<body>
+<body id="page-start">
 
 <header><strong>스마트24 전국대리운전·24시탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 접속 기록 및 전화 버튼 통계">
  <div class="traffic-stats-lines" aria-live="polite">
@@ -1232,10 +1233,8 @@ async function loadTripTicker(){
 })();
 </script>
 
-<button class="back-to-top" id="back-to-top" type="button" aria-label="페이지 맨 위로 이동" title="맨 위로">↑ TOP</button>
-<script>
-(function(){const button=document.getElementById('back-to-top');if(!button)return;function update(){button.classList.toggle('visible',window.scrollY>260)}window.addEventListener('scroll',update,{passive:true});update();button.addEventListener('click',function(){window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})})})();
-</script>
+<a class="back-to-top visible" id="back-to-top" href="#page-start" aria-label="페이지 맨 위로 이동" title="맨 위로">↑ TOP</a>
+
 <script src="/assets/traffic-analytics.js?v=20261030-count-accuracy" defer></script>
 <script src="/assets/region-card-preview.js?v=20261106-traverse-information" defer></script>
 
