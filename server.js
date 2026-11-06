@@ -2020,9 +2020,27 @@ const regionalTaksongTarget=(value)=>{
 const mountainRedirect= (pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search')
  ?mountainTarget(explicitMountainKeyword||searchReferrerKeyword):null;
 if(mountainRedirect){res.writeHead(302,{location:encodeURI(mountainRedirect),'cache-control':'no-store','vary':'Accept-Encoding'});return res.end();}
-const traverseTopic=(pathname==='/'||pathname==='/index.html')&&explicitMountainKeyword?keywordExpansion.resolve(explicitMountainKeyword):null;
-if(traverseTopic&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route'].includes(traverseTopic.slug)){
- res.writeHead(302,{location:encodeURI(traverseTopic.url),'cache-control':'no-store'});return res.end();
+// Match homepage search intent to the existing dedicated service or course homepage.
+// Never infer a query when search engines omit referrer keywords; preserve bare /
+// as the navigation homepage and keep locality-only search with the region finder.
+const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search';
+const intentQuery=keywordEntryPath?(explicitMountainKeyword||searchReferrerKeyword):null;
+if(intentQuery){
+ const normalizedIntent=String(intentQuery).replace(/[\\s·_+-]/g,'').toLowerCase();
+ const exactDestination={
+  '대리운전':'/daeri/','전국대리운전':'/daeri/','24시대리운전':'/daeri/',
+  '탁송':'/taksong/','자동차탁송':'/taksong/','차량탁송':'/taksong/','전국탁송':'/taksong/','전국자동차탁송':'/taksong/','전국24시탁송':'/special/24-hour-service/',
+  '골프대리운전':'/service/golf/','골프장대리운전':'/service/golf/',
+  '법인대리운전':'/service/corporate/','법인카드대리운전':'/service/corporate/',
+  '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/'
+ }[normalizedIntent];
+ const matchedTopic=keywordExpansion.resolve(intentQuery);
+ const destination=exactDestination||(matchedTopic&&matchedTopic.url);
+ // A named region+service must use its regional page, not a generic topic.
+ const regionalDestination=regionalTaksongTarget(intentQuery);
+ if((destination||regionalDestination)&&(!regionalDestination||!destination||matchedTopic&&['seoraksan','jirisan','deogyusan','eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling'].includes(matchedTopic.slug))){
+  res.writeHead(302,{location:encodeURI(destination||regionalDestination),'cache-control':'no-store'});return res.end();
+ }
 }
 const innovationSearchRoute=pathname==='/'||pathname==='/index.html'||pathname==='/region/';
 if(innovationSearchRoute&&/^(?:전북|충북)혁신도시(?:대리운전|탁송)$/.test(compact(u.searchParams.get('q')||''))){
