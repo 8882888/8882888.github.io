@@ -1583,6 +1583,14 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    const start='<nav id="homepage-primary-services-20261106"';
    const fixedNav='<nav id="homepage-primary-services-20261106" aria-label="주요 운전 서비스 바로가기" style="position:sticky;top:0;z-index:1100;background:#fff;border-bottom:2px solid #c4d9ee;padding:10px 4%;box-shadow:0 4px 15px #10254420"><div class="homepage-primary-service-grid" style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px"><a href="/daeri/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">대리운전</a><a href="/taksong/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#0754a0;color:#fff;font-weight:900">자동차탁송</a><a href="/service/corporate/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">법인대리운전</a><a href="/service/golf/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">골프대리운전</a></div></nav>';
    if(!html.includes(start))html=html.replace('</header>','</header>'+fixedNav);
+   else {
+    const from=html.indexOf(start),end=html.indexOf('</nav>',from);
+    if(end>from){
+     const present=html.slice(from,end);
+     const complete=['/daeri/','/taksong/','/service/corporate/','/service/golf/'].every(link=>present.includes('href="'+link+'"'));
+     if(!complete||!present.includes('position:sticky'))html=html.slice(0,from)+fixedNav+html.slice(end+6);
+    }
+   }
    if(!html.includes('id="smart24-permanent-nav-fallback-style"')){
     html=html.replace('</head>','<style id="smart24-permanent-nav-fallback-style">@media(min-width:740px){#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}#homepage-primary-services-20261106{isolation:isolate}#homepage-primary-services-20261106 a{box-sizing:border-box;text-align:center;text-decoration:none;padding:8px;line-height:1.3}#homepage-primary-services-20261106 a:focus-visible{outline:3px solid #e6a900;outline-offset:2px}</style></head>');
    }
