@@ -5,7 +5,7 @@ const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const sitemap=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
-assert.equal((html.match(/<h1(?:\\s|>)/g)||[]).length,1,'homepage H1 should be unique');
+assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1,'homepage H1 should be unique');
 const sections=['smart24-customer-journeys-20261106','smart24-customer-faq-20261106','provincial-food-districts-20261106','search-intent-discovery-20261106'];
 for(const id of sections)assert(html.includes('id="'+id+'"'),'missing homepage customer-facing section: '+id);
 assert(html.indexOf('smart24-customer-journeys-20261106')<html.indexOf('innovation-search-focus'),'customer navigation should appear before deep regional guides');
