@@ -62,6 +62,9 @@ async function main(){
     assert.equal(response.status,302,'Search term must redirect: '+term);
     assert.equal(decodeURI(response.headers.location||''),expected,'Wrong dedicated page: '+term);
   }
+  const fromLegacyRegion=await request(port,'/region/?q='+encodeURIComponent('울산탁송'));
+  assert.equal(fromLegacyRegion.status,302,'Old region search must open dedicated Ulsan taksong page');
+  assert.equal(fromLegacyRegion.headers.location,'/taksong/ulsan/');
   const fromHome=await request(port,'/?q='+encodeURIComponent('울산탁송'));
   assert.equal(fromHome.status,302,'Homepage search must redirect to Ulsan taksong');
   assert.equal(fromHome.headers.location,'/taksong/ulsan/');
