@@ -411,13 +411,13 @@ const rules=[
     "group": "seo",
     "path": "data/seo-pages.json",
     "name": "taksong title",
-    "needle": "전국자동차탁송 | 실제 운행기록"
+    "needle": "24시탁송·전국자동차탁송 | 차량탁송 요금"
   },
   {
     "group": "seo",
     "path": "data/seo-pages.json",
     "name": "driver title",
-    "needle": "전국대리운전·지역별 대리운전"
+    "needle": "전국대리운전 | 심야·장거리"
   },
   {
     "group": "seo",
