@@ -81,7 +81,8 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
  await tick();await tick();
  const event=requests.find(r=>r.name==='site_phone_event');
  assert.ok(event,'click sends one attribution event');
- assert.equal(event.body.p_source,'네이버 검색');
+ assert.equal(event.body.p_source,'네이버 경유(검색 여부 미확인)',
+   'Naver referral is not automatically proven to be a Naver search click');
  assert.equal(event.body.p_page,'/taksong/');
  assert.equal(requests.filter(r=>r.name==='site_click_stats').length,0,
    '204 No Content from successful source logging must not double-count');
