@@ -1982,7 +1982,6 @@ if(pathname==='/api/keyword-status'){res.setHeader('X-Robots-Tag','noindex');ret
 if(pathname==='/activities/'||pathname==='/activities')return respond(res,200,keywordEngine.activityHub());
 const serviceActivity=pathname.match(/^\/(daeri|taksong)\/activities\/([a-z-]+)\/?$/);if(serviceActivity){const topic=keywordEngine.topicFromSlug(serviceActivity[2]);return topic?respond(res,200,keywordEngine.topicPage(topic,serviceActivity[1])):respond(res,404,'이용 안내를 찾을 수 없습니다.')}
 const activityMatch=pathname.match(/^\/activities\/([a-z-]+)\/?$/);if(activityMatch){const topic=keywordEngine.topicFromSlug(activityMatch[1]);return topic?respond(res,200,keywordEngine.topicPage(topic)):respond(res,404,'이용 안내를 찾을 수 없습니다.')}
-if(pathname==='/keyword-search/'||pathname==='/keyword-search'){const q=u.searchParams.get('q');const target=keywordEngine.topicUrl(u.searchParams.get('category'));if(target&&!q){res.writeHead(301,{location:target});return res.end()}res.setHeader('X-Robots-Tag','noindex, follow');return respond(res,200,keywordEngine.search(u.searchParams.get('q'),u.searchParams.get('page'),u.searchParams.get('category')))}
 const serviceVisit=pathname.match(/^\/(daeri|taksong)\/visit\/([a-f0-9]{20})\/?$/);
 if(serviceVisit){const [,kind,id]=serviceVisit,item=keywordEngine.byId.get(id);if(!item)return respond(res,404,'연결된 키워드를 찾을 수 없습니다.');const target=keywordEngine.url(item,kind);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,keywordEngine.itemPage(item,kind))}
 const visitKeyword=pathname.match(/^\/visit\/([a-f0-9]{20})\/?$/);if(visitKeyword){const item=keywordEngine.byId.get(visitKeyword[1]);if(!item)return respond(res,404,'연결된 키워드를 찾을 수 없습니다.');const target=keywordEngine.url(item);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,keywordEngine.itemPage(item))}
@@ -2062,6 +2061,12 @@ if(searchIntent){
    '일일기사':'/service/daily-driver/'
   }[normalized])||(named&&named.url);
  if(target){res.writeHead(302,{location:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
+}
+if(pathname==='/keyword-search/'||pathname==='/keyword-search'){
+ const target=keywordEngine.topicUrl(u.searchParams.get('category'));
+ if(target&&!u.searchParams.get('q')){res.writeHead(301,{location:target});return res.end()}
+ res.setHeader('X-Robots-Tag','noindex, follow');
+ return respond(res,200,keywordEngine.search(u.searchParams.get('q'),u.searchParams.get('page'),u.searchParams.get('category')));
 }
 const innovationSearchRoute=pathname==='/'||pathname==='/index.html'||pathname==='/region/';
 if(innovationSearchRoute&&/^(?:전북|충북)혁신도시(?:대리운전|탁송)$/.test(compact(u.searchParams.get('q')||''))){
