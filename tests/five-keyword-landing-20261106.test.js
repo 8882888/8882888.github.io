@@ -1,0 +1,38 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const entry=require('../lib/service-keyword-entry');
+const home=read('index.html');
+const server=read('server.js');
+const long=read('service/long-distance-daeri/index.html');
+const target=['/daeri/','/taksong/','/service/golf/','/service/corporate/','/service/long-distance-daeri/'];
+assert.deepEqual(entry.paths.map(x=>x.url),target,'Five keyword landing URLs are fixed');
+const mainNav=home.slice(home.indexOf('<nav id="homepage-primary-services-20261106"'),home.indexOf('</nav>',home.indexOf('<nav id="homepage-primary-services-20261106"')));
+for(const url of target){
+ assert(mainNav.includes('href="'+url+'"'),'Homepage fixed menu missing '+url);
+ assert(home.includes('href="'+url+'"'),'Homepage first-screen shortcut missing '+url);
+ const item=entry.paths.find(x=>x.url===url);
+ const minimal='<html><head><title>test</title></head><body><header>header</header><main>original content</main></body></html>';
+ const result=entry.enhance(minimal,url);
+ assert(result.includes('id="smart24-five-intent-nav"'),'Permanent selection navigation missing '+url);
+ assert(result.includes('href="'+url+'" aria-current="page"'),'Current service should be visibly selected '+url);
+ assert(result.includes('id="smart24-intent-first-20261106"'),'Keyword-specific introduction missing '+url);
+ assert(result.includes('href="/fare/?service='+item.fare+'"'),'Service-aware fare search missing '+url);
+ assert(result.includes('href="/reviews/history/?kind='+item.proof+'"'),'Service-aware completed-trip link missing '+url);
+ assert(result.includes('href="tel:18114294"'),'Telephone consult missing '+url);
+ assert(result.indexOf('smart24-five-intent-nav')<result.indexOf('<main>'),'Service menu should precede long body '+url);
+ assert.equal((result.match(/id="smart24-five-intent-nav"/g)||[]).length,1,'Only one navigation allowed '+url);
+ assert.equal(entry.enhance(result,url),result,'Rendering must be idempotent '+url);
+}
+assert(home.includes('grid-template-columns:repeat(5,minmax(0,1fr))!important'),'Desktop 5-column sticky nav missing');
+assert(home.includes('position:sticky!important;top:0!important'),'Homepage nav must be sticky');
+assert(server.includes("serviceKeywordEntry.enhance(html,res._smartPath||'')"),'Server must inject service-specific first screen on dynamic/static routes');
+assert(server.includes("'/service/long-distance-daeri/'".replaceAll('\\',''))||server.includes("'/service/long-distance-daeri/'"),'Fallback menu missing fifth link');
+assert(long.includes('<link rel="canonical" href="https://jeongukdaeri.kr/service/long-distance-daeri/"'),'Long-distance canonical missing');
+assert(long.includes('장거리대리운전 예약·요금')&&long.includes('기사 복귀'),'Unique long-distance content missing');
+assert(long.includes('href="/reviews/history/?kind=daeri"'),'Verified ride records link missing');
+assert(!long.includes('100% 배차')&&!long.includes('확정 요금'),'Do not fabricate dispatch outcomes');
+console.log('PASS: five distinct keyword entry points, fixed menu, selected state, booking CTAs, original content and canonical');
