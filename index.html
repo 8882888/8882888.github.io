@@ -437,7 +437,9 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  }
 }
 </style>
-<style id="fare-card-first-layout">#homepage-fare-top{margin:0!important;border-radius:0}#dynamic-service-card-search-20261103{content-visibility:visible!important;margin:0!important}#dynamic-service-card-search-20261103 h2{margin-top:0}#dynamic-service-card-search-20261103 .region-card-live{scroll-margin-top:12px}@media(max-width:700px){body>header{padding:10px 4%!important}#dynamic-service-card-search-20261103{padding:14px 4%!important}}</style></head>
+<style id="fare-card-first-layout">#homepage-fare-top{margin:0!important;border-radius:0}#dynamic-service-card-search-20261103{content-visibility:visible!important;margin:0!important}#dynamic-service-card-search-20261103 h2{margin-top:0}#dynamic-service-card-search-20261103 .region-card-live{scroll-margin-top:12px}@media(max-width:700px){body>header{padding:10px 4%!important}#dynamic-service-card-search-20261103{padding:14px 4%!important}}@media(min-width:740px){#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+@media(max-width:380px){#homepage-primary-services-20261106{padding:9px 3%!important}#homepage-primary-services-20261106 a{padding:8px 5px!important;font-size:14px!important}}
+</style></head>
 <body>
 
 <header><strong>스마트24 전국대리운전·24시탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 접속 기록 및 전화 버튼 통계">
@@ -456,6 +458,14 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
   <small class="traffic-source-note">정확한 네이버 검색 노출·클릭 수는 네이버 서치어드바이저에서 확인해야 합니다.</small>
  </div>
 </aside></div></header>
+<nav id="homepage-primary-services-20261106" aria-label="주요 운전 서비스 바로가기" style="background:#fff;border-bottom:2px solid #c4d9ee;padding:12px 4%">
+ <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px" class="homepage-primary-service-grid">
+  <a href="/daeri/" style="display:flex;justify-content:center;align-items:center;min-height:54px;padding:8px 12px;border:1px solid #b6cfe7;border-radius:11px;background:#f1f7ff;text-align:center;font-weight:900;color:#17436b;text-decoration:none;font-size:clamp(15px,2vw,19px)">대리운전</a>
+  <a href="/taksong/" style="display:flex;justify-content:center;align-items:center;min-height:54px;padding:8px 12px;border:1px solid #0754a0;border-radius:11px;background:#0754a0;text-align:center;font-weight:900;color:#fff;text-decoration:none;font-size:clamp(15px,2vw,19px)">자동차탁송</a>
+  <a href="/service/corporate/" style="display:flex;justify-content:center;align-items:center;min-height:54px;padding:8px 12px;border:1px solid #b6cfe7;border-radius:11px;background:#f1f7ff;text-align:center;font-weight:900;color:#17436b;text-decoration:none;font-size:clamp(15px,2vw,19px)">법인대리운전</a>
+  <a href="/service/golf/" style="display:flex;justify-content:center;align-items:center;min-height:54px;padding:8px 12px;border:1px solid #b6cfe7;border-radius:11px;background:#f1f7ff;text-align:center;font-weight:900;color:#17436b;text-decoration:none;font-size:clamp(15px,2vw,19px)">골프대리운전</a>
+ </div>
+</nav>
 <section id="homepage-fare-top" aria-label="첫 화면 출발지 도착지 요금조회" style="background:#eff6ff;padding:17px 5%;border-bottom:2px solid #b9d5ef"><h2 style="max-width:1160px;margin:0 auto 9px;font-size:clamp(19px,2.7vw,25px);color:#123c63">출발지·도착지 바로 입력해 예상요금 확인</h2><form action="/fare/" method="get" style="max-width:1160px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:end"><label style="font-weight:800;color:#163b65">출발지<input name="from" required placeholder="출발지 입력" style="display:block;width:100%;min-height:48px;padding:10px;border:2px solid #9cb9d8;border-radius:9px;box-sizing:border-box"></label><label style="font-weight:800;color:#163b65">도착지<input name="to" required placeholder="도착지 입력" style="display:block;width:100%;min-height:48px;padding:10px;border:2px solid #9cb9d8;border-radius:9px;box-sizing:border-box"></label><label style="font-weight:800;color:#163b65">서비스<select name="service" style="display:block;width:100%;min-height:48px;padding:8px;border:2px solid #9cb9d8;border-radius:9px"><option value="taksong">탁송</option><option value="daeri">대리운전</option></select></label><button type="submit" style="min-height:48px;background:#0754a0;color:white;border:0;border-radius:9px;font-weight:900;font-size:17px;cursor:pointer">출발·도착 예상요금 조회</button></form><div style="max-width:1160px;margin:9px auto 0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><small>참고요금이며 실제 배차요금은 상담 시 확인합니다.</small><a href="tel:18114294" style="font-weight:900">☎ 1811-4294 전화상담</a></div></section>
 <section id="dynamic-service-card-search-20261103" aria-label="지역명과 서비스에 맞춘 명함 자동 펼치기" style="padding:20px 5%;background:#eaf3ff;border-block:1px solid #b8d0ee">
 <div style="max-width:1160px;margin:auto">
