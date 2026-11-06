@@ -23,9 +23,9 @@ for path in pages:
         descriptions[html.unescape(description.group(1)).strip()].append(str(path))
     if not canonical:
         missing_canonical.append(str(path))
-    stripped = re.sub(r"<(script|style)\\b[^>]*>.*?</\\1>", " ", source, flags=re.I | re.S)
+    stripped = re.sub(r"<(script|style)\b[^>]*>.*?</\1>", " ", source, flags=re.I | re.S)
     stripped = re.sub(r"<[^>]+>", " ", stripped)
-    stripped = re.sub(r"\\s+", " ", html.unescape(stripped)).strip()
+    stripped = re.sub(r"\s+", " ", html.unescape(stripped)).strip()
     if len(stripped) < 450:
         short_pages.append(str(path))
 report = {
