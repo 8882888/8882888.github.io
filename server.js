@@ -122,8 +122,17 @@ function naverFocus50Guide(r,kind){
   :[['골프장 대리운전','/service/golf/'],['법인카드·법인 대리운전','/service/corporate/'],['일일기사·왕복 대기','/service/daily-driver/']];
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
  const intro='<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
- const focusImage='/focus-card/'+r.slug+'-'+kind+'.svg';
- const focusVisual='<figure style="max-width:600px;margin:16px auto"><a href="'+focusImage+'" target="_blank" rel="noopener noreferrer"><img src="'+focusImage+'" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px" alt="'+esc(info.keyword)+' 키워드가 표시된 지역 맞춤 안내 명함, 상담 1811-4294"></a><figcaption>검색어별 안내 이미지 · 실제 운행사진이나 지역 지점 표시가 아닙니다.</figcaption></figure>';
+ // Prioritize real published review sources over generated regional card illustrations.
+ // Never present an editorial locality as a completed trip without a matching source.
+ const placeToken=(r.level==='시도'?shortPlace(r.name):r.name).replace(/(특별자치시|특별시|광역시|특별자치도)$/,'');
+ const servicePattern=kind==='taksong'?/(?:탁송|차량이동)/:/(?:대리운전|일일기사)/;
+ const sourcePosts=placeToken.length>=2?publishedBlogPosts.filter(p=>
+  p.title.includes(placeToken)&&servicePattern.test(p.title)&&/(?:운행완료|운행후기|탁송후기|대리운전후기|배차완료)/.test(p.title)
+ ).slice(0,3):[];
+ const focusVisual=sourcePosts.length?
+  '<section aria-label="기존 공개 운행후기 원문" class="verified-post-links"><h3>해당 지역명이 포함된 기존 공개 운행후기</h3><ul>'+
+  sourcePosts.map(p=>'<li><a href="'+esc(p.url)+'" rel="noopener noreferrer" target="_blank">'+esc(p.title)+'</a></li>').join('')+
+  '</ul><p>지역명 및 서비스가 제목에 포함된 기존 블로그 글입니다. 실제 운행구간과 요금은 원문에서 확인하세요.</p></section>':'';
  return '<section id="naver-focus50-local-guide" aria-label="'+esc(name+' '+kindLabel)+' 지역 상황별 실제 이용 안내">'+
   '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+focusVisual+
   '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+
