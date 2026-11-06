@@ -2026,7 +2026,7 @@ if(mountainRedirect){res.writeHead(302,{location:encodeURI(mountainRedirect),'ca
 const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search';
 const intentQuery=keywordEntryPath?(explicitMountainKeyword||searchReferrerKeyword):null;
 if(intentQuery){
- const normalizedIntent=String(intentQuery).replace(/[\\s·_+-]/g,'').toLowerCase();
+ const normalizedIntent=String(intentQuery).replace(/[\s·_+-]/g,'').toLowerCase();
  const exactDestination={
   '대리운전':'/daeri/','전국대리운전':'/daeri/','24시대리운전':'/daeri/',
   '탁송':'/taksong/','자동차탁송':'/taksong/','차량탁송':'/taksong/','전국탁송':'/taksong/','전국자동차탁송':'/taksong/','전국24시탁송':'/special/24-hour-service/',
