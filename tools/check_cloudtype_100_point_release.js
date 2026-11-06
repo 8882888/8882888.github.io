@@ -422,8 +422,8 @@ const rules=[
   {
     "group": "seo",
     "path": "data/seo-pages.json",
-    "name": "no automatic price guarantee",
-    "needle": "실제 완료 운행기록"
+    "name": "primary SEO metadata links to verified ride history",
+    "needle": "실제 운행기록"
   },
   {
     "group": "corporate",
