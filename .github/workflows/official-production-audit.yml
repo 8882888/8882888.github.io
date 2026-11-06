@@ -34,11 +34,43 @@ jobs:
           # production builds time to finish before declaring the deployment stale.
           sleep 45
           set +e
-          python tools/check_live_taksong_deploy.py > audit/live-taksong-audit.json
-          code=$?
-          cat audit/live-taksong-audit.json
+          code=1
+          for attempt in 1 2 3; do
+            echo "=== Production inspection attempt $attempt/3 ==="
+            python tools/check_live_taksong_deploy.py > "audit/attempt-$attempt.json"
+            code=$?
+            cp "audit/attempt-$attempt.json" audit/live-taksong-audit.json
+            python - "$attempt" <<'PY'
+          import json,sys,os
+          attempt=sys.argv[1]
+          with open('audit/live-taksong-audit.json',encoding='utf8') as f:
+              report=json.load(f)
+          failures=report.get('failures',[])
+          print('Attempt',attempt,'result:', 'PASS' if not failures else 'FAILED')
+          for message in failures:
+              print('  -',message)
+          h=report.get('checks',{}).get('health',{})
+          if h.get('error'): print('  - production network error:',h['error'])
+          summary=os.environ.get('GITHUB_STEP_SUMMARY')
+          if summary:
+              with open(summary,'a',encoding='utf8') as out:
+                  out.write('## Official production verification attempt '+attempt+'\\n')
+                  out.write('Result: '+('PASS' if not failures else 'FAILED')+'\\n\\n')
+                  for item in failures: out.write('- '+item+'\\n')
+                  if h.get('error'): out.write('- Health endpoint: '+h['error']+'\\n')
+                  out.write('\\n')
+          PY
+            if [ "$code" -eq 0 ]; then
+              echo "PASS: Official Cloudtype is serving the expected source version."
+              break
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Cloudtype may still be building; rechecking after 45 seconds."
+              sleep 45
+            fi
+          done
           if [ "$code" -ne 0 ]; then
-            echo "::error::Official production site is stale, unavailable or has SEO/canonical/sitemap failures. GitHub Pages backup success is NOT Cloudtype success."
+            echo "::error::Production audit FAILED after 3 attempts. Open the job Summary or official-production-seo-audit artifact for exact mismatches. GitHub Pages backup is not the Cloudtype deployment."
           fi
           exit "$code"
       - name: Keep production audit report
