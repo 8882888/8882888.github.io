@@ -44,16 +44,16 @@ async function main(){
   for(const [route,tableId,imageId] of [
     ['/설악산탁송/','mountain-route-fare-table-202611','original-mountain-fare-visual'],
     ['/지리산탁송/','mountain-route-fare-table-202611','original-mountain-fare-visual'],
-    ['/special/cycling-trail-transport/','cycling-route-fare-table-202611','keyword-image-first-202611']
+    ['/special/cycling-trail-transport/','cycling-route-fare-table-202611','cycling-verified-course-visual-20261106']
   ]){
     const r=await request(port,encodeURI(route));
     assert.equal(r.status,200,route+' must open');
     const fareAt=r.body.indexOf('<section id="'+tableId+'"');
-    const imageAt=r.body.indexOf('<figure id="'+imageId+'"');
+    const imageAt=r.body.indexOf(route.includes('special/cycling')?'<section id="'+imageId+'"':'<figure id="'+imageId+'"');
     if(route.includes('탁송/')){
       assert(imageAt>0&&fareAt>imageAt,'original mountain fare image must be the first visual: '+route);
       assert(imageAt<r.body.indexOf('<header'),'mountain visual is buried below menu: '+route);
-    }else assert(fareAt>0&&imageAt>fareAt,'cycling fare table should be before banner: '+route);
+    }else assert(imageAt>0&&fareAt>imageAt,'Verified cycling course cards must precede the original fare table: '+route);
     assert(r.body.includes('<table')&&r.body.includes('만원'),'real historical fare table missing: '+route);
     assert(r.body.includes('https://jeongukdaeri.kr'+route),'canonical URL missing: '+route);
   }
