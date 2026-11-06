@@ -46,6 +46,8 @@ jobs:
       - name: Test REAL Cloudtype Node startup and SEO routes before redeploy
         run: |
           node --check server.js
+          node tools/check_cloudtype_20_point_readiness.js
+          node tests/homepage-top-services.test.js
           node tests/regional-history-ambiguity.test.js
           node tools/check_core_seo.js
           node tools/smoke_production_server.js
