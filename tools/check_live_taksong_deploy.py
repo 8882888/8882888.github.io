@@ -109,7 +109,8 @@ if sm["status"] == 200:
         urls = [x.text for x in doc.iter() if x.tag.endswith("loc") and x.text]
         report["checks"]["sitemap"]["parseable"] = True
         report["checks"]["sitemap"]["priority_count"] = len(urls)
-        test(BASE + "/taksong/" in urls, "Priority sitemap omits taksong")
+        for path in ["/taksong/","/taksong/busan/","/taksong/daegu/","/taksong/ulsan/","/taksong/gyeongnam/changwon-si/","/taksong/sejong/","/taksong/gangwon/sokcho-si/","/taksong/gangwon/gangneung-si/","/설악산탁송/"]:
+            test(BASE + path in urls, "Priority sitemap omits commercial transport page: " + path)
         test(all(x.startswith(BASE + "/") for x in urls), "Sitemap contains non-canonical host")
         test(len(urls) == len(set(urls)), "Priority sitemap has duplicate URLs")
     except ET.ParseError as ex:
