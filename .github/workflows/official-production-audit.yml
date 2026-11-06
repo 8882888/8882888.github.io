@@ -29,6 +29,7 @@ jobs:
       - name: Validate source before checking Cloudtype
         run: |
           node --check server.js
+          node tools/check_cloudtype_20_point_readiness.js
           node tests/homepage-top-services.test.js
           node tests/taksong-priority-seo-links.test.js
       - name: Compare live Cloudtype deployment with GitHub files
