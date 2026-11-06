@@ -24,7 +24,7 @@ let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>out
   const response=await fetch('http://127.0.0.1:3168/taksong/');
   assert.equal(response.status,200);
   const html=await response.text();
-  assert.equal((html.match(/<h1(?:\\s|>)/g)||[]).length,1,'unique H1');
+  assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1,'unique H1');
   assert(html.includes('taksong-trust-first-20261106'));
   assert(html.includes('차량 인수부터 인계까지 4단계'));
   assert(html.includes('https://jeongukdaeri.kr/taksong/'),'canonical link');
