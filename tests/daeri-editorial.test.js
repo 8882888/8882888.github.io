@@ -61,7 +61,7 @@ async function get(p){
  assert.ok(mapPriority.includes('https://jeongukdaeri.kr/travel/food-map/'),'map in priority sitemap');
  const indexPage=await get('/');
  assert.ok(indexPage.includes('id="traffic-stats-panel"')&&indexPage.includes('id="exclude-my-visits"'),'homepage has a compact visitor counter and opt-out control');
- assert.ok(indexPage.includes('오늘 접속')&&indexPage.includes('누적 기록')&&indexPage.includes('누적 전화클릭'),'homepage labels are distinct from real search impressions/calls');
+ assert.ok(indexPage.includes('오늘 접속기록')&&indexPage.includes('누적 접속기록')&&indexPage.includes('전화버튼 클릭'),'homepage labels are distinct from real search impressions/calls');
  assert.ok(indexPage.includes('/assets/traffic-summary.css'),'homepage references compact traffic styling');
  assert.ok(hub.includes('id="traffic-stats-panel"')&&hub.includes('id="exclude-my-visits"'),'secondary service pages show same header counts and control');
  assert.ok(hub.includes('접속 집계 안내')&&hub.includes('이미 기록된 수치는 자동 차감되지 않습니다.'),'stats explain internal traffic and historical limits');
