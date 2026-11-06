@@ -54,11 +54,11 @@ jobs:
           summary=os.environ.get('GITHUB_STEP_SUMMARY')
           if summary:
               with open(summary,'a',encoding='utf8') as out:
-                  out.write('## Official production verification attempt '+attempt+'\\n')
-                  out.write('Result: '+('PASS' if not failures else 'FAILED')+'\\n\\n')
-                  for item in failures: out.write('- '+item+'\\n')
-                  if h.get('error'): out.write('- Health endpoint: '+h['error']+'\\n')
-                  out.write('\\n')
+                  out.write('## Official production verification attempt '+attempt+'\n')
+                  out.write('Result: '+('PASS' if not failures else 'FAILED')+'\n\n')
+                  for item in failures: out.write('- '+item+'\n')
+                  if h.get('error'): out.write('- Health endpoint: '+h['error']+'\n')
+                  out.write('\n')
           PY
             if [ "$code" -eq 0 ]; then
               echo "PASS: Official Cloudtype is serving the expected source version."
