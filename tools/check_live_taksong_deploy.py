@@ -92,6 +92,7 @@ for route in ["/", "/taksong/"]:
     test(parser.description == seo["description"], route + " SEO description does not match latest curated source")
     if route == "/":
         test('id="homepage-primary-services-20261106"' in res["body"], "Live homepage lacks fixed four-service navigation")
+        test(res['headers'].get('x-smart24-primary-nav', res['headers'].get('X-Smart24-Primary-Nav', '')) == 'four-services-sticky-20261106', 'Live server is missing permanent menu release header')
         test("position:sticky;top:0;z-index:1100" in res["body"], "Live homepage four-service navigation is not sticky")
         test(all('href="'+x+'"' in res["body"] for x in ["/daeri/","/taksong/","/service/corporate/","/service/golf/"]), "Live homepage lacks one or more primary service links")
     if route == "/taksong/":
