@@ -2006,12 +2006,27 @@ if(!explicitMountainKeyword&&(pathname==='/'||pathname==='/index.html')){
 }
 // The service keyword in the query is not a region. A unique matching region
 // routes directly to its image-first canonical page; duplicate names remain a search.
-const regionalTaksongTarget=(value)=>{
- const raw=compact(value||'');
- if(raw.length<3||raw.length>80||!/(?:전국)?(?:자동차|차량)?탁송$/.test(raw))return null;
- const place=raw.replace(/(?:전국)?(?:자동차|차량)?탁송$/,'');
- if(!place||/^(?:전국|장거리|24시|자동차|차량)$/.test(place))return null;
- let matched=null;
+// Source-backed routing: a keyword selects its canonical regional/service or
+// mountain/cycling page. No new card images, fares, reviews or content are created.
+const regionalServiceTarget=(value)=>{
+ const raw=compact(keywordExpansion.normalizeCompanyKeyword(value||''));
+ if(raw.length<3||raw.length>90)return null;
+ const serviceSuffix=raw.match(/(대리운전|대리|탁송)$/);
+ if(!serviceSuffix)return null;
+ const kind=serviceSuffix[1]==='탁송'?'taksong':'daeri';
+ let place=raw.slice(0,-serviceSuffix[1].length).replace(/(?:전국)?(?:자동차|차량)$/,'');
+ // e.g. 울산렌트카탁송, 부산중고차탁송, 대구골프장대리운전.
+ place=place.replace(/(?:렌트카|렌터카|사고대차|정비소|서비스센터|블루핸즈|중고차|공항|장거리|골프장|법인카드|법인)$/,'');
+ if(!place||/^(?:전국|장거리|24시|24시간|자동차|차량|국토종주|자전거길|자전거종주)$/.test(place))return null;
+ const focus=focusKeywordByPhrase.get(raw);
+ if(focus&&focus.kind===kind){
+  const exact=regionByFullName.get(focus.region);
+  if(exact)return servicePath(exact,kind);
+ }
+ const direct=resolvedLiveCardAliases(place);
+ if(direct.length===1)return servicePath(direct[0],kind);
+ // Use only a unique name in the official legal-administrative directory.
+ let found=null;
  for(const r of regions){
   const ancestors=regionAncestors(r);
   const province=ancestors[0]?(provinceSeoLabels[ancestors[0].name]||shortPlace(ancestors[0].name)):'';
@@ -2020,36 +2035,33 @@ const regionalTaksongTarget=(value)=>{
    ancestors.map(x=>x.name).join(''),
    province+r.name,province+shortPlace(r.name)];
   if(aliases.some(label=>compact(label)===place)){
-   if(matched)return null; // e.g. 광주 can mean the metro or Gyeonggi city
-   matched=r;
+   if(found)return null; // ambiguous like Gwangju: ask user to select region
+   found=r;
   }
  }
- return matched?servicePath(matched,'taksong'):null;
+ return found?servicePath(found,kind):null;
 };
-const mountainRedirect= (pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search')
- ?mountainTarget(explicitMountainKeyword||searchReferrerKeyword):null;
-if(mountainRedirect){res.writeHead(302,{location:encodeURI(mountainRedirect),'cache-control':'no-store','vary':'Accept-Encoding'});return res.end();}
-// Match homepage search intent to the existing dedicated service or course homepage.
-// Never infer a query when search engines omit referrer keywords; preserve bare /
-// as the navigation homepage and keep locality-only search with the region finder.
 const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search';
-const intentQuery=keywordEntryPath?(explicitMountainKeyword||searchReferrerKeyword):null;
-if(intentQuery){
- const normalizedIntent=String(intentQuery).replace(/[\s·_+-]/g,'').toLowerCase();
- const exactDestination={
-  '대리운전':'/daeri/','전국대리운전':'/daeri/','24시대리운전':'/daeri/',
-  '탁송':'/taksong/','자동차탁송':'/taksong/','차량탁송':'/taksong/','전국탁송':'/taksong/','전국자동차탁송':'/taksong/','전국24시탁송':'/special/24-hour-service/',
-  '골프대리운전':'/service/golf/','골프장대리운전':'/service/golf/',
-  '법인대리운전':'/service/corporate/','법인카드대리운전':'/service/corporate/',
-  '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/'
- }[normalizedIntent];
- const matchedTopic=keywordExpansion.resolve(intentQuery);
- const destination=exactDestination||(matchedTopic&&matchedTopic.url);
- // A named region+service must use its regional page, not a generic topic.
- const regionalDestination=regionalTaksongTarget(intentQuery);
- if((destination||regionalDestination)&&(!regionalDestination||!destination||matchedTopic&&['seoraksan','jirisan','deogyusan','eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling'].includes(matchedTopic.slug))){
-  res.writeHead(302,{location:encodeURI(destination||regionalDestination),'cache-control':'no-store'});return res.end();
- }
+const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
+const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):null;
+if(searchIntent){
+ const normalized=String(searchIntent).replace(/[\\s·_+-]/g,'').toLowerCase();
+ const mountain=mountainTarget(searchIntent);
+ const cycle=/((?:자전거|자전)길|자전거종주|국토종주|동해안|섬진강|영산강|낙동강|금강|오천).*(?:종주|탁송|완벽정리|코스|인증센터)|(?:전국)?자전길탁송/.test(normalized);
+ const named=keywordExpansion.resolve(searchIntent);
+ const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
+ // Distinct trekking routes always win over a generic locality match.
+ const target=mountain||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+  regionalServiceTarget(searchIntent)||
+  ({
+   '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
+   '탁송':'/taksong/','자동차탁송':'/taksong/','차량탁송':'/taksong/','전국탁송':'/taksong/','전국자동차탁송':'/taksong/',
+   '골프대리운전':'/service/golf/','골프장대리운전':'/service/golf/',
+   '법인대리운전':'/service/corporate/','법인카드대리운전':'/service/corporate/',
+   '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
+   '일일기사':'/service/daily-driver/'
+  }[normalized])||(named&&named.url);
+ if(target){res.writeHead(302,{location:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
 }
 const innovationSearchRoute=pathname==='/'||pathname==='/index.html'||pathname==='/region/';
 if(innovationSearchRoute&&/^(?:전북|충북)혁신도시(?:대리운전|탁송)$/.test(compact(u.searchParams.get('q')||''))){
@@ -2060,8 +2072,6 @@ const innovationKind=u.searchParams.get('service');
 if(innovationQuery&&(!innovationKind||innovationKind===innovationQuery.kind)){
  res.writeHead(302,{location:servicePath(regionByFullName.get(innovationQuery.region),innovationQuery.kind),'cache-control':'no-store'});return res.end();
 }
-const regionalRedirect=(pathname==='/'||pathname==='/index.html')?regionalTaksongTarget(explicitMountainKeyword):null;
-if(regionalRedirect){res.writeHead(302,{location:regionalRedirect,'cache-control':'no-store'});return res.end();}
 if(pathname==='/'||pathname==='/index.html'){const homepageStat=fs.statSync(path.join(ROOT,'index.html'));const signature=homepageStat.size+':'+homepageStat.mtimeMs;if(!cachedHomepageHtml||cachedHomepageSignature!==signature){cachedHomepageSignature=signature;const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');cachedHomepageHtml=applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->',nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/');}return respond(res,200,cachedHomepageHtml)}
 // Redirect regional search clicks to a single service-specific, image-first landing page.
 if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
