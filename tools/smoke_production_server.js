@@ -97,7 +97,7 @@ async function main(){
   const warmMs=Date.now()-warmAt;
   assert.equal(homePage.status,200,'homepage must open');
   assert(homePage.body.includes('id="mountain-cycling-fare-first-20261103"'),'homepage first-screen fare links missing');
-  assert(homePage.body.indexOf('id="homepage-fare-top"')<homePage.body.indexOf('id="dynamic-service-card-search-20261103"')&&homePage.body.indexOf('id="dynamic-service-card-search-20261103"')<homePage.body.indexOf('class="hero hero-with-photo"'),'fare inputs and dynamic cards must precede the long introduction');
+  assert(homePage.body.indexOf('class="hero hero-with-photo"')<homePage.body.indexOf('id="homepage-verified-reviews-first-20261106"')&&homePage.body.indexOf('id="homepage-fare-top"')<homePage.body.indexOf('id="keyword-service-navigation-20261106"'),'Compact hero and review-first layout with service keyword search required');
   for(const path of ['/assets/seoraksan-taksong-original-fare.png','/assets/jirisan-taksong-original-fare.png','/assets/smart24-taksong-brand.webp','/assets/smart24-business-card-inline.webp']){
     const img=await request(port,path);
     assert.equal(img.status,200,'image asset HTTP failed: '+path);
