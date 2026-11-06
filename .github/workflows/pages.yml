@@ -229,6 +229,7 @@ jobs:
           node tests/search-intent-discovery.test.js
           node tests/food-district-discovery.test.js
           node tests/homepage-competitor-structure.test.js
+          node tests/taksong-trust-first.test.js
           node tests/homepage-conversion-regression.test.js
           node tests/blog-regional-hashtags.test.js
           node tests/regional-history-ambiguity.test.js
