@@ -230,8 +230,8 @@ const rules=[
   {
     "group": "top-menu",
     "path": "index.html",
-    "name": "desktop four columns",
-    "needle": "grid-template-columns:repeat(4,minmax(0,1fr))!important"
+    "name": "desktop five columns",
+    "needle": "grid-template-columns:repeat(5,minmax(0,1fr))!important"
   },
   {
     "group": "top-menu",
