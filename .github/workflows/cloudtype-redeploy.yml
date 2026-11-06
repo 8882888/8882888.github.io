@@ -46,6 +46,8 @@ jobs:
       - name: Test REAL Cloudtype Node startup and SEO routes before redeploy
         run: |
           node --check server.js
+          node --check lib/cycling-centers.js
+          node --check lib/keyword-card-expansion.js
           node tools/check_cloudtype_20_point_readiness.js
           node tools/check_cloudtype_100_point_release.js
           node tests/cycling-keyword-intents-20261106.test.js
@@ -145,6 +147,14 @@ jobs:
           fi
           if ! grep -Fq 'id="homepage-primary-services-20261106"' <<<"$homepage" || ! grep -Fq '2,591' <<<"$homepage"; then
             echo '::error::Fixed primary services or verified ride-history summary missing from live homepage.'
+            exit 1
+          fi
+          if ! grep -Fq 'id="keyword-service-navigation-20261106"' <<<"$homepage" || grep -Fq 'id="dynamic-service-card-search-20261103"' <<<"$homepage"; then
+            echo '::error::Live homepage still exposes the retired illustration preview or lacks keyword-specific navigation.'
+            exit 1
+          fi
+          if ! grep -Fq 'id="mobile-direct-image-priority"' <<<"$homepage"; then
+            echo '::error::Homepage original Seoraksan/Jirisan fare poster section missing.'
             exit 1
           fi
           echo 'Live homepage provincial links, fixed primary services and verified ride-history label confirmed.' >> "$GITHUB_STEP_SUMMARY"
