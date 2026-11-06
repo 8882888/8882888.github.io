@@ -33,6 +33,7 @@ jobs:
       CLOUDTYPE_PROJECT: ${{ vars.CLOUDTYPE_PROJECT }}
       CLOUDTYPE_APP: ${{ vars.CLOUDTYPE_APP }}
       CLOUDTYPE_STAGE: ${{ vars.CLOUDTYPE_STAGE }}
+      CLOUDTYPE_DEPLOY_YAML: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
     steps:
       - name: Checkout production source
         uses: actions/checkout@v4
@@ -49,42 +50,56 @@ jobs:
           node tools/check_core_seo.js
           node tools/smoke_production_server.js
           python3 -m py_compile tools/audit_live_seo.py
-      - name: Check whether existing Cloudtype deployment is connected
+      - name: Check original Cloudtype application binding safely
         id: connection
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "$CLOUDTYPE_TOKEN" ] || [ -z "$CLOUDTYPE_PROJECT" ] || [ -z "$CLOUDTYPE_APP" ] || [ -z "$CLOUDTYPE_STAGE" ]; then
-            missing=""
-            [ -z "$CLOUDTYPE_TOKEN" ] && missing="${missing} CLOUDTYPE_TOKEN(secret)"
-            [ -z "$CLOUDTYPE_PROJECT" ] && missing="${missing} CLOUDTYPE_PROJECT(variable)"
-            [ -z "$CLOUDTYPE_APP" ] && missing="${missing} CLOUDTYPE_APP(variable)"
-            [ -z "$CLOUDTYPE_STAGE" ] && missing="${missing} CLOUDTYPE_STAGE(variable)"
+          missing=""
+          [ -z "$CLOUDTYPE_TOKEN" ] && missing="${missing} CLOUDTYPE_TOKEN(secret)"
+          [ -z "$CLOUDTYPE_PROJECT" ] && missing="${missing} CLOUDTYPE_PROJECT(variable)"
+          [ -z "$CLOUDTYPE_APP" ] && missing="${missing} CLOUDTYPE_APP(variable)"
+          [ -z "$CLOUDTYPE_STAGE" ] && missing="${missing} CLOUDTYPE_STAGE(variable)"
+          [ -z "$CLOUDTYPE_DEPLOY_YAML" ] && missing="${missing} CLOUDTYPE_DEPLOY_YAML(secret)"
+          if [ -n "$missing" ]; then
             echo "### Cloudtype production redeploy BLOCKED" >> "$GITHUB_STEP_SUMMARY"
-            echo "Missing repository configuration:$missing" >> "$GITHUB_STEP_SUMMARY"
-            echo "No deployment was requested; source commits alone do not update the official site." >> "$GITHUB_STEP_SUMMARY"
-            echo "::error::Cloudtype production redeploy is NOT connected. Missing:$missing"
+            echo "Missing configuration:$missing" >> "$GITHUB_STEP_SUMMARY"
+            echo "Copy the existing application's deployment YAML from its Cloudtype CLI tab; do not invent an application or publish credentials." >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::No production redeploy was requested. Missing:$missing"
             exit 1
-          else
-            echo 'enabled=true' >> "$GITHUB_OUTPUT"
-            echo '### Cloudtype redeploy: configuration present' >> "$GITHUB_STEP_SUMMARY"
           fi
-      - name: Request Cloudtype to redeploy the EXISTING application
+          # Fail closed if the supplied YAML is for a different application.
+          printf '%s\n' "$CLOUDTYPE_DEPLOY_YAML" > "$RUNNER_TEMP/cloudtype-existing-app.yml"
+          export ORIGINAL_APP="$CLOUDTYPE_APP"
+          python3 - <<'PY'
+          import os,re,pathlib,sys
+          source=pathlib.Path(os.environ['RUNNER_TEMP'],'cloudtype-existing-app.yml').read_text()
+          matches=re.findall(r'^name:\s*["\x27]?([^\s"\x27#]+)',source,re.M)
+          if len(matches)!=1 or matches[0]!=os.environ['ORIGINAL_APP']:
+              print('::error::Cloudtype deployment YAML name does not match CLOUDTYPE_APP; no deployment requested.')
+              sys.exit(1)
+          if not re.search(r'^app:\s*\S+',source,re.M):
+              print('::error::Cloudtype original YAML has no app type; no deployment requested.')
+              sys.exit(1)
+          print('Original Cloudtype app identity matches deployment YAML.')
+          PY
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+          echo "### Existing Cloudtype application binding validated" >> "$GITHUB_STEP_SUMMARY"
+          echo "Target: pre-existing project/stage and application name from repository configuration. No new project or domain created." >> "$GITHUB_STEP_SUMMARY"
+      - name: Deploy existing Cloudtype application using OFFICIAL action
         if: steps.connection.outputs.enabled == 'true'
-        shell: bash
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: ${{ vars.CLOUDTYPE_PROJECT }}
+          stage: ${{ vars.CLOUDTYPE_STAGE }}
+          allStages: false
+          yaml: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
+      - name: Record accepted deployment request
+        if: steps.connection.outputs.enabled == 'true'
         run: |
-          set -euo pipefail
-          payload="$(jq -cn --arg project "$CLOUDTYPE_PROJECT" --arg app "$CLOUDTYPE_APP" --arg stage "$CLOUDTYPE_STAGE" '{project:$project,app:$app,stage:$stage}')"
-          curl --fail-with-body --silent --show-error \
-            --connect-timeout 10 --max-time 55 --retry 1 \
-            --request POST 'https://api.cloudtype.io/webhooks/deploy' \
-            --header 'Content-Type: application/json' \
-            --header "Authorization: Bearer $CLOUDTYPE_TOKEN" \
-            --data "$payload" --output /tmp/smart24-deploy-response.json
-          echo 'Cloudtype deployment requested for the configured existing application.'
-          echo 'This confirms request acceptance only. Production deployment and Naver indexing are separate.'
-          echo 'Cloudtype existing-app redeploy request accepted. Verify actual live HTML and source SHA256 separately.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Cloudtype redeploy request accepted; live SHA256 verification begins next.' >> "$GITHUB_STEP_SUMMARY"
+          echo '### Official Cloudtype deploy action completed' >> "$GITHUB_STEP_SUMMARY"
+          echo 'This does not prove the public site has updated. Comparing the live release hash next.' >> "$GITHUB_STEP_SUMMARY"
       - name: Confirm LIVE Cloudtype release matches GitHub source
         if: steps.connection.outputs.enabled == 'true'
         shell: bash
