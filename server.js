@@ -222,7 +222,15 @@ const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);co
 const reviewedRides=load('data/public-reviewed-rides-202610.json');
 const localReviewHub=require('./lib/review-first-500').create(regions,reviewedRides,publishedBlogPosts,process.env.PUBLIC_HOST||'jeongukdaeri.kr');
 const localReviewHubSlugs=new Set(localReviewHub?require('./lib/review-first-500').targets.regions.map(x=>x.slug):[]);
-const verifiedRides=[...reviewedRides,...(Array.isArray(rides)?rides.filter(x=>x.verified===true&&['completed','종료','운행종료'].includes(String(x.status||'').trim())):[]),...excelCompleted];
+// Verified October dispatches remain separate from the immutable 2,591-record archive.
+// Unknown departure times are not inferred or displayed.
+const octoberCompletedRides=load('data/ride-history-upload-202610.json')
+ .filter(x=>x&&x.status==='종료'&&/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))&&
+  ['탁송','대리운전'].includes(x.service)&&String(x.departure||'').trim()&&String(x.destination||'').trim()&&
+  /^\d[\d,]*원$/.test(String(x.fare||'')))
+ .map(x=>({...x,service:x.service==='탁송'?'taksong':'daeri',status:'completed',verified:true,
+  verification_source:'user-confirmed October completed dispatch',recordedTime:''}));
+const verifiedRides=[...reviewedRides,...(Array.isArray(rides)?rides.filter(x=>x.verified===true&&['completed','종료','운행종료'].includes(String(x.status||'').trim())):[]),...excelCompleted,...octoberCompletedRides];
 const publicRides=verifiedRides.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))&&String(x.departure||'').trim()&&String(x.destination||'').trim()&&['taksong','daeri'].includes(x.service)).map(x=>({...x,publicId:require('node:crypto').createHash('sha256').update([x.date,x.service,x.departure,x.destination].join('|')).digest('hex').slice(0,16)}));
 const publicRideById=new Map(publicRides.map(x=>[x.publicId,x]));
 // Excel-derived completed dispatch records: classified by departure 탁 or destination 톨포.
