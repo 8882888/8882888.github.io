@@ -51,6 +51,8 @@ jobs:
           with open('audit/live-taksong-audit.json',encoding='utf8') as f:
               report=json.load(f)
           failures=report.get('failures',[])
+          diagnosis=report.get('diagnosis','UNKNOWN')
+          print('Diagnosis:',diagnosis)
           print('Attempt',attempt,'result:', 'PASS' if not failures else 'FAILED')
           for message in failures:
               print('  -',message)
@@ -61,6 +63,7 @@ jobs:
               with open(summary,'a',encoding='utf8') as out:
                   out.write('## Official production verification attempt '+attempt+'\n')
                   out.write('Result: '+('PASS' if not failures else 'FAILED')+'\n\n')
+                  out.write('Diagnosis: `'+diagnosis+'`\n\n')
                   for item in failures: out.write('- '+item+'\n')
                   if h.get('error'): out.write('- Health endpoint: '+h['error']+'\n')
                   out.write('\n')
