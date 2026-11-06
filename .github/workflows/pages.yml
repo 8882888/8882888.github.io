@@ -235,6 +235,7 @@ jobs:
           node tests/homepage-top-services.test.js
           node tests/five-keyword-landing-20261106.test.js
           node tests/kstyle-five-primary-services-20261106.test.js
+          node tests/nationwide-daeri-24h-taksong-keywords.test.js
           node tests/homepage-service-first-20261106.test.js
           node tools/check_cloudtype_100_point_release.js
           node tests/cycling-keyword-intents-20261106.test.js
