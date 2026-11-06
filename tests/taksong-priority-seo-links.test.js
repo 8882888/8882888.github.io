@@ -14,7 +14,7 @@ const priority = [
   ['/taksong/gyeongnam/changwon-si/','창원탁송'],
   ['/taksong/sejong/','세종탁송'],
   ['/taksong/gangwon/sokcho-si/','속초탁송'],
-  ['/taksong/gangwon/gangneung-si/','강릉탁송'],
+  ['/taksong/gangwon/gangreung-si/','강릉탁송'],
   ['/설악산탁송/','설악산종주 차량탁송']
 ];
 const panel=server.slice(server.indexOf('const taksongTrustFirst='),server.indexOf('const body=taksongTrustFirst+'));
