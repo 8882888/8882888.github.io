@@ -90,6 +90,10 @@ for route in ["/", "/taksong/"]:
     test("noindex" not in res["headers"].get("X-Robots-Tag", "").lower(), route + " X-Robots-Tag noindex")
     test(parser.title == seo["title"], route + " SEO title does not match latest curated source")
     test(parser.description == seo["description"], route + " SEO description does not match latest curated source")
+    if route == "/":
+        test('id="homepage-primary-services-20261106"' in res["body"], "Live homepage lacks fixed four-service navigation")
+        test("position:sticky;top:0;z-index:1100" in res["body"], "Live homepage four-service navigation is not sticky")
+        test(all('href="'+x+'"' in res["body"] for x in ["/daeri/","/taksong/","/service/corporate/","/service/golf/"]), "Live homepage lacks one or more primary service links")
     if route == "/taksong/":
         test("taksong-trust-first-20261106" in res["body"], "Live taksong trust-first section missing")
         test('href="/reviews/history/?kind=taksong"' in res["body"], "Live taksong evidence link missing")
