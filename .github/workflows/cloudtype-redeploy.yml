@@ -54,6 +54,7 @@ jobs:
           node tests/kstyle-five-primary-services-20261106.test.js
           node tests/nationwide-daeri-24h-taksong-keywords.test.js
           node tests/review-first-search-titles-20261106.test.js
+          node tests/night-taksong-intent-alias-and-proof.test.js
           node tests/homepage-service-first-20261106.test.js
           node tests/regional-history-ambiguity.test.js
           node tools/check_core_seo.js
