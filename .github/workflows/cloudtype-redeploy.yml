@@ -55,10 +55,16 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "$CLOUDTYPE_TOKEN" ] || [ -z "$CLOUDTYPE_PROJECT" ] || [ -z "$CLOUDTYPE_APP" ] || [ -z "$CLOUDTYPE_STAGE" ]; then
-            echo "::notice::Cloudtype redeploy not connected. Requires CLOUDTYPE_TOKEN secret and CLOUDTYPE_PROJECT, CLOUDTYPE_APP, CLOUDTYPE_STAGE repository variables. No deployment requested."
-            echo 'enabled=false' >> "$GITHUB_OUTPUT"
-            echo '### Cloudtype: no deployment requested' >> "$GITHUB_STEP_SUMMARY"
-            echo 'Cloudtype API key or existing app identifiers are not configured. The source startup test ran, but Cloudtype production is NOT updated by this workflow.' >> "$GITHUB_STEP_SUMMARY"
+            missing=""
+            [ -z "$CLOUDTYPE_TOKEN" ] && missing="${missing} CLOUDTYPE_TOKEN(secret)"
+            [ -z "$CLOUDTYPE_PROJECT" ] && missing="${missing} CLOUDTYPE_PROJECT(variable)"
+            [ -z "$CLOUDTYPE_APP" ] && missing="${missing} CLOUDTYPE_APP(variable)"
+            [ -z "$CLOUDTYPE_STAGE" ] && missing="${missing} CLOUDTYPE_STAGE(variable)"
+            echo "### Cloudtype production redeploy BLOCKED" >> "$GITHUB_STEP_SUMMARY"
+            echo "Missing repository configuration:$missing" >> "$GITHUB_STEP_SUMMARY"
+            echo "No deployment was requested; source commits alone do not update the official site." >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::Cloudtype production redeploy is NOT connected. Missing:$missing"
+            exit 1
           else
             echo 'enabled=true' >> "$GITHUB_OUTPUT"
             echo '### Cloudtype redeploy: configuration present' >> "$GITHUB_STEP_SUMMARY"
