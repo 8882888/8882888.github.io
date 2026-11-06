@@ -26,6 +26,11 @@ jobs:
           python-version: '3.12'
       - name: Validate production audit script syntax
         run: python -m py_compile tools/check_live_taksong_deploy.py
+      - name: Validate source before checking Cloudtype
+        run: |
+          node --check server.js
+          node tests/homepage-top-services.test.js
+          node tests/taksong-priority-seo-links.test.js
       - name: Compare live Cloudtype deployment with GitHub files
         shell: bash
         run: |
