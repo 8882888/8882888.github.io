@@ -78,12 +78,12 @@ jobs:
                   errors.append('Old illustration preview still on live homepage')
               # Check the rendered live menu, not just a marker elsewhere in HTML.
               import re
-              nav=re.search(r'<nav\\b[^>]*id="homepage-primary-services-20261106"[^>]*>(.*?)</nav>',homepage,re.S)
+              nav=re.search(r'<nav\b[^>]*id="homepage-primary-services-20261106"[^>]*>(.*?)</nav>',homepage,re.S)
               expected_services=('/daeri/','/taksong/','/service/corporate/','/service/golf/','/service/long-distance-daeri/')
               if not nav:
                   errors.append('Five-service primary navigation missing')
               else:
-                  links=re.findall(r'<a\\b[^>]*href="([^"]+)"',nav.group(1))
+                  links=re.findall(r'<a\b[^>]*href="([^"]+)"',nav.group(1))
                   if tuple(links)!=expected_services:
                       errors.append('Five-service menu order or destinations changed: '+str(links))
               if 'id="back-to-top"' not in homepage:
