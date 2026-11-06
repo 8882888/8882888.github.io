@@ -18,8 +18,8 @@ assert(pages.get('/').title.startsWith('전국대리운전 실제 운행후기·
 assert(pages.get('/daeri/').title.startsWith('전국대리운전 실제 운행후기'),'Designated-driver page target missing');
 assert(pages.get('/taksong/').title.startsWith('전국자동차탁송 실제 운행후기'),'Vehicle transport page target missing');
 assert(home.includes('<title>'+pages.get('/').title+'</title>'),'Homepage source and runtime metadata differ');
-assert(home.includes('id="nationwide-24h-keyword-guide-20261106"'),'Visible primary search guide missing');
-assert(home.includes('실제 배차 여부와 시간은 출발 지역 및 기사 수급에 따라 달라집니다.'),'Never promise guaranteed 24-hour dispatch');
+assert(home.includes('id="keyword-service-navigation-20261106"'),'Keyword-specific customer routing missing');
+assert(home.includes('실제 배차·최종 요금은 별도 확정합니다.'),'Never promise guaranteed 24-hour dispatch');
 assert(home.includes('href="/special/24-hour-service/"'),'24-hour query must link to relevant service guide');
 assert(home.includes('href="/daeri/"')&&home.includes('href="/taksong/"'),'Keep primary service routes');
 const test=[
