@@ -290,8 +290,8 @@ const rules=[
   {
     "group": "homepage",
     "path": "index.html",
-    "name": "regional visual search",
-    "needle": "id=\"dynamic-service-card-search-20261103\""
+    "name": "keyword service navigation",
+    "needle": "id=\"keyword-service-navigation-20261106\""
   },
   {
     "group": "homepage",
