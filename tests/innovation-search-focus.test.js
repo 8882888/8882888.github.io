@@ -62,9 +62,15 @@ let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>out
     assert.equal(redir.status,302,entry.keyword+' search redirect');
     assert.equal(redir.headers.get('location'),path);
    }
-   const page=await (await fetch('http://127.0.0.1:3136'+path)).text();
-   assert(page.includes('<title>'+entry.keyword+'｜'));
-   assert(page.includes('href="https://jeongukdaeri.kr'+path+'"'));
+   const pageResponse=await fetch('http://127.0.0.1:3136'+path);
+   assert.equal(pageResponse.status,200,entry.keyword+' landing response');
+   const page=await pageResponse.text();
+   assert(page.includes('<title>'+entry.keyword+'｜'),entry.keyword+' title');
+   assert(page.includes('href="https://jeongukdaeri.kr'+path+'"'),entry.keyword+' canonical');
+   assert(page.includes('id="innovation-city-guide"'),entry.keyword+' guidance panel');
+   const guide=page.split('id="innovation-city-guide"')[1].split('</section>')[0];
+   assert(guide.includes('tel:18114294'),entry.keyword+' call link');
+   assert(guide.includes('완료 운행정보는 확인되지 않아')||guide.includes('출발 또는 도착 장소가 확인된 기존 운행정보'),entry.keyword+' evidence disclosure');
   }
   for(const [keyword,path] of cases){
    assert(sitemap.includes('https://jeongukdaeri.kr'+path+'</loc>'),keyword+' sitemap discovery');
