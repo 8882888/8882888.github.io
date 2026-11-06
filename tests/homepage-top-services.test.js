@@ -24,4 +24,9 @@ assert(source.includes('#homepage-primary-services-20261106 a:focus-visible'),'K
 assert(source.includes('grid-template-columns:repeat(4,minmax(0,1fr))!important'),'Desktop four-column navigation missing');
 assert(nav.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Mobile two-column navigation missing');
 assert.equal((source.match(/id="homepage-primary-services-20261106"/g)||[]).length,1,'Only one primary navigation allowed');
+const server=fs.readFileSync(path.join(__dirname,'..','server.js'),'utf8');
+assert(server.includes("cachedHomepageSignature!==signature"),'Server must refresh cached homepage after file updates');
+assert(server.includes("if(!html.includes(start))html=html.replace('</header>','</header>'+fixedNav)"),'Server must restore four links even if generated homepage omitted them');
+assert(server.includes("headers['x-smart24-primary-nav']='four-services-sticky-20261106'"),'Homepage must expose diagnostic navigation version');
+assert(server.includes("headers['cache-control']='no-store, max-age=0, must-revalidate'"),'Home menu must not be served from stale intermediate caches');
 console.log('PASS: four primary services available above fare search on desktop and mobile');
