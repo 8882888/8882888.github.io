@@ -437,7 +437,11 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
  }
 }
 </style>
-<style id="fare-card-first-layout">#homepage-fare-top{margin:0!important;border-radius:0}#dynamic-service-card-search-20261103{content-visibility:visible!important;margin:0!important}#dynamic-service-card-search-20261103 h2{margin-top:0}#dynamic-service-card-search-20261103 .region-card-live{scroll-margin-top:12px}@media(max-width:700px){body>header{padding:10px 4%!important}#dynamic-service-card-search-20261103{padding:14px 4%!important}}@media(min-width:740px){#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+<style id="fare-card-first-layout">#homepage-fare-top{margin:0!important;border-radius:0}#dynamic-service-card-search-20261103{content-visibility:visible!important;margin:0!important}#dynamic-service-card-search-20261103 h2{margin-top:0}#dynamic-service-card-search-20261103 .region-card-live{scroll-margin-top:12px}@media(max-width:700px){body>header{padding:10px 4%!important}#dynamic-service-card-search-20261103{padding:14px 4%!important}}#homepage-primary-services-20261106{isolation:isolate}
+#homepage-primary-services-20261106 a:focus-visible{outline:3px solid #e6a900;outline-offset:2px}
+.section-jump{top:178px}
+@media(min-width:740px){#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}.section-jump{top:96px}}
+
 @media(max-width:380px){#homepage-primary-services-20261106{padding:9px 3%!important}#homepage-primary-services-20261106 a{padding:8px 5px!important;font-size:14px!important}}
 </style></head>
 <body>
@@ -458,7 +462,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #ffb400!important;outline
   <small class="traffic-source-note">정확한 네이버 검색 노출·클릭 수는 네이버 서치어드바이저에서 확인해야 합니다.</small>
  </div>
 </aside></div></header>
-<nav id="homepage-primary-services-20261106" aria-label="주요 운전 서비스 바로가기" style="background:#fff;border-bottom:2px solid #c4d9ee;padding:12px 4%">
+<nav id="homepage-primary-services-20261106" aria-label="주요 운전 서비스 바로가기" style="position:sticky;top:0;z-index:1100;background:#fff;border-bottom:2px solid #c4d9ee;padding:12px 4%;box-shadow:0 4px 15px #10254420">
  <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px" class="homepage-primary-service-grid">
   <a href="/daeri/" style="display:flex;justify-content:center;align-items:center;min-height:54px;padding:8px 12px;border:1px solid #b6cfe7;border-radius:11px;background:#f1f7ff;text-align:center;font-weight:900;color:#17436b;text-decoration:none;font-size:clamp(15px,2vw,19px)">대리운전</a>
   <a href="/taksong/" style="display:flex;justify-content:center;align-items:center;min-height:54px;padding:8px 12px;border:1px solid #0754a0;border-radius:11px;background:#0754a0;text-align:center;font-weight:900;color:#fff;text-decoration:none;font-size:clamp(15px,2vw,19px)">자동차탁송</a>
