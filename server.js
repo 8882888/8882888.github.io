@@ -2287,7 +2287,13 @@ if(pathname==='/region/'){
    const candidates=resolvedLiveCardAliases(normalizedCompound.slice(0,-suffix.length));
    return candidates.length===1&&Boolean(exactRegionalKeywordCard(candidates[0],directTopic.kind,rawQuery));
   }));
- const directTarget=rawQuery?(mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(!compoundExactLocality&&directTopic&&directTopic.url)):null;
+ // The same verified suffix+locality rule used by exact SVG previews must
+ // win over generic thematic redirects, so the typed phrase stays visible.
+ const exactIntent=rawQuery?regionalBlogKeywords.parse(rawQuery):null;
+ const exactRegions=exactIntent?resolvedLiveCardAliases(exactIntent.region):[];
+ const exactLocalKeyword=exactRegions.length===1&&Boolean(exactRegionalKeywordCard(exactRegions[0],exactIntent.kind,rawQuery));
+ const directTarget=rawQuery&&!(compoundExactLocality||exactLocalKeyword)?
+  (mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
  if(directTarget){res.writeHead(302,{location:encodeURI(directTarget),'cache-control':'no-store'});return res.end()}
  const requestedService=u.searchParams.get('service');
  // Strip only a trailing service name. A typed keyword like 부산대리운전
