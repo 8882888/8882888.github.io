@@ -9,6 +9,7 @@ on:
       - 'lib/**'
       - 'tests/**'
       - 'route-taksong/courses/**'
+      - 'special/cycling-trail-transport/**'
       - 'assets/cycling-routes/**'
       - 'scripts/**'
       - 'server.js'
