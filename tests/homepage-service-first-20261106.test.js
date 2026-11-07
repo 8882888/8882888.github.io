@@ -10,11 +10,14 @@ const reviews=home.indexOf('id="homepage-verified-reviews-first-20261106"');
 const regional=home.indexOf('id="smart24-kstyle-regional-categories-20261106"');
 const fare=home.indexOf('id="homepage-fare-top"');
 const find=home.indexOf('id="keyword-service-navigation-20261106"');
-assert(nav>0&&hero>nav&&reviews>hero&&regional>reviews&&fare>regional&&find>fare,'Keep clean five-service, verified-review, region, fare and keyword navigation order');
+const liveCard=home.indexOf('id="dynamic-service-card-search-20261103"');
+assert(nav>0&&regional>nav&&fare>regional&&liveCard>fare&&hero>liveCard&&reviews>hero&&find>reviews,
+ 'Keep first-screen five services, real region choice, fare, dynamic card search, verified reviews and keyword routing');
 const primary=home.slice(home.indexOf('<nav id="homepage-primary-services-20261106"'),home.indexOf('</nav>',nav));
 for(const href of ['/daeri/','/taksong/','/service/corporate/','/service/golf/','/service/long-distance-daeri/'])assert(primary.includes('href="'+href+'"'),'Missing customer service: '+href);
 assert.equal((home.match(/<h1>/g)||[]).length,1,'One visible document H1 required');
-assert(!home.includes('id="dynamic-service-card-search-20261103"'),'Do not push generated illustration preview into homepage');
+assert(home.includes('data-card-preview-form')&&home.includes('data-card-preview-output'),
+ 'Keep working live region card search with real typed localities and explicit service selection');
 assert(home.includes('action="/keyword-search/"'),'Keyword search must route to dedicated service pages');
 assert(home.includes('id="mountain-cycling-fare-first-20261103"'),'Keep original mountain and bicycle fare materials');
 assert(home.includes('tel:18114294')&&home.includes('/reviews/history/'),'Keep booking and verified rides');
