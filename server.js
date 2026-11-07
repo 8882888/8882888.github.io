@@ -2537,23 +2537,11 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  // 17 province hubs and 12 hand-curated driver regions for Naver crawl discovery.
  // Both sitemaps now prioritize useful province hubs and operationally relevant city/district pages.
  // Other valid regional URLs remain available through navigation and search; no data is deleted.
- const focusTaksongAreas=new Set([
-  '부산광역시 기장군','부산광역시 해운대구','부산광역시 강서구','부산광역시 사하구',
-  '부산광역시 동래구','부산광역시 금정구','부산광역시 북구','부산광역시 연제구',
-  '부산광역시 수영구','부산광역시 부산진구','부산광역시 남구','부산광역시 서구',
-  '부산광역시 동구','부산광역시 중구','울산광역시 남구','울산광역시 중구','울산광역시 동구','울산광역시 북구','울산광역시 울주군','대구광역시 수성구','대구광역시 달서구',
-  '대구광역시 북구','대구광역시 동구','대구광역시 중구',
-  '강원특별자치도 속초시','강원특별자치도 강릉시','강원특별자치도 양양군',
-  '강원특별자치도 태백시','강원특별자치도 동해시','강원특별자치도 삼척시',
-  '강원특별자치도 원주시','강원특별자치도 정선군'
- ]);
- // Keep each discovery sitemap focused (<=500 entries) even as curated SEO
- // inventory grows. All 2,700 curated pages stay accessible and are not deleted.
+ // Use the same nationwide selection rules for both services; avoid city-only boosts.
  const baseRoutes=['/'+service+'/',...(service==='daeri'?daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor):['/service/taksong/','/service/long-distance-taksong/'])];
  // Always retain the first three verified 50-keyword batches in discovery,
  // before rotating through the remaining curated 2,700 locality targets.
- const originalFocusNames=new Set(naverFocus2900.slice(0,150).filter(x=>x.kind===service).map(x=>x.region));
- const primaryRegions=regions.filter(r=>r.level==='시도'||priorityByKey.has(service+'|'+r.full_name)||originalFocusNames.has(r.full_name)||(service==='taksong'&&focusTaksongAreas.has(r.full_name)));
+ const primaryRegions=regions.filter(r=>r.level==='시도'||priorityByKey.has(service+'|'+r.full_name));
  const primarySlugs=new Set(primaryRegions.map(r=>r.slug));
  const additionalCurated=regions.filter(r=>!primarySlugs.has(r.slug)&&focus50ByKey.has(service+'|'+r.full_name));
  // Interleave curated districts by all 17 provinces instead of filling the
