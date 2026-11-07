@@ -38,5 +38,10 @@
     "id": "4b4e687fe18bcd31",
     "service": "taksong",
     "published_at": "2026-11-07T07:15:24.087895+00:00"
+  },
+  {
+    "id": "beaadac165d9d73c",
+    "service": "daeri",
+    "published_at": "2026-11-07T18:04:14.629241+00:00"
   }
 ]
