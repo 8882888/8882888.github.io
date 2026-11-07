@@ -1282,7 +1282,7 @@ async function servicePage(r,kind){
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Show useful local service information and a phone CTA before a generic promotional card.
  // Keep the regional card close to the first guide and let it fit mobile widths.
- const imageAfterContent=visibleCard?placeRegionalCardAfterIntro(rendered,visibleCard,visibleCard.replace('loading="eager" fetchpriority="high"',(priorityMeta||['시도','시','군','구'].includes(r.level))?'loading="eager" fetchpriority="high"':'loading="lazy"')):rendered;
+ const imageAfterContent=visibleCard?placeRegionalCardAfterIntro(rendered,visibleCard,visibleCard.replace('loading="eager" fetchpriority="high"',(priorityMeta||r.level==='시도')?'loading="eager" fetchpriority="high"':'loading="lazy" decoding="async"')):rendered;
  // Keep the regional OG thumbnail fully described and dimensioned for crawlers.
  const mobileCardMeta=regionImagePath?'<meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="800"><meta property="og:image:alt" content="'+esc(displayBrand)+' 지역별 차량 서비스 명함 이미지">':'';
  const imageWithMetadata=mobileCardMeta?imageAfterContent.replace('</head>',mobileCardMeta+'</head>'):imageAfterContent;
