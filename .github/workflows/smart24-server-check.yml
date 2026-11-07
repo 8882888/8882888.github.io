@@ -8,6 +8,8 @@ on:
       - 'fare/**'
       - 'lib/**'
       - 'tests/**'
+      - 'route-taksong/courses/**'
+      - 'assets/cycling-routes/**'
       - 'scripts/**'
       - 'server.js'
       - 'package.json'
