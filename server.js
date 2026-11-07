@@ -1031,7 +1031,10 @@ function regionalDecisionPanel(r,kind,verified,history){
  const from=encodeURIComponent(r.full_name),fare='/fare/?service='+kind+'&amp;from='+from;
  const local=childrenByParent.get(r.slug)||[];
  const siblings=r.parent_slug?(childrenByParent.get(r.parent_slug)||[]).filter(x=>x.slug!==r.slug):[];
- const related=(local.length?local:siblings).filter(x=>x&&x.name&&x.name!=='(직할)'&&x.name!=='직할'&&x.level!=='리').slice(0,8);
+ // Deduplicate every regional child/sibling list by its official full name, not by repeated keyword variants.
+ const related=[...new Map((local.length?local:siblings)
+  .filter(x=>x&&x.name&&x.name!=='(직할)'&&x.name!=='직할'&&x.level!=='리')
+  .map(x=>[x.full_name||x.name,x])).values()].slice(0,8);
  const source=[...verified.map(x=>({date:x.date,departure:x.departure,destination:x.destination,fare:x.fare,url:rideUrl(x)})),
   ...history.map(x=>({date:x.date,departure:x.departure,destination:x.destination,fare:x.fare,url:'/reviews/history/'+x.id+'/'}))]
   .filter(x=>x.departure&&x.destination&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개');
