@@ -24,4 +24,5 @@ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 for(const required of ['innovationCity100=load(\'data/innovation-city-100.json\')','function innovationCity100Panel','innovationCity100Panel(r,kind)','function innovationCityPanel']){
  assert(server.includes(required),'dynamic route connection lost: '+required);
 }
+for(const field of ['guideCount:innovationCity100.length','regionServiceGroups:innovationCity100ByRegionKind.size','guideRevision:'])assert(server.includes(field),'health deployment fingerprint missing: '+field);
 console.log('PASS innovation-city-100: 100 unique legal-location customer guides, 20 groups, dynamic route wiring');
