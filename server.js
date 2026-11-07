@@ -1029,6 +1029,14 @@ function regionalDecisionPanel(r,kind,verified,history){
  // The full, unique mobile selector replaces the old first-eight repeated text links.
  const childLinks=!nationwideSubareaChoices&&related.length?'<nav aria-label="'+esc(label)+' 인근 세부 지역"><strong>가까운 지역 상세 안내</strong><p>'+related.map(x=>'<a href="'+servicePath(x,kind)+'">'+esc(seoRegionLabel(x)+service)+'</a>').join(' · ')+'</p></nav>':'';
  const instructions=kind==='daeri'?'출발 주차 위치·목적지·출발 시각·경유 여부를 알려주세요.':'차량 인수·인계 위치·차종·희망 시각·열쇠 전달 방법을 알려주세요.';
+ // A customer can quote a route from every real locality without visiting a
+ // separate empty form first. Auto-calculation requires an explicit submit.
+ const directQuoteForm='<form id="regional-direct-route-quote-20261107" action="/fare/" method="get" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;align-items:end;margin:12px 0;padding:12px;border-radius:11px;background:#fff;border:1px solid #bfd5eb">'+
+  '<input type="hidden" name="service" value="'+kind+'"><input type="hidden" name="auto" value="1">'+
+  '<label style="font-weight:800;color:#234567">출발지<input name="from" value="'+esc(r.full_name)+'" autocomplete="street-address" maxlength="130" required style="display:block;width:100%;box-sizing:border-box;min-height:48px;padding:9px;border:1px solid #9ab6d4;border-radius:8px"></label>'+
+  '<label style="font-weight:800;color:#234567">도착지<input name="to" placeholder="도착지 주소 또는 지명 입력" autocomplete="off" maxlength="130" required style="display:block;width:100%;box-sizing:border-box;min-height:48px;padding:9px;border:1px solid #9ab6d4;border-radius:8px"></label>'+
+  '<button type="submit" style="min-height:48px;background:#0754a0;color:#fff;border:0;border-radius:8px;font-weight:900;cursor:pointer">'+esc(label)+' 출발 '+(kind==='daeri'?'대리비견적':'탁송비견적')+'</button></form>'+
+  '<script>(function(){var el=document.getElementById("regional-direct-route-quote-20261107");if(!el)return;el.addEventListener("submit",function(){try{sessionStorage.setItem("smart24_explicit_quote_submit",String(Date.now()))}catch(_){}})})();</script>';
  return '<section id="regional-booking-first" aria-label="'+esc(label+' '+service)+' 요금·후기·상담 바로가기" style="border:2px solid #1764a3;border-radius:15px;padding:18px;margin:12px 0 22px;background:#f5faff">'+
   '<h2 style="margin-top:0">'+esc(label+service)+' 요금·실제 운행·예약</h2>'+
   '<p>'+esc(instructions)+' <strong>현재 요금과 배차 가능 여부는 상담 후 확정</strong>됩니다.</p>'+
@@ -1036,7 +1044,7 @@ function regionalDecisionPanel(r,kind,verified,history){
   '<a href="'+fare+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#0755a3;color:#fff;font-weight:800;text-decoration:none">출발지 예상요금 조회</a>'+
   '<a href="/reviews/history/?kind='+kind+'&amp;q='+from+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">지역 실제 후기 검색</a>'+
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
-  nationwideSubareaChoices+
+  directQuoteForm+nationwideSubareaChoices+
   '<h3>공개된 실제 완료 운행 '+distinct.length+'건</h3>'+tripItems+
   (distinct.length?'<p style="font-size:.93em">표시된 요금은 당시 운행금액이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>':'')+
   childLinks+'</section>';
