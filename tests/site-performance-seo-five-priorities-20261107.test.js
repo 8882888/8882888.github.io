@@ -42,9 +42,6 @@ assert(fare.includes("result.dataset.quoteState='success'")&&
  fare.includes("window.smart24QuoteOutcome(service,'success')")&&
  fare.includes("window.smart24QuoteOutcome(service,timedOut?'timeout':'error')"),
  'Only verified road quote outcomes can be counted');
-assert(fare.includes('현재 자동 도로거리 조회가 완료되지 않았습니다.')&&
- fare.includes('금액은 표시하지 않습니다.')===false ? true : true,
- 'Check fallback amount is never made up');
 assert(fare.includes('확인되지 않은 거리나 요금은 표시하지 않습니다.'),
  'Missing real road distance must never generate a fake fare');
 assert(fare.includes('같은 구간 다시 조회')&&fare.includes('form.requestSubmit()'),
