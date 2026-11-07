@@ -54,6 +54,8 @@ jobs:
         run: node tests/fare-search-intent-keywords.test.js
       - name: Verify nationwide 17 province and 20562 locality dynamic mobile quote links
         run: node tests/nationwide-dynamic-mobile-regions.test.js
+      - name: Verify nationwide live mobile locality autocomplete and quote actions
+        run: node tests/nationwide-live-locality-search-20261107.test.js
       - name: Verify road and ferry quote calculations
         run: node tests/fare-rules.test.js
       - name: Verify phone conversion tracking and referral toggles (no live DB writes)
