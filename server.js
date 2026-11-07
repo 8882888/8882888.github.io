@@ -2154,6 +2154,18 @@ const ganghwaTownTarget=phrase=>{
  if(quote)return '/fare/?service='+kind+'&from='+encodeURIComponent('인천광역시 강화군 '+town);
  return servicePath(county,kind)+'#official-county-subareas-20261107';
 };
+// SVG preview is generated only for one of the 13 official Ganghwa 읍/면.
+// Exact keyword display is an information card, not a photo or branch claim.
+if(pathname==='/api/ganghwa-town-card.svg'){
+ const q=clean(u.searchParams.get('q')||''),target=ganghwaTownTarget(q);
+ const kind=target&&(target.startsWith('/taksong/')||target.includes('service=taksong'))?'taksong':'daeri';
+ if(!target||u.searchParams.get('service')!==kind)return respond(res,404,'공식 읍면과 서비스 검색어가 일치하지 않습니다');
+ const svg=exactKeywordCard.render({keyword:q,region:'인천광역시 강화군',kind,phone:PHONE});
+ if(!svg)return respond(res,404,'검색어 명함을 만들 수 없습니다');
+ res.setHeader('cache-control','private, no-store, max-age=0');
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ return respond(res,200,svg,'image/svg+xml; charset=utf-8');
+}
 const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search';
 const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
 const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):null;
@@ -2246,6 +2258,24 @@ if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/da
 if(pathname==='/route-taksong/centers/'||pathname==='/route-taksong/centers')return respond(res,200,require('./lib/cycling-centers').page(u.searchParams,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'}));
 if(pathname==='/api/region-card-preview'){
  const query=clean(u.searchParams.get('q')||'');
+ const townTarget=ganghwaTownTarget(query);
+ if(townTarget){
+  const service=townTarget.startsWith('/taksong/')||townTarget.includes('service=taksong')?'taksong':'daeri';
+  const requested=u.searchParams.get('service');
+  if(requested&&['daeri','taksong'].includes(requested)&&requested!==service){
+   res.setHeader('x-robots-tag','noindex,nofollow');
+   return respond(res,200,JSON.stringify({status:'not_found',query,locality:query,service:requested,region:null,cards:[],candidates:[],source:'선택한 서비스와 검색어가 일치하지 않습니다.'}),'application/json; charset=utf-8');
+  }
+  const town=officialGanghwaSubareas.find(name=>compact(query).includes(name));
+  const image='/api/ganghwa-town-card.svg?service='+service+'&q='+encodeURIComponent(query);
+  const data={status:'matched',query,locality:'인천광역시 강화군 '+town,service,
+   region:'인천광역시 강화군',cards:[{kind:service,label:query,image,previewImage:image,
+    url:townTarget,phone:PHONE,displayKeyword:query,
+    description:'강화군 공식 읍·면 지역명으로 만든 안내용 명함입니다. 실제 운행사진 또는 지역 상주기사 표시가 아닙니다. 해당 출발지의 참고요금·배차 가능 여부를 상담으로 확인합니다.'}],
+   candidates:[],source:'강화군청 공식 13개 읍면 목록과 일치하는 검색어입니다. 가격·배차는 상담 후 확정합니다.'};
+  res.setHeader('x-robots-tag','noindex,nofollow');
+  return respond(res,200,JSON.stringify(data),'application/json; charset=utf-8');
+ }
  const curated=focusKeywordByPhrase.get(compact(query));
  const normalizedKeyword=curated?curated.region+(curated.kind==='taksong'?'탁송':'대리운전'):keywordExpansion.normalizeCompanyKeyword(query);
  const requested=u.searchParams.get('service');
