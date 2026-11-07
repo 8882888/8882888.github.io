@@ -2090,7 +2090,7 @@ const regionalServiceTarget=(value)=>{
  const serviceSuffix=raw.match(/(대리운전|대리|탁송)$/);
  if(!serviceSuffix)return null;
  const kind=serviceSuffix[1]==='탁송'?'taksong':'daeri';
- let place=raw.slice(0,-serviceSuffix[1].length).replace(/(?:전국)?(?:자동차|차량)$/,'');
+ let place=raw.slice(0,-serviceSuffix[1].length).replace(/(?:전국)?(?:자동차|차량)$/,'').replace(/전국$/,'');
  // e.g. 울산렌트카탁송, 부산중고차탁송, 대구골프장대리운전.
  place=place.replace(/(?:렌트카|렌터카|사고대차|정비소|서비스센터|블루핸즈|중고차|공항|장거리|골프장|법인카드|법인)$/,'');
  if(!place||/^(?:전국|장거리|24시|24시간|자동차|차량|국토종주|자전거길|자전거종주)$/.test(place))return null;
