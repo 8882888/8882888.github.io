@@ -45,6 +45,8 @@ assert.equal(route('대구양도면대리운전'),null,'Do not invent geographic
 assert(code.includes('ganghwaTownTarget(searchIntent)||regionalServiceTarget(searchIntent)'), 'Homepage search intent must recognize county towns');
 assert(code.includes('ganghwaTownTarget(rawQuery)||regionalServiceTarget(rawQuery)'), 'Region search must recognize county towns');
 assert(code.includes('regionalVerifiedSubareaChooser(r,kind)+childLinks'), 'Both region service pages must expose county selection');
+assert(code.includes('const related=[...new Map((local.length?local:siblings)'),
+ 'All nationwide regional child/sibling links must deduplicate identical official localities');
 assert(code.includes("if(pathname==='/api/region-card-preview'){")&&
  code.includes('const townTarget=ganghwaTownTarget(query)')&&
  code.includes("status:'matched',query,locality:'인천광역시 강화군 '+town"),
