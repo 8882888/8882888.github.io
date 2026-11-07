@@ -43,6 +43,7 @@ const fetchMock=async(url,options)=>{
     phone_sources:[{source:'기존 클릭 · 유입 경로 미확인',page:'',day:'',clicks:4}]
   });
   case 'site_phone_event':return fake(null,204);
+  case 'site_quote_summary':return fake({total_attempts:10,success_attempts:8,failed_attempts:2,success_rate_pct:80});
   case 'site_click_stats':return fake({total_clicks:4});
   default:throw Error('unexpected API '+name);
  }
@@ -61,6 +62,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
  assert.equal(el('today-visit-number').textContent,'5회');
  assert.equal(el('total-visit-number').textContent,'9회');
  assert.equal(el('phone-click-number').textContent,'4회');
+ assert.ok(el('quote-success-summary-20261107').textContent.includes('성공률 80.0%'),'Real quote success rate shows measured completed attempts');
  assert.equal(el('traffic-sources-detail').hidden,true);
  assert.equal(el('phone-source-list').children.length,1);
  assert.ok(el('phone-source-list').children[0].textContent.includes('유입 경로 미확인'),
@@ -84,6 +86,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
  assert.equal(event.body.p_source,'네이버 경유(검색 여부 미확인)',
    'Naver referral is not automatically proven to be a Naver search click');
  assert.equal(event.body.p_page,'/taksong/');
+ assert.ok(requests.some(r=>r.name==='site_quote_summary'),'Aggregated quote outcomes must be fetched without private route input');
  assert.equal(requests.filter(r=>r.name==='site_click_stats').length,0,
    '204 No Content from successful source logging must not double-count');
  console.log('PASS: referral preserved, click counter and expander work, old clicks explicit, no duplicate write');
