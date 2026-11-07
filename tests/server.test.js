@@ -1049,7 +1049,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(daeguPreview.status,'matched');
   assert.equal(daeguPreview.cards[0].label,'대구대리운전');
   assert.ok(daeguPreview.cards[0].previewImage.endsWith('-daeri-brand-v6.webp'));
-  const daeguSvg=await (await get(daeguPreview.cards[0].image.replace(/\\.png$/,'.svg'))).text();
+  const daeguSvg=await (await get(daeguPreview.cards[0].image.replace(/\.png$/,'.svg'))).text();
   assert.ok(daeguSvg.includes('>대구대리운전</text>'),'Daegu card must not truncate to 대 or use 대스마트대리운전');
   const daeguWebp=await get(daeguPreview.cards[0].previewImage);
   assert.equal(daeguWebp.status,200,'Daegu v6 mobile WebP image must resolve');
