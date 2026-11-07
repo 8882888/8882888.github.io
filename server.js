@@ -2137,6 +2137,23 @@ const regionalServiceTarget=(value)=>{
  }
  return found?servicePath(found,kind):null;
 };
+// Official Ganghwa 읍/면 search intent returns the verified county page,
+// avoiding thin locality pages and leaving exact cost queries on /fare/.
+const ganghwaTownTarget=phrase=>{
+ const key=compact(phrase),county=regionByFullName.get('인천광역시 강화군');
+ if(!county)return null;
+ const suffixes=[['대리비견적','daeri',true],['탁송비견적','taksong',true],
+  ['탁송견적','taksong',true],['대리비','daeri',true],['탁송비','taksong',true],
+  ['대리운전','daeri',false],['대리','daeri',false],['탁송','taksong',false]];
+ const matched=suffixes.find(([suffix])=>key.endsWith(suffix));
+ if(!matched)return null;
+ const [suffix,kind,quote]=matched,place=key.slice(0,-suffix.length);
+ const roots=['','강화','강화군','인천','인천광역시','인천강화군','인천광역시강화군'];
+ const town=officialGanghwaSubareas.find(name=>roots.some(prefix=>place===prefix+name));
+ if(!town)return null;
+ if(quote)return '/fare/?service='+kind+'&from='+encodeURIComponent('인천광역시 강화군 '+town);
+ return servicePath(county,kind)+'#official-county-subareas-20261107';
+};
 const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search';
 const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
 const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):null;
@@ -2148,7 +2165,7 @@ if(searchIntent){
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
  const target=mountain||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
-  regionalServiceTarget(searchIntent)||
+  ganghwaTownTarget(searchIntent)||regionalServiceTarget(searchIntent)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
    '탁송':'/taksong/','자동차탁송':'/taksong/','차량탁송':'/taksong/','전국탁송':'/taksong/','전국자동차탁송':'/taksong/',
@@ -2318,7 +2335,7 @@ if(pathname==='/region/'){
  const exactRegions=exactIntent?resolvedLiveCardAliases(exactIntent.region):[];
  const exactLocalKeyword=exactRegions.length===1&&Boolean(exactRegionalKeywordCard(exactRegions[0],exactIntent.kind,rawQuery));
  const directTarget=rawQuery&&!(compoundExactLocality||exactLocalKeyword)?
-  (mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
+  (mountainTarget(rawQuery)||ganghwaTownTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
  if(directTarget){res.writeHead(302,{location:encodeURI(directTarget),'cache-control':'no-store'});return res.end()}
  const requestedService=u.searchParams.get('service');
  // Strip only a trailing service name. A typed keyword like 부산대리운전
