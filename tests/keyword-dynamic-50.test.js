@@ -78,18 +78,28 @@ const establishedVisuals={
  '/설악산탁송/':'/assets/seoraksan-taksong-original-fare.png',
  '/지리산탁송/':'/assets/jirisan-taksong-original-fare.png',
  '/special/cycling-trail-transport/':'/assets/cycling-routes/nationwide-taksong.svg',
- '/service/golf/':'/assets/service-golf-visual.svg',
+ '/service/golf/':'/assets/photos/golf-driver.avif',
  '/service/corporate/':'/assets/service-daeri-visual.svg',
  '/service/daily-driver/':'/assets/service-golf-visual.svg'
 };
 for(const [number,path,topic] of pages)checks.push([number,path+' visible topic image, original poster or expandable card',async()=>{
  const result=await get(path);
  assert.equal(result.res.status,200,path);
+ // The nationwide cycling guide intentionally uses its original factual course
+ // cards and fare table instead of an invented nationwide SVG illustration.
+ if(path==='/special/cycling-trail-transport/'){
+  assert.ok(result.body.includes('id="cycling-verified-course-visual-20261106"')&&
+   result.body.includes('class="cycle-route-grid"')&&
+   result.body.includes('id="cycling-route-fare-table-202611"'),'Cycling source-based course visual and verified fare table must be preserved');
+  assert.ok(!result.body.includes('src="/assets/cycling-routes/nationwide-taksong.svg"'),'Do not reinsert disallowed generated nationwide art');
+  return;
+ }
  const original=establishedVisuals[path];
  if(original){
   assert.ok(result.body.includes('src="'+original+'"'),path+' must visibly render its original or specialist image');
   assert.ok(!result.body.includes('id="keyword-intent-dynamic-image"'),path+' must not duplicate imagery and obscure existing fares');
   assert.ok(result.body.includes('width:100%')&&result.body.includes('height:auto'),path+' image must remain mobile responsive');
+  if(path==='/service/golf/')assert.ok(result.body.includes('AI로 제작한 골프장 이동 분위기')&&result.body.includes('실제 운행 증빙사진 아님'),'Golf visual must disclose staged AI provenance');
   if(path==='/설악산탁송/'||path==='/지리산탁송/')
    assert.ok(result.body.includes('fetchpriority="high"'),path+' original fare image must load first');
   return;
