@@ -1389,6 +1389,18 @@ const quickRegions=regionQuickNames.map(n=>regions.find(r=>r.name===n||r.full_na
 function regionServiceLinks(items,kind){const label=kind==='taksong'?'탁송':'대리운전';return '<ul class="region-service-links">'+items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(seoRegionLabel(r)+label)+'</a></li>').join('')+'</ul>'}
 function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=childrenByParent.get(r.slug)||[];return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
 
+function homepageTaksongIntentLinks(){
+ const groups=[
+  ['도시 탁송',['부산광역시','대구광역시','울산광역시','대전광역시','세종특별자치시']],
+  ['지방 주요 도시',['경상남도 창원시','강원특별자치도 원주시','경상남도 진주시','전라남도 나주시','경상북도 김천시']]
+ ];
+ const items=groups.map(([label,names])=>'<div><h3>'+esc(label)+'</h3><ul>'+names.map(full=>{
+  const r=regions.find(x=>x.full_name===full);if(!r)return '';
+  const name=seoRegionLabel(r),href=servicePath(r,'taksong');
+  return '<li><a href="'+esc(href)+'">'+esc(name+'탁송')+'</a> · '+esc(name+'자동차탁송')+' · '+esc(name+'차량탁송')+'</li>';
+ }).join('')+'</ul></div>').join('');
+ return '<section id="homepage-taksong-intents" aria-label="자동차탁송 서비스별 검색 안내"><h2>자동차탁송 · 차량탁송 · 장거리탁송 · 지역별 탁송</h2><p>자동차탁송업체, 차량탁송업체, 자동차탁송예약, 장거리차량탁송, 중고차탁송, 신차탁송, 렌트카탁송, 사고대차탁송, 서비스센터탁송, 정비차량입고탁송, 정비차량출고탁송, 법인차량탁송, 경매장탁송, 수출차량탁송, 공항차량탁송 등 서비스 목적에 따라 차량 인수와 인계 방법이 다릅니다. 가능한 차량 종류·톤급·배차 시간·요금은 상담으로 확인합니다.</p><p>출발지·도착지 주소, 차량 종류, 희망 인수·인계 시간, 비대면 인계 가능 여부를 확인하세요. 실제 완료 운행 기록이 없는 구간은 후기나 확정 요금으로 표시하지 않습니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+items+'</div><p><a href="/taksong/">전국 자동차탁송 안내</a> · <a href="/fare/">차량탁송 예상요금 조회</a></p></section>';
+}
 function homepageCampingDriverLinks(){
  // Camping-ground intent links to existing city-level driver pages only.
  const areas=[
@@ -1435,7 +1447,7 @@ function homepagePriorityLinks(){
   }).join('');
   return '<div><h3>지역별 '+label+' 안내</h3><ul>'+links+'</ul></div>';
  }).join('');
- return homepageFocusTenLinks()+homepageCampingDriverLinks()+'<section id="home-priority-regions"><h2>지역 + 탁송 · 대리운전 · 대리 서비스 찾기</h2><p>지역별 자동차탁송과 대리운전 정보를 자동 연결합니다. 지역명+대리 검색어는 같은 대리운전 안내 페이지로 연결하여 중복 페이지를 만들지 않습니다. 실제 배차·요금은 상담으로 확인합니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+groups+'</div><p><a href="/region/">읍·면·동 지역별 서비스 전체 찾기</a> · <a href="/fare/">출발·도착 예상요금</a></p></section>';
+ return homepageFocusTenLinks()+homepageTaksongIntentLinks()+homepageCampingDriverLinks()+'<section id="home-priority-regions"><h2>지역 + 탁송 · 대리운전 · 대리 서비스 찾기</h2><p>지역별 자동차탁송과 대리운전 정보를 자동 연결합니다. 지역명+대리 검색어는 같은 대리운전 안내 페이지로 연결하여 중복 페이지를 만들지 않습니다. 실제 배차·요금은 상담으로 확인합니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+groups+'</div><p><a href="/region/">읍·면·동 지역별 서비스 전체 찾기</a> · <a href="/fare/">출발·도착 예상요금</a></p></section>';
 }
 function nationwideLinks(){return '<section id="nationwide-service-links" aria-label="전국 지역별 서비스"><h2>전국 지역별 탁송·대리운전 바로가기</h2><p><a href="/fare/routes/">전국 1,000개 구간 예상요금·예약 안내</a></p><p>전국 주요 도시의 개별 안내 페이지로 이동합니다. 실제 기사 배정과 요금은 출발지·목적지·시간에 따라 상담 후 확인합니다.</p><h3>전국 대리운전 지역 안내</h3>'+regionServiceLinks(quickRegions,'daeri')+'<h3>전국 자동차탁송 지역 안내</h3>'+regionServiceLinks(quickRegions,'taksong')+'<p><a href="/taksong/types/">차종·톤급·서비스센터별 탁송 안내</a> · <a href="/region/">전국 읍·면·동 상세 지역 찾기</a></p><p><a href="/taksong/">전국 탁송 지역 전체 보기</a> · <a href="/daeri/">전국 대리운전 지역 전체 보기</a></p></section>'}
 const featuredTaksongRoutes=[
