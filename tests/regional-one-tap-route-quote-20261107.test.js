@@ -31,6 +31,8 @@ for(const r of samples)for(const kind of ['daeri','taksong']){
  assert(html.includes('name="from" value="'+r.full_name+'"'),'Departure must be pre-filled with actual legal locality');
  assert(html.includes('name="to" placeholder="도착지 주소 또는 지명 입력"')&&html.includes('name="auto" value="1"'),
   'Destination must be required and customer quote must be explicit');
+ assert(html.includes('실제 차량 주차장·도로명주소로 수정'),
+  'A broad region alone is not a reliable exact fare origin');
  assert(html.includes('sessionStorage.setItem("smart24_explicit_quote_submit",String(Date.now()))'),
   'Explicit user submit marker must be sent for safe automatic quote');
  assert(html.includes('href="tel:18114294"'),'Call action must remain above long region text');
