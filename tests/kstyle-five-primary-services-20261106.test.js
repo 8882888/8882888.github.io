@@ -19,7 +19,7 @@ assert(!nav.slice(gridEnd).includes('<a href='),'No stray link outside the five-
 assert(home.includes('#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}'),'Desktop five columns');
 assert(home.includes('@media(max-width:739px){#homepage-primary-services-20261106 .homepage-primary-service-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}'),'Mobile five items in compact rows');
 assert(home.includes('position:sticky!important;top:0!important'),'Top-level navigation stays sticky');
-const regional=home.slice(home.indexOf('id="smart24-kstyle-regional-categories-20261106"'),home.indexOf('id="homepage-fare-top"'));
+const regional=home.slice(home.indexOf('id="smart24-kstyle-regional-categories-20261106"'),home.indexOf('id="dynamic-service-card-search-20261103"'));
 assert(regional.includes('인천 · 경기')&&regional.includes('강원 · 속초 · 강릉')&&regional.includes('대구 · 경북')&&regional.includes('부산 · 울산 · 경남'),'Regional discovery labels missing');
 assert(regional.includes('/taksong/jeju/')&&regional.includes('/taksong/sejong/'),'Jeju and Sejong landing links missing');
 assert(server.includes("'/service/long-distance-daeri/'"),'Server fallback must check the fifth service too');
