@@ -810,8 +810,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     busanEvidence.includes('blog.naver.com/wjdtnr4757/224445300887'),
     'Busan links regional landmarks to existing published source rather than made-up completions');
   for(const [region,html] of [['busan',busanEvidence],['ulsan',ulsanHtml]]){
-    const imagePath=region==='busan'?'/card/area-494-taksong-brand-v5.png':null;
-    assert.equal((html.match(/<img src="\/card\/area-[0-9]+-taksong-brand-v5.png"/g)||[]).length,1,
+    const imagePath=region==='busan'?'/card/area-494-taksong-brand-v6.png':null;
+    assert.equal((html.match(/<img src="\/card\/area-[0-9]+-taksong-brand-v6.png"/g)||[]).length,1,
       'region branded hero image must be shown exactly once: '+region);
     assert.ok(html.includes('href="tel:18114294"')&&html.includes('href="https://open.kakao.com/o/sGV88r7h"'),
       'Busan and Ulsan local booking paths remain accessible: '+region);
@@ -835,7 +835,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(daeriCard.headers.get('content-type').includes('image/png')&&taksongCard.headers.get('content-type').includes('image/png'),'business cards return PNG');
   assert.ok(!Buffer.from(await daeriCard.arrayBuffer()).equals(Buffer.from(await taksongCard.arrayBuffer())),'daeri and taksong business card artwork must actually differ');
   const inferredRegion=await (await get('/region/?q='+encodeURIComponent('부산대리운전'))).text();
-  assert.ok(/\/card\/area-\d+-daeri-brand-v5\.png/.test(inferredRegion),'search text 대리운전 selects daeri card');
+  assert.ok(/\/card\/area-\d+-daeri-brand-v6\.png/.test(inferredRegion),'search text 대리운전 selects daeri card');
 
   assert.ok(hubHtml.includes('href="/taksong/ulsan/"')&&hubHtml.includes('>울산탁송</a>'),
     'national taksong hub uses a concise Ulsan keyword anchor');
@@ -891,7 +891,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const jejuPage=await (await get('/taksong/jeju/')).text();assert.ok(jejuPage.includes('/fare/jeju/'));assert.ok(jejuPage.includes('275,000원'));
   assert.ok(jejuPage.includes('href="tel:18775245"')&&jejuPage.includes('1877-5245'),'Jeju landing page links its dedicated phone');
   assert.ok(!jejuPage.includes('tel:18114294')&&!jejuPage.includes('1811-4294'),'Jeju landing page contains no conflicting nationwide phone');
-  assert.ok(/property="og:image" content="https:\/\/example\.com\/card\/area-\d+-taksong-brand-v5\.png"/.test(jejuPage),'Jeju card OG image must be locality specific');
+  assert.ok(/property="og:image" content="https:\/\/example\.com\/card\/area-\d+-taksong-brand-v6\.png"/.test(jejuPage),'Jeju card OG image must be locality specific');
   assert.ok(jejuPage.includes('primaryImageOfPage'),'Jeju JSON-LD should link dedicated phone and locality image');
   const jejuFareHtml=await (await get('/fare/jeju/')).text();
   assert.ok(jejuFareHtml.includes('1877-5245')&&jejuFareHtml.includes('tel:18775245'),'Jeju quote page uses the correct phone');
@@ -956,7 +956,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(serviceUrl,'dedicated '+kind+' link: '+r.full_name);
     const response=await get(serviceUrl);assert.equal(response.status,200,serviceUrl);
     const html=await response.text();
-    const imagePath='/card/'+r.slug+'-'+kind+'-brand-v5.png';
+    const imagePath='/card/'+r.slug+'-'+kind+'-brand-v6.png';
     assert.ok(html.includes('<figure'),'region image remains visible without an oversized first-view placement: '+serviceUrl);
     assert.ok(html.includes('src="'+imagePath+'"'),'only correct locality and service image is linked: '+serviceUrl);
     assert.ok(html.includes('class="regional-responsive-card"')&&html.includes('href="'+imagePath+'" target="_blank"'),'card should resize and open its full-resolution version on tap: '+serviceUrl);
@@ -985,7 +985,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(new URL(response.url).pathname,canonicalPath,'regional keyword selects matching landing: '+query);
     const html=await response.text();
     assert.ok(html.includes('<figure')&&html.includes(headline),'region+전국탁송 banner and locality identity are visible: '+query);
-    assert.ok(/src="\/card\/area-\d+-taksong-brand-v5\.png"/.test(html),'new image URL avoids previous browser cache: '+query);
+    assert.ok(/src="\/card\/area-\d+-taksong-brand-v6\.png"/.test(html),'new image URL avoids previous browser cache: '+query);
    }
   }
   // Sample ten local service destinations: all must use distinct dynamic v3 PNGs.
@@ -1001,7 +1001,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const uniqueCardUrls=new Set();
   for(const [route,brand] of automaticLocalCards){
     const html=await (await get(route)).text();
-    const og=html.match(/<meta property="og:image" content="https:\/\/example\.com(\/card\/area-\d+-(?:taksong|daeri)-brand-v5\.png)"/);
+    const og=html.match(/<meta property="og:image" content="https:\/\/example\.com(\/card\/area-\d+-(?:taksong|daeri)-brand-v6\.png)"/);
     assert(og,'regional og:image missing: '+route);
     assert(!uniqueCardUrls.has(og[1]),'generic card reused across localities: '+route);
     uniqueCardUrls.add(og[1]);
@@ -1018,14 +1018,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const inferredServiceKeyword=await (await get('/region/?q='+encodeURIComponent('부산대리운전'))).text();
   assert.ok(inferredServiceKeyword.includes('class="dynamic-region-card-preview" open'),'region+대리운전 query automatically expands an exact-locality driver card');
   assert.ok(inferredServiceKeyword.includes('id="region-card-keyword-form"')&&inferredServiceKeyword.includes('name="service"'),'dynamic search has an explicit service selector');
-  assert.ok(/\/card\/area-\d+-daeri-brand-v5\.png/.test(inferredServiceKeyword)&&!inferredServiceKeyword.includes('/card/area-494-taksong-brand-v5.png'),'typed driver keyword must not show a taksong card');
+  assert.ok(/\/card\/area-\d+-daeri-brand-v6\.png/.test(inferredServiceKeyword)&&!inferredServiceKeyword.includes('/card/area-494-taksong-brand-v6.png'),'typed driver keyword must not show a taksong card');
   const cityBoth=(await (await get('/region/?q='+encodeURIComponent('부산'))).text());
-  assert.ok(/\/card\/area-\d+-daeri-brand-v5\.png/.test(cityBoth)&&/\/card\/area-\d+-taksong-brand-v5\.png/.test(cityBoth),'unqualified region displays two different service images');
+  assert.ok(/\/card\/area-\d+-daeri-brand-v6\.png/.test(cityBoth)&&/\/card\/area-\d+-taksong-brand-v6\.png/.test(cityBoth),'unqualified region displays two different service images');
   const requestedTaksong=(await (await get('/region/?q='+encodeURIComponent('울산')+'&service=taksong')).text());
   assert.ok(requestedTaksong.includes('class="dynamic-region-card-preview" open'),'explicit taksong filter should open matching region; markup excerpt '+requestedTaksong.match(/<details[^>]*>/)?.[0]);
   assert.ok(requestedTaksong.includes('울산광역시 탁송')&&
-   /\/card\/area-\d+-taksong-brand-v5\.png/.test(requestedTaksong)&&
-   !/\/card\/area-\d+-daeri-brand-v5\.png/.test(requestedTaksong),
+   /\/card\/area-\d+-taksong-brand-v6\.png/.test(requestedTaksong)&&
+   !/\/card\/area-\d+-daeri-brand-v6\.png/.test(requestedTaksong),
    'explicit Ulsan taksong filter must show the correct legal locality and taksong-only card');
   const homeCardSearch=(await (await get('/')).text());
   assert.ok(homeCardSearch.includes('id="dynamic-service-card-search-20261103"')&&homeCardSearch.includes('action="/region/"')&&homeCardSearch.includes('지역별 명함 자동확장 보기'),'homepage offers responsive region service card search');
@@ -1043,7 +1043,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const driverPreview=await getPreview('부산대리운전');
   assert.equal(driverPreview.status,'matched');assert.equal(driverPreview.service,'daeri');
   assert.equal(driverPreview.cards.length,1);assert.equal(driverPreview.cards[0].kind,'daeri');
-  assert.ok(driverPreview.cards[0].image.endsWith('-daeri-brand-v5.png'));
+  assert.ok(driverPreview.cards[0].image.endsWith('-daeri-brand-v6.png'));
+  // Regression: province labels must stay complete and v6 mobile WebP must resolve.
+  const daeguPreview=await getPreview('대구대리운전');
+  assert.equal(daeguPreview.status,'matched');
+  assert.equal(daeguPreview.cards[0].label,'대구대리운전');
+  assert.ok(daeguPreview.cards[0].previewImage.endsWith('-daeri-brand-v6.webp'));
+  const daeguSvg=await (await get(daeguPreview.cards[0].image.replace(/\\.png$/,'.svg'))).text();
+  assert.ok(daeguSvg.includes('>대구대리운전</text>'),'Daegu card must not truncate to 대 or use 대스마트대리운전');
+  const daeguWebp=await get(daeguPreview.cards[0].previewImage);
+  assert.equal(daeguWebp.status,200,'Daegu v6 mobile WebP image must resolve');
+  assert.ok(daeguWebp.headers.get('content-type').includes('image/webp'));
   const taksongPreview=await getPreview('울산탁송');
   assert.equal(taksongPreview.status,'matched');assert.equal(taksongPreview.region,'울산광역시');
   assert.equal(taksongPreview.cards.length,1);assert.equal(taksongPreview.cards[0].kind,'taksong');
@@ -1077,7 +1087,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(duplicateDistrict.cards.length,0,'ambiguous district cannot claim a specific local ride');
   // PNG remains the share/search original; 800-pixel WebP is used only as mobile preview.
   assert.ok(taksongPreview.cards[0].image.endsWith('.png'));
-  assert.ok(taksongPreview.cards[0].previewImage.endsWith('-taksong-brand-v5.webp'));
+  assert.ok(taksongPreview.cards[0].previewImage.endsWith('-taksong-brand-v6.webp'));
   assert.notEqual(taksongPreview.cards[0].previewImage,taksongPreview.cards[0].image);
   const previewImagePath=taksongPreview.cards[0].previewImage;
   const mobileImage=await get(previewImagePath);
@@ -1106,7 +1116,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const previewScriptVersion=(currentHome.match(/region-card-preview\.js\?v=([^"]+)/)||[])[1];
   const previewCssVersion=(currentHome.match(/region-card-preview\.css\?v=([^"]+)/)||[])[1];
   assert.ok(previewScriptVersion&&previewCssVersion&&
-   previewScriptVersion==='20261106-traverse-information'&&previewCssVersion==='20261103-keyword3',
+   previewScriptVersion==='20261107-v6-preview'&&previewCssVersion==='20261103-keyword3',
    'versioned, updated JS and CSS must bypass stale mobile browser caches');
   for(const asset of ['/assets/region-card-preview.js','/assets/region-card-preview.css']){
    const r=await get(asset);assert.equal(r.status,200,asset);
@@ -1128,7 +1138,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const service of ['daeri','taksong']){
    const response=await get('/'+service+'/seoul/');assert.equal(response.status,200);
    const html=await response.text();
-   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-(?:daeri|taksong)-brand-v5\.png)"/);
+   const card=html.match(/<meta property="og:image" content="https:\/\/example.com(\/card\/area-\d+-(?:daeri|taksong)-brand-v6\.png)"/);
    assert.ok(card,'regional '+service+' page must advertise a PNG business card');
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
    const svg=await (await get(card[1].replace('.png','.svg'))).text();
