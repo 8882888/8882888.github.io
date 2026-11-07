@@ -89,7 +89,7 @@ for(const phrase of [
  "const national=nationwideExplorer.resolve(query)",
  "if(pathname==='/api/nationwide-locality-card.svg')"
 ])assert(server.includes(phrase),'Missing nationwide server integration: '+phrase);
-assert(server.indexOf('  nationwideSubareaChoices+')<
+assert(server.indexOf('  directQuoteForm+nationwideSubareaChoices+')<
  server.indexOf("'<h3>공개된 실제 완료 운행 '+distinct.length"),'Mobile town chooser must appear above long ride lists');
 assert(server.includes('const childLinks=!nationwideSubareaChoices&&related.length?'),
  'Do not duplicate nearby region links when the full nationwide selector is shown');
