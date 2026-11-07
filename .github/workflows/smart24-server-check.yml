@@ -62,6 +62,8 @@ jobs:
         run: node tests/fare-rules.test.js
       - name: Verify phone conversion tracking and referral toggles (no live DB writes)
         run: node tests/traffic-analytics.test.js
+      - name: Verify five operational priorities, real quote status and sparse Naver-indexed regions
+        run: node tests/site-performance-seo-five-priorities-20261107.test.js
       - name: Check metropolitan and same-name city ride attribution
         run: node tests/regional-history-ambiguity.test.js
       - name: Verify 63 regional blog keyword suffixes and non-duplicated article guidance
