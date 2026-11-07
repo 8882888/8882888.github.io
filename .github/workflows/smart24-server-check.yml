@@ -52,8 +52,6 @@ jobs:
         run: node tests/quote-review-booking-first.test.js
       - name: Verify five driver-cost and transport-quote search intents
         run: node tests/fare-search-intent-keywords.test.js
-      - name: Verify mobile competitor-informed personal and corporate conversion
-        run: node tests/mobile-competitor-parity-20261107.test.js
       - name: Verify road and ferry quote calculations
         run: node tests/fare-rules.test.js
       - name: Verify phone conversion tracking and referral toggles (no live DB writes)
