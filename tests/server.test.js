@@ -799,7 +799,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(raw.status,200,'keyword search returns a real page: '+query);
     assert.equal(raw.headers.get('x-robots-tag'),'noindex, follow','query result noindex: '+query);
     const html=await raw.text();
-    assert.ok(/href="\\/(?:daeri|taksong|visit|place)\\//.test(html),'keyword links to a real destination: '+query);
+    assert.ok(/href="\/(?:daeri|taksong|visit|place)\//.test(html),'keyword links to a real destination: '+query);
    }
   }
   const categoryHtml=await (await get('/keyword-search/?category='+encodeURIComponent('맛집'))).text();assert.ok(categoryHtml.includes('맛집·식당 방문 후 대리운전'));assert.ok(categoryHtml.includes('/assets/smart24-daeri-brand.png'));assert.ok(categoryHtml.includes('activity-feature'));assert.ok(!categoryHtml.includes('자동 갱신 현황'));assert.ok(!categoryHtml.includes('20,562'));
