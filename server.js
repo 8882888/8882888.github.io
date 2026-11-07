@@ -8,6 +8,7 @@ const serviceKeywordEntry=require('./lib/service-keyword-entry');
 const keywordExpansion=require('./lib/keyword-card-expansion');
 const regionalBlogKeywords=require('./lib/regional-blog-keywords');
 const exactKeywordCard=require('./lib/exact-keyword-card');
+const {createNationwideLocalityExplorer}=require('./lib/nationwide-locality-explorer');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const load=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
 const baseRegions=load('data/regions.json').regions||[];
@@ -113,6 +114,7 @@ for(const r of regions){const parentPath=r.parent_slug?pathBySlug.get(r.parent_s
  const suffixLabels={'특별자치시':'si','특별시':'si','광역시':'si','특별자치도':'do','자치도':'do','도':'do','시':'si','군':'gun','구':'gu','읍':'eup','면':'myeon','동':'dong','리':'ri'};
  const segment=romanOverrides[r.name]||(suffixMatch&&suffixMatch[1]?romanizeKorean(suffixMatch[1])+'-'+suffixLabels[suffixMatch[2]]:romanizeKorean(r.name));const proposed=(parentPath?parentPath+'/':'')+segment;const unique=byPath.has(proposed)?proposed+'-'+r.slug:proposed;pathBySlug.set(r.slug,unique);byPath.set(unique,r)}
 function servicePath(r,kind){return '/'+kind+'/'+pathBySlug.get(r.slug)+'/'}
+const nationwideExplorer=createNationwideLocalityExplorer({regions,bySlug,childrenByParent,servicePath,escapeHtml:esc});
 
 function naverFocus50Guide(r,kind){
  const info=focus50ByKey.get(kind+'|'+r.full_name);
@@ -1006,26 +1008,8 @@ function innovationCityPanel(r,kind){
   (links?'<nav aria-label="인근 지역 '+esc(service)+' 안내"><strong>인접 지역 연결</strong><p>'+links+'</p></nav>':'')+
   '<p><small>지역 내 지점·상주기사·특정 기관과의 제휴를 의미하지 않으며, 실제 배차와 요금은 상담 후 확인합니다.</small></p></section>';
 }
-// The complete 1-eup/12-myeon Ganghwa hierarchy comes from the county government.
-// Never invent individual branch offices, completed rides, prices or indexable pages.
-const officialGanghwaSubareas=Object.freeze([
- '강화읍','선원면','불은면','길상면','화도면','양도면','내가면',
- '하점면','양사면','송해면','교동면','삼산면','서도면'
-]);
-function regionalVerifiedSubareaChooser(r,kind){
- if(r.full_name!=='인천광역시 강화군')return '';
- const unique=[...new Set(officialGanghwaSubareas)];
- const service=kind==='daeri'?'대리운전':'탁송';
- const chips=unique.map(name=>{
-  const from=encodeURIComponent('인천광역시 강화군 '+name);
-  return '<a href="/fare/?service='+kind+'&amp;from='+from+'" style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;background:#fff;border:1px solid #b2cbe3;border-radius:9px;color:#164b7c;font-weight:800;text-decoration:none">'+esc(name+service+' 요금조회')+'</a>';
- }).join('');
- return '<details id="official-county-subareas-20261107" style="margin:12px 0;border:1px solid #afcbe3;border-radius:11px;background:#f8fbff;padding:10px">'+
-  '<summary style="font-weight:900;cursor:pointer;padding:8px 3px;min-height:48px;line-height:1.5">강화군 13개 읍·면별 '+service+' 출발지 선택</summary>'+
-  '<p style="font-size:14px;margin:7px 0">강화군청 공식 행정구역 1읍·12면을 중복 없이 표시합니다. 선택하면 해당 읍·면이 요금조회 출발지에 입력됩니다. 지점·기사 상주나 확정 요금은 의미하지 않습니다.</p>'+
-  '<nav aria-label="강화군 읍면별 '+service+' 예상요금" style="display:flex;flex-wrap:wrap;gap:7px">'+chips+'</nav>'+
-  '<p style="font-size:13px;margin:8px 0 0">행정구역 근거: <a href="https://www.ganghwa.go.kr/open_content/main/ganghwa/info/district.jsp" target="_blank" rel="noopener noreferrer">강화군청 행정구역</a> · 현재 요금·배차는 전화 상담으로 확인합니다.</p></details>';
-}
+// Reuse one deduplicated regional chooser for all 17 provinces.
+function regionalNationwideSubareaChooser(r,kind){return nationwideExplorer.chooser(r,kind)}
 function regionalDecisionPanel(r,kind,verified,history){
  const label=seoRegionLabel(r),service=kind==='daeri'?'대리운전':'자동차탁송';
  const from=encodeURIComponent(r.full_name),fare='/fare/?service='+kind+'&amp;from='+from;
@@ -1052,7 +1036,7 @@ function regionalDecisionPanel(r,kind,verified,history){
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
   '<h3>공개된 실제 완료 운행 '+distinct.length+'건</h3>'+tripItems+
   (distinct.length?'<p style="font-size:.93em">표시된 요금은 당시 운행금액이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>':'')+
-  regionalVerifiedSubareaChooser(r,kind)+childLinks+'</section>';
+  regionalNationwideSubareaChooser(r,kind)+childLinks+'</section>';
 }
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
@@ -2142,28 +2126,14 @@ const regionalServiceTarget=(value)=>{
 };
 // Official Ganghwa 읍/면 search intent returns the verified county page,
 // avoiding thin locality pages and leaving exact cost queries on /fare/.
-const ganghwaTownTarget=phrase=>{
- const key=compact(phrase),county=regionByFullName.get('인천광역시 강화군');
- if(!county)return null;
- const suffixes=[['대리비견적','daeri',true],['탁송비견적','taksong',true],
-  ['탁송견적','taksong',true],['대리비','daeri',true],['탁송비','taksong',true],
-  ['대리운전','daeri',false],['대리','daeri',false],['탁송','taksong',false]];
- const matched=suffixes.find(([suffix])=>key.endsWith(suffix));
- if(!matched)return null;
- const [suffix,kind,quote]=matched,place=key.slice(0,-suffix.length);
- const roots=['','강화','강화군','인천','인천광역시','인천강화군','인천광역시강화군'];
- const town=officialGanghwaSubareas.find(name=>roots.some(prefix=>place===prefix+name));
- if(!town)return null;
- if(quote)return '/fare/?service='+kind+'&from='+encodeURIComponent('인천광역시 강화군 '+town);
- return servicePath(county,kind)+'#official-county-subareas-20261107';
-};
-// SVG preview is generated only for one of the 13 official Ganghwa 읍/면.
-// Exact keyword display is an information card, not a photo or branch claim.
-if(pathname==='/api/ganghwa-town-card.svg'){
- const q=clean(u.searchParams.get('q')||''),target=ganghwaTownTarget(q);
- const kind=target&&(target.startsWith('/taksong/')||target.includes('service=taksong'))?'taksong':'daeri';
- if(!target||u.searchParams.get('service')!==kind)return respond(res,404,'공식 읍면과 서비스 검색어가 일치하지 않습니다');
- const svg=exactKeywordCard.render({keyword:q,region:'인천광역시 강화군',kind,phone:PHONE});
+const nationwideRegionTarget=phrase=>{const matched=nationwideExplorer.resolve(phrase);return matched?matched.url:null};
+// SVG previews are generated only for a verified, unambiguous locality and service.
+if(pathname==='/api/nationwide-locality-card.svg'){
+ const q=clean(u.searchParams.get('q')||''),matched=nationwideExplorer.resolve(q);
+ const requested=u.searchParams.get('service');
+ if(!matched||requested!==matched.kind)return respond(res,404,'행정구역과 서비스 검색어가 일치하지 않습니다');
+ const contact=matched.kind==='taksong'&&matched.region.full_name==='제주특별자치도'?'1877-5245':PHONE;
+ const svg=exactKeywordCard.render({keyword:q,region:matched.region.full_name,kind:matched.kind,phone:contact});
  if(!svg)return respond(res,404,'검색어 명함을 만들 수 없습니다');
  res.setHeader('cache-control','private, no-store, max-age=0');
  res.setHeader('x-robots-tag','noindex, nofollow');
@@ -2180,7 +2150,7 @@ if(searchIntent){
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
  const target=mountain||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
-  ganghwaTownTarget(searchIntent)||regionalServiceTarget(searchIntent)||
+  nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
    '탁송':'/taksong/','자동차탁송':'/taksong/','차량탁송':'/taksong/','전국탁송':'/taksong/','전국자동차탁송':'/taksong/',
@@ -2191,7 +2161,7 @@ if(searchIntent){
    '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
    '일일기사':'/service/daily-driver/'
   }[normalized])||(named&&named.url);
- if(target){res.writeHead(302,{location:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
+ if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
 }
 if(pathname==='/keyword-search/'||pathname==='/keyword-search'){
  const target=keywordEngine.topicUrl(u.searchParams.get('category'));
@@ -2261,21 +2231,20 @@ if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/da
 if(pathname==='/route-taksong/centers/'||pathname==='/route-taksong/centers')return respond(res,200,require('./lib/cycling-centers').page(u.searchParams,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'}));
 if(pathname==='/api/region-card-preview'){
  const query=clean(u.searchParams.get('q')||'');
- const townTarget=ganghwaTownTarget(query);
- if(townTarget){
-  const service=townTarget.startsWith('/taksong/')||townTarget.includes('service=taksong')?'taksong':'daeri';
-  const requested=u.searchParams.get('service');
-  if(requested&&['daeri','taksong'].includes(requested)&&requested!==service){
+ const national=nationwideExplorer.resolve(query);
+ if(national){
+  const requested=u.searchParams.get('service'),kind=national.kind;
+  if(requested&&['daeri','taksong'].includes(requested)&&requested!==kind){
    res.setHeader('x-robots-tag','noindex,nofollow');
    return respond(res,200,JSON.stringify({status:'not_found',query,locality:query,service:requested,region:null,cards:[],candidates:[],source:'선택한 서비스와 검색어가 일치하지 않습니다.'}),'application/json; charset=utf-8');
   }
-  const town=officialGanghwaSubareas.find(name=>compact(query).includes(name));
-  const image='/api/ganghwa-town-card.svg?service='+service+'&q='+encodeURIComponent(query);
-  const data={status:'matched',query,locality:'인천광역시 강화군 '+town,service,
-   region:'인천광역시 강화군',cards:[{kind:service,label:query,image,previewImage:image,
-    url:townTarget,phone:PHONE,displayKeyword:query,
-    description:'강화군 공식 읍·면 지역명으로 만든 안내용 명함입니다. 실제 운행사진 또는 지역 상주기사 표시가 아닙니다. 해당 출발지의 참고요금·배차 가능 여부를 상담으로 확인합니다.'}],
-   candidates:[],source:'강화군청 공식 13개 읍면 목록과 일치하는 검색어입니다. 가격·배차는 상담 후 확정합니다.'};
+  const contact=kind==='taksong'&&national.region.full_name==='제주특별자치도'?'1877-5245':PHONE;
+  const image=nationwideExplorer.imageUrl(query,kind);
+  const data={status:'matched',query,locality:national.region.full_name,service:kind,
+   region:national.region.full_name,cards:[{kind,label:query,image,previewImage:image,
+    url:national.url,phone:contact,displayKeyword:query,
+    description:'등록된 행정구역과 검색어가 일치하는 안내용 이미지입니다. 지역 지점·상주기사·실제 운행완료를 의미하지 않으며 예상요금과 배차는 상담 후 확인합니다.'}],
+   candidates:[],source:'전국 17개 시·도 행정구역 데이터와 일치하는 검색어입니다. 요금·배차는 상담 후 확정합니다.'};
   res.setHeader('x-robots-tag','noindex,nofollow');
   return respond(res,200,JSON.stringify(data),'application/json; charset=utf-8');
  }
@@ -2367,9 +2336,10 @@ if(pathname==='/region/'){
  const exactIntent=rawQuery?regionalBlogKeywords.parse(rawQuery):null;
  const exactRegions=exactIntent?resolvedLiveCardAliases(exactIntent.region):[];
  const exactLocalKeyword=exactRegions.length===1&&Boolean(exactRegionalKeywordCard(exactRegions[0],exactIntent.kind,rawQuery));
- const directTarget=rawQuery&&!(compoundExactLocality||exactLocalKeyword)?
-  (mountainTarget(rawQuery)||ganghwaTownTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
- if(directTarget){res.writeHead(302,{location:encodeURI(directTarget),'cache-control':'no-store'});return res.end()}
+ const nationalDirect=rawQuery?nationwideExplorer.resolve(rawQuery):null;
+ const directTarget=nationalDirect?nationalDirect.url:rawQuery&&!(compoundExactLocality||exactLocalKeyword)?
+  (mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
+ if(directTarget){res.writeHead(302,{location:directTarget.startsWith('/fare/?')?directTarget:encodeURI(directTarget),'cache-control':'no-store'});return res.end()}
  const requestedService=u.searchParams.get('service');
  // Strip only a trailing service name. A typed keyword like 부산대리운전
  // should expand 부산, while an ambiguous 광주 still requires a choice.
