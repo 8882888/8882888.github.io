@@ -1286,10 +1286,14 @@ async function servicePage(r,kind){
  // Keep the regional OG thumbnail fully described and dimensioned for crawlers.
  const mobileCardMeta=regionImagePath?'<meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="800"><meta property="og:image:alt" content="'+esc(displayBrand)+' 지역별 차량 서비스 명함 이미지">':'';
  const imageWithMetadata=mobileCardMeta?imageAfterContent.replace('</head>',mobileCardMeta+'</head>'):imageAfterContent;
+ // Let mobile browsers defer painting long below-the-fold guide sections while
+ // keeping the canonical HTML and links available to crawlers and non-JS users.
+ const mobilePaintStyle='<style id="regional-mobile-paint-budget-20261107">@supports (content-visibility: auto){main>section:nth-of-type(n+4){content-visibility:auto;contain-intrinsic-size:auto 360px}}@media(max-width:600px){.regional-responsive-card img{max-width:100%;height:auto}.nationwide-subareas-20261107{overflow-wrap:anywhere}}</style>';
+ const paintOptimized=imageWithMetadata.replace('</head>',mobilePaintStyle+'</head>');
  // Avoid adding templated village-level pages without specific confirmed trips to the search index.
  // These URLs remain navigable; verified local trips and all priority hubs stay indexable.
  const sparseVillage=r.level==='리'&&!priorityMeta&&!matches.length&&!historicalMatches.length;
- const crawlerReady=sparseVillage?imageWithMetadata.replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">'):imageWithMetadata;
+ const crawlerReady=sparseVillage?paintOptimized.replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">'):paintOptimized;
  return jejuSearchPage?crawlerReady.replaceAll('1811-4294','1877-5245').replaceAll('18114294','18775245'):crawlerReady;
 }
 function remoteRegionGuidance(r){
