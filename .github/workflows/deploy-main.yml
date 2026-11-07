@@ -63,6 +63,10 @@ jobs:
                       'https://jeongukdaeri.kr/fare/?release-check='+os.environ['DEPLOYED_COMMIT'],
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
                       fare_page=response.read().decode('utf-8')
+                  with urllib.request.urlopen(urllib.request.Request(
+                      'https://jeongukdaeri.kr/?release-check='+os.environ['DEPLOYED_COMMIT'],
+                      headers={'Cache-Control':'no-cache'}),timeout=10) as response:
+                      home=response.read().decode('utf-8')
                   mobile_quote_ok=(
                     'id="homepage-mobile-first-20261107"' in home
                     and 'id="homepage-fare-form"' in home
@@ -75,10 +79,6 @@ jobs:
                       ['대리비','대리비견적','탁송비','탁송견적','탁송비견적'])
                     and all(term in fare_page for term in
                       ['대리비','대리비견적','탁송비','탁송견적','탁송비견적']))
-                  with urllib.request.urlopen(urllib.request.Request(
-                      'https://jeongukdaeri.kr/?release-check='+os.environ['DEPLOYED_COMMIT'],
-                      headers={'Cache-Control':'no-cache'}),timeout=10) as response:
-                      home=response.read().decode('utf-8')
                   with urllib.request.urlopen(urllib.request.Request(
                       'https://jeongukdaeri.kr/assets/traffic-analytics.js?v='+os.environ['DEPLOYED_COMMIT'],
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
