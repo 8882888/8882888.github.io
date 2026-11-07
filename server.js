@@ -2593,10 +2593,11 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
    if(bucket.length){balancedRegions.push(bucket.shift());hasMore=true}
   }
  }
- const discoveryRegions=[...provinceHubs,...balancedRegions,...unmatchedRegions].slice(0,Math.max(0,500-baseRoutes.length));
+ const uniqueBaseRoutes=[...new Set(baseRoutes)];
+ const discoveryRegions=[...provinceHubs,...balancedRegions,...unmatchedRegions].slice(0,Math.max(0,500-uniqueBaseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
  // Keep actual HTML region pages and all on-page images intact.
- const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+baseRoutes.map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+uniqueBaseRoutes.map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
 if(pathname==='/sitemap.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const cached=sitemapCache.get(pathname);
