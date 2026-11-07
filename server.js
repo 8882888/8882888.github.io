@@ -531,7 +531,7 @@ ${kind==='daeri'? `<rect x="0" y="604" width="1200" height="116" fill="#eef7ff"/
 <text x="600" y="793" font-family="sans-serif" font-size="19" fill="#dbeafe" text-anchor="middle">지역별 기사 배정 및 확정 요금은 상담 후 확인 · 실제 운행 사진 아님</text>
 </svg>`;
  }
- const first=prefix+'스마트대리운전',second=prefix+'전국탁송';
+ const first=prefix+'대리운전',second=prefix+'탁송';
  const daeriHeading=esc(first),taksongHeading=esc(second),size=Math.min(32,Math.floor(850/Math.max(first.length,second.length)));
  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="card-title"><title id="card-title">${esc(full)} 스마트전국대리운전 스마트24시탁송 1811-4294</title><image href="data:image/webp;base64,${cardArtData}" x="0" y="0" width="1200" height="800"/><defs><linearGradient id="banner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#007e91"/><stop offset="0.55" stop-color="#004252"/><stop offset="1" stop-color="#008d9d"/></linearGradient></defs><rect x="200" y="7" width="884" height="74" rx="8" fill="url(#banner)"/><g font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle" stroke="#002b3a" stroke-width="1.8" paint-order="stroke fill"><text x="642" y="36" fill="#ffffff">${daeriHeading}</text><text x="642" y="70" fill="#fff04b">${taksongHeading}</text></g></svg>`;
 };
@@ -1222,7 +1222,7 @@ async function servicePage(r,kind){
  // These are branded templates, not purported photographs of the city or a completed trip.
  const regionImagePath=cardPngPath(r.slug,kind);
  const imageUrl=regionImagePath?'https://'+host+regionImagePath:null;
- const displayBrand=seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전');
+ const displayBrand=seoRegionLabel(r)+(kind==='taksong'?'탁송':'대리운전');
  const card=regionImagePath?'<figure class="regional-responsive-card" style="width:100%;max-width:700px;margin:16px auto;text-align:center"><a href="'+regionImagePath+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(name)+' '+service+' 지역명 맞춤 명함 이미지 크게 보기"><picture><source type="image/webp" srcset="'+cardPreviewWebpPath(r.slug,kind)+'"><img src="'+regionImagePath+'" alt="'+esc(displayBrand)+' 지역명 맞춤 명함 · 안내용 그래픽 · 상담 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" style="display:block;width:100%;max-width:100%;height:auto;border-radius:12px"></picture></a></figure>':'';
  const pageUrl='https://'+host+servicePath(r,kind);
  const imageId=imageUrl+'#image';
@@ -2333,7 +2333,7 @@ if(pathname==='/region/'){
  const showAllServices=!selectedService;
  const previewFor=(r,kind)=>{
   const matched=exactRegionalKeywordCard(r,kind,rawQuery);
-  const image=matched?.keywordImage||cardPngPath(r.slug,kind),brand=matched?.displayKeyword||(seoRegionLabel(r)+(kind==='taksong'?'전국탁송':'스마트대리운전'));
+  const image=matched?.keywordImage||cardPngPath(r.slug,kind),brand=matched?.displayKeyword||(seoRegionLabel(r)+(kind==='taksong'?'탁송':'대리운전'));
   const isJejuTaksong=kind==='taksong'&&r.full_name==='제주특별자치도';
   const phone=isJejuTaksong?'1877-5245':PHONE,phoneHref='tel:'+phone.replace(/-/g,'');
   const open=r.slug===exactPreviewSlug;
