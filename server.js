@@ -1666,7 +1666,7 @@ function routeKeywordSearchPage(from,to,kind,page=1){
 function recruitmentPage(kind,region){
  const isT=kind==='taksong',label=isT?'탁송기사':'대리운전기사',area=region?region.full_name:'전국',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const url='/recruit/'+kind+'/'+(region?region.slug+'/':'');
- const title=region?area+' '+(isT?'탁송기사모집':'대리기사모집'):isT?'탁송기사모집 | 전국 탁송기사 지원':'대리기사모집 | 전국 대리기사 지원';
+ const title=region?area+' '+(isT?'탁송기사모집':'대리기사모집'):isT?'탁송기사모집 | 전국 자동차탁송기사 지원·등록 상담 스마트24':'대리기사모집 | 전국 대리운전기사 지원·등록 상담 스마트24';
  const desc=region?area+' '+label+' 지원 상담. 운행지역·경력·등록 조건 확인. 1811-4294.':isT?'전국 탁송기사 모집 안내. 차량 인수·인계 및 운행지역·기사 등록 조건 상담. 1811-4294.':'전국 대리기사 모집 안내. 운행 시간·지역·경력과 기사 등록 조건 상담. 1811-4294.';
  const provinces=regions.filter(r=>r.level==='시도').slice(0,20);
  const regionLinks=!region?'<section><h2>지역별 기사 모집 안내</h2><ul>'+provinces.map(r=>'<li><a href="/recruit/'+kind+'/'+r.slug+'/">'+esc(r.full_name)+' '+label+' 모집</a></li>').join('')+'</ul></section>':'';
