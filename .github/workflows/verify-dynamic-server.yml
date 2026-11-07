@@ -9,6 +9,7 @@ on:
       - 'data/ride-history.json'
       - 'tests/server.test.js'
       - 'route-taksong/courses/**'
+      - 'special/cycling-trail-transport/**'
       - 'assets/cycling-routes/**'
       - 'tests/traffic-analytics.test.js'
       - 'assets/traffic-analytics.js'
