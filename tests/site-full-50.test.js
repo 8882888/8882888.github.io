@@ -81,7 +81,7 @@ check('22 Taksong hub HTTP 200 and service heading',async()=>{const r=await page
 check('23 Corporate service hub HTTP 200',async()=>{assert.equal((await page('/service/corporate/')).res.status,200)});
 check('24 Golf driving service hub HTTP 200',async()=>{assert.equal((await page('/service/golf/')).res.status,200)});
 check('25 Region directory accessible',async()=>{const r=await page('/region/');assert.equal(r.res.status,200);has(r.body,'지역')});
-check('26 Exact Busan daeri search expands regional card',async()=>{has((await page('/region/?q='+encodeURIComponent('부산대리운전'))).body,'class="dynamic-region-card-preview" open')});
+check('26 Exact Busan daeri search opens its canonical local driver card',async()=>{const r=await page('/region/?q='+encodeURIComponent('부산대리운전'));assert.equal(r.res.status,200);assert.equal(new URL(r.res.url).pathname,'/daeri/busan/');has(r.body,'부산대리운전');has(r.body,'/card/area-')});
 check('27 Typed Busan daeri keyword chooses driver',async()=>{const r=await card('부산대리운전');assert.equal(r.status,'matched');assert.deepEqual(r.cards.map(x=>x.kind),['daeri'])});
 check('28 Typed Ulsan taksong keyword chooses taksong',async()=>{const r=await card('울산탁송');assert.equal(r.status,'matched');assert.equal(r.region,'울산광역시');assert.deepEqual(r.cards.map(x=>x.kind),['taksong'])});
 check('29 Ambiguous Gwangju never silently chooses',async()=>{const r=await card('광주');assert.equal(r.status,'ambiguous');assert.equal(r.cards.length,0)});
