@@ -1006,6 +1006,26 @@ function innovationCityPanel(r,kind){
   (links?'<nav aria-label="인근 지역 '+esc(service)+' 안내"><strong>인접 지역 연결</strong><p>'+links+'</p></nav>':'')+
   '<p><small>지역 내 지점·상주기사·특정 기관과의 제휴를 의미하지 않으며, 실제 배차와 요금은 상담 후 확인합니다.</small></p></section>';
 }
+// The complete 1-eup/12-myeon Ganghwa hierarchy comes from the county government.
+// Never invent individual branch offices, completed rides, prices or indexable pages.
+const officialGanghwaSubareas=Object.freeze([
+ '강화읍','선원면','불은면','길상면','화도면','양도면','내가면',
+ '하점면','양사면','송해면','교동면','삼산면','서도면'
+]);
+function regionalVerifiedSubareaChooser(r,kind){
+ if(r.full_name!=='인천광역시 강화군')return '';
+ const unique=[...new Set(officialGanghwaSubareas)];
+ const service=kind==='daeri'?'대리운전':'탁송';
+ const chips=unique.map(name=>{
+  const from=encodeURIComponent('인천광역시 강화군 '+name);
+  return '<a href="/fare/?service='+kind+'&amp;from='+from+'" style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;background:#fff;border:1px solid #b2cbe3;border-radius:9px;color:#164b7c;font-weight:800;text-decoration:none">'+esc(name+service+' 요금조회')+'</a>';
+ }).join('');
+ return '<details id="official-county-subareas-20261107" style="margin:12px 0;border:1px solid #afcbe3;border-radius:11px;background:#f8fbff;padding:10px">'+
+  '<summary style="font-weight:900;cursor:pointer;padding:8px 3px;min-height:48px;line-height:1.5">강화군 13개 읍·면별 '+service+' 출발지 선택</summary>'+
+  '<p style="font-size:14px;margin:7px 0">강화군청 공식 행정구역 1읍·12면을 중복 없이 표시합니다. 선택하면 해당 읍·면이 요금조회 출발지에 입력됩니다. 지점·기사 상주나 확정 요금은 의미하지 않습니다.</p>'+
+  '<nav aria-label="강화군 읍면별 '+service+' 예상요금" style="display:flex;flex-wrap:wrap;gap:7px">'+chips+'</nav>'+
+  '<p style="font-size:13px;margin:8px 0 0">행정구역 근거: <a href="https://www.ganghwa.go.kr/open_content/main/ganghwa/info/district.jsp" target="_blank" rel="noopener noreferrer">강화군청 행정구역</a> · 현재 요금·배차는 전화 상담으로 확인합니다.</p></details>';
+}
 function regionalDecisionPanel(r,kind,verified,history){
  const label=seoRegionLabel(r),service=kind==='daeri'?'대리운전':'자동차탁송';
  const from=encodeURIComponent(r.full_name),fare='/fare/?service='+kind+'&amp;from='+from;
@@ -1029,7 +1049,7 @@ function regionalDecisionPanel(r,kind,verified,history){
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
   '<h3>공개된 실제 완료 운행 '+distinct.length+'건</h3>'+tripItems+
   (distinct.length?'<p style="font-size:.93em">표시된 요금은 당시 운행금액이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>':'')+
-  childLinks+'</section>';
+  regionalVerifiedSubareaChooser(r,kind)+childLinks+'</section>';
 }
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
