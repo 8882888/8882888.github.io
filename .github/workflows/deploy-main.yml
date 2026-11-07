@@ -68,8 +68,8 @@ jobs:
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
                       traffic_css=response.read().decode('utf-8')
                   stats_ok=('오늘 접속' in home
-                    and '누적 기록' in home
-                    and '누적 전화클릭' in home
+                    and '누적 접속기록' in home
+                    and '전화버튼 클릭' in home
                     and 'id="traffic-call-trigger"' in home
                     and 'id="exclude-my-visits"' in home
                     and 'id="phone-source-list"' in home
