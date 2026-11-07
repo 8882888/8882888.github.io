@@ -56,7 +56,7 @@ const levels=[
 for(const [level,place,suffix,kind]of levels)check(level+' locality+company intent',async()=>{
  const d=await preview(place+suffix);assert.equal(d.status,'matched',level);
  assert.equal(d.region,place,level);assert.equal(d.cards.length,1);
- assert.equal(d.cards[0].kind,kind);assert.ok(d.cards[0].image.endsWith('-'+kind+'-brand-v5.png'));
+ assert.equal(d.cards[0].kind,kind);assert.ok(d.cards[0].image.endsWith('-'+kind+'-brand-v6.png'));
  const page=await get(d.cards[0].url);assert.equal(page.status,200);
  assert.ok(page.body.includes('id="regional-provider-keywords"'),level+' company guidance');
  assert.ok(page.body.includes('탁송업체·탁송회사')||page.body.includes('대리운전업체·대리운전회사'));
@@ -84,7 +84,7 @@ for(const [q,place,kind,slug,phone]of combinations)check('Combined '+q,async()=>
   const image=await get(d.cards[0].image);
   assert.equal(image.status,200,q);assert.match(image.headers.get('content-type'),/image\/svg\+xml/);
   assert.ok(image.body.includes(phone),q);
- }else assert.ok(d.cards[0].image.endsWith('-'+kind+'-brand-v5.png'),q);
+ }else assert.ok(d.cards[0].image.endsWith('-'+kind+'-brand-v6.png'),q);
 });
 for(const q of ['동구대리업체','광주탁송회사','광주법인카드대리운전'])
  check('Ambiguous '+q,async()=>{
