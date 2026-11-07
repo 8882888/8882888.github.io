@@ -178,8 +178,10 @@
       if(['success','error','timeout','invalid'].includes(state))metricPage='/fare/quote-'+state;
     }
     const payload={p_page:metricPage,p_source:acquisition()};
+    // Never retry a failed/uncertain write against a different counter.
+    // A lost response can occur after the server has already recorded the event;
+    // legacy fallback would count one tap twice and inflate conversion figures.
     rpc('site_phone_event',payload,{keepalive:true})
-      .catch(()=>rpc('site_click_stats',{p_phone:true},{keepalive:true}))
       .then(refresh).catch(()=>{});
   },true);
   window.addEventListener('focus',refresh);
