@@ -323,3 +323,52 @@ jobs:
               if not ok: failed.append(path)
           if failed: raise SystemExit('Live taksong page or sitemap checks failed: '+', '.join(failed))
           PYSEO
+      - name: Verify live five-priority customer funnel
+        env:
+          DEPLOYED_COMMIT: ${{ github.sha }}
+        run: |
+          python3 - <<'PYFIVE'
+          import json, os, time, urllib.request, xml.etree.ElementTree as ET
+          base='https://jeongukdaeri.kr'
+          commit=os.environ['DEPLOYED_COMMIT']
+          samples={}
+          def get(path):
+              url=base+path+('&' if '?' in path else '?')+'deploy-check='+commit
+              started=time.monotonic()
+              with urllib.request.urlopen(urllib.request.Request(url,headers={'Cache-Control':'no-cache','User-Agent':'Smart24-CI-Deploy-Smoke/1.0'}),timeout=12) as response:
+                  body=response.read().decode('utf-8')
+                  code=response.status
+              samples[path]={'http_status':code,'bytes':len(body.encode('utf-8')),'elapsed_s':round(time.monotonic()-started,3)}
+              if code!=200: raise ValueError(path+' HTTP '+str(code))
+              return body
+          home=get('/')
+          fare=get('/fare/')
+          busan=get('/taksong/busan/')
+          trace=get('/assets/traffic-analytics.js')
+          outcome=get('/assets/quote-outcome.js')
+          sitemap=get('/sitemap.xml')
+          quality=json.loads(get('/api/site-quality'))
+          locs=[x.text for x in ET.fromstring(sitemap).iter() if x.tag.endswith('loc')]
+          checks={
+             'home_quote_summary':'id="quote-success-summary-20261107"' in home,
+             'real_quote_states':all(x in fare for x in ('quoteState','quote-outcome.js','도로거리')),
+             'anonymous_quote_metrics':'site_quote_event' in outcome,
+             'phone_result_attribution':"metricPage='/fare/quote-'+state" in trace,
+             'regional_direct_quote':'id="regional-direct-route-quote-20261107"' in busan,
+             'regional_canonical':'https://jeongukdaeri.kr/taksong/busan/' in busan and '<link rel="canonical"' in busan,
+             'technical_sitemap':bool(locs) and len(locs)<=499 and len(locs)==len(set(locs)),
+             'ride_evidence':quality.get('checks',{}).get('historicalRideRecords')==2591,
+          }
+          print('Live HTTP/download samples (not phone Core Web Vitals):',json.dumps(samples,ensure_ascii=False))
+          print('Five priority smoke checks:',json.dumps(checks,ensure_ascii=False))
+          summary=os.environ.get('GITHUB_STEP_SUMMARY')
+          if summary:
+              with open(summary,'a',encoding='utf-8') as fp:
+                  fp.write('\n### Smart24 live five-priority audit\n')
+                  fp.write('| Test | Result |\n|---|---|\n')
+                  for name,ok in checks.items(): fp.write('| '+name+' | '+('PASS' if ok else 'FAIL')+' |\n')
+                  fp.write('\nHTTP download times below are CI-observed network timings, not mobile LCP/FCP.\n')
+                  for name,data in samples.items(): fp.write('- '+name+': '+str(data['elapsed_s'])+'s / '+str(data['bytes'])+' bytes\n')
+          failures=[name for name,ok in checks.items() if not ok]
+          if failures: raise SystemExit('Live five-priority smoke failed: '+', '.join(failures))
+          PYFIVE
