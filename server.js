@@ -2555,7 +2555,25 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  const primaryRegions=regions.filter(r=>r.level==='시도'||priorityByKey.has(service+'|'+r.full_name)||originalFocusNames.has(r.full_name)||(service==='taksong'&&focusTaksongAreas.has(r.full_name)));
  const primarySlugs=new Set(primaryRegions.map(r=>r.slug));
  const additionalCurated=regions.filter(r=>!primarySlugs.has(r.slug)&&focus50ByKey.has(service+'|'+r.full_name));
- const discoveryRegions=[...primaryRegions,...additionalCurated].slice(0,Math.max(0,500-baseRoutes.length));
+ // Interleave curated districts by all 17 provinces instead of filling the
+ // bounded discovery sitemap in registry/keyword insertion order.
+ const provinceNames=regions.filter(r=>r.level==='시도').map(r=>r.full_name);
+ const provinceBuckets=new Map(provinceNames.map(name=>[name,[]]));
+ const otherCurated=[];
+ for(const region of additionalCurated){
+  const province=provinceNames.find(name=>region.full_name.startsWith(name+' '));
+  if(province)provinceBuckets.get(province).push(region);
+  else otherCurated.push(region);
+ }
+ const nationwideCurated=[];
+ let more=true;
+ while(more){
+  more=false;
+  for(const bucket of provinceBuckets.values()){
+   if(bucket.length){nationwideCurated.push(bucket.shift());more=true}
+  }
+ }
+ const discoveryRegions=[...primaryRegions,...nationwideCurated,...otherCurated].slice(0,Math.max(0,500-baseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
  // Keep actual HTML region pages and all on-page images intact.
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+baseRoutes.map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
