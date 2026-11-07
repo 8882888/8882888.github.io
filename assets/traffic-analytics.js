@@ -157,7 +157,16 @@
     // Exclude owner/test calls on this browser without interrupting tel: navigation.
     if(isExcluded())return;
     // Do not cancel tel: navigation; analytics must never block calling.
-    const payload={p_page:location.pathname.slice(0,160),p_source:acquisition()};
+    // The source page is a categorical page label, not a route/address or a
+    // phone-call completion record. Distinguish calculator result buttons
+    // without collecting user-entered pickup/destination or query strings.
+    let metricPage=location.pathname.slice(0,160);
+    if(location.pathname==='/fare/'){
+      const el=document.getElementById('result');
+      const state=el&&el.dataset&&el.dataset.quoteState;
+      if(['success','error','timeout','invalid'].includes(state))metricPage='/fare/quote-'+state;
+    }
+    const payload={p_page:metricPage,p_source:acquisition()};
     rpc('site_phone_event',payload,{keepalive:true})
       .catch(()=>rpc('site_click_stats',{p_phone:true},{keepalive:true}))
       .then(refresh).catch(()=>{});
