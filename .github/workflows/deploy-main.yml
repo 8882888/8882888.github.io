@@ -70,7 +70,11 @@ jobs:
                     and 'smart24_explicit_quote_submit' in home
                     and 'smart24_explicit_quote_submit' in fare_page
                     and "preset.get('auto')==='1'" in fare_page
-                    and 'form.requestSubmit()' in fare_page)
+                    and 'form.requestSubmit()' in fare_page
+                    and all(('>'+term+'</a>') in home for term in
+                      ['대리비','대리비견적','탁송비','탁송견적','탁송비견적'])
+                    and all(term in fare_page for term in
+                      ['대리비','대리비견적','탁송비','탁송견적','탁송비견적']))
                   with urllib.request.urlopen(urllib.request.Request(
                       'https://jeongukdaeri.kr/?release-check='+os.environ['DEPLOYED_COMMIT'],
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
