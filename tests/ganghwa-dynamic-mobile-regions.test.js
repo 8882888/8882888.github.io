@@ -45,6 +45,17 @@ assert.equal(route('대구양도면대리운전'),null,'Do not invent geographic
 assert(code.includes('ganghwaTownTarget(searchIntent)||regionalServiceTarget(searchIntent)'), 'Homepage search intent must recognize county towns');
 assert(code.includes('ganghwaTownTarget(rawQuery)||regionalServiceTarget(rawQuery)'), 'Region search must recognize county towns');
 assert(code.includes('regionalVerifiedSubareaChooser(r,kind)+childLinks'), 'Both region service pages must expose county selection');
+assert(code.includes("if(pathname==='/api/region-card-preview'){")&&
+ code.includes('const townTarget=ganghwaTownTarget(query)')&&
+ code.includes("status:'matched',query,locality:'인천광역시 강화군 '+town"),
+ 'The interactive regional keyword preview must recognize official Ganghwa town searches');
+assert(code.includes("if(pathname==='/api/ganghwa-town-card.svg')")&&
+ code.includes("exactKeywordCard.render({keyword:q,region:'인천광역시 강화군',kind,phone:PHONE})"),
+ 'The preview image must display the exact validated locality and official number');
+assert(code.includes("url:townTarget,phone:PHONE,displayKeyword:query,"),
+ 'The dynamic preview must link customers to a canonical service/quote route');
+assert(code.includes("requested!==service")&&code.includes("status:'not_found'"),
+ 'Contradictory user-selected services must not return the wrong card');
 const history=JSON.parse(read('data/ride-history.json'));
 assert.equal(history.length,2591,'Keep the 2,591 original verified ride records unchanged');
 console.log('PASS official Ganghwa 13 unique areas, quote links, contextual search routes, no fictional local offices');
