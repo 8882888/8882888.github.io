@@ -10,6 +10,13 @@ const keyword=fare.indexOf('id="regional-route-keyword-search"');
 assert(main>0&&quote>main&&quote<keyword,'Fare form must precede long keyword guidance');
 assert(quote-main<100,'The fare form must be the first main content block');
 assert.equal(fare.split('id="quote-form"').length-1,1,'Only one quote form');
+const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
+assert(home.includes("sessionStorage.setItem('smart24_explicit_quote_submit',String(Date.now()))"),
+ 'Only an explicit home quote submission should permit automatic live distance lookup');
+assert(fare.includes("sessionStorage.removeItem('smart24_explicit_quote_submit')")&&
+ fare.includes("preset.get('auto')==='1'")&&fare.includes("Date.now()-stamp<120000")&&
+ fare.includes("form.requestSubmit()"),
+ 'A home customer quote must launch once on arrival, but copied/prefetched URLs must not auto-call the route API');
 assert(fare.includes('id="fare-mobile-consult-20261107"')&&fare.includes('class="fare-mobile-actions"'),
  'Mobile estimator must retain fixed quote and official phone actions');
 assert(fare.includes('result-contact-note')&&fare.includes('이 구간 요금·배차 전화상담 1811-4294'),
