@@ -113,6 +113,13 @@ jobs:
                     and any(x.get('full_name')=='부산광역시 해운대구'
                       and x.get('quote_url','').startswith('/fare/?service=taksong&from=')
                       for x in live_localities.get('items',[])))
+                  regional_direct_quote_ok=(
+                    'id="regional-direct-route-quote-20261107"' in page
+                    and 'id="regional-direct-route-quote-20261107"' in county_page
+                    and 'id="regional-direct-route-quote-20261107"' in seoul_page
+                    and 'name="from" value="부산광역시"' in page
+                    and 'name="auto" value="1"' in page
+                    and 'smart24_explicit_quote_submit' in page)
                   mobile_quote_ok=(
                     'id="homepage-mobile-first-20261107"' in home
                     and 'id="homepage-fare-form"' in home
@@ -151,7 +158,7 @@ jobs:
                     and '유입 경로 미확인' in tracker and 'acquisition();' in tracker)
                   region_stats_ok=('id="traffic-stats-panel"' in page
                     and 'id="exclude-my-visits"' in page)
-                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok and mobile_quote_ok and nationwide_dynamic_ok and locality_live_ok:
+                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok and mobile_quote_ok and nationwide_dynamic_ok and locality_live_ok and regional_direct_quote_ok:
                       print('PASS: live Cloudtype stats, region labels, phone actions, and regional hierarchy verified')
                       break
               except Exception:
