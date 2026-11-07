@@ -111,10 +111,13 @@
   async function refresh(){
     // The phone count beside the top-right number is lifetime clicks.
     // The two small counters below it are KST today and lifetime visits.
+    // Only the homepage displays quote success statistics. Do not create a
+    // third network request on thousands of regional pages or on the fare form.
+    const quoteLine=el('quote-success-summary-20261107');
     const [visits,phone,quoteSummary]=await Promise.allSettled([
       rpc('site_visit_stats',{p_record:false}),
       rpc('site_traffic_dashboard'),
-      rpc('site_quote_summary')
+      quoteLine?rpc('site_quote_summary'):Promise.resolve(null)
     ]);
     if(visits.status==='fulfilled'&&visits.value){
       put('today',visits.value.today_visits);
@@ -130,7 +133,6 @@
       }catch(_){put('phoneClicks',null);}
       drawSources(null);
     }
-    const quoteLine=el('quote-success-summary-20261107');
     if(quoteLine){
       const q=quoteSummary.status==='fulfilled'?quoteSummary.value:null;
       const attempts=Number(q&&q.total_attempts),success=Number(q&&q.success_attempts),failed=Number(q&&q.failed_attempts);
