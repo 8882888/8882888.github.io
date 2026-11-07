@@ -2232,6 +2232,17 @@ if(driverTravelMatch){const canonical='/daeri/travel/'+driverTravelMatch[1]+'/';
 if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return res.end()}
 if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
 if(pathname==='/route-taksong/centers/'||pathname==='/route-taksong/centers')return respond(res,200,require('./lib/cycling-centers').page(u.searchParams,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'}));
+// Lightweight nationwide locality autocomplete for the first mobile screen.
+// Exact legal names and links only; no user-level visit data or false dispatch claims.
+if(pathname==='/api/locality-suggest'){
+ const query=clean(u.searchParams.get('q')||'');
+ const requested=u.searchParams.get('service');
+ const kind=requested==='daeri'?'daeri':'taksong';
+ const items=nationwideExplorer.suggestions(query,{kind,limit:8});
+ res.setHeader('cache-control','private, no-store, max-age=0');
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ return respond(res,200,JSON.stringify({query,service:kind,items,notice:'실제 등록된 행정구역만 표시합니다. 지역 지점·즉시 배차나 요금 확정이 아닙니다.'}),'application/json; charset=utf-8');
+}
 if(pathname==='/api/region-card-preview'){
  const query=clean(u.searchParams.get('q')||'');
  const national=nationwideExplorer.resolve(query);
