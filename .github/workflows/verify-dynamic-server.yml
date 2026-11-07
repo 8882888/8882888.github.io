@@ -8,6 +8,8 @@ on:
       - 'data/regions.json'
       - 'data/ride-history.json'
       - 'tests/server.test.js'
+      - 'route-taksong/courses/**'
+      - 'assets/cycling-routes/**'
       - 'tests/traffic-analytics.test.js'
       - 'assets/traffic-analytics.js'
       - 'index.html'
