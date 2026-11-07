@@ -16,6 +16,19 @@ const search=home.indexOf('id="dynamic-service-card-search-20261103"');
 assert(search>0&&search<intro&&intro<firstFares,'Dynamic regional cards precede introduction and protected mountain fares');
 const quickFare=home.indexOf('id="homepage-fare-top"');
 const regionalDirectory=home.indexOf('id="smart24-kstyle-regional-categories-20261106"');
+const mobileNav=home.indexOf('<nav id="homepage-primary-services-20261106"');
+const fareFormEnd=home.indexOf('</section>',quickFare);
+assert(mobileNav>fareFormEnd&&mobileNav<regionalDirectory,
+ 'On a small screen the quote form must precede the five service menu links');
+assert(home.includes('id="homepage-mobile-first-20261107"')&&
+ home.includes('body>header .header-phone-actions .traffic-stats{display:none!important}')&&
+ home.includes('#homepage-primary-services-20261106 .homepage-primary-service-grid{display:flex!important;overflow-x:auto'),
+ 'Keep the first mobile viewport for quote actions instead of counters or five stacked navigation tiles');
+assert(home.includes('id="homepage-fare-form"')&&
+ home.includes('<input type="hidden" name="auto" value="1">')&&
+ home.includes("sessionStorage.setItem('smart24_explicit_quote_submit',String(Date.now()))"),
+ 'Homepage form needs explicit opt-in marker for the next-page automatic road quote');
+
 assert(quickFare>0&&regionalDirectory>quickFare&&regionalDirectory<search,
  'Mobile fare input must come before region directory and dynamic card search');
 const specialistNav=home.indexOf('id="four-driver-intents-20261103"');
