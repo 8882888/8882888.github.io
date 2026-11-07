@@ -785,7 +785,22 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const h=await get('/health');assert.equal(h.status,200);const health=await h.json();assert.equal(health.regions,regions.length);
   const keywordStatus=await (await get('/api/keyword-status')).json();assert.ok(keywordStatus.stored>200000);assert.equal(keywordStatus.searchExposure,'not-measured');
   for(const query of ['강화도맛집','강남맛집','설악산','영덕해맞이공원']){
-   const response=await get('/keyword-search/?q='+encodeURIComponent(query));assert.equal(response.status,200);assert.equal(response.headers.get('x-robots-tag'),'noindex, follow');const html=await response.text();assert.ok(/href="\/(?:daeri|taksong|visit|place)\//.test(html),'keyword must link to a real website destination: '+query);
+   const requestPath='/keyword-search/?q='+encodeURIComponent(query);
+   const raw=await fetch('http://127.0.0.1:'+port+requestPath,{redirect:'manual'});
+   if([301,302].includes(raw.status)){
+    // A dedicated destination remains indexable; search-result pages alone are noindex.
+    const target=raw.headers.get('location')||'';
+    assert.ok(target.startsWith('/')&&!target.startsWith('//'),'keyword redirects only to a local page: '+query);
+    const dest=await get(target);
+    assert.equal(dest.status,200,'keyword destination is valid: '+query);
+    const html=await dest.text();
+    assert.ok(html.includes('1811-4294')&&html.includes('rel="canonical"'),'redirect landing offers booking: '+query);
+   }else{
+    assert.equal(raw.status,200,'keyword search returns a real page: '+query);
+    assert.equal(raw.headers.get('x-robots-tag'),'noindex, follow','query result noindex: '+query);
+    const html=await raw.text();
+    assert.ok(/href="\\/(?:daeri|taksong|visit|place)\\//.test(html),'keyword links to a real destination: '+query);
+   }
   }
   const categoryHtml=await (await get('/keyword-search/?category='+encodeURIComponent('맛집'))).text();assert.ok(categoryHtml.includes('맛집·식당 방문 후 대리운전'));assert.ok(categoryHtml.includes('/assets/smart24-daeri-brand.png'));assert.ok(categoryHtml.includes('activity-feature'));assert.ok(!categoryHtml.includes('자동 갱신 현황'));assert.ok(!categoryHtml.includes('20,562'));
   for(const p of ['/activities/','/activities/food/','/activities/hiking/','/activities/cycling/']){const r=await get(p);assert.equal(r.status,200);const h=await r.text();assert.ok(h.includes('index,follow,max-image-preview:large'));assert.ok(h.includes('property="og:image"'));const activityImage=h.match(/property="og:image" content="https:\/\/example.com([^"]+)/)[1];assert.ok(h.includes('src="'+activityImage+'"'),'advertised card must be visible on category page');assert.ok(h.includes('tel:18114294'));assert.ok(!h.includes('자동 갱신 현황'));assert.ok(!h.includes('20,562'));assert.ok(h.includes('href="https://example.com'+p+'"'));}
