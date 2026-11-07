@@ -92,7 +92,7 @@ async function main(){
     const page=await request(port,route);
     assert.equal(page.status,200,'cycling course route '+route);
     assert(page.body.includes(label+'자전거종주탁송'),'Missing original cycling course text '+route);
-    assert(page.body.includes('/assets/cycling-routes/'+id.replace('nakdonggang','nakdong')+'-taksong.svg')&&page.body.includes('cycling-course-primary-visual'),'Course-specific original reference illustration must be visible '+route);
+    assert(page.body.includes('<img src="/assets/cycling-routes/'+id+'-taksong.svg"')&&page.body.includes('실제 고객 차량 운행 사진이 아닙니다.'),'Course-specific source illustration needs honest provenance '+route);
     assert(page.body.includes('1811-4294'),'Original consultation line missing '+route);
   }
   // Dynamic, automatically scaled region cards must be visible near the first
