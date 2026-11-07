@@ -45,7 +45,7 @@ jobs:
           DEPLOYED_COMMIT: ${{ github.sha }}
         run: |
           python3 - <<'PYVERIFY'
-          import os,time,urllib.request
+          import os,time,json,urllib.request,urllib.parse
           url='https://jeongukdaeri.kr/taksong/busan/?release-check='+os.environ['DEPLOYED_COMMIT']
           for attempt in range(24):
               try:
@@ -59,6 +59,22 @@ jobs:
                       daegu_page=response.read().decode('utf-8')
                   regional_brand_ok=('대구스마트대리운전' not in daegu_page
                     and '<figcaption style="text-align:center">대구대리운전 ·' in daegu_page)
+                  with urllib.request.urlopen(urllib.request.Request(
+                      'https://jeongukdaeri.kr/daeri/incheon/ganghwa-gun/?release-check='+os.environ['DEPLOYED_COMMIT'],
+                      headers={'Cache-Control':'no-cache'}),timeout=10) as response:
+                      ganghwa_page=response.read().decode('utf-8')
+                  ganghwa_query=urllib.parse.quote('강화군양도면대리운전')
+                  with urllib.request.urlopen(urllib.request.Request(
+                      'https://jeongukdaeri.kr/api/region-card-preview?q='+ganghwa_query,
+                      headers={'Cache-Control':'no-cache'}),timeout=10) as response:
+                      ganghwa_preview=json.loads(response.read().decode('utf-8'))
+                  official_towns=['강화읍','선원면','불은면','길상면','화도면','양도면','내가면','하점면','양사면','송해면','교동면','삼산면','서도면']
+                  ganghwa_dynamic_ok=('id="official-county-subareas-20261107"' in ganghwa_page
+                    and all((town+'대리운전 요금조회</a>') in ganghwa_page for town in official_towns)
+                    and ganghwa_preview.get('status')=='matched'
+                    and ganghwa_preview.get('service')=='daeri'
+                    and ganghwa_preview.get('locality')=='인천광역시 강화군 양도면'
+                    and any('/api/ganghwa-town-card.svg?' in card.get('image','') for card in ganghwa_preview.get('cards',[])))
                   with urllib.request.urlopen(urllib.request.Request(
                       'https://jeongukdaeri.kr/fare/?release-check='+os.environ['DEPLOYED_COMMIT'],
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
@@ -105,7 +121,7 @@ jobs:
                     and '유입 경로 미확인' in tracker and 'acquisition();' in tracker)
                   region_stats_ok=('id="traffic-stats-panel"' in page
                     and 'id="exclude-my-visits"' in page)
-                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok and mobile_quote_ok:
+                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok and mobile_quote_ok and ganghwa_dynamic_ok:
                       print('PASS: live Cloudtype stats, region labels, phone actions, and regional hierarchy verified')
                       break
               except Exception:
