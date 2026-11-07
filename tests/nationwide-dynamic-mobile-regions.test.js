@@ -83,14 +83,16 @@ for(const keyword of ['중구대리운전','고성군대리운전','대구양도
 const server=read('server.js');
 for(const phrase of [
  "createNationwideLocalityExplorer({regions,bySlug,childrenByParent,servicePath,escapeHtml:esc})",
- "regionalNationwideSubareaChooser(r,kind)+",
+ "const nationwideSubareaChoices=regionalNationwideSubareaChooser(r,kind);",
  "nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)",
  "const nationalDirect=rawQuery?nationwideExplorer.resolve(rawQuery):null",
  "const national=nationwideExplorer.resolve(query)",
  "if(pathname==='/api/nationwide-locality-card.svg')"
 ])assert(server.includes(phrase),'Missing nationwide server integration: '+phrase);
-assert(server.indexOf('regionalNationwideSubareaChooser(r,kind)+')<
+assert(server.indexOf('  nationwideSubareaChoices+')<
  server.indexOf("'<h3>공개된 실제 완료 운행 '+distinct.length"),'Mobile town chooser must appear above long ride lists');
+assert(server.includes('const childLinks=!nationwideSubareaChoices&&related.length?'),
+ 'Do not duplicate nearby region links when the full nationwide selector is shown');
 assert(!server.includes('ganghwaTownTarget('),'No special county-only query routing may survive');
 assert(server.includes("location:target.startsWith('/fare/?')?target:encodeURI(target)"),
  'Protect query-string percent encodings from double encoding');
