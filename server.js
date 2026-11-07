@@ -1880,6 +1880,7 @@ function publicSiteQuality(){
   scope:'Repository-level structural checks only; no claim about live uptime, page speed, search ranking, bookings, or revenue.'
  };
 }
+const regionSearchCache=new Map(); // Shared bounded regional search cache across requests.
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
 if(pathname==='/api/site-quality'){
@@ -2482,9 +2483,8 @@ if(pathname==='/sitemap.xml'){
 }
 const intentMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/(fare|long-distance|handover)\/?$/);
 if(intentMatch){const [,kind,regionPath,topic]=intentMatch,r=byPath.get(regionPath);if(!r||!regionalIntentSlugs.has(r.slug)||!regionalIntentTypes[kind].includes(topic))return respond(res,404,'지역별 이용 안내를 찾을 수 없습니다.');const target=regionalIntentPath(r,kind,topic);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,regionalIntentPage(r,kind,topic))}
-const regionSearchCache=new Map(); // Short-lived bounded cache; no keyword pages are generated.
 // Live Supabase regional keyword lookup; database remains authoritative and is not bundled into builds.
-if(pathname==='/region-live/'||pathname==='/region-live'){
+if(pathname==='/region-live/'||pathname==='/region-live'){return (async()=>{
  const q=String(u.searchParams.get('q')||'').trim().slice(0,75);
  const form='<form method="get" action="/region-live/"><label>지역·서비스 검색 <input name="q" maxlength="75" value="'+esc(q)+'" placeholder="예: 부산탁송, 역삼동대리" required></label><button type="submit">실시간 조회</button></form>';
  let rows='',notice='지역명과 탁송·대리운전·대리를 입력해 검색하세요.';
@@ -2499,7 +2499,7 @@ if(pathname==='/region-live/'||pathname==='/region-live'){
  }
  const body='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>전국 읍면동리 실시간 탁송·대리운전 검색 | 스마트24</title></head><body><main style="max-width:760px;margin:30px auto;padding:20px;font:17px/1.7 sans-serif"><h1>전국 읍·면·동·리 탁송·대리운전 실시간 검색</h1>'+form+'<p>'+esc(notice)+'</p><ul>'+rows+'</ul><p><a href="/region/">전체 지역 안내</a> · <a href="tel:18114294">상담 1811-4294</a></p><p>실제 기사 배정과 요금은 지역·시간·기사 수급에 따라 확인됩니다.</p></main></body></html>';
  return respond(res,200,body,'text/html; charset=utf-8');
-}
+})().catch(err=>{console.error('region-live handler error',err);return respond(res,500,'지역 검색 오류')})}
 const hierarchicalMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/?$/);
 if(hierarchicalMatch){const r=byPath.get(hierarchicalMatch[2]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');const target=servicePath(r,hierarchicalMatch[1]);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return servicePage(r,hierarchicalMatch[1]).then(html=>respond(res,200,html)).catch(err=>{console.error('regional page error',err);respond(res,500,'페이지 생성 오류')})}
 const serviceMatch=pathname.match(/^\/service\/(area-[0-9]+)\/(daeri|taksong)\/?$/);if(serviceMatch){const r=bySlug.get(serviceMatch[1]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');res.writeHead(301,{location:servicePath(r,serviceMatch[2])});return res.end()}
