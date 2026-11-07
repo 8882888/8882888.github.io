@@ -92,7 +92,7 @@ async function main(){
     const page=await request(port,route);
     assert.equal(page.status,200,'cycling course route '+route);
     assert(page.body.includes(label+'자전거종주탁송'),'Missing original cycling course text '+route);
-    assert(!page.body.includes('/assets/cycling-routes/')&&!page.body.includes('cycling-course-primary-visual'),'Illustration must not return to cycling guide '+route);
+    assert(page.body.includes('/assets/cycling-routes/'+id.replace('nakdonggang','nakdong')+'-taksong.svg')&&page.body.includes('cycling-course-primary-visual'),'Course-specific original reference illustration must be visible '+route);
     assert(page.body.includes('1811-4294'),'Original consultation line missing '+route);
   }
   // Dynamic, automatically scaled region cards must be visible near the first
@@ -101,7 +101,7 @@ async function main(){
     const page=await request(port,route);
     assert.equal(page.status,200,'regional dynamic card page '+route);
     const kind=route.startsWith('/taksong/')?'taksong':'daeri';
-    const match=page.body.match(new RegExp('src="(/card/area-[0-9]+-'+kind+'-brand-v5\\.png)"'));
+    const match=page.body.match(new RegExp('src="(/card/area-[0-9]+-'+kind+'-brand-v6\\.png)"'));
     assert(match,'missing automatically generated regional PNG: '+route);
     assert(page.body.includes('property="og:image" content="https://jeongukdaeri.kr'+match[1]+'"'),'region OG image not matching visible card '+route);
     assert(page.body.includes('href="'+match[1]+'" target="_blank"'),'regional card not tap-to-enlarge '+route);
@@ -116,7 +116,7 @@ async function main(){
   const preview=await request(port,'/region/?q='+encodeURIComponent('강릉'));
   assert.equal(preview.status,200);
   assert(preview.body.includes('class="dynamic-region-card-preview" open'),'Gangneung should auto-expand the correct card');
-  assert(preview.body.includes('-taksong-brand-v5.png'),'preview should use region-specific v3 PNG');
+  assert(preview.body.includes('-taksong-brand-v6.png'),'preview should use region-specific v6 PNG');
   const cycleHub=await request(port,'/route-taksong/');
   assert.equal(cycleHub.status,200);
   assert(cycleHub.body.includes('id="cycling-visible-fare-table-20261103"'),'cycling hub lost its visible fare table');
