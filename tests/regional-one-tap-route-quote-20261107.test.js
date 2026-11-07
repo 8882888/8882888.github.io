@@ -37,6 +37,10 @@ for(const r of samples)for(const kind of ['daeri','taksong']){
  const f=html.indexOf('id="regional-direct-route-quote-20261107"'),sub=html.indexOf('id="test-national-subarea"'),review=html.indexOf('공개된 실제 완료 운행');
  assert(f>0&&f<sub&&sub<review,'One-step regional route entry must precede lists and ride history');
 }
+assert(server.includes("const caption='<figcaption style=\\\"text-align:center\\\">'+esc(displayBrand)+' · 출발지·도착지 확인 후"),
+ 'Regional card captions must use natural locality/service labels');
+assert(!server.includes("esc(seoRegionLabel(r)+' '+serviceBrand(kind))"),
+ 'Do not duplicate city-plus-brand boilerplate in service card captions');
 assert(fare.includes("preset.get('auto')==='1'")&&fare.includes("stamp>0&&Date.now()>=stamp")&&fare.includes('form.requestSubmit()'),
  'Fare page must auto-calculate only after a recent explicit submit');
 assert.equal(JSON.parse(read('data/ride-history.json')).length,2591,
