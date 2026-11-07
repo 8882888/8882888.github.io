@@ -512,7 +512,7 @@ html{scroll-padding-top:95px}
 .keyword-service-shortcuts{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.keyword-service-shortcuts a{display:inline-flex;min-height:44px;align-items:center;padding:8px 12px;background:#fff;border:1px solid #b8cee5;border-radius:8px;color:#13446b;font-weight:800;text-decoration:none}
 @media(max-width:680px){.keyword-service-form{grid-template-columns:1fr}.keyword-service-form button{width:100%}.keyword-service-shortcuts a{flex:1 1 44%;justify-content:center;text-align:center}}
 </style>
-<style id="homepage-mobile-personal-corporate-20261107">@media(max-width:420px){#mobile-personal-corporate-choice-20261107{margin:8px 3%;padding:12px 3%!important}#mobile-personal-corporate-choice-20261107 .mobile-customer-choice-grid{grid-template-columns:minmax(0,1fr)!important}#mobile-personal-corporate-choice-20261107 a{min-height:48px!important}}#mobile-personal-corporate-choice-20261107 a:focus-visible{outline:3px solid #e69c00;outline-offset:2px}</style><style id="homepage-mobile-first-20261107">
+<style id="homepage-mobile-first-20261107">
 /* Prioritize the quote form above service browsing on narrow devices. */
 @media(max-width:700px){
  body>header{padding:8px 4%!important}
@@ -572,14 +572,6 @@ html{scroll-padding-top:95px}
 if(!quote)return;
 quote.addEventListener('submit',()=>{try{sessionStorage.setItem('smart24_explicit_quote_submit',String(Date.now()))}catch(_){}});})();
 </script>
-<section id="mobile-personal-corporate-choice-20261107" aria-label="개인 고객과 법인 담당자 빠른 선택" style="max-width:1160px;margin:10px auto;padding:12px 4%;background:#f7fbff;border:1px solid #d4e3f3;border-radius:12px">
-<h2 style="font-size:clamp(18px,2.5vw,23px);margin:0 0 6px;color:#163b65">이용 목적에 맞게 바로 확인하세요</h2>
-<div class="mobile-customer-choice-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px">
-<a href="#homepage-fare-top" style="min-height:50px;display:flex;align-items:center;justify-content:center;border-radius:9px;padding:9px;background:#0754a0;color:#fff;font-weight:900;text-align:center;text-decoration:none">개인 고객 · 대리비·탁송비 조회</a>
-<a href="/service/corporate/#corporate-first-action-20261105" style="min-height:50px;display:flex;align-items:center;justify-content:center;border-radius:9px;padding:9px;background:#fff;color:#0754a0;border:1px solid #91b8dd;font-weight:900;text-align:center;text-decoration:none">기업 담당자 · 법인 계약 상담</a>
-</div>
-<p style="font-size:13px;line-height:1.5;margin:8px 0 0;color:#42566d">일반 견적은 참고요금이며 법인 후불·정산 조건과 기사 배차는 상담 및 계약 협의 후 확인됩니다.</p>
-</section>
 <section id="smart24-kstyle-regional-categories-20261106" aria-label="전국 주요 지역 대리운전과 자동차탁송" class="smart24-kstyle-regions">
  <div class="smart24-kstyle-regions-inner">
   <h2>지역별 대리운전 · 자동차탁송 바로 찾기</h2>
