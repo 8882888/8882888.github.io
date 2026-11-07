@@ -1030,10 +1030,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert(html.includes('class="dynamic-region-card-preview" open'),'unique region should auto-expand: '+q);
     assert(html.includes(label),'regional search lacks '+label);
   }
-  const inferredServiceKeyword=await (await get('/region/?q='+encodeURIComponent('부산대리운전'))).text();
-  assert.ok(inferredServiceKeyword.includes('class="dynamic-region-card-preview" open'),'region+대리운전 query automatically expands an exact-locality driver card');
-  assert.ok(inferredServiceKeyword.includes('id="region-card-keyword-form"')&&inferredServiceKeyword.includes('name="service"'),'dynamic search has an explicit service selector');
+  // An unambiguous region+service keyword is redirected straight to its canonical
+  // service landing; only the unsuffixed region query needs the inline directory.
+  const inferredDriverResponse=await get('/region/?q='+encodeURIComponent('부산대리운전'));
+  const inferredServiceKeyword=await inferredDriverResponse.text();
+  assert.equal(new URL(inferredDriverResponse.url).pathname,'/daeri/busan/','typed driver keyword opens correct locality service page');
   assert.ok(/\/card\/area-\d+-daeri-brand-v6\.png/.test(inferredServiceKeyword)&&!inferredServiceKeyword.includes('/card/area-494-taksong-brand-v6.png'),'typed driver keyword must not show a taksong card');
+  assert.ok(inferredServiceKeyword.includes('부산스마트대리운전')&&inferredServiceKeyword.includes('href="tel:18114294"'),'canonical landing retains exact driver label and phone');
   const cityBoth=(await (await get('/region/?q='+encodeURIComponent('부산'))).text());
   assert.ok(/\/card\/area-\d+-daeri-brand-v6\.png/.test(cityBoth)&&/\/card\/area-\d+-taksong-brand-v6\.png/.test(cityBoth),'unqualified region displays two different service images');
   const requestedTaksong=(await (await get('/region/?q='+encodeURIComponent('울산')+'&service=taksong')).text());
