@@ -4,6 +4,8 @@ const vm=require('node:vm');
 const fs=require('node:fs');
 const path=require('node:path');
 const script=fs.readFileSync(path.join(__dirname,'../assets/traffic-analytics.js'),'utf8');
+assert.ok(script.includes("quoteLine?rpc('site_quote_summary'):Promise.resolve(null)"),
+ 'The nationwide location pages must not fetch homepage-only quote metrics');
 const pending={};
 function el(id){
  if(pending[id])return pending[id];
