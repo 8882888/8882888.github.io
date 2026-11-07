@@ -2519,6 +2519,9 @@ if(pathname==='/sitemap.xml'){
  // All historic URLs remain reachable; this is a crawl-discovery change only.
  const provinceRegions=regions.filter(r=>r.level==='시도');
  const focused=[
+  // Give every province equal crawl-discovery priority before city-specific guides.
+  '/','/coverage/','/region/','/daeri/','/taksong/',
+  ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
   '/region/innovation-cities/',...innovationFocusEntries.map(x=>servicePath(regionByFullName.get(x.region),x.kind)),
   '/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],
   '/daeri/sejong/','/taksong/sejong/','/daeri/gangwon/wonju-si/','/taksong/gyeongnam/jinju-si/','/daeri/jeonnam/naju-si/','/taksong/gyeongbuk/gimcheon-si/',
@@ -2537,7 +2540,6 @@ if(pathname==='/sitemap.xml'){
   '/business/auction/','/business/scrapyard/','/business/export-port/',
   ...placeCategories.map(x=>'/places/'+encodeURIComponent(x[0])+'/'),
   ...vehicleTopics.map(([name])=>vehicleTopicPath(name)),
-  ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
   ...priorityRegionalPages.map(p=>servicePath(regionByFullName.get(p.region),p.kind)),
   '/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),
   '/blog/archive/categories/',
