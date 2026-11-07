@@ -2276,7 +2276,18 @@ if(pathname==='/region/'){
  const rawQuery=clean(u.searchParams.get('q')||'');
  // Legacy region search links must obey the same explicit service and course intent.
  const directTopic=rawQuery?keywordExpansion.resolve(rawQuery):null;
- const directTarget=rawQuery?(mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
+ // Preserve exact locality+specialty images in the regional search instead of
+ // redirecting 김포화물차탁송 to a generic nationwide type information page.
+ const normalizedCompound=compact(keywordExpansion.normalizeCompanyKeyword(rawQuery));
+ const compoundExactLocality=Boolean(directTopic&&['daeri','taksong'].includes(directTopic.kind)&&
+  directTopic.image&&directTopic.image.startsWith('/keyword-card/')&&
+  Array.isArray(directTopic.terms)&&directTopic.terms.some(term=>{
+   const suffix=compact(term);
+   if(!suffix||!normalizedCompound.endsWith(suffix)||normalizedCompound.length<=suffix.length)return false;
+   const candidates=resolvedLiveCardAliases(normalizedCompound.slice(0,-suffix.length));
+   return candidates.length===1&&Boolean(exactRegionalKeywordCard(candidates[0],directTopic.kind,rawQuery));
+  }));
+ const directTarget=rawQuery?(mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(!compoundExactLocality&&directTopic&&directTopic.url)):null;
  if(directTarget){res.writeHead(302,{location:encodeURI(directTarget),'cache-control':'no-store'});return res.end()}
  const requestedService=u.searchParams.get('service');
  // Strip only a trailing service name. A typed keyword like 부산대리운전
