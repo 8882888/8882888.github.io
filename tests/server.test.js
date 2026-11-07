@@ -1161,7 +1161,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('href="tel:18114294"'),'service card retains the representative phone');
    const svg=await (await get(card[1].replace('.png','.svg'))).text();
    const expectedBrand=service==='daeri'?'스마트전국대리운전':'스마트24시전국탁송';
-   const expectedCardLabel=service==='daeri'?'서울스마트대리운전':'서울전국탁송';
+   const expectedCardLabel=service==='daeri'?'서울대리운전':'서울탁송';
    assert.ok(svg.includes(expectedCardLabel),'service-card heading must show the actual Seoul locality and right service');
    const caption=html.match(/<figcaption[^>]*>(.*?)<\/figcaption>/)[1];assert.ok(caption.includes(expectedBrand),'caption identifies the same service as the displayed card');
    const visibleLabels=svg.replace(/<image[^>]+\/>/g,'');
