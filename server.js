@@ -1389,6 +1389,22 @@ const quickRegions=regionQuickNames.map(n=>regions.find(r=>r.name===n||r.full_na
 function regionServiceLinks(items,kind){const label=kind==='taksong'?'탁송':'대리운전';return '<ul class="region-service-links">'+items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(seoRegionLabel(r)+label)+'</a></li>').join('')+'</ul>'}
 function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=childrenByParent.get(r.slug)||[];return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
 
+function homepageCampingDriverLinks(){
+ // Camping-ground intent links to existing city-level driver pages only.
+ const areas=[
+  ['서울특별시','서울'],['인천광역시','인천'],['경기도','경기'],
+  ['강원특별자치도','강원도'],['충청북도','충북'],['충청남도','충남'],
+  ['대전광역시','대전'],['세종특별자치시','세종'],
+  ['전북특별자치도','전북'],['전라남도','전남'],['광주광역시','광주'],
+  ['경상북도','경북'],['경상남도','경남'],['부산광역시','부산'],
+  ['대구광역시','대구'],['울산광역시','울산'],['제주특별자치도','제주도']
+ ];
+ const links=areas.map(([full,name])=>{
+  const r=regions.find(x=>x.full_name===full);
+  return r?'<li><a href="'+esc(servicePath(r,'daeri'))+'">'+esc(name+'캠핑장대리운전')+'</a></li>':'';
+ }).filter(Boolean).join('');
+ return '<section id="camping-driver-keywords" aria-label="전국 캠핑장 대리운전"><h2>캠핑장대리운전 · 전국캠핑장대리운전</h2><p>전국 캠핑장대리운전, 캠핑장대리운전예약, 캠핑장야간대리운전, 캠핑장심야대리운전, 캠핑장장거리대리운전, 오토캠핑장대리운전, 글램핑장대리운전, 카라반캠핑장대리운전 등 캠핑장 출발 대리운전 상담을 안내합니다. 캠핑장별 실제 배차 가능 여부는 지역과 시간에 따라 확인이 필요합니다.</p><p>캠핑장 주소와 출입구 위치, 출발 예정 시간, 목적지, 동승 인원, 야간 출차 제한을 알려주시면 상담에 도움이 됩니다. 특정 캠핑장 배차 이력이나 요금은 확인 없이 표시하지 않습니다.</p><h3>지역별 캠핑장 대리운전 찾기</h3><ul>'+links+'</ul></section>';
+}
 function homepageFocusTenLinks(){
  // Only existing, fully-qualified administrative regions. Never alter overlapping names or create URLs.
  const focus=[
@@ -1419,7 +1435,7 @@ function homepagePriorityLinks(){
   }).join('');
   return '<div><h3>지역별 '+label+' 안내</h3><ul>'+links+'</ul></div>';
  }).join('');
- return homepageFocusTenLinks()+'<section id="home-priority-regions"><h2>지역 + 탁송 · 대리운전 · 대리 서비스 찾기</h2><p>지역별 자동차탁송과 대리운전 정보를 자동 연결합니다. 지역명+대리 검색어는 같은 대리운전 안내 페이지로 연결하여 중복 페이지를 만들지 않습니다. 실제 배차·요금은 상담으로 확인합니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+groups+'</div><p><a href="/region/">읍·면·동 지역별 서비스 전체 찾기</a> · <a href="/fare/">출발·도착 예상요금</a></p></section>';
+ return homepageFocusTenLinks()+homepageCampingDriverLinks()+'<section id="home-priority-regions"><h2>지역 + 탁송 · 대리운전 · 대리 서비스 찾기</h2><p>지역별 자동차탁송과 대리운전 정보를 자동 연결합니다. 지역명+대리 검색어는 같은 대리운전 안내 페이지로 연결하여 중복 페이지를 만들지 않습니다. 실제 배차·요금은 상담으로 확인합니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+groups+'</div><p><a href="/region/">읍·면·동 지역별 서비스 전체 찾기</a> · <a href="/fare/">출발·도착 예상요금</a></p></section>';
 }
 function nationwideLinks(){return '<section id="nationwide-service-links" aria-label="전국 지역별 서비스"><h2>전국 지역별 탁송·대리운전 바로가기</h2><p><a href="/fare/routes/">전국 1,000개 구간 예상요금·예약 안내</a></p><p>전국 주요 도시의 개별 안내 페이지로 이동합니다. 실제 기사 배정과 요금은 출발지·목적지·시간에 따라 상담 후 확인합니다.</p><h3>전국 대리운전 지역 안내</h3>'+regionServiceLinks(quickRegions,'daeri')+'<h3>전국 자동차탁송 지역 안내</h3>'+regionServiceLinks(quickRegions,'taksong')+'<p><a href="/taksong/types/">차종·톤급·서비스센터별 탁송 안내</a> · <a href="/region/">전국 읍·면·동 상세 지역 찾기</a></p><p><a href="/taksong/">전국 탁송 지역 전체 보기</a> · <a href="/daeri/">전국 대리운전 지역 전체 보기</a></p></section>'}
 const featuredTaksongRoutes=[
