@@ -11,8 +11,8 @@ const regional=home.indexOf('id="smart24-kstyle-regional-categories-20261106"');
 const fare=home.indexOf('id="homepage-fare-top"');
 const find=home.indexOf('id="keyword-service-navigation-20261106"');
 const liveCard=home.indexOf('id="dynamic-service-card-search-20261103"');
-assert(nav>0&&regional>nav&&fare>regional&&liveCard>fare&&hero>liveCard&&reviews>hero&&find>reviews,
- 'Keep first-screen five services, real region choice, fare, dynamic card search, verified reviews and keyword routing');
+assert(nav>0&&fare>nav&&regional>fare&&liveCard>regional&&hero>liveCard&&reviews>hero&&find>reviews,
+ 'Keep first-screen five services, fare before region choice, dynamic card search, verified reviews and keyword routing');
 const primary=home.slice(home.indexOf('<nav id="homepage-primary-services-20261106"'),home.indexOf('</nav>',nav));
 for(const href of ['/daeri/','/taksong/','/service/corporate/','/service/golf/','/service/long-distance-daeri/'])assert(primary.includes('href="'+href+'"'),'Missing customer service: '+href);
 assert.equal((home.match(/<h1>/g)||[]).length,1,'One visible document H1 required');
