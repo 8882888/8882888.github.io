@@ -82,6 +82,8 @@ jobs:
         run: node tests/national-authority-homepage.test.js
       - name: Protect homepage image, booking actions, fares, dynamic cards and 2,591 rides
         run: node tests/homepage-conversion-regression.test.js
+      - name: Verify Seoraksan mountain transport cost, six source fares, and mobile quote CTA
+        run: node tests/seoraksan-cost-mobile-20261107.test.js
       - name: Validate all 2,591 historical ride links and quote paths
         run: node tests/review-archive-link-integrity-2591.test.js
       - name: Verify 300 unresolved ride records against legal regions
