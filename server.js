@@ -2330,7 +2330,8 @@ if(pathname==='/region/'){
  return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section><h2>전국 지역·코스·서비스 키워드별 자동 이미지</h2><p>부산대리운전·부산렌트카탁송·영산강길종주탁송·설악산탁송·골프장대리운전 등 키워드마다 해당 지역·코스·서비스의 이미지를 자동 표시합니다. 이미지를 누르거나 확대 링크로 크게 볼 수 있습니다.</p>'+form+'<div class="region-card-live" data-card-preview-output hidden aria-label="지역별 실시간 명함 미리보기"></div><p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/').replace('</head>','<link rel="stylesheet" href="/assets/region-card-preview.css?v=20261103-keyword3"></head>').replace('</body>','<script src="/assets/region-card-preview.js?v=20261106-traverse-information" defer></script></body>'),'/region/'));
 }
 const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
- const previewWebpMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand-v5\.webp$/);
+ // Keep the live-card API's v6 preview URL aligned with the WebP route (v5 stays supported for cached pages).
+ const previewWebpMatch=pathname.match(/^\/card\/(area-[0-9]+)-(daeri|taksong)-brand-v[56]\.webp$/);
  if(previewWebpMatch){
   const [,slug,kind]=previewWebpMatch,r=bySlug.get(slug);
   if(!r)return respond(res,404,'명함을 찾을 수 없습니다');
