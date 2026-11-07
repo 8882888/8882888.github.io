@@ -1061,8 +1061,8 @@ async function servicePage(r,kind){
    const parent=r.parent_slug?bySlug.get(r.parent_slug):null;
    const label=seoRegionLabel(r),canonicalUrl='https://'+host+servicePath(r,kind);
    const parentLink=parent?'<a href="'+esc(servicePath(parent,kind))+'">'+esc(seoRegionLabel(parent)+service)+' 상위 지역 안내</a> · ':'';
-   const quick='<main id="source-empty-village-20261107" style="max-width:780px;margin:auto;padding:16px">'+
-    '<section style="border:1px solid #bdd5ea;border-radius:12px;padding:16px;background:#f6faff"><h1>'+esc(label+service)+' 차량 위치·예상요금 안내</h1>'+
+   const quick='<section id="source-empty-village-20261107" style="max-width:780px;margin:auto;padding:16px">'+
+    '<div style="border:1px solid #bdd5ea;border-radius:12px;padding:16px;background:#f6faff"><h1>'+esc(label+service)+' 차량 위치·예상요금 안내</h1>'+
     '<p>'+esc(r.full_name)+'은 등록된 행정구역입니다. 이곳의 완료 운행내역은 현재 확인되지 않았으므로 다른 지역 후기나 가격을 이 지역의 실적처럼 표시하지 않습니다.</p>'+
     '<p>'+(kind==='taksong'?'차량 인수·인계 장소와 차종, 열쇠 전달 및 희망 시각을 확인해 주세요.':'기사와 만날 정확한 주차 위치, 도착지, 출발 시간, 경유 여부를 알려주세요.')+'</p>'+
     '<form action="/fare/" method="get" id="village-direct-quote-20261107"><input type="hidden" name="service" value="'+kind+'"><input type="hidden" name="auto" value="1">'+
@@ -1071,7 +1071,7 @@ async function servicePage(r,kind){
     '<button type="submit" style="min-height:48px;padding:12px;background:#0754a0;color:white;border:0;border-radius:9px;font-weight:900">출발·도착 예상요금 조회</button></form>'+
     '<script>(function(){var f=document.getElementById("village-direct-quote-20261107");if(f)f.addEventListener("submit",function(){try{sessionStorage.setItem("smart24_explicit_quote_submit",String(Date.now()))}catch(_){}})})();</script>'+
     '<p><small>행정구역명은 실제 주소가 아닐 수 있습니다. 정확한 주차장·도로명주소로 수정해 조회하세요. 현재 요금·배차 가능 여부는 상담 후 확정합니다.</small></p>'+
-    '<p>'+parentLink+'<a href="/reviews/history/?kind='+kind+'">실제 운행기록 확인</a> · <a href="tel:18114294">☎ 상담 1811-4294</a></p></section></main>';
+    '<p>'+parentLink+'<a href="/reviews/history/?kind='+kind+'">실제 운행기록 확인</a> · <a href="tel:18114294">☎ 상담 1811-4294</a></p></div></section>';
    return layout(label+service+' 출발·예약 안내',r.full_name+' '+service+' 출발 위치·요금조회·상위 지역 안내. 공개된 현지 운행기록이 없으므로 완료 후기를 표시하지 않습니다.',quick,canonicalUrl)
     .replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">');
   }
