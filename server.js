@@ -2563,7 +2563,7 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  // Reserve province hubs, then round-robin all curated regions across 17 provinces.
  // A large focus list in one city must not exhaust the 500-URL sitemap.
  const provinceHubs=primaryRegions.filter(r=>r.level==='시도');
- const candidateRegions=[...primaryRegions.filter(r=>r.level!=='시도'),...nationwideCurated,...otherCurated];
+ const candidateRegions=[...new Map([...primaryRegions.filter(r=>r.level!=='시도'),...nationwideCurated,...otherCurated].map(r=>[r.slug,r])).values()];
  const balancedBuckets=new Map(provinceNames.map(name=>[name,[]]));
  const unmatchedRegions=[];
  for(const region of candidateRegions){
@@ -2580,7 +2580,7 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
   }
  }
  const uniqueBaseRoutes=[...new Set(baseRoutes)];
- const discoveryRegions=[...provinceHubs,...balancedRegions,...unmatchedRegions].slice(0,Math.max(0,500-uniqueBaseRoutes.length));
+ const discoveryRegions=[...new Map([...provinceHubs,...balancedRegions,...unmatchedRegions].map(r=>[r.slug,r])).values()].slice(0,Math.max(0,500-uniqueBaseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
  // Keep actual HTML region pages and all on-page images intact.
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+uniqueBaseRoutes.map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
