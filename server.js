@@ -1403,7 +1403,7 @@ function homepageFocusTenLinks(){
   const t=servicePath(r,'taksong'),d=servicePath(r,'daeri');
   return '<li><strong>'+esc(label)+'</strong> <a href="'+esc(t)+'">'+esc(label+'탁송')+'</a> · <a href="'+esc(d)+'">'+esc(label+'대리운전')+'</a></li>';
  }).filter(Boolean).join('');
- return '<section id="homepage-focus-ten" aria-label="지방 주요 도시 및 혁신도시 서비스"><h2>부산·대구·울산·창원·대전·세종 및 혁신도시 탁송·대리운전</h2><p>원주·진주·나주·김천 혁신도시 관련 차량탁송과 대리운전은 기존 해당 시 지역 안내로 연결합니다. 별도 키워드 페이지는 만들지 않으며 실제 배차와 요금은 상담으로 확인합니다.</p><ul>'+items+'</ul></section>';
+ return '<section id="homepage-focus-ten" aria-label="지방 주요 도시 및 혁신도시 서비스"><h2>부산·대구·울산·창원·대전·세종 및 혁신도시 탁송·대리운전</h2><p>부산탁송·대구탁송·울산대리운전·창원탁송·대전대리운전·세종탁송은 기존 지역 안내에서 차량 인수·인계, 출발지와 도착지, 배차 가능 여부를 확인할 수 있습니다. 원주혁신도시대리운전·진주혁신도시탁송·나주혁신도시대리운전·김천혁신도시탁송은 각각 원주·진주·나주·김천의 기존 시 단위 서비스 안내로 연결합니다.</p><p>자동차탁송은 차량 인수 위치와 인계 시간을, 대리운전은 출발 시간과 경유·대기 여부를 알려주시면 상담에 도움이 됩니다. 실제 요금과 배차는 지역·시간·기사 수급에 따라 확인하며 별도 키워드 페이지를 만들지 않습니다.</p><ul>'+items+'</ul></section>';
 }
 function homepagePriorityLinks(){
  // Generate genuine region + service combinations from the existing region registry.
