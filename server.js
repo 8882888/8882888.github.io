@@ -2132,6 +2132,8 @@ if(searchIntent){
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
    '탁송':'/taksong/','자동차탁송':'/taksong/','차량탁송':'/taksong/','전국탁송':'/taksong/','전국자동차탁송':'/taksong/',
+   '대리비':'/fare/?service=daeri','대리비견적':'/fare/?service=daeri',
+   '탁송비':'/fare/?service=taksong','탁송견적':'/fare/?service=taksong','탁송비견적':'/fare/?service=taksong',
    '골프대리운전':'/service/golf/','골프장대리운전':'/service/golf/',
    '법인대리운전':'/service/corporate/','법인카드대리운전':'/service/corporate/',
    '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
@@ -2247,7 +2249,10 @@ if(pathname==='/api/region-card-preview'){
  const cards=region?(kind?[liveCardPublicData(region,kind)]:[liveCardPublicData(region,'daeri'),liveCardPublicData(region,'taksong')]):
   (topic&&!themedAmbiguous&&(!kind||kind===topic.kind)?[keywordExpansion.preview(topic,themedInfo)]:[]);
  for(const card of cards){
-  if(topic&&!region&&!themedRegion&&!/탁송$/.test(compact(query)))card.displayKeyword=query+' · 코스·차량회수 안내';
+  if(topic&&!region&&!themedRegion){
+   if(['daeri-cost-quote','taksong-cost-quote'].includes(topic.slug))card.displayKeyword=query+' · 예상 참고요금 조회';
+   else if(!/탁송$/.test(compact(query)))card.displayKeyword=query+' · 코스·차량회수 안내';
+  }
   const exact=exactRegionalKeywordCard(region||themedRegion,card.kind,query);
   if(exact)Object.assign(card,exact);
  }
