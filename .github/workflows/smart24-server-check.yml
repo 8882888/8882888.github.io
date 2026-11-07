@@ -50,6 +50,8 @@ jobs:
         run: node tests/five-priorities-customer-journey.test.js
       - name: Verify quote-first review-to-booking conversion
         run: node tests/quote-review-booking-first.test.js
+      - name: Verify five driver-cost and transport-quote search intents
+        run: node tests/fare-search-intent-keywords.test.js
       - name: Verify road and ferry quote calculations
         run: node tests/fare-rules.test.js
       - name: Verify phone conversion tracking and referral toggles (no live DB writes)
