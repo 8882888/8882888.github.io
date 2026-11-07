@@ -2435,6 +2435,7 @@ if(pathname==='/sitemap.xml'){
 }
 const intentMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/(fare|long-distance|handover)\/?$/);
 if(intentMatch){const [,kind,regionPath,topic]=intentMatch,r=byPath.get(regionPath);if(!r||!regionalIntentSlugs.has(r.slug)||!regionalIntentTypes[kind].includes(topic))return respond(res,404,'지역별 이용 안내를 찾을 수 없습니다.');const target=regionalIntentPath(r,kind,topic);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return respond(res,200,regionalIntentPage(r,kind,topic))}
+const regionSearchCache=new Map(); // Short-lived bounded cache; no keyword pages are generated.
 // Live Supabase regional keyword lookup; database remains authoritative and is not bundled into builds.
 if(pathname==='/region-live/'||pathname==='/region-live'){
  const q=String(u.searchParams.get('q')||'').trim().slice(0,75);
@@ -2444,8 +2445,8 @@ if(pathname==='/region-live/'||pathname==='/region-live'){
   try{
    const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),4500);
    let data;
-   try{const api=await fetch('https://xgdijyiotsemfnsuwwoi.supabase.co/functions/v1/region-keyword-search?q='+encodeURIComponent(q),{signal:ctrl.signal});if(!api.ok)throw Error('HTTP '+api.status);data=await api.json()}finally{clearTimeout(timer)}
-   rows=(data.results||[]).filter(x=>typeof x.path==='string'&&x.path.startsWith('/')).map(x=>'<li><a href="'+esc(x.path)+'">'+esc(x.keyword)+'</a> <small>'+esc(x.region)+'</small></li>').join('');
+   try{const key=q.normalize('NFC');const hit=regionSearchCache.get(key);if(hit&&hit.expires>Date.now()){data=hit.data}else{const api=await fetch('https://xgdijyiotsemfnsuwwoi.supabase.co/functions/v1/region-keyword-search?q='+encodeURIComponent(q),{signal:ctrl.signal});if(!api.ok)throw Error('HTTP '+api.status);data=await api.json();if(regionSearchCache.size>=100)regionSearchCache.delete(regionSearchCache.keys().next().value);regionSearchCache.set(key,{data,expires:Date.now()+60000})}}finally{clearTimeout(timer)}
+   rows=(Array.isArray(data.results)?data.results:[]).slice(0,30).filter(x=>typeof x.path==='string'&&/^\/(?:taksong|daeri)\/[a-z0-9\/-]+\/$/.test(x.path)).map(x=>'<li><a href="'+esc(x.path)+'">'+esc(x.keyword)+'</a> <small>'+esc(x.region)+'</small></li>').join('');
    notice=rows?'Supabase 등록 지역 검색 결과입니다.':'일치하는 등록 지역 검색어가 없습니다.';
   }catch(err){console.error('region-live database lookup',err.message);notice='실시간 지역 검색을 일시적으로 사용할 수 없습니다. 기존 지역 안내를 이용하세요.'}
  }
