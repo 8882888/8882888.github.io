@@ -1034,9 +1034,10 @@ function regionalDecisionPanel(r,kind,verified,history){
   '<a href="'+fare+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#0755a3;color:#fff;font-weight:800;text-decoration:none">출발지 예상요금 조회</a>'+
   '<a href="/reviews/history/?kind='+kind+'&amp;q='+from+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">지역 실제 후기 검색</a>'+
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
+  regionalNationwideSubareaChooser(r,kind)+
   '<h3>공개된 실제 완료 운행 '+distinct.length+'건</h3>'+tripItems+
   (distinct.length?'<p style="font-size:.93em">표시된 요금은 당시 운행금액이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>':'')+
-  regionalNationwideSubareaChooser(r,kind)+childLinks+'</section>';
+  childLinks+'</section>';
 }
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
