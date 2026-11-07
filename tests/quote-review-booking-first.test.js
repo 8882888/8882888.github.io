@@ -10,6 +10,13 @@ const keyword=fare.indexOf('id="regional-route-keyword-search"');
 assert(main>0&&quote>main&&quote<keyword,'Fare form must precede long keyword guidance');
 assert(quote-main<100,'The fare form must be the first main content block');
 assert.equal(fare.split('id="quote-form"').length-1,1,'Only one quote form');
+assert(fare.includes('id="fare-mobile-consult-20261107"')&&fare.includes('class="fare-mobile-actions"'),
+ 'Mobile estimator must retain fixed quote and official phone actions');
+assert(fare.includes('result-contact-note')&&fare.includes('이 구간 요금·배차 전화상담 1811-4294'),
+ 'A successful calculated quote must immediately offer a one-tap phone consultation');
+assert(server.includes('function mobileRegionConversion(')&&server.includes("encodeURIComponent(region.full_name)"),
+ 'Every canonical administrative service page must carry its verified departure locality into the quote');
+
 for(const item of ['id="service"','id="from"','id="to"','id="submit"','id="result"','tel:18114294',"preset.get('service')", "preset.get(id)"]){
  assert(fare.includes(item),'Missing booking parameter or action '+item);
 }
