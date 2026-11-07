@@ -111,9 +111,10 @@
   async function refresh(){
     // The phone count beside the top-right number is lifetime clicks.
     // The two small counters below it are KST today and lifetime visits.
-    const [visits,phone]=await Promise.allSettled([
+    const [visits,phone,quoteSummary]=await Promise.allSettled([
       rpc('site_visit_stats',{p_record:false}),
-      rpc('site_traffic_dashboard')
+      rpc('site_traffic_dashboard'),
+      rpc('site_quote_summary')
     ]);
     if(visits.status==='fulfilled'&&visits.value){
       put('today',visits.value.today_visits);
@@ -128,6 +129,14 @@
         put('phoneClicks',legacy?.total_clicks);
       }catch(_){put('phoneClicks',null);}
       drawSources(null);
+    }
+    const quoteLine=el('quote-success-summary-20261107');
+    if(quoteLine){
+      const q=quoteSummary.status==='fulfilled'?quoteSummary.value:null;
+      const attempts=Number(q&&q.total_attempts),success=Number(q&&q.success_attempts),failed=Number(q&&q.failed_attempts);
+      quoteLine.textContent=q&&Number.isFinite(attempts)&&attempts>0&&Number.isFinite(success)&&Number.isFinite(failed)
+        ?'자동 도로거리 조회 '+attempts.toLocaleString('ko-KR')+'회 중 성공 '+success.toLocaleString('ko-KR')+'회 · 실패/시간초과 '+failed.toLocaleString('ko-KR')+'회 · 성공률 '+(100*success/attempts).toFixed(1)+'%'
+        :'아직 집계된 자동 도로거리 조회가 없습니다. 실서비스 계산 결과가 생기면 표시합니다.';
     }
     if(panel)panel.title='접속 기록에는 작업·점검 방문이 포함될 수 있습니다. 네이버 검색 노출이나 실제 통화 연결 수가 아닙니다.';
   }
