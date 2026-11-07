@@ -1031,7 +1031,7 @@ function regionalDecisionPanel(r,kind,verified,history){
  const instructions=kind==='daeri'?'출발 주차 위치·목적지·출발 시각·경유 여부를 알려주세요.':'차량 인수·인계 위치·차종·희망 시각·열쇠 전달 방법을 알려주세요.';
  // A customer can quote a route from every real locality without visiting a
  // separate empty form first. Auto-calculation requires an explicit submit.
- const directQuoteForm='<form id="regional-direct-route-quote-20261107" action="/fare/" method="get" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;align-items:end;margin:12px 0;padding:12px;border-radius:11px;background:#fff;border:1px solid #bfd5eb">'+
+ const directQuoteForm='<p style="font-size:14px;margin:10px 0 3px;color:#355370">정확한 도로거리 조회를 위해 출발지는 실제 차량 주차장·도로명주소로 수정하고, 도착지도 구체적으로 입력하세요. 행정구역명만으로는 계산이 부정확하거나 조회되지 않을 수 있습니다.</p><form id="regional-direct-route-quote-20261107" action="/fare/" method="get" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;align-items:end;margin:12px 0;padding:12px;border-radius:11px;background:#fff;border:1px solid #bfd5eb">'+
   '<input type="hidden" name="service" value="'+kind+'"><input type="hidden" name="auto" value="1">'+
   '<label style="font-weight:800;color:#234567">출발지<input name="from" value="'+esc(r.full_name)+'" autocomplete="street-address" maxlength="130" required style="display:block;width:100%;box-sizing:border-box;min-height:48px;padding:9px;border:1px solid #9ab6d4;border-radius:8px"></label>'+
   '<label style="font-weight:800;color:#234567">도착지<input name="to" placeholder="도착지 주소 또는 지명 입력" autocomplete="off" maxlength="130" required style="display:block;width:100%;box-sizing:border-box;min-height:48px;padding:9px;border:1px solid #9ab6d4;border-radius:8px"></label>'+
