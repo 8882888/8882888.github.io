@@ -1025,7 +1025,9 @@ function regionalDecisionPanel(r,kind,verified,history){
  const distinct=[...new Map(source.map(x=>[x.date+'|'+x.departure+'|'+x.destination,x])).values()].slice(0,3);
  const tripItems=distinct.length?'<ol>'+distinct.map(x=>'<li><a href="'+esc(x.url)+'">'+esc(x.departure+' → '+x.destination)+'</a> · '+esc(x.date||'운행일 미기록')+' · 당시 요금 '+esc(x.fare||'미기록')+'</li>').join('')+'</ol>':
   '<p>이 지역과 출발·도착지가 모두 확인된 공개 운행기록은 현재 표시할 수 없습니다. 임의의 완료 후기를 만들지 않습니다.</p>';
- const childLinks=related.length?'<nav aria-label="'+esc(label)+' 인근 세부 지역"><strong>가까운 지역 상세 안내</strong><p>'+related.map(x=>'<a href="'+servicePath(x,kind)+'">'+esc(seoRegionLabel(x)+service)+'</a>').join(' · ')+'</p></nav>':'';
+ const nationwideSubareaChoices=regionalNationwideSubareaChooser(r,kind);
+ // The full, unique mobile selector replaces the old first-eight repeated text links.
+ const childLinks=!nationwideSubareaChoices&&related.length?'<nav aria-label="'+esc(label)+' 인근 세부 지역"><strong>가까운 지역 상세 안내</strong><p>'+related.map(x=>'<a href="'+servicePath(x,kind)+'">'+esc(seoRegionLabel(x)+service)+'</a>').join(' · ')+'</p></nav>':'';
  const instructions=kind==='daeri'?'출발 주차 위치·목적지·출발 시각·경유 여부를 알려주세요.':'차량 인수·인계 위치·차종·희망 시각·열쇠 전달 방법을 알려주세요.';
  return '<section id="regional-booking-first" aria-label="'+esc(label+' '+service)+' 요금·후기·상담 바로가기" style="border:2px solid #1764a3;border-radius:15px;padding:18px;margin:12px 0 22px;background:#f5faff">'+
   '<h2 style="margin-top:0">'+esc(label+service)+' 요금·실제 운행·예약</h2>'+
@@ -1034,7 +1036,7 @@ function regionalDecisionPanel(r,kind,verified,history){
   '<a href="'+fare+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#0755a3;color:#fff;font-weight:800;text-decoration:none">출발지 예상요금 조회</a>'+
   '<a href="/reviews/history/?kind='+kind+'&amp;q='+from+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">지역 실제 후기 검색</a>'+
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
-  regionalNationwideSubareaChooser(r,kind)+
+  nationwideSubareaChoices+
   '<h3>공개된 실제 완료 운행 '+distinct.length+'건</h3>'+tripItems+
   (distinct.length?'<p style="font-size:.93em">표시된 요금은 당시 운행금액이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>':'')+
   childLinks+'</section>';
