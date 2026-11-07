@@ -1431,7 +1431,7 @@ function homepageFocusTenLinks(){
   const t=servicePath(r,'taksong'),d=servicePath(r,'daeri');
   return '<li><strong>'+esc(label)+'</strong> <a href="'+esc(t)+'">'+esc(label+'탁송')+'</a> · <a href="'+esc(d)+'">'+esc(label+'대리운전')+'</a></li>';
  }).filter(Boolean).join('');
- return '<section id="homepage-focus-ten" aria-label="지방 주요 도시 및 혁신도시 서비스"><h2>부산·대구·울산·창원·대전·세종 및 혁신도시 탁송·대리운전</h2><p>부산탁송·대구탁송·울산대리운전·창원탁송·대전대리운전·세종탁송은 기존 지역 안내에서 차량 인수·인계, 출발지와 도착지, 배차 가능 여부를 확인할 수 있습니다. 원주혁신도시대리운전·진주혁신도시탁송·나주혁신도시대리운전·김천혁신도시탁송은 각각 원주·진주·나주·김천의 기존 시 단위 서비스 안내로 연결합니다.</p><p>자동차탁송은 차량 인수 위치와 인계 시간을, 대리운전은 출발 시간과 경유·대기 여부를 알려주시면 상담에 도움이 됩니다. 실제 요금과 배차는 지역·시간·기사 수급에 따라 확인하며 별도 키워드 페이지를 만들지 않습니다.</p><ul>'+items+'</ul></section>';
+ return '<section id="homepage-focus-ten" aria-label="지방 주요 도시 및 혁신도시 서비스"><h2>부산·대구·울산·창원·대전·세종 탁송·대리운전</h2><p>지역별 차량탁송과 대리운전은 기존 행정구역별 안내에서 출발·도착 위치, 차량 인수·인계 조건, 배차 가능 시간과 예상요금을 확인할 수 있습니다. 원주·진주·나주·김천 혁신도시는 해당 시의 기존 안내 페이지로 연결합니다.</p><ul>'+items+'</ul><p><a href="/taksong/">전국 자동차탁송</a> · <a href="/daeri/">전국 대리운전</a> · <a href="/fare/">예상요금 확인</a></p></section>';
 }
 function homepagePriorityLinks(){
  // Generate genuine region + service combinations from the existing region registry.
@@ -1447,7 +1447,7 @@ function homepagePriorityLinks(){
   }).join('');
   return '<div><h3>지역별 '+label+' 안내</h3><ul>'+links+'</ul></div>';
  }).join('');
- return homepageFocusTenLinks()+homepageTaksongIntentLinks()+homepageCampingDriverLinks()+'<section id="home-priority-regions"><h2>지역 + 탁송 · 대리운전 · 대리 서비스 찾기</h2><p>지역별 자동차탁송과 대리운전 정보를 자동 연결합니다. 지역명+대리 검색어는 같은 대리운전 안내 페이지로 연결하여 중복 페이지를 만들지 않습니다. 실제 배차·요금은 상담으로 확인합니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+groups+'</div><p><a href="/region/">읍·면·동 지역별 서비스 전체 찾기</a> · <a href="/fare/">출발·도착 예상요금</a></p></section>';
+ return homepageFocusTenLinks()+'<section id="home-priority-regions"><h2>지역 + 탁송 · 대리운전 · 대리 서비스 찾기</h2><p>지역별 자동차탁송과 대리운전 정보를 자동 연결합니다. 지역명+대리 검색어는 같은 대리운전 안내 페이지로 연결하여 중복 페이지를 만들지 않습니다. 실제 배차·요금은 상담으로 확인합니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+groups+'</div><p><a href="/region/">읍·면·동 지역별 서비스 전체 찾기</a> · <a href="/fare/">출발·도착 예상요금</a></p></section>';
 }
 function nationwideLinks(){return '<section id="nationwide-service-links" aria-label="전국 지역별 서비스"><h2>전국 지역별 탁송·대리운전 바로가기</h2><p><a href="/fare/routes/">전국 1,000개 구간 예상요금·예약 안내</a></p><p>전국 주요 도시의 개별 안내 페이지로 이동합니다. 실제 기사 배정과 요금은 출발지·목적지·시간에 따라 상담 후 확인합니다.</p><h3>전국 대리운전 지역 안내</h3>'+regionServiceLinks(quickRegions,'daeri')+'<h3>전국 자동차탁송 지역 안내</h3>'+regionServiceLinks(quickRegions,'taksong')+'<p><a href="/taksong/types/">차종·톤급·서비스센터별 탁송 안내</a> · <a href="/region/">전국 읍·면·동 상세 지역 찾기</a></p><p><a href="/taksong/">전국 탁송 지역 전체 보기</a> · <a href="/daeri/">전국 대리운전 지역 전체 보기</a></p></section>'}
 const featuredTaksongRoutes=[
