@@ -62,19 +62,38 @@ jobs:
                   with urllib.request.urlopen(urllib.request.Request(
                       'https://jeongukdaeri.kr/daeri/incheon/ganghwa-gun/?release-check='+os.environ['DEPLOYED_COMMIT'],
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
-                      ganghwa_page=response.read().decode('utf-8')
-                  ganghwa_query=urllib.parse.quote('강화군양도면대리운전')
+                      county_page=response.read().decode('utf-8')
                   with urllib.request.urlopen(urllib.request.Request(
-                      'https://jeongukdaeri.kr/api/region-card-preview?q='+ganghwa_query,
+                      'https://jeongukdaeri.kr/taksong/seoul/gangnam-gu/?release-check='+os.environ['DEPLOYED_COMMIT'],
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
-                      ganghwa_preview=json.loads(response.read().decode('utf-8'))
+                      seoul_page=response.read().decode('utf-8')
+                  county_region=county_page.split('id="nationwide-subareas-20261107"',1)[-1].split('</details>',1)[0]
+                  seoul_region=seoul_page.split('id="nationwide-subareas-20261107"',1)[-1].split('</details>',1)[0]
                   official_towns=['강화읍','선원면','불은면','길상면','화도면','양도면','내가면','하점면','양사면','송해면','교동면','삼산면','서도면']
-                  ganghwa_dynamic_ok=('id="official-county-subareas-20261107"' in ganghwa_page
-                    and all((town+'대리운전 요금조회</a>') in ganghwa_page for town in official_towns)
-                    and ganghwa_preview.get('status')=='matched'
-                    and ganghwa_preview.get('service')=='daeri'
-                    and ganghwa_preview.get('locality')=='인천광역시 강화군 양도면'
-                    and any('/api/ganghwa-town-card.svg?' in card.get('image','') for card in ganghwa_preview.get('cards',[])))
+                  nationwide_dynamic_ok=('id="nationwide-subareas-20261107"' in county_page
+                    and 'id="nationwide-subareas-20261107"' in seoul_page
+                    and county_region.count('class="nationwide-child-region"')==13
+                    and seoul_region.count('class="nationwide-child-region"')>0
+                    and all((town+'대리운전</a>') in county_region for town in official_towns))
+                  nationwide_cases=[
+                      ('강화군양도면대리운전','인천광역시 강화군 양도면','daeri'),
+                      ('서울강남구역삼동대리운전','서울특별시 강남구 역삼동','daeri'),
+                      ('부산해운대구우동탁송비견적','부산광역시 해운대구 우동','taksong'),
+                      ('세종나성동대리운전','세종특별자치시 (직할) 나성동','daeri'),
+                      ('제주제주시연동탁송견적','제주특별자치도 제주시 연동','taksong')]
+                  for word,place,kind in nationwide_cases:
+                      q=urllib.parse.quote(word)
+                      with urllib.request.urlopen(urllib.request.Request(
+                          'https://jeongukdaeri.kr/api/region-card-preview?q='+q,
+                          headers={'Cache-Control':'no-cache'}),timeout=10) as response:
+                          preview=json.loads(response.read().decode('utf-8'))
+                      if not (preview.get('status')=='matched'
+                          and preview.get('service')==kind
+                          and preview.get('locality')==place
+                          and any('/api/nationwide-locality-card.svg?' in c.get('image','') for c in preview.get('cards',[]))
+                          and all(c.get('url','').startswith('/fare/?service='+kind) for c in preview.get('cards',[]) if word.endswith(('대리비견적','탁송비견적','탁송견적')))):
+                          nationwide_dynamic_ok=False
+                          break
                   with urllib.request.urlopen(urllib.request.Request(
                       'https://jeongukdaeri.kr/fare/?release-check='+os.environ['DEPLOYED_COMMIT'],
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
@@ -121,7 +140,7 @@ jobs:
                     and '유입 경로 미확인' in tracker and 'acquisition();' in tracker)
                   region_stats_ok=('id="traffic-stats-panel"' in page
                     and 'id="exclude-my-visits"' in page)
-                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok and mobile_quote_ok and ganghwa_dynamic_ok:
+                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok and mobile_quote_ok and nationwide_dynamic_ok:
                       print('PASS: live Cloudtype stats, region labels, phone actions, and regional hierarchy verified')
                       break
               except Exception:
