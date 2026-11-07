@@ -60,6 +60,18 @@ jobs:
                   regional_brand_ok=('대구스마트대리운전' not in daegu_page
                     and '<figcaption style="text-align:center">대구대리운전 ·' in daegu_page)
                   with urllib.request.urlopen(urllib.request.Request(
+                      'https://jeongukdaeri.kr/fare/?release-check='+os.environ['DEPLOYED_COMMIT'],
+                      headers={'Cache-Control':'no-cache'}),timeout=10) as response:
+                      fare_page=response.read().decode('utf-8')
+                  mobile_quote_ok=(
+                    'id="homepage-mobile-first-20261107"' in home
+                    and 'id="homepage-fare-form"' in home
+                    and home.index('id="homepage-fare-top"') < home.index('id="homepage-primary-services-20261106"')
+                    and 'smart24_explicit_quote_submit' in home
+                    and 'smart24_explicit_quote_submit' in fare_page
+                    and "preset.get('auto')==='1'" in fare_page
+                    and 'form.requestSubmit()' in fare_page)
+                  with urllib.request.urlopen(urllib.request.Request(
                       'https://jeongukdaeri.kr/?release-check='+os.environ['DEPLOYED_COMMIT'],
                       headers={'Cache-Control':'no-cache'}),timeout=10) as response:
                       home=response.read().decode('utf-8')
@@ -89,7 +101,7 @@ jobs:
                     and '유입 경로 미확인' in tracker and 'acquisition();' in tracker)
                   region_stats_ok=('id="traffic-stats-panel"' in page
                     and 'id="exclude-my-visits"' in page)
-                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok:
+                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok and mobile_quote_ok:
                       print('PASS: live Cloudtype stats, region labels, phone actions, and regional hierarchy verified')
                       break
               except Exception:
