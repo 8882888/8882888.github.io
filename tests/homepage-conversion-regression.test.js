@@ -15,6 +15,9 @@ const firstFares=home.indexOf('id="mountain-cycling-fare-first-20261103"');
 const search=home.indexOf('id="dynamic-service-card-search-20261103"');
 assert(search>0&&search<intro&&intro<firstFares,'Dynamic regional cards precede introduction and protected mountain fares');
 const quickFare=home.indexOf('id="homepage-fare-top"');
+const regionalDirectory=home.indexOf('id="smart24-kstyle-regional-categories-20261106"');
+assert(quickFare>0&&regionalDirectory>quickFare&&regionalDirectory<search,
+ 'Mobile fare input must come before region directory and dynamic card search');
 const specialistNav=home.indexOf('id="four-driver-intents-20261103"');
 assert(quickFare<search&&search<intro&&intro<firstFares&&firstFares<specialistNav,
  'One-step departure/destination fare inputs must precede specialist mountain/cycling fare visuals');
