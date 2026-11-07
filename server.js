@@ -1042,7 +1042,8 @@ async function servicePage(r,kind){
  const blogKeywordGuide=regionalBlogKeywords.render({name:r.level==='군'?r.name:preciseLocality,kind,scope,esc});
  const priorityKeywordGuide=regionalBlogKeywords.focused({region:r.full_name,kind,label:r.name,esc});
  const focus50Info=focus50ByKey.get(kind+'|'+r.full_name);
- const localIntentLinks='<section><h2>'+esc(preciseLocality)+' '+(kind==='taksong'?'차량탁송 이용 목적':'대리운전 이용 목적')+'</h2><p>'+(kind==='taksong'?'정비·서비스센터 입출고, 중고차 인수, 장거리 차량 이동은 차량 상태와 인계 가능한 시간을 먼저 확인해야 합니다.':'장거리 이동, 골프장 복귀, 예약 대리운전은 출발 시간과 기사 접근·복귀 여건을 함께 확인해야 합니다.')+' '+esc(name)+' 출발·도착지와 실제 이용 조건을 확인해 상담합니다. 특정 업체와 제휴하거나 해당 지역에 기사가 상주한다는 뜻은 아닙니다.</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역별 예상요금 조회</a> · <a href="tel:18114294">1811-4294 전화 상담</a></p></section>';
+ const localIndustryGuide=kind==='taksong'&&scope==='district'?' 공업사탁송·자동차검사소탁송은 차량의 운행 가능 상태와 업체의 인수 가능 시간, 수령 담당자를 먼저 확인합니다. 공업사나 검사소와의 제휴 또는 상주 기사 배정을 뜻하지 않습니다.':'';
+ const localIntentLinks='<section><h2>'+esc(preciseLocality)+' '+(kind==='taksong'?'차량탁송 이용 목적':'대리운전 이용 목적')+'</h2><p>'+(kind==='taksong'?'정비·서비스센터 입출고, 중고차 인수, 장거리 차량 이동은 차량 상태와 인계 가능한 시간을 먼저 확인해야 합니다.':'장거리 이동, 골프장 복귀, 예약 대리운전은 출발 시간과 기사 접근·복귀 여건을 함께 확인해야 합니다.')+' '+esc(name)+' 출발·도착지와 실제 이용 조건을 확인해 상담합니다. 특정 업체와 제휴하거나 해당 지역에 기사가 상주한다는 뜻은 아닙니다.'+localIndustryGuide+'</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역별 예상요금 조회</a> · <a href="tel:18114294">1811-4294 전화 상담</a></p></section>';
  const companyWords=kind==='taksong'
   ?[preciseLocality+'탁송업체',preciseLocality+'탁송회사',preciseLocality+'자동차탁송']
   :[preciseLocality+'대리운전업체',preciseLocality+'대리운전회사',preciseLocality+'대리업체'];
