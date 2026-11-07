@@ -506,7 +506,8 @@ const serviceCardArt={daeri:path.join(ROOT,'assets/smart24-daeri-brand.webp'),ta
 const serviceCardData=Object.fromEntries(Object.entries(serviceCardArt).map(([kind,file])=>[kind,fs.readFileSync(file).toString('base64')]));
 function serviceBrand(kind){return kind==='daeri'?'스마트전국대리운전':'스마트24시전국탁송'}
 const cardSvg=(label,kind)=>{
- const full=String(label||'전국').trim(),place=label?full.split(/\s+/).map(shortPlace).join(' '):'';
+ // The caller already supplies seoRegionLabel(); never strip suffixes again: '대구' would become '대'.
+ const full=String(label||'전국').trim(),place=label?full:'';
  const prefix=place?place.replace(/\s+/g,''):'';
 
  if(kind){
