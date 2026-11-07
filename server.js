@@ -2574,7 +2574,26 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
    if(bucket.length){nationwideCurated.push(bucket.shift());more=true}
   }
  }
- const discoveryRegions=[...primaryRegions,...nationwideCurated,...otherCurated].slice(0,Math.max(0,500-baseRoutes.length));
+ // Reserve province hubs, then round-robin all curated regions across 17 provinces.
+ // A large focus list in one city must not exhaust the 500-URL sitemap.
+ const provinceHubs=primaryRegions.filter(r=>r.level==='시도');
+ const candidateRegions=[...primaryRegions.filter(r=>r.level!=='시도'),...nationwideCurated,...otherCurated];
+ const balancedBuckets=new Map(provinceNames.map(name=>[name,[]]));
+ const unmatchedRegions=[];
+ for(const region of candidateRegions){
+  const province=provinceNames.find(name=>region.full_name.startsWith(name+' '));
+  if(province)balancedBuckets.get(province).push(region);
+  else unmatchedRegions.push(region);
+ }
+ const balancedRegions=[];
+ let hasMore=true;
+ while(hasMore){
+  hasMore=false;
+  for(const bucket of balancedBuckets.values()){
+   if(bucket.length){balancedRegions.push(bucket.shift());hasMore=true}
+  }
+ }
+ const discoveryRegions=[...provinceHubs,...balancedRegions,...unmatchedRegions].slice(0,Math.max(0,500-baseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
  // Keep actual HTML region pages and all on-page images intact.
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+baseRoutes.map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
