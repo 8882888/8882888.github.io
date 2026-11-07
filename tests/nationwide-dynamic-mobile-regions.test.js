@@ -22,7 +22,7 @@ for(let i=1;i<=17;i++){
  }
 }
 assert.equal(provinces.length,17,'All seventeen provinces must be loaded');
-assert.equal(regions.length,20562,'Preserve the registered 20,562 legal locality paths');
+assert(regions.length>=20562,'Preserve at least the current 20,562 legal locality paths while allowing future region additions');
 const explorer=createNationwideLocalityExplorer({regions,bySlug,childrenByParent,servicePath:(r,kind)=>'/'+kind+'/'+r.slug+'/'});
 assert(explorer.indexedAliases>regions.length,'Region aliases should include qualified and unique shorthand names');
 for(const full of provinces){
