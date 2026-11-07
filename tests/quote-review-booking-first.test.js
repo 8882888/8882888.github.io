@@ -14,6 +14,11 @@ assert(fare.includes('id="fare-mobile-consult-20261107"')&&fare.includes('class=
  'Mobile estimator must retain fixed quote and official phone actions');
 assert(fare.includes('result-contact-note')&&fare.includes('이 구간 요금·배차 전화상담 1811-4294'),
  'A successful calculated quote must immediately offer a one-tap phone consultation');
+assert(server.includes("const first=prefix+'대리운전',second=prefix+'탁송';"),'Combined regional card must use natural service names');
+assert(server.includes("const displayBrand=seoRegionLabel(r)+(kind==='taksong'?'탁송':'대리운전');"),'Regional metadata must not say 대구스마트대리운전');
+assert(server.includes("brand=matched?.displayKeyword||(seoRegionLabel(r)+(kind==='taksong'?'탁송':'대리운전'));"),'Dynamic search card preview must use natural labels');
+assert(fare.includes("failedRoute.textContent=from+' → '+to+")&&fare.includes("contact.className='btn result-call'"),
+ 'Failed live road distance lookup must retain route context and a prominent one-tap consultation');
 assert(server.includes('function mobileRegionConversion(')&&server.includes("encodeURIComponent(region.full_name)"),
  'Every canonical administrative service page must carry its verified departure locality into the quote');
 
