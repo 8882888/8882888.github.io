@@ -13,7 +13,7 @@ const ctx=vm.createContext({
  esc:x=>String(x),
  encodeURIComponent,
  regionByFullName:new Map([[county.full_name,county]]),
- compact:x=>String(x||'').replace(/[\\s·\\-_.,()/]+/g,'').trim(),
+ compact:x=>String(x||'').replace(/\s+/g,'').replace(/[·_.(),-]/g,'').trim(),
  servicePath:(r,kind)=>'/'+kind+'/incheon/ganghwa-gun/'
 });
 vm.runInContext(code.slice(start,end)+'\n'+code.slice(routeStart,routeEnd),ctx);
@@ -25,7 +25,7 @@ for(const kind of ['daeri','taksong']){
  const html=vm.runInContext("regionalVerifiedSubareaChooser({full_name:'인천광역시 강화군'},'"+kind+"')",ctx);
  assert(html.includes('id="official-county-subareas-20261107"'),'County chooser missing');
  assert(html.includes('<details')&&html.includes('<summary'),'Mobile county chooser should be collapsible');
- assert.equal((html.match(/href="\\/fare\\/\\?service=/g)||[]).length,13,
+ assert.equal(html.split('href="/fare/?service=').length-1,13,
   'Every official 읍/면 must have one and only one quote link');
  assert(html.includes('강화군청 행정구역'),'Official evidence link missing');
  assert(html.includes('지점·기사 상주나 확정 요금은 의미하지 않습니다.'),'No invented local branch or rate');
