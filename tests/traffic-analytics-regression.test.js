@@ -86,3 +86,9 @@ test('overnight open tabs can record a new Korean calendar day visit',()=>{
   assert.ok(analytics.includes('if(!recordDailyVisit())refresh();'));
   assert.ok(analytics.includes('if(now-lastPassiveRefresh<60000)return;'));
 });
+
+test('Cloudtype serves analytics with cache revalidation and ETag',()=>{
+  assert.ok(server.includes("pathname==='/assets/traffic-analytics.js'"));
+  assert.ok(server.includes("'no-cache, max-age=0, must-revalidate'"));
+  assert.ok(server.includes("'if-none-match'"));
+});
