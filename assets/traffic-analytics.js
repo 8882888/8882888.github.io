@@ -6,7 +6,8 @@
   'use strict';
   const root='https://xgdijyiotsemfnsuwwoi.supabase.co/rest/v1/rpc/';
   const key='sb_publishable_QjNQmNLe9NWRQtBjTu1QqQ_w-cmKGui';
-  const headers={'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json'};
+  // Publishable keys identify the project; they are not JWT bearer tokens.
+  const headers={'apikey':key,'Content-Type':'application/json'};
   const el=id=>document.getElementById(id);
   const figures={
     today:el('today-visit-number'),
@@ -154,7 +155,10 @@
       const next={...old,[stage]:true,source:acquisition(),updated:Date.now()};
       sessionStorage.setItem(funnelKey,JSON.stringify(next));
       const sentKey='smart24_funnel_sent_'+stage;
-      if(!old[stage]&&!sessionStorage.getItem(sentKey)){
+      // An explicitly failed request can retry on a later interaction in this tab.
+      // Pending requests are not retried because a lost response may have been counted.
+      const delivery=sessionStorage.getItem(sentKey);
+      if(!delivery||delivery==='failed'){
         sessionStorage.setItem(sentKey,'pending');
         rpc('site_funnel_event',{p_source:next.source,p_stage:stage},{keepalive:true})
           .then(()=>sessionStorage.setItem(sentKey,'sent'))
