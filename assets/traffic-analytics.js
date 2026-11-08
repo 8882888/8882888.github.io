@@ -171,6 +171,8 @@
     const trackRegionIntent=()=>{
       if((regionInput&&regionInput.value.trim())||(serviceInput&&serviceInput.value))funnelStage('region_search');
     };
+    const regionForm=regionInput&&regionInput.closest('form');
+    if(regionForm)regionForm.addEventListener('submit',()=>funnelStage('region_search'),true);
     if(regionInput)regionInput.addEventListener('change',trackRegionIntent);
     if(serviceInput)serviceInput.addEventListener('change',trackRegionIntent);
     trackRegionIntent();
