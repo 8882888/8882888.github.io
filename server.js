@@ -2294,6 +2294,23 @@ if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/da
 if(pathname==='/route-taksong/centers/'||pathname==='/route-taksong/centers')return respond(res,200,require('./lib/cycling-centers').page(u.searchParams,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'}));
 // Lightweight nationwide locality autocomplete for the first mobile screen.
 // Exact legal names and links only; no user-level visit data or false dispatch claims.
+// Public exact-match lookup for the noindex regional handoff page.
+// /data/ is intentionally blocked; never expose the full regional source file.
+if(pathname==='/api/public-region-lookup'){
+ const name=(u.searchParams.get('region')||'').trim();
+ const parent=(u.searchParams.get('parent')||'').trim();
+ const kind=u.searchParams.get('kind');
+ res.setHeader('cache-control','no-store');
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ if(!name||name.length>60||parent.length>60||!['daeri','taksong'].includes(kind))
+  return respond(res,400,JSON.stringify({matches:[]}), 'application/json; charset=utf-8');
+ try{
+  const source=load('data/regions.json');
+  const matches=(source.regions||[]).filter(x=>x.name===name&&(!parent||x.parent_name===parent)&&(x.services||[]).includes(kind))
+   .map(x=>({name:x.name,parent_name:x.parent_name,level:x.level}));
+  return respond(res,200,JSON.stringify({matches}), 'application/json; charset=utf-8');
+ }catch(_){return respond(res,503,JSON.stringify({matches:[]}), 'application/json; charset=utf-8')}
+}
 if(pathname==='/api/locality-suggest'){
  const query=clean(u.searchParams.get('q')||'');
  const requested=u.searchParams.get('service');
