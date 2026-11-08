@@ -57,3 +57,9 @@ test('funnel deduplication resets on each Korean calendar day',()=>{
   assert.ok(analytics.includes("const sentKey='smart24_funnel_sent_'+kstDay()+'_'+stage;"));
   assert.ok(analytics.includes("'Asia/Seoul'"));
 });
+
+test('dashboard polling is skipped when no counters are displayed',()=>{
+  assert.ok(analytics.includes("if(!figures.today&&!figures.total&&!figures.phoneClicks&&!channelList&&!el('quote-success-summary-20261107'))return;"));
+  assert.ok(analytics.includes("rpc('site_funnel_event'"));
+  assert.ok(analytics.includes("rpc('site_phone_event'"));
+});
