@@ -6,9 +6,15 @@
  const suffix=['장거리자동차탁송','장거리차량탁송','장거리대리운전','골프장대리운전','대리운전업체','대리운전회사','대리운전요금','자동차탁송업체','자동차탁송회사','자동차탁송요금','차량탁송업체','차량탁송회사','차량탁송요금','자동차탁송','차량탁송','탁송업체','탁송회사','탁송요금','대리운전','탁송'].find(x=>clean.endsWith(x))||'';
  if(!suffix)return '';
  const place=clean.slice(0,-suffix.length),service=suffix.includes('대리운전')?'daeri':'taksong';
- if(kind&&kind!=='daily'&&kind!==service)return '';
+ if(kind==='daily'||(kind&&kind!==service))return '';
  const aliases=name=>{const n=String(name||'').replace(/\s+/g,'');return [...new Set([n,n.replace(/(특별자치시|특별자치도|광역시|특별시|자치시|자치도|시|군|구)$/,''),n.replace(/(광역시|특별시|특별자치시)$/,'시')])].filter(Boolean)};
- const found=places.filter(p=>aliases(p.name).includes(place)&&(p.services||[]).includes(service));
+ const normalize=value=>String(value||'').replace(/\s+/g,'');
+ const found=places.filter(p=>{
+   if(!(p.services||[]).includes(service))return false;
+   const names=aliases(p.name);
+   const parent=normalize(p.parent_name);
+   return names.includes(place)||names.some(name=>parent&&parent!=='대한민국'&&(parent+name===place||aliases(parent).some(prefix=>prefix+name===place)));
+ });
  if(found.length!==1)return '';
  const p=found[0];
  return '/go/region-service/?region='+encodeURIComponent(p.name)+'&parent='+encodeURIComponent(p.parent_name||'')+'&kind='+service;
