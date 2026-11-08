@@ -763,7 +763,7 @@ const provinceServiceProfiles={"서울특별시":["도심 모임·업무 일정"
 function provinceServiceGuide(r,kind){
  if(r.level!=='시도')return '';
  const profile=provinceServiceProfiles[r.name];if(!profile)return '';
- if(kind==='daeri')return daeriBlogEditorial.province(r,childrenByParent.get(r.slug)||[],servicePath,esc);
+ if(kind==='daeri')return daeriBlogEditorial.province(r,(childrenByParent.get(r.slug)||[]).filter(x=>x.name!=='(직할)'&&x.name!=='직할'),servicePath,esc);
  const label=kind==='taksong'?'자동차탁송':'대리운전';
  const children=childrenByParent.get(r.slug)||[];
  const links=children.map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.name)+' '+label+'</a></li>').join('');
@@ -1448,8 +1448,9 @@ const majorRegionNames=['서울특별시','부산광역시','인천광역시','�
 const regionQuickNames=['서울특별시','부산광역시','인천광역시','대구광역시','광주광역시','대전광역시','울산광역시','세종특별자치시','수원시','성남시','고양시','용인시','화성시','평택시','안산시','부천시','김포시','의정부시','남양주시','파주시','강릉시','속초시','원주시','춘천시','태백시','청주시','충주시','천안시','아산시','당진시','서산시','공주시','전주시','군산시','익산시','남원시','목포시','여수시','순천시','광양시','포항시','경주시','구미시','안동시','경산시','창원시','김해시','양산시','진주시','거제시','통영시','제주시','서귀포시'];
 const majorRegions=majorRegionNames.map(n=>regions.find(r=>r.full_name===n)).filter(Boolean);
 const quickRegions=regionQuickNames.map(n=>regions.find(r=>r.name===n||r.full_name===n)).filter(Boolean);
-function regionServiceLinks(items,kind){const label=kind==='taksong'?'탁송':'대리운전';return '<ul class="region-service-links">'+items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(seoRegionLabel(r)+label)+'</a></li>').join('')+'</ul>'}
-function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=childrenByParent.get(r.slug)||[];return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
+function customerVisibleRegions(items){return items.filter(x=>x&&x.name&&x.name!=='(직할)'&&x.name!=='직할'&&x.level!=='리')}
+function regionServiceLinks(items,kind){items=customerVisibleRegions(items);const label=kind==='taksong'?'탁송':'대리운전';return '<ul class="region-service-links">'+items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(seoRegionLabel(r)+label)+'</a></li>').join('')+'</ul>'}
+function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=customerVisibleRegions(childrenByParent.get(r.slug)||[]);return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
 
 function homepageTaksongIntentLinks(){
  const groups=[
