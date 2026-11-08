@@ -503,9 +503,9 @@ const regionMatches=(r,q)=>{
 const regionAncestors=r=>{const a=[];let cur=r;while(cur){a.unshift(cur);cur=cur.parent_slug?bySlug.get(cur.parent_slug):null}return a};
 const regionContext=r=>({읍:'읍내·인접 마을',면:'면 소재지·인접 마을',리:'마을·인접 읍면',동:'주거지·상업시설',구:'구내 주요 생활권',군:'읍·면·리 지역',시:'시내·외곽 지역',시도:'시·군·구별 지역'})[r.level]||'해당 지역';
 const cardArtFile=path.join(ROOT,'assets/smart24-business-card-inline.webp');
-const cardArtData=fs.readFileSync(cardArtFile).toString('base64');
+
 const serviceCardArt={daeri:path.join(ROOT,'assets/smart24-daeri-brand.webp'),taksong:path.join(ROOT,'assets/smart24-taksong-brand.webp')};
-const serviceCardData=Object.fromEntries(Object.entries(serviceCardArt).map(([kind,file])=>[kind,fs.readFileSync(file).toString('base64')]));
+
 function serviceBrand(kind){return kind==='daeri'?'스마트전국대리운전':'스마트24시전국탁송'}
 const cardSvg=(label,kind)=>{
  // The caller already supplies seoRegionLabel(); never strip suffixes again: '대구' would become '대'.
@@ -521,7 +521,7 @@ const cardSvg=(label,kind)=>{
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="card-title card-desc">
 <title id="card-title">${esc(labelText)} · ${esc(purpose)} · 상담 ${phone}</title>
 <desc id="card-desc">${esc(place||'전국')} ${esc(purpose)} 지역명 맞춤 상담 명함 이미지. 다른 지역명이나 운행 완료 사실을 표시하지 않음. 대표 상담 ${phone}.</desc>
-<image href="data:image/webp;base64,${serviceCardData[kind]}" x="0" y="0" width="1200" height="800"/>
+<rect x="0" y="0" width="1200" height="800" fill="#f4f8fc"/>
 <defs><linearGradient id="identity-band" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#006179"/><stop offset=".5" stop-color="#0b4a79"/><stop offset="1" stop-color="#006179"/></linearGradient></defs>
 <rect x="0" y="0" width="1200" height="82" fill="url(#identity-band)"/>
 <text x="600" y="56" font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle" stroke="#032d45" stroke-width="2" paint-order="stroke fill" fill="#fff04b">${esc(labelText)}</text>
@@ -535,7 +535,7 @@ ${kind==='daeri'? `<rect x="0" y="604" width="1200" height="116" fill="#eef7ff"/
  }
  const first=prefix+'대리운전',second=prefix+'탁송';
  const daeriHeading=esc(first),taksongHeading=esc(second),size=Math.min(32,Math.floor(850/Math.max(first.length,second.length)));
- return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="card-title"><title id="card-title">${esc(full)} 스마트전국대리운전 스마트24시탁송 1811-4294</title><image href="data:image/webp;base64,${cardArtData}" x="0" y="0" width="1200" height="800"/><defs><linearGradient id="banner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#007e91"/><stop offset="0.55" stop-color="#004252"/><stop offset="1" stop-color="#008d9d"/></linearGradient></defs><rect x="200" y="7" width="884" height="74" rx="8" fill="url(#banner)"/><g font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle" stroke="#002b3a" stroke-width="1.8" paint-order="stroke fill"><text x="642" y="36" fill="#ffffff">${daeriHeading}</text><text x="642" y="70" fill="#fff04b">${taksongHeading}</text></g></svg>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="card-title"><title id="card-title">${esc(full)} 스마트전국대리운전 스마트24시탁송 1811-4294</title><rect x="0" y="0" width="1200" height="800" fill="#f4f8fc"/><defs><linearGradient id="banner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#007e91"/><stop offset="0.55" stop-color="#004252"/><stop offset="1" stop-color="#008d9d"/></linearGradient></defs><rect x="200" y="7" width="884" height="74" rx="8" fill="url(#banner)"/><g font-family="sans-serif" font-weight="900" font-size="${size}" text-anchor="middle" stroke="#002b3a" stroke-width="1.8" paint-order="stroke fill"><text x="642" y="36" fill="#ffffff">${daeriHeading}</text><text x="642" y="70" fill="#fff04b">${taksongHeading}</text></g></svg>`;
 };
 function renderCardArtwork(label,kind){
  // Full region and service identity is generated in the SVG, with no baked-in
@@ -543,10 +543,10 @@ function renderCardArtwork(label,kind){
  if(kind){
   const overlay=cardSvg(label,kind).replace(/<image[^>]+\/>/,'');
   // Preserve the service-specific photo card; overwrite the obsolete regional banner only.
-  return require('sharp')(serviceCardArt[kind]).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:false,compressionLevel:6}).toBuffer();
+  return require('sharp')({create:{width:1200,height:800,channels:4,background:'#f4f8fc'}}).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:false,compressionLevel:6}).toBuffer();
  }
  const overlay=cardSvg(label).replace(/<image[^>]+\/>/,'');
- return require('sharp')(cardArtFile).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:true,quality:95,effort:3}).toBuffer();
+ return require('sharp')({create:{width:1200,height:800,channels:4,background:'#f4f8fc'}}).composite([{input:Buffer.from(overlay),left:0,top:0}]).png({palette:true,quality:95,effort:3}).toBuffer();
 }
 const regionalCardPngs=new Map();
 const regionalCardWebps=new Map();
@@ -559,8 +559,7 @@ function regionalCardWebp(r,kind){
  const overlay=cardSvg(seoRegionLabel(r),kind)
   .replace(/<image[^>]+\/>/,'')
   .replace('width="1200" height="800"','width="800" height="533"');
- const render=require('sharp')(serviceCardArt[kind])
-  .resize({width:800})
+ const render=require('sharp')({create:{width:800,height:533,channels:4,background:'#f4f8fc'}})
   .composite([{input:Buffer.from(overlay),left:0,top:0}])
   .webp({quality:78,effort:2}).toBuffer()
   .catch(err=>{regionalCardWebps.delete(key);throw err});
