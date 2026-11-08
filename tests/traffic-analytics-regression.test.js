@@ -52,3 +52,8 @@ test('dynamic region landing preserves fare and consultation paths',()=>{
   assert.ok(dynamicRegion.includes('tel:18114294'));
   assert.ok(dynamicRegion.includes('noindex,follow'));
 });
+
+test('funnel deduplication resets on each Korean calendar day',()=>{
+  assert.ok(analytics.includes("const sentKey='smart24_funnel_sent_'+kstDay()+'_'+stage;"));
+  assert.ok(analytics.includes("'Asia/Seoul'"));
+});
