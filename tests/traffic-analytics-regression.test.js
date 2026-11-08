@@ -79,3 +79,10 @@ test('all primary customer entry pages load the current funnel script version',(
   }
   assert.ok(server.includes('/assets/traffic-analytics.js?v=20261109-funnel-refresh'));
 });
+
+test('overnight open tabs can record a new Korean calendar day visit',()=>{
+  assert.ok(analytics.includes('function recordDailyVisit(){'));
+  assert.ok(analytics.includes("const today=kstDay(),visitKey='smart24_visit_'+today;"));
+  assert.ok(analytics.includes('if(!recordDailyVisit())refresh();'));
+  assert.ok(analytics.includes('if(now-lastPassiveRefresh<60000)return;'));
+});
