@@ -234,7 +234,11 @@
     const form=event.target;
     const from=form.querySelector('#from,[name="from"],[name="start"],[name="origin"]');
     const to=form.querySelector('#to,[name="to"],[name="end"],[name="destination"]');
-    if(from&&to&&String(from.value||'').trim()&&String(to.value||'').trim())funnelStage('fare_submit');
+    // Match the actual calculator, not unrelated forms; reject identical endpoints.
+    if(form.id!=='quote-form'||!from||!to)return;
+    const start=String(from.value||'').normalize('NFKC').replace(/\\s/g,'').toLowerCase();
+    const end=String(to.value||'').normalize('NFKC').replace(/\\s/g,'').toLowerCase();
+    if(start.length>=2&&end.length>=2&&start!==end)funnelStage('fare_submit');
   },true);
   // Remember the *landing-page* referrer before later internal navigations
   // replace it with the site's own URL. Only a coarse category is retained.
