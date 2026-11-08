@@ -208,9 +208,12 @@
     }catch(_){}
   }
   window.smart24FunnelStage=funnelStage;
+  // Both directory URLs and their explicit index.html forms serve the same page.
+  // Use the same funnel stages for either URL without creating a new SEO landing page.
+  const normalizedPage=location.pathname.replace(/\/index\.html$/,'/');
   funnelStage('landing');
-  if(location.pathname==='/fare/')funnelStage('fare_view');
-  if(location.pathname==='/region/'){
+  if(normalizedPage==='/fare/')funnelStage('fare_view');
+  if(normalizedPage==='/region/'){
     const regionInput=document.getElementById('q');
     const serviceInput=document.getElementById('region-card-kind')||document.getElementById('type');
     const trackRegionIntent=()=>{
@@ -226,7 +229,7 @@
     // Only explicit change/submit interactions represent region-search intent.
   }
   document.addEventListener('submit',function(event){
-    if(location.pathname!=='/fare/'||!event.target||!event.target.matches||!event.target.matches('form'))return;
+    if(normalizedPage!=='/fare/'||!event.target||!event.target.matches||!event.target.matches('form'))return;
     // A fare submission needs both endpoints; unrelated forms are not conversions.
     const form=event.target;
     const from=form.querySelector('#from,[name="from"],[name="start"],[name="origin"]');
