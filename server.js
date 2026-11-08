@@ -281,7 +281,7 @@ function vehicleGuideLink(kind){
 }
 function serviceVehicleGallery(kind){
  const label=kind==='taksong'?'자동차탁송':'대리운전';
- return '<section id="vehicle-guide"><h2>국산차·수입차 '+label+' 안내</h2><p>차량 종류와 이용 목적을 함께 알려주세요. 아래 사진은 서비스 소개용 홍보 이미지이며, 보유 차량이나 실제 운행 사례를 뜻하지 않습니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">'+[['domestic','국산차'],['imported','수입차']].map(([key,name])=>'<figure style="margin:0"><img src="/assets/vehicles/'+key+'-fleet-1811.webp" alt="'+name+' 차종별 '+label+' 서비스 소개 이미지, 상담 1811-4294" width="1536" height="1024" loading="lazy" decoding="async" style="width:100%;height:auto"><figcaption>'+name+' · <a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a></figcaption></figure>').join('')+'</div></section>';
+ return '<section id="vehicle-guide"><h2>국산차·수입차 '+label+' 안내</h2><p>차종과 차량 크기, 출발지·도착지 및 희망 일정을 알려주시면 이용 조건을 상담합니다. 차량 홍보 이미지는 저작권 확인을 위해 표시하지 않습니다.</p><p><a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>';
 }
 function serviceJourneyLinks(kind){
  const isT=kind==='taksong',label=isT?'자동차탁송':'대리운전';
