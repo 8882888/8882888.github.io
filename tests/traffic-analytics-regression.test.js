@@ -63,3 +63,10 @@ test('dashboard polling is skipped when no counters are displayed',()=>{
   assert.ok(analytics.includes("rpc('site_funnel_event'"));
   assert.ok(analytics.includes("rpc('site_phone_event'"));
 });
+
+test('mobile focus and visibility dashboard reads are throttled without delaying phone tracking',()=>{
+  assert.ok(analytics.includes('if(now-lastPassiveRefresh<60000)return;'));
+  assert.ok(analytics.includes("window.addEventListener('focus',passiveRefresh)"));
+  assert.ok(analytics.includes("document.addEventListener('visibilitychange',passiveRefresh)"));
+  assert.ok(analytics.includes("rpc('site_phone_event',payload,{keepalive:true})"));
+});
