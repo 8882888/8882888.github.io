@@ -36,7 +36,10 @@
   // Explicit ?internal=1 is useful when opening a preview link from a new device:
   // it excludes the very first access from statistics before any network requests.
   try{if(new URL(location.href).searchParams.get('internal')==='1')writeLocal(exclusionKey,'1')}catch(_){}
-  const isExcluded=()=>readLocal(exclusionKey)==='1';
+  // Search crawlers and automated browsers may execute JS; they are not customer visits.
+  // Keep read-only dashboard requests available, but never count bot funnel or call events.
+  const isAutomated=()=>/bot|crawler|spider|headless|yeti|google-inspectiontool|lighthouse|pagespeed/i.test(navigator.userAgent||'')||navigator.webdriver===true;
+  const isExcluded=()=>readLocal(exclusionKey)==='1'||isAutomated();
   function reflectExclusion(){
     if(checkExclusion)checkExclusion.checked=isExcluded();
     if(modeNote)modeNote.textContent=isExcluded()?
