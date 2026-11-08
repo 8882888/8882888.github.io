@@ -142,6 +142,26 @@
     }
     if(panel)panel.title='접속 기록에는 작업·점검 방문이 포함될 수 있습니다. 네이버 검색 노출이나 실제 통화 연결 수가 아닙니다.';
   }
+  // Privacy-preserving, same-tab funnel stages. No search terms, addresses or IDs sent.
+  // These events are local until a dedicated aggregate-only endpoint is verified.
+  const funnelKey='smart24_funnel_v1';
+  function funnelStage(stage){
+    if(isExcluded())return;
+    try{
+      const allowed=['landing','region_search','fare_view','fare_submit','phone_tap'];
+      if(!allowed.includes(stage))return;
+      const old=JSON.parse(sessionStorage.getItem(funnelKey)||'{}');
+      const next={...old,[stage]:true,source:acquisition(),updated:Date.now()};
+      sessionStorage.setItem(funnelKey,JSON.stringify(next));
+    }catch(_){}
+  }
+  window.smart24FunnelStage=funnelStage;
+  funnelStage('landing');
+  if(location.pathname==='/fare/')funnelStage('fare_view');
+  if(location.pathname==='/region/')funnelStage('region_search');
+  document.addEventListener('submit',function(event){
+    if(location.pathname==='/fare/'&&event.target&&event.target.closest&&event.target.closest('form'))funnelStage('fare_submit');
+  },true);
   // Remember the *landing-page* referrer before later internal navigations
   // replace it with the site's own URL. Only a coarse category is retained.
   acquisition();
@@ -167,6 +187,7 @@
     if(!link||link.getAttribute('href').replace(/\D/g,'')!=='18114294')return;
     // Exclude owner/test calls on this browser without interrupting tel: navigation.
     if(isExcluded())return;
+    funnelStage('phone_tap');
     // Do not cancel tel: navigation; analytics must never block calling.
     // The source page is a categorical page label, not a route/address or a
     // phone-call completion record. Distinguish calculator result buttons
