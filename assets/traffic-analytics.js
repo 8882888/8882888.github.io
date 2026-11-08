@@ -143,7 +143,7 @@
     if(panel)panel.title='접속 기록에는 작업·점검 방문이 포함될 수 있습니다. 네이버 검색 노출이나 실제 통화 연결 수가 아닙니다.';
   }
   // Privacy-preserving, same-tab funnel stages. No search terms, addresses or IDs sent.
-  // These events are local until a dedicated aggregate-only endpoint is verified.
+  // Events are submitted to the aggregate-only RPC; production delivery must be verified separately.
   const funnelKey='smart24_funnel_v1';
   function funnelStage(stage){
     if(isExcluded())return;
@@ -167,7 +167,7 @@
   if(location.pathname==='/fare/')funnelStage('fare_view');
   if(location.pathname==='/region/'){
     const regionInput=document.getElementById('q');
-    const serviceInput=document.getElementById('type');
+    const serviceInput=document.getElementById('region-card-kind')||document.getElementById('type');
     const trackRegionIntent=()=>{
       if((regionInput&&regionInput.value.trim())||(serviceInput&&serviceInput.value))funnelStage('region_search');
     };
