@@ -92,3 +92,32 @@ test('Cloudtype serves analytics with cache revalidation and ETag',()=>{
   assert.ok(server.includes("'no-cache, max-age=0, must-revalidate'"));
   assert.ok(server.includes("'if-none-match'"));
 });
+
+test('browser initialization sends funnel landing and visit RPCs without real network',async()=>{
+  const vm=require('node:vm');
+  const calls=[];
+  const session=new Map(),local=new Map();
+  const storage=map=>({getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,String(v))});
+  const document={
+    referrer:'',visibilityState:'visible',
+    getElementById:()=>null,
+    addEventListener:()=>{}
+  };
+  const window={addEventListener:()=>{}};
+  const context={
+    window,document,navigator:{userAgent:'Mozilla/5.0',webdriver:false},
+    location:{href:'https://jeongukdaeri.kr/',hostname:'jeongukdaeri.kr',pathname:'/'},
+    sessionStorage:storage(session),localStorage:storage(local),
+    URL,Intl,Date,JSON,Number,String,Array,Promise,console,
+    fetch:async(url,opts)=>{
+      calls.push({url,body:JSON.parse(opts.body)});
+      return {ok:true,status:204,text:async()=>''};
+    }
+  };
+  vm.runInNewContext(analytics,context,{timeout:1500});
+  await new Promise(resolve=>setImmediate(resolve));
+  assert(calls.some(c=>c.url.endsWith('/site_funnel_event')&&c.body.p_stage==='landing'),'landing RPC missing');
+  assert(calls.some(c=>c.url.endsWith('/site_visit_stats')&&c.body.p_record===true),'visit RPC missing');
+  assert.equal(calls.filter(c=>c.url.endsWith('/site_traffic_dashboard')).length,0,'non-dashboard pages must not poll');
+  assert.equal(local.get('smart24_last_recorded_visit_day'),new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()));
+});
