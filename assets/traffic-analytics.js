@@ -236,8 +236,8 @@
     const to=form.querySelector('#to,[name="to"],[name="end"],[name="destination"]');
     // Match the actual calculator, not unrelated forms; reject identical endpoints.
     if(form.id!=='quote-form'||!from||!to)return;
-    const start=String(from.value||'').normalize('NFKC').replace(/\\s/g,'').toLowerCase();
-    const end=String(to.value||'').normalize('NFKC').replace(/\\s/g,'').toLowerCase();
+    const start=String(from.value||'').normalize('NFKC').replace(/\s/g,'').toLowerCase();
+    const end=String(to.value||'').normalize('NFKC').replace(/\s/g,'').toLowerCase();
     if(start.length>=2&&end.length>=2&&start!==end)funnelStage('fare_submit');
   },true);
   // Remember the *landing-page* referrer before later internal navigations
