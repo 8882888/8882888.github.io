@@ -186,7 +186,12 @@
     // Only explicit change/submit interactions represent region-search intent.
   }
   document.addEventListener('submit',function(event){
-    if(location.pathname==='/fare/'&&event.target&&event.target.closest&&event.target.closest('form'))funnelStage('fare_submit');
+    if(location.pathname!=='/fare/'||!event.target||!event.target.matches||!event.target.matches('form'))return;
+    // A fare submission needs both endpoints; unrelated forms are not conversions.
+    const form=event.target;
+    const from=form.querySelector('[name="from"],[name="start"],[name="origin"]');
+    const to=form.querySelector('[name="to"],[name="end"],[name="destination"]');
+    if(from&&to&&String(from.value||'').trim()&&String(to.value||'').trim())funnelStage('fare_submit');
   },true);
   // Remember the *landing-page* referrer before later internal navigations
   // replace it with the site's own URL. Only a coarse category is retained.
