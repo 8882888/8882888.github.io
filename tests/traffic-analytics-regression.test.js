@@ -70,3 +70,12 @@ test('mobile focus and visibility dashboard reads are throttled without delaying
   assert.ok(analytics.includes("document.addEventListener('visibilitychange',passiveRefresh)"));
   assert.ok(analytics.includes("rpc('site_phone_event',payload,{keepalive:true})"));
 });
+
+test('all primary customer entry pages load the current funnel script version',()=>{
+  const pages=['index.html','region/index.html','fare/index.html','go/region-service/index.html'];
+  for(const page of pages){
+    const html=fs.readFileSync(path.join(root,page),'utf8');
+    assert.match(html,/\/assets\/traffic-analytics\.js\?v=20261109-funnel-refresh/,'stale analytics asset: '+page);
+  }
+  assert.ok(server.includes('/assets/traffic-analytics.js?v=20261109-funnel-refresh'));
+});
