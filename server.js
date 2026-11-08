@@ -2240,7 +2240,13 @@ if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
  const kind=u.searchParams.get('kind')==='daeri'?'daeri':'taksong';
  const candidates=regions.filter(x=>x.name===region&&(!parent||x.parent_name===parent));
  if(candidates.length!==1){res.writeHead(302,{location:'/region/'});return res.end()}
- res.writeHead(302,{location:servicePath(candidates[0],kind),'cache-control':'no-store'});return res.end();
+ // Serve the validated image-first region landing rather than redirecting away
+ // from the regional card and service-specific customer journey.
+ // The landing page is intentionally noindex; the unique service URL remains
+ // the canonical, indexable destination linked from the landing.
+ res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
+ res.setHeader('x-robots-tag','noindex, follow');
+ return respond(res,200,fs.readFileSync(path.join(ROOT,'go/region-service/index.html'),'utf8'));
 }
 const keywordMatch=pathname.match(/^\/keywords\/(taksong|daeri)\/?$/);if(keywordMatch){res.setHeader('X-Robots-Tag','noindex, follow');return respond(res,200,regionKeywordDirectory(keywordMatch[1],u.searchParams.get('page')))}
 if(pathname==='/route-search/'||pathname==='/route-search'){res.setHeader('X-Robots-Tag','noindex, follow');const from=String(u.searchParams.get('from')||''),to=String(u.searchParams.get('to')||''),kind=u.searchParams.get('service')==='daeri'?'daeri':'taksong';return respond(res,200,routeKeywordSearchPage(from,to,kind,u.searchParams.get('page')))}
