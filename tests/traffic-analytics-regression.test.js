@@ -35,3 +35,20 @@ test('health diagnostics are resilient to an absent optional analytics file',()=
   assert.match(server,/trafficAnalytics:TRAFFIC_ANALYTICS_SHA256/);
   assert.match(server,/catch\(_\)\{return 'unavailable'\}/);
 });
+
+const dynamicRegion=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
+test('dynamic region landing requires a unique matching region and service',()=>{
+  assert.ok(dynamicRegion.includes('matches.length!==1'));
+  assert.ok(dynamicRegion.includes('card.kind===kind'));
+  assert.ok(dynamicRegion.includes('exactCards.length===1'));
+});
+test('dynamic region images have a fallback and cannot be mislabeled as real trips',()=>{
+  assert.ok(dynamicRegion.includes("image.addEventListener('error'"));
+  assert.ok(dynamicRegion.includes('실제 운행 사진이 아닙니다'));
+  assert.ok(dynamicRegion.includes("image.alt=full+' '+service"));
+});
+test('dynamic region landing preserves fare and consultation paths',()=>{
+  assert.ok(dynamicRegion.includes("fare.href='/fare/?service='"));
+  assert.ok(dynamicRegion.includes('tel:18114294'));
+  assert.ok(dynamicRegion.includes('noindex,follow'));
+});
