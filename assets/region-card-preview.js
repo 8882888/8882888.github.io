@@ -134,7 +134,7 @@
    img.addEventListener('error',()=>{
     // Never replace a requested exact-region image with a different region's generic art.
     if(!exact&&!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
-    if(img.getAttribute('src')!==serviceFallback){img.src=serviceFallback;img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 공통 서비스 안내 이미지 (지역별 실제 사진 아님)';picture.href=serviceFallback;return}
+    if(img.getAttribute('src')!==serviceFallback){img.src=serviceFallback;img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 공통 서비스 안내 이미지 (지역별 실제 사진 아님)';picture.href=serviceFallback;if(fullLink)fullLink.href=serviceFallback;return}
     failed=true;
     picture.removeAttribute('href');
     picture.removeAttribute('target');
@@ -148,14 +148,14 @@
    picture.setAttribute('aria-label',img.alt+' 크게 보기');
    picture.append(img);
    picture.addEventListener('click',event=>{
-    if(zoom){event.preventDefault();openZoom(original,img.alt,picture)}
+    if(zoom){event.preventDefault();openZoom(picture.getAttribute('href'),img.alt,picture)}
    });
    const description=node('p','smart24-card-description',card.description||'지역별 운행 조건은 상담 후 확인합니다.');
    const actions=node('div','smart24-card-actions');
    if(zoom){
     const button=node('button','smart24-card-zoom','명함 화면에서 확대');
     zoomButton=button;
-    button.type='button';button.addEventListener('click',()=>openZoom(original,img.alt,button));
+    button.type='button';button.addEventListener('click',()=>openZoom(picture.getAttribute('href'),img.alt,button));
     actions.append(button);
    }
    const full=addLink(actions,original,'명함 원본 보기');
