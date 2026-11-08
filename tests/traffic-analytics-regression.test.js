@@ -15,7 +15,7 @@ test('analytics is present on region and fare pages',()=>{
   assert.match(fare,/assets\/traffic-analytics\.js/);
 });
 test('both canonical and index.html pages use the same funnel route',()=>{
-  assert.match(analytics,/location\.pathname\.replace\(\/\\\/index\\\.html\$\/,\s*'\/'\)/);
+  assert.ok(analytics.includes("location.pathname.replace(/\\/index\\.html$/,'/')"));
   assert.match(analytics,/if\(normalizedPage==='\/region\/'\)/);
   assert.match(analytics,/if\(normalizedPage==='\/fare\/'\)/);
   assert.doesNotMatch(analytics,/if\(location\.pathname==='\/fare\/'\)/);
@@ -24,7 +24,7 @@ test('fare submit only counts the real form with distinct populated endpoints',(
   assert.match(fare,/<form id="quote-form">/);
   assert.match(analytics,/form\.id!=='quote-form'/);
   assert.match(analytics,/start\.length>=2&&end\.length>=2&&start!==end/);
-  assert.match(analytics,/replace\(\/\\s\/g,''\)/);
+  assert.ok(analytics.includes("replace(/\\s/g,'')"));
 });
 test('call metrics count button taps, not connected calls',()=>{
   assert.match(analytics,/a\[href\^="tel:"\]/);
