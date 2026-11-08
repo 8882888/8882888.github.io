@@ -70,6 +70,32 @@ async function main(){
   assert.equal(fromHome.headers.location,'/taksong/ulsan/');
   const bareHome=await request(port,'/');
   assert.equal(bareHome.status,200,'Bare homepage must remain navigable without keyword');
+  // Protected /data/ must remain blocked, while the regional handoff needs a
+  // narrowly scoped lookup to avoid a permanent loading/error state.
+  const blockedSource=await request(port,'/data/regions.json');
+  assert.equal(blockedSource.status,403,'regional source data must stay protected');
+  for(const [region,parent,kind] of [
+    ['서울특별시','대한민국','daeri'],
+    ['부산광역시','대한민국','taksong'],
+    ['대구광역시','대한민국','daeri'],
+    ['울산광역시','대한민국','taksong'],
+    ['세종특별자치시','대한민국','daeri']
+  ]){
+    const params=new URLSearchParams({region,parent,kind});
+    const response=await request(port,'/api/public-region-lookup?'+params);
+    assert.equal(response.status,200,'regional lookup failed: '+region);
+    const data=JSON.parse(response.body);
+    assert.equal(data.matches.length,1,'region lookup must return exactly one '+region);
+    assert.equal(data.matches[0].name,region);
+    assert.equal(data.matches[0].parent_name,parent);
+    assert.equal(response.headers['x-robots-tag'],'noindex, nofollow');
+  }
+  const badKind=await request(port,'/api/public-region-lookup?region=부산광역시&kind=other');
+  assert.equal(badKind.status,400,'invalid service must not resolve');
+  const handoff=await request(port,'/go/region-service/');
+  assert.equal(handoff.status,200,'regional handoff page missing');
+  assert(handoff.body.includes('/api/public-region-lookup?'),'regional handoff must not fetch blocked /data/');
+  assert(!handoff.body.includes("fetch('/data/regions.json'"),'regional handoff still uses protected source');
   // Verify the real Cloudtype Node handler, not just source-string assertions.
   const tracking=await request(port,'/assets/traffic-analytics.js?v=20261109-overnight-visit');
   assert.equal(tracking.status,200,'analytics script must be served');
