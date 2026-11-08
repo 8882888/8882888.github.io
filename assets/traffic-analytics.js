@@ -125,7 +125,166 @@
     const keywords=new Map();
     for(const row of rows){
       const page=String(row.page||'');
-      const match=page.match(/\\/kw\\/([가-힣a-zA-Z0-9_-]{1,50})$/);
+      const match=page.match(new RegExp('/kw/([가-힣a-zA-Z0-9_-]{1,50})
+      if(!match)continue;
+      const label=match[1];
+      keywords.set(label,(keywords.get(label)||0)+Math.max(0,Number(row.clicks)||0));
+    }
+    if(keywords.size){
+      const heading=document.createElement('li');
+      heading.textContent='캠페인 키워드별 전화 버튼 클릭 (자연검색어 아님)';
+      heading.style.fontWeight='700';
+      channelList.appendChild(heading);
+      for(const [word,count] of [...keywords].sort((a,b)=>b[1]-a[1]).slice(0,15)){
+        const item=document.createElement('li');
+        item.textContent=word+' · '+format(count);
+        channelList.appendChild(item);
+      }
+    }
+    for(const row of rows.slice(0,12)){
+      const item=document.createElement('li');
+      const source=String(row.source||'유입 경로 미확인').replace(/^네이버 검색$/,'네이버 경유(검색 여부 미확인)');
+      const page=String(row.page||'');
+      const day=String(row.day||'');
+      item.textContent=[day,source,page].filter(Boolean).join(' · ')+' · '+format(row.clicks);
+      channelList.appendChild(item);
+    }
+  }
+  async function refresh(){
+    // The phone count beside the top-right number is lifetime clicks.
+    // The two small counters below it are KST today and lifetime visits.
+    // Only the homepage displays quote success statistics. Do not create a
+    // third network request on thousands of regional pages or on the fare form.
+    const quoteLine=el('quote-success-summary-20261107');
+    const [visits,phone,quoteSummary]=await Promise.allSettled([
+      rpc('site_visit_stats',{p_record:false}),
+      rpc('site_traffic_dashboard'),
+      quoteLine?rpc('site_quote_summary'):Promise.resolve(null)
+    ]);
+    if(visits.status==='fulfilled'&&visits.value){
+      put('today',visits.value.today_visits);
+      put('total',visits.value.total_visits);
+    }else{put('today',null);put('total',null);}
+    if(phone.status==='fulfilled'&&phone.value&&phone.value.total_phone_clicks!=null){
+      put('phoneClicks',phone.value.total_phone_clicks);
+      drawSources(phone.value.phone_sources);
+    }else{
+      try {
+        const legacy=await rpc('site_click_stats',{p_phone:null});
+        put('phoneClicks',legacy?.total_clicks);
+      }catch(_){put('phoneClicks',null);}
+      drawSources(null);
+    }
+    if(quoteLine){
+      const q=quoteSummary.status==='fulfilled'?quoteSummary.value:null;
+      const attempts=Number(q&&q.total_attempts),success=Number(q&&q.success_attempts),failed=Number(q&&q.failed_attempts);
+      quoteLine.textContent=q&&Number.isFinite(attempts)&&attempts>0&&Number.isFinite(success)&&Number.isFinite(failed)
+        ?'자동 도로거리 조회 '+attempts.toLocaleString('ko-KR')+'회 중 성공 '+success.toLocaleString('ko-KR')+'회 · 실패/시간초과 '+failed.toLocaleString('ko-KR')+'회 · 성공률 '+(100*success/attempts).toFixed(1)+'%'
+        :'아직 집계된 자동 도로거리 조회가 없습니다. 실서비스 계산 결과가 생기면 표시합니다.';
+    }
+    if(panel)panel.title='접속 기록에는 작업·점검 방문이 포함될 수 있습니다. 네이버 검색 노출이나 실제 통화 연결 수가 아닙니다.';
+  }
+  // Privacy-preserving, same-tab funnel stages. No search terms, addresses or IDs sent.
+  // Events are submitted to the aggregate-only RPC; production delivery must be verified separately.
+  const funnelKey='smart24_funnel_v1';
+  function funnelStage(stage){
+    if(isExcluded())return;
+    try{
+      const allowed=['landing','region_search','fare_view','fare_submit','phone_tap'];
+      if(!allowed.includes(stage))return;
+      const old=JSON.parse(sessionStorage.getItem(funnelKey)||'{}');
+      const next={...old,[stage]:true,source:acquisition(),updated:Date.now()};
+      sessionStorage.setItem(funnelKey,JSON.stringify(next));
+      const sentKey='smart24_funnel_sent_'+stage;
+      // An explicitly failed request can retry on a later interaction in this tab.
+      // Pending requests are not retried because a lost response may have been counted.
+      const delivery=sessionStorage.getItem(sentKey);
+      if(!delivery||delivery==='failed'){
+        sessionStorage.setItem(sentKey,'pending');
+        rpc('site_funnel_event',{p_source:next.source,p_stage:stage},{keepalive:true})
+          .then(()=>sessionStorage.setItem(sentKey,'sent'))
+          .catch(()=>sessionStorage.setItem(sentKey,'failed'));
+      }
+    }catch(_){}
+  }
+  window.smart24FunnelStage=funnelStage;
+  funnelStage('landing');
+  if(location.pathname==='/fare/')funnelStage('fare_view');
+  if(location.pathname==='/region/'){
+    const regionInput=document.getElementById('q');
+    const serviceInput=document.getElementById('region-card-kind')||document.getElementById('type');
+    const trackRegionIntent=()=>{
+      if((regionInput&&regionInput.value.trim())||(serviceInput&&serviceInput.value))funnelStage('region_search');
+    };
+    const regionForm=regionInput&&regionInput.closest('form');
+    if(regionForm)regionForm.addEventListener('submit',()=>funnelStage('region_search'),true);
+    if(regionInput)regionInput.addEventListener('change',trackRegionIntent);
+    // Region results update on input, not only on blur/change; count explicit typing once per tab.
+    if(regionInput)regionInput.addEventListener('input',trackRegionIntent);
+    if(serviceInput)serviceInput.addEventListener('change',trackRegionIntent);
+    // Do not treat a preselected service or an auto-filled search box as a user search.
+    // Only explicit change/submit interactions represent region-search intent.
+  }
+  document.addEventListener('submit',function(event){
+    if(location.pathname!=='/fare/'||!event.target||!event.target.matches||!event.target.matches('form'))return;
+    // A fare submission needs both endpoints; unrelated forms are not conversions.
+    const form=event.target;
+    const from=form.querySelector('#from,[name="from"],[name="start"],[name="origin"]');
+    const to=form.querySelector('#to,[name="to"],[name="end"],[name="destination"]');
+    if(from&&to&&String(from.value||'').trim()&&String(to.value||'').trim())funnelStage('fare_submit');
+  },true);
+  // Remember the *landing-page* referrer before later internal navigations
+  // replace it with the site's own URL. Only a coarse category is retained.
+  acquisition();
+  // New records are at most once per browser and KST day, not once per tab/page.
+  // Older records used per-tab counts, so historical totals cannot be fixed automatically.
+  // Browser clearing, devices and automated traffic mean these are NOT unique customers.
+  const today=kstDay(),visitKey='smart24_visit_'+today,browserDayKey='smart24_last_recorded_visit_day';
+  const alreadyCounted=readLocal(browserDayKey)===today||!!readSession(visitKey);
+  if(alreadyCounted)writeLocal(browserDayKey,today);
+  if(!isExcluded()&&!alreadyCounted){
+    // Mark before sending to avoid double-counts during concurrent tabs/refreshes.
+    writeLocal(browserDayKey,today);
+    writeSession(visitKey,'pending');
+    rpc('site_visit_stats',{p_record:true})
+      .then(()=>writeSession(visitKey,'sent'))
+      .catch(()=>writeSession(visitKey,'failed'))
+      .finally(refresh);
+  }else{
+    refresh();
+  }
+  document.addEventListener('click',function(event){
+    const link=event.target.closest&&event.target.closest('a[href^="tel:"]');
+    if(!link||link.getAttribute('href').replace(/\D/g,'')!=='18114294')return;
+    // Exclude owner/test calls on this browser without interrupting tel: navigation.
+    if(isExcluded())return;
+    funnelStage('phone_tap');
+    // Do not cancel tel: navigation; analytics must never block calling.
+    // The source page is a categorical page label, not a route/address or a
+    // phone-call completion record. Distinguish calculator result buttons
+    // without collecting user-entered pickup/destination or query strings.
+    let metricPage=location.pathname.slice(0,160);
+    if(location.pathname==='/fare/'){
+      const el=document.getElementById('result');
+      const state=el&&el.dataset&&el.dataset.quoteState;
+      if(['success','error','timeout','invalid'].includes(state))metricPage='/fare/quote-'+state;
+    }
+    // Explicit utm_term is campaign attribution, not a verified organic search query.
+    const taggedKeyword=campaignKeyword();
+    if(taggedKeyword)metricPage=(metricPage+'/kw/'+taggedKeyword).slice(0,160);
+    const payload={p_page:metricPage,p_source:acquisition()};
+    // Never retry a failed/uncertain write against a different counter.
+    // A lost response can occur after the server has already recorded the event;
+    // legacy fallback would count one tap twice and inflate conversion figures.
+    rpc('site_phone_event',payload,{keepalive:true})
+      .then(refresh).catch(()=>{});
+  },true);
+  window.addEventListener('focus',refresh);
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible')refresh();
+  });
+})();
+));
       if(!match)continue;
       const label=match[1];
       keywords.set(label,(keywords.get(label)||0)+Math.max(0,Number(row.clicks)||0));
