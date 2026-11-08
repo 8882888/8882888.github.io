@@ -182,7 +182,8 @@
     if(regionForm)regionForm.addEventListener('submit',()=>funnelStage('region_search'),true);
     if(regionInput)regionInput.addEventListener('change',trackRegionIntent);
     if(serviceInput)serviceInput.addEventListener('change',trackRegionIntent);
-    trackRegionIntent();
+    // Do not treat a preselected service or an auto-filled search box as a user search.
+    // Only explicit change/submit interactions represent region-search intent.
   }
   document.addEventListener('submit',function(event){
     if(location.pathname==='/fare/'&&event.target&&event.target.closest&&event.target.closest('form'))funnelStage('fare_submit');
