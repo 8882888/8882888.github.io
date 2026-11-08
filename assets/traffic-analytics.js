@@ -195,7 +195,7 @@
       const old=JSON.parse(sessionStorage.getItem(funnelKey)||'{}');
       const next={...old,[stage]:true,source:acquisition(),updated:Date.now()};
       sessionStorage.setItem(funnelKey,JSON.stringify(next));
-      const sentKey='smart24_funnel_sent_'+stage;
+      const sentKey='smart24_funnel_sent_'+kstDay()+'_'+stage;
       // An explicitly failed request can retry on a later interaction in this tab.
       // Pending requests are not retried because a lost response may have been counted.
       const delivery=sessionStorage.getItem(sentKey);
