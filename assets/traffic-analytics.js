@@ -116,16 +116,36 @@
     channelList.replaceChildren();
     if(!Array.isArray(rows)||!rows.length){
       const item=document.createElement('li');
-      item.textContent='전화클릭 전환 경로가 아직 기록되지 않았습니다. 전화 버튼을 누른 시점부터 수집됩니다.';
+      item.textContent='전화클릭 전환 경로가 아직 기록되지 않았습니다.';
       channelList.appendChild(item);
       return;
+    }
+    // Explicit utm_term attribution is embedded in the recorded page label.
+    // This is not a verified organic search keyword. Group only these tagged taps.
+    const keywords=new Map();
+    for(const row of rows){
+      const page=String(row.page||'');
+      const match=page.match(/\\/kw\\/([가-힣a-zA-Z0-9_-]{1,50})$/);
+      if(!match)continue;
+      const label=match[1];
+      keywords.set(label,(keywords.get(label)||0)+Math.max(0,Number(row.clicks)||0));
+    }
+    if(keywords.size){
+      const heading=document.createElement('li');
+      heading.textContent='캠페인 키워드별 전화 버튼 클릭 (자연검색어 아님)';
+      heading.style.fontWeight='700';
+      channelList.appendChild(heading);
+      for(const [word,count] of [...keywords].sort((a,b)=>b[1]-a[1]).slice(0,15)){
+        const item=document.createElement('li');
+        item.textContent=word+' · '+format(count);
+        channelList.appendChild(item);
+      }
     }
     for(const row of rows.slice(0,12)){
       const item=document.createElement('li');
       const source=String(row.source||'유입 경로 미확인').replace(/^네이버 검색$/,'네이버 경유(검색 여부 미확인)');
       const page=String(row.page||'');
       const day=String(row.day||'');
-      // Old click totals predate source tracking. Do not mislabel them as direct traffic.
       item.textContent=[day,source,page].filter(Boolean).join(' · ')+' · '+format(row.clicks);
       channelList.appendChild(item);
     }
@@ -249,7 +269,10 @@
       const state=el&&el.dataset&&el.dataset.quoteState;
       if(['success','error','timeout','invalid'].includes(state))metricPage='/fare/quote-'+state;
     }
-    // Explicit utm_term is campaign attribution, not a verified organic search query.\n    const taggedKeyword=campaignKeyword();\n    if(taggedKeyword)metricPage=(metricPage+'/kw/'+taggedKeyword).slice(0,160);\n    const payload={p_page:metricPage,p_source:acquisition()};
+    // Explicit utm_term is campaign attribution, not a verified organic search query.
+    const taggedKeyword=campaignKeyword();
+    if(taggedKeyword)metricPage=(metricPage+'/kw/'+taggedKeyword).slice(0,160);
+    const payload={p_page:metricPage,p_source:acquisition()};
     // Never retry a failed/uncertain write against a different counter.
     // A lost response can occur after the server has already recorded the event;
     // legacy fallback would count one tap twice and inflate conversion figures.
