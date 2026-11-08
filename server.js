@@ -2722,7 +2722,10 @@ try{
  // Images, CSS and JavaScript need cache validation and nonblocking streaming.
  // Previously every asset used synchronous readFileSync on the single Node event loop.
  const stat=fs.statSync(p),etag='"'+stat.size.toString(16)+'-'+Math.round(stat.mtimeMs).toString(16)+'"';
- const headers={'content-type':types[ext],'cache-control':'public, max-age=3600, must-revalidate','etag':etag,'x-content-type-options':'nosniff'};
+ // Conversion tracking must revalidate on each request after a Cloudtype deployment;
+ // a stale JS file can silently suppress visits, fare submissions and phone taps.
+ const analyticsAsset=pathname==='/assets/traffic-analytics.js';
+ const headers={'content-type':types[ext],'cache-control':analyticsAsset?'no-cache, max-age=0, must-revalidate':'public, max-age=3600, must-revalidate','etag':etag,'x-content-type-options':'nosniff'};
  if(req.headers['if-none-match']===etag){res.writeHead(304,headers);return res.end()}
  res.writeHead(200,{...headers,'content-length':stat.size});
  if(req.method==='HEAD')return res.end();
