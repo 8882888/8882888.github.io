@@ -165,7 +165,16 @@
   window.smart24FunnelStage=funnelStage;
   funnelStage('landing');
   if(location.pathname==='/fare/')funnelStage('fare_view');
-  if(location.pathname==='/region/')funnelStage('region_search');
+  if(location.pathname==='/region/'){
+    const regionInput=document.getElementById('q');
+    const serviceInput=document.getElementById('type');
+    const trackRegionIntent=()=>{
+      if((regionInput&&regionInput.value.trim())||(serviceInput&&serviceInput.value))funnelStage('region_search');
+    };
+    if(regionInput)regionInput.addEventListener('change',trackRegionIntent);
+    if(serviceInput)serviceInput.addEventListener('change',trackRegionIntent);
+    trackRegionIntent();
+  }
   document.addEventListener('submit',function(event){
     if(location.pathname==='/fare/'&&event.target&&event.target.closest&&event.target.closest('form'))funnelStage('fare_submit');
   },true);
