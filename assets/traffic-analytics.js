@@ -153,6 +153,13 @@
       const old=JSON.parse(sessionStorage.getItem(funnelKey)||'{}');
       const next={...old,[stage]:true,source:acquisition(),updated:Date.now()};
       sessionStorage.setItem(funnelKey,JSON.stringify(next));
+      const sentKey='smart24_funnel_sent_'+stage;
+      if(!old[stage]&&!sessionStorage.getItem(sentKey)){
+        sessionStorage.setItem(sentKey,'pending');
+        rpc('site_funnel_event',{p_source:next.source,p_stage:stage},{keepalive:true})
+          .then(()=>sessionStorage.setItem(sentKey,'sent'))
+          .catch(()=>sessionStorage.setItem(sentKey,'failed'));
+      }
     }catch(_){}
   }
   window.smart24FunnelStage=funnelStage;
