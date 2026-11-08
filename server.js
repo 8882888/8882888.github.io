@@ -2599,7 +2599,8 @@ if(pathname==='/sitemap.xml'){
   ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
   '/region/innovation-cities/',...innovationFocusEntries.map(x=>servicePath(regionByFullName.get(x.region),x.kind)),
   '/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],
-  '/daeri/sejong/','/taksong/sejong/','/daeri/gangwon/wonju-si/','/taksong/gyeongnam/jinju-si/','/daeri/jeonnam/naju-si/','/taksong/gyeongbuk/gimcheon-si/',
+  // Province and locality discovery is provided by the balanced registry selection below.
+ 
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
   '/','/coverage/','/taksongdaeri/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/fare/','/fare/jeju/',
   '/reviews/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/blog/','/blog/archive/','/find/',
