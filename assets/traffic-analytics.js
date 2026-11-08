@@ -104,7 +104,7 @@
       const params=new URL(location.href).searchParams;
       const raw=(params.get('utm_term')||'').trim();
       if(!raw||raw.length>50||!/^[가-힣a-zA-Z0-9 _-]+$/.test(raw))return '';
-      const normalized=raw.replace(/\\s+/g,'-').slice(0,50);
+      const normalized=raw.replace(/\s+/g,'-').slice(0,50);
       writeSession(key,normalized);
       return normalized;
     }catch(_){return ''}
