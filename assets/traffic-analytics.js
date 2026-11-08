@@ -249,10 +249,12 @@
   // New records are at most once per browser and KST day, not once per tab/page.
   // Older records used per-tab counts, so historical totals cannot be fixed automatically.
   // Browser clearing, devices and automated traffic mean these are NOT unique customers.
-  const today=kstDay(),visitKey='smart24_visit_'+today,browserDayKey='smart24_last_recorded_visit_day';
-  const alreadyCounted=readLocal(browserDayKey)===today||!!readSession(visitKey);
-  if(alreadyCounted)writeLocal(browserDayKey,today);
-  if(!isExcluded()&&!alreadyCounted){
+  const browserDayKey='smart24_last_recorded_visit_day';
+  function recordDailyVisit(){
+    const today=kstDay(),visitKey='smart24_visit_'+today;
+    const alreadyCounted=readLocal(browserDayKey)===today||!!readSession(visitKey);
+    if(alreadyCounted)writeLocal(browserDayKey,today);
+    if(isExcluded()||alreadyCounted)return false;
     // Mark before sending to avoid double-counts during concurrent tabs/refreshes.
     writeLocal(browserDayKey,today);
     writeSession(visitKey,'pending');
@@ -260,9 +262,9 @@
       .then(()=>writeSession(visitKey,'sent'))
       .catch(()=>writeSession(visitKey,'failed'))
       .finally(refresh);
-  }else{
-    refresh();
+    return true;
   }
+  if(!recordDailyVisit())refresh();
   document.addEventListener('click',function(event){
     const link=event.target.closest&&event.target.closest('a[href^="tel:"]');
     if(!link||link.getAttribute('href').replace(/\D/g,'')!=='18114294')return;
@@ -296,7 +298,7 @@
     const now=Date.now();
     if(now-lastPassiveRefresh<60000)return;
     lastPassiveRefresh=now;
-    refresh();
+    if(!recordDailyVisit())refresh();
   }
   window.addEventListener('focus',passiveRefresh);
   document.addEventListener('visibilitychange',passiveRefresh);
