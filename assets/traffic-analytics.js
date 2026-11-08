@@ -181,6 +181,8 @@
     const regionForm=regionInput&&regionInput.closest('form');
     if(regionForm)regionForm.addEventListener('submit',()=>funnelStage('region_search'),true);
     if(regionInput)regionInput.addEventListener('change',trackRegionIntent);
+    // Region results update on input, not only on blur/change; count explicit typing once per tab.
+    if(regionInput)regionInput.addEventListener('input',trackRegionIntent);
     if(serviceInput)serviceInput.addEventListener('change',trackRegionIntent);
     // Do not treat a preselected service or an auto-filled search box as a user search.
     // Only explicit change/submit interactions represent region-search intent.
