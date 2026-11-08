@@ -1,15 +1,15 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-07T21:53:07+00:00",
-  "stored": 268059,
+  "updatedAt": "2026-11-08T06:05:30+00:00",
+  "stored": 268075,
   "generated": 267306,
-  "collected": 753,
-  "feedKeywords": 547,
+  "collected": 769,
+  "feedKeywords": 563,
   "seedKeywords": 206,
-  "linkedCollected": 255,
-  "review": 498,
+  "linkedCollected": 257,
+  "review": 512,
   "archived": 0,
-  "observationsThisRun": 95,
+  "observationsThisRun": 107,
   "sources": [
     {
       "id": "google-trends-kr",
@@ -17,7 +17,7 @@
       "status": "ok",
       "received": 10,
       "error": null,
-      "checkedAt": "2026-11-07T21:53:07+00:00"
+      "checkedAt": "2026-11-08T06:05:30+00:00"
     },
     {
       "id": "travel-news-keywords",
@@ -25,7 +25,7 @@
       "status": "ok",
       "received": 100,
       "error": null,
-      "checkedAt": "2026-11-07T21:53:07+00:00"
+      "checkedAt": "2026-11-08T06:05:30+00:00"
     },
     {
       "id": "cycling-news-keywords",
@@ -33,7 +33,7 @@
       "status": "ok",
       "received": 52,
       "error": null,
-      "checkedAt": "2026-11-07T21:53:07+00:00"
+      "checkedAt": "2026-11-08T06:05:30+00:00"
     }
   ],
   "scheduledIntervalHours": 6,
