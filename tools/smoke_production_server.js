@@ -70,6 +70,22 @@ async function main(){
   assert.equal(fromHome.headers.location,'/taksong/ulsan/');
   const bareHome=await request(port,'/');
   assert.equal(bareHome.status,200,'Bare homepage must remain navigable without keyword');
+  // Verify the real Cloudtype Node handler, not just source-string assertions.
+  const tracking=await request(port,'/assets/traffic-analytics.js?v=20261109-overnight-visit');
+  assert.equal(tracking.status,200,'analytics script must be served');
+  assert.match(tracking.headers['content-type']||'',/javascript/);
+  assert.equal(tracking.headers['cache-control'],'no-cache, max-age=0, must-revalidate','tracking script must revalidate after deploy');
+  assert(tracking.headers.etag,'tracking script must provide an ETag');
+  const unchanged=await request(port,'/assets/traffic-analytics.js',{'If-None-Match':tracking.headers.etag});
+  assert.equal(unchanged.status,304,'unchanged tracking script must support conditional requests');
+  const fresh=await request(port,'/assets/traffic-analytics.js',{'If-None-Match':'"old-deployment"'});
+  assert.equal(fresh.status,200,'outdated tracking script must return fresh bytes');
+  for(const route of ['/','/region/','/fare/','/go/region-service/']){
+    const page=await request(port,route);
+    assert.equal(page.status,200,'tracking entry page unavailable: '+route);
+    assert(page.body.includes('/assets/traffic-analytics.js?v=20261109-overnight-visit'),'stale tracking asset on '+route);
+  }
+
   // Regression: show the three most important historical fare tables before long prose.
   for(const [route,tableId,imageId] of [
     ['/설악산탁송/','mountain-route-fare-table-202611','original-mountain-fare-visual'],
