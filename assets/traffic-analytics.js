@@ -151,6 +151,9 @@
     }
   }
   async function refresh(){
+    // Regional and service pages without visible counters should not issue dashboard RPCs.
+    // This does not suppress visit, funnel or phone-click event writes.
+    if(!figures.today&&!figures.total&&!figures.phoneClicks&&!channelList&&!el('quote-success-summary-20261107'))return;
     // The phone count beside the top-right number is lifetime clicks.
     // The two small counters below it are KST today and lifetime visits.
     // Only the homepage displays quote success statistics. Do not create a
