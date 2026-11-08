@@ -119,9 +119,10 @@
    const exact=imagePath(card.keywordImage);
    const original=exact||imagePath(card.image);
    const preview=exact||imagePath(card.previewImage);
+   const serviceFallback=card.kind==='daeri'?'/assets/service-daeri-visual.svg':'/assets/service-taksong-visual.svg';
    const legacy=imagePath(card.image);
    const page=guidePath(card.url);
-   if(!original||!page)return null;
+   if(!original||!page||!['daeri','taksong'].includes(card.kind))return null;
    const article=node('article','smart24-card-panel');
    const title=node('h3','smart24-card-heading',card.displayKeyword||card.label||'지역별 상담 명함');
    const img=node('img','smart24-card-preview-image');
@@ -133,6 +134,7 @@
    img.addEventListener('error',()=>{
     // Never replace a requested exact-region image with a different region's generic art.
     if(!exact&&!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
+    if(img.getAttribute('src')!==serviceFallback){img.src=serviceFallback;img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 공통 서비스 안내 이미지 (지역별 실제 사진 아님)';picture.href=serviceFallback;return}
     failed=true;
     picture.removeAttribute('href');
     picture.removeAttribute('target');
