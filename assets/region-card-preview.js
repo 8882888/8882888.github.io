@@ -122,12 +122,12 @@
    const serviceFallback=card.kind==='daeri'?'/assets/service-daeri-visual.svg':'/assets/service-taksong-visual.svg';
    const legacy=imagePath(card.image);
    const page=guidePath(card.url);
-   if(!original||!page||!['daeri','taksong'].includes(card.kind))return null;
+   if(!page||!['daeri','taksong'].includes(card.kind))return null;
    const article=node('article','smart24-card-panel');
    const title=node('h3','smart24-card-heading',card.displayKeyword||card.label||'지역별 상담 명함');
    const img=node('img','smart24-card-preview-image');
-   img.src=preview||original;
-   img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 전용 명함';
+   img.src=preview||original||serviceFallback;
+   img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+(original?' 전용 명함':' 공통 서비스 안내 이미지 (지역별 실제 사진 아님)');
    img.width=1200;img.height=800;img.loading='eager';img.decoding='async';
    let pngFallback=false;
    let zoomButton=null,fullLink=null;
@@ -135,7 +135,6 @@
     // Never replace a requested exact-region image with a different region's generic art.
     if(!exact&&!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
     if(img.getAttribute('src')!==serviceFallback){img.src=serviceFallback;img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 공통 서비스 안내 이미지 (지역별 실제 사진 아님)';picture.href=serviceFallback;if(fullLink)fullLink.href=serviceFallback;return}
-    failed=true;
     picture.removeAttribute('href');
     picture.removeAttribute('target');
     picture.style.cursor='default';
@@ -144,7 +143,7 @@
     if(fullLink)fullLink.remove();
    });
    const picture=node('a','smart24-card-picture-link');
-   picture.href=original;picture.target='_blank';picture.rel='noopener noreferrer';
+   picture.href=original||serviceFallback;picture.target='_blank';picture.rel='noopener noreferrer';
    picture.setAttribute('aria-label',img.alt+' 크게 보기');
    picture.append(img);
    picture.addEventListener('click',event=>{
@@ -158,7 +157,7 @@
     button.type='button';button.addEventListener('click',()=>openZoom(picture.getAttribute('href'),img.alt,button));
     actions.append(button);
    }
-   const full=addLink(actions,original,'명함 원본 보기');
+   const full=addLink(actions,original||serviceFallback,'명함 원본 보기');
    fullLink=full;
    full.target='_blank';full.rel='noopener noreferrer';
    addLink(actions,page,'지역 상세 안내');
