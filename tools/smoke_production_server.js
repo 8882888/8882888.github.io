@@ -90,7 +90,7 @@ async function main(){
     assert.equal(data.matches[0].parent_name,parent);
     assert.equal(response.headers['x-robots-tag'],'noindex, nofollow');
   }
-  const badKind=await request(port,'/api/public-region-lookup?region=부산광역시&kind=other');
+  const badKind=await request(port,'/api/public-region-lookup?'+new URLSearchParams({region:'부산광역시',kind:'other'}));
   assert.equal(badKind.status,400,'invalid service must not resolve');
   const handoff=await request(port,'/go/region-service/');
   assert.equal(handoff.status,200,'regional handoff page missing');
