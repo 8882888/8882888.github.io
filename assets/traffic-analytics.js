@@ -93,6 +93,24 @@
     writeSession('smart24_traffic_source',source);
     return source;
   }
+  // Only explicit campaign-tagged keywords can be attributed to an individual tap.
+  // Organic search engines generally do not reveal the visitor's search query.
+  // Keep a coarse, validated keyword label in this tab; never store raw URLs or search inputs.
+  function campaignKeyword(){
+    const key='smart24_campaign_keyword_v1';
+    const cached=readSession(key);
+    if(cached)return cached;
+    try{
+      const params=new URL(location.href).searchParams;
+      const raw=(params.get('utm_term')||'').trim();
+      if(!raw||raw.length>50||!/^[가-힣a-zA-Z0-9 _-]+$/.test(raw))return '';
+      const normalized=raw.replace(/\\s+/g,'-').slice(0,50);
+      writeSession(key,normalized);
+      return normalized;
+    }catch(_){return ''}
+  }
+  // Capture the landing-page campaign term before the user moves to /fare/.
+  campaignKeyword();
   function drawSources(rows){
     if(!channelList)return;
     channelList.replaceChildren();
@@ -231,7 +249,7 @@
       const state=el&&el.dataset&&el.dataset.quoteState;
       if(['success','error','timeout','invalid'].includes(state))metricPage='/fare/quote-'+state;
     }
-    const payload={p_page:metricPage,p_source:acquisition()};
+    // Explicit utm_term is campaign attribution, not a verified organic search query.\n    const taggedKeyword=campaignKeyword();\n    if(taggedKeyword)metricPage=(metricPage+'/kw/'+taggedKeyword).slice(0,160);\n    const payload={p_page:metricPage,p_source:acquisition()};
     // Never retry a failed/uncertain write against a different counter.
     // A lost response can occur after the server has already recorded the event;
     // legacy fallback would count one tap twice and inflate conversion figures.
