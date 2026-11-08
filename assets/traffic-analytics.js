@@ -289,8 +289,15 @@
     rpc('site_phone_event',payload,{keepalive:true})
       .then(refresh).catch(()=>{});
   },true);
-  window.addEventListener('focus',refresh);
-  document.addEventListener('visibilitychange',function(){
-    if(document.visibilityState==='visible')refresh();
-  });
+  // Focus and visibilitychange often fire together on mobile; avoid duplicate dashboard reads.
+  let lastPassiveRefresh=0;
+  function passiveRefresh(){
+    if(document.visibilityState!=='visible')return;
+    const now=Date.now();
+    if(now-lastPassiveRefresh<60000)return;
+    lastPassiveRefresh=now;
+    refresh();
+  }
+  window.addEventListener('focus',passiveRefresh);
+  document.addEventListener('visibilitychange',passiveRefresh);
 })();
