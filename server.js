@@ -2626,7 +2626,7 @@ if(pathname==='/sitemap.xml'){
   ...routeKeywordPages.reviewed.entries.slice(0,50).map(e=>routeKeywordPages.reviewed.routePath(e)),
   ...keywordEngine.activityUrls,
   // Curated guides and verified routes remain ahead of rotating locality entries.
-  ...naverFocus2900.slice(0,200).map(p=>servicePath(regionByFullName.get(p.region),p.kind))
+  ...(() => { const names=provinceRegions.map(r=>r.full_name); const buckets=new Map(names.map(n=>[n,[]])); for(const p of naverFocus2900){ const region=regionByFullName.get(p.region); if(!region)continue; const province=names.find(n=>region.full_name===n||region.full_name.startsWith(n+' ')); if(province)buckets.get(province).push(servicePath(region,p.kind)); } const selected=[]; let more=true; while(more&&selected.length<200){ more=false; for(const bucket of buckets.values()){ if(bucket.length){ selected.push(bucket.shift());more=true; if(selected.length>=200)break; } } } return selected; })()
  ];
  // The primary discovery map stays intentionally under 500 URLs; deeper regional
  // and completed-route pages remain reachable in their dedicated sitemaps.
