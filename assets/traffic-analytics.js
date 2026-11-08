@@ -271,7 +271,7 @@
     // phone-call completion record. Distinguish calculator result buttons
     // without collecting user-entered pickup/destination or query strings.
     let metricPage=location.pathname.slice(0,160);
-    if(location.pathname==='/fare/'){
+    if(normalizedPage==='/fare/'){
       const el=document.getElementById('result');
       const state=el&&el.dataset&&el.dataset.quoteState;
       if(['success','error','timeout','invalid'].includes(state))metricPage='/fare/quote-'+state;
