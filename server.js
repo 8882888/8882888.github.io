@@ -1457,12 +1457,25 @@ function homepageTaksongIntentLinks(){
   ['지방 주요 도시',['경상남도 창원시','강원특별자치도 원주시','경상남도 진주시','전라남도 나주시','경상북도 김천시']],
   ['강원 산간·동해권',['강원특별자치도 태백시','강원특별자치도 정선군','강원특별자치도 삼척시','강원특별자치도 동해시','강원특별자치도 영월군','강원특별자치도 속초시','강원특별자치도 강릉시']]
  ];
+ // All 17 top-level regions: link only to already-defined regional service routes.
+ const nationwide=[
+  ['서울특별시','서울'],['부산광역시','부산'],['대구광역시','대구'],['인천광역시','인천'],
+  ['광주광역시','광주'],['대전광역시','대전'],['울산광역시','울산'],['세종특별자치시','세종'],
+  ['경기도','경기'],['강원특별자치도','강원'],['충청북도','충북'],['충청남도','충남'],
+  ['전북특별자치도','전북'],['전라남도','전남'],['경상북도','경북'],['경상남도','경남'],
+  ['제주특별자치도','제주']
+ ];
+ const nationwideLinks=nationwide.map(([full,label])=>{
+  const r=regions.find(x=>x.full_name===full);
+  if(!r)return '';
+  return '<li><a href="'+esc(servicePath(r,'taksong'))+'">'+esc(label+'탁송')+'</a> · <a href="'+esc(servicePath(r,'daeri'))+'">'+esc(label+'대리운전')+'</a></li>';
+ }).filter(Boolean).join('');
  const items=groups.map(([label,names])=>'<div><h3>'+esc(label)+'</h3><ul>'+names.map(full=>{
   const r=regions.find(x=>x.full_name===full);if(!r)return '';
   const name=seoRegionLabel(r),href=servicePath(r,'taksong');
   return '<li><a href="'+esc(href)+'">'+esc(name+'탁송')+'</a> · '+esc(name+'자동차탁송')+' · '+esc(name+'차량탁송')+'</li>';
  }).join('')+'</ul></div>').join('');
- return '<section id="homepage-taksong-intents" aria-label="자동차탁송 서비스별 검색 안내"><h2>자동차탁송 · 차량탁송 · 장거리탁송 · 지역별 탁송</h2><p>자동차탁송업체, 차량탁송업체, 자동차탁송예약, 장거리차량탁송, 중고차탁송, 신차탁송, 렌트카탁송, 사고대차탁송, 서비스센터탁송, 정비차량입고탁송, 정비차량출고탁송, 법인차량탁송, 경매장탁송, 수출차량탁송, 공항차량탁송 등 서비스 목적에 따라 차량 인수와 인계 방법이 다릅니다. 가능한 차량 종류·톤급·배차 시간·요금은 상담으로 확인합니다.</p><p>출발지·도착지 주소, 차량 종류, 희망 인수·인계 시간, 비대면 인계 가능 여부를 확인하세요. 실제 완료 운행 기록이 없는 구간은 후기나 확정 요금으로 표시하지 않습니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+items+'</div><p><a href="/taksong/">전국 자동차탁송 안내</a> · <a href="/fare/">차량탁송 예상요금 조회</a></p></section>';
+ return '<section id="homepage-taksong-intents" aria-label="자동차탁송 서비스별 검색 안내"><h2>자동차탁송 · 차량탁송 · 장거리탁송 · 지역별 탁송</h2><p>자동차탁송업체, 차량탁송업체, 자동차탁송예약, 장거리차량탁송, 중고차탁송, 신차탁송, 렌트카탁송, 사고대차탁송, 서비스센터탁송, 정비차량입고탁송, 정비차량출고탁송, 법인차량탁송, 경매장탁송, 수출차량탁송, 공항차량탁송 등 서비스 목적에 따라 차량 인수와 인계 방법이 다릅니다. 가능한 차량 종류·톤급·배차 시간·요금은 상담으로 확인합니다.</p><p>출발지·도착지 주소, 차량 종류, 희망 인수·인계 시간, 비대면 인계 가능 여부를 확인하세요. 실제 완료 운행 기록이 없는 구간은 후기나 확정 요금으로 표시하지 않습니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">'+items+'</div><h3>전국 17개 시도 탁송·대리운전 안내</h3><ul>'+nationwideLinks+'</ul><p><a href="/taksong/">전국 자동차탁송 안내</a> · <a href="/fare/">차량탁송 예상요금 조회</a></p></section>';
 }
 function homepageCampingDriverLinks(){
  // Camping-ground intent links to existing city-level driver pages only.
