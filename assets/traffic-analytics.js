@@ -189,8 +189,8 @@
     if(location.pathname!=='/fare/'||!event.target||!event.target.matches||!event.target.matches('form'))return;
     // A fare submission needs both endpoints; unrelated forms are not conversions.
     const form=event.target;
-    const from=form.querySelector('[name="from"],[name="start"],[name="origin"]');
-    const to=form.querySelector('[name="to"],[name="end"],[name="destination"]');
+    const from=form.querySelector('#from,[name="from"],[name="start"],[name="origin"]');
+    const to=form.querySelector('#to,[name="to"],[name="end"],[name="destination"]');
     if(from&&to&&String(from.value||'').trim()&&String(to.value||'').trim())funnelStage('fare_submit');
   },true);
   // Remember the *landing-page* referrer before later internal navigations
