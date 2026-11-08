@@ -1746,7 +1746,7 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    }
   }
   if(html.includes('</body>')&&!/src=["']\/assets\/traffic-analytics\.js(?:\?[^"']*)?["']/.test(html)){
-   html=html.replace('</body>','<script src="/assets/traffic-analytics.js?v=20261108-fare-submit" defer></script></body>');
+   html=html.replace('</body>','<script src="/assets/traffic-analytics.js?v=20261109-funnel-refresh" defer></script></body>');
   }
   html=serviceKeywordEntry.enhance(html,res._smartPath||'');
   body=keywordExpansion.enhance(html,res._smartPath||'');
