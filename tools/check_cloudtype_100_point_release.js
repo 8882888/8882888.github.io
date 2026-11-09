@@ -411,7 +411,7 @@ const rules=[
     "group": "seo",
     "path": "data/seo-pages.json",
     "name": "taksong title",
-    "needle": "전국자동차탁송 실제 운행후기 | 24시탁송"
+    "needle": "전국자동차탁송 실제 운행기록·후기 | 24시탁송"
   },
   {
     "group": "seo",
@@ -555,7 +555,7 @@ const rules=[
     "group": "regions",
     "path": "region/index.html",
     "name": "region title",
-    "needle": "전국 지역별 자동차탁송"
+    "needle": "전국 시도·시군구 대리운전·자동차탁송 지역 검색"
   },
   {
     "group": "regions",
