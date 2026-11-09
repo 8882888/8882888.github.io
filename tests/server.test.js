@@ -558,7 +558,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     'Never misattribute other localities rides or prices');
   assert.ok(localityHtml.includes('content="noindex,follow"'),
     'Thin no-evidence village landing must not be indexed as a fabricated local review');
-  assert.ok(!/href="\\/reviews\\/[a-f0-9]{16}\\//.test(localityHtml),
+  assert.ok(!/href="\/reviews\/[a-f0-9]{16}\//.test(localityHtml),
     'Local pages without confirmed rides must not feature unrelated records');
   assert.ok(localityHtml.includes('/reviews/history/?kind=taksong'),
     'Actual national ride archive must remain accessible');
