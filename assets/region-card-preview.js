@@ -82,7 +82,7 @@
   {name:'영산강길종주탁송',aliases:['영산강길종주탁송','영산강종주탁송'],image:'/assets/cycling-routes/yeongsan-taksong.svg',url:'/special/cycling-trail-transport/',description:'영산강 자전거길 종주 차량 회수 안내. 출발·도착 주차장과 배차 조건은 상담으로 확인합니다.'},
   {name:'섬진강종주탁송',aliases:['섬진강종주탁송'],image:'/assets/cycling-routes/seomjin-taksong.svg',url:'/special/cycling-trail-transport/',description:'섬진강 자전거길 종주 차량 회수 안내. 차량 인수·인계 장소는 상담으로 확인합니다.'},
   {name:'동해안종주탁송',aliases:['동해안종주탁송'],image:'/assets/cycling-routes/eastcoast-taksong.svg',url:'/special/cycling-trail-transport/',description:'동해안 자전거길 종주 차량 회수 안내. 코스와 날짜에 따른 배차 조건은 상담으로 확인합니다.'},
-  {name:'설악산탁송',aliases:['설악산','설악산탁송','오색탁송','한계령탁송','백담사탁송'],image:'/assets/seoraksan-taksong-fares.svg',url:'/설악산탁송/',description:'설악산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
+  {name:'설악산탁송',aliases:['설악산','설악산탁송','설악산종주','설악산종주탁송','설악산코스별탁송','오색탁송','한계령탁송','백담사탁송'],image:'/assets/seoraksan-taksong-fares.svg',url:'/설악산탁송/',description:'설악산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
   {name:'지리산탁송',aliases:['지리산','지리산탁송','성삼재탁송','중산리탁송','대원사탁송'],image:'/assets/jirisan-taksong-fares.svg',url:'/지리산탁송/',description:'지리산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
   {name:'자전거길종주탁송',aliases:['자전거종주','자전거종주탁송','자전거길종주탁송','영산강길종주탁송','영산강종주탁송','섬진강종주탁송','동해안종주탁송'],image:'/assets/cycling-routes/nationwide-taksong.svg',url:'/special/cycling-trail-transport/',description:'자전거길 종주 차량 회수 안내 이미지. 세부 코스별 요금과 배차는 별도 확인합니다.'}
  ];
@@ -235,7 +235,18 @@
    addLink(actions,page,'지역 상세 안내');
    const tel=String(card.phone||'1811-4294').replace(/[^0-9]/g,'');
    if(tel.length>=7)addLink(actions,'tel:'+tel,'전화 '+card.phone,'smart24-card-phone');
-   article.append(title,picture,description,actions);
+   // Keep the verified mountain fare table visible independently of image or API loading.
+   if(card.url==='/설악산탁송/'){
+    const heading=node('h4','smart24-card-fare-heading','설악산 코스별 기존 탁송요금');
+    const table=node('table','smart24-card-fare-table');
+    const caption=node('caption','', '기존 안내요금이며 현재 확정요금은 상담 후 확인합니다.');
+    table.append(caption);
+    const tbody=document.createElement('tbody');
+    const fares=[['오색 → 소공원','7만원'],['한계령 → 소공원','8만원'],['백담사 → 소공원','8만원'],['남교리 → 소공원','8만원'],['한계령 → 백담사','8만원'],['오색 → 백담사','8만원']];
+    fares.forEach(([route,fare])=>{const tr=document.createElement('tr');tr.append(node('th','',route),node('td','',fare));tbody.append(tr)});
+    table.append(tbody);
+    article.append(title,picture,heading,table,description,actions);
+   }else article.append(title,picture,description,actions);
    return article;
   }
   function show(data){
@@ -283,10 +294,9 @@
    // Use a legally mapped locality image URL immediately on the official host.
    // If Cloudtype has not deployed the endpoint, the img error handler renders an in-browser text SVG.
    // Never claim live deployment simply because a generated URL was selected.
-   if(location.hostname==='jeongukdaeri.kr'||location.hostname==='www.jeongukdaeri.kr'){
-    const city=liveCityMatch(query,select?.value||'');
-    if(city){show(city);return;}
-   }
+   // Use source-verified metropolitan cards even on a static hosting fallback.
+   const city=liveCityMatch(query,select?.value||'');
+   if(city){show(city);return;}
    showDraft(query,inferred||select?.value||'taksong');
    async function lookup(){
     controller=new AbortController();
@@ -311,7 +321,9 @@
      if(seq!==sequence||(error.name==='AbortError'&&!timedOut))return;
      // A missing/slow Cloudtype preview API must not leave the search looking broken.
      // The existing /region/ page runs from static region data independently.
-     showDraft(query,inferred||select?.value||'taksong','조회 서버에 연결되지 않아 입력한 키워드 텍스트 명함을 표시합니다.');
+     // Keep the already displayed local card in place; do not make it blink or disappear on API failure.
+     output.hidden=false;
+     message.textContent='서버 연결 오류: 표시 중인 키워드 명함은 유지합니다. 정확한 지역은 전체 지역 검색에서 확인할 수 있습니다.';
      const p=new URLSearchParams({q:query});
      if(select?.value)p.set('service',select.value);
      const known=nearbyRoute(query,select?.value||'');
