@@ -22,7 +22,7 @@ REQUIRED = {
     "reviews/verified/index.html": ["운행기록","예상요금 조회","카드대리운전 상담"],
     "service/daeri/index.html": ["real-long-distance-daeri","daeri-image-provenance","long-distance-daeri-trust","daeri-review-visual-1811"],
     "service/heavy-truck-taksong/index.html": ["25톤","완료가 확인된 후기와는 다릅니다","heavy-truck-types","heavy-dispatch-verification-8","heavy-25t-wingbody-photo-1811"],
-    "service/golf/index.html": ["golf-driver-real-case","golf-photo-standard","golf-route-consult","golf-driver-comparison-8","golf-visual-and-callback-1811","실제 운행 증빙사진 아님"],
+    "service/golf/index.html": ["golf-driver-real-case","golf-photo-standard","golf-route-consult","golf-driver-comparison-8","golf-visual-and-callback-1811","차량·사람 사진이 아닌 안내용 텍스트 명함"],
     "service/daily-driver/index.html": ["daily-driver-real-route","daily-photo-standard","daily-route-consult","daily-golf-photo-and-fare-1811","참고 일러스트"],
     "service/long-distance-taksong/index.html": ["long-distance-history-search-202611","long-distance-verified-routes","taksong-vehicle-visual-guide","long-taksong-route-comparison","long-taksong-1811-plate"],
 }
