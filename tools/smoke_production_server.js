@@ -127,7 +127,9 @@ async function main(){
     const imageAt=r.body.indexOf(route.includes('special/cycling')?'<section id="'+imageId+'"':'<figure id="'+imageId+'"');
     if(route.includes('탁송/')){
       assert(imageAt>0&&fareAt>imageAt,'text-only mountain fare chart must precede route prices: '+route);
-      assert(r.body.indexOf('<header')>=0&&imageAt>r.body.indexOf('<header'),'mountain title and navigation should precede fare chart: '+route);
+      // Seoraksan prints its heading before the chart; Jirisan prints the chart first.
+      // Both established templates must preserve a heading and the text-only chart above the price table.
+      assert(r.body.indexOf('<header')>=0&&r.body.indexOf('<header')<fareAt,'mountain heading must appear before route fare table: '+route);
       assert(!r.body.includes('-taksong-original-fare.png'),'deleted photo-era mountain poster must not return: '+route);
     }else assert(imageAt>0&&fareAt>imageAt,'Verified cycling course cards must precede the original fare table: '+route);
     assert(r.body.includes('<table')&&r.body.includes('만원'),'real historical fare table missing: '+route);
