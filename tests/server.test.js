@@ -1627,7 +1627,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(pagePath.startsWith('/'+target.kind+'/'),'same-service landing '+target.keyword);
    assert.ok(!focusPaths.has(pagePath),'one unique page per focus item '+pagePath);
    focusPaths.add(pagePath);
-   assert.ok(siteMaps[target.kind].includes('https://example.com'+pagePath),
+   assert.ok(siteMaps[target.kind].includes('https://jeongukdaeri.kr'+pagePath),
     '50 priority pages should be in service sitemap '+target.keyword);
    const response=await get(pagePath);
    assert.equal(response.status,200,'priority region HTTP '+target.keyword);
