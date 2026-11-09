@@ -2651,10 +2651,10 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
   }
  }
  const uniqueBaseRoutes=[...new Set(baseRoutes)];
- // Reserve the first 100 hand-reviewed SEO focus localities before the
+ // Reserve all first 150 hand-reviewed SEO focus localities before the
  // bounded round-robin discovery list; otherwise high-volume regional
  // keywords can disappear from the sitemap as the 2,900-target set grows.
- const firstFocusNames=new Set([...naverFocus50,...naverFocusNext50].filter(x=>x.kind===service).map(x=>x.region));
+ const firstFocusNames=new Set([...naverFocus50,...naverFocusNext50,...naverFocusThird50].filter(x=>x.kind===service).map(x=>x.region));
  const firstFocusRegions=regions.filter(r=>firstFocusNames.has(r.full_name));
  const discoveryRegions=[...new Map([...provinceHubs,...firstFocusRegions,...balancedRegions,...unmatchedRegions].map(r=>[r.slug,r])).values()].slice(0,Math.max(0,500-uniqueBaseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
