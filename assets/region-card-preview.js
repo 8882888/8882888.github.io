@@ -76,7 +76,7 @@
    image:'/card/area-'+city.id+'-'+kind+'-brand-v7.png',
    url:'/'+kind+'/'+city.slug+'/',
    description:city.name+' '+(kind==='daeri'?'대리운전':'자동차탁송')+' 지역 상담 안내입니다. 실제 배차와 요금은 별도 확인합니다.',
-   phone:kind==='taksong'&&city.slug==='jeju'?'1877-5245':'1811-4294'
+   phone:'1811-4294'
   }))};
  }
  // Existing SVGs verified in the repository; these are route guides, not trip photos.
@@ -108,7 +108,7 @@
  function localKeywordSvg(raw,kind){
   const keyword=String(raw||'').trim().slice(0,75);
   const service=kind==='daeri'?'대리운전':'자동차탁송';
-  const phone=kind==='taksong'&&keyword.includes('제주')?'1877-5245':'1811-4294';
+  const phone='1811-4294';
   const svg=document.createElementNS(SVG_NS,'svg');
   // A 900-unit viewBox keeps important text readable when the mobile card is 320px wide.
   svg.setAttribute('viewBox','0 0 900 730');
@@ -172,7 +172,7 @@
    const keyword=String(raw||'').trim();
    if(!keyword)return;
    const service=/대리운전(?:업체|회사)?$|대리$/.test(keyword.replace(/\s/g,''))?'daeri':/탁송(?:업체|회사)?$/.test(keyword.replace(/\s/g,''))?'taksong':kind;
-   const phone=service==='taksong'&&keyword.includes('제주')?'1877-5245':'1811-4294';
+   const phone='1811-4294';
    const article=node('article','smart24-card-panel');
    article.append(node('h3','smart24-card-heading',keyword+' · 텍스트 명함'),localKeywordSvg(keyword,service));
    article.append(node('p','smart24-card-description','입력하신 글자를 표시한 안내 이미지이며 실제 지점·운행완료·배차 확정을 뜻하지 않습니다.'));
@@ -242,8 +242,8 @@
    fullLink=full;
    full.hidden=true;full.target='_blank';full.rel='noopener noreferrer';
    addLink(actions,page,'지역 상세 안내');
-   const tel=String(card.phone||'1811-4294').replace(/[^0-9]/g,'');
-   if(tel.length>=7)addLink(actions,'tel:'+tel,'전화 '+(card.phone||'1811-4294'),'smart24-card-phone');
+   // The site-wide consultation line is fixed; never trust an API card's alternate phone.
+   addLink(actions,'tel:18114294','전화 1811-4294','smart24-card-phone');
    // Keep the verified mountain fare table visible independently of image or API loading.
    if(card.url==='/설악산탁송/'){
     const heading=node('h4','smart24-card-fare-heading','설악산 코스별 기존 탁송요금');
