@@ -141,7 +141,7 @@ assert(serverBusan.includes('busanReviewPage?busanReviewTitle:kind===\'taksong\'
 const busanRender=serverBusan.slice(serverBusan.indexOf('const rendered=layout(searchTitle,searchDesc,'));
 assert(busanRender.indexOf('+busanReviewLead+')>=0 &&
  busanRender.indexOf('+busanReviewLead+')<busanRender.indexOf('+regionHistoryAllLink+') &&
- busanRender.indexOf('+busanReviewLead+')<busanRender.indexOf('+companySection+'),
+ busanRender.indexOf('+busanReviewLead+')<busanRender.indexOf("companySection+blogKeywordGuide"),
  'Canonical Busan actual reviews must precede archive links and generic company keyword sections');
 assert(serverBusan.includes('busan-local-taksong-tags'),'Canonical Busan hashtags missing');
 const rides=JSON.parse(read('data/ride-history.json'));
