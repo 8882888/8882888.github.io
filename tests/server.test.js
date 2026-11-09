@@ -1128,7 +1128,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const liveScript=await (await get('/assets/region-card-preview.js')).text();
   const liveCss=await (await get('/assets/region-card-preview.css')).text();
   assert.ok(liveScript.includes('card.previewImage')&&liveScript.includes('pngFallback'),'browser must prefer WebP and fall back to PNG');
-  assert.ok(liveScript.includes("picture.addEventListener('click'")&&liveScript.includes('openZoom(original,img.alt,picture)'),'tapping actual image should open original zoom');
+  assert.ok(liveScript.includes("picture.addEventListener('click'")&&liveScript.includes("openZoom(picture.getAttribute('href'),img.alt,picture)"),'tapping actual image should open original zoom');
   assert.ok(liveScript.includes('lastActivator.focus()')&&liveCss.includes('.smart24-card-picture-link:focus-visible'),'keyboard focus and visible focus ring are retained');
   assert.ok(liveScript.includes('++sequence')&&liveScript.includes('controller.abort()'),'stale fast-typing requests are cancelled');
   const currentHome=await (await get('/')).text();
