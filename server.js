@@ -2321,8 +2321,10 @@ if(pathname==='/api/public-region-lookup'){
  if(!name||name.length>60||parent.length>60||!['daeri','taksong'].includes(kind))
   return respond(res,400,JSON.stringify({matches:[]}), 'application/json; charset=utf-8');
  try{
-  const source=load('data/regions.json');
-  const matches=(source.regions||[]).filter(x=>x.name===name&&(!parent||x.parent_name===parent)&&(x.services||[]).includes(kind))
+  // Use the same 20,562 legal administrative localities as all active regional routes.
+  // The legacy data/regions.json is only a partial historical seed and returns false
+  // negatives for real cities on the public booking handoff.
+  const matches=regions.filter(x=>x.name===name&&(!parent||x.parent_name===parent)&&(x.services||[]).includes(kind))
    .map(x=>({name:x.name,parent_name:x.parent_name,level:x.level}));
   return respond(res,200,JSON.stringify({matches}), 'application/json; charset=utf-8');
  }catch(_){return respond(res,503,JSON.stringify({matches:[]}), 'application/json; charset=utf-8')}
