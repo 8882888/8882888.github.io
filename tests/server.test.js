@@ -550,20 +550,18 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const localityWithoutRecord=await get('/taksong/busan/gijang-gun/gijang-eup/dongbu-ri/');
   assert.equal(localityWithoutRecord.status,200,'rural locality must resolve');
   const localityHtml=await localityWithoutRecord.text();
-  assert.ok(localityHtml.includes('동부리 실제 운행기록 확인 안내')||
-    localityHtml.includes('운행기록 확인 현황')||
-    localityHtml.includes('id="nationwide-review-first"'),
-    'Rural locality must explain whether verified local trip evidence exists; actual page heading: '+(localityHtml.match(/<h1[^>]*>[\s\S]*?<\/h1>/i)||['none'])[0].slice(0,350)+'; excerpt: '+localityHtml.slice(0,500));
-  assert.ok(localityHtml.includes('이 행정구역의 출발 또는 도착이 확인된 운행은 없습니다')||
-    localityHtml.includes('이 지역의 출발 또는 도착이 명확하게 확인된 사례는 찾지 못했습니다')||
-    localityHtml.includes('이 지역에 해당하는 완료 운행기록이 현재 확인되지 않았습니다'),
-    'Do not claim completed rides without a verified locality match');
-  assert.ok(localityHtml.includes('이름이 비슷한 다른 지역의 운행사례를 이곳의 실적으로 표시하지 않습니다')||
-    localityHtml.includes('다른 지역의 운행을 이 지역의 실적으로 표시하지 않습니다')||
-    localityHtml.includes('확인되지 않은 지역을 실제 후기처럼 표시하지 않습니다'),
-    'Never misattribute similarly named or unrelated rides');
-  assert.ok(!/href="\/reviews\/[a-f0-9]{16}\//.test(localityHtml),'local pages without confirmed rides must not feature unrelated records');
-  assert.ok(localityHtml.includes('/reviews/history/?kind=taksong'),'all actual records remain accessible through a clearly labelled national archive');
+  assert.ok(localityHtml.includes('id="source-empty-village-20261107"'),
+    'Rural locality with no verified rides must use the compact source-empty template');
+  assert.ok(localityHtml.includes('이곳의 완료 운행내역은 현재 확인되지 않았으므로'),
+    'No completed local trips may be claimed without evidence');
+  assert.ok(localityHtml.includes('다른 지역 후기나 가격을 이 지역의 실적처럼 표시하지 않습니다'),
+    'Never misattribute other localities rides or prices');
+  assert.ok(localityHtml.includes('content="noindex,follow"'),
+    'Thin no-evidence village landing must not be indexed as a fabricated local review');
+  assert.ok(!/href="\\/reviews\\/[a-f0-9]{16}\\//.test(localityHtml),
+    'Local pages without confirmed rides must not feature unrelated records');
+  assert.ok(localityHtml.includes('/reviews/history/?kind=taksong'),
+    'Actual national ride archive must remain accessible');
   // Only completed, directional dispatch records should enrich SEO route pages.
   const verifiedRouteIndex=await get('/routes/reviewed/');
   const verifiedRouteHtml=await verifiedRouteIndex.text();
