@@ -528,7 +528,14 @@ html{scroll-padding-top:95px}
  #homepage-primary-services-20261106 .homepage-primary-service-grid{display:flex!important;overflow-x:auto;scroll-snap-type:x proximity;gap:8px!important;padding:2px 0 6px;scrollbar-width:thin}
  #homepage-primary-services-20261106 .homepage-primary-service-grid>a{flex:0 0 auto!important;min-height:46px!important;padding:8px 13px!important;scroll-snap-align:start;font-size:14px!important}
 }
-</style></head>
+</style><style id="smart24-clean-quicklinks-style-20261109">
+.smart24-clean-quicklinks{max-width:1160px;margin:10px auto 14px;padding:8px 12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.smart24-clean-quicklinks a{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:7px 12px;border:1px solid #cbdcf0;border-radius:9px;background:#fff;color:#17436b;text-decoration:none;font-size:14px;font-weight:700;line-height:1.35}
+.smart24-clean-quicklinks a:hover,.smart24-clean-quicklinks a:focus-visible{border-color:#1764b1;background:#eff6ff;outline-offset:2px}
+.smart24-clean-quicklinks a:last-child{background:#0754a0;color:#fff;border-color:#0754a0}
+@media(max-width:600px){.smart24-clean-quicklinks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 12px}.smart24-clean-quicklinks a{font-size:13px;padding:8px 5px;text-align:center}}
+</style>
+</head>
 <body id="page-start">
 
 <header><strong>스마트24 전국대리운전·24시탁송</strong><div class="header-phone-actions"><div class="header-phone-line"><a class="header-call" href="tel:18114294" aria-label="대표 상담 전화 1811-4294">☎ 대표 상담 1811-4294</a></div><aside class="traffic-stats" id="traffic-stats-panel" aria-label="스마트24 접속 기록 및 전화 버튼 통계">
@@ -552,6 +559,16 @@ html{scroll-padding-top:95px}
 </aside></div></header>
 
 <section id="homepage-fare-top" aria-label="첫 화면 출발지 도착지 요금조회" style="background:#eff6ff;padding:17px 5%;border-bottom:2px solid #b9d5ef"><h2 style="max-width:1160px;margin:0 auto 9px;font-size:clamp(19px,2.7vw,25px);color:#123c63">출발지·도착지 바로 입력해 예상요금 확인</h2><form action="/fare/" method="get" id="homepage-fare-form" style="max-width:1160px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:end"><input type="hidden" name="auto" value="1"><label style="font-weight:800;color:#163b65">출발지<input name="from" required placeholder="출발지 입력" style="display:block;width:100%;min-height:48px;padding:10px;border:2px solid #9cb9d8;border-radius:9px;box-sizing:border-box"></label><label style="font-weight:800;color:#163b65">도착지<input name="to" required placeholder="도착지 입력" style="display:block;width:100%;min-height:48px;padding:10px;border:2px solid #9cb9d8;border-radius:9px;box-sizing:border-box"></label><label style="font-weight:800;color:#163b65">서비스<select name="service" style="display:block;width:100%;min-height:48px;padding:8px;border:2px solid #9cb9d8;border-radius:9px"><option value="taksong">탁송</option><option value="daeri">대리운전</option></select></label><button type="submit" style="min-height:48px;background:#0754a0;color:white;border:0;border-radius:9px;font-weight:900;font-size:17px;cursor:pointer">출발·도착 예상요금 조회</button></form><div style="max-width:1160px;margin:9px auto 0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><small>참고요금이며 실제 배차요금은 상담 시 확인합니다.</small><a href="tel:18114294" style="font-weight:900">☎ 1811-4294 전화상담</a></div>
+<nav class="smart24-clean-quicklinks" aria-label="스마트24 주요 서비스 바로가기">
+ <a href="#nationwide-live-locality-20261107">지역명 검색</a>
+ <a href="/daeri/">대리운전</a>
+ <a href="/taksong/">자동차탁송</a>
+ <a href="/special/24-hour-service/">24시·심야</a>
+ <a href="#nationwide-harbor-service-20261109">항구·항만</a>
+ <a href="#homepage-verified-reviews-first-20261106">실제 운행기록</a>
+ <a href="/fare/">요금 상세조회</a>
+ <a href="tel:18114294">전화 1811-4294</a>
+</nav>
 <section id="nationwide-live-locality-20261107" aria-label="전국 행정구역 빠른 검색" style="max-width:1160px;margin:13px auto 5px;padding:13px;background:#fff;border:1px solid #bdd3e9;border-radius:11px">
  <h3 style="margin:0 0 5px;font-size:clamp(16px,2.4vw,20px);color:#154673">전국 지역명 검색 → 대리운전·탁송 견적 바로가기</h3>
  <p style="margin:0 0 8px;font-size:14px">서울 강남구·부산 해운대구·대구 수성구·세종 나성동 등 시·군·구·읍·면·동·리 검색. 같은 지명은 시·도까지 구분합니다.</p>
