@@ -40,6 +40,10 @@ assert.match(html,/<form\b[^>]*id="nationwide-live-locality-form-20261107"[^>]*d
 assert.match(html,/class="region-card-live" data-card-preview-output hidden/,'home must include keyword image output');
 assert.ok(!html.includes('#dynamic-service-card-search-20261103{display:none!important}'),'keyword preview must be visible');
 assert.ok(client.includes('function localKeywordSvg(raw,kind)'),'typed keyword SVG builder must exist');
+assert.ok(client.includes('-brand-v7.png')&&!client.includes('-brand-v6.png'),
+ 'instant region previews should use the cache-busting photo-free v7 image');
+assert.ok(html.includes('region-card-preview.js?v=20261109-textcard-v7'),
+ 'homepage must load the current v7 image preview client instead of an old cached script');
 assert.ok(client.includes("showDraft(query,inferred||select?.value||'taksong')"),'keyword should show immediately');
 assert.ok(client.includes('img.replaceWith(localKeywordSvg('),'image failure must retain keyword text');
 assert.ok(client.includes("const href=picture.getAttribute('href');")&&client.includes('if(zoom&&href)'),
