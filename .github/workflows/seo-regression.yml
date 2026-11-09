@@ -36,10 +36,14 @@ jobs:
           node --check tests/keyword-preview.test.js
           node --check assets/region-card-preview.js
           node --check lib/visual-policy.js
+          node --check lib/homepage-copy.js
+          node --check tests/homepage-copy.test.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
       - name: Check keyword-to-text-image previews
         run: node tests/keyword-preview.test.js
+      - name: Check retired homepage copy is removed, not keyword search
+        run: node tests/homepage-copy.test.js
       - name: Run real HTTP regional SEO regression
         env:
           CI: 'true'
