@@ -20,9 +20,16 @@ assert.ok(!/<img\b[^>]*src="\/assets\/photos\//i.test(html),'no removed vehicle/
 
 class MockElement{
  constructor(tag){this.tag=tag;this.children=[];this.style={};this.events={};this.attrs={};this.textContent='';this.hidden=false;}
- append(...items){this.children.push(...items);}
- replaceChildren(...items){this.children=items;}
+ append(...items){for(const item of items){if(item&&typeof item==='object')item._parent=this;this.children.push(item);}}
+ replaceChildren(...items){this.children=[];this.append(...items);}
+ replaceWith(item){
+  assert.ok(this._parent,'replacement must have a parent element');
+  const index=this._parent.children.indexOf(this);
+  assert.ok(index>=0,'replacement must refer to an attached image');
+  item._parent=this._parent;this._parent.children[index]=item;this._parent=null;
+ }
  setAttribute(k,v){this.attrs[k]=String(v);}
+ getAttribute(k){return this.attrs[k]??null;}
  removeAttribute(k){delete this.attrs[k];}
  addEventListener(k,fn){this.events[k]=fn;}
  get childElementCount(){return this.children.length;}
@@ -47,6 +54,15 @@ function findElement(el,test){
 const metro=findElement(output,x=>x.tag==='img'&&String(x.src||'').startsWith('/keyword-card/exact/'));
 assert.ok(metro&&metro.src.includes('area-494-daeri.svg'),'typing 부산대리운전 should select a matching original SVG card');
 assert.equal(select.value,'daeri','service intent in typed phrase overrides old select value');
+assert.equal(typeof metro.events.error,'function','region image must register load-failure handler');
+metro.events.error();
+const recovered=findElement(output,x=>x.tag==='svg');
+assert.ok(recovered,'a failed exact-region image must recover as in-browser SVG');
+assert.ok(recovered.children.some(x=>x.tag==='text'&&x.textContent==='부산대리운전'),
+ 'in-browser fallback image must paint the exact typed region keyword');
+assert.ok(!findElement(output,x=>x.tag==='img'&&String(x.src||'').startsWith('/keyword-card/exact/')),
+ 'failed remote preview must not remain as a broken image');
+
 input.value='원주혁신도시대리운전';
 assert.equal(typeof input.events.input,'function','input listener attached to homepage form');
 input.events.input();
