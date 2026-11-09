@@ -23,3 +23,10 @@
 .smart24-card-actions :focus-visible,.smart24-card-choice:focus-visible,.smart24-card-dialog-close:focus-visible{outline:3px solid #f2aa28;outline-offset:2px}
 @media(max-width:600px){.region-card-live{padding:10px}.smart24-card-grid{grid-template-columns:1fr}.smart24-card-panel{padding:10px}.smart24-card-actions>*{flex:1 1 130px}}
 @media(prefers-reduced-motion:reduce){.region-card-live *{scroll-behavior:auto!important}}
+
+/* Keep verified mountain fares readable beneath the dynamic route visual. */
+.smart24-card-fare-heading{font-size:18px;color:#102f53;margin:15px 0 6px}
+.smart24-card-fare-table{width:100%;border-collapse:collapse;background:#fff;font-size:15px}
+.smart24-card-fare-table caption{font-size:13px;text-align:left;color:#4a5665;margin-bottom:6px}
+.smart24-card-fare-table th,.smart24-card-fare-table td{padding:9px 8px;border-bottom:1px solid #d6e2ee;text-align:left}
+.smart24-card-fare-table th{font-weight:650}.smart24-card-fare-table td{font-weight:850;white-space:nowrap;color:#07539c}
