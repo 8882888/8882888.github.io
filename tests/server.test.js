@@ -966,7 +966,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(!firstMobileHero.includes('src="/assets/jirisan-taksong-original-fare.png"'),'Jirisan vehicle poster removed');
   assert.ok(!firstMobileHero.includes('smart24-business-card-inline.webp'),'generic brand card no longer blocks mobile mountain posters');
   const specialHub=await (await get('/special/')).text();
-  assert.ok(specialHub.includes('<body><section aria-label="설악산·지리산 원본 요금표 우선 안내"'),'special category menu follows original poster');
+  assert.ok(specialHub.includes('<body><section aria-label="설악산·지리산 코스별 요금표 우선 안내"'),'special category menu follows original poster');
   assert.ok(!specialHub.includes('src="/assets/seoraksan-taksong-original-fare.png"'),'special category does not show people/vehicle poster');
   // All legal-area levels share one on-demand image generator; never need hand-authored 10-image batches.
   const imageSamples=[
