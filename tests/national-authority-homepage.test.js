@@ -7,7 +7,8 @@ const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const rides=JSON.parse(fs.readFileSync(path.join(root,'data/ride-history.json'),'utf8'));
 assert.equal(rides.length,2591,'Do not inflate actual completed ride counts');
 assert.match(home,/<title>전국대리운전 실제 운행후기·24시탁송 \| 스마트24<\/title>/,'Home title must preserve agreed review-first search headline');
-assert(home.includes('실제 운행완료 2,591건 확인'),'First screen should state verifiable evidence');
+assert(home.includes('2,591건 실제 운행후기')&&home.includes('href="/reviews/history/"'),
+ 'First screen must link the verified 2,591-ride archive without requiring a duplicate claim');
 assert(home.includes('2,591건 실제 운행후기'),'First screen CTA should link actual archive');
 assert(home.includes('href="/reviews/history/"'),'Actual ride CTA remains directly clickable');
 assert(home.includes('href="#homepage-fare-top"'),'Fare calculator remains one click away');
