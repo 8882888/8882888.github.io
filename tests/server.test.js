@@ -74,6 +74,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 (async()=>{
  try{
   for(let i=0;i<50;i++){try{const r=await get('/health');if(r.ok)break}catch{}await delay(100)}
+  // Copyright-safe removal policy: old photo files are unavailable, text-only graphics remain.
+  for(const retired of ['/assets/photos/busan-rainy-dongnae.avif','/assets/smart24-business-card-art.webp','/assets/seoraksan-taksong-original-fare.png','/assets/jirisan-taksong-original-fare.png']){
+   assert.equal((await get(retired)).status,410,'retired car/person photo must not be served: '+retired);
+  }
+  for(const safe of ['/assets/service-taksong-visual.svg','/assets/service-daeri-visual.svg','/assets/service-golf-visual.svg','/assets/cycling-routes/eastcoast-taksong.svg']){
+   const result=await get(safe),svg=await result.text();
+   assert.equal(result.status,200,'approved text-only SVG remains usable: '+safe);
+   assert.ok(svg.includes('<svg')&&!svg.includes('<image'),'no embedded photos in SVG: '+safe);
+  }
   const coverageResponse=await get('/coverage/');
   assert.equal(coverageResponse.status,200,'Nationwide province hub must return HTTP 200');
   const coverageHTML=await coverageResponse.text();
@@ -933,7 +942,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(decodeURIComponent(result.url).includes('/'+(mountain==='seoraksan'?'설악산탁송':'지리산탁송')+'/'),'no generic homepage for mountain keyword: '+keyword);
     const body=await result.text();
     assert.ok(body.startsWith('<!doctype html>')&&body.includes('<figure id="original-mountain-fare-visual"')&&body.includes('id="mountain-route-fare-table-202611"')&&body.indexOf('<figure id="original-mountain-fare-visual"')<body.indexOf('<section id="mountain-route-fare-table-202611"'),'mountain original poster and fares are both visible: '+keyword);
-    assert.ok(body.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct mountain PNG: '+keyword);
+    assert.ok(!body.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'retired mountain photo with cars/people is not displayed: '+keyword);
     assert.ok(!body.includes('id="mobile-direct-image-priority"'),'no homepage Smart24 hero: '+keyword);
   }
   const referrerResult=await fetch('http://127.0.0.1:'+port+'/',{headers:{referer:'https://search.naver.com/search.naver?query='+encodeURIComponent('설악산탁송')},redirect:'manual'});
@@ -944,7 +953,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(seo.status,200,'Korean keyword URL resolves');
     const html=await seo.text();
     assert.ok(html.includes('<figure id="original-mountain-fare-visual"')&&html.includes('id="mountain-route-fare-table-202611"')&&html.indexOf('<figure id="original-mountain-fare-visual"')<html.indexOf('<section id="mountain-route-fare-table-202611"'),'Korean keyword URL leads with original fare poster and preserves readable fares');
-    assert.ok(html.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct original mountain fare image');
+    assert.ok(!html.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'old mountain photo must be absent');
     assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr/'+segment+'/"'),'Korean URL is canonical');
   }
   const nationwideHome=await get('/');
@@ -953,12 +962,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(nationwideHtml.includes('id="mobile-direct-image-priority"'),'ordinary homepage retains mountain direct-view mobile hero');
   assert.ok(nationwideHtml.indexOf('<header')>=0&&nationwideHtml.indexOf('<header')<nationwideHtml.indexOf('<section id="mobile-direct-image-priority"'),'general-service header comes before the mountain mobile poster');
   const firstMobileHero=nationwideHtml.slice(nationwideHtml.indexOf('id="mobile-direct-image-priority"'),nationwideHtml.indexOf('</section>',nationwideHtml.indexOf('id="mobile-direct-image-priority"')));
-  assert.ok(firstMobileHero.includes('src="/assets/seoraksan-taksong-original-fare.png"'),'Seoraksan original fare first');
-  assert.ok(firstMobileHero.includes('src="/assets/jirisan-taksong-original-fare.png"'),'Jirisan original fare in same direct-view area');
+  assert.ok(!firstMobileHero.includes('src="/assets/seoraksan-taksong-original-fare.png"'),'Seoraksan people/vehicle poster removed');
+  assert.ok(!firstMobileHero.includes('src="/assets/jirisan-taksong-original-fare.png"'),'Jirisan vehicle poster removed');
   assert.ok(!firstMobileHero.includes('smart24-business-card-inline.webp'),'generic brand card no longer blocks mobile mountain posters');
   const specialHub=await (await get('/special/')).text();
   assert.ok(specialHub.includes('<body><section aria-label="설악산·지리산 원본 요금표 우선 안내"'),'special category menu follows original poster');
-  assert.ok(specialHub.indexOf('src="/assets/seoraksan-taksong-original-fare.png"')<specialHub.indexOf('<header>'),'Seoraksan original poster before special category menu');
+  assert.ok(!specialHub.includes('src="/assets/seoraksan-taksong-original-fare.png"'),'special category does not show people/vehicle poster');
   // All legal-area levels share one on-demand image generator; never need hand-authored 10-image batches.
   const imageSamples=[
    regions.find(r=>r.full_name==='경상남도 창원시'),
@@ -1359,7 +1368,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(gangwonProvince.includes(gangwonInquiries.url),'Gangwon taksong provincial guide links to call-generating original blog post');
     assert.ok(editorialHtml.includes('1811-4294'),'homepage shows official contact for current booking');
   const editorialImages=[...editorialHtml.matchAll(/<img\b[^>]*alt="([^"]+)"/g)].map(x=>x[1]);
-  assert.ok(editorialImages.every(alt=>alt.includes('AI 연출 이미지')&&alt.includes('실제')&&alt.includes('촬영 사진 아님')),'travel illustrations must be transparently labeled, never claimed as field photographs');
+  assert.ok(editorialImages.every(alt=>!alt.includes('AI 연출 이미지'))&&!editorialHtml.includes('<img src="/assets/photos/'),'AI editorial photos removed from homepage');
   const archiveData=require('../lib/blog-archive');
   assert.equal(archiveData.total,require('../blog/posts.json').length,'archive retains source links');
   assert.equal(Object.values(archiveData.counts).reduce((sum,n)=>sum+n,0),archiveData.total,'all original posts are cataloged once');
