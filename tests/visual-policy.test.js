@@ -40,6 +40,12 @@ assert.ok(!mixedResult.includes('unreviewed-van.webp')&&!mixedResult.includes('d
 assert.ok(mixedResult.includes('/card/area-494-taksong-brand-v6.webp')&&mixedResult.includes('<img src="/card/area-494-taksong-brand-v6.png"'),'safe responsive picture retained');
 const index=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 assert.equal((index.match(/<img[^>]+src="\/assets\/photos\//g)||[]).length,0,'homepage AI photos physically removed from HTML');
+// Source HTML must be safe even when served by a static mirror without the Node response filter.
+for(const file of ['index.html','special/index.html','special/seoraksan-transport/index.html','special/jirisan-transport/index.html','설악산탁송/index.html','지리산탁송/index.html']){
+ const html=fs.readFileSync(path.join(__dirname,'..',file),'utf8');
+ assert.ok(!html.includes('taksong-original-fare.png'),'retired mountain photo URL must not remain in '+file);
+ if(file!=='index.html')assert.ok(/taksong-fares\.svg/.test(html),'safe fare table must remain on '+file);
+}
 for(const p of ['service-taksong-visual.svg','service-daeri-visual.svg','service-golf-visual.svg']){
  const svg=fs.readFileSync(path.join(__dirname,'../assets',p),'utf8');
  assert.ok(svg.includes('<svg')&&!/<image\b|<circle\b|<ellipse\b/.test(svg),'text-only brand SVG '+p);
