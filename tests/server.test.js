@@ -1571,6 +1571,28 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(workBlog.includes('요청 지역별 탁송·대리운전 핵심 검색어'));
   assert.ok(workBlog.includes('창원탁송')&&workBlog.includes('인천탁송'),'new priority region navigation');
   console.log('PASS: 100 new locality SEO intents -> 20 canonical pages, proper regional images and actual article context');
+  // All province-level service phrases resolve their actual administrative locality,
+  // even when absent from the curated SEO set. Keep ambiguous city names blocked.
+  for(const [phrase,id,kind] of [
+   ['세종탁송','2063','taksong'],
+   ['대전대리운전','1672','daeri'],
+   ['인천탁송','1174','taksong'],
+   ['강원도탁송','4433','taksong'],
+   ['광주광역시탁송','1464','taksong'],
+   ['제주도탁송','20348','taksong']
+  ]){
+   const url='/keyword-card/exact/area-'+id+'-'+kind+'.svg?q='+encodeURIComponent(phrase);
+   const image=await get(url);
+   assert.equal(image.status,200,'legal province exact image '+phrase);
+   assert.match(image.headers.get('content-type')||'',/image\/svg\+xml/,'SVG MIME '+phrase);
+   const svg=await image.text();
+   assert.ok(svg.includes('<title id="title">'+phrase+' | 스마트24'),'exact province keyword title '+phrase);
+   assert.ok(svg.includes('>'+phrase+'</text>'),'visible province keyword SVG text '+phrase);
+   assert.ok(!/<(?:image|foreignObject)\b/i.test(svg),'no photo elements in province SVG '+phrase);
+  }
+  const ambiguousGwangjuCard=await get('/keyword-card/exact/area-1464-taksong.svg?q='+encodeURIComponent('광주탁송'));
+  assert.equal(ambiguousGwangjuCard.status,404,'ambiguous 광주 must not resolve to an unrelated legal city');
+  console.log('PASS exact province SVGs and ambiguous city name protection');
   // Twenty different combinations must paint the *entire typed query* on
   // the live preview/zoom SVG while original canonical PNG cards remain stable.
   const exactTerms=require('../data/exact-image-priority-20.json');
