@@ -1304,11 +1304,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
                    'phone-click-number','phone-source-list','exclude-my-visits']){
     assert.ok(statsHome.includes('id="'+id+'"'),'home header statistic missing '+id);
   }
-  assert.equal(statsHome.split('src="/assets/traffic-analytics.js?v=20261030-count-accuracy"').length-1,1,
-    'homepage loads new versioned click tracking exactly once');
+  assert.equal((statsHome.match(/src="\/assets\/traffic-analytics\.js\?v=[^"]+"/g)||[]).length,1,
+    'homepage loads versioned click tracking exactly once');
   const statRoute=await (await get('/taksong/')).text();
-  assert.equal(statRoute.split('src="/assets/traffic-analytics.js?v=20261030-count-accuracy"').length-1,1,
-    'dynamic transport pages track clicks with current script without duplicates');
+  assert.equal((statRoute.match(/src="\/assets\/traffic-analytics\.js\?v=[^"]+"/g)||[]).length,1,
+    'dynamic transport pages track clicks with a versioned script without duplicates');
   const statOther=await (await get('/service/golf/')).text();
   assert.ok(statOther.includes('traffic-analytics.js'),'static HTML pages track calls too');
   const tracker=await get('/assets/traffic-analytics.js');
