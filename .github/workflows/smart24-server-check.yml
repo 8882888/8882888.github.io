@@ -214,7 +214,7 @@ jobs:
             '/route-taksong/centers/',
           ]
           for path in required:
-            expected='https://jeongukdaeri.kr'+path
+            expected='https://jeongukdaeri.kr'+quote(path)
             if expected not in listed:
               raise SystemExit('Priority sitemap missing '+path)
             with urllib.request.urlopen(base+quote(path),timeout=20) as response:
