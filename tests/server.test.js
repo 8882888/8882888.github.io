@@ -1263,9 +1263,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const statsFarePos=statsHome.indexOf('id="top-fare-calculator"');
   const statsFareShortcutPos=statsHome.indexOf('id="homepage-fare-top"');
   const statsHeroPos=statsHome.indexOf('class="hero hero-with-photo"');
-  const statsImagePos=statsHome.indexOf('src="/assets/vehicles/santafe-1811.webp"');
-  assert.ok(statsFareShortcutPos>=0&&statsFareShortcutPos<statsHome.indexOf('id="dynamic-service-card-search-20261103"')&&statsFareShortcutPos<statsHeroPos&&statsHeroPos<statsImagePos&&statsImagePos<statsFarePos,
-    'fare inputs and regional card search must precede the vehicle introduction');
+  const statsRegionSearchPos=statsHome.indexOf('id="nationwide-live-locality-form-20261107"');
+  assert.ok(statsFareShortcutPos>=0&&statsFareShortcutPos<statsRegionSearchPos&&statsRegionSearchPos<statsHeroPos&&statsHeroPos<statsFarePos,
+    'fare shortcut and current nationwide region search must precede the vehicle introduction and detailed fare calculator');
   assert.equal((statsHome.match(/class="quick-booking"/g)||[]).length,1,'fare form must not be duplicated');
   assert.ok(statsHome.includes('name="from"')&&statsHome.includes('name="to"')&&statsHome.includes('action="/fare/"'),
     'top fare calculator still submits the real fare lookup');
