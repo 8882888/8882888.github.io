@@ -2633,7 +2633,12 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
   }
  }
  const uniqueBaseRoutes=[...new Set(baseRoutes)];
- const discoveryRegions=[...new Map([...provinceHubs,...balancedRegions,...unmatchedRegions].map(r=>[r.slug,r])).values()].slice(0,Math.max(0,500-uniqueBaseRoutes.length));
+ // Reserve the original 50 hand-reviewed SEO focus localities before the
+ // bounded round-robin discovery list; otherwise high-volume regional
+ // keywords can disappear from the sitemap as the 2,900-target set grows.
+ const firstFocusNames=new Set(naverFocus50.filter(x=>x.kind===service).map(x=>x.region));
+ const firstFocusRegions=regions.filter(r=>firstFocusNames.has(r.full_name));
+ const discoveryRegions=[...new Map([...provinceHubs,...firstFocusRegions,...balancedRegions,...unmatchedRegions].map(r=>[r.slug,r])).values()].slice(0,Math.max(0,500-uniqueBaseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
  // Keep actual HTML region pages and all on-page images intact.
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+uniqueBaseRoutes.map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
