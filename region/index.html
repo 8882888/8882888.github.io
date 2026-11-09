@@ -15,7 +15,7 @@
    const parent=normalize(p.parent_name);
    return names.includes(place)||names.some(name=>parent&&parent!=='대한민국'&&(parent+name===place||aliases(parent).some(prefix=>prefix+name===place)));
  });
- if(found.length!==1)return '';
+ if(found.length!==1){if(found.length>1){const status=document.getElementById('status');if(status)status.textContent='동일하거나 비슷한 지역명 '+found.length+'곳이 있습니다. 시·군·구와 상위 지역을 함께 입력하여 선택해 주세요.';}return '';}
  const p=found[0];
  return '/go/region-service/?region='+encodeURIComponent(p.name)+'&parent='+encodeURIComponent(p.parent_name||'')+'&kind='+service;
 }
