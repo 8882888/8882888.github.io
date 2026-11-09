@@ -1149,7 +1149,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const ambiguousCity=await (await get('/region/?q='+encodeURIComponent('광주'))).text();
   assert(ambiguousCity.includes('class="dynamic-region-card-preview"')&&!ambiguousCity.includes('class="dynamic-region-card-preview" open'),'ambiguous city must not silently choose a card');
   const ambiguousRegion=await get('/region/?q='+encodeURIComponent('광주탁송'));
-  assert.equal(new URL(ambiguousRegion.url).pathname,'/region/','ambiguous city name must show region choices');
+  assert.equal(new URL(ambiguousRegion.url).pathname,'/taksong/gwangju/','광주탁송 official metropolitan keyword opens Gwangju metropolitan service landing');
   const oldRegion=await get('/region/detail/?region='+encodeURIComponent('창원시')+'&parent='+encodeURIComponent('경상남도')+'&kind=daeri');
   assert.equal(oldRegion.status,200,'fetch follows legacy regional redirect');
   const oldRegionHtml=await oldRegion.text();
