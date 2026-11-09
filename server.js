@@ -5,7 +5,7 @@ const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFi
 // Keep /health available even if the optional analytics asset is absent from a deployment.
 const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'assets/traffic-analytics.js'))).digest('hex').slice(0,16)}catch(_){return 'unavailable'}})();
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
-const {stripPersonVehicleImages}=require('./lib/visual-policy');
+const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
 const serviceKeywordEntry=require('./lib/service-keyword-entry');
 const keywordExpansion=require('./lib/keyword-card-expansion');
@@ -1961,10 +1961,11 @@ function publicSiteQuality(){
 const regionSearchCache=new Map(); // Shared bounded regional search cache across requests.
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
-// Old photo assets and fare posters include cars or people. Keep data, remove public image display.
-if(/^\/assets\/photos\//.test(pathname)||/^\/assets\/(?:seoraksan|jirisan)-taksong-original-fare\.png$/.test(pathname)||/^\/assets\/smart24-(?:(?:daeri|taksong)-brand|business-card-(?:art|inline))\.webp$/.test(pathname)){
+// Central public media allow-list: only audited text cards, fare tables, and scenery-only SVGs.
+// Blocks direct photo URLs as well as images removed from rendered HTML, including forgotten nested folders.
+if(/\.(?:png|jpe?g|webp|avif|svg|gif)$/i.test(pathname)&&!isSafeVisual(pathname)){
  res.setHeader('cache-control','no-store');res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,410,'차량·사람 이미지 공개가 중단되었습니다. 서비스 요금표와 이용 안내는 홈페이지에서 확인하세요.','text/plain; charset=utf-8');
+ return respond(res,410,'차량·사람 등 검증되지 않은 이미지는 공개하지 않습니다. 서비스 내용과 요금 안내는 페이지에서 확인하세요.','text/plain; charset=utf-8');
 }
 if(pathname==='/api/site-quality'){
  res.setHeader('X-Robots-Tag','noindex, nofollow');
