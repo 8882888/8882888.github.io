@@ -1,12 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-<title id="title">낙동강길자전거종주탁송 · 안동댐 → 낙동강하구둑</title><desc id="desc">안동댐·상주보·구미보·창녕함안보 종주 출발지에 세워둔 고객 자동차를 종료지로 이동하는 탁송 서비스, 상담 1811-4294. 안내용 그래픽으로 실제 차량 사진 아님.</desc>
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102544"/><stop offset=".65" stop-color="#176b76"/><stop offset="1" stop-color="#0b315b"/></linearGradient></defs>
-<rect width="1200" height="630" fill="url(#g)"/><path d="M0 485 Q170 430 330 495 T660 470 T980 465 T1220 500" fill="none" stroke="#a9d8ef" stroke-width="16" opacity=".27"/>
-<g fill="none" stroke="#e5f7ff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" opacity=".9"><circle cx="154" cy="456" r="55"/><circle cx="382" cy="456" r="55"/><path d="M154 456 L223 354 L282 456 L382 456 L326 355 L223 354 L222 332 M282 456 L311 387 M310 355 L355 355"/></g>
-<g transform="translate(710 386)" fill="none" stroke="#f5fbff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M25 85 L60 33 Q70 24 93 24 L230 24 Q252 24 270 49 L296 85 L306 122 L18 122 Z"/><path d="M68 78 L92 38 L225 38 L265 78 Z"/><circle cx="77" cy="124" r="25" fill="#12365c"/><circle cx="248" cy="124" r="25" fill="#12365c"/></g>
-<rect x="55" y="42" width="475" height="57" rx="14" fill="#e2f4ff"/><text x="78" y="82" fill="#143f67" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="30" font-weight="800">스마트24 전국 자동차탁송</text>
-<text x="55" y="192" fill="#ffffff" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="57" font-weight="900">낙동강길자전거종주탁송</text>
-<text x="57" y="261" fill="#ffffff" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="38" font-weight="700">안동댐 → 낙동강하구둑</text>
-<text x="59" y="318" fill="#d7f2ff" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="26">안동댐·상주보·구미보·창녕함안보</text>
-<rect x="54" y="543" width="1090" height="60" rx="14" fill="#fce995"/><text x="77" y="582" fill="#12365c" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="28" font-weight="800">고객 자동차 차량회수 탁송  |  상담 1811-4294  |  실제 배차·요금은 상담 후 확인</text>
+<title id="title">낙동강길자전거종주탁송 · 안동댐 → 낙동강하구둑</title>
+<desc id="desc">낙동강 자전거길 안동댐·상주보·구미보·창녕함안보·낙동강하구둑 코스 차량 이동 상담 안내. 실제 차량이나 라이더 사진이 없는 텍스트 명함. 상담 1811-4294.</desc>
+<rect width="1200" height="630" fill="#0c294a"/>
+<rect x="0" y="0" width="1200" height="96" fill="#09618b"/>
+<text x="600" y="59" text-anchor="middle" font-family="sans-serif" font-size="39" font-weight="900" fill="#ffffff">스마트24 · 낙동강 자전거 종주 탁송</text>
+<rect x="56" y="130" width="1088" height="269" rx="20" fill="#183e63"/>
+<text x="600" y="212" text-anchor="middle" font-family="sans-serif" font-size="58" font-weight="900" fill="#fff27a">낙동강길종주탁송</text>
+<text x="600" y="287" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="800" fill="#ffffff">안동댐 → 낙동강하구둑</text>
+<text x="600" y="351" text-anchor="middle" font-family="sans-serif" font-size="26" fill="#d9efff">상주보 · 구미보 · 창녕함안보 · 인증센터 구간 상담</text>
+<text x="600" y="458" text-anchor="middle" font-family="sans-serif" font-size="26" fill="#dbe9f7">자전거 종주 출발지·종료지의 고객 차량 인수·인계 안내</text>
+<rect x="235" y="488" width="730" height="88" rx="12" fill="#f4f9ff"/>
+<text x="600" y="545" text-anchor="middle" font-family="sans-serif" font-size="50" font-weight="900" fill="#124c7e">대표 상담 1811-4294</text>
+<text x="600" y="611" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#d3e7f4">실제 운행 사진 아님 · 배차 가능 여부 및 현재 요금은 상담 후 확인</text>
 </svg>
