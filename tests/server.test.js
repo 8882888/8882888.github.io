@@ -1137,14 +1137,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const liveScript=await (await get('/assets/region-card-preview.js')).text();
   const liveCss=await (await get('/assets/region-card-preview.css')).text();
   assert.ok(liveScript.includes('card.previewImage')&&liveScript.includes('pngFallback'),'browser must prefer WebP and fall back to PNG');
-  assert.ok(liveScript.includes("picture.addEventListener('click'")&&liveScript.includes("openZoom(picture.getAttribute('href'),img.alt,picture)"),'tapping actual image should open original zoom');
+  assert.ok(liveScript.includes("picture.addEventListener('click'")&&liveScript.includes("const href=picture.getAttribute('href');")&&liveScript.includes('if(zoom&&href)')&&liveScript.includes("openZoom(href,img.alt,picture)"),'tapping actual image should open original zoom');
   assert.ok(liveScript.includes('lastActivator.focus()')&&liveCss.includes('.smart24-card-picture-link:focus-visible'),'keyboard focus and visible focus ring are retained');
   assert.ok(liveScript.includes('++sequence')&&liveScript.includes('controller.abort()'),'stale fast-typing requests are cancelled');
   const currentHome=await (await get('/')).text();
   const previewScriptVersion=(currentHome.match(/region-card-preview\.js\?v=([^"]+)/)||[])[1];
   const previewCssVersion=(currentHome.match(/region-card-preview\.css\?v=([^"]+)/)||[])[1];
   assert.ok(previewScriptVersion&&previewCssVersion&&
-   previewScriptVersion==='20261107-v6-preview'&&previewCssVersion==='20261103-keyword3',
+   previewScriptVersion==='20261109-textcard-v7'&&previewCssVersion==='20261103-keyword3',
    'versioned, updated JS and CSS must bypass stale mobile browser caches');
   for(const asset of ['/assets/region-card-preview.js','/assets/region-card-preview.css']){
    const r=await get(asset);assert.equal(r.status,200,asset);
