@@ -39,9 +39,12 @@ assert(html.includes('id="seoraksan-mobile-booking-20261107"')&&
  html.includes('class="call-quote" href="tel:18114294"'),
  'Mobile sticky CTA must open fare table or national phone');
 assert(html.includes('id="original-mountain-fare-visual"')&&
- html.includes('/assets/seoraksan-taksong-original-fare.png')&&
- html.includes("i.src='/assets/seoraksan-taksong-fares.svg'"),
- 'Preserve original visual and fallback artwork');
+ html.includes('<img src="/assets/seoraksan-taksong-fares.svg"')&&
+ !html.includes('/assets/seoraksan-taksong-original-fare.png'),
+ 'Preserve the text-only Seoraksan six-route fare poster, not deleted vehicle/photo artwork');
+const poster=fs.readFileSync(path.join(__dirname,'..','assets/seoraksan-taksong-fares.svg'),'utf8');
+assert(poster.includes('<svg')&&!/<(?:image|foreignObject)\\b/i.test(poster),
+ 'Fare SVG should be an accessible text table with no embedded photography');
 for(const postId of ['224451230156','224453015755']){
  assert(html.includes('blog.naver.com/wjdtnr4757/'+postId),'Published factual ride source not preserved: '+postId);
 }
