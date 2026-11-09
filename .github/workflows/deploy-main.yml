@@ -18,27 +18,60 @@ jobs:
   deploy:
     needs: verify
     runs-on: ubuntu-latest
+    env:
+      CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}
+      CLOUDTYPE_PROJECT: ${{ vars.CLOUDTYPE_PROJECT }}
+      CLOUDTYPE_APP: ${{ vars.CLOUDTYPE_APP }}
+      CLOUDTYPE_STAGE: ${{ vars.CLOUDTYPE_STAGE }}
+      CLOUDTYPE_DEPLOY_YAML: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       # This public repository can be cloned over HTTPS without a deploy key.
+      - name: Check original Cloudtype application binding safely
+        id: connection
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=""
+          [ -z "$CLOUDTYPE_TOKEN" ] && missing="${missing} CLOUDTYPE_TOKEN(secret)"
+          [ -z "$CLOUDTYPE_PROJECT" ] && missing="${missing} CLOUDTYPE_PROJECT(variable)"
+          [ -z "$CLOUDTYPE_APP" ] && missing="${missing} CLOUDTYPE_APP(variable)"
+          [ -z "$CLOUDTYPE_STAGE" ] && missing="${missing} CLOUDTYPE_STAGE(variable)"
+          [ -z "$CLOUDTYPE_DEPLOY_YAML" ] && missing="${missing} CLOUDTYPE_DEPLOY_YAML(secret)"
+          if [ -n "$missing" ]; then
+            echo "### Cloudtype production redeploy BLOCKED" >> "$GITHUB_STEP_SUMMARY"
+            echo "Missing configuration:$missing" >> "$GITHUB_STEP_SUMMARY"
+            echo "Copy the existing application's deployment YAML from its Cloudtype CLI tab; do not invent an application or publish credentials." >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::No production redeploy was requested. Missing:$missing"
+            exit 1
+          fi
+          # Fail closed if the supplied YAML is for a different application.
+          printf '%s\n' "$CLOUDTYPE_DEPLOY_YAML" > "$RUNNER_TEMP/cloudtype-existing-app.yml"
+          export ORIGINAL_APP="$CLOUDTYPE_APP"
+          python3 - <<'PY'
+          import os,re,pathlib,sys
+          source=pathlib.Path(os.environ['RUNNER_TEMP'],'cloudtype-existing-app.yml').read_text()
+          matches=re.findall(r'^name:\s*["\x27]?([^\s"\x27#]+)',source,re.M)
+          if len(matches)!=1 or matches[0]!=os.environ['ORIGINAL_APP']:
+              print('::error::Cloudtype deployment YAML name does not match CLOUDTYPE_APP; no deployment requested.')
+              sys.exit(1)
+          if not re.search(r'^app:\s*\S+',source,re.M):
+              print('::error::Cloudtype original YAML has no app type; no deployment requested.')
+              sys.exit(1)
+          print('Original Cloudtype app identity matches deployment YAML.')
+          PY
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+          echo "### Existing Cloudtype application binding validated" >> "$GITHUB_STEP_SUMMARY"
+          echo "Target: pre-existing project/stage and application name from repository configuration. No new project or domain created." >> "$GITHUB_STEP_SUMMARY"
       - name: Deploy
         uses: cloudtype-github-actions/deploy@v1
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
-          project: smart24-taksong/8882888
-          stage: main
-          yaml: |
-            name: smart24-taksong-backup
-            app: dockerfile
-            options:
-              ports: "3000"
-              env: []
-              args: []
-            context:
-              git:
-                url: https://github.com/${{ github.repository }}.git
-                ref: ${{ github.ref }}
+          project: ${{ vars.CLOUDTYPE_PROJECT }}
+          stage: ${{ vars.CLOUDTYPE_STAGE }}
+          allStages: false
+          yaml: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
 
       - name: Verify deployed regional service revision
         env:
