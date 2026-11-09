@@ -60,7 +60,7 @@ if (/<sitemapindex\b/.test(sitemap)) {
   }).join('\n');
 }
 for(const route of ['/설악산탁송/','/지리산탁송/','/blog/archive/','/service/taksong/']){
- check(sitemap.includes('https://jeongukdaeri.kr'+route),'static sitemap route '+route);
+ check(sitemap.includes(encodeURI('https://jeongukdaeri.kr'+route)),'static sitemap route '+route);
 }
 const businessChecks=[
  ['business/rental-car/index.html','rental-b2b-operating-guide-20261103'],
