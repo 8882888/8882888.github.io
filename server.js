@@ -2567,7 +2567,7 @@ if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const rootSitemaps=pathname==='/sitemap-all.xml'
   ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-history.xml']
   :Array.from({length:Math.ceil(historicalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
- const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(base+p)+'</loc></sitemap>').join('')+'</sitemapindex>';
+ const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(encodeURI(base+p))+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
 const historySitemapMatch=pathname.match(/^\/sitemap-history-([1-9][0-9]*)\.xml$/);
@@ -2576,7 +2576,7 @@ if(historySitemapMatch){
  if(segment>total)return respond(res,404,'존재하지 않는 운행후기 사이트맵입니다.');
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const selected=historicalRides.slice((segment-1)*500,segment*500);
- const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+selected.map(x=>'<url><loc>'+esc(base+'/reviews/history/'+x.id+'/')+'</loc></url>').join('')+'</urlset>';
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+selected.map(x=>'<url><loc>'+esc(encodeURI(base+'/reviews/history/'+x.id+'/'))+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
 if(pathname==='/sitemap-priority.xml'){
@@ -2604,7 +2604,7 @@ if(pathname==='/sitemap-priority.xml'){
   '/blog/seoul-taksong/',...seoulEditorialGroups.map(g=>'/blog/seoul-taksong/'+g.slug+'/'),
   ...blogRideHighlights.map(x=>'/reviews/history/'+x.id+'/')];
  // Keep priority discovery bounded to nationwide hubs, services and editorial guides; curated regions remain in service sitemaps.
- const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+[...new Set(urls)].map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+[...new Set(urls)].map(p=>'<url><loc>'+esc(encodeURI(base+p))+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
 if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const service=pathname==='/sitemap-daeri.xml'?'daeri':'taksong';const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const cached=sitemapCache.get(pathname);if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');// Keep existing 20,562 region URLs usable for route lookup, but prioritize the
@@ -2664,7 +2664,7 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  const discoveryRegions=[...new Map([...provinceHubs,...firstFocusRegions,...balancedRegions,...unmatchedRegions].map(r=>[r.slug,r])).values()].slice(0,Math.max(0,500-uniqueBaseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
  // Keep actual HTML region pages and all on-page images intact.
- const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+uniqueBaseRoutes.map(route=>'<url><loc>'+esc(base+route)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(base+servicePath(r,service))+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+uniqueBaseRoutes.map(route=>'<url><loc>'+esc(encodeURI(base+route))+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(encodeURI(base+servicePath(r,service)))+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
 if(pathname==='/sitemap.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const cached=sitemapCache.get(pathname);
@@ -2713,7 +2713,7 @@ if(pathname==='/sitemap.xml'){
  // The primary discovery map stays intentionally under 500 URLs; deeper regional
  // and completed-route pages remain reachable in their dedicated sitemaps.
  const urls=[...new Set(focused)].slice(0,499);
- const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(base+p)+'</loc></url>').join('')+'</urlset>';
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(encodeURI(base+p))+'</loc></url>').join('')+'</urlset>';
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
