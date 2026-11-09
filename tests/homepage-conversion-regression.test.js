@@ -181,7 +181,7 @@ for(const [keyword,region,kind] of [
 }
 assert(server.includes('naverFocus2900.length!==2900'),'Curated keyword count guard missing');
 assert(server.includes("if(sameOne(phrase))return make("),'Exact locality card coverage missing');
-assert(read('assets/region-card-preview.js').includes('if(!exact&&!pngFallback'),'Never use a wrong fallback image for an exact search');
+assert(read('assets/region-card-preview.js').includes('picture.append(fallback)')&&read('assets/region-card-preview.js').includes('if(!fallback.isConnected)return;'),'Never replace an exact-keyword SVG with an unrelated or unloaded image');
 const dynamic=require(path.join(root,'lib/keyword-card-expansion.js'));
 const testHtml='<html><body><h1>서비스 요금표</h1><p>원본 요금</p></body></html>';
 for(const name of ['/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/','/service/golf/','/service/corporate/','/service/daily-driver/']){
