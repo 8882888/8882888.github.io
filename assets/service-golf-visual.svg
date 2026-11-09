@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"><defs><linearGradient id="s" x2="0" y2="1"><stop stop-color="#7ec4ec"/><stop offset="1" stop-color="#eef7fb"/></linearGradient><linearGradient id="g" x2="0" y2="1"><stop stop-color="#5b9b45"/><stop offset="1" stop-color="#174a34"/></linearGradient></defs><rect width="1200" height="630" fill="url(#s)"/><path d="M0 360Q210 260 410 345T820 330T1200 350V630H0Z" fill="url(#g)"/><path d="M0 480Q420 380 900 480T1200 455V630H0Z" fill="#8ac25b"/><rect x="780" y="200" width="350" height="195" rx="10" fill="#e5e7eb"/><path d="M760 205L940 115L1150 205Z" fill="#253e4b"/><g fill="#b5d7e5"><rect x="810" y="235" width="75" height="110"/><rect x="905" y="235" width="75" height="110"/><rect x="1000" y="235" width="75" height="110"/></g><g transform="translate(540 360)"><path d="M0 85L70 30Q130 0 220 10L305 45L360 75V125H0Z" fill="#142337"/><rect x="25" y="120" width="60" height="60" rx="30" fill="#171717"/><rect x="275" y="120" width="60" height="60" rx="30" fill="#171717"/><path d="M105 35L155 5H225L280 40Z" fill="#8eb7c7"/></g><rect x="0" y="0" width="1200" height="122" fill="#081e3b" opacity=".94"/><text x="50" y="75" fill="white" font-family="sans-serif" font-size="57" font-weight="bold">골프대리운전 · 일일기사</text><rect x="0" y="505" width="1200" height="125" fill="#081e3b" opacity=".94"/><text x="50" y="557" fill="white" font-family="sans-serif" font-size="34">스마트전국대리운전 스마트24탁송</text><text x="50" y="610" fill="#ffdf4b" font-family="sans-serif" font-size="48" font-weight="bold">1811-4294</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+<title id="title">골프장 대리운전 상담 안내</title>
+<desc id="description">차량이나 사람을 포함하지 않는 텍스트 전용 안내 이미지. 실제 배차와 요금은 상담 후 확인합니다.</desc>
+<rect width="1200" height="630" fill="#f4f8ff"/>
+<rect width="1200" height="105" fill="#0a467e"/>
+<text x="60" y="73" font-family="sans-serif" font-size="42" font-weight="bold" fill="#ffffff">스마트24 · 골프장 상담</text>
+<text x="60" y="243" font-family="sans-serif" font-size="70" font-weight="bold" fill="#104374">골프장 대리운전</text>
+<rect x="60" y="290" width="1080" height="3" fill="#b9d4ec"/>
+<text x="60" y="367" font-family="sans-serif" font-size="35" fill="#245478">골프장 출발 · 왕복 · 대기 · 기사 복귀 조건</text>
+<rect x="60" y="415" width="1080" height="135" rx="18" fill="#e2efff"/>
+<text x="600" y="490" text-anchor="middle" font-family="sans-serif" font-size="64" font-weight="bold" fill="#003c7c">1811-4294</text>
+<text x="600" y="533" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#355b79">출발지·도착지·일정 확인 후 안내</text>
+</svg>
