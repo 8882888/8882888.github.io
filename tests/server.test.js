@@ -976,6 +976,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(serviceUrl,'dedicated '+kind+' link: '+r.full_name);
     const response=await get(serviceUrl);assert.equal(response.status,200,serviceUrl);
     const html=await response.text();
+    // No verified rides: village pages deliberately use a lean, noindex quote form,
+    // rather than creating an indexed locality card or implied local testimonial.
+    if(html.includes('id="source-empty-village-20261107"')){
+     assert.ok(html.includes('content="noindex,follow"'),'unverified village must be noindex: '+serviceUrl);
+     assert.ok(html.includes('id="village-direct-quote-20261107"'),'unverified village still offers a quote form: '+serviceUrl);
+     assert.ok(html.includes('tel:18114294'),'unverified village still offers direct consultation: '+serviceUrl);
+     continue;
+    }
     const imagePath='/card/'+r.slug+'-'+kind+'-brand-v6.png';
     assert.ok(html.includes('<figure'),'region image remains visible without an oversized first-view placement: '+serviceUrl);
     assert.ok(html.includes('src="'+imagePath+'"'),'only correct locality and service image is linked: '+serviceUrl);
