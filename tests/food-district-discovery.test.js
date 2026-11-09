@@ -16,7 +16,9 @@ const map=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
 for(const guide of guides){
  const url='/daeri/food-district/'+guide.slug+'/';
  assert(home.includes('href="'+url+'"'),'missing home navigation: '+url);
- assert(map.includes('https://jeongukdaeri.kr'+url),'missing sitemap: '+url);
+ // Node-only guides have no generated static HTML: do not list broken URLs in Pages sitemap.
+ assert(!map.includes('https://jeongukdaeri.kr'+url),
+  'Server-only food district guide must not be advertised as a static Pages sitemap URL: '+url);
  const html=page(guide.slug,{layout:(title,desc,body,canonical)=>'<title>'+title+'</title><meta name="description" content="'+desc+'"><link rel="canonical" href="'+canonical+'">'+body,esc:v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;'),host:'jeongukdaeri.kr'});
  assert(html.includes('<h1>'));
  assert(html.includes('음식점'));
