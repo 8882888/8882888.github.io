@@ -10,7 +10,7 @@ REQUIRED = {
     "reviews/taksong/index.html": ["자동차탁송 운행완료 기록 후기", "1811-4294", "application/ld+json", "taksong-baekdamsa-sogongwon"],
     "reviews/daeri/index.html": ["대리운전 운행완료 기록 후기", "1811-4294"],
     "service/taksong/index.html": ["자동차탁송", "taksong-evidence-202611", "application/ld+json", "1811-4294"],
-    "assets/service-taksong-visual.svg": ["taksong-marketing-number-plate","1811-4294"],
+    "assets/service-taksong-visual.svg": ["전국 자동차탁송", "1811-4294", "차량이나 사람을 포함하지 않는 텍스트 전용 안내 이미지"],
     "service/corporate/index.html": ["corporate-image-and-consult-1811"],
     "reviews/verified/d09f9ce6526e3f85/index.html": ["verified-daeri-illustration"],
     "index.html": ["real-completed-service-hubs-202611","운행완료 후기 지역 검색","homepage-fare-top","five-menu-mobile-layout","review-service-image-grid","route-first-real-trips","1811-4294","mountain-cycle-review-three-links-202611","설악산탁송 운행후기 찾기"],
