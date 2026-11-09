@@ -34,6 +34,10 @@ assert.ok(result.includes('<img src="/assets/smart24-daeri-brand.png">'));
 assert.ok(result.includes('<figcaption>실제 요금은 별도 확인</figcaption>'));
 assert.ok(result.includes('<a href="/fare/">예상요금 조회</a>'));
 assert.ok(result.includes('const template='),'inline client JavaScript remains intact');
+const mixed='<picture><source srcset="/assets/photos/unreviewed-van.webp"><source srcset="/card/area-494-taksong-brand-v6.webp"><img src="/card/area-494-taksong-brand-v6.png" srcset="/assets/photos/driver.avif 2x" alt="지역 상담"></picture>';
+const mixedResult=stripPersonVehicleImages(mixed);
+assert.ok(!mixedResult.includes('unreviewed-van.webp')&&!mixedResult.includes('driver.avif'),'unsafe source/srcset removed');
+assert.ok(mixedResult.includes('/card/area-494-taksong-brand-v6.webp')&&mixedResult.includes('<img src="/card/area-494-taksong-brand-v6.png"'),'safe responsive picture retained');
 const index=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 assert.equal((index.match(/<img[^>]+src="\/assets\/photos\//g)||[]).length,0,'homepage AI photos physically removed from HTML');
 for(const p of ['service-taksong-visual.svg','service-daeri-visual.svg','service-golf-visual.svg']){
