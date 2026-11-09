@@ -6,6 +6,35 @@ const {Script}=require('node:vm');
 const root=path.join(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const client=fs.readFileSync(path.join(root,'assets/region-card-preview.js'),'utf8');
+// Prevent a future data reorder from silently showing the wrong province image.
+// The IDs are dataset offsets, not arbitrary marketing artwork identifiers.
+const legalDir=path.join(root,'data/legal-regions');
+let regionNumber=0;
+const provinceIds=new Map();
+for(const name of fs.readdirSync(legalDir).filter(x=>/^\d{2}\.json$/.test(x)).sort()){
+ const data=JSON.parse(fs.readFileSync(path.join(legalDir,name),'utf8'));
+ for(const fullName of data.full_names){
+  regionNumber++;
+  if(fullName.indexOf(' ')===-1)provinceIds.set(fullName,String(regionNumber));
+ }
+}
+assert.equal(regionNumber,20562,'full administrative dataset must be loaded before province ID checks');
+const provinceImageMappings=[
+ ['서울특별시','seoul'],['부산광역시','busan'],['대구광역시','daegu'],
+ ['인천광역시','incheon'],['광주광역시','gwangju'],['대전광역시','daejeon'],
+ ['울산광역시','ulsan'],['세종특별자치시','sejong'],['경기도','gyeonggi'],
+ ['강원특별자치도','gangwon'],['충청북도','chungbuk'],['충청남도','chungnam'],
+ ['전북특별자치도','jeonbuk'],['전라남도','jeonnam'],['경상북도','gyeongbuk'],
+ ['경상남도','gyeongnam'],['제주특별자치도','jeju']
+];
+assert.equal(provinceImageMappings.length,17);
+for(const [province,slug] of provinceImageMappings){
+ const id=provinceIds.get(province);
+ assert.ok(id,'official province missing in legal region dataset: '+province);
+ assert.ok(client.includes("id:'"+id+"',slug:'"+slug+"'"),
+   'client image ID mismatches authoritative legal-region order for '+province+' ('+id+')');
+}
+
 new Script(client,{filename:'region-card-preview.js'});
 assert.match(html,/<form\b[^>]*id="nationwide-live-locality-form-20261107"[^>]*data-card-preview-form/,'home keyword form must have preview binding');
 assert.match(html,/class="region-card-live" data-card-preview-output hidden/,'home must include keyword image output');
