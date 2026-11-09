@@ -151,6 +151,8 @@ assert.match(serviceRouter,/href="\/fare\/"/,'region-service must retain a fare 
 assert.match(serviceRouter,/\/fare\/\?service=/,'verified region selection must offer a service-specific fare lookup');
 assert.match(serviceRouter,/\/assets\/service-taksong-visual\.svg/,'default graphic must remain a service SVG, not an unverified vehicle photograph');
 assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken regional image must fall back safely');
+  assert.match(serviceRouter,/setTimeout\(\(\)=>finish\(false\),2500\)/,'regional image loading must time out so fare and phone actions remain reachable');
+  assert.match(serviceRouter,/clearTimeout\(timer\)/,'completed regional image probes must clear their timeout');
 assert.match(serviceRouter,/card\.kind===kind/,'region image selection must not cross chauffeur and vehicle-delivery services');
 assert.match(serviceRouter,/exactCards\.length===1/,'ambiguous regional image matches must not be selected');
 
