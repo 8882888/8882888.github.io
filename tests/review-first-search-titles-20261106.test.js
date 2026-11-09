@@ -11,7 +11,7 @@ const long=read('service/long-distance-daeri/index.html');
 const server=read('server.js');
 for(const route of ['/','/daeri/','/taksong/','/service/long-distance-daeri/']){
  const page=byPath.get(route);
- assert(page&&page.title.includes('운행후기'),'Verified review must be visible in service search title: '+route);
+ assert(page&&/운행(?:기록·)?후기|운행기록·후기/.test(page.title),'Verified ride records or reviews must be visible in service search title: '+route);
  assert(page.description.includes('운행'),'Review title needs context in its search description: '+route);
  assert(page.title.length<=75,'Avoid overly long search title: '+route);
 }
