@@ -1116,27 +1116,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const duplicateDistrict=await getPreview('동구탁송');
   assert.equal(duplicateDistrict.status,'ambiguous','same-name Dong-gu must not auto-choose a province');
   assert.equal(duplicateDistrict.cards.length,0,'ambiguous district cannot claim a specific local ride');
-  // PNG remains the share/search original; 800-pixel WebP is used only as mobile preview.
-  assert.ok(taksongPreview.cards[0].image.endsWith('.png'));
-  assert.ok(taksongPreview.cards[0].previewImage.endsWith('-taksong-brand-v6.webp'));
-  assert.notEqual(taksongPreview.cards[0].previewImage,taksongPreview.cards[0].image);
-  const previewImagePath=taksongPreview.cards[0].previewImage;
-  const mobileImage=await get(previewImagePath);
-  assert.equal(mobileImage.status,200,'mobile WebP card image must resolve');
-  assert.ok(mobileImage.headers.get('content-type').includes('image/webp'));
-  const etag=mobileImage.headers.get('etag');assert.ok(etag,'versioned preview must have conditional caching');
-  const mobileBytes=Buffer.from(await mobileImage.arrayBuffer());
-  assert.equal(mobileBytes.subarray(0,4).toString(),'RIFF');
-  assert.equal(mobileBytes.subarray(8,12).toString(),'WEBP');
-  const dimensions=await require('sharp')(mobileBytes).metadata();
-  assert.equal(dimensions.width,800);assert.ok(dimensions.height>=530&&dimensions.height<=535);
+  // Official nationwide locality keywords use a dynamic SVG, not legacy PNG/WebP.
+  assert.ok(taksongPreview.cards[0].image.startsWith('/api/nationwide-locality-card.svg?service=taksong&'));
+  assert.equal(taksongPreview.cards[0].previewImage,taksongPreview.cards[0].image);
   const originalImage=await get(taksongPreview.cards[0].image);
-  assert.equal(originalImage.status,200);assert.ok(originalImage.headers.get('content-type').includes('image/png'));
-  assert.ok(mobileBytes.byteLength<(await originalImage.arrayBuffer()).byteLength,'mobile WebP should use fewer bytes than crawler PNG');
-  const cached=await fetch('http://127.0.0.1:'+port+previewImagePath,{headers:{'if-none-match':etag}});
-  assert.equal(cached.status,304,'WebP conditional cache response should not download image twice');
-  const head=await fetch('http://127.0.0.1:'+port+previewImagePath,{method:'HEAD'});
-  assert.equal(head.status,200);assert.ok(head.headers.get('content-type').includes('image/webp'));
+  assert.equal(originalImage.status,200,'official locality SVG must resolve');
+  assert.ok(originalImage.headers.get('content-type').includes('image/svg+xml'));
+  const svg=await originalImage.text();
+  assert.ok(svg.includes('울산탁송'),'official locality image must identify Ulsan taksong');
+  const previewImagePath=taksongPreview.cards[0].previewImage;
   const liveScript=await (await get('/assets/region-card-preview.js')).text();
   const liveCss=await (await get('/assets/region-card-preview.css')).text();
   assert.ok(liveScript.includes('card.previewImage')&&liveScript.includes('pngFallback'),'browser must prefer WebP and fall back to PNG');
