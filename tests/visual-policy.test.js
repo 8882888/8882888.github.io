@@ -11,6 +11,7 @@ const safePaths=[
  '/assets/smart24-taksong-brand.png',
  '/assets/service-taksong-visual.svg',
  '/assets/cycling-routes/eastcoast-taksong.svg',
+ '/assets/cycling-routes/nakdonggang-taksong.svg',
  '/assets/seoraksan-taksong-fares.svg'
 ];
 for(const p of safePaths)assert.equal(isSafeVisual(p),true,'verified text-only visual '+p);
@@ -52,7 +53,7 @@ for(const p of ['service-taksong-visual.svg','service-daeri-visual.svg','service
  const svg=fs.readFileSync(path.join(__dirname,'../assets',p),'utf8');
  assert.ok(svg.includes('<svg')&&!/<image\b|<circle\b|<ellipse\b/.test(svg),'text-only brand SVG '+p);
 }
-for(const p of ['nationwide','eastcoast','yeongsan','seomjin','geumgang','ocheon']){
+for(const p of ['nationwide','eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdonggang']){
  const svg=fs.readFileSync(path.join(__dirname,'../assets/cycling-routes',p+'-taksong.svg'),'utf8');
  assert.ok(svg.includes('<svg')&&!/<image\b|<circle\b|<ellipse\b/.test(svg),'vehicle-free cycling infographic '+p);
 }
