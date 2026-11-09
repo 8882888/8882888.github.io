@@ -25,7 +25,7 @@ for(const [url,label] of priority){
 assert(server.includes("const body=taksongTrustFirst+operationalNotice"),'Transport trust content must be first');
 assert(home.includes('id="taksong-first-trust-home-20261106"'),'Home transport navigation missing');
 assert(home.includes('href="/taksong/"'),'Transport hub link missing');
-assert(sitemap.includes('https://jeongukdaeri.kr/taksong/'),'Transport hub not indexed in sitemap source');
+assert(!sitemap.includes('<loc>https://jeongukdaeri.kr/taksong/</loc>'),'Node-only transport hub must not be advertised as a missing static GitHub Pages page');
 const rule=rules.pages.find(x=>x.path==='/taksong/');
 assert(rule && rule.title.includes('탁송') && /운행(?:기록|후기)/.test(rule.description),'Transport title and description missing');
 assert(!panel.includes('100% 최상위') && !panel.includes('확정 배차'),'No unsupported guarantees');
