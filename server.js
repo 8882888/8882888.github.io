@@ -2677,6 +2677,11 @@ if(pathname==='/sitemap.xml'){
   // Give every province equal crawl-discovery priority before city-specific guides.
   '/','/coverage/','/region/','/daeri/','/taksong/',
   ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
+  // These genuine category guides must be listed before the 499-URL limit;
+  // the national driver destinations can otherwise exhaust the sitemap first.
+  '/places/','/taksong/types/',
+  ...placeCategories.map(x=>'/places/'+encodeURIComponent(x[0])+'/'),
+  ...['렉카탁송','전기차탁송','블루핸즈탁송'].filter(name=>vehicleTopicMap.has(name)).map(vehicleTopicPath),
   '/region/innovation-cities/',...innovationFocusEntries.map(x=>servicePath(regionByFullName.get(x.region),x.kind)),
   '/blog/guides/',...[...["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"]],
   // Province and locality discovery is provided by the balanced registry selection below.
