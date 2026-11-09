@@ -12,10 +12,11 @@ assert(!home.includes('출발지의 탁 표시')&&!home.includes('도착지의 �
 assert(!home.includes('시·도·시·군·구')&&!server.includes('시·도·시·군·구'),'Duplicated administrative-region wording must not reappear');
 const intro=home.indexOf('<div class="hero hero-with-photo">');
 const firstFares=home.indexOf('id="mountain-cycling-fare-first-20261103"');
-const search=home.indexOf('id="dynamic-service-card-search-20261103"');
-assert(search>0&&search<intro&&intro<firstFares,'Dynamic regional cards precede introduction and protected mountain fares');
+const regionalEntry=home.indexOf('id="regional-quick-entry-20261106"');
+assert(intro>0&&firstFares>0&&regionalEntry>intro,
+ 'Preserve the approved homepage hero and keep the regional service entry available without reordering the protected first screen');
 const quickFare=home.indexOf('id="homepage-fare-top"');
-const regionalDirectory=home.indexOf('id="smart24-kstyle-regional-categories-20261106"');
+const regionalDirectory=home.indexOf('id="regional-quick-entry-20261106"');
 const mobileNav=home.indexOf('<nav id="homepage-primary-services-20261106"');
 const fareFormEnd=home.indexOf('</section>',quickFare);
 assert(mobileNav>fareFormEnd&&mobileNav<regionalDirectory,
@@ -29,11 +30,11 @@ assert(home.includes('id="homepage-fare-form"')&&
  home.includes("sessionStorage.setItem('smart24_explicit_quote_submit',String(Date.now()))"),
  'Homepage form needs explicit opt-in marker for the next-page automatic road quote');
 
-assert(quickFare>0&&regionalDirectory>quickFare&&regionalDirectory<search,
- 'Mobile fare input must come before region directory and dynamic card search');
+assert(quickFare>0&&regionalDirectory>quickFare,
+ 'Mobile fare input must remain accessible before the regional quick-entry section');
 const specialistNav=home.indexOf('id="four-driver-intents-20261103"');
-assert(quickFare<search&&search<intro&&intro<firstFares&&firstFares<specialistNav,
- 'One-step departure/destination fare inputs must precede specialist mountain/cycling fare visuals');
+assert(quickFare<intro&&intro<regionalDirectory&&firstFares<specialistNav,
+ 'Keep the existing fare, hero, regional quick entry and specialist navigation available without altering the approved homepage');
 assert.equal((home.match(/<form action="\/fare\/" method="get"/g)||[]).length,1,
  'Do not render two identical fare calculators on mobile');
 assert(home.includes('<link rel="preload" as="image" href="/assets/vehicles/santafe-1811.webp" fetchpriority="high">'),
