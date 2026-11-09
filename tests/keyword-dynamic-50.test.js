@@ -181,7 +181,7 @@ checks.push(['49','Combined region + purpose yields matching local service image
  const h=await get('/');assert.equal(h.res.status,200);
  assert.ok(h.body.includes('id="nationwide-live-locality-form-20261107"')&&h.body.includes('data-card-preview-form'),'homepage keeps the working current keyword search form');
  const script=await get('/assets/region-card-preview.js');
- assert.ok(script.body.includes("'/keyword-card/'")&&script.body.includes("'/assets/'"));
+ assert.ok(script.body.includes('const imagePath=value=>')&&script.body.includes("value.startsWith('//')")&&script.body.includes("value.includes('..')")&&script.body.includes('nationwide-locality-card.svg')&&script.body.includes('service-(?:taksong|daeri|golf)-visual'),'only approved keyword-card and service-visual sources are accepted');
 }]);
 checks.push(['50','Non-keyword records and ambiguous city stay unmodified',async()=>{
  const history=await get('/reviews/history/');
