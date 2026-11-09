@@ -6,6 +6,9 @@ const {Script}=require('node:vm');
 const root=path.join(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const client=fs.readFileSync(path.join(root,'assets/region-card-preview.js'),'utf8');
+assert.ok(!client.includes('1877-5245'),'regional preview must not display an alternate Jeju phone number');
+assert.ok(client.includes("addLink(actions,'tel:18114294','전화 1811-4294','smart24-card-phone')"),'every dynamic region card must use the fixed national consultation number');
+assert.ok(!client.includes("String(card.phone||'1811-4294')"),'untrusted API card phone must not override the fixed consultation line');
 assert.ok(client.includes("if(!p.endsWith('.svg'))return null;"),'live regional card previews must reject legacy PNG/WebP/JPEG vehicle imagery');
 // Prevent a future data reorder from silently showing the wrong province image.
 // The IDs are dataset offsets, not arbitrary marketing artwork identifiers.
