@@ -153,6 +153,8 @@ assert.match(serviceRouter,/\/assets\/service-taksong-visual\.svg/,'default grap
 assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken regional image must fall back safely');
   assert.match(serviceRouter,/setTimeout\(\(\)=>finish\(false\),2500\)/,'regional image loading must time out so fare and phone actions remain reachable');
   assert.match(serviceRouter,/clearTimeout\(timer\)/,'completed regional image probes must clear their timeout');
+  assert.ok(serviceRouter.indexOf("const fare=document.createElement('a')") < serviceRouter.indexOf("fetch('/api/region-card-preview?"),'fare action must render before optional regional image fetch');
+  assert.ok(serviceRouter.indexOf("actions.append(detail)") < serviceRouter.indexOf("fetch('/api/region-card-preview?"),'region detail link must render before optional image fetch');
 assert.match(serviceRouter,/card\.kind===kind/,'region image selection must not cross chauffeur and vehicle-delivery services');
 assert.match(serviceRouter,/exactCards\.length===1/,'ambiguous regional image matches must not be selected');
 
