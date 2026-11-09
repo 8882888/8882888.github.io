@@ -53,4 +53,26 @@ assert.ok(svg&&!output.hidden,'unregistered or pending keyword still displays a 
 assert.ok(svg.children.some(x=>x.tag==='text'&&x.textContent==='원주혁신도시대리운전'),'local graphic must contain exact typed keyword');
 assert.ok(!svg.children.some(x=>x.tag==='image'),'local SVG contains no photos of cars or people');
 
+// Cover five frequently used search intents, including ports and innovation cities.
+for(const [keyword,kind,expectedArea] of [
+ ['부산대리운전','daeri','area-494-daeri.svg'],
+ ['대구탁송','taksong','area-765-taksong.svg'],
+ ['세종탁송','taksong',null],
+ ['원주혁신도시대리운전','daeri',null],
+ ['삼길포항대리운전','daeri',null]
+]){
+ input.value=keyword;
+ input.events.input();
+ assert.equal(output.hidden,false,'input keyword must open visible graphic: '+keyword);
+ assert.equal(select.value,kind,'keyword must select its correct service: '+keyword);
+ const exact=findElement(output,x=>x.tag==='img'&&String(x.src||'').includes('/keyword-card/exact/'));
+ const inline=findElement(output,x=>x.tag==='svg');
+ if(expectedArea){
+  assert.ok(exact&&exact.src.includes(expectedArea),'exact regional SVG URL missing for '+keyword);
+ }else{
+  assert.ok(inline,'local SVG fallback missing for '+keyword);
+  assert.ok(inline.children.some(x=>x.tag==='text'&&x.textContent===keyword),'fallback text must match '+keyword);
+  assert.ok(!inline.children.some(x=>x.tag==='image'),'fallback must not contain car or person photos: '+keyword);
+ }
+}
 console.log('PASS keyword image preview bindings, fallback and JavaScript syntax');
