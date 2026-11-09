@@ -539,6 +539,9 @@ def main():
     if not regions:
         raise SystemExit("data/regions.json에 지역을 입력해야 합니다.")
     urls = {SITE_URL + "/"}
+    # This server-rendered, canonical dining/driver guide is linked from the homepage.
+    # Preserve its discovery URL when rebuilding the static sitemap index and shards.
+    urls.add(SITE_URL + "/daeri/gangnam-food-guide/")
     if (ROOT / "fare" / "index.html").is_file():
         urls.add(SITE_URL + "/fare/")
     generate_service_pages(urls)
