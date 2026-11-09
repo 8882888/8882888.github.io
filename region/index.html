@@ -9,7 +9,7 @@
  if(!suffix)return '';
  const place=clean.slice(0,-suffix.length),service=suffix.includes('대리운전')?'daeri':'taksong';
  if(kind==='daily')return '';if(kind&&kind!==service)type.value=service;
- const aliases=name=>{const n=String(name||'').replace(/\s+/g,'');return [...new Set([n,n.replace(/(특별자치시|특별자치도|광역시|특별시|자치시|자치도|시|군|구)$/,''),n.replace(/(광역시|특별시|특별자치시)$/,'시'),n==='제주특별자치도'?'제주도':'',n==='제주특별자치도'?'제주':''])].filter(Boolean)};
+ const aliases=name=>{const n=String(name||'').replace(/\s+/g,'');return [...new Set([n,n.replace(/(특별자치시|특별자치도|광역시|특별시|자치시|자치도|시|군|구)$/,''),n.replace(/(광역시|특별시|특별자치시)$/,'시'),n==='제주특별자치도'?'제주도':''])].filter(Boolean)};
  const normalize=value=>String(value||'').replace(/\s+/g,'');
  const found=places.filter(p=>{
    if(!(p.services||[]).includes(service))return false;
