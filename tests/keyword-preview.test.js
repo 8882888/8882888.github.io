@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {Script}=require('node:vm');
+const root=path.join(__dirname,'..');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const client=fs.readFileSync(path.join(root,'assets/region-card-preview.js'),'utf8');
+new Script(client,{filename:'region-card-preview.js'});
+assert.match(html,/<form\b[^>]*id="nationwide-live-locality-form-20261107"[^>]*data-card-preview-form/,'home keyword form must have preview binding');
+assert.match(html,/class="region-card-live" data-card-preview-output hidden/,'home must include keyword image output');
+assert.ok(!html.includes('#dynamic-service-card-search-20261103{display:none!important}'),'keyword preview must be visible');
+assert.ok(client.includes('function localKeywordSvg(raw,kind)'),'typed keyword SVG builder must exist');
+assert.ok(client.includes("showDraft(query,inferred||select?.value||'taksong')"),'keyword should show immediately');
+assert.ok(client.includes('img.replaceWith(localKeywordSvg('),'image failure must retain keyword text');
+assert.ok(client.includes("showDraft(input.value.trim(),select?.value||'taksong',message.textContent)"),'ambiguous results should show a keyword card');
+assert.ok(!/<img\b[^>]*src="\/assets\/photos\//i.test(html),'no removed vehicle/person photos on home');
+console.log('PASS keyword image preview bindings, fallback and JavaScript syntax');
