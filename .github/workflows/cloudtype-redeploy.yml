@@ -191,7 +191,7 @@ jobs:
           # v7 changes the URL so a browser cannot keep showing cached photo-era imagery.
           for slug in ['area-494-daeri', 'area-765-taksong', 'area-2063-taksong']:
               for suffix, mime, marker in [
-                  ('.png', 'image/png', b'\\x89PNG\\r\\n\\x1a\\n'),
+                  ('.png', 'image/png', bytes([137,80,78,71,13,10,26,10])),
                   ('.webp', 'image/webp', b'RIFF'),
               ]:
                   url = host + '/card/' + slug + '-brand-v7' + suffix
