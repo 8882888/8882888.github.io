@@ -91,10 +91,10 @@ assert(home.includes('class="mobile-consult-actions"'),'Mobile call/fare actions
 assert(home.includes('<a href="#homepage-fare-top">출발·도착지 요금입력</a>'),'One-tap mobile fare form anchor missing');
 assert(home.includes('<a class="btn" href="#homepage-fare-top">출발·도착 예상요금</a>'),'Hero quote CTA must open same-page form');
 assert(home.includes('id="mobile-conversion-first-100-20261104"'),'Compact mobile conversion layout must be present');
-assert(home.includes('data-card-preview-form'),'Dynamic keyword card search missing');
-assert(home.includes('/assets/vehicles/santafe-1811.webp'),'Homepage hero visual missing');
-const heroImage=home.slice(home.indexOf('src="/assets/vehicles/santafe-1811.webp"'),home.indexOf('>',home.indexOf('src="/assets/vehicles/santafe-1811.webp"'))+1);
-assert(heroImage.includes('loading="eager"')&&heroImage.includes('fetchpriority="high"'),'Hero visual must be requested promptly on mobile');
+assert(home.includes('id="nationwide-live-locality-20261107"')&&home.includes('href="/find/"'),
+ 'Customer must retain live locality lookup and nationwide service finder');
+assert(home.includes('class="hero-vehicle"')&&home.includes('차량 상담 안내')&&home.includes('tel:18114294'),
+ 'Copyright-safe hero must retain visible vehicle consultation and phone');
 assert(!home.includes('id="homepage-mountain-fare-shortcuts-202611"'),'Repeated mountain shortcut section returned');
 assert(!home.includes('id="regional-taksong-search-guide"'),'Repeated regional route block returned');
 assert(home.includes('id="home-business-service-links-20261104"'),'Consolidated B2B service navigation missing');
