@@ -9,10 +9,12 @@ const rows=[
  ['대리비','daeri'],['대리비견적','daeri'],
  ['탁송비','taksong'],['탁송견적','taksong'],['탁송비견적','taksong']
 ];
-const chips=home.indexOf('id="home-fare-keyword-links-20261107"');
 const quote=home.indexOf('id="homepage-fare-form"');
 const services=home.indexOf('id="homepage-primary-services-20261106"');
-assert(quote>0&&chips>quote&&services>chips,'Mobile fare input and links must precede category browsing');
+assert(quote>0&&services>quote,'Existing mobile fare form must precede category browsing without changing the approved homepage top');
+assert(home.includes('action="/fare/" method="get" id="homepage-fare-form"'),'Homepage fare form must open the canonical calculator');
+assert(home.includes('name="service"')&&home.includes('<option value="taksong">탁송</option>')&&home.includes('<option value="daeri">대리운전</option>'),'Homepage must offer both real service types');
+assert(home.includes('href="tel:18114294"'),'Homepage phone consultation must remain available');
 assert(fare.indexOf('id="fare-cost-quote-keywords-20261107"')>fare.indexOf('id="quote-form"'),
  'Keep the mobile calculator above search guidance');
 assert(fare.indexOf('id="fare-cost-quote-keywords-20261107"')<fare.indexOf('id="regional-route-keyword-search"'),
@@ -23,7 +25,7 @@ for(const [term,service] of rows){
  assert(resolved,'Keyword not recognized: '+term);
  assert.equal(resolved.kind,service,term+' must identify the correct service');
  assert.equal(resolved.url,'/fare/?service='+service,term+' must open the calculator');
- assert(home.includes('>'+term+'</a>'),term+' must be visible as a concise mobile quick link');
+ // Search-intent aliases resolve to the calculator; the approved homepage top does not require five redundant chips.
  assert(fare.includes('<strong>'+term+'</strong>'),term+' must have an honest explanation on the canonical fare page');
  assert(server.includes("'"+term+"':'/fare/?service="+service+"'"),term+' missing from direct keyword routing');
  assert(seo.pages.find(p=>p.path==='/').description.includes(term),term+' missing from canonical homepage metadata');
