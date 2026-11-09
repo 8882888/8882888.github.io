@@ -1059,7 +1059,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    !/\/card\/area-\d+-daeri-brand-v6\.png/.test(requestedTaksong),
    'explicit Ulsan taksong filter must show the correct legal locality and taksong-only card');
   const homeCardSearch=(await (await get('/')).text());
-  assert.ok(homeCardSearch.includes('id="dynamic-service-card-search-20261103"')&&homeCardSearch.includes('action="/region/"')&&homeCardSearch.includes('지역별 명함 자동확장 보기'),'homepage offers responsive region service card search');
+  assert.ok(homeCardSearch.includes('id="nationwide-live-locality-form-20261107"')&&homeCardSearch.includes('action="/region/"')&&homeCardSearch.includes('지역명·서비스 검색'),'homepage offers responsive region service card search');
   assert.ok(homeCardSearch.includes('id="mountain-cycling-fare-first-20261103"')&&homeCardSearch.includes('id="homepage-fare-top"'),'home retains original fare and calculator');
 
   // Live business-card previews must work without a second page load.
