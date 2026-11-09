@@ -166,3 +166,6 @@ for(const [province] of provinceImageMappings){
  assert.ok(provinceIds.has(province),'region search coverage must retain '+province);
 }
 console.log('PASS 17 province mappings, disambiguation and mountain fare anchors');
+
+assert.match(regionSearch,/if\(kind&&kind!==service\)type\.value=service/,'typed 부산대리운전 must override a default 탁송 selector rather than silently failing to route');
+assert.ok(!regionSearch.includes("kind==='daily'||(kind&&kind!==service)"),'default service mismatch must not block a valid explicit service keyword');
