@@ -505,10 +505,6 @@ const regionMatches=(r,q)=>{
 };
 const regionAncestors=r=>{const a=[];let cur=r;while(cur){a.unshift(cur);cur=cur.parent_slug?bySlug.get(cur.parent_slug):null}return a};
 const regionContext=r=>({읍:'읍내·인접 마을',면:'면 소재지·인접 마을',리:'마을·인접 읍면',동:'주거지·상업시설',구:'구내 주요 생활권',군:'읍·면·리 지역',시:'시내·외곽 지역',시도:'시·군·구별 지역'})[r.level]||'해당 지역';
-const cardArtFile=path.join(ROOT,'assets/smart24-business-card-inline.webp');
-
-const serviceCardArt={daeri:path.join(ROOT,'assets/smart24-daeri-brand.webp'),taksong:path.join(ROOT,'assets/smart24-taksong-brand.webp')};
-
 function serviceBrand(kind){return kind==='daeri'?'스마트전국대리운전':'스마트24시전국탁송'}
 const cardSvg=(label,kind)=>{
  // The caller already supplies seoRegionLabel(); never strip suffixes again: '대구' would become '대'.
