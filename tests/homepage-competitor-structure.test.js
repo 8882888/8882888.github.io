@@ -17,7 +17,8 @@ for(const uri of ['/service/corporate/','/service/golf/','/service/daily-driver/
 for(const slug of ['busan','daegu','ulsan','changwon','daejeon']){
  const uri='/daeri/food-district/'+slug+'/';
  assert(html.includes('href="'+uri+'"'),'missing city discovery path: '+uri);
- assert(sitemap.includes('https://jeongukdaeri.kr'+uri),'missing sitemap path: '+uri);
+ assert(!sitemap.includes('https://jeongukdaeri.kr'+uri),
+  'Node-only food district pages must not be listed as missing static Pages URLs: '+uri);
 }
 assert(html.includes('실제 배차 시각')&&html.includes('현재 기사 수급'),'must disclose price and availability uncertainty');
 assert(!html.includes('대리고와 제휴'),'competitor affiliation must not be suggested');
