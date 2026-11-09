@@ -75,10 +75,10 @@ for(const [number,query,kind,image] of samples)checks.push([number,query+' match
 // Original mountain fare posters and existing specialist illustrations have
 // deliberate image priority. Do not force a duplicate dynamic card above them.
 const establishedVisuals={
- '/설악산탁송/':'/assets/seoraksan-taksong-original-fare.png',
- '/지리산탁송/':'/assets/jirisan-taksong-original-fare.png',
+ '/설악산탁송/':'/assets/seoraksan-taksong-fares.svg',
+ '/지리산탁송/':'/assets/jirisan-taksong-fares.svg',
  '/special/cycling-trail-transport/':'/assets/cycling-routes/nationwide-taksong.svg',
- '/service/golf/':'/assets/photos/golf-driver.avif',
+ '/service/golf/':'/assets/service-golf-visual.svg',
  '/service/corporate/':'/assets/service-daeri-visual.svg',
  '/service/daily-driver/':'/assets/service-golf-visual.svg'
 };
@@ -99,7 +99,7 @@ for(const [number,path,topic] of pages)checks.push([number,path+' visible topic 
   assert.ok(result.body.includes('src="'+original+'"'),path+' must visibly render its original or specialist image');
   assert.ok(!result.body.includes('id="keyword-intent-dynamic-image"'),path+' must not duplicate imagery and obscure existing fares');
   assert.ok(result.body.includes('width:100%')&&result.body.includes('height:auto'),path+' image must remain mobile responsive');
-  if(path==='/service/golf/')assert.ok(result.body.includes('AI로 제작한 골프장 이동 분위기')&&result.body.includes('실제 운행 증빙사진 아님'),'Golf visual must disclose staged AI provenance');
+  if(path==='/service/golf/')assert.ok(result.body.includes('차량·사람 사진이 아닌 안내용 텍스트 명함')&&!result.body.includes('src="/assets/photos/golf-driver.avif"'),'Golf visual must be photo-free');
   if(path==='/설악산탁송/'||path==='/지리산탁송/')
    assert.ok(result.body.includes('fetchpriority="high"'),path+' original fare image must load first');
   return;
