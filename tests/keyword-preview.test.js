@@ -156,6 +156,9 @@ assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken regional i
   assert.ok(serviceRouter.indexOf("const fare=document.createElement('a')") < serviceRouter.indexOf("fetch('/api/region-card-preview?"),'fare action must render before optional regional image fetch');
   assert.ok(serviceRouter.indexOf("actions.append(detail)") < serviceRouter.indexOf("fetch('/api/region-card-preview?"),'region detail link must render before optional image fetch');
   assert.ok(serviceRouter.indexOf("image.addEventListener('error'") < serviceRouter.indexOf("fetch('/api/region-card-preview?"),'regional image error fallback must be registered before asynchronous preview loading');
+  assert.match(serviceRouter,/lookupController=new AbortController\(\)/,'region lookup should support cancellation');
+  assert.match(serviceRouter,/setTimeout\(\(\)=>lookupController\.abort\(\),8000\)/,'region lookup must not hang indefinitely');
+  assert.match(serviceRouter,/clearTimeout\(lookupTimeout\)/,'region lookup timeout must be cleared after completion');
 assert.match(serviceRouter,/card\.kind===kind/,'region image selection must not cross chauffeur and vehicle-delivery services');
 assert.match(serviceRouter,/exactCards\.length===1/,'ambiguous regional image matches must not be selected');
 
