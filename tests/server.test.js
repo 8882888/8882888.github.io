@@ -1319,7 +1319,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     'record first landing source and display existing unattributed conversions');
   assert.ok(trackerBody.includes("el('traffic-call-trigger')") && !trackerBody.includes("traffic-today-trigger"),
     'click-source visibility is controlled only by the phone-click count');
-  assert.ok(trackerBody.includes('p_page:location.pathname')&&trackerBody.includes('p_source:acquisition()'));
+  assert.ok(trackerBody.includes('p_page:metricPage')&&trackerBody.includes('p_source:acquisition()')&&trackerBody.includes('campaignKeyword()'),'phone click analytics retains landing source and keyword-aware page attribution');
   assert.ok(!trackerBody.includes('event.preventDefault()'),'phone navigation is never blocked');
   assert.ok(trackerBody.includes('response.status===204'),'Supabase void phone-event response must not cause retry or double count');
   assert.ok(!trackerBody.includes('document.referrer.trim()'),'raw referrers must not be transmitted');
