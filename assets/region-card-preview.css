@@ -30,3 +30,29 @@
 .smart24-card-fare-table caption{font-size:13px;text-align:left;color:#4a5665;margin-bottom:6px}
 .smart24-card-fare-table th,.smart24-card-fare-table td{padding:9px 8px;border-bottom:1px solid #d6e2ee;text-align:left}
 .smart24-card-fare-table th{font-weight:650}.smart24-card-fare-table td{font-weight:850;white-space:nowrap;color:#07539c}
+
+/* 2026-11 mobile: readable, non-clipping keyword cards and mountain fare list. */
+.region-card-live,.smart24-card-panel,.smart24-card-grid{min-width:0}
+.smart24-card-heading{overflow-wrap:anywhere;word-break:keep-all}
+.smart24-card-picture-link svg{display:block;width:100%;height:auto;max-width:100%;border-radius:8px}
+.smart24-card-results{min-width:0}
+@media(max-width:600px){
+ .region-card-live{width:100%;max-width:100%;margin:10px 0;padding:10px;border-radius:10px;overflow-wrap:anywhere;scroll-margin-top:18px}
+ .smart24-card-panel{padding:11px 10px}
+ .smart24-card-status{font-size:15px;line-height:1.55}
+ .smart24-card-heading{font-size:clamp(18px,5vw,22px);line-height:1.4}
+ .smart24-card-picture-link{width:100%;max-width:100%}
+ .smart24-card-picture-link svg,.smart24-card-preview-image{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:auto;object-fit:contain}
+ .smart24-card-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .smart24-card-actions>a,.smart24-card-actions>button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:48px;padding:9px 7px;font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+ .smart24-card-actions .smart24-card-phone{grid-column:1/-1;min-height:54px;font-size:18px}
+ .smart24-card-fare-heading{font-size:18px;line-height:1.35}
+ .smart24-card-fare-table{width:100%;table-layout:fixed;font-size:clamp(14px,3.7vw,16px)}
+ .smart24-card-fare-table caption{font-size:13px;line-height:1.5}
+ .smart24-card-fare-table th{width:67%;padding:11px 5px;white-space:normal;overflow-wrap:anywhere}
+ .smart24-card-fare-table td{width:33%;padding:11px 5px;text-align:right;white-space:nowrap}
+ .smart24-card-description{font-size:15px}
+ .smart24-card-dialog{width:96vw;max-height:94dvh;max-height:94vh;padding:10px}
+ .smart24-card-dialog-image{max-height:calc(94vh - 90px)}
+}
+@media(max-width:360px){.smart24-card-actions{grid-template-columns:1fr}.smart24-card-actions .smart24-card-phone{grid-column:auto}}
