@@ -1164,7 +1164,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const expectedBrand=service==='daeri'?'스마트전국대리운전':'스마트24시전국탁송';
    const expectedCardLabel=service==='daeri'?'서울대리운전':'서울탁송';
    assert.ok(svg.includes(expectedCardLabel),'service-card heading must show the actual Seoul locality and right service');
-   const caption=html.match(/<figcaption[^>]*>(.*?)<\/figcaption>/)[1];assert.ok(caption.includes(expectedBrand),'caption identifies the same service as the displayed card');
+   assert.ok(html.includes('alt="'+expectedCardLabel+' 지역명 맞춤 명함'),'regional card accessibility label identifies the same locality and service');
    const visibleLabels=svg.replace(/<image[^>]+\/>/g,'');
    assert.ok(!visibleLabels.includes(service==='daeri'?'스마트24시전국탁송':'스마트전국대리운전'),'card headings do not mix two service brands');
    assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('id="identity-band"')&&svg.includes('height="82"'),'custom local banner covers the obsolete city text but preserves matching service artwork');
