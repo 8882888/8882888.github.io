@@ -38,7 +38,7 @@ const checks=[
  ['15','Deployed release must match source fingerprint',deploy.includes('expected="$(sha256sum server.js')&&deploy.includes("actual=\"$(jq -r '.release")],
  ['16','Release verification uses official domain',deploy.includes('https://jeongukdaeri.kr/health')],
  ['17','Independent production audit checks live hashes',audit.includes('check_live_taksong_deploy.py')&&live.includes('deployment_hashes')],
- ['18','All five fixed service links are above fare search',start>home.indexOf('</header>')&&start<home.indexOf('id="homepage-fare-top"')&&services.every(([label,href])=>nav.includes('href="'+href+'"')&&nav.includes('>'+label+'</a>'))],
+ ['18','Fare lookup stays first and all five fixed service links remain present',start>home.indexOf('id="homepage-fare-top"')&&start>home.indexOf('</header>')&&services.every(([label,href])=>nav.includes('href="'+href+'"')&&nav.includes('>'+label+'</a>'))],
  ['19','Five-service navigation stays sticky',nav.includes('position:sticky;top:0;z-index:1100')&&home.includes('grid-template-columns:repeat(5,minmax(0,1fr))!important')],
  ['20','Homepage cache and missing menu are repaired',server.includes('cachedHomepageSignature!==signature')&&server.includes('if(!html.includes(start))html=html.replace')&&server.includes("headers['x-smart24-primary-nav']='four-services-sticky-20261106'")&&server.includes("headers['cache-control']='no-store, max-age=0, must-revalidate'")]
 ];
