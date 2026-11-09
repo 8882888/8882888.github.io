@@ -85,6 +85,37 @@
  const addLink=(parent,href,text,cls)=>{
   const a=node('a',cls,text);a.href=href;parent.append(a);return a;
  };
+ // Always show an exact, human-readable keyword graphic without relying on a server image.
+ // The graphic contains no cars, people, or unlicensed photographs.
+ const SVG_NS='http://www.w3.org/2000/svg';
+ function localKeywordSvg(raw,kind){
+  const keyword=String(raw||'').trim().slice(0,75);
+  const service=kind==='daeri'?'대리운전':'자동차탁송';
+  const phone=kind==='taksong'&&keyword.includes('제주')?'1877-5245':'1811-4294';
+  const svg=document.createElementNS(SVG_NS,'svg');
+  svg.setAttribute('viewBox','0 0 1200 700');
+  svg.setAttribute('role','img');
+  svg.setAttribute('aria-label',keyword+' 입력 키워드 안내 명함');
+  svg.style.cssText='display:block;width:100%;height:auto;border-radius:9px;background:#f2f8ff';
+  const draw=(tag,attrs,value)=>{
+   const el=document.createElementNS(SVG_NS,tag);
+   Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v)));
+   if(value!==undefined)el.textContent=value;
+   svg.append(el);
+  };
+  draw('rect',{x:0,y:0,width:1200,height:700,fill:'#f1f7fe'});
+  draw('rect',{x:0,y:0,width:1200,height:110,fill:'#0a4c85'});
+  draw('text',{x:54,y:75,fill:'#ffffff','font-family':'sans-serif','font-size':42,'font-weight':800},'스마트24 · '+service);
+  draw('text',{x:54,y:175,fill:'#286387','font-family':'sans-serif','font-size':29},'입력 키워드 상담 명함');
+  const chars=Array.from(keyword),step=chars.length>44?Math.ceil(chars.length/3):chars.length>23?Math.ceil(chars.length/2):Math.max(1,chars.length);
+  const lines=[];for(let i=0;i<chars.length;i+=step)lines.push(chars.slice(i,i+step).join(''));
+  const font=Math.max(32,Math.min(72,Math.floor(1050/Math.max(1,...lines.map(line=>Array.from(line).length)))));
+  lines.forEach((line,i)=>draw('text',{x:55,y:275+i*95,fill:'#053c75','font-family':'sans-serif','font-size':font,'font-weight':900},line));
+  draw('rect',{x:38,y:535,width:1124,height:123,rx:16,fill:'#d7eaff'});
+  draw('text',{x:600,y:607,'text-anchor':'middle',fill:'#064379','font-family':'sans-serif','font-size':66,'font-weight':900},phone);
+  draw('text',{x:600,y:645,'text-anchor':'middle',fill:'#345a77','font-family':'sans-serif','font-size':22},'지역 일치·운행·현재 요금·기사 배정은 확인 후 안내');
+  return svg;
+ }
  let zoom=null,lastActivator=null;
  if(typeof HTMLDialogElement!=='undefined'){
   const dialog=node('dialog','smart24-card-dialog');
@@ -116,6 +147,22 @@
   const results=node('div','smart24-card-results');
   output.replaceChildren(message,results);
   let pending=null,controller=null,sequence=0;
+  function showDraft(raw,kind,notice){
+   const keyword=String(raw||'').trim();
+   if(!keyword)return;
+   const service=/대리운전(?:업체|회사)?$|대리$/.test(keyword.replace(/\s/g,''))?'daeri':/탁송(?:업체|회사)?$/.test(keyword.replace(/\s/g,''))?'taksong':kind;
+   const phone=service==='taksong'&&keyword.includes('제주')?'1877-5245':'1811-4294';
+   const article=node('article','smart24-card-panel');
+   article.append(node('h3','smart24-card-heading',keyword+' · 텍스트 명함'),localKeywordSvg(keyword,service));
+   article.append(node('p','smart24-card-description','입력하신 글자를 표시한 안내 이미지이며 실제 지점·운행완료·배차 확정을 뜻하지 않습니다.'));
+   const actions=node('div','smart24-card-actions'),params=new URLSearchParams({q:keyword});
+   if(service)params.set('service',service);
+   addLink(actions,'/region/?'+params.toString(),'해당 지역 검색 결과');
+   addLink(actions,'tel:'+phone.replace(/-/g,''),'상담 '+phone,'smart24-card-phone');
+   article.append(actions);
+   output.hidden=false;message.textContent=notice||'입력한 키워드의 텍스트 명함을 표시했습니다. 지역 일치를 확인합니다.';
+   results.replaceChildren(article);
+  }
   function reset(reason){
    ++sequence;
    if(controller)controller.abort();controller=null;
@@ -141,11 +188,11 @@
    img.addEventListener('error',()=>{
     // Never replace a requested exact-region image with a different region's generic art.
     if(!exact&&!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
-    if(img.getAttribute('src')!==serviceFallback){img.src=serviceFallback;img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 공통 서비스 안내 이미지 (지역별 실제 사진 아님)';picture.href=serviceFallback;if(fullLink)fullLink.href=serviceFallback;return}
+    // Preserve the exact typed keyword even if the image host is stale or unreachable.
     picture.removeAttribute('href');
     picture.removeAttribute('target');
     picture.style.cursor='default';
-    img.replaceWith(node('p','smart24-card-error','이미지 연결을 확인할 수 없습니다. 아래 지역 상세 안내를 이용해 주세요.'));
+    img.replaceWith(localKeywordSvg(card.displayKeyword||card.label||input.value.trim(),card.kind));
     if(zoomButton)zoomButton.remove();
     if(fullLink)fullLink.remove();
    });
@@ -191,7 +238,7 @@
      list.append(b);
     });
     results.append(list);
-   }else message.textContent='일치하는 지역 명함이 없습니다. 시·군·구 이름을 확인해 주세요.';
+   }else showDraft(input.value.trim(),select?.value||'taksong','검색어에 해당하는 지역을 확인하지 못했습니다. 텍스트 명함과 지역 검색 링크를 제공합니다.');
    const params=new URLSearchParams({q:input.value.trim()});
    if(select?.value)params.set('service',select.value);
    const p=node('p','smart24-card-full-search');
@@ -221,12 +268,13 @@
     const city=liveCityMatch(query,select?.value||'');
     if(city){show(city);return;}
    }
+   showDraft(query,inferred||select?.value||'taksong');
    async function lookup(){
     controller=new AbortController();
     let timedOut=false;
     timeoutId=setTimeout(()=>{timedOut=true;controller.abort()},6500);
     output.hidden=false;output.setAttribute('aria-busy','true');
-    results.replaceChildren();message.textContent='지역에 맞는 명함을 확인하고 있습니다.';
+    message.textContent='키워드 명함 표시 중 · 등록 지역 일치를 확인하고 있습니다.';
     const direct=new URLSearchParams({q:query});
     if(select?.value)direct.set('service',select.value);
     addLink(results,'/region/?'+direct.toString(),'지역 검색 결과 바로 보기','smart24-card-choice');
@@ -244,8 +292,7 @@
      if(seq!==sequence||(error.name==='AbortError'&&!timedOut))return;
      // A missing/slow Cloudtype preview API must not leave the search looking broken.
      // The existing /region/ page runs from static region data independently.
-     reset('이미지 자동보기 서버에 연결할 수 없습니다. 지역별 검색과 상담은 계속 이용할 수 있습니다.');
-     output.hidden=false;
+     showDraft(query,inferred||select?.value||'taksong','조회 서버에 연결되지 않아 입력한 키워드 텍스트 명함을 표시합니다.');
      const p=new URLSearchParams({q:query});
      if(select?.value)p.set('service',select.value);
      const known=nearbyRoute(query,select?.value||'');
