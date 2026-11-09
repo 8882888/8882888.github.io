@@ -71,7 +71,7 @@
   return {status:'matched',region:city.name,cards:kinds.map(kind=>({
    kind,displayKeyword:/대리운전$|탁송$/.test(compact)?compact:city.name+(kind==='daeri'?'대리운전':'탁송'),
    keywordImage:'/keyword-card/exact/area-'+city.id+'-'+kind+'.svg?q='+encodeURIComponent(/대리운전$|탁송$/.test(compact)?compact:city.name+(kind==='daeri'?'대리운전':'탁송')),
-   image:'/card/area-'+city.id+'-'+kind+'-brand-v6.png',
+   image:'/card/area-'+city.id+'-'+kind+'-brand-v7.png',
    url:'/'+kind+'/'+city.slug+'/',
    description:city.name+' '+(kind==='daeri'?'대리운전':'자동차탁송')+' 지역 상담 안내입니다. 실제 배차와 요금은 별도 확인합니다.',
    phone:kind==='taksong'&&city.slug==='jeju'?'1877-5245':'1811-4294'
