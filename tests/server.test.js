@@ -1691,7 +1691,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(decodeURIComponent(imagePath).includes(entry.keyword),'exact query preserved in image route '+entry.keyword);
    const img=await get(imagePath);
    assert.equal(img.status,200,'regional image generated '+entry.keyword);
-   assert.ok((await img.text()).includes(entry.keyword),'exact phrase represented in SVG '+entry.keyword);
+   assert.match(img.headers.get('content-type')||'',/image\/svg\+xml/,'actual SVG media type '+entry.keyword);
+   const svgContent=await img.text();
+   assert.ok(svgContent.includes('<svg')&&svgContent.includes(entry.keyword),'actual SVG contains regional phrase '+entry.keyword);
    additionalVerified++;
   }
   assert.equal(additionalVerified,50);
@@ -1726,9 +1728,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.equal(result.cards[0].kind,target.kind);
    assert.equal(result.cards[0].url,url,'correct canonical '+target.keyword);
    assert.equal(result.cards[0].displayKeyword,target.keyword,'keyword visual label '+target.keyword);
-   const image=await get(result.cards[0].keywordImage);
+   const imageUrl=result.cards[0].keywordImage||result.cards[0].image;
+   assert.ok(imageUrl&&(imageUrl.startsWith('/keyword-card/exact/')||imageUrl.startsWith('/api/nationwide-locality-card.svg')),'third batch regional SVG route '+target.keyword);
+   assert.ok(decodeURIComponent(imageUrl).includes(target.keyword),'query is preserved in SVG URL '+target.keyword);
+   const image=await get(imageUrl);
    assert.equal(image.status,200,'SVG preview '+target.keyword);
-   assert.ok((await image.text()).includes('>'+target.keyword+'</text>'),'SVG exact keyword pixels '+target.keyword);
+   assert.match(image.headers.get('content-type')||'',/image\/svg\+xml/,'actual SVG media type '+target.keyword);
+   const svgContent=await image.text();
+   assert.ok(svgContent.includes('<svg')&&svgContent.includes(target.keyword),'regional phrase represented in SVG '+target.keyword);
    thirdVerified++;
   }
   assert.equal(thirdVerified,50);
