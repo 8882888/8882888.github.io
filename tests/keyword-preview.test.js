@@ -136,3 +136,9 @@ for(const [keyword,kind,expectedArea] of [
 
 }
 console.log('PASS keyword image preview bindings, fallback and JavaScript syntax');
+
+// Explicit keyword links must never strand users on a missing region/kind selection.
+const serviceRouter=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
+assert.match(serviceRouter,/q\.get\('q'\)/,'keyword query must be recognized');
+assert.match(serviceRouter,/location\.replace\('\/region\/\?q='\+encodeURIComponent\(keyword\)\)/,'q-only queries must preserve their keyword in the canonical search flow');
+assert.match(serviceRouter,/q\.has\('region'\).*q\.has\('kind'\)/,'explicit structured region selection must remain intact');
