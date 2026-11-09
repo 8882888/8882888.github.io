@@ -1144,7 +1144,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const regionInteractive=await (await get('/region/?q='+encodeURIComponent('부산'))).text();
   assert.ok(regionInteractive.includes('data-card-preview-form')&&regionInteractive.includes('data-card-preview-output'),'region result page offers in-place live switching');
   assert.ok(regionInteractive.includes('region-card-preview.js')&&regionInteractive.includes('region-card-preview.css'),'region page loads live preview assets');
-  assert.ok(homeCardSearch.includes('data-card-preview-form')&&homeCardSearch.includes('data-card-preview-output')&&homeCardSearch.includes('region-card-preview.js'),'homepage supports instant no-navigation preview');
+  assert.ok(homeCardSearch.includes('id="nationwide-live-locality-form-20261107"')&&homeCardSearch.includes('action="/region/"')&&homeCardSearch.includes('region-card-preview.js'),'homepage provides current nationwide locality search and loads preview assets');
 
   const ambiguousCity=await (await get('/region/?q='+encodeURIComponent('광주'))).text();
   assert(ambiguousCity.includes('class="dynamic-region-card-preview"')&&!ambiguousCity.includes('class="dynamic-region-card-preview" open'),'ambiguous city must not silently choose a card');
