@@ -109,7 +109,7 @@ async function main(){
   assert.equal(unchanged.status,304,'unchanged tracking script must support conditional requests');
   const fresh=await request(port,'/assets/traffic-analytics.js',{'If-None-Match':'"old-deployment"'});
   assert.equal(fresh.status,200,'outdated tracking script must return fresh bytes');
-  for(const route of ['/','/region/','/fare/','/go/region-service/']){
+  for(const route of ['/','/region/','/fare/','/go/region-service/?'+new URLSearchParams({region:'서울특별시',parent:'대한민국',kind:'daeri'})]){
     const page=await request(port,route);
     assert.equal(page.status,200,'tracking entry page unavailable: '+route);
     assert(page.body.includes('/assets/traffic-analytics.js?v=20261109-overnight-visit'),'stale tracking asset on '+route);
