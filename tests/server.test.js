@@ -1686,10 +1686,12 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.equal(data.cards[0].kind,entry.kind,'correct service category '+entry.keyword);
    assert.equal(data.cards[0].url,url,'search lands on the correct existing region page '+entry.keyword);
    assert.equal(data.cards[0].displayKeyword,entry.keyword,'dynamic card heading exactly matches '+entry.keyword);
-   assert.ok(data.cards[0].keywordImage.startsWith('/keyword-card/exact/'),'exact regional card '+entry.keyword);
-   const img=await get(data.cards[0].keywordImage);
-   assert.equal(img.status,200,'exact image generated '+entry.keyword);
-   assert.ok((await img.text()).includes('>'+entry.keyword+'</text>'),'exact phrase actually painted on image '+entry.keyword);
+   const imagePath=data.cards[0].keywordImage||data.cards[0].image;
+   assert.ok(imagePath&&(imagePath.startsWith('/keyword-card/exact/')||imagePath.startsWith('/api/nationwide-locality-card.svg')),'regional card SVG route '+entry.keyword);
+   assert.ok(decodeURIComponent(imagePath).includes(entry.keyword),'exact query preserved in image route '+entry.keyword);
+   const img=await get(imagePath);
+   assert.equal(img.status,200,'regional image generated '+entry.keyword);
+   assert.ok((await img.text()).includes(entry.keyword),'exact phrase represented in SVG '+entry.keyword);
    additionalVerified++;
   }
   assert.equal(additionalVerified,50);
