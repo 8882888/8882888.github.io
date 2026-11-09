@@ -45,6 +45,7 @@ const fetchMock=async(url,options)=>{
     phone_sources:[{source:'기존 클릭 · 유입 경로 미확인',page:'',day:'',clicks:4}]
   });
   case 'site_phone_event':return fake(null,204);
+  case 'site_funnel_event':return fake(null,204);
   case 'site_quote_summary':return fake({total_attempts:10,success_attempts:8,failed_attempts:2,success_rate_pct:80});
   case 'site_click_stats':return fake({total_clicks:4});
   default:throw Error('unexpected API '+name);
@@ -52,6 +53,7 @@ const fetchMock=async(url,options)=>{
 };
 const env={
  fetch:fetchMock,document:doc,window:{addEventListener:()=>{}},
+ navigator:{userAgent:'Mozilla/5.0',webdriver:false},localStorage:{getItem:k=>local.get('local:'+k)||null,setItem:(k,v)=>local.set('local:'+k,v)},
  location:loc,sessionStorage:{
   getItem:k=>local.get(k)||null,
   setItem:(k,v)=>local.set(k,v)
