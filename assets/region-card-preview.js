@@ -194,30 +194,33 @@
    if(!page||!['daeri','taksong'].includes(card.kind))return null;
    const article=node('article','smart24-card-panel');
    const title=node('h3','smart24-card-heading',card.displayKeyword||card.label||'지역별 상담 명함');
-   const img=node('img','smart24-card-preview-image');
-   img.src=preview||original||serviceFallback;
-   img.alt=(card.displayKeyword||card.label||'지역')+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+(original?' 전용 명함':' 공통 서비스 안내 이미지 (지역별 실제 사진 아님)');
-   img.width=1200;img.height=800;img.loading='eager';img.decoding='async';
-   let pngFallback=false;
-   let zoomButton=null,fullLink=null;
-   img.addEventListener('error',()=>{
-    // Never replace a requested exact-region image with a different region's generic art.
-    if(!exact&&!pngFallback&&legacy&&img.src!==new URL(legacy,location.href).href){pngFallback=true;img.src=legacy;return}
-    // Preserve the exact typed keyword even if the image host is stale or unreachable.
-    picture.removeAttribute('href');
-    picture.removeAttribute('target');
-    picture.style.cursor='default';
-    img.replaceWith(localKeywordSvg(card.displayKeyword||card.label||input.value.trim(),card.kind));
-    if(zoomButton)zoomButton.remove();
-    if(fullLink)fullLink.remove();
-   });
+   // Paint an exact-keyword card immediately, before any remote image request.
+   // Only swap to a downloaded graphic after a successful image load.
+   const keyword=card.displayKeyword||card.label||input.value.trim();
+   const fallback=localKeywordSvg(keyword,card.kind);
    const picture=node('a','smart24-card-picture-link');
-   picture.href=original||serviceFallback;picture.target='_blank';picture.rel='noopener noreferrer';
-   picture.setAttribute('aria-label',img.alt+' 크게 보기');
-   picture.append(img);
+   picture.style.cursor='default';picture.append(fallback);
+   const img=node('img','smart24-card-preview-image');
+   img.alt=keyword+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 안내 명함';
+   img.width=1200;img.height=800;img.loading='eager';img.decoding='async';
+   let zoomButton=null,fullLink=null;
+   const sources=[...new Set([preview,original,legacy].filter(Boolean))];
+   let sourceIndex=0;
+   const tryNext=()=>{if(sourceIndex<sources.length)img.src=sources[sourceIndex++];};
+   img.addEventListener('load',()=>{
+    if(!fallback.isConnected)return;
+    fallback.replaceWith(img);
+    picture.href=img.src;picture.target='_blank';picture.rel='noopener noreferrer';
+    picture.style.cursor='zoom-in';picture.setAttribute('aria-label',img.alt+' 크게 보기');
+    if(fullLink){fullLink.href=img.src;fullLink.hidden=false;}
+    if(zoomButton){zoomButton.hidden=false;zoomButton.disabled=false;}
+   });
+   img.addEventListener('error',()=>{
+    // Keep the locally rendered keyword card on screen if the endpoint fails.
+    // Do not briefly display a broken image or an unrelated locality's photo.
+    tryNext();
+   });
    picture.addEventListener('click',event=>{
-    // A generated in-browser SVG remains visible after an image 404, but no longer has an original URL.
-    // Do not open a blank image dialog or prevent navigation to a missing href.
     const href=picture.getAttribute('href');
     if(zoom&&href){event.preventDefault();openZoom(href,img.alt,picture)}
    });
@@ -226,15 +229,15 @@
    if(zoom){
     const button=node('button','smart24-card-zoom','명함 화면에서 확대');
     zoomButton=button;
-    button.type='button';button.addEventListener('click',()=>openZoom(picture.getAttribute('href'),img.alt,button));
+    button.type='button';button.hidden=true;button.disabled=true;button.addEventListener('click',()=>{const href=picture.getAttribute('href');if(href)openZoom(href,img.alt,button)});
     actions.append(button);
    }
    const full=addLink(actions,original||serviceFallback,'명함 원본 보기');
    fullLink=full;
-   full.target='_blank';full.rel='noopener noreferrer';
+   full.hidden=true;full.target='_blank';full.rel='noopener noreferrer';
    addLink(actions,page,'지역 상세 안내');
    const tel=String(card.phone||'1811-4294').replace(/[^0-9]/g,'');
-   if(tel.length>=7)addLink(actions,'tel:'+tel,'전화 '+card.phone,'smart24-card-phone');
+   if(tel.length>=7)addLink(actions,'tel:'+tel,'전화 '+(card.phone||'1811-4294'),'smart24-card-phone');
    // Keep the verified mountain fare table visible independently of image or API loading.
    if(card.url==='/설악산탁송/'){
     const heading=node('h4','smart24-card-fare-heading','설악산 코스별 기존 탁송요금');
@@ -247,6 +250,7 @@
     table.append(tbody);
     article.append(title,picture,heading,table,description,actions);
    }else article.append(title,picture,description,actions);
+   tryNext();
    return article;
   }
   function show(data){
