@@ -42,10 +42,10 @@ assert.ok(!html.includes('#dynamic-service-card-search-20261103{display:none!imp
 assert.ok(client.includes('function localKeywordSvg(raw,kind)'),'typed keyword SVG builder must exist');
 assert.ok(client.includes('-brand-v7.png')&&!client.includes('-brand-v6.png'),
  'instant region previews should use the cache-busting photo-free v7 image');
-assert.ok(html.includes('region-card-preview.js?v=20261109-textcard-v7'),
- 'homepage must load the current v7 image preview client instead of an old cached script');
+assert.ok(html.includes('region-card-preview.js?v=20261109-mobile-v11'),
+ 'homepage must load the current mobile-v11 image preview client instead of an old cached script');
 assert.ok(client.includes("showDraft(query,inferred||select?.value||'taksong')"),'keyword should show immediately');
-assert.ok(client.includes('img.replaceWith(localKeywordSvg('),'image failure must retain keyword text');
+assert.ok(client.includes('picture.append(fallback)')&&client.includes('if(!fallback.isConnected)return;')&&client.includes('tryNext();'),'image failures must preserve the immediately visible exact-keyword SVG until a verified image loads');
 assert.ok(client.includes("const href=picture.getAttribute('href');")&&client.includes('if(zoom&&href)'),
  'image errors must not open an empty zoom modal');
 assert.ok(client.includes("showDraft(input.value.trim(),select?.value||'taksong',message.textContent)"),'ambiguous results should show a keyword card');
@@ -99,8 +99,8 @@ const recovered=findElement(output,x=>x.tag==='svg');
 assert.ok(recovered,'a failed exact-region image must recover as in-browser SVG');
 assert.ok(recovered.children.some(x=>x.tag==='text'&&x.textContent==='부산대리운전'),
  'in-browser fallback image must paint the exact typed region keyword');
-assert.ok(!findElement(output,x=>x.tag==='img'&&String(x.src||'').startsWith('/keyword-card/exact/')),
- 'failed remote preview must not remain as a broken image');
+assert.ok(!findElement(output,x=>x.tag==='img'&&x._parent&&String(x.src||'').startsWith('/keyword-card/exact/')),
+ 'failed remote preview must not be attached as a broken image');
 
 input.value='원주혁신도시대리운전';
 assert.equal(typeof input.events.input,'function','input listener attached to homepage form');
