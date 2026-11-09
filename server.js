@@ -2584,6 +2584,7 @@ if(pathname==='/sitemap-priority.xml'){
  const nationwideProvinceHubs=regions.filter(r=>r.level==='시도').flatMap(r=>[canonical(r.slug),servicePath(r,'taksong'),servicePath(r,'daeri')]);
  // Prioritize real city/county landing pages alongside province hubs; never fabricate routes.
  const priorityLocalities=[
+  '인천광역시 강화군', // Actual completed rides and dedicated indexable review-first region page.
   '강원특별자치도 태백시','강원특별자치도 정선군','강원특별자치도 영월군',
   '강원특별자치도 속초시','강원특별자치도 강릉시','강원특별자치도 원주시',
   '경상남도 창원시','경상남도 진주시','경상북도 김천시',
