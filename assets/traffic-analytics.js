@@ -217,6 +217,10 @@
   funnelStage('landing');
   if(normalizedPage==='/fare/')funnelStage('fare_view');
   if(normalizedPage==='/region/'){
+    // A q= URL represents an explicit keyword lookup even if the page redirects
+    // before a user can blur the input. Record only the stage, never the term.
+    const explicitQuery=new URL(location.href).searchParams.get('q');
+    if(explicitQuery&&explicitQuery.trim())funnelStage('region_search');
     const regionInput=document.getElementById('q');
     const serviceInput=document.getElementById('region-card-kind')||document.getElementById('type');
     const trackRegionIntent=()=>{
