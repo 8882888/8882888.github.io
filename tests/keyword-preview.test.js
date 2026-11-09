@@ -15,4 +15,42 @@ assert.ok(client.includes("showDraft(query,inferred||select?.value||'taksong')")
 assert.ok(client.includes('img.replaceWith(localKeywordSvg('),'image failure must retain keyword text');
 assert.ok(client.includes("showDraft(input.value.trim(),select?.value||'taksong',message.textContent)"),'ambiguous results should show a keyword card');
 assert.ok(!/<img\b[^>]*src="\/assets\/photos\//i.test(html),'no removed vehicle/person photos on home');
+
+class MockElement{
+ constructor(tag){this.tag=tag;this.children=[];this.style={};this.events={};this.attrs={};this.textContent='';this.hidden=false;}
+ append(...items){this.children.push(...items);}
+ replaceChildren(...items){this.children=items;}
+ setAttribute(k,v){this.attrs[k]=String(v);}
+ removeAttribute(k){delete this.attrs[k];}
+ addEventListener(k,fn){this.events[k]=fn;}
+ get childElementCount(){return this.children.length;}
+}
+const input=new MockElement('input'),select=new MockElement('select'),output=new MockElement('output'),form=new MockElement('form');
+input.value='부산대리운전';select.value='taksong';
+form.querySelector=q=>q==='input[name="q"]'?input:q==='select[name="service"]'?select:null;
+form.parentElement={querySelector:q=>q==='[data-card-preview-output]'?output:null};
+const documentMock={
+ querySelectorAll:q=>q==='form[data-card-preview-form]'?[form]:[],
+ createElement:t=>new MockElement(t),
+ createElementNS:(_ns,t)=>new MockElement(t),
+ body:new MockElement('body')
+};
+const runner=new Function('document','location','HTMLDialogElement','URLSearchParams','setTimeout','clearTimeout','fetch','AbortController',client);
+runner(documentMock,{hostname:'jeongukdaeri.kr'},undefined,URLSearchParams,()=>1,()=>{},()=>Promise.reject(Error('offline')),AbortController);
+function findElement(el,test){
+ if(test(el))return el;
+ for(const child of el.children||[]){const found=findElement(child,test);if(found)return found;}
+ return null;
+}
+const metro=findElement(output,x=>x.tag==='img'&&String(x.src||'').startsWith('/keyword-card/exact/'));
+assert.ok(metro&&metro.src.includes('area-494-daeri.svg'),'typing 부산대리운전 should select a matching original SVG card');
+assert.equal(select.value,'daeri','service intent in typed phrase overrides old select value');
+input.value='원주혁신도시대리운전';
+assert.equal(typeof input.events.input,'function','input listener attached to homepage form');
+input.events.input();
+const svg=findElement(output,x=>x.tag==='svg');
+assert.ok(svg&&!output.hidden,'unregistered or pending keyword still displays a local SVG immediately');
+assert.ok(svg.children.some(x=>x.tag==='text'&&x.textContent==='원주혁신도시대리운전'),'local graphic must contain exact typed keyword');
+assert.ok(!svg.children.some(x=>x.tag==='image'),'local SVG contains no photos of cars or people');
+
 console.log('PASS keyword image preview bindings, fallback and JavaScript syntax');
