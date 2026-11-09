@@ -159,6 +159,28 @@ jobs:
             echo '::error::Live homepage still contains wording explicitly retired by the site owner.'
             exit 1
           fi
+          # The two exact-region images shown on homepage search must be real
+          # accessible SVG responses, not a broken URL or a cached vehicle photo.
+          python3 - <<'PY'
+          import re
+          from urllib.parse import urlencode
+          from urllib.request import Request, urlopen
+          host = 'https://jeongukdaeri.kr'
+          for keyword, slug in [('부산대리운전', 'area-494-daeri'), ('대구탁송', 'area-765-taksong')]:
+              url = host + '/keyword-card/exact/' + slug + '.svg?' + urlencode({'q': keyword})
+              request = Request(url, headers={'Cache-Control':'no-cache','User-Agent':'Smart24-keyword-image-release-check'})
+              try:
+                  with urlopen(request, timeout=20) as response:
+                      mime = response.headers.get('Content-Type', '')
+                      body = response.read(1000000).decode('utf-8', errors='replace')
+                      if response.status != 200 or 'image/svg+xml' not in mime or keyword not in body:
+                          raise ValueError('invalid status, SVG MIME, or exact keyword')
+                      if re.search(r'<(?:image|foreignObject)\b', body, re.I):
+                          raise ValueError('unexpected embedded photo or foreign object')
+              except Exception as error:
+                  raise SystemExit(f'::error::LIVE keyword SVG failed for {keyword}: {error}')
+              print(f'PASS live keyword image: {keyword} ({slug})')
+          PY
           if ! grep -Fq 'id="mobile-direct-image-priority"' <<<"$homepage"; then
             echo '::error::Homepage original Seoraksan/Jirisan fare poster section missing.'
             exit 1
