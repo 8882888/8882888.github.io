@@ -194,6 +194,6 @@ assert.ok(!regionSearch.includes("kind==='daily'||(kind&&kind!==service)"),'defa
 // Mountain fare searches must redirect before any regional dataset fetch resolves.
 const regionHtml=fs.readFileSync(path.join(root,'region/index.html'),'utf8');
 assert.match(regionHtml,/const mountainKeyword=String\(params\.get\('q'\)\|\|''\)\.replace\(\/\\s\+\/g,''\)/,'mountain query must normalize whitespace immediately');
-assert.match(regionHtml,/\.includes\(mountainKeyword\)\)\{goToKeyword\(\)\}else fetch\('\/data\/regions\.json'\)/,'mountain navigation must not wait for region JSON');
+assert.match(regionHtml,/\.includes\(mountainKeyword\)\)\{window\.addEventListener\('DOMContentLoaded',\(\)=>goToKeyword\(\),\{once:true\}\)\}else fetch\('\/data\/regions\.json'\)/,'mountain navigation must wait for deferred analytics initialization but not region JSON');
 assert.match(regionHtml,/fetch\('\/data\/regions\.json'\)[\s\S]*?fetch\('\/data\/ride-history\.json'\)/,'regional search and ride history should load independently');
 console.log('PASS independent regional fetch and immediate mountain fare redirect');
