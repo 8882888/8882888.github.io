@@ -162,6 +162,7 @@ assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken regional i
   assert.match(serviceRouter,/previewController=new AbortController\(\)/,'optional regional image preview must be cancellable');
   assert.match(serviceRouter,/setTimeout\(\(\)=>previewController\.abort\(\),5000\)/,'regional image preview must not wait indefinitely');
   assert.match(serviceRouter,/clearTimeout\(previewTimeout\)/,'preview request timeout must be cleaned up');
+  assert.match(serviceRouter,/catch\(_\)\{image\.src=common;image\.alt=full\+' '\+service\+' 공통 안내 이미지';imageNote\.textContent='지역 전용 이미지 정보를 확인하지 못해 서비스 공통 안내 이미지를 표시합니다\.'/,'preview API failure must explain the generic image fallback');
 assert.match(serviceRouter,/card\.kind===kind/,'region image selection must not cross chauffeur and vehicle-delivery services');
 assert.match(serviceRouter,/exactCards\.length===1/,'ambiguous regional image matches must not be selected');
 
