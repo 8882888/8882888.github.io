@@ -133,7 +133,7 @@
   document.body.append(dialog);zoom={dialog,img};
  }
  function openZoom(src,alt,trigger){
-  if(!zoom)return false;
+  if(!zoom||!src)return false;
   lastActivator=trigger;zoom.img.src=src;zoom.img.alt=alt;
   zoom.dialog.showModal();return true;
  }
@@ -201,7 +201,10 @@
    picture.setAttribute('aria-label',img.alt+' 크게 보기');
    picture.append(img);
    picture.addEventListener('click',event=>{
-    if(zoom){event.preventDefault();openZoom(picture.getAttribute('href'),img.alt,picture)}
+    // A generated in-browser SVG remains visible after an image 404, but no longer has an original URL.
+    // Do not open a blank image dialog or prevent navigation to a missing href.
+    const href=picture.getAttribute('href');
+    if(zoom&&href){event.preventDefault();openZoom(href,img.alt,picture)}
    });
    const description=node('p','smart24-card-description',card.description||'지역별 운행 조건은 상담 후 확인합니다.');
    const actions=node('div','smart24-card-actions');
