@@ -1012,7 +1012,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(response.status,200,'regional search resolves: '+query);
     assert.equal(new URL(response.url).pathname,canonicalPath,'regional keyword selects matching landing: '+query);
     const html=await response.text();
-    assert.ok(html.includes('<figure')&&html.includes(headline),'region+전국탁송 banner and locality identity are visible: '+query);
+    assert.ok(html.includes('class="regional-responsive-card"')&&html.includes(headline.replace('전국탁송','탁송')),'locality-specific taksong card and identity are visible: '+query);
     assert.ok(/src="\/card\/area-\d+-taksong-brand-v6\.png"/.test(html),'new image URL avoids previous browser cache: '+query);
    }
   }
