@@ -161,7 +161,7 @@ jobs:
             echo '::error::Live homepage still contains wording explicitly retired by the site owner.'
             exit 1
           fi
-          # The two exact-region images shown on homepage search must be real
+          # Exact keyword SVGs and the current regional PNG/WebP images must be real
           # accessible SVG responses, not a broken URL or a cached vehicle photo.
           python3 - <<'PY'
           import re
@@ -188,7 +188,29 @@ jobs:
               except Exception as error:
                   raise SystemExit(f'::error::LIVE keyword SVG failed for {keyword}: {error}')
               print(f'PASS live keyword image: {keyword} ({slug})')
+          # v7 changes the URL so a browser cannot keep showing cached photo-era imagery.
+          for slug in ['area-494-daeri', 'area-765-taksong', 'area-2063-taksong']:
+              for suffix, mime, marker in [
+                  ('.png', 'image/png', b'\\x89PNG\\r\\n\\x1a\\n'),
+                  ('.webp', 'image/webp', b'RIFF'),
+              ]:
+                  url = host + '/card/' + slug + '-brand-v7' + suffix
+                  request = Request(url, headers={'Cache-Control':'no-cache','User-Agent':'Smart24-v7-photo-free-release-check'})
+                  try:
+                      with urlopen(request, timeout=25) as response:
+                          data = response.read(32)
+                          if response.status != 200 or mime not in response.headers.get('Content-Type', '') or not data.startswith(marker):
+                              raise ValueError('invalid image response or signature')
+                          if suffix == '.webp' and data[8:12] != b'WEBP':
+                              raise ValueError('invalid WebP encoding')
+                  except Exception as error:
+                      raise SystemExit(f'::error::LIVE v7 image failed {slug}{suffix}: {error}')
+                  print(f'PASS live v7 region card: {slug}{suffix}')
           PY
+          if ! grep -Fq '/assets/region-card-preview.js?v=20261109-textcard-v7' <<<"$homepage"; then
+            echo '::error::Production homepage still loads the outdated regional image preview script.'
+            exit 1
+          fi
           if ! grep -Fq 'id="mobile-direct-image-priority"' <<<"$homepage"; then
             echo '::error::Homepage original Seoraksan/Jirisan fare poster section missing.'
             exit 1
