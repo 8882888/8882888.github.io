@@ -553,7 +553,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(localityHtml.includes('동부리 실제 운행기록 확인 안내')||
     localityHtml.includes('운행기록 확인 현황')||
     localityHtml.includes('id="nationwide-review-first"'),
-    'Rural locality must explain whether verified local trip evidence exists; actual page heading: '+(localityHtml.match(/<h1[^>]*>[\\s\\S]*?<\\/h1>/i)||['none'])[0].slice(0,350)+'; excerpt: '+localityHtml.slice(0,500));
+    'Rural locality must explain whether verified local trip evidence exists; actual page heading: '+(localityHtml.match(/<h1[^>]*>[\s\S]*?<\/h1>/i)||['none'])[0].slice(0,350)+'; excerpt: '+localityHtml.slice(0,500));
   assert.ok(localityHtml.includes('이 행정구역의 출발 또는 도착이 확인된 운행은 없습니다')||
     localityHtml.includes('이 지역의 출발 또는 도착이 명확하게 확인된 사례는 찾지 못했습니다')||
     localityHtml.includes('이 지역에 해당하는 완료 운행기록이 현재 확인되지 않았습니다'),
