@@ -90,17 +90,13 @@ function findElement(el,test){
  for(const child of el.children||[]){const found=findElement(child,test);if(found)return found;}
  return null;
 }
-const metro=findElement(output,x=>x.tag==='img'&&String(x.src||'').startsWith('/keyword-card/exact/'));
-assert.ok(metro&&metro.src.includes('area-494-daeri.svg'),'typing 부산대리운전 should select a matching original SVG card');
+const metro=findElement(output,x=>x.tag==='svg');
+assert.ok(metro,'typing 부산대리운전 must immediately render an exact-keyword SVG');
 assert.equal(select.value,'daeri','service intent in typed phrase overrides old select value');
-assert.equal(typeof metro.events.error,'function','region image must register load-failure handler');
-metro.events.error();
-const recovered=findElement(output,x=>x.tag==='svg');
-assert.ok(recovered,'a failed exact-region image must recover as in-browser SVG');
-assert.ok(recovered.children.some(x=>x.tag==='text'&&x.textContent==='부산대리운전'),
- 'in-browser fallback image must paint the exact typed region keyword');
-assert.ok(!findElement(output,x=>x.tag==='img'&&x._parent&&String(x.src||'').startsWith('/keyword-card/exact/')),
- 'failed remote preview must not be attached as a broken image');
+assert.ok(metro.children.some(x=>x.tag==='text'&&x.textContent==='부산대리운전'),
+ 'the local fallback must show the exact typed keyword while a remote image loads');
+assert.ok(!findElement(output,x=>x.tag==='img'&&x._parent),
+ 'a pending or failed remote image must not be attached before load success');
 
 input.value='원주혁신도시대리운전';
 assert.equal(typeof input.events.input,'function','input listener attached to homepage form');
@@ -127,14 +123,16 @@ for(const [keyword,kind,expectedArea] of [
  input.events.input();
  assert.equal(output.hidden,false,'input keyword must open visible graphic: '+keyword);
  assert.equal(select.value,kind,'keyword must select its correct service: '+keyword);
- const exact=findElement(output,x=>x.tag==='img'&&String(x.src||'').includes('/keyword-card/exact/'));
  const inline=findElement(output,x=>x.tag==='svg');
+ assert.ok(inline,'a safe local SVG must be visible immediately for '+keyword);
+ assert.ok(inline.children.some(x=>x.tag==='text'&&x.textContent===keyword),
+  'visible SVG keyword must match the exact input: '+keyword);
+ assert.ok(!inline.children.some(x=>x.tag==='image'),
+  'fallback must not contain car or person photos: '+keyword);
  if(expectedArea){
-  assert.ok(exact&&exact.src.includes(expectedArea),'exact regional SVG URL missing for '+keyword);
- }else{
-  assert.ok(inline,'local SVG fallback missing for '+keyword);
-  assert.ok(inline.children.some(x=>x.tag==='text'&&x.textContent===keyword),'fallback text must match '+keyword);
-  assert.ok(!inline.children.some(x=>x.tag==='image'),'fallback must not contain car or person photos: '+keyword);
+  const id=expectedArea.match(/area-(\\d+)-/)[1];
+  assert.ok(client.includes("id:'"+id+"'"),'province ID must be present for '+keyword);
  }
+
 }
 console.log('PASS keyword image preview bindings, fallback and JavaScript syntax');
