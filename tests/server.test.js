@@ -85,12 +85,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const kind of ['daeri','taksong']){
    const hub=await (await get('/'+kind+'/')).text();
    assert.ok(hub.includes('id="vehicle-guide"'),'national vehicle guide anchor');
-   for(const fleet of ['domestic','imported']){
-    assert.ok(hub.includes('/assets/vehicles/'+fleet+'-fleet-1811.webp'),'fleet image on service hub');
-    const asset=await get('/assets/vehicles/'+fleet+'-fleet-1811.webp');
-    assert.equal(asset.status,200,'fleet asset served');
-    assert.ok(asset.headers.get('content-type').includes('image/webp'));
-   }
+   assert.ok(hub.includes('차량 홍보 이미지는 저작권 확인을 위해 표시하지 않습니다.'),
+    'Service hub must retain copyright-safe vehicle guidance');
+   assert.ok(hub.includes('/fare/?service='+kind),'Service hub must link to its own fare calculator');
+   assert.ok(hub.includes('tel:18114294'),'Service hub must retain the real consultation phone');
   }
   for(const kind of ['daeri','taksong']){
    const route=await get('/route-search/?from='+encodeURIComponent('대구')+'&service='+kind);
