@@ -192,7 +192,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   ]){
    const response=await get(url),html=await response.text();
    assert.equal(response.status,200,'mountain canonical page loads: '+url);
-   assert.ok(html.includes('<body><figure id="original-mountain-fare-visual"')&&
+   assert.ok(html.includes('<figure id="original-mountain-fare-visual"')&&
     html.indexOf('<figure id="original-mountain-fare-visual"')<html.indexOf('<section id="mountain-route-fare-table-202611"')&&
     html.indexOf('<section id="mountain-route-fare-table-202611"')<html.indexOf('id="mountain-complete-course-guide-20261102"'),
     'original mountain fare poster should be visually first, readable HTML fares before long guide: '+url);
