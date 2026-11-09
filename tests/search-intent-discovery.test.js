@@ -9,12 +9,14 @@ const sitemap=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
 assert(home.includes('href="/recruit/daeri/"'));
 assert(home.includes('href="/recruit/taksong/"'));
 assert(home.includes('href="/daeri/gangnam-food-guide/"'));
+// This guide is served by the Node application, not generated as a static Pages file.
+// Static sitemap entries must never point to missing static HTML.
 const sitemapTarget='https://jeongukdaeri.kr/daeri/gangnam-food-guide/';
 const sitemapSources=sitemap.includes('<sitemapindex')
  ?fs.readdirSync(root).filter(name=>/^sitemap-\\d+\\.xml$/.test(name)).map(name=>fs.readFileSync(path.join(root,name),'utf8'))
  :[sitemap];
-assert(sitemapSources.some(xml=>xml.includes(sitemapTarget)),
- 'Canonical food guide must be present in a generated sitemap shard or standalone sitemap');
+assert(!sitemapSources.some(xml=>xml.includes(sitemapTarget)),
+ 'Server-only guide must not be listed as a missing static Pages URL');
 const child=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:'3149'},stdio:['ignore','pipe','pipe']});
 let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>output+=x);
 (async()=>{
