@@ -13,6 +13,8 @@ on:
       - 'service/**'
       - 'region/**'
       - 'assets/**'
+      - 'tests/**'
+      - 'tools/**'
       - 'sitemap*.xml'
       - '.github/workflows/cloudtype-redeploy.yml'
   workflow_dispatch:
