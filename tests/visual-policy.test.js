@@ -4,6 +4,8 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {stripPersonVehicleImages,isSafeVisual}=require('../lib/visual-policy');
 const safePaths=[
+ '/card/area-494-taksong-brand-v7.png',
+ '/card/area-494-taksong-brand-v7.webp',
  '/card/area-494-taksong-brand-v6.png',
  '/assets/smart24-daeri-brand.png',
  '/assets/smart24-taksong-brand.png',
