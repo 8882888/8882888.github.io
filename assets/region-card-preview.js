@@ -15,6 +15,8 @@
  const imagePath=value=>{
   if(typeof value!=='string'||value.startsWith('//')||value.includes('..'))return null;
   const p=value.split('?')[0];
+  // Reject legacy PNG/WebP/JPEG vehicle or person imagery even when the API returns it.
+  if(!p.endsWith('.svg'))return null;
   if(/^\/card\/area-\d+/.test(p)||/^\/keyword-card\//.test(p)||p==='/api/nationwide-locality-card.svg')return value;
   if(/^\/assets\/service-(?:taksong|daeri|golf)-visual\.svg$/.test(p)||/^\/assets\/(?:seoraksan|jirisan)-taksong-fares\.svg$/.test(p)||/^\/assets\/cycling-routes\/(?:nationwide|eastcoast|yeongsan|seomjin|geumgang|ocheon)-taksong\.svg$/.test(p))return value;
   return null;
