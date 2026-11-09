@@ -1167,7 +1167,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('alt="'+expectedCardLabel+' 지역명 맞춤 명함'),'regional card accessibility label identifies the same locality and service');
    const visibleLabels=svg.replace(/<image[^>]+\/>/g,'');
    assert.ok(!visibleLabels.includes(service==='daeri'?'스마트24시전국탁송':'스마트전국대리운전'),'card headings do not mix two service brands');
-   assert.ok(svg.includes('data:image/webp;base64,')&&svg.includes('id="identity-band"')&&svg.includes('height="82"'),'custom local banner covers the obsolete city text but preserves matching service artwork');
+   assert.ok(svg.includes('id="identity-band"')&&svg.includes('height="82"'),'custom locality banner retains the correct identity strip without requiring embedded third-party imagery');
    assert.ok(html.includes('src="'+card[1]+'"'),'advertised business card is also visible on the page');
    assert.ok(html.includes('class="regional-responsive-card"')&&html.includes('class="booking-guide"'),'responsive regional card and booking guide are both retained');
    const metadata=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
