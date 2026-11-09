@@ -41,7 +41,10 @@ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 assert(server.includes('naverFocus2900.length!==2900'),'server must reject dropped/duplicated batch entries');
 for(const suffix of ['twenty-first-taksong-100.json','twenty-first-daeri-100.json'])
  assert(server.includes(suffix),'server must load new focus file '+suffix);
-assert(server.includes('naverFocus2900.map(p=>servicePath(regionByFullName.get(p.region),p.kind))'),
- 'priority discovery sitemap must retain new canonical region pages');
+assert(server.includes('for(const p of naverFocus2900)')&&
+ server.includes('buckets.get(province).push(servicePath(region,p.kind))')&&
+ server.includes("if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml')")&&
+ server.includes('focus50ByKey.has(service+\'|\'+r.full_name)'),
+ 'Priority discovery must retain real region service routes through bounded national and service sitemaps');
 assert(server.includes('id="naver-focus50-local-guide"'),'each selected region must receive a booking guidance panel');
 console.log('PASS 200/200 distinct location-service targets, 2900 total; legal regions, fare/phone links, dynamic guide mapping, no fabricated rides');
