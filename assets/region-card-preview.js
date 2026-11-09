@@ -36,8 +36,8 @@
   // Only the static taksong routes are verified in the homepage; other services use region search.
   return kind==='taksong'?{url:'/taksong/'+r.slug+'/',label:r.name+'탁송 지역 안내 바로 보기'}:null;
  }
- // Images verified on the live jeongukdaeri.kr /region/ page (2026-11-05).
- // They are served by the production site, not necessarily the GitHub Pages mirror.
+ // Province IDs checked against the repository's 17 legal-region datasets.
+ // Source-code availability is not proof these URLs are deployed; local SVG fallback remains available.
  // Exact province IDs originate from data/legal-regions/01.json ... 17.json.
  // "광주" and "제주" alone can name other legal localities; use nonambiguous aliases.
  const liveCityCards=[
@@ -280,9 +280,9 @@
    // Route illustrations in the repository work on both Cloudtype and GitHub Pages.
    const route=routeVisualMatch(query,select?.value||'');
    if(route){show(route);return;}
-   // Confirmed production images resolve immediately without relying on API availability.
-   // A GitHub Pages backup must not assume these Cloudtype-generated assets exist there.
-   // Show lightweight exact-keyword SVGs immediately for verified city routes.
+   // Use a legally mapped locality image URL immediately on the official host.
+   // If Cloudtype has not deployed the endpoint, the img error handler renders an in-browser text SVG.
+   // Never claim live deployment simply because a generated URL was selected.
    if(location.hostname==='jeongukdaeri.kr'||location.hostname==='www.jeongukdaeri.kr'){
     const city=liveCityMatch(query,select?.value||'');
     if(city){show(city);return;}
