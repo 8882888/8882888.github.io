@@ -190,3 +190,10 @@ console.log('PASS 17 province mappings, disambiguation and mountain fare anchors
 
 assert.match(regionSearch,/if\(kind&&kind!==service\)type\.value=service/,'typed 부산대리운전 must override a default 탁송 selector rather than silently failing to route');
 assert.ok(!regionSearch.includes("kind==='daily'||(kind&&kind!==service)"),'default service mismatch must not block a valid explicit service keyword');
+
+// Mountain fare searches must redirect before any regional dataset fetch resolves.
+const regionHtml=fs.readFileSync(path.join(root,'region/index.html'),'utf8');
+assert.match(regionHtml,/const mountainKeyword=String\(params\.get\('q'\)\|\|''\)\.replace\(\/\\s\+\/g,''\)/,'mountain query must normalize whitespace immediately');
+assert.match(regionHtml,/\.includes\(mountainKeyword\)\)\{goToKeyword\(\)\}else fetch\('\/data\/regions\.json'\)/,'mountain navigation must not wait for region JSON');
+assert.match(regionHtml,/fetch\('\/data\/regions\.json'\)[\s\S]*?fetch\('\/data\/ride-history\.json'\)/,'regional search and ride history should load independently');
+console.log('PASS independent regional fetch and immediate mountain fare redirect');
