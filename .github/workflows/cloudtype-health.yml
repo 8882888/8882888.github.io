@@ -41,7 +41,7 @@ jobs:
           set -uo pipefail
           base="${PRODUCTION_URL%/}"
           failed=0
-          for route in / /health /find/ '/api/find-regions?q=%EA%B0%95%ED%99%94&service=daeri&intent=history' /assets/smart24-business-card.svg /region/ /places/ /places/%EC%BA%A0%ED%95%91%EC%9E%A5/ /taksong/types/ /fare/ /sitemap.xml /sitemap-daeri.xml /sitemap-taksong.xml /robots.txt /taksongdaeri/ /favicon.ico /blog/; do
+          for route in / /health /find/ '/api/find-regions?q=%EA%B0%95%ED%99%94&service=daeri&intent=history' /assets/service-taksong-visual.svg /region/ /places/ /places/%EC%BA%A0%ED%95%91%EC%9E%A5/ /taksong/types/ /fare/ /sitemap.xml /sitemap-daeri.xml /sitemap-taksong.xml /robots.txt /taksongdaeri/ /favicon.ico /blog/; do
             url="$base$route"
             code=$(curl -L -sS -o /tmp/smart24-response -w '%{http_code}' --connect-timeout 10 --max-time 25 "$url") || code=000
             echo "$code $url"
@@ -109,30 +109,30 @@ jobs:
             raise SystemExit('FAIL: general-service header must precede the mountain mobile poster section')
           first_section=page[section_start:].split('</section>',1)[0]
           original=[
-            '/assets/seoraksan-taksong-original-fare.png',
-            '/assets/jirisan-taksong-original-fare.png'
+            '/assets/seoraksan-taksong-fares.svg',
+            '/assets/jirisan-taksong-fares.svg'
           ]
           order=[first_section.find('src="'+p+'"') for p in original]
           if min(order)<0 or order!=sorted(order):
-            raise SystemExit('FAIL: mountain original posters are missing or reversed on live homepage: '+str(order))
+            raise SystemExit('FAIL: photo-free mountain fare charts are missing or reversed on live homepage: '+str(order))
           if 'src="/assets/smart24-business-card-inline.webp"' in first_section:
-            raise SystemExit('FAIL: generic Smart24 artwork still precedes mountain original posters')
+            raise SystemExit('FAIL: removed promotional artwork was restored above text-only mountain charts')
           if '@media(max-width:1199px)' not in page or '#mobile-direct-image-priority{display:block' not in page:
             raise SystemExit('FAIL: mobile media rule does not show fare posters')
           for p in original:
             image_data,_=fetch(p+'?mobile-fare-verify=1')
-            if image_data[:8]!=bytes.fromhex('89504e470d0a1a0a'):
-              raise SystemExit('FAIL: actual poster is not a valid PNG: '+p)
-            print('PASS live mobile poster PNG:',p,len(image_data),'bytes')
+            if not image_data.lstrip().startswith(b'<svg') or b'<image' in image_data.lower():
+              raise SystemExit('FAIL: approved mobile poster is not photo-free SVG: '+p)
+            print('PASS live mobile poster SVG:',p,len(image_data),'bytes')
           for mountain in ['seoraksan','jirisan']:
             route='/special/'+mountain+'-transport/'
             sub,_=fetch(route+'?mobile-fare-verify=1')
             sub=sub.decode('utf-8')
-            expected='src="/assets/'+mountain+'-taksong-original-fare.png"'
+            expected='src="/assets/'+mountain+'-taksong-fares.svg"'
             if not sub.split('<body>',1)[-1].lstrip().startswith('<figure id="original-mountain-fare-visual"') or expected not in sub:
               raise SystemExit('FAIL: incorrect first image on mountain destination '+route)
-            print('PASS live original-image-first special page:',route)
-          print('PASS actual live mobile homepage: general services first, mountain posters remain available in order')
+            print('PASS live text-only fare graphic on special page:',route)
+          print('PASS live mobile homepage: fare-first and photo-free mountain charts in order')
           PYMOBILE
 
       - name: Check Naver crawler access to previously restricted URLs
