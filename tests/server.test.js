@@ -1018,13 +1018,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   // Sample ten local service destinations: all must use distinct dynamic v3 PNGs.
   const automaticLocalCards=[
-   ['/taksong/busan/','부산전국탁송'],['/taksong/daegu/','대구전국탁송'],
-   ['/taksong/incheon/','인천전국탁송'],['/taksong/ulsan/','울산전국탁송'],
-   ['/taksong/gyeongnam/changwon-si/','창원전국탁송'],
-   ['/taksong/gyeongnam/gimhae-si/','김해전국탁송'],
-   ['/taksong/gangwon/gangreung-si/','강릉전국탁송'],
-   ['/taksong/gangwon/sokcho-si/','속초전국탁송'],
-   ['/daeri/busan/','부산스마트대리운전'],['/daeri/daegu/','대구스마트대리운전']
+   ['/taksong/busan/','부산탁송'],['/taksong/daegu/','대구탁송'],
+   ['/taksong/incheon/','인천탁송'],['/taksong/ulsan/','울산탁송'],
+   ['/taksong/gyeongnam/changwon-si/','창원탁송'],
+   ['/taksong/gyeongnam/gimhae-si/','김해탁송'],
+   ['/taksong/gangwon/gangreung-si/','강릉탁송'],
+   ['/taksong/gangwon/sokcho-si/','속초탁송'],
+   ['/daeri/busan/','부산대리운전'],['/daeri/daegu/','대구대리운전']
   ];
   const uniqueCardUrls=new Set();
   for(const [route,brand] of automaticLocalCards){
@@ -1049,7 +1049,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const inferredServiceKeyword=await inferredDriverResponse.text();
   assert.equal(new URL(inferredDriverResponse.url).pathname,'/daeri/busan/','typed driver keyword opens correct locality service page');
   assert.ok(/\/card\/area-\d+-daeri-brand-v6\.png/.test(inferredServiceKeyword)&&!inferredServiceKeyword.includes('/card/area-494-taksong-brand-v6.png'),'typed driver keyword must not show a taksong card');
-  assert.ok(inferredServiceKeyword.includes('부산스마트대리운전')&&inferredServiceKeyword.includes('href="tel:18114294"'),'canonical landing retains exact driver label and phone');
+  assert.ok(inferredServiceKeyword.includes('부산대리운전')&&inferredServiceKeyword.includes('href="tel:18114294"'),'canonical landing retains exact driver label and phone');
   const cityBoth=(await (await get('/region/?q='+encodeURIComponent('부산'))).text());
   assert.ok(/\/card\/area-\d+-daeri-brand-v6\.png/.test(cityBoth)&&/\/card\/area-\d+-taksong-brand-v6\.png/.test(cityBoth),'unqualified region displays two different service images');
   const requestedTaksong=(await (await get('/region/?q='+encodeURIComponent('울산')+'&service=taksong')).text());
