@@ -37,8 +37,8 @@ assert(quickFare<intro&&intro<regionalDirectory&&firstFares<specialistNav,
  'Keep the existing fare, hero, regional quick entry and specialist navigation available without altering the approved homepage');
 assert.equal((home.match(/<form action="\/fare\/" method="get"/g)||[]).length,1,
  'Do not render two identical fare calculators on mobile');
-assert(home.includes('<link rel="preload" as="image" href="/assets/vehicles/santafe-1811.webp" fetchpriority="high">'),
- 'Preload the above-fold vehicle LCP image');
+assert(home.includes('class="hero hero-with-photo"')&&home.includes('href="tel:18114294"'),
+ 'Protect the approved hero and phone CTA without requiring a removed vehicle asset preload');
 assert(home.includes('id="homepage-mobile-render-perf-20261104"')&&
  home.includes('content-visibility:auto;contain-intrinsic-size:auto 480px;'),
  'Large offscreen editorial sections should not delay mobile rendering');
