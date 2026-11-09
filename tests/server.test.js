@@ -932,7 +932,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(result.status,200,'search redirects to dedicated page: '+keyword);
     assert.ok(decodeURIComponent(result.url).includes('/'+(mountain==='seoraksan'?'설악산탁송':'지리산탁송')+'/'),'no generic homepage for mountain keyword: '+keyword);
     const body=await result.text();
-    assert.ok(body.startsWith('<!doctype html>')&&body.includes('<body><figure id="original-mountain-fare-visual"')&&body.includes('id="mountain-route-fare-table-202611"'),'mountain original poster and fares are both visible: '+keyword);
+    assert.ok(body.startsWith('<!doctype html>')&&body.includes('<figure id="original-mountain-fare-visual"')&&body.includes('id="mountain-route-fare-table-202611"')&&body.indexOf('<figure id="original-mountain-fare-visual"')<body.indexOf('<section id="mountain-route-fare-table-202611"'),'mountain original poster and fares are both visible: '+keyword);
     assert.ok(body.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct mountain PNG: '+keyword);
     assert.ok(!body.includes('id="mobile-direct-image-priority"'),'no homepage Smart24 hero: '+keyword);
   }
