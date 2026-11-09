@@ -130,7 +130,7 @@ for(const [keyword,kind,expectedArea] of [
  assert.ok(!inline.children.some(x=>x.tag==='image'),
   'fallback must not contain car or person photos: '+keyword);
  if(expectedArea){
-  const id=expectedArea.match(/area-(\\d+)-/)[1];
+  const id=expectedArea.match(/area-(\d+)-/)[1];
   assert.ok(client.includes("id:'"+id+"'"),'province ID must be present for '+keyword);
  }
 
