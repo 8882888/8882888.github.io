@@ -1,1 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc"><title id="title">전국 자전거길종주탁송 · 자동차 차량회수</title><desc id="desc">동해안길, 영산강길, 섬진강길, 금강길, 오천길, 낙동강길 종주 출발지 고객 자동차 회수 서비스 안내 이미지. 1811-4294, 실제 운행 사진 아님.</desc><defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c284a"/><stop offset=".55" stop-color="#186b99"/><stop offset="1" stop-color="#065b72"/></linearGradient></defs><rect width="1200" height="630" fill="url(#b)"/><path d="M0 430 C220 340 295 580 510 450 S860 360 1200 470" stroke="#addff1" stroke-width="19" opacity=".42" fill="none"/><text x="60" y="92" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="37" font-weight="800" fill="#ffe69b">스마트24 전국자동차탁송 · 1811-4294</text><text x="60" y="190" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="62" font-weight="900" fill="#fff">전국 자전거길종주탁송</text><text x="62" y="258" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="38" font-weight="800" fill="#e6f5ff">종주 출발지 고객 자동차 → 종료지 차량회수</text><g stroke="#ffffff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="210" cy="418" r="62"/><circle cx="445" cy="418" r="62"/><path d="M210 418 L284 308 L342 418 L445 418 L382 315 L284 308 L284 289 M342 418 L372 351"/></g><g transform="translate(655 349)" fill="none" stroke="#f5fbff" stroke-width="10" stroke-linejoin="round"><path d="M50 74 L87 29 Q101 15 121 15 L278 15 Q300 15 315 46 L344 74 L347 122 L36 122Z"/><circle cx="101" cy="128" r="27" fill="#0c3455"/><circle cx="277" cy="128" r="27" fill="#0c3455"/></g><rect x="57" y="538" rx="17" width="1084" height="65" fill="#e5f7fb"/><text x="82" y="580" font-family="'Malgun Gothic','Noto Sans KR',sans-serif" font-size="28" font-weight="800" fill="#124265">영산강길 · 섬진강길 · 동해안길 · 금강길 · 오천길 · 낙동강길</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+<title id="title">전국 자전거길종주탁송 · 텍스트 안내</title>
+<desc id="desc">자동차·사람 그림 없이 자전거 종주 코스와 차량 회수 상담 방법만 표시하는 안내 카드.</desc>
+<rect width="1200" height="630" fill="#f2f7fd"/>
+<rect width="1200" height="116" fill="#0a466f"/>
+<text x="60" y="78" font-family="sans-serif" font-size="40" font-weight="700" fill="#ffffff">스마트24 전국 자동차탁송 · 1811-4294</text>
+<text x="60" y="228" font-family="sans-serif" font-size="58" font-weight="900" fill="#073b68">전국 자전거길종주탁송</text>
+<rect x="60" y="260" width="1080" height="3" fill="#b5cce2"/>
+<text x="60" y="340" font-family="sans-serif" font-size="37" font-weight="700" fill="#144974">종주 출발지 고객 자동차 → 종료지 차량회수</text>
+<text x="60" y="412" font-family="sans-serif" font-size="23" fill="#325e78">영산강길 · 섬진강길 · 동해안길 · 금강길 · 오천길 · 낙동강길</text>
+<rect x="60" y="452" width="1080" height="115" rx="16" fill="#e0efff"/>
+<text x="600" y="510" text-anchor="middle" font-family="sans-serif" font-size="31" font-weight="800" fill="#064675">자동차 회수 · 주차장 위치와 인계 시각 확인</text>
+<text x="600" y="550" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#31516d">실제 배차 가능 여부와 요금은 상담 후 확정</text>
+</svg>
