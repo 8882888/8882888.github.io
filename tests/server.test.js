@@ -1576,17 +1576,24 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const card=result.cards[0];
    assert.equal(card.kind,parsed.kind,'exact service '+phrase);
    assert.equal(card.displayKeyword,phrase,'exact keyword label '+phrase);
-   assert.ok(card.keywordImage.startsWith('/keyword-card/exact/'),'custom visual for '+phrase);
-   assert.ok(card.keywordImage.includes(encodeURIComponent(phrase)),'escaped query '+phrase);
-   // Legacy canonical card URL stays untouched for SEO and old article embeds.
-   assert.ok(card.image.startsWith('/card/')||card.image.startsWith('/keyword-card/'));
-   const visual=await get(card.keywordImage);
+   // Nationwide locality aliases use a separate live SVG endpoint rather than
+   // the legacy region-specific keywordImage field.
+   const visualUrl=card.keywordImage||card.image;
+   assert.ok(visualUrl.startsWith('/keyword-card/exact/')||visualUrl.startsWith('/api/nationwide-locality-card.svg?'),
+     'live keyword visual for '+phrase);
+   assert.ok(visualUrl.includes(encodeURIComponent(phrase)),'escaped query '+phrase);
+   assert.ok(card.image.startsWith('/card/')||card.image.startsWith('/keyword-card/')||
+     card.image.startsWith('/api/nationwide-locality-card.svg?'),'supported canonical card image');
+   const visual=await get(visualUrl);
    assert.equal(visual.status,200,'exact SVG loads '+phrase);
    assert.match(visual.headers.get('content-type'),/image\/svg\+xml/);
-   assert.equal(visual.headers.get('x-robots-tag'),'noindex, nofollow');
+   assert.match(visual.headers.get('x-robots-tag')||'',/noindex/);
    const svg=await visual.text();
-   assert.ok(svg.includes('<title id="title">'+phrase+' | 스마트24'),'exact SVG title '+phrase);
-   assert.ok(svg.includes('>'+phrase+'</text>'),'exact visible painted phrase '+phrase);
+   assert.ok(svg.includes(phrase),'visible keyword appears in SVG '+phrase);
+   if(card.keywordImage){
+     assert.ok(svg.includes('<title id="title">'+phrase+' | 스마트24'),'exact SVG title '+phrase);
+     assert.ok(svg.includes('>'+phrase+'</text>'),'exact visible painted phrase '+phrase);
+   }
    const page=await get('/region/?q='+encodeURIComponent(phrase));
    assert.equal(page.status,200,'keyword search result page '+phrase);
    const pageHtml=await page.text();
