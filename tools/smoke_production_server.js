@@ -92,8 +92,11 @@ async function main(){
   }
   const badKind=await request(port,'/api/public-region-lookup?'+new URLSearchParams({region:'부산광역시',kind:'other'}));
   assert.equal(badKind.status,400,'invalid service must not resolve');
-  const handoff=await request(port,'/go/region-service/');
-  assert.equal(handoff.status,200,'regional handoff page missing');
+  const emptyHandoff=await request(port,'/go/region-service/');
+  assert.equal(emptyHandoff.status,302,'a handoff without a verifiable locality must return to regional directory');
+  assert.equal(emptyHandoff.headers.location,'/region/');
+  const handoff=await request(port,'/go/region-service/?'+new URLSearchParams({region:'서울특별시',parent:'대한민국',kind:'daeri'}));
+  assert.equal(handoff.status,200,'validated regional handoff page missing');
   assert(handoff.body.includes('/api/public-region-lookup?'),'regional handoff must not fetch blocked /data/');
   assert(!handoff.body.includes("fetch('/data/regions.json'"),'regional handoff still uses protected source');
   // Verify the real Cloudtype Node handler, not just source-string assertions.
