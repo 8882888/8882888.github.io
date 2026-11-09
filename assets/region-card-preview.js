@@ -108,27 +108,31 @@
   const service=kind==='daeri'?'대리운전':'자동차탁송';
   const phone=kind==='taksong'&&keyword.includes('제주')?'1877-5245':'1811-4294';
   const svg=document.createElementNS(SVG_NS,'svg');
-  svg.setAttribute('viewBox','0 0 1200 700');
+  // A 900-unit viewBox keeps important text readable when the mobile card is 320px wide.
+  svg.setAttribute('viewBox','0 0 900 730');
   svg.setAttribute('role','img');
-  svg.setAttribute('aria-label',keyword+' 입력 키워드 안내 명함');
-  svg.style.cssText='display:block;width:100%;height:auto;border-radius:9px;background:#f2f8ff';
+  svg.setAttribute('aria-label',keyword+' '+service+' 상담 명함 · '+phone);
+  svg.style.cssText='display:block;width:100%;height:auto;max-width:100%;border-radius:9px;background:#f2f8ff';
   const draw=(tag,attrs,value)=>{
    const el=document.createElementNS(SVG_NS,tag);
    Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v)));
    if(value!==undefined)el.textContent=value;
    svg.append(el);
   };
-  draw('rect',{x:0,y:0,width:1200,height:700,fill:'#f1f7fe'});
-  draw('rect',{x:0,y:0,width:1200,height:110,fill:'#0a4c85'});
-  draw('text',{x:54,y:75,fill:'#ffffff','font-family':'sans-serif','font-size':42,'font-weight':800},'스마트24 · '+service);
-  draw('text',{x:54,y:175,fill:'#286387','font-family':'sans-serif','font-size':29},'입력 키워드 상담 명함');
-  const chars=Array.from(keyword),step=chars.length>44?Math.ceil(chars.length/3):chars.length>23?Math.ceil(chars.length/2):Math.max(1,chars.length);
+  draw('rect',{x:0,y:0,width:900,height:730,fill:'#f1f7fe'});
+  draw('rect',{x:0,y:0,width:900,height:110,fill:'#0a4c85'});
+  draw('text',{x:36,y:73,fill:'#ffffff','font-family':'sans-serif','font-size':43,'font-weight':800},'스마트24 · '+service);
+  draw('text',{x:38,y:167,fill:'#286387','font-family':'sans-serif','font-size':34},'검색 키워드 맞춤 상담 명함');
+  const chars=Array.from(keyword);
+  const step=chars.length>54?Math.ceil(chars.length/4):chars.length>36?Math.ceil(chars.length/3):chars.length>18?Math.ceil(chars.length/2):Math.max(1,chars.length);
   const lines=[];for(let i=0;i<chars.length;i+=step)lines.push(chars.slice(i,i+step).join(''));
-  const font=Math.max(32,Math.min(72,Math.floor(1050/Math.max(1,...lines.map(line=>Array.from(line).length)))));
-  lines.forEach((line,i)=>draw('text',{x:55,y:275+i*95,fill:'#053c75','font-family':'sans-serif','font-size':font,'font-weight':900},line));
-  draw('rect',{x:38,y:535,width:1124,height:123,rx:16,fill:'#d7eaff'});
-  draw('text',{x:600,y:607,'text-anchor':'middle',fill:'#064379','font-family':'sans-serif','font-size':66,'font-weight':900},phone);
-  draw('text',{x:600,y:645,'text-anchor':'middle',fill:'#345a77','font-family':'sans-serif','font-size':22},'지역 일치·운행·현재 요금·기사 배정은 확인 후 안내');
+  const longest=Math.max(1,...lines.map(line=>Array.from(line).length));
+  const font=Math.max(34,Math.min(74,Math.floor(805/longest)));
+  const startY=lines.length===1?365:lines.length===2?315:lines.length===3?290:265;
+  lines.forEach((line,i)=>draw('text',{x:42,y:startY+i*76,fill:'#053c75','font-family':'sans-serif','font-size':font,'font-weight':900},line));
+  draw('rect',{x:30,y:558,width:840,height:125,rx:16,fill:'#d7eaff'});
+  draw('text',{x:450,y:636,'text-anchor':'middle',fill:'#064379','font-family':'sans-serif','font-size':67,'font-weight':900},phone);
+  draw('text',{x:450,y:672,'text-anchor':'middle',fill:'#345a77','font-family':'sans-serif','font-size':26},'배차 가능 여부와 현재 요금은 상담 후 확인');
   return svg;
  }
  let zoom=null,lastActivator=null;
@@ -350,7 +354,13 @@
    }
    run(true);
   });
-  form.addEventListener('submit',event=>{event.preventDefault();run(true)});
+  form.addEventListener('submit',event=>{
+   event.preventDefault();run(true);
+   // Only deliberate mobile submissions scroll to results; typing never jumps the screen.
+   if(typeof window!=='undefined'&&window.innerWidth<=600&&typeof output.scrollIntoView==='function'){
+    output.scrollIntoView({block:'start',behavior:'smooth'});
+   }
+  });
   // Support direct inbound links such as /?q=설악산탁송 and /?q=기장군탁송.
   // Keep form selection and the original typed keyword; never infer a different locality.
   const incoming=new URLSearchParams(location.search);
