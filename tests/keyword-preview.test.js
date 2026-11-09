@@ -6,6 +6,7 @@ const {Script}=require('node:vm');
 const root=path.join(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const client=fs.readFileSync(path.join(root,'assets/region-card-preview.js'),'utf8');
+assert.ok(client.includes("if(!p.endsWith('.svg'))return null;"),'live regional card previews must reject legacy PNG/WebP/JPEG vehicle imagery');
 // Prevent a future data reorder from silently showing the wrong province image.
 // The IDs are dataset offsets, not arbitrary marketing artwork identifiers.
 const legalDir=path.join(root,'data/legal-regions');
