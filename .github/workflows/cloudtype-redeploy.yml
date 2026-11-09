@@ -59,6 +59,8 @@ jobs:
           node tests/review-first-search-titles-20261106.test.js
           node tests/night-taksong-intent-alias-and-proof.test.js
           node tests/homepage-service-first-20261106.test.js
+          node tests/homepage-copy.test.js
+          node tests/keyword-preview.test.js
           node tests/regional-history-ambiguity.test.js
           node tools/check_core_seo.js
           node tools/smoke_production_server.js
@@ -151,6 +153,10 @@ jobs:
           fi
           if ! grep -Fq 'id="keyword-service-navigation-20261106"' <<<"$homepage" || grep -Fq 'id="dynamic-service-card-search-20261103"' <<<"$homepage"; then
             echo '::error::Live homepage still exposes the retired illustration preview or lacks keyword-specific navigation.'
+            exit 1
+          fi
+          if grep -Eq '지역·코스·서비스 키워드별 동적 (명함|이미지) 자동보기|지역별 명함 자동확장 보기' <<<"$homepage"; then
+            echo '::error::Live homepage still contains wording explicitly retired by the site owner.'
             exit 1
           fi
           if ! grep -Fq 'id="mobile-direct-image-priority"' <<<"$homepage"; then
