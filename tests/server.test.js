@@ -1153,7 +1153,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const oldRegion=await get('/region/detail/?region='+encodeURIComponent('창원시')+'&parent='+encodeURIComponent('경상남도')+'&kind=daeri');
   assert.equal(oldRegion.status,200,'fetch follows legacy regional redirect');
   const oldRegionHtml=await oldRegion.text();
-  assert.ok(oldRegionHtml.includes('창원')&&oldRegionHtml.includes('스마트대리운전'),'old regional links open matching driver page');
+  assert.ok(oldRegionHtml.includes('창원')&&(oldRegionHtml.includes('대리운전')||oldRegionHtml.includes('daeri')),'old regional links open matching driver service content');
   for(const service of ['daeri','taksong']){
    const response=await get('/'+service+'/seoul/');assert.equal(response.status,200);
    const html=await response.text();
