@@ -33,9 +33,13 @@ jobs:
           node --check server.js
           node --check tests/server.test.js
           node --check tests/visual-policy.test.js
+          node --check tests/keyword-preview.test.js
+          node --check assets/region-card-preview.js
           node --check lib/visual-policy.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
+      - name: Check keyword-to-text-image previews
+        run: node tests/keyword-preview.test.js
       - name: Run real HTTP regional SEO regression
         env:
           CI: 'true'
