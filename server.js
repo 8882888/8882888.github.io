@@ -6,6 +6,7 @@ const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFi
 const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'assets/traffic-analytics.js'))).digest('hex').slice(0,16)}catch(_){return 'unavailable'}})();
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
 const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');
+const {removeRetiredHomepageCopy}=require('./lib/homepage-copy');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
 const serviceKeywordEntry=require('./lib/service-keyword-entry');
 const keywordExpansion=require('./lib/keyword-card-expansion');
@@ -1724,6 +1725,9 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
  const isHtml=status===200&&type.startsWith('text/html;');
  if(isHtml){
   let html=Buffer.isBuffer(body)?body.toString('utf8'):String(body);
+  // A legacy release still advertised the retired dynamic-card headline.
+  // Remove that display copy from the homepage without disabling keyword search.
+  if(res._smartPath==='/')html=removeRetiredHomepageCopy(html);
   // Five primary service links are permanent parts of the homepage.
   // Recover from an older/generated homepage file rather than silently dropping them.
   if(res._smartPath==='/'&&html.includes('</header>')){
