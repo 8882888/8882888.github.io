@@ -1074,17 +1074,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const driverPreview=await getPreview('부산대리운전');
   assert.equal(driverPreview.status,'matched');assert.equal(driverPreview.service,'daeri');
   assert.equal(driverPreview.cards.length,1);assert.equal(driverPreview.cards[0].kind,'daeri');
-  assert.ok(driverPreview.cards[0].image.endsWith('-daeri-brand-v6.png'));
-  // Regression: province labels must stay complete and v6 mobile WebP must resolve.
+  assert.ok(driverPreview.cards[0].image.startsWith('/api/nationwide-locality-card.svg?service=daeri&'),'official locality preview must be a service-specific SVG');
+  // The exact Daegu name must remain intact; no legacy truncated 대스마트대리운전 banner.
   const daeguPreview=await getPreview('대구대리운전');
   assert.equal(daeguPreview.status,'matched');
   assert.equal(daeguPreview.cards[0].label,'대구대리운전');
-  assert.ok(daeguPreview.cards[0].previewImage.endsWith('-daeri-brand-v6.webp'));
-  const daeguSvg=await (await get(daeguPreview.cards[0].image.replace(/\.png$/,'.svg'))).text();
-  assert.ok(daeguSvg.includes('>대구대리운전</text>'),'Daegu card must not truncate to 대 or use 대스마트대리운전');
-  const daeguWebp=await get(daeguPreview.cards[0].previewImage);
-  assert.equal(daeguWebp.status,200,'Daegu v6 mobile WebP image must resolve');
-  assert.ok(daeguWebp.headers.get('content-type').includes('image/webp'));
+  assert.ok(daeguPreview.cards[0].image.startsWith('/api/nationwide-locality-card.svg?service=daeri&'));
+  const daeguSvgResponse=await get(daeguPreview.cards[0].image);
+  assert.equal(daeguSvgResponse.status,200,'Daegu locality SVG must resolve');
+  assert.ok(daeguSvgResponse.headers.get('content-type').includes('image/svg+xml'));
+  const daeguSvg=await daeguSvgResponse.text();
+  assert.ok(daeguSvg.includes('대구대리운전')&&!daeguSvg.includes('대스마트대리운전'),'Daegu name must not truncate');
   const taksongPreview=await getPreview('울산탁송');
   assert.equal(taksongPreview.status,'matched');assert.equal(taksongPreview.region,'울산광역시');
   assert.equal(taksongPreview.cards.length,1);assert.equal(taksongPreview.cards[0].kind,'taksong');
