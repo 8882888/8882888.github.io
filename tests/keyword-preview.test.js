@@ -169,6 +169,8 @@ assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken regional i
 assert.match(serviceRouter,/card\.kind===kind/,'region image selection must not cross chauffeur and vehicle-delivery services');
 assert.match(serviceRouter,/exactCards\.length===1/,'ambiguous regional image matches must not be selected');
 assert.ok(serviceRouter.includes(String.raw`/\.svg(?:\?|$)/i.test(path)`),'dynamic regional images must be SVG-only to exclude raster car and people photos');
+assert.ok(serviceRouter.includes(String.raw`/assets\\/service-(?:daeri|taksong|golf)-visual\\.svg`),'dynamic regional image allowlist must not accept arbitrary assets SVGs');
+assert.ok(!serviceRouter.includes("['/card/','/keyword-card/','/assets/'].some"),'do not accept arbitrary SVG files under the general assets directory');
 
 // Validate all 17 official provinces against the actual region search destination,
 // not just against the preview image's dataset ordinal.
