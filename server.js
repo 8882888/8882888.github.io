@@ -1917,6 +1917,15 @@ function exactRegionalKeywordCard(r,kind,raw){
  const make=(label)=>({displayKeyword:label,keywordImage:'/keyword-card/exact/'+r.slug+'-'+kind+'.svg?q='+encodeURIComponent(phrase)});
  const curated=focusKeywordByPhrase.get(compact(phrase));
  if(curated&&curated.region===r.full_name&&curated.kind===kind)return make(phrase);
+ // Exactly named legal localities can have a typed service suffix even when
+ // they were not prelisted in the curated focus dataset. Resolve the place
+ // independently to avoid cross-city cards for ambiguous names such as 광주.
+ const compactPhrase=compact(phrase);
+ const serviceSuffix=kind==='daeri'?/(?:대리운전|대리)(?:업체|회사)?$/:/(?:자동차탁송|차량탁송|탁송)(?:업체|회사)?$/;
+ if(serviceSuffix.test(compactPhrase)){
+  const locality=compactPhrase.replace(serviceSuffix,'');
+  if(locality&&sameOne(locality))return make(phrase);
+ }
  // A bare legal place name needs the same region-specific service artwork as a full phrase.
  // Keep q as originally typed so the actual SVG endpoint rechecks the same region.
  if(sameOne(phrase))return make(seoRegionLabel(r)+(kind==='daeri'?'대리운전':'탁송'));
