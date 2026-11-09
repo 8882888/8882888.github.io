@@ -142,3 +142,5 @@ const serviceRouter=fs.readFileSync(path.join(root,'go/region-service/index.html
 assert.match(serviceRouter,/q\.get\('q'\)/,'keyword query must be recognized');
 assert.match(serviceRouter,/location\.replace\('\/region\/\?q='\+encodeURIComponent\(keyword\)\)/,'q-only queries must preserve their keyword in the canonical search flow');
 assert.match(serviceRouter,/q\.has\('region'\).*q\.has\('kind'\)/,'explicit structured region selection must remain intact');
+
+assert.ok(serviceRouter.includes("replaceAll('스마트','')"), 'smart-branded card labels must normalize to the exact selected region without changing the selected service');
