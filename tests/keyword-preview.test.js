@@ -153,3 +153,16 @@ assert.match(serviceRouter,/\/assets\/service-taksong-visual\.svg/,'default grap
 assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken regional image must fall back safely');
 assert.match(serviceRouter,/card\.kind===kind/,'region image selection must not cross chauffeur and vehicle-delivery services');
 assert.match(serviceRouter,/exactCards\.length===1/,'ambiguous regional image matches must not be selected');
+
+// Validate all 17 official provinces against the actual region search destination,
+// not just against the preview image's dataset ordinal.
+const regionSearch=fs.readFileSync(path.join(root,'region/index.html'),'utf8');
+assert.match(regionSearch,/function resolveKeywordDestination\(term,kind\)/,'regional search must resolve typed service intent');
+assert.match(regionSearch,/found\.length!==1/,'duplicate locality names must require disambiguation');
+assert.match(regionSearch,/\/go\/region-service\/\?region=/,'unique locality selection must lead to the service-specific route');
+assert.match(regionSearch,/\/설악산탁송\/#mountain-route-fare-table-202611/,'Seoraksan searches must target the approved fare anchor');
+assert.match(regionSearch,/\/지리산탁송\/#mountain-route-fare-table-202611/,'Jirisan searches must target the approved fare anchor');
+for(const [province] of provinceImageMappings){
+ assert.ok(provinceIds.has(province),'region search coverage must retain '+province);
+}
+console.log('PASS 17 province mappings, disambiguation and mountain fare anchors');
