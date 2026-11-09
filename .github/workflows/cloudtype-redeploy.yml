@@ -166,7 +166,13 @@ jobs:
           from urllib.parse import urlencode
           from urllib.request import Request, urlopen
           host = 'https://jeongukdaeri.kr'
-          for keyword, slug in [('부산대리운전', 'area-494-daeri'), ('대구탁송', 'area-765-taksong')]:
+          for keyword, slug in [
+              ('부산대리운전', 'area-494-daeri'),
+              ('대구탁송', 'area-765-taksong'),
+              ('대전대리운전', 'area-1672-daeri'),
+              ('세종탁송', 'area-2063-taksong'),
+              ('제주도탁송', 'area-20348-taksong'),
+          ]:
               url = host + '/keyword-card/exact/' + slug + '.svg?' + urlencode({'q': keyword})
               request = Request(url, headers={'Cache-Control':'no-cache','User-Agent':'Smart24-keyword-image-release-check'})
               try:
