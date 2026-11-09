@@ -55,11 +55,16 @@ assert.ok(svg&&!output.hidden,'unregistered or pending keyword still displays a 
 assert.ok(svg.children.some(x=>x.tag==='text'&&x.textContent==='원주혁신도시대리운전'),'local graphic must contain exact typed keyword');
 assert.ok(!svg.children.some(x=>x.tag==='image'),'local SVG contains no photos of cars or people');
 
-// Cover five frequently used search intents, including ports and innovation cities.
+// Cover representative metro, port, and innovation-city searches.
 for(const [keyword,kind,expectedArea] of [
  ['부산대리운전','daeri','area-494-daeri.svg'],
  ['대구탁송','taksong','area-765-taksong.svg'],
- ['세종탁송','taksong',null],
+ ['세종탁송','taksong','area-2063-taksong.svg'],
+ ['대전대리운전','daeri','area-1672-daeri.svg'],
+ ['인천탁송','taksong','area-1174-taksong.svg'],
+ ['강원도탁송','taksong','area-4433-taksong.svg'],
+ ['광주광역시탁송','taksong','area-1464-taksong.svg'],
+ ['제주도탁송','taksong','area-20348-taksong.svg'],
  ['원주혁신도시대리운전','daeri',null],
  ['삼길포항대리운전','daeri',null]
 ]){
