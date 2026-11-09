@@ -1136,7 +1136,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const previewImagePath=taksongPreview.cards[0].previewImage;
   const liveScript=await (await get('/assets/region-card-preview.js')).text();
   const liveCss=await (await get('/assets/region-card-preview.css')).text();
-  assert.ok(liveScript.includes('card.previewImage')&&liveScript.includes('pngFallback'),'browser must prefer WebP and fall back to PNG');
+  assert.ok(liveScript.includes('card.previewImage')&&liveScript.includes('const fallback=localKeywordSvg(keyword,card.kind)')&&liveScript.includes("img.addEventListener('error',()=>")&&liveScript.includes('tryNext();'),'browser must show exact keyword SVG immediately and keep it visible on image failure');
   assert.ok(liveScript.includes("picture.addEventListener('click'")&&liveScript.includes("const href=picture.getAttribute('href');")&&liveScript.includes('if(zoom&&href)')&&liveScript.includes("openZoom(href,img.alt,picture)"),'tapping actual image should open original zoom');
   assert.ok(liveScript.includes('lastActivator.focus()')&&liveCss.includes('.smart24-card-picture-link:focus-visible'),'keyboard focus and visible focus ring are retained');
   assert.ok(liveScript.includes('++sequence')&&liveScript.includes('controller.abort()'),'stale fast-typing requests are cancelled');
