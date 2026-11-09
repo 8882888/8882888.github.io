@@ -6,7 +6,9 @@ const home=fs.readFileSync('index.html','utf8');
 const posts=require('../blog/posts.json');
 const rides=require('../data/public-reviewed-rides-202610.json');
 const page='/daeri/incheon/ganghwa-gun/';
-assert(src.includes("'"+page+"'"),'Priority sitemap must offer Ganghwa canonical URL');
+assert(/const priorityLocalities=\[[\s\S]{0,120}'인천광역시 강화군'/.test(src)&&
+ src.includes('const priorityLocalityRoutes=')&&src.includes('servicePath(r,\'daeri\')'),
+ 'Priority sitemap must include the canonical Ganghwa region through the legal-region route builder');
 assert(src.includes("r.full_name==='인천광역시 강화군'"),'use canonical region not ambiguous Ganghwa name');
 assert(src.includes('ganghwa-daeri-verified-editorial-20261104'),'unique editorial review above generic region template');
 assert(src.includes('강화대리운전 실제 후기｜강화읍·선원면'),'unique Ganghwa title');
