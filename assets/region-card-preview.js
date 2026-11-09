@@ -38,11 +38,26 @@
  }
  // Images verified on the live jeongukdaeri.kr /region/ page (2026-11-05).
  // They are served by the production site, not necessarily the GitHub Pages mirror.
+ // Exact province IDs originate from data/legal-regions/01.json ... 17.json.
+ // "광주" and "제주" alone can name other legal localities; use nonambiguous aliases.
  const liveCityCards=[
-  {name:'서울',aliases:['서울','서울특별시'],id:'1',slug:'seoul'},
-  {name:'부산',aliases:['부산','부산광역시'],id:'494',slug:'busan'},
-  {name:'대구',aliases:['대구','대구광역시'],id:'765',slug:'daegu'},
-  {name:'울산',aliases:['울산','울산광역시'],id:'1855',slug:'ulsan'}
+  {name:'서울',aliases:['서울','서울시','서울특별시'],id:'1',slug:'seoul'},
+  {name:'부산',aliases:['부산','부산시','부산광역시'],id:'494',slug:'busan'},
+  {name:'대구',aliases:['대구','대구시','대구광역시'],id:'765',slug:'daegu'},
+  {name:'인천',aliases:['인천','인천시','인천광역시'],id:'1174',slug:'incheon'},
+  {name:'광주광역시',aliases:['광주광역시'],id:'1464',slug:'gwangju'},
+  {name:'대전',aliases:['대전','대전시','대전광역시'],id:'1672',slug:'daejeon'},
+  {name:'울산',aliases:['울산','울산시','울산광역시'],id:'1855',slug:'ulsan'},
+  {name:'세종',aliases:['세종','세종시','세종특별자치시'],id:'2063',slug:'sejong'},
+  {name:'경기',aliases:['경기','경기도'],id:'2215',slug:'gyeonggi'},
+  {name:'강원도',aliases:['강원','강원도','강원특별자치도'],id:'4433',slug:'gangwon'},
+  {name:'충북',aliases:['충북','충청북도'],id:'5906',slug:'chungbuk'},
+  {name:'충남',aliases:['충남','충청남도'],id:'7541',slug:'chungnam'},
+  {name:'전북',aliases:['전북','전라북도','전북특별자치도'],id:'9816',slug:'jeonbuk'},
+  {name:'전남',aliases:['전남','전라남도'],id:'11707',slug:'jeonnam'},
+  {name:'경북',aliases:['경북','경상북도'],id:'14704',slug:'gyeongbuk'},
+  {name:'경남',aliases:['경남','경상남도'],id:'17946',slug:'gyeongnam'},
+  {name:'제주도',aliases:['제주도','제주특별자치도'],id:'20348',slug:'jeju'}
  ];
  function liveCityMatch(query,service){
   // Never imply that a different ward or town has its own confirmed image.
@@ -54,12 +69,12 @@
   const kinds=service==='daeri'?['daeri']:service==='taksong'?['taksong']:
    compact.includes('대리운전')?['daeri']:compact.includes('탁송')?['taksong']:['daeri','taksong'];
   return {status:'matched',region:city.name,cards:kinds.map(kind=>({
-   kind,displayKeyword:city.name+(kind==='daeri'?'대리운전':'탁송'),
-   keywordImage:'/keyword-card/exact/area-'+city.id+'-'+kind+'.svg?q='+encodeURIComponent(city.name+(kind==='daeri'?'대리운전':'탁송')),
+   kind,displayKeyword:/대리운전$|탁송$/.test(compact)?compact:city.name+(kind==='daeri'?'대리운전':'탁송'),
+   keywordImage:'/keyword-card/exact/area-'+city.id+'-'+kind+'.svg?q='+encodeURIComponent(/대리운전$|탁송$/.test(compact)?compact:city.name+(kind==='daeri'?'대리운전':'탁송')),
    image:'/card/area-'+city.id+'-'+kind+'-brand-v6.png',
    url:'/'+kind+'/'+city.slug+'/',
    description:city.name+' '+(kind==='daeri'?'대리운전':'자동차탁송')+' 지역 상담 안내입니다. 실제 배차와 요금은 별도 확인합니다.',
-   phone:'1811-4294'
+   phone:kind==='taksong'&&city.slug==='jeju'?'1877-5245':'1811-4294'
   }))};
  }
  // Existing SVGs verified in the repository; these are route guides, not trip photos.
