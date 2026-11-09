@@ -95,8 +95,8 @@ check('35 Optimized WebP smaller than crawler PNG',async()=>{const r=await card(
 check('36 Optimized WebP has ETag',async()=>{const r=await card('울산탁송');const p=await bytes(r.cards[0].previewImage);assert.ok(p.res.headers.get('etag'))});
 check('37 Conditional image cache responds 304',async()=>{const r=await card('울산탁송'),p=await bytes(r.cards[0].previewImage);const c=await request(r.cards[0].previewImage,{headers:{'if-none-match':p.res.headers.get('etag')}});assert.equal(c.status,304)});
 check('38 Driver and taksong cards have separate image URLs',async()=>{const r=await card('부산');assert.deepEqual(r.cards.map(x=>x.kind),['daeri','taksong']);assert.notEqual(r.cards[0].image,r.cards[1].image)});
-check('39 Seoraksan original fare PNG available',async()=>{await asset('/assets/seoraksan-taksong-original-fare.png','image/png')});
-check('40 Jirisan original fare PNG available',async()=>{await asset('/assets/jirisan-taksong-original-fare.png','image/png')});
+check('39 Seoraksan text-only fare SVG available',async()=>{await asset('/assets/seoraksan-taksong-fares.svg','image/svg+xml')});
+check('40 Jirisan text-only fare SVG available',async()=>{await asset('/assets/jirisan-taksong-fares.svg','image/svg+xml')});
 // E — fare integrity, authentic review evidence and tracking privacy
 check('41 Seoraksan six legacy price routes preserved',async()=>{const r=await page('/설악산탁송/');assert.equal(r.res.status,200);hasAll(r.body,['mountain-route-fare-table-202611','오색','한계령','백담사','남교리','7만원','8만원'])});
 check('42 Jirisan six legacy price routes preserved',async()=>{const r=await page('/지리산탁송/');assert.equal(r.res.status,200);hasAll(r.body,['mountain-route-fare-table-202611','성삼재','중산리','대원사','화엄사','12만원','10만원'])});
