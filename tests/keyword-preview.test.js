@@ -61,6 +61,12 @@ class MockElement{
   assert.ok(index>=0,'replacement must refer to an attached image');
   item._parent=this._parent;this._parent.children[index]=item;this._parent=null;
  }
+ remove(){
+  if(!this._parent)return;
+  const index=this._parent.children.indexOf(this);
+  if(index>=0)this._parent.children.splice(index,1);
+  this._parent=null;
+ }
  setAttribute(k,v){this.attrs[k]=String(v);}
  getAttribute(k){return this.attrs[k]??null;}
  removeAttribute(k){delete this.attrs[k];}
