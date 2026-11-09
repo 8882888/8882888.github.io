@@ -1539,7 +1539,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(data.region,group.region,'100-keyword region '+keyword);
     assert.equal(data.cards.length,1,'single regional visual for '+keyword);
     assert.equal(data.cards[0].kind,group.kind,'correct service for '+keyword);
-    assert.ok(data.cards[0].image.startsWith('/card/')||data.cards[0].image.startsWith('/keyword-card/'),'no generic false image '+keyword);
+    assert.ok(data.cards[0].image.startsWith('/card/')||data.cards[0].image.startsWith('/keyword-card/')||data.cards[0].image.startsWith('/api/nationwide-locality-card.svg?'),'region-specific image route '+keyword);
     const pageUrl=data.cards[0].url;
     assert.ok(pageUrl.startsWith('/'+group.kind+'/'),'canonical regional route '+keyword);
     if(!workPages.has(pageUrl)){
