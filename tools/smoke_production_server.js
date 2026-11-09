@@ -168,19 +168,24 @@ async function main(){
   assert.equal(homePage.status,200,'homepage must open');
   assert(homePage.body.includes('id="mountain-cycling-fare-first-20261103"'),'homepage first-screen fare links missing');
   assert(homePage.body.indexOf('class="hero hero-with-photo"')<homePage.body.indexOf('id="homepage-verified-reviews-first-20261106"')&&homePage.body.indexOf('id="homepage-fare-top"')<homePage.body.indexOf('id="keyword-service-navigation-20261106"'),'Compact hero and review-first layout with service keyword search required');
-  for(const path of ['/assets/seoraksan-taksong-original-fare.png','/assets/jirisan-taksong-original-fare.png','/assets/smart24-taksong-brand.webp','/assets/smart24-business-card-inline.webp']){
+  // Text-only route charts replace retired vehicle/person promotional photos.
+  for(const path of ['/assets/seoraksan-taksong-fares.svg','/assets/jirisan-taksong-fares.svg','/assets/service-taksong-visual.svg','/assets/cycling-routes/eastcoast-taksong.svg']){
     const img=await request(port,path);
-    assert.equal(img.status,200,'image asset HTTP failed: '+path);
-    assert(/^image\//.test(img.headers['content-type']||''),'image MIME missing: '+path);
-    assert((img.headers['cache-control']||'').includes('max-age=3600'),'image caching missing: '+path);
-    assert((Number(img.headers['content-length'])||0)>10000,'image asset too small or empty: '+path);
+    assert.equal(img.status,200,'text-only chart HTTP failed: '+path);
+    assert((img.headers['content-type']||'').includes('image/svg+xml'),'SVG chart MIME missing: '+path);
+    assert((img.headers['cache-control']||'').includes('max-age=3600'),'chart cache validation missing: '+path);
+    assert((Number(img.headers['content-length'])||0)>800,'approved chart too small or empty: '+path);
     const cached=await request(port,path,{'If-None-Match':img.headers.etag});
-    assert.equal(cached.status,304,'image ETag revalidation failed: '+path);
+    assert.equal(cached.status,304,'chart ETag revalidation failed: '+path);
+  }
+  for(const retired of ['/assets/seoraksan-taksong-original-fare.png','/assets/jirisan-taksong-original-fare.png','/assets/smart24-taksong-brand.webp','/assets/smart24-business-card-inline.webp']){
+    const oldAsset=await request(port,retired);
+    assert.equal(oldAsset.status,410,'retired vehicle/person image must stay unpublished: '+retired);
   }
   const favicon=await request(port,'/favicon.ico');
   assert.equal(favicon.status,200,'favicon must render immediately from bundled file');
   assert.equal(favicon.headers['content-type'],'image/x-icon');
-  console.log('PASS: mountain and cycling fare tables restored to top, image assets stream/cached, home visual links visible; warm homepage '+warmMs+'ms in local CI');
+  console.log('PASS: mountain and cycling fare tables restored to top, text-only images cache correctly, home links visible; warm homepage '+warmMs+'ms in local CI');
   const expected=JSON.parse(fs.readFileSync('data/priority-regions.json','utf8')).pages;
   assert(expected.length>=34,'Priority regions unexpectedly reduced');
   const json=await request(port,'/health/seo.json');assert.equal(json.status,200,'Deployment JSON');
