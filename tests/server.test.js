@@ -943,7 +943,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     const seo=await get('/'+encodeURIComponent(segment)+'/');
     assert.equal(seo.status,200,'Korean keyword URL resolves');
     const html=await seo.text();
-    assert.ok(html.includes('<body><figure id="original-mountain-fare-visual"')&&html.includes('id="mountain-route-fare-table-202611"'),'Korean keyword URL leads with original fare poster and preserves readable fares');
+    assert.ok(html.includes('<figure id="original-mountain-fare-visual"')&&html.includes('id="mountain-route-fare-table-202611"')&&html.indexOf('<figure id="original-mountain-fare-visual"')<html.indexOf('<section id="mountain-route-fare-table-202611"'),'Korean keyword URL leads with original fare poster and preserves readable fares');
     assert.ok(html.includes('src="/assets/'+mountain+'-taksong-original-fare.png"'),'correct original mountain fare image');
     assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr/'+segment+'/"'),'Korean URL is canonical');
   }
