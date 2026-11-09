@@ -102,8 +102,13 @@ async function get(p){
  assert.ok(!homepage.includes('id="home-driver-recruitment"')&&!homepage.includes('id="front-driver-recruitment"'),'recruitment panels are intentionally absent from homepage');
  const mainNav=homepage.match(/<nav class="top-nav"[\s\S]*?<\/nav>/)||[];
  assert.ok(mainNav[0]&&!mainNav[0].includes('href="/recruit/daeri/"')&&!mainNav[0].includes('href="/recruit/taksong/"'),'recruitment links are intentionally absent from main navigation');
- const hero=homepage.match(/<div class="hero hero-with-photo">[\s\S]*?<\/figure><\/div>/)||[];
- assert.ok(hero[0]&&!hero[0].includes('href="/recruit/daeri/"')&&!hero[0].includes('href="/recruit/taksong/"'),'recruitment CTAs are intentionally absent from hero');
+ // The homepage no longer contains a photo <figure> inside the hero.
+ // Delimit the actual hero instead of accidentally scanning all later sections.
+ const heroStart=homepage.indexOf('<div class="hero hero-with-photo">');
+ const heroEnd=homepage.indexOf('</div></div>',heroStart);
+ const hero=heroStart>=0&&heroEnd>heroStart?homepage.slice(heroStart,heroEnd+12):'';
+ assert.ok(hero&&!hero.includes('href="/recruit/daeri/"')&&!hero.includes('href="/recruit/taksong/"'),
+  'the introductory hero remains service-focused while recruitment links live elsewhere');
  assert.ok(homepage.indexOf('id="field-notes"')>homepage.indexOf('class="hero hero-with-photo"'),'real blog stories follow homepage hero');
  assert.ok(homepage.includes('id="jeju-blog-spotlight"')&&homepage.includes('/blog/archive/jeju-taksong/'),
    'homepage prominently links Jeju source-guided article');
