@@ -66,7 +66,8 @@ for(const request of requests){
  assert.equal(request.options.keepalive,true,'Telemetry must never delay leaving the page');
 }
 // 4: Phone click event reports only phone-button clicks, not completed calls.
-assert(traffic.includes("if(location.pathname==='/fare/')")&&
+assert(traffic.includes("const normalizedPage=location.pathname.replace(/\\/index\\.html$/,'/')")&&
+ traffic.includes("if(normalizedPage==='/fare/')")&&
  traffic.includes("metricPage='/fare/quote-'+state"),
  'Phone conversion must distinguish quote success/error/timeout without route payload');
 assert(traffic.includes("rpc('site_quote_summary')")&&
