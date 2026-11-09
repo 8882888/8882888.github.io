@@ -126,8 +126,9 @@ async function main(){
     const fareAt=r.body.indexOf('<section id="'+tableId+'"');
     const imageAt=r.body.indexOf(route.includes('special/cycling')?'<section id="'+imageId+'"':'<figure id="'+imageId+'"');
     if(route.includes('탁송/')){
-      assert(imageAt>0&&fareAt>imageAt,'original mountain fare image must be the first visual: '+route);
-      assert(imageAt<r.body.indexOf('<header'),'mountain visual is buried below menu: '+route);
+      assert(imageAt>0&&fareAt>imageAt,'text-only mountain fare chart must precede route prices: '+route);
+      assert(r.body.indexOf('<header')>=0&&imageAt>r.body.indexOf('<header'),'mountain title and navigation should precede fare chart: '+route);
+      assert(!r.body.includes('-taksong-original-fare.png'),'deleted photo-era mountain poster must not return: '+route);
     }else assert(imageAt>0&&fareAt>imageAt,'Verified cycling course cards must precede the original fare table: '+route);
     assert(r.body.includes('<table')&&r.body.includes('만원'),'real historical fare table missing: '+route);
     assert(r.body.includes('https://jeongukdaeri.kr'+route),'canonical URL missing: '+route);
