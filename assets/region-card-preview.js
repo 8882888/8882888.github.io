@@ -11,7 +11,14 @@
   return el;
  };
  const safePath=(value,prefix)=>typeof value==='string'&&value.startsWith(prefix)&&!value.startsWith('//')&&!value.includes('..')?value:null;
- const imagePath=value=>['/card/','/assets/','/keyword-card/'].map(prefix=>safePath(value,prefix)).find(Boolean)||null;
+ // Only preview source-controlled text-only cards and fare diagrams. Never load vehicle/person photos from API data.
+ const imagePath=value=>{
+  if(typeof value!=='string'||value.startsWith('//')||value.includes('..'))return null;
+  const p=value.split('?')[0];
+  if(/^\/card\/area-\d+/.test(p)||/^\/keyword-card\//.test(p)||p==='/api/nationwide-locality-card.svg')return value;
+  if(/^\/assets\/service-(?:taksong|daeri|golf)-visual\.svg$/.test(p)||/^\/assets\/(?:seoraksan|jirisan)-taksong-fares\.svg$/.test(p)||/^\/assets\/cycling-routes\/(?:nationwide|eastcoast|yeongsan|seomjin|geumgang|ocheon)-taksong\.svg$/.test(p))return value;
+  return null;
+ };
  // Verified representative routes already linked in the homepage markup.
  // Provide a useful result immediately while the image API is checked.
  const representativeRoutes=[
