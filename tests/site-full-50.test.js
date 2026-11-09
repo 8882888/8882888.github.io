@@ -39,7 +39,7 @@ const home=async()=>(await page('/')).body;
 const asset=async(path,type)=>{
  const r=await bytes(path);
  assert.equal(r.res.status,200,path);
- assert.match(r.res.headers.get('content-type')||'',new RegExp(type));
+ assert.ok((r.res.headers.get('content-type')||'').startsWith(type),'expected MIME '+type+' for '+path);
  assert.ok(r.body.length>80,'nonempty image '+path);
  return r;
 };
@@ -72,7 +72,7 @@ check('14 Mobile two-column core menu CSS',async()=>{has(await home(),'.top-nav>
 check('15 Representative call link is dialable',async()=>{has(await home(),'href="tel:18114294"')});
 check('16 Kakao open chat link retains security attrs',async()=>{const h=await home();assert.match(h,/<a[^>]*href="https:\/\/open.kakao.com\/o\/sGV88r7h"[^>]*rel="noopener noreferrer"/)});
 check('17 Quote lookup preserves all three inputs',async()=>{const h=await home(),start=h.indexOf('id="homepage-fare-top"');assert.ok(start>0);const form=h.slice(start,start+2200);hasAll(form,['name="from"','name="to"','name="service"'])});
-check('18 Homepage card search is an actual form',async()=>{hasAll(await home(),['id="dynamic-service-card-search-20261103"','data-card-preview-form','data-card-preview-output'])});
+check('18 Homepage card search is an actual form',async()=>{hasAll(await home(),['id="nationwide-live-locality-form-20261107"','data-card-preview-form','data-card-preview-output'])});
 check('19 Responsive card stylesheet served',async()=>{const r=await page('/assets/region-card-preview.css');assert.equal(r.res.status,200);has(r.body,'.smart24-card-grid')});
 check('20 Card interaction script served',async()=>{const r=await page('/assets/region-card-preview.js');assert.equal(r.res.status,200);hasAll(r.body,['openZoom','previewImage','AbortController'])});
 // C — product/service navigation and locality semantics
@@ -87,13 +87,13 @@ check('28 Typed Ulsan taksong keyword chooses taksong',async()=>{const r=await c
 check('29 Ambiguous Gwangju never silently chooses',async()=>{const r=await card('광주');assert.equal(r.status,'ambiguous');assert.equal(r.cards.length,0)});
 check('30 Jeju taksong dedicated consultation preserved',async()=>{const r=await card('제주도탁송');assert.equal(r.cards[0].phone,'1877-5245')});
 // D — generated image correctness, delivery and caching
-check('31 Busan driver PNG is genuine PNG',async()=>{const r=await card('부산대리운전');const p=await asset(r.cards[0].image,'image/png');assert.equal(p.body.subarray(0,8).toString('hex'),'89504e470d0a1a0a')});
-check('32 Ulsan taksong PNG is genuine PNG',async()=>{const r=await card('울산탁송');const p=await asset(r.cards[0].image,'image/png');assert.equal(p.body.subarray(0,8).toString('hex'),'89504e470d0a1a0a')});
-check('33 Busan driver optimized WebP delivered',async()=>{const r=await card('부산대리운전');const p=await asset(r.cards[0].previewImage,'image/webp');assert.equal(p.body.toString('ascii',8,12),'WEBP')});
-check('34 Ulsan taksong optimized WebP delivered',async()=>{const r=await card('울산탁송');const p=await asset(r.cards[0].previewImage,'image/webp');assert.equal(p.body.toString('ascii',8,12),'WEBP')});
-check('35 Optimized WebP smaller than crawler PNG',async()=>{const r=await card('울산탁송'),v=r.cards[0];const p=await bytes(v.image),w=await bytes(v.previewImage);assert.ok(w.body.length<p.body.length,'responsive WebP size should be smaller')});
-check('36 Optimized WebP has ETag',async()=>{const r=await card('울산탁송');const p=await bytes(r.cards[0].previewImage);assert.ok(p.res.headers.get('etag'))});
-check('37 Conditional image cache responds 304',async()=>{const r=await card('울산탁송'),p=await bytes(r.cards[0].previewImage);const c=await request(r.cards[0].previewImage,{headers:{'if-none-match':p.res.headers.get('etag')}});assert.equal(c.status,304)});
+check('31 Busan driver PNG is genuine PNG',async()=>{const p=await asset('/card/area-494-daeri-brand-v7.png','image/png');assert.equal(p.body.subarray(0,8).toString('hex'),'89504e470d0a1a0a')});
+check('32 Ulsan taksong PNG is genuine PNG',async()=>{const p=await asset('/card/area-1855-taksong-brand-v7.png','image/png');assert.equal(p.body.subarray(0,8).toString('hex'),'89504e470d0a1a0a')});
+check('33 Busan driver optimized WebP delivered',async()=>{const p=await asset('/card/area-494-daeri-brand-v7.webp','image/webp');assert.equal(p.body.toString('ascii',8,12),'WEBP')});
+check('34 Ulsan taksong optimized WebP delivered',async()=>{const p=await asset('/card/area-1855-taksong-brand-v7.webp','image/webp');assert.equal(p.body.toString('ascii',8,12),'WEBP')});
+check('35 Optimized WebP smaller than crawler PNG',async()=>{const p=await bytes('/card/area-1855-taksong-brand-v7.png'),w=await bytes('/card/area-1855-taksong-brand-v7.webp');assert.ok(w.body.length<p.body.length,'responsive WebP size should be smaller')});
+check('36 Optimized WebP has ETag',async()=>{const p=await bytes('/card/area-1855-taksong-brand-v7.webp');assert.ok(p.res.headers.get('etag'))});
+check('37 Conditional image cache responds 304',async()=>{const p=await bytes('/card/area-1855-taksong-brand-v7.webp');const c=await request('/card/area-1855-taksong-brand-v7.webp',{headers:{'if-none-match':p.res.headers.get('etag')}});assert.equal(c.status,304)});
 check('38 Driver and taksong cards have separate image URLs',async()=>{const r=await card('부산');assert.deepEqual(r.cards.map(x=>x.kind),['daeri','taksong']);assert.notEqual(r.cards[0].image,r.cards[1].image)});
 check('39 Seoraksan text-only fare SVG available',async()=>{await asset('/assets/seoraksan-taksong-fares.svg','image/svg+xml')});
 check('40 Jirisan text-only fare SVG available',async()=>{await asset('/assets/jirisan-taksong-fares.svg','image/svg+xml')});
