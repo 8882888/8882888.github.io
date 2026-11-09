@@ -228,9 +228,10 @@
     const grid=node('div','smart24-card-grid');
     data.cards.forEach(card=>{const el=renderCard(card);if(el)grid.append(el)});
     if(grid.childElementCount){results.append(grid)}
-    else message.textContent='검색 결과는 있지만 연결된 명함 이미지 또는 지역 상세 주소를 확인할 수 없습니다. 아래 지역 검색 결과를 이용해 주세요.';
+    else showDraft(input.value.trim(),select?.value||'taksong','검색 결과의 이미지 연결을 확인하지 못해 입력한 키워드 텍스트 명함을 표시합니다.');
    }else if((data.status==='ambiguous'||data.status==='suggestions')&&Array.isArray(data.candidates)){
     message.textContent=data.status==='ambiguous'?'동일한 이름의 지역이 있습니다. 정확한 지역을 선택하세요.':'지역명을 확인하고 아래 후보 중 선택하세요.';
+    showDraft(input.value.trim(),select?.value||'taksong',message.textContent);
     const list=node('div','smart24-card-choices');
     data.candidates.forEach(candidate=>{
      const b=node('button','smart24-card-choice',candidate.name||'지역 선택');
