@@ -12,7 +12,7 @@ async function preview(q,service){
  const p=new URLSearchParams({q});if(service)p.set('service',service);
  const r=await get('/api/region-card-preview?'+p);
  assert.equal(r.status,200,q);assert.match(r.headers.get('content-type'),/application\/json/);
- assert.equal(r.headers.get('x-robots-tag'),'noindex, nofollow');
+ assert.match(r.headers.get('x-robots-tag')||'',/^noindex\s*,\s*nofollow$/,'search-preview API must stay noindex regardless of insignificant whitespace');
  return JSON.parse(r.body);
 }
 const exact=[
@@ -58,9 +58,15 @@ for(const [level,place,suffix,kind]of levels)check(level+' locality+company inte
  assert.equal(d.region,place,level);assert.equal(d.cards.length,1);
  assert.equal(d.cards[0].kind,kind);assert.ok(d.cards[0].image.endsWith('-'+kind+'-brand-v7.png'));
  const page=await get(d.cards[0].url);assert.equal(page.status,200);
- assert.ok(page.body.includes('id="regional-provider-keywords"'),level+' company guidance');
- assert.ok(page.body.includes('탁송업체·탁송회사')||page.body.includes('대리운전업체·대리운전회사'));
- assert.ok(page.body.includes('상주')&&page.body.includes('보장하지 않습니다'));
+ if(level==='리'){
+  // Fine-grained villages deliberately use compact content to avoid 20k duplicate SEO pages.
+  assert.ok(page.body.includes('동부리')&&page.body.includes('tel:18114294'),'village still shows its correct area and phone');
+  assert.ok(!page.body.includes('id="regional-provider-keywords"'),'village avoids repetitive provider keyword stuffing');
+ }else{
+  assert.ok(page.body.includes('id="regional-provider-keywords"'),level+' company guidance');
+  assert.ok(page.body.includes('탁송업체·탁송회사')||page.body.includes('대리운전업체·대리운전회사'));
+  assert.ok(page.body.includes('상주')&&page.body.includes('보장하지 않습니다'));
+ }
 });
 const combinations=[
  ['부산골프대리운전','부산광역시','daeri','golf-daeri','1811-4294'],
