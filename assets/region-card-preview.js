@@ -347,6 +347,12 @@
    run(true);
   });
   form.addEventListener('submit',event=>{event.preventDefault();run(true)});
+  // Support direct inbound links such as /?q=설악산탁송 and /?q=기장군탁송.
+  // Keep form selection and the original typed keyword; never infer a different locality.
+  const incoming=new URLSearchParams(location.search);
+  const incomingKeyword=(incoming.get('q')||'').trim();
+  if(!input.value.trim()&&incomingKeyword.length>=2&&incomingKeyword.length<=75)input.value=incomingKeyword;
+  if(select&&['daeri','taksong'].includes(incoming.get('service')))select.value=incoming.get('service');
   if(input.value.trim().length>=2)run(false);
  });
 })();
