@@ -109,8 +109,8 @@ for(const [number,path,topic] of pages)checks.push([number,path+' visible topic 
  assert.match(result.body,/width:100%;height:auto/,path);
  const exp=topic==='cycling'?'/assets/cycling-routes/nationwide-taksong.svg':'/keyword-card/'+topic+'.svg';
  assert.ok(result.body.includes('href="'+exp+'"'),path+' links the matching service image');
- // Below-the-fold keyword cards are lazy by design; do not compete with the hero image.
- assert.ok(result.body.includes('loading="lazy"'),path+' avoids delaying first screen imagery');
+ // This relevant card is inserted immediately after the H1 and should be visible promptly.
+ assert.ok(result.body.includes('loading="eager"')&&result.body.includes('fetchpriority="high"'),path+' first-screen keyword card must load promptly');
 }]);
 checks.push(['48','Every mountain subroute, cycling itinerary and outside-area driving page matches its correct visual',async()=>{
  const r=await get('/keyword-card/golf-daeri.svg');
@@ -179,7 +179,7 @@ checks.push(['49','Combined region + purpose yields matching local service image
  assert.equal(ambiguous.cards.length,0);
  assert.ok(ambiguous.candidates.some(x=>x.query.includes('렌트카탁송')),'region choice retains service purpose');
  const h=await get('/');assert.equal(h.res.status,200);
- assert.ok(h.body.includes('id="dynamic-service-card-search-20261103"'));
+ assert.ok(h.body.includes('id="nationwide-live-locality-form-20261107"')&&h.body.includes('data-card-preview-form'),'homepage keeps the working current keyword search form');
  const script=await get('/assets/region-card-preview.js');
  assert.ok(script.body.includes("'/keyword-card/'")&&script.body.includes("'/assets/'"));
 }]);
