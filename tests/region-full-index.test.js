@@ -6,6 +6,14 @@ const root=path.resolve(__dirname,'..');
 const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 const region=fs.readFileSync(path.join(root,'region/index.html'),'utf8');
 const handoff=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
+const deployWorkflow=fs.readFileSync(path.join(root,'.github/workflows/cloudtype-redeploy.yml'),'utf8');
+for(const changedPath of ["'go/**'","'package.json'","'package-lock.json'"])
+  assert(deployWorkflow.includes(changedPath),'Cloudtype deployment trigger missing '+changedPath);
+assert(deployWorkflow.includes('node tests/region-full-index.test.js'),'Cloudtype deploy must run the regional regression test');
+assert(deployWorkflow.includes('for service in daeri taksong; do'),'Cloudtype must verify both service-specific live regional handoffs');
+assert(deployWorkflow.includes('actual_handoff="$(sha256sum "$handoff_file"'),'Cloudtype must hash the downloaded handoff bytes exactly');
+assert(deployWorkflow.includes("grep -qi 'noindex'"),'Cloudtype must check the regional handoff noindex response header');
+assert(deployWorkflow.includes("[ \"$redirect\" != '/region/' ]"),'Cloudtype must reject invalid region redirects to unexpected destinations');
 assert((handoff.match(/p\.name===region&&\(!parent\|\|p\.parent_name===parent\)&&Array\.isArray\(p\.services\)/g)||[]).length===3,'regional handoff must accept omitted parent consistently across API and fallback validation');
 assert(handoff.includes('if(matches.length!==1)'), 'regional handoff must reject ambiguous locality matches');
 assert(handoff.includes('if(matches.length===0)'), 'regional handoff must only retry the full index for zero matches, not ambiguous multiple matches');
