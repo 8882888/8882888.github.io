@@ -221,17 +221,25 @@ jobs:
           fi
           echo 'Live homepage provincial links, fixed primary services and verified ride-history label confirmed.' >> "$GITHUB_STEP_SUMMARY"
           # Confirm that the regional handoff HTML itself is deployed, not only server.js.
-          handoff_url='https://jeongukdaeri.kr/go/region-service/?region=부산광역시&parent=대한민국&kind=daeri'
-          handoff_file="$(mktemp)"
-          curl --fail --silent --show-error --connect-timeout 8 --max-time 20 -H 'Cache-Control: no-cache' "$handoff_url" --output "$handoff_file"
           expected_handoff="$(sha256sum go/region-service/index.html | cut -d' ' -f1)"
-          actual_handoff="$(sha256sum "$handoff_file" | cut -d' ' -f1)"
-          rm -f "$handoff_file"
-          if [ "$actual_handoff" != "$expected_handoff" ]; then
-            echo '::error::Live regional handoff HTML differs from the committed production source.'
-            exit 1
-          fi
-          echo 'Live regional handoff HTML SHA256 matches the committed source.' >> "$GITHUB_STEP_SUMMARY"
+          for service in daeri taksong; do
+            handoff_url="https://jeongukdaeri.kr/go/region-service/?region=부산광역시&parent=대한민국&kind=$service"
+            handoff_file="$(mktemp)"
+            handoff_headers="$(mktemp)"
+            curl --fail --silent --show-error --connect-timeout 8 --max-time 20 -H 'Cache-Control: no-cache' --dump-header "$handoff_headers" "$handoff_url" --output "$handoff_file"
+            actual_handoff="$(sha256sum "$handoff_file" | cut -d' ' -f1)"
+            robots_header="$(grep -i '^x-robots-tag:' "$handoff_headers" | tail -n 1 | tr -d '\r' || true)"
+            rm -f "$handoff_file" "$handoff_headers"
+            if [ "$actual_handoff" != "$expected_handoff" ]; then
+              echo "::error::Live $service regional handoff HTML differs from the committed source."
+              exit 1
+            fi
+            if ! grep -qi 'noindex' <<<"$robots_header"; then
+              echo "::error::Live $service regional handoff lacks its required noindex header."
+              exit 1
+            fi
+          done
+          echo 'Live daeri and taksong regional handoffs match committed HTML and retain noindex.' >> "$GITHUB_STEP_SUMMARY"
           # Reject invalid service/parent combinations without silently displaying
           # an unrelated region. Do not follow redirects in these negative tests.
           for invalid_query in \
