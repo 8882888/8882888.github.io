@@ -2328,7 +2328,7 @@ if(pathname==='/api/public-region-lookup'){
   // The legacy data/regions.json is only a partial historical seed and returns false
   // negatives for real cities on the public booking handoff.
   const matches=regions.filter(x=>x.name===name&&(!parent||x.parent_name===parent)&&(x.services||[]).includes(kind))
-   .map(x=>({name:x.name,parent_name:x.parent_name,level:x.level}));
+   .map(x=>({name:x.name,parent_name:x.parent_name,level:x.level,services:x.services}));
   return respond(res,200,JSON.stringify({matches}), 'application/json; charset=utf-8');
  }catch(_){return respond(res,503,JSON.stringify({matches:[]}), 'application/json; charset=utf-8')}
 }
