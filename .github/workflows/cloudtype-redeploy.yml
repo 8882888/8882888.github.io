@@ -220,9 +220,11 @@ jobs:
           echo 'Live homepage provincial links, fixed primary services and verified ride-history label confirmed.' >> "$GITHUB_STEP_SUMMARY"
           # Confirm that the regional handoff HTML itself is deployed, not only server.js.
           handoff_url='https://jeongukdaeri.kr/go/region-service/?region=부산광역시&parent=대한민국&kind=daeri'
-          handoff="$(curl --fail --silent --show-error --location --connect-timeout 8 --max-time 20 -H 'Cache-Control: no-cache' "$handoff_url")"
+          handoff_file="$(mktemp)"
+          curl --fail --silent --show-error --connect-timeout 8 --max-time 20 -H 'Cache-Control: no-cache' "$handoff_url" --output "$handoff_file"
           expected_handoff="$(sha256sum go/region-service/index.html | cut -d' ' -f1)"
-          actual_handoff="$(printf '%s' "$handoff" | sha256sum | cut -d' ' -f1)"
+          actual_handoff="$(sha256sum "$handoff_file" | cut -d' ' -f1)"
+          rm -f "$handoff_file"
           if [ "$actual_handoff" != "$expected_handoff" ]; then
             echo '::error::Live regional handoff HTML differs from the committed production source.'
             exit 1
