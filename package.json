@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js"
+    "check": "node --check server.js",
+    "check:seo": "node --test tests/seo-sitemap-regression.test.js"
   },
   "engines": {
     "node": ">=20"
