@@ -2539,6 +2539,15 @@ if(pathname==='/api/public-rides'){
  const safe=Array.isArray(rows)?rows.filter(r=>r.status==='종료'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&[r.departure,r.destination,r.fare].every(v=>typeof v==='string'&&v.length>0&&v.length<100)).map(r=>({date:r.date,departure:r.departure,destination:r.destination,fare:r.fare})):[];
  return respond(res,200,JSON.stringify(safe),'application/json; charset=utf-8');
 }
+// Full official-region index for the interactive /region/index.html fallback.
+// The committed data/regions.json is a 255-location pilot and must not silently
+// truncate searches in the production dynamic legal-dong hierarchy.
+if(pathname==='/api/legal-region-index'){
+ res.setHeader('cache-control','public, max-age=3600');
+ res.setHeader('x-robots-tag','noindex, nofollow');
+ const compactRegions=regions.map(r=>({name:r.name,parent_name:r.parent_name,level:r.level,services:r.services}));
+ return respond(res,200,JSON.stringify({regions:compactRegions,source:'official legal-region hierarchy'}),'application/json; charset=utf-8');
+}
 if(pathname==='/health'){
  res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
  res.setHeader('x-robots-tag','noindex, nofollow');
