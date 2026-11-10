@@ -2574,6 +2574,16 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
 if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-all.xml','Sitemap: '+base+'/sitemap-history.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 // Full discoverability inventory for genuine historical completed rides.
 // Six bounded shards; preserve all original 2,591 records and never fabricate rides.
+// Source-reviewed regional service pages only; no fabricated trip URLs.
+if(pathname==='/sitemap-reviewed-routes.xml'){
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const routes=[...new Set(priorityRegionalPages.flatMap(entry=>{
+  const region=regionByFullName.get(entry.region);
+  return region&&['daeri','taksong'].includes(entry.kind)?[servicePath(region,entry.kind)]:[];
+ }))];
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+routes.map(route=>'<url><loc>'+esc(new URL(base+route).href)+'</loc></url>').join('')+'</urlset>';
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
