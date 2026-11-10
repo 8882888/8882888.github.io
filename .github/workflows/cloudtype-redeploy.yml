@@ -237,9 +237,12 @@ jobs:
           for invalid_query in \
             'region=부산광역시&parent=대한민국&kind=invalid' \
             'region=부산광역시&parent=서울특별시&kind=daeri'; do
-            status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --connect-timeout 8 --max-time 20 "https://jeongukdaeri.kr/go/region-service/?$invalid_query")"
-            if [ "$status" != 302 ]; then
-              echo "::error::Invalid regional handoff request returned HTTP $status instead of HTTP 302."
+            response_headers="$(mktemp)"
+            status="$(curl --silent --show-error --dump-header "$response_headers" --output /dev/null --write-out '%{http_code}' --connect-timeout 8 --max-time 20 "https://jeongukdaeri.kr/go/region-service/?$invalid_query")"
+            redirect="$(grep -i '^location:' "$response_headers" | tail -n 1 | tr -d '\r' | cut -d' ' -f2-)"
+            rm -f "$response_headers"
+            if [ "$status" != 302 ] || [ "$redirect" != '/region/' ]; then
+              echo "::error::Invalid regional handoff returned HTTP $status with Location $redirect instead of 302 /region/."
               exit 1
             fi
           done
