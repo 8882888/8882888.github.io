@@ -13,4 +13,11 @@ assert(region.includes("fetchWithTimeout('/api/legal-region-index',8000)"),'regi
 assert(region.includes("fetchWithTimeout('/data/regions.json',5000)"),'GitHub Pages static fallback must be preserved');
 assert(region.indexOf("fetchWithTimeout('/api/legal-region-index',8000)")<region.indexOf("fetchWithTimeout('/data/regions.json',5000)"),'production index must take precedence');
 for(const key of ['설악산탁송','지리산탁송'])assert(region.includes(key),'mountain keyword routing lost: '+key);
+const servicePage=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
+assert(servicePage.includes("name===fullExpected||(place.parent_name==='대한민국'&&name===expected)"),'regional image cards must match parent-qualified location');
+assert(!servicePage.includes("|\\/assets\\/service-(?:daeri|taksong|golf)-visual\\.svg"),'generic service images must not count as verified regional cards');
+assert(servicePage.includes("tel:18114294"),'regional service landing must retain official consultation number');
+assert(servicePage.includes("fare.href='/fare/?service='"),'regional service landing must retain fare lookup');
+assert(region.includes("regionCatalogueReady=true"),'region catalogue readiness guard must remain');
+assert(region.includes("fetchWithTimeout('/data/ride-history.json',5000)"),'ride history must have a bounded fetch');
 console.log('PASS region search prefers complete production legal-region index; pilot is backup only');
