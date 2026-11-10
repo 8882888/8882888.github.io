@@ -22,6 +22,8 @@ assert(servicePage.includes("fare.href='/fare/?service='"),'regional service lan
 assert(region.includes("supported.includes('daeri')?'daeri':'daily'"),'daily-only regions must not route to an unsupported proxy driving service');
 assert(region.includes("regionName.href=matchedKind==='daily'?"),'daily-only region card must use its supported detail route');
 assert(region.includes("link.href=matchedKind==='daily'?"),'daily-only secondary link must use its supported detail route');
+assert(!region.includes("if(kind==='daily')return ''"),'explicit region-service keyword must override a stale daily-driver selection');
+assert(region.includes("if(kind!==service)type.value=service;"),'explicit region-service keyword must update the service selector');
 assert(region.includes("regionCatalogueReady=true"),'region catalogue readiness guard must remain');
 assert(region.includes("fetchWithTimeout('/data/ride-history.json',5000)"),'ride history must have a bounded fetch');
 console.log('PASS region search prefers complete production legal-region index; pilot is backup only');
