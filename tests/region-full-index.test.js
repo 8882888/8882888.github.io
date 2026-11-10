@@ -8,6 +8,7 @@ const region=fs.readFileSync(path.join(root,'region/index.html'),'utf8');
 const handoff=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
 assert((handoff.match(/p\.name===region&&\(!parent\|\|p\.parent_name===parent\)&&Array\.isArray\(p\.services\)/g)||[]).length===3,'regional handoff must accept omitted parent consistently across API and fallback validation');
 assert(handoff.includes('if(matches.length!==1)'), 'regional handoff must reject ambiguous locality matches');
+assert(handoff.includes('if(matches.length===0)'), 'regional handoff must only retry the full index for zero matches, not ambiguous multiple matches');
 assert((handoff.match(/fetch\('\/api\/legal-region-index'/g)||[]).length===2,'regional handoff fallback must use accessible complete legal region index');
 assert(!handoff.includes("fetch('/data/regions.json'"),'regional handoff must not request blocked historical region seed');
 const pilot=JSON.parse(fs.readFileSync(path.join(root,'data/regions.json'),'utf8')).regions;
