@@ -28,6 +28,9 @@ assert(region.includes("const matchedKind=service==='daily'?'daily':"),'daily-dr
 assert(region.includes("matchedKind==='daily'?p.name+' 일일기사 상담"),'daily-driver cards must use service-specific descriptions');
 assert(region.includes("if(matchedKind!=='daily'){const fare="),'daily-only cards must not display a vehicle transport fare link');
 assert(region.includes("estimate.href=service==='daily'?'/service/daily-driver/'"),'daily-driver zero-results fallback must not point to vehicle transport fares');
+assert(region.includes('regionCataloguePartial=!!data.partial'),'static fallback must be marked as partial');
+assert(region.includes('return {...data,partial:true}'),'static backup must carry partial coverage metadata');
+assert(region.includes('검색 결과가 없어도 서비스 지역이 아니라는 뜻은 아닙니다'),'partial search must not falsely imply unsupported service areas');
 assert(region.includes("regionCatalogueReady=true"),'region catalogue readiness guard must remain');
 assert(region.includes("fetchWithTimeout('/data/ride-history.json',5000)"),'ride history must have a bounded fetch');
 console.log('PASS region search prefers complete production legal-region index; pilot is backup only');
