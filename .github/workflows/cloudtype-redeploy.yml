@@ -221,11 +221,13 @@ jobs:
           # Confirm that the regional handoff HTML itself is deployed, not only server.js.
           handoff_url='https://jeongukdaeri.kr/go/region-service/?region=부산광역시&parent=대한민국&kind=daeri'
           handoff="$(curl --fail --silent --show-error --location --connect-timeout 8 --max-time 20 -H 'Cache-Control: no-cache' "$handoff_url")"
-          if ! grep -Fq "fetch('/api/legal-region-index'" <<<"$handoff" || ! grep -Fq 'if(matches.length===0)' <<<"$handoff"; then
-            echo '::error::Live regional handoff HTML is stale or missing current full-index fallback.' 
+          expected_handoff="$(sha256sum go/region-service/index.html | cut -d' ' -f1)"
+          actual_handoff="$(printf '%s' "$handoff" | sha256sum | cut -d' ' -f1)"
+          if [ "$actual_handoff" != "$expected_handoff" ]; then
+            echo '::error::Live regional handoff HTML differs from the committed production source.'
             exit 1
           fi
-          echo 'Live regional handoff HTML matches required lookup fallback markers.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Live regional handoff HTML SHA256 matches the committed source.' >> "$GITHUB_STEP_SUMMARY"
           echo '### Cloudtype live deployment verified' >> "$GITHUB_STEP_SUMMARY"
           echo "Production /health release matches GitHub server.js sha256-$expected." >> "$GITHUB_STEP_SUMMARY"
           echo 'Live deployment verified. Naver Search Advisor indexing and search ranking remain separate checks.' >> "$GITHUB_STEP_SUMMARY"
