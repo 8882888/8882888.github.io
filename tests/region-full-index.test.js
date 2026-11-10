@@ -11,6 +11,7 @@ assert(server.includes('const reviewCards=uniqueMatches.length?'),'regional revi
 assert(server.includes('uniqueMatches.slice(0,5).map('),'regional review cards must render deduplicated records');
 assert(pilot.length<1000,'static pilot unexpectedly became full nationwide data');
 assert(server.includes("if(pathname==='/api/legal-region-index')"),'production legal index endpoint missing');
+assert(server.includes('level:x.level,services:x.services}));'),'public regional lookup must return service types required by client validation');
 assert(server.includes("candidates.length!==1||!(candidates[0].services||[]).includes(kind)"),'dynamic regional landing must reject services unsupported by the selected legal region');
 assert(server.includes("if(!['daeri','taksong'].includes(kind)){res.writeHead(302,{location:'/region/'});return res.end()}"),'dynamic handoff must reject missing or invalid service kind rather than default to taksong');
 assert(server.includes('regions.map(r=>({name:r.name,parent_name:r.parent_name,level:r.level,services:r.services}))'),'index must use official legal regions');
