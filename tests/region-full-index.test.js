@@ -16,6 +16,7 @@ for(const key of ['설악산탁송','지리산탁송'])assert(region.includes(ke
 const servicePage=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
 assert(servicePage.includes("name===fullExpected||(place.parent_name==='대한민국'&&name===expected)"),'regional image cards must match parent-qualified location');
 assert(!servicePage.includes("|\\/assets\\/service-(?:daeri|taksong|golf)-visual\\.svg"),'generic service images must not count as verified regional cards');
+assert(!servicePage.includes('.replaceAll('),'regional image label matching must support older mobile browsers');
 assert(servicePage.includes("tel:18114294"),'regional service landing must retain official consultation number');
 assert(servicePage.includes("fare.href='/fare/?service='"),'regional service landing must retain fare lookup');
 assert(region.includes("regionCatalogueReady=true"),'region catalogue readiness guard must remain');
