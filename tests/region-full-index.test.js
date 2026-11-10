@@ -10,6 +10,7 @@ assert(pilot.length<1000,'static pilot unexpectedly became full nationwide data'
 assert(server.includes("if(pathname==='/api/legal-region-index')"),'production legal index endpoint missing');
 assert(server.includes('regions.map(r=>({name:r.name,parent_name:r.parent_name,level:r.level,services:r.services}))'),'index must use official legal regions');
 assert(region.includes("fetchWithTimeout('/api/legal-region-index',8000)"),'region search must use complete production index');
+assert(region.includes("data.regions.length<1000)throw Error('Dynamic region index incomplete')"),'undersized dynamic region index must not be represented as complete nationwide coverage');
 assert(region.includes("fetchWithTimeout('/data/regions.json',5000)"),'GitHub Pages static fallback must be preserved');
 assert(region.indexOf("fetchWithTimeout('/api/legal-region-index',8000)")<region.indexOf("fetchWithTimeout('/data/regions.json',5000)"),'production index must take precedence');
 for(const key of ['설악산탁송','지리산탁송'])assert(region.includes(key),'mountain keyword routing lost: '+key);
