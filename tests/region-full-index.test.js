@@ -24,6 +24,8 @@ assert(region.includes("regionName.href=matchedKind==='daily'?"),'daily-only reg
 assert(region.includes("link.href=matchedKind==='daily'?"),'daily-only secondary link must use its supported detail route');
 assert(!region.includes("if(kind==='daily')return ''"),'explicit region-service keyword must override a stale daily-driver selection');
 assert(region.includes("if(kind!==service)type.value=service;"),'explicit region-service keyword must update the service selector');
+assert(region.includes("if(matchedKind!=='daily'){const fare="),'daily-only cards must not display a vehicle transport fare link');
+assert(region.includes("estimate.href=service==='daily'?'/service/daily-driver/'"),'daily-driver zero-results fallback must not point to vehicle transport fares');
 assert(region.includes("regionCatalogueReady=true"),'region catalogue readiness guard must remain');
 assert(region.includes("fetchWithTimeout('/data/ride-history.json',5000)"),'ride history must have a bounded fetch');
 console.log('PASS region search prefers complete production legal-region index; pilot is backup only');
