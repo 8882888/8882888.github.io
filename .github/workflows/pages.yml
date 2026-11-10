@@ -226,6 +226,7 @@ jobs:
           node --test tests/traffic-analytics-regression.test.js
           node tests/naver-regional-focus-twenty-first-200.test.js
           node tests/innovation-city-100.test.js
+          node tests/region-full-index.test.js
           node tests/innovation-search-focus.test.js
           node tests/search-intent-discovery.test.js
           node tests/food-district-discovery.test.js
