@@ -2259,7 +2259,7 @@ if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
  const region=String(u.searchParams.get('region')||'').trim(),parent=String(u.searchParams.get('parent')||'').trim();
  const kind=u.searchParams.get('kind')==='daeri'?'daeri':'taksong';
  const candidates=regions.filter(x=>x.name===region&&(!parent||x.parent_name===parent));
- if(candidates.length!==1){res.writeHead(302,{location:'/region/'});return res.end()}
+ if(candidates.length!==1||!(candidates[0].services||[]).includes(kind)){res.writeHead(302,{location:'/region/'});return res.end()}
  // Serve the validated image-first region landing rather than redirecting away
  // from the regional card and service-specific customer journey.
  // The landing page is intentionally noindex; the unique service URL remains
