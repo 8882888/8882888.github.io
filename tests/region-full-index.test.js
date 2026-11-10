@@ -25,6 +25,8 @@ assert(region.includes("regionName.href=matchedKind==='daily'?"),'daily-only reg
 assert(region.includes("link.href=matchedKind==='daily'?"),'daily-only secondary link must use its supported detail route');
 assert(!region.includes("if(kind==='daily')return ''"),'explicit region-service keyword must override a stale daily-driver selection');
 assert(region.includes("if(kind!==service)type.value=service;"),'explicit region-service keyword must update the service selector');
+assert(region.includes("const service=suffix?(suffix.includes('대리운전')?'daeri':'taksong'):type.value;"),'live search must prioritize explicit service suffix over a stale daily-driver filter');
+assert(!region.includes("type.value==='daily'?'daily':suffix?"),'daily filter must not suppress explicit region-service search terms');
 assert(region.includes("const matchedKind=service==='daily'?'daily':"),'daily-driver filter must take precedence over a region transport capability');
 assert(region.includes("matchedKind==='daily'?p.name+' 일일기사 상담"),'daily-driver cards must use service-specific descriptions');
 assert(region.includes("if(matchedKind!=='daily'){const fare="),'daily-only cards must not display a vehicle transport fare link');
