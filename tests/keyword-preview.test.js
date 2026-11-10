@@ -173,8 +173,8 @@ assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken regional i
 assert.match(serviceRouter,/card\.kind===kind/,'region image selection must not cross chauffeur and vehicle-delivery services');
 assert.match(serviceRouter,/exactCards\.length===1/,'ambiguous regional image matches must not be selected');
 assert.ok(serviceRouter.includes(String.raw`/\.svg(?:\?|$)/i.test(path)`),'dynamic regional images must be SVG-only to exclude raster car and people photos');
-assert.ok(serviceRouter.includes(String.raw`/card\\/area-\\d+`),'dynamic regional image allowlist must require exact area-card SVG paths');
-assert.ok(serviceRouter.includes(String.raw`/keyword-card\\/`),'dynamic regional image allowlist must restrict keyword-card SVG paths');
+assert.ok(serviceRouter.includes(String.raw\`\/card\/area-\d+\`),'dynamic regional image allowlist must require exact area-card SVG paths');
+assert.ok(serviceRouter.includes(String.raw\`\/keyword-card\/\`),'dynamic regional image allowlist must restrict keyword-card SVG paths');
 assert.ok(!serviceRouter.includes(String.raw`/assets\\/service-(?:daeri|taksong|golf)-visual\\.svg`),'dynamic preview allowlist must not accept generic assets SVG paths');
 assert.ok(!serviceRouter.includes("['/card/','/keyword-card/','/assets/'].some"),'do not accept arbitrary SVG files under the general assets directory');
 
