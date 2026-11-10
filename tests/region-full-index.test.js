@@ -19,6 +19,9 @@ assert(!servicePage.includes("|\\/assets\\/service-(?:daeri|taksong|golf)-visual
 assert(!servicePage.includes('.replaceAll('),'regional image label matching must support older mobile browsers');
 assert(servicePage.includes("tel:18114294"),'regional service landing must retain official consultation number');
 assert(servicePage.includes("fare.href='/fare/?service='"),'regional service landing must retain fare lookup');
+assert(region.includes("supported.includes('daeri')?'daeri':'daily'"),'daily-only regions must not route to an unsupported proxy driving service');
+assert(region.includes("regionName.href=matchedKind==='daily'?"),'daily-only region card must use its supported detail route');
+assert(region.includes("link.href=matchedKind==='daily'?"),'daily-only secondary link must use its supported detail route');
 assert(region.includes("regionCatalogueReady=true"),'region catalogue readiness guard must remain');
 assert(region.includes("fetchWithTimeout('/data/ride-history.json',5000)"),'ride history must have a bounded fetch');
 console.log('PASS region search prefers complete production legal-region index; pilot is backup only');
