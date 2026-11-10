@@ -232,6 +232,18 @@ jobs:
             exit 1
           fi
           echo 'Live regional handoff HTML SHA256 matches the committed source.' >> "$GITHUB_STEP_SUMMARY"
+          # Reject invalid service/parent combinations without silently displaying
+          # an unrelated region. Do not follow redirects in these negative tests.
+          for invalid_query in \
+            'region=부산광역시&parent=대한민국&kind=invalid' \
+            'region=부산광역시&parent=서울특별시&kind=daeri'; do
+            status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --connect-timeout 8 --max-time 20 "https://jeongukdaeri.kr/go/region-service/?$invalid_query")"
+            if [ "$status" != 302 ]; then
+              echo "::error::Invalid regional handoff request returned HTTP $status instead of HTTP 302."
+              exit 1
+            fi
+          done
+          echo 'Invalid regional service and parent combinations redirect safely.' >> "$GITHUB_STEP_SUMMARY"
           echo '### Cloudtype live deployment verified' >> "$GITHUB_STEP_SUMMARY"
           echo "Production /health release matches GitHub server.js sha256-$expected." >> "$GITHUB_STEP_SUMMARY"
           echo 'Live deployment verified. Naver Search Advisor indexing and search ranking remain separate checks.' >> "$GITHUB_STEP_SUMMARY"
