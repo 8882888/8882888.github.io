@@ -216,6 +216,13 @@
   const normalizedPage=location.pathname.replace(/\/index\.html$/,'/');
   funnelStage('landing');
   if(normalizedPage==='/fare/')funnelStage('fare_view');
+  // A direct regional service handoff is also an explicit region/service selection.
+  // Only record it when both parameters are supplied; never collect their values.
+  // The same KST-day stage key prevents double counting after /region/ navigation.
+  if(normalizedPage==='/go/region-service/'){
+    const params=new URL(location.href).searchParams;
+    if(params.get('region')&&['daeri','taksong'].includes(params.get('kind')))funnelStage('region_search');
+  }
   if(normalizedPage==='/region/'){
     // A q= URL represents an explicit keyword lookup even if the page redirects
     // before a user can blur the input. Record only the stage, never the term.
