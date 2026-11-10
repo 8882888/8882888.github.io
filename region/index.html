@@ -6,7 +6,7 @@ function resolveKeywordDestination(term,kind){
  if(['지리산','지리산탁송','지리산종주','지리산종주탁송'].includes(clean))return '/지리산탁송/#mountain-route-fare-table-202611';
  // Information-first cycling searches should reach the existing guide, not an empty locality result.
  if(cyclingExactKeywords.has(clean)||/^(?:(?:전국|국토|동해안|낙동강|영산강|섬진강|금강|오천|아라|한강|남한강|북한강|새재|제주환상)(?:자전거길|자전거)?(?:종주|종주코스|종주완벽정리|코스|완벽정리)(?:탁송)?|(?:전국자전거길|국토종주자전거길)(?:종주|종주코스|코스|완벽정리)?(?:탁송)?|(?:동해안자전거길)?(?:강원|경북)구간(?:종주|탁송)|(?:경포대통일전망대|통일전망대경포대|은어다리영덕해맞이공원|영덕임원항|임원항경포대|영덕통일전망대|고성통일전망대영덕해맞이공원|영덕해맞이공원고성통일전망대)(?:자전거길)?(?:종주|종주탁송|탁송|코스|복귀)|(?:자전거길종주|자전거종주|국토종주))(?:탁송)?$/.test(clean)||/^(?:국토종주자전거길|동해안자전거길(?:종주)?|낙동강자전거길(?:종주)?)(?:탁송)?$/.test(clean))return '/special/cycling-trail-transport/';
- const suffix=['장거리자동차탁송','장거리차량탁송','장거리대리운전','골프장대리운전','대리운전업체','대리운전회사','대리운전요금','자동차탁송업체','자동차탁송회사','자동차탁송요금','차량탁송업체','차량탁송회사','차량탁송요금','자동차탁송','차량탁송','탁송업체','탁송회사','탁송요금','대리운전','탁송'].find(x=>clean.endsWith(x))||'';
+ const suffix=['장거리자동차탁송','장거리차량탁송','렌트카탁송','사고대차탁송','장거리대리운전','골프장대리운전','대리운전업체','대리운전회사','대리운전요금','자동차탁송업체','자동차탁송회사','자동차탁송요금','차량탁송업체','차량탁송회사','차량탁송요금','자동차탁송','차량탁송','탁송업체','탁송회사','탁송요금','대리운전','탁송'].find(x=>clean.endsWith(x))||'';
  if(!suffix)return '';
  const place=clean.slice(0,-suffix.length),service=suffix.includes('대리운전')?'daeri':'taksong';
  if(kind!==service)type.value=service;
