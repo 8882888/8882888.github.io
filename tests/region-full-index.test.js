@@ -24,6 +24,8 @@ assert(region.includes("regionName.href=matchedKind==='daily'?"),'daily-only reg
 assert(region.includes("link.href=matchedKind==='daily'?"),'daily-only secondary link must use its supported detail route');
 assert(!region.includes("if(kind==='daily')return ''"),'explicit region-service keyword must override a stale daily-driver selection');
 assert(region.includes("if(kind!==service)type.value=service;"),'explicit region-service keyword must update the service selector');
+assert(region.includes("const matchedKind=service==='daily'?'daily':"),'daily-driver filter must take precedence over a region transport capability');
+assert(region.includes("matchedKind==='daily'?p.name+' 일일기사 상담"),'daily-driver cards must use service-specific descriptions');
 assert(region.includes("if(matchedKind!=='daily'){const fare="),'daily-only cards must not display a vehicle transport fare link');
 assert(region.includes("estimate.href=service==='daily'?'/service/daily-driver/'"),'daily-driver zero-results fallback must not point to vehicle transport fares');
 assert(region.includes("regionCatalogueReady=true"),'region catalogue readiness guard must remain');
