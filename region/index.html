@@ -20,6 +20,8 @@ function resolveKeywordDestination(term,kind){
  });
  if(found.length!==1){if(found.length>1){const status=document.getElementById('status');if(status)status.textContent='동일하거나 비슷한 지역명 '+found.length+'곳이 있습니다. 시·군·구와 상위 지역을 함께 입력하여 선택해 주세요.';}return '';}
  const p=found[0];
+ // A partial static index cannot prove that a bare district name is unique nationwide.
+ if(regionCataloguePartial&&p.parent_name&&p.parent_name!=='대한민국'&&aliases(p.name).includes(place))return '';
  return '/go/region-service/?region='+encodeURIComponent(p.name)+'&parent='+encodeURIComponent(p.parent_name||'')+'&kind='+service;
 }
 function goToKeyword(){const destination=resolveKeywordDestination(q.value,type.value);if(destination){location.assign(destination);return true}return false}
