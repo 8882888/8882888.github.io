@@ -12,6 +12,7 @@ on:
       - 'business/**'
       - 'service/**'
       - 'region/**'
+      - 'go/**'
       - 'assets/**'
       - 'tests/**'
       - 'tools/**'
