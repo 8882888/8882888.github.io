@@ -19,7 +19,7 @@ test('sitemap index includes reviewed routes and history inventory',()=>{
  for(const route of ['/sitemap-reviewed-routes.xml','/sitemap-history.xml','/sitemap-priority.xml']){
   assert.ok(server.includes("'"+route+"'"),'missing sitemap index reference: '+route);
  }
- assert.match(server,/sitemap-history-\([1-9]/,'history shards must remain reachable');
+ assert.ok(server.includes("'/sitemap-history-'+(i+1)+'.xml'"),'history shards must remain reachable');
 });
 test('reviewed regional sitemap is backed by source-reviewed pages only',()=>{
  assert.ok(server.includes('priorityRegionalPages.flatMap(entry=>'),'reviewed sitemap must use curated records');
