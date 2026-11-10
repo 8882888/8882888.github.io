@@ -36,6 +36,12 @@ for(const [p,id] of sections){
  }
 }
 const home=read('index.html');
+const serverSource=read('server.js');
+const naverTags=[...home.matchAll(/<meta\s+name=["']naver-site-verification["']\s+content=["']([^"']+)["']\s*\/?>/gi)].map(m=>m[1]);
+check(naverTags.length>=1,'homepage must retain Naver ownership verification');
+check(naverTags.every(v=>/^[a-f0-9]{40}$/i.test(v)),'Naver ownership tokens must remain well-formed');
+check(new Set(naverTags).size===naverTags.length,'duplicate Naver ownership tokens in homepage');
+check(naverTags.some(v=>serverSource.includes('name="naver-site-verification" content="'+v+'"')),'dynamic server pages must retain a homepage Naver verification token');
 check(home.indexOf('<body>')<home.indexOf('<header')&&home.indexOf('<header')<home.indexOf('<section id="mobile-direct-image-priority"'),'homepage general service must precede mountain posters');
 check(home.includes('id="general-taksong-service-focus-20261102"'),'missing general regional focus');
 const rules=JSON.parse(read('data/seo-pages.json')).pages;
