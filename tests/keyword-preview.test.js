@@ -185,9 +185,14 @@ console.log('PASS 17 province mappings, disambiguation and mountain fare anchors
 assert.match(regionSearch,/if\(kind!==service\)type\.value=service/,'typed 부산대리운전 must override a default 탁송 selector rather than silently failing to route');
 assert.ok(!regionSearch.includes("kind==='daily'||(kind&&kind!==service)"),'default service mismatch must not block a valid explicit service keyword');
 
-// Mountain fare searches must redirect before any regional dataset fetch resolves.
+// Exact mountain and cycling keywords navigate before the legal-region fetch.
+// The current resolver normalizes the user's input directly; the old
+// DOMContentLoaded-only mountainKeyword implementation was retired.
 const regionHtml=fs.readFileSync(path.join(root,'region/index.html'),'utf8');
-assert.match(regionHtml,/const mountainKeyword=String\(params\.get\('q'\)\|\|''\)\.replace\(\/\\s\+\/g,''\)/,'mountain query must normalize whitespace immediately');
-assert.ok(regionHtml.includes("window.addEventListener('DOMContentLoaded',()=>goToKeyword(),{once:true})") && regionHtml.includes("else fetchWithTimeout('/api/legal-region-index',8000)"),'mountain navigation must not wait for the full region index');
-assert.ok(regionHtml.includes("fetchWithTimeout('/api/legal-region-index',8000)") && regionHtml.includes("fetchWithTimeout('/data/ride-history.json',5000)"),'regional search and ride history should load independently');
-console.log('PASS independent regional fetch and immediate mountain fare redirect');
+assert.ok(regionHtml.includes("const clean=String(term||'').replace(/\\s+/g,'').trim();"),
+ 'keyword resolver must normalize whitespace before choosing the destination');
+assert.ok(regionHtml.includes("if(resolveKeywordDestination(q.value,type.value)){goToKeyword()}else fetchWithTimeout('/api/legal-region-index',8000)"),
+ 'recognized mountain and cycling keyword destinations must not wait for legal-region data');
+assert.ok(regionHtml.includes("fetchWithTimeout('/api/legal-region-index',8000)")&&regionHtml.includes("fetchWithTimeout('/data/ride-history.json',5000)"),
+ 'regional search and completed-ride history must load independently');
+console.log('PASS independent regional data loads and immediate mountain fare redirect');
