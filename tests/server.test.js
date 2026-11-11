@@ -357,6 +357,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     cyclingCentersHtml.includes('rel="canonical" href="https://example.com/route-taksong/centers/"'),
     'cycling center guide must keep a canonical URL');
 
+  const cyclingData=require('../data/cycling-certification-centers.json');
+  assert.equal(cyclingData.centers.length,87,'keep 87 verified cycling center entries');
+  for(const center of cyclingData.centers){
+    assert.ok(cyclingCentersHtml.includes(center.name),'HTTP directory missing cycling center '+center.name);
+  }
+  const cyclingSearch=await get('/route-taksong/centers/?from='+encodeURIComponent(cyclingData.centers[0].id)+'&to='+encodeURIComponent(cyclingData.centers[1].id));
+  assert.equal(cyclingSearch.status,200,'cycling handover search must load');
+  const cyclingSearchHtml=await cyclingSearch.text();
+  assert.ok(cyclingSearchHtml.includes('id="cycling-direction-result"'),'cycling search must render direction result');
+  assert.ok(cyclingSearchHtml.includes('noindex,follow'),'query result must not create indexable duplicate pages');
+  assert.ok(cyclingSearchHtml.includes('tel:18114294'),'cycling search must retain homepage phone');
   // Regional link volume must not crowd out verifiable completed rides in the main sitemap.
   const crypto=require('node:crypto');
   const firstRide=require('../data/public-reviewed-rides-202610.json')[0];
