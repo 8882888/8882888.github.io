@@ -1780,7 +1780,14 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   if(res._smartPath==='/'&&html.includes('</header>')){
    const start='<nav id="homepage-primary-services-20261106"';
    const fixedNav='<nav id="homepage-primary-services-20261106" aria-label="주요 운전 서비스 바로가기" style="position:sticky;top:0;z-index:1100;background:#fff;border-bottom:2px solid #c4d9ee;padding:10px 4%;box-shadow:0 4px 15px #10254420"><div class="homepage-primary-service-grid" style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px"><a href="/daeri/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">대리운전</a><a href="/taksong/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#0754a0;color:#fff;font-weight:900">자동차탁송</a><a href="/service/corporate/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">법인대리운전</a><a href="/service/golf/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">골프대리운전</a><a href="/service/long-distance-daeri/" style="display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:9px;background:#f1f7ff;color:#17436b;font-weight:900">장거리대리운전</a></div></nav>';
-   if(!html.includes(start))html=html.replace('</header>','</header>'+fixedNav);
+   if(!html.includes(start)){
+    const fareStart=html.indexOf('<section id="homepage-fare-top"');
+    const fareEnd=fareStart<0?-1:html.indexOf('</section>',fareStart);
+    if(fareEnd>=0){
+     const afterFare=fareEnd+'</section>'.length;
+     html=html.slice(0,afterFare)+fixedNav+html.slice(afterFare);
+    }else html=html.replace('</header>','</header>'+fixedNav);
+   }
    else {
     const from=html.indexOf(start),end=html.indexOf('</nav>',from);
     if(end>from){

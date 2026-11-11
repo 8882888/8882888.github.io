@@ -10,7 +10,7 @@ const nav=home.indexOf('id="homepage-primary-services-20261106"');
 const hero=home.indexOf('class="hero hero-with-photo"');
 const reviews=home.indexOf('id="homepage-verified-reviews-first-20261106"');
 const find=home.indexOf('id="keyword-service-navigation-20261106"');
-assert(fare>0&&regionSearch>fare&&nav>regionSearch&&hero>nav&&reviews>hero&&find>reviews,
+assert(fare>0&&nav>fare&&regionSearch>nav&&hero>regionSearch&&reviews>hero&&find>reviews,
  'Keep homepage fare-first placement, current regional search, primary service navigation, verified reviews and keyword routing');
 const primary=home.slice(home.indexOf('<nav id="homepage-primary-services-20261106"'),home.indexOf('</nav>',nav));
 for(const href of ['/daeri/','/taksong/','/service/corporate/','/service/golf/','/service/long-distance-daeri/'])assert(primary.includes('href="'+href+'"'),'Missing customer service: '+href);

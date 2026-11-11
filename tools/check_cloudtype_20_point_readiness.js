@@ -41,7 +41,7 @@ const checks=[
  ['17','Independent production audit checks live hashes',audit.includes('check_live_taksong_deploy.py')&&live.includes('deployment_hashes')],
  ['18','Fare lookup stays first and all five fixed service links remain present',start>home.indexOf('id="homepage-fare-top"')&&start>home.indexOf('</header>')&&services.every(([label,href])=>nav.includes('href="'+href+'"')&&nav.includes('>'+label+'</a>'))],
  ['19','Five-service navigation stays sticky',nav.includes('position:sticky;top:0;z-index:1100')&&home.includes('grid-template-columns:repeat(5,minmax(0,1fr))!important')],
- ['20','Homepage cache and missing menu are repaired',server.includes('cachedHomepageSignature!==signature')&&server.includes('if(!html.includes(start))html=html.replace')&&server.includes("headers['x-smart24-primary-nav']='four-services-sticky-20261106'")&&server.includes("headers['cache-control']='no-store, max-age=0, must-revalidate'")]
+ ['20','Homepage cache and missing menu are repaired',server.includes('cachedHomepageSignature!==signature')&&server.includes('html.slice(0,afterFare)+fixedNav+html.slice(afterFare)')&&server.includes("headers['x-smart24-primary-nav']='four-services-sticky-20261106'")&&server.includes("headers['cache-control']='no-store, max-age=0, must-revalidate'")]
 ];
 if(checks.length!==20)throw Error('Expected exactly 20 independent release checks');
 for(const [number,name,valid] of checks){

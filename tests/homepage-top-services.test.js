@@ -21,7 +21,7 @@ assert(nav.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Mobile two
 assert.equal((source.match(/id="homepage-primary-services-20261106"/g)||[]).length,1,'Only one primary navigation allowed');
 const server=fs.readFileSync(path.join(__dirname,'..','server.js'),'utf8');
 assert(server.includes("cachedHomepageSignature!==signature"),'Server must refresh cached homepage after file updates');
-assert(server.includes("if(!html.includes(start))html=html.replace('</header>','</header>'+fixedNav)"),'Server must restore four links even if generated homepage omitted them');
+assert(server.includes('if(!html.includes(start)){') && server.includes('html.slice(0,afterFare)+fixedNav+html.slice(afterFare)'), 'Server must restore missing service links below the fare form');
 assert(server.includes('if(!complete||!present.includes(\'position:sticky\'))'),'Server must repair incomplete or non-sticky old navigation');
 assert(server.includes("headers['x-smart24-primary-nav']='four-services-sticky-20261106'"),'Homepage must expose diagnostic navigation version');
 assert(server.includes("headers['cache-control']='no-store, max-age=0, must-revalidate'"),'Home menu must not be served from stale intermediate caches');

@@ -321,7 +321,7 @@ const rules=[
     "group": "server",
     "path": "server.js",
     "name": "automatic menu restore",
-    "needle": "if(!html.includes(start))html=html.replace"
+    "needle": "html.slice(0,afterFare)+fixedNav+html.slice(afterFare)"
   },
   {
     "group": "server",
