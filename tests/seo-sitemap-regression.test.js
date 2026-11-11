@@ -136,3 +136,10 @@ test('vehicle guide includes actionable handover details without promotional ima
  assert.ok(server.includes("kind==='taksong'?'자동차탁송 인수·인계 전 확인':'대리운전 출발 전 확인'"),
   'vehicle guide heading must reflect the actual service');
 });
+
+test('chauffeur and taksong vehicle guides use distinct operational checklists',()=>{
+ assert.ok(server.includes("kind==='taksong'?'<ol><li>차량의 정확한 주차 위치"),
+  'taksong-only handover checklist must be conditional');
+ assert.ok(server.includes(":'<ol><li>출발지의 정확한 위치와 주차장 출입 방법"),
+  'chauffeur checklist must describe driver pickup rather than vehicle delivery');
+});
