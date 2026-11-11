@@ -346,6 +346,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert(indexedRobots.includes('Sitemap: https://example.com/sitemap-all.xml'),'robots advertises complete sitemap index');
   const seoulPriorityMap=await (await get('/sitemap-priority.xml')).text();
   const seoulMainMap=await (await get('/sitemap.xml')).text();
+  // Cycling handover pages must survive the live dynamic sitemap's 499-URL cap.
+  for(const route of ['/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/']){
+    assert.ok(seoulMainMap.includes('<loc>https://example.com'+route+'</loc>'),'dynamic sitemap must include cycling guide '+route);
+  }
+  const cyclingCentersResponse=await get('/route-taksong/centers/');
+  assert.equal(cyclingCentersResponse.status,200,'cycling center guide must load via HTTP');
+  const cyclingCentersHtml=await cyclingCentersResponse.text();
+  assert.ok(cyclingCentersHtml.includes('rel="canonical" href="https://jeongukdaeri.kr/route-taksong/centers/"')||
+    cyclingCentersHtml.includes('rel="canonical" href="https://example.com/route-taksong/centers/"'),
+    'cycling center guide must keep a canonical URL');
+
   // Regional link volume must not crowd out verifiable completed rides in the main sitemap.
   const crypto=require('node:crypto');
   const firstRide=require('../data/public-reviewed-rides-202610.json')[0];
