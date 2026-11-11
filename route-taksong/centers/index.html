@@ -8,7 +8,8 @@ const officialCenters=['통일전망대','북천철교','봉포해변','영금�
 const knownAliases={'고성통일전망대':'통일전망대','경포대':'경포해변','은어다리':'울진은어다리','영덕해맞이공원':'해맞이공원','삼척임원항':'임원'};
 const otherRouteCenters=['담양댐','영산강하구둑','섬진강댐','배알도수변공원','대청댐','금강하구둑','안동댐','낙동강하구둑'];
 const otherAliases={'광양배알도':'배알도수변공원','배알도':'배알도수변공원','목포영산강하구둑':'영산강하구둑'};
-const normalized=query.replace(/\s+/g,'');
+// Strip common search-intent suffixes only; do not guess unlisted certification centers.
+const normalized=query.replace(/\s+/g,'').replace(/(?:인증센터)?(?:자동차탁송|차량탁송|종주탁송|탁송|종주)?(?:인증센터)?$/,'');
 const center=officialCenters.find(name=>name===normalized)||knownAliases[normalized];
 const otherCenter=otherRouteCenters.find(name=>name===normalized)||otherAliases[normalized];
 if(query){
