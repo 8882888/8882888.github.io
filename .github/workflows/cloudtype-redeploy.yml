@@ -1,33 +1,17 @@
 name: Redeploy official Cloudtype site on verified repository changes
 
+# Manual recovery path only. Normal main pushes are handled by deploy-main.yml.
+# Keeping this workflow dispatch-only avoids duplicate Cloudtype deployments.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'server.js'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'index.html'
-      - 'data/**'
-      - 'lib/**'
-      - 'blog/**'
-      - 'business/**'
-      - 'service/**'
-      - 'region/**'
-      - 'go/**'
-      - 'assets/**'
-      - 'tests/**'
-      - 'tools/**'
-      - 'sitemap*.xml'
-      - '.github/workflows/cloudtype-redeploy.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: smart24-cloudtype-production-redeploy
-  cancel-in-progress: true
+  # Shared with deploy-main.yml so the same existing app is not deployed concurrently.
+  group: cloudtype-production
+  cancel-in-progress: false
 
 jobs:
   request-existing-cloudtype-deployment:
