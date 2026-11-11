@@ -31,11 +31,11 @@ assert(server.includes("if(!['daeri','taksong'].includes(kind)){res.writeHead(30
 assert(server.includes('regions.map(r=>({name:r.name,parent_name:r.parent_name,level:r.level,services:r.services}))'),'index must use official legal regions');
 assert(region.includes("fetchWithTimeout('/api/legal-region-index',8000)"),'region search must use complete production index');
 assert(region.includes("data.regions.length<1000)throw Error('Dynamic region index incomplete')"),'undersized dynamic region index must not be represented as complete nationwide coverage');
-assert(region.includes("fetchWithTimeout('/data/regions.json',5000)"),'GitHub Pages static fallback must be preserved');
-assert(region.indexOf("fetchWithTimeout('/api/legal-region-index',8000)")<region.indexOf("fetchWithTimeout('/data/regions.json',5000)"),'production index must take precedence');
+assert(!region.includes("fetchWithTimeout('/data/regions.json',5000)"),'do not silently use a small pilot index as nationwide coverage');
+assert(region.indexOf("fetchWithTimeout('/api/legal-region-index',8000)")<region.indexOf("fetchWithTimeout('/api/legal-region-index',5000)"),'complete production index retry must follow the first attempt');
 for(const key of ['설악산탁송','지리산탁송'])assert(region.includes(key),'mountain keyword routing lost: '+key);
 const servicePage=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
-assert(servicePage.includes("name===fullExpected||(place.parent_name==='대한민국'&&name===expected)"),'regional image cards must match parent-qualified location');
+assert(servicePage.includes("p.services.includes(kind)"),'verified region service must use exact parent-qualified matches and declared services');
 assert(!servicePage.includes("|\\/assets\\/service-(?:daeri|taksong|golf)-visual\\.svg"),'generic service images must not count as verified regional cards');
 assert(!servicePage.includes('.replaceAll('),'regional image label matching must support older mobile browsers');
 assert(servicePage.includes("tel:18114294"),'regional service landing must retain official consultation number');
@@ -53,7 +53,7 @@ assert(region.includes("if(matchedKind!=='daily'){const fare="),'daily-only card
 assert(region.includes("estimate.href=service==='daily'?'/service/daily-driver/'"),'daily-driver zero-results fallback must not point to vehicle transport fares');
 assert(region.includes("regionCataloguePartial&&p.parent_name&&p.parent_name!=='대한민국'&&aliases(p.name).includes(place)"),'partial index must not auto-redirect a bare district name as uniquely identified');
 assert(region.includes('regionCataloguePartial=!!data.partial'),'static fallback must be marked as partial');
-assert(region.includes('return {...data,partial:true}'),'static backup must carry partial coverage metadata');
+assert(!region.includes("fetchWithTimeout('/data/regions.json',5000)"),'retired pilot fallback must never claim complete legal-region data');
 assert(region.includes('검색 결과가 없어도 서비스 지역이 아니라는 뜻은 아닙니다'),'partial search must not falsely imply unsupported service areas');
 assert(region.includes("regionCatalogueReady=true"),'region catalogue readiness guard must remain');
 assert(region.includes("fetchWithTimeout('/data/ride-history.json',5000)"),'ride history must have a bounded fetch');
