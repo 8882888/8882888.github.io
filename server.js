@@ -2698,6 +2698,8 @@ if(pathname==='/sitemap.xml'){
  const focused=[
   // Give every province equal crawl-discovery priority before city-specific guides.
   '/','/coverage/','/region/','/daeri/','/taksong/',
+  // Preserve core cycling handover guides before large regional lists and the 499-URL cutoff.
+  '/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/',
   ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
   // These genuine category guides must be listed before the 499-URL limit;
   // the national driver destinations can otherwise exhaust the sitemap first.
