@@ -409,6 +409,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(taksongHubResponse.status,200,'taksong service hub must load');
   const taksongHubHtml=await taksongHubResponse.text();
   assert.ok(taksongHubHtml.includes('24시탁송'),'taksong hub must explain overnight vehicle delivery');
+  for(const route of ['/taksong/types/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/']){
+    assert.ok(taksongHubHtml.includes('href="'+route+'"'),'national taksong hub must link directly to specialized service '+route);
+  }
+
   assert.ok(taksongHubHtml.includes('/fare/?service=taksong'),'taksong hub must offer service-specific fare lookup');
   for(const route of ['/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/']){
     assert.ok(taksongHubHtml.includes('href="'+route+'"'),'taksong hub must link outdoor handover guide '+route);
