@@ -377,6 +377,7 @@ jobs:
           home=get('/')
           fare=get('/fare/')
           busan=get('/taksong/busan/')
+          gijang=get('/taksong/busan/gijang-gun/')
           trace=get('/assets/traffic-analytics.js')
           outcome=get('/assets/quote-outcome.js')
           sitemap=get('/sitemap.xml')
@@ -389,6 +390,10 @@ jobs:
              'phone_result_attribution':"metricPage='/fare/quote-'+state" in trace,
              'regional_direct_quote':'id="regional-direct-route-quote-20261107"' in busan,
              'regional_canonical':'https://jeongukdaeri.kr/taksong/busan/' in busan and '<link rel="canonical"' in busan,
+             'gijang_exact_title':'<title>기장군탁송 |' in gijang and '<h1>기장군탁송 |' in gijang,
+             'gijang_canonical':'rel="canonical" href="https://jeongukdaeri.kr/taksong/busan/gijang-gun/"' in gijang,
+             'gijang_indexable':'<meta name="robots" content="noindex' not in gijang.lower(),
+             'gijang_internal_link':'href="/taksong/busan/gijang-gun/"' in home,
              'technical_sitemap':bool(locs) and len(locs)<=499 and len(locs)==len(set(locs)),
              'ride_evidence':quality.get('checks',{}).get('historicalRideRecords')==2591,
           }
