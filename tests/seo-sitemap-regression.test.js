@@ -92,7 +92,7 @@ test('automobile delivery service guides precede province expansion in dynamic s
  const province=focused.indexOf('...provinceRegions.flatMap(');
  assert.ok(province>0,'province expansion must exist');
  for(const route of [
-  '/service/taksong/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
+  '/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
   '/taksong/types/','/taksong/jeju/','/reviews/taksong/','/fare/',
   '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/'
  ]){
