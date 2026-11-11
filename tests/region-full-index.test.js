@@ -7,8 +7,18 @@ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 const region=fs.readFileSync(path.join(root,'region/index.html'),'utf8');
 const handoff=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
 const deployWorkflow=fs.readFileSync(path.join(root,'.github/workflows/cloudtype-redeploy.yml'),'utf8');
-for(const changedPath of ["'go/**'","'package.json'","'package-lock.json'"])
-  assert(deployWorkflow.includes(changedPath),'Cloudtype deployment trigger missing '+changedPath);
+const autoDeployWorkflow=fs.readFileSync(path.join(root,'.github/workflows/deploy-main.yml'),'utf8');
+// The automatic deploy covers every main-branch source change, including go/**,
+// package.json and package-lock.json. The recovery workflow is manual-only to
+// prevent a second deploy request from the same push.
+assert(autoDeployWorkflow.includes('on:\n  push:\n    branches:\n      - main'),'automatic Cloudtype deploy must trigger on main pushes');
+assert(!autoDeployWorkflow.split('concurrency:')[0].includes('paths:'),'automatic Cloudtype deploy must not omit changed application paths');
+assert(deployWorkflow.includes('on:\n  workflow_dispatch:'),'Cloudtype recovery must support manual workflow dispatch');
+assert(!/^  push:/m.test(deployWorkflow.split('permissions:')[0]),'manual Cloudtype recovery must not trigger on each push');
+for(const workflow of [autoDeployWorkflow,deployWorkflow]){
+  assert(workflow.includes('group: cloudtype-production'),'Cloudtype deploy workflows must share one concurrency group');
+  assert(workflow.includes('cancel-in-progress: false'),'Cloudtype deploy must never cancel an in-flight release');
+}
 assert(deployWorkflow.includes('node tests/region-full-index.test.js'),'Cloudtype deploy must run the regional regression test');
 assert(deployWorkflow.includes('for service in daeri taksong; do'),'Cloudtype must verify both service-specific live regional handoffs');
 assert(deployWorkflow.includes('actual_handoff="$(sha256sum "$handoff_file"'),'Cloudtype must hash the downloaded handoff bytes exactly');
