@@ -6,7 +6,7 @@ const root = path.resolve(__dirname,'..');
 const server = fs.readFileSync(path.join(root,'server.js'),'utf8');
 const home = fs.readFileSync(path.join(root,'index.html'),'utf8');
 const rules = JSON.parse(fs.readFileSync(path.join(root,'data/seo-pages.json'),'utf8'));
-const sitemap = fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
+const sitemap = fs.readFileSync(path.join(root,'sitemap-priority.xml'),'utf8');
 const priority = [
   ['/taksong/busan/','부산탁송'],
   ['/taksong/daegu/','대구탁송'],
@@ -25,7 +25,8 @@ for(const [url,label] of priority){
 assert(server.includes("const body=taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice"),'Transport trust proof must precede nationwide keyword and operational notice panels');
 assert(home.includes('id="taksong-first-trust-home-20261106"'),'Home transport navigation missing');
 assert(home.includes('href="/taksong/"'),'Transport hub link missing');
-assert(sitemap.includes('<loc>https://jeongukdaeri.kr/taksong/</loc>'),'Taksong canonical hub must remain discoverable in the official site inventory');
+assert(sitemap.includes('<loc>https://jeongukdaeri.kr/taksong/</loc>'),'Taksong canonical hub must remain in the priority inventory even when the Pages build rewrites sitemap.xml');
+assert(sitemap.includes('<loc>https://jeongukdaeri.kr/taksong/busan/gijang-gun/</loc>'),'Exact Gijang county guide must remain in priority discovery inventory');
 assert(server.includes("const gijangTaksongPage=kind==='taksong'&&r.full_name==='부산광역시 기장군'"),'Gijang county must have its own unambiguous SEO target');
 assert(server.includes("gijangTaksongPage?'기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내'"),'Gijang title must preserve the exact county keyword');
 const rule=rules.pages.find(x=>x.path==='/taksong/');
