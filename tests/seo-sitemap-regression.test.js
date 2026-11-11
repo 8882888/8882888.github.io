@@ -47,7 +47,7 @@ test('cycling center discovery stays in priority and main sitemaps',()=>{
  assert.ok(page.includes('action="/route-taksong/centers/" method="get"'),'search must submit query before fragment');
  assert.ok(page.includes('name="q"'),'search input must be submitted as q');
  assert.equal((page.match(/href="\?q=[^"]+#result"/g)||[]).length,25,'retain 25 center shortcuts');
- const shortcuts=[...page.matchAll(/href="\\?q=([^"#]+)#result"/g)].map(match=>decodeURIComponent(match[1]));
+ const shortcuts=[...page.matchAll(/href="\?q=([^"#]+)#result"/g)].map(match=>decodeURIComponent(match[1]));
  assert.equal(new Set(shortcuts).size,25,'center shortcuts must be unique');
  const script=page.slice(page.indexOf('const officialCenters='),page.indexOf('</script>'));
  for(const name of shortcuts){
