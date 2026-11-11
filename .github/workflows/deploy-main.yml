@@ -9,8 +9,9 @@ on:
     types: [completed]
     branches: [main]
 concurrency:
+  # Keep automatic deployment and manual recovery mutually exclusive without canceling an in-flight release.
   group: cloudtype-production
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   verify:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
