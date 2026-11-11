@@ -1575,6 +1575,48 @@ function staticOriginalSourceSection(relativePath, id){
   return end<0?'':source.slice(start,end+10);
  }catch(_){return ''}
 }
+// Canonical nationwide entry links: draw addresses only from the legal-region registry.
+// Useful service guidance, not a page generated for each keyword variation.
+function nationwideServiceIntentHub(kind){
+ const isT=kind==='taksong',service=isT?'자동차탁송':'대리운전';
+ const provinces=[
+  ['서울특별시','서울'],['부산광역시','부산'],['대구광역시','대구'],['인천광역시','인천'],
+  ['광주광역시','광주'],['대전광역시','대전'],['울산광역시','울산'],['세종특별자치시','세종'],
+  ['경기도','경기'],['강원특별자치도','강원'],['충청북도','충북'],['충청남도','충남'],
+  ['전북특별자치도','전북'],['전라남도','전남'],['경상북도','경북'],
+  ['경상남도','경남'],['제주특별자치도','제주']
+ ];
+ const provinceLinks=provinces.map(([full,short])=>{
+  const r=regionByFullName.get(full);
+  return r?'<li><a href="'+esc(servicePath(r,kind))+'">'+esc(short+service)+'</a></li>':'';
+ }).filter(Boolean).join('');
+ const focus=[
+  ['경상남도 창원시','창원'],['강원특별자치도 원주시','원주'],
+  ['경상남도 진주시','진주'],['전라남도 나주시','나주'],
+  ['경상북도 김천시','김천'],['강원특별자치도 속초시','속초'],
+  ['강원특별자치도 강릉시','강릉']
+ ];
+ const focusLinks=focus.map(([full,name])=>{
+  const r=regionByFullName.get(full);
+  return r?'<li><a href="'+esc(servicePath(r,kind))+'">'+esc(name+service)+'</a></li>':'';
+ }).filter(Boolean).join('');
+ const heading=isT?'전국자동차탁송 예약 · 차량탁송·로드탁송·장거리탁송':'전국대리운전 예약 · 심야대리운전·장거리대리운전';
+ const lead=isT
+  ?'전국탁송·전국자동차탁송을 찾는 고객은 일반 로드탁송, 정비차량 입출고, 장거리 차량 이동 중 목적을 먼저 구분하세요. 자동차탁송업체·차량탁송회사 상담 시 운행 가능한 차량인지, 차량 열쇠와 인수·인계 담당자가 누구인지 확인합니다.'
+  :'전국대리운전·대리운전업체·대리운전회사를 찾는 고객은 출발지와 목적지, 귀가 예정 시각부터 확인하세요. 일반 야간 귀가, 장거리대리운전, 골프장 편도 대리운전, 법인·단체 운전은 기사 대기·복귀 조건이 서로 다릅니다.';
+ const practice=isT
+  ?'<h3>탁송요금과 24시 차량 이동 문의</h3><p>24시탁송·24시간탁송·심야탁송은 상담 요청 시간과 실제 출발 가능 시간이 다를 수 있습니다. 차량의 주행 가능 상태, 출발·도착 주소, 희망 인계 시각, 통행료·주차비·기사 복귀 비용 포함 여부를 확인해 최종 견적을 상담합니다. 주행이 불가능한 차량은 로드탁송과 견인·적재운송을 구분해야 합니다.</p><p><a href="/service/long-distance-taksong/">장거리탁송 안내</a> · <a href="/service/taksong-purpose/">정비·중고차·렌트카 탁송</a> · <a href="/taksong/types/">차종별 차량탁송</a></p>'
+  :'<h3>대리운전요금과 야간·장거리 예약 문의</h3><p>대리운전요금은 출발 주차장·도착지, 심야 시간, 경유·대기, 기사 접근과 복귀 교통편에 따라 달라집니다. 골프장 왕복 일일기사와 라운딩 후 편도 대리운전은 서로 다른 서비스입니다. 법인카드 결제나 단체 이용 조건은 예약 전에 확인합니다.</p><p><a href="/service/long-distance-daeri/">장거리대리운전 안내</a> · <a href="/service/golf/">골프대리운전</a> · <a href="/service/corporate/">법인대리운전</a> · <a href="/service/daily-driver/">일일기사</a></p>';
+ return '<section id="national-commercial-intents-'+kind+'" aria-label="전국 '+service+' 예약과 지역 선택">'+
+ '<h2>'+heading+'</h2><p>'+lead+'</p>'+practice+
+ '<h3>전국 17개 시·도 '+service+' 지역별 안내</h3><p>지역명은 상담 정보를 찾는 기준입니다. 각 링크는 기존 정식 행정구역 주소로 연결되며, 모든 지역에 기사가 상주하거나 즉시 배차된다는 뜻은 아닙니다.</p>'+
+ '<ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:7px;padding-left:20px">'+provinceLinks+'</ul>'+
+ '<h3>지방 주요 도시 '+service+' 상세 안내</h3><p>원주·진주·나주·김천의 혁신도시 이용은 현재 해당 시의 정식 지역 안내에서 출발 동·주소를 확인합니다.</p>'+
+ '<ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;padding-left:20px">'+focusLinks+'</ul>'+
+ '<p><a href="/fare/?service='+kind+'">출발지·도착지 '+service+' 예상요금</a> · <a href="/reviews/history/?kind='+kind+'">확인된 실제 운행기록</a> · <a href="/region/">읍·면·동 지역 검색</a> · <a href="tel:18114294">대표전화 1811-4294</a></p>'+
+ '<p><small>예상요금과 기존 운행내역은 현재 배차 확정이나 동일 요금 보장이 아닙니다. 기사 배정 가능 여부와 보험 적용 범위는 예약 조건에 따라 확인합니다.</small></p></section>';
+}
+
 function serviceHub(kind){
  const label=kind==='taksong'?'탁송':'대리운전',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const isT=kind==='taksong';
@@ -1616,7 +1658,7 @@ function serviceHub(kind){
 
  const taksongOutdoorRoutes=isT?'<section id="taksong-outdoor-handover"><h2>설악산·지리산 종주 및 자전거길 차량탁송</h2><p>산행과 자전거 종주에서는 출발 주차장과 종착 지점이 서로 다를 수 있습니다. 고객 차량의 인수 장소와 인계 장소, 열쇠 전달 방법, 차량 주차 가능 여부를 먼저 확인하세요. 자전거 자체 운송과 고객 자동차 이동은 별도 서비스입니다.</p><h3>산행 종주 차량 이동</h3><p><a href="/설악산탁송/">설악산 오색·한계령·소공원·백담사 차량탁송 안내</a> · <a href="/지리산탁송/">지리산 성삼재·중산리·대원사 차량탁송 안내</a></p><h3>자전거 종주 차량 이동</h3><p><a href="/route-taksong/">국토종주·동해안·낙동강 자전거길 탁송</a> · <a href="/route-taksong/centers/">자전거길 인증센터 출발·도착 선택</a></p><p>각 코스의 실제 배차 가능 여부와 요금은 출발·도착 장소, 시간 및 기사 복귀 조건에 따라 확인합니다. <a href="/fare/?service=taksong">탁송 예상요금 조회</a> · <a href="tel:18114294">차량탁송 상담 1811-4294</a></p></section>':'';
  const taksongCenterHandover=isT?'<section id="taksong-service-center-handover"><h2>자동차 서비스센터 입고·출고탁송 및 사고대차 차량 이동</h2><p>정비 예약 차량은 센터의 입고 가능 시간, 차량 키 전달 담당자, 정비 접수처와 출고 후 수령 장소를 사전에 확인해야 합니다. 블루핸즈·수입차 서비스센터·렌트카 반납 등 목적별로 인수·인계 조건이 다릅니다. 센터와의 공식 제휴나 기사 상주를 의미하지 않습니다.</p><h3>서비스센터 탁송 전 확인사항</h3><ol><li>센터명과 지점 주소, 입고·출고 가능 시각</li><li>차종과 차량 운행 가능 상태, 주차장 출입 절차</li><li>접수·수령 담당자, 차량 키와 서류 전달 방법</li><li>출발지·도착지 및 기사 복귀 조건에 따른 최종 요금</li></ol><p><a href="/service/taksong-purpose/">서비스 목적별 탁송 안내</a> · <a href="/business/rental-car/">렌트카·사고대차 탁송</a> · <a href="/reviews/taksong/">실제 탁송 운행기록</a> · <a href="/fare/?service=taksong">탁송 예상요금</a> · <a href="tel:18114294">입출고탁송 상담 1811-4294</a></p></section>':'';
- const body=taksongTrustFirst+operationalNotice+taksongOutdoorRoutes+taksongCenterHandover+(isT?'<section id="specialized-business-taksong-hub"><h2>렌터카·중고차 딜러·수출차·경매장 기업탁송 상담</h2><p>고정거래처는 반복 이동 구간, 월 예상 대수, 출고·반납 마감시각과 인수·인계 담당자를 기준으로 운행 조건을 협의합니다. 확정 단가·전담 기사·법인 제휴 여부는 상담으로 확인합니다.</p><p><a href="/business/rental-car/">렌트카·보험사 사고대차탁송</a> · <a href="/business/used-car/">중고차 딜러·매매단지탁송</a> · <a href="/business/export-port/">송도수출단지·항만탁송</a> · <a href="/business/auction/">경매장 차량탁송</a> · <a href="/blog/archive/vehicle-taksong/">기존 블로그 원문</a> · <a href="tel:18114294">고정거래처 상담 1811-4294</a></p></section>':'')+(isT?'<section id="seoul-taksong-seven-articles"><h2>서울 25개 구 · 7권역 자동차탁송 블로그형 안내</h2><p>3~4개 구씩 묶어 차량 인수 환경과 실제 발행된 네이버 원문을 연결했습니다.</p><p><a href="/blog/seoul-taksong/">서울 7개 권역 전체보기</a> · <a href="/taksong/seoul/">서울탁송 요금·예약</a></p></section>':'')+curatedArchiveHub+staticOriginalSourceSection(isT?'service/taksong/index.html':'service/daeri/index.html',isT?'real-original-taksong-links-20261102':'real-original-daeri-links-20261102')+(isT?'':daeriBlogEditorial.national(majorRegions,servicePath,esc))+nationalDriverGuide+regionalStories+priorityRegionLinks(kind)+naverFocus50Hub(kind)+'<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+nightTaksongPriority+taksongSearchSignals+casinoPriority+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
+ const body=taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice+taksongOutdoorRoutes+taksongCenterHandover+(isT?'<section id="specialized-business-taksong-hub"><h2>렌터카·중고차 딜러·수출차·경매장 기업탁송 상담</h2><p>고정거래처는 반복 이동 구간, 월 예상 대수, 출고·반납 마감시각과 인수·인계 담당자를 기준으로 운행 조건을 협의합니다. 확정 단가·전담 기사·법인 제휴 여부는 상담으로 확인합니다.</p><p><a href="/business/rental-car/">렌트카·보험사 사고대차탁송</a> · <a href="/business/used-car/">중고차 딜러·매매단지탁송</a> · <a href="/business/export-port/">송도수출단지·항만탁송</a> · <a href="/business/auction/">경매장 차량탁송</a> · <a href="/blog/archive/vehicle-taksong/">기존 블로그 원문</a> · <a href="tel:18114294">고정거래처 상담 1811-4294</a></p></section>':'')+(isT?'<section id="seoul-taksong-seven-articles"><h2>서울 25개 구 · 7권역 자동차탁송 블로그형 안내</h2><p>3~4개 구씩 묶어 차량 인수 환경과 실제 발행된 네이버 원문을 연결했습니다.</p><p><a href="/blog/seoul-taksong/">서울 7개 권역 전체보기</a> · <a href="/taksong/seoul/">서울탁송 요금·예약</a></p></section>':'')+curatedArchiveHub+staticOriginalSourceSection(isT?'service/taksong/index.html':'service/daeri/index.html',isT?'real-original-taksong-links-20261102':'real-original-daeri-links-20261102')+(isT?'':daeriBlogEditorial.national(majorRegions,servicePath,esc))+nationalDriverGuide+regionalStories+priorityRegionLinks(kind)+naverFocus50Hub(kind)+'<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+nightTaksongPriority+taksongSearchSignals+casinoPriority+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
  '<section id="reservation-guide"><h2>'+label+' 예약할 때 필요한 정보</h2>'+(isT?'<ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치</li><li>도착지 주소와 희망 인수·인계 날짜 및 시각</li><li>차종·주행 가능 상태와 차량 키 전달 방법</li><li>현장 담당자, 경유지, 통행료 및 기타 요청사항</li></ol>':'<ol><li>기사와 만날 출발지 주소 및 주차 위치</li><li>목적지 주소, 경유지와 희망 출발 시각</li><li>차종·동승 인원과 차량 특이사항</li><li>야간·장거리 이동 및 기타 요청사항</li></ol>')+'<p>거리만으로 최종 요금을 확정하지 않으며, 기사 접근·복귀 여건을 확인합니다.</p></section>'+
  bookingGuide(kind)+faqHtml+longDistanceDaeriExamples+earlierDaeriPosts+featuredLinks+
  (isT?'<section><h2>차종·서비스별 자동차탁송</h2><p>국산차·수입차·전기차·화물차 및 서비스센터 입출고 등 차량 종류와 이용 목적에 따라 확인할 사항이 다릅니다.</p><p><a href="/taksong/types/">차종별 자동차탁송</a> · <a href="/service/taksong-purpose/">서비스센터 입출고·정비차량탁송</a> · <a href="/service/long-distance-taksong/">장거리 자동차탁송</a> · <a href="/service/heavy-truck-taksong/">화물차·특장차 탁송</a></p></section>':'<section><h2>장거리·골프장 대리운전</h2><p>일반 시내 이동과 달리 장거리·골프장 출발은 운행 후 기사 복귀 여건이 배차에 영향을 줄 수 있습니다. 출발 예정 시각과 목적지를 함께 알려주세요.</p></section>')+
