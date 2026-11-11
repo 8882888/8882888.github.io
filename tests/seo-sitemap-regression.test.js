@@ -160,3 +160,9 @@ test('national reservation guide does not reuse vehicle handover instructions fo
  assert.ok(server.includes(":'<ol><li>기사와 만날 출발지 주소 및 주차 위치"));
  assert.ok(server.includes('차종·동승 인원과 차량 특이사항'));
 });
+
+test('national taksong hub directly links five priority cities',()=>{
+ for(const city of ['sejong','changwon','daejeon','sokcho','gangneung']){
+  assert.ok(server.includes('<a href="/taksong/'+city+'/">'),'missing direct regional link: '+city);
+ }
+});
