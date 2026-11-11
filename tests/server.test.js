@@ -413,6 +413,23 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(taksongHubHtml.includes('href="'+route+'"'),'national taksong hub must link directly to specialized service '+route);
   }
 
+  // Verify actual rendered links and HTTP 200 destinations. The unusual
+  // gangreung-si spelling is intentional: it comes from the current region slugger.
+  for(const [city,route] of [
+    ['세종','/taksong/sejong/'],
+    ['창원','/taksong/gyeongnam/changwon-si/'],
+    ['대전','/taksong/daejeon/'],
+    ['속초','/taksong/gangwon/sokcho-si/'],
+    ['강릉','/taksong/gangwon/gangreung-si/']
+  ]){
+    assert.ok(taksongHubHtml.includes('href="'+route+'">'+city+'자동차탁송</a>'),
+      'national taksong hub must link the canonical city '+city+' -> '+route);
+    const destination=await get(route);
+    assert.equal(destination.status,200,'canonical city page must respond HTTP 200: '+route);
+    const cityHtml=await destination.text();
+    assert.ok(cityHtml.includes(city+'탁송'),'destination must name the correct city: '+route);
+    assert.ok(cityHtml.includes('1811-4294'),'destination must preserve official consultation number: '+route);
+  }
   assert.ok(taksongHubHtml.includes('/fare/?service=taksong'),'taksong hub must offer service-specific fare lookup');
   for(const route of ['/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/']){
     assert.ok(taksongHubHtml.includes('href="'+route+'"'),'taksong hub must link outdoor handover guide '+route);
@@ -423,12 +440,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(taksongHubHtml.includes('href="/business/rental-car/"'),'service center guidance must link rental and accident replacement cars');
 
 
-  // A keyword-only region-service shortcut must not discard the customer's typed service.
+  // Verify the first server redirect: /region/ may then redirect unique matches
+  // to their canonical service landing pages, which is correct SEO behavior.
   for(const keyword of ['부산대리운전','대구탁송','세종대리운전','속초탁송']){
-    const response=await get('/go/region-service/?q='+encodeURIComponent(keyword));
-    assert.equal(response.status,200,'keyword shortcut should resolve through region search '+keyword);
-    assert.ok(response.url.includes('/region/?q='+encodeURIComponent(keyword)),
-      'keyword shortcut must preserve search term '+keyword);
+    const response=await fetch('http://127.0.0.1:'+port+'/go/region-service/?q='+encodeURIComponent(keyword),{redirect:'manual'});
+    assert.equal(response.status,302,'keyword shortcut must redirect to regional search '+keyword);
+    assert.equal(response.headers.get('location'),'/region/?q='+encodeURIComponent(keyword),
+      'keyword shortcut must preserve the typed service term '+keyword);
   }
   // Regional link volume must not crowd out verifiable completed rides in the main sitemap.
   const crypto=require('node:crypto');
