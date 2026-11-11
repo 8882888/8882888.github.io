@@ -3,6 +3,7 @@
 import json
 import html
 import os
+import re
 from pathlib import Path
 from datetime import date
 from urllib.parse import quote, urlsplit, urlunsplit
@@ -768,8 +769,11 @@ def main():
     sorted_urls = sorted(sitemap_safe_url(url) for url in urls)
     chunk_size = 45000
     sitemap_files = []
+    # Replace only generated numbered sitemap shards. Keep curated priority,
+    # reviewed and other hand-maintained sitemap files intact during Pages builds.
     for old_file in ROOT.glob("sitemap-*.xml"):
-        old_file.unlink()
+        if re.fullmatch(r"sitemap-\d+\.xml", old_file.name):
+            old_file.unlink()
     for offset in range(0, len(sorted_urls), chunk_size):
         chunk = sorted_urls[offset:offset + chunk_size]
         sitemap_name = f"sitemap-{len(sitemap_files) + 1}.xml"
