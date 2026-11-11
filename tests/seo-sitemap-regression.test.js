@@ -166,4 +166,8 @@ test('national taksong hub builds priority city links from canonical region path
   assert.ok(server.includes("['"+city+"',"),'missing priority city: '+city);
  }
  assert.ok(server.includes("servicePath(r,'taksong')"),'priority city links must use canonical region paths');
+ assert.ok(server.includes("if(!r)throw Error('Missing canonical priority taksong region: '+full)"),
+  'missing official city data must fail loudly rather than silently drop links');
+ assert.ok(!server.includes("regions.find(x=>x.name===name+'시'"),
+  'ambiguous city-name fallback must never choose the wrong province');
 });
