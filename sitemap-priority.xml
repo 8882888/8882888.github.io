@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://jeongukdaeri.kr/</loc></url>
+  <url><loc>https://jeongukdaeri.kr/daeri/</loc></url>
+  <url><loc>https://jeongukdaeri.kr/taksong/</loc></url>
+  <url><loc>https://jeongukdaeri.kr/coverage/</loc></url>
+  <url><loc>https://jeongukdaeri.kr/region/innovation-cities/</loc></url>
+  <url><loc>https://jeongukdaeri.kr/reviews/history/</loc></url>
+  <url><loc>https://jeongukdaeri.kr/special/24-hour-service/</loc></url>
+  <url><loc>https://jeongukdaeri.kr/service/long-distance-daeri/</loc></url>
   <url><loc>https://jeongukdaeri.kr/region/</loc></url>
   <url><loc>https://jeongukdaeri.kr/fare/</loc></url>
   <url><loc>https://jeongukdaeri.kr/region/busan-daeri-taksong/</loc></url>
