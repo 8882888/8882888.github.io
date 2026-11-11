@@ -147,7 +147,8 @@ assert.match(serviceRouter,/q\.get\('q'\)/,'keyword query must be recognized');
 assert.match(serviceRouter,/location\.replace\('\/region\/\?q='\+encodeURIComponent\(keyword\)\)/,'q-only queries must preserve their keyword in the canonical search flow');
 assert.match(serviceRouter,/q\.has\('region'\).*q\.has\('kind'\)/,'explicit structured region selection must remain intact');
 
-assert.ok(serviceRouter.includes("replace(/자동차탁송|대리운전|탁송|스마트/g,'')"), 'smart-branded card labels must normalize service suffixes and brand text without requiring replaceAll on older browsers');
+assert.ok(serviceRouter.includes("const common=kind==='daeri'?'/assets/service-daeri-visual.svg':'/assets/service-taksong-visual.svg'"), 'region-service uses verified text-only service illustrations instead of guessed brand images');
+assert.ok(!serviceRouter.includes('replaceAll('), 'region service landing must remain compatible with browsers lacking replaceAll');
 
 // Preserve the mobile conversion path and the non-photographic image fallback.
 assert.match(serviceRouter,/href="tel:18114294"/,'region-service must retain the approved phone action');
