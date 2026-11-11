@@ -7,7 +7,7 @@ const root=path.resolve(__dirname,'..');
 const read=x=>fs.readFileSync(path.join(root,x),'utf8');
 const server=read('server.js'),home=read('index.html'),seo=JSON.parse(read('data/seo-pages.json'));
 assert(server.includes('id="taksong-trust-first-20261106"'),'trust panel omitted');
-assert(server.includes("const body=taksongTrustFirst+operationalNotice"),'trust-first priority lost');
+assert(server.includes("const body=taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice"),'trust-first priority lost before nationwide service hub');
 assert(server.includes("x.service==='taksong'&&x.verified===true&&x.status==='completed'"),'verified ride gate missing');
 assert(server.includes('차량 인수부터 인계까지 4단계'),'handover procedure missing');
 assert(server.includes('보험 적용 및 보장 범위'),'insurance disclosure missing');
