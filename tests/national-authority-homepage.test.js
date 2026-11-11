@@ -16,4 +16,15 @@ assert(home.includes('href="tel:18114294"'),'Actual booking phone remains direct
 assert(home.includes('최종 요금은 별도 확정합니다'),'Honest current pricing notice remains visible');
 assert(!home.includes('업계 1위')&&!home.includes('대리고보다'),'No unsupported ranking or superiority claims');
 assert(home.includes('<link rel="canonical" href="https://jeongukdaeri.kr/">'),'Original canonical domain is preserved');
+const searchConfig=JSON.parse(fs.readFileSync(path.join(root,'data/seo-pages.json'),'utf8'));
+const primary=searchConfig.pages.find(page=>page.path==='/');
+assert(primary,'Homepage must have one canonical SEO metadata definition');
+assert(home.includes('<title>'+primary.title+'</title>'),'Homepage title and central SEO config must match');
+assert(home.includes('<meta name="description" content="'+primary.description+'">'),'Homepage meta description and SEO config must match');
+assert(home.includes('<meta property="og:description" content="'+primary.description+'">'),'Open Graph description must match central SEO config');
+for(const term of ['전국대리운전','전국탁송','24시탁송','대리비','대리비견적','탁송비','탁송견적','탁송비견적']){
+ assert(primary.description.includes(term),'Homepage search intent lost: '+term);
+}
+assert(home.includes('<meta property="og:image:type" content="image/png">'),'OG image must be PNG');
+assert(home.includes('"encodingFormat":"image/png"'),'Homepage image JSON-LD must match actual PNG response');
 console.log('PASS: source-backed 2,591 ride proof, concise national service title and one-tap quote/phone');
