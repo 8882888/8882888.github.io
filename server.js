@@ -2256,6 +2256,13 @@ if(innovationQuery&&(!innovationKind||innovationKind===innovationQuery.kind)){
 if(pathname==='/'||pathname==='/index.html'){const homepageStat=fs.statSync(path.join(ROOT,'index.html'));const signature=homepageStat.size+':'+homepageStat.mtimeMs;if(!cachedHomepageHtml||cachedHomepageSignature!==signature){cachedHomepageSignature=signature;const home=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');const ticker=publicRides.slice(-18).reverse().map(x=>'<a class="trip-flow-card" href="'+rideUrl(x)+'"><span>'+esc(x.date)+'</span><strong>'+esc(x.departure)+' → '+esc(x.destination)+'</strong><span>'+esc(x.fare||'요금 문의')+'</span></a>').join('');const homepage=home.replace(/href="#ride-history"/g,'href="/reviews/"').replace('<span class="trip-flow-card">확인된 운행 기록을 불러오는 중입니다.</span>',ticker||'<a class="trip-flow-card" href="/reviews/">완료 운행 후기 보기</a>');cachedHomepageHtml=applySeo(homepage.replace('<!-- DYNAMIC_REGION_LINKS -->','<section id="hiking-transport-quicklinks" aria-label="산행 종주 차량탁송 바로가기"><h2>설악산·지리산 종주 차량탁송</h2><p>설악산탁송은 오색·한계령·소공원·백담사 등 산행 출발지와 하산지 사이 차량 이동을 안내합니다. 일반 대리운전과 구분해 산행 코스, 차량 인수·인계, 주차장 위치 및 요금을 확인하세요.</p><p><a class="cta" href="/설악산탁송/">설악산탁송 코스·요금 자세히 보기</a> <a href="/지리산탁송/">지리산 종주탁송 안내</a></p></section>'+nationwideLinks()+homepagePriorityLinks()+'<section><h2>전국 기사 모집</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a></p></section><section><h2>장소·활동으로 찾기</h2><p><a href="/activities/">맛집·여행지·산행·자전거·행사 후 귀가와 차량 이동 안내</a></p></section>'),'/');}return respond(res,200,cachedHomepageHtml)}
 // Redirect regional search clicks to a single service-specific, image-first landing page.
 if(pathname==='/go/region-service/'||pathname==='/go/region-service'){
+ // Preserve an explicit user-entered search term when a shortcut uses ?q= rather than region/kind.
+ // The /region/ resolver handles ambiguity and service intent; never guess a same-name locality here.
+ if(u.searchParams.has('q')&&!u.searchParams.has('region')){
+  const q=String(u.searchParams.get('q')||'').trim().slice(0,120);
+  const dest='/region/'+(q?'?q='+encodeURIComponent(q):'');
+  res.writeHead(302,{location:dest,'cache-control':'no-store'});return res.end();
+ }
  const region=String(u.searchParams.get('region')||'').trim(),parent=String(u.searchParams.get('parent')||'').trim();
  const kind=u.searchParams.get('kind');
  if(!['daeri','taksong'].includes(kind)){res.writeHead(302,{location:'/region/'});return res.end()}
