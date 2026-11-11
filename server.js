@@ -2704,6 +2704,13 @@ if(pathname==='/sitemap.xml'){
   '/service/taksong/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
   '/taksong/types/','/taksong/jeju/','/reviews/taksong/','/fare/',
   '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/',
+  // Curated high-intent automobile delivery localities, only where official legal-region records exist.
+  ...[
+   '부산광역시','대구광역시','울산광역시','세종특별자치시',
+   '경상남도 창원시','경상남도 진주시','경상북도 김천시',
+   '강원특별자치도 원주시','강원특별자치도 속초시','강원특별자치도 강릉시',
+   '전라남도 나주시'
+  ].map(name=>regionByFullName.get(name)).filter(Boolean).map(r=>servicePath(r,'taksong')),
   ...provinceRegions.flatMap(r=>[canonical(r.slug),servicePath(r,'daeri'),servicePath(r,'taksong')]),
   // These genuine category guides must be listed before the 499-URL limit;
   // the national driver destinations can otherwise exhaust the sitemap first.
