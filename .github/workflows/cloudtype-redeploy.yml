@@ -165,6 +165,21 @@ jobs:
             echo '::error::Live homepage still contains wording explicitly retired by the site owner.'
             exit 1
           fi
+          # Check the exact county page only after matching the real release hash.
+          # Naver index/rank is independent; these checks protect crawlable HTML.
+          gijang="$(curl --fail --silent --show-error --connect-timeout 8 --max-time 20 -H 'Cache-Control: no-cache' 'https://jeongukdaeri.kr/taksong/busan/gijang-gun/?verify=gijang-keyword-20261111')"
+          if ! grep -Fq '<title>기장군탁송 |' <<<"$gijang" || ! grep -Fq '<h1>기장군탁송 |' <<<"$gijang"; then
+            echo '::error::Gijang county live page does not have the exact keyword title and H1.'
+            exit 1
+          fi
+          if ! grep -Fq 'rel="canonical" href="https://jeongukdaeri.kr/taksong/busan/gijang-gun/"' <<<"$gijang" || grep -Eiq '<meta[^>]+name="robots"[^>]+noindex' <<<"$gijang"; then
+            echo '::error::Gijang county live page canonical or search indexability is wrong.'
+            exit 1
+          fi
+          if ! grep -Fq 'href="/taksong/busan/gijang-gun/"' <<<"$homepage"; then
+            echo '::error::Gijang county homepage crawl path is missing.'
+            exit 1
+          fi
           # Exact keyword SVGs and the current regional PNG/WebP images must be real
           # accessible SVG responses, not a broken URL or a cached vehicle photo.
           python3 - <<'PY'
