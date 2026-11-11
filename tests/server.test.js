@@ -370,7 +370,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(cyclingSearchHtml.includes('tel:18114294'),'cycling search must retain homepage phone');
   // Service-intent taksong pages must be present in the HTTP-generated discovery map.
   for(const route of [
-    '/service/taksong/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
+    '/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
     '/taksong/types/','/taksong/jeju/','/reviews/taksong/',
     '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/'
   ]){
