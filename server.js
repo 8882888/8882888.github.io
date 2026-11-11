@@ -285,7 +285,7 @@ function vehicleGuideLink(kind){
 }
 function serviceVehicleGallery(kind){
  const label=kind==='taksong'?'자동차탁송':'대리운전';
- return '<section id="vehicle-guide"><h2>국산차·수입차 '+label+' 안내</h2><p>차종과 차량 크기, 출발지·도착지 및 희망 일정을 알려주시면 이용 조건을 상담합니다. 차량 홍보 이미지는 저작권 확인을 위해 표시하지 않습니다.</p><p><a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>';
+ return '<section id="vehicle-guide"><h2>국산차·수입차 '+label+' 안내</h2><p>차종·차량 크기와 출발지·도착지, 희망 인수 시각을 알려주시면 이용 조건을 상담합니다. 차량 홍보 이미지는 저작권 확인을 위해 표시하지 않습니다.</p><h3>자동차 인수·인계 전 확인</h3><ol><li>차량의 정확한 주차 위치와 출입·주차 제한</li><li>차량 키 전달 방법과 인수·인계 담당자 연락처</li><li>시동·주행 가능 상태, 경고등과 특이사항</li><li>장거리·야간 이동 시 희망 시간과 통행료 등 추가 조건</li></ol><p>정비 입출고나 렌트카 반납은 담당자 및 영업시간도 함께 확인해 주세요.</p><p><a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>';
 }
 function serviceJourneyLinks(kind){
  const isT=kind==='taksong',label=isT?'자동차탁송':'대리운전';
