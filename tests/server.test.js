@@ -1917,6 +1917,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(finderData.count,1028100);
   assert.equal(finderData.selectedIntent,'fare');
   assert(finderData.results.some(x=>x.name==='인천광역시 강화군'),'Ganghwa lookup includes official region');
+  // County keyword must be explicit in HTML metadata, not shortened to an ambiguous town name.
+  const gijang=await get('/taksong/busan/gijang-gun/');
+  assert.equal(gijang.status,200,'Gijang county taksong guide must be reachable');
+  const gijangHtml=await gijang.text();
+  assert(gijangHtml.includes('<title>기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내'), 'Exact 기장군탁송 keyword must lead the canonical search title');
+  assert(gijangHtml.includes('부산 기장군탁송·기장탁송 차량 인수·인계 안내'), 'Gijang meta description must describe real booking intent');
+  assert(gijangHtml.includes('https://example.com/taksong/busan/gijang-gun/')||gijangHtml.includes('https://jeongukdaeri.kr/taksong/busan/gijang-gun/'), 'Gijang canonical must remain on the same dedicated route');
+  assert(!gijangHtml.includes('<meta name="robots" content="noindex'), 'Gijang source-backed guide must remain indexable');
+  assert(gijangHtml.includes('경동오토필드')&&gijangHtml.includes('정관읍')&&gijangHtml.includes('일광읍'), 'Source-backed Gijang logistics and neighborhood guidance must remain');
   const finderSitemap=await(await get('/sitemap-priority.xml')).text();
   assert(finderSitemap.includes('https://example.com/find/'),'finder has one discoverable canonical');
   console.log('PASS million-query finder HTTP, search, intent, API and noindex guard');
