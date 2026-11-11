@@ -22,7 +22,7 @@ assert(panel.length>1000,'Taksong trust panel missing');
 for(const [url,label] of priority){
  assert(panel.includes('href="'+url+'">'+label+'</a>'),'Missing intended transport link '+label);
 }
-assert(server.includes("const body=taksongTrustFirst+operationalNotice"),'Transport trust content must be first');
+assert(server.includes("const body=taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice"),'Transport trust proof must precede nationwide keyword and operational notice panels');
 assert(home.includes('id="taksong-first-trust-home-20261106"'),'Home transport navigation missing');
 assert(home.includes('href="/taksong/"'),'Transport hub link missing');
 assert(!sitemap.includes('<loc>https://jeongukdaeri.kr/taksong/</loc>'),'Node-only transport hub must not be advertised as a missing static GitHub Pages page');
