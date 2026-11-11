@@ -143,3 +143,9 @@ test('chauffeur and taksong vehicle guides use distinct operational checklists',
  assert.ok(server.includes(":'<ol><li>출발지의 정확한 위치와 주차장 출입 방법"),
   'chauffeur checklist must describe driver pickup rather than vehicle delivery');
 });
+
+test('vehicle guide introduction uses service-specific pickup terminology',()=>{
+ assert.ok(server.includes("kind==='taksong'?'차량 인수·인계 조건과 예약 준비사항':'출발지·목적지와 기사 호출 전 확인사항'"));
+ assert.ok(server.includes("kind==='taksong'?'차종·차량 크기와 출발지·도착지, 희망 인수 시각"));
+ assert.ok(server.includes(":'차종과 출발지·목적지, 희망 출발 시각"));
+});
