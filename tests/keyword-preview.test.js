@@ -155,29 +155,19 @@ assert.match(serviceRouter,/href="tel:18114294"/,'region-service must retain the
 assert.match(serviceRouter,/href="\/fare\/"/,'region-service must retain a fare lookup fallback');
 assert.match(serviceRouter,/\/fare\/\?service=/,'verified region selection must offer a service-specific fare lookup');
 assert.match(serviceRouter,/\/assets\/service-taksong-visual\.svg/,'default graphic must remain a service SVG, not an unverified vehicle photograph');
-assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken regional image must fall back safely');
-  assert.match(serviceRouter,/setTimeout\(\(\)=>finish\(false\),2500\)/,'regional image loading must time out so fare and phone actions remain reachable');
-  assert.match(serviceRouter,/clearTimeout\(timer\)/,'completed regional image probes must clear their timeout');
-  assert.ok(serviceRouter.indexOf("const fare=document.createElement('a')") < serviceRouter.indexOf("fetch('/api/region-card-preview?"),'fare action must render before optional regional image fetch');
-  assert.ok(serviceRouter.indexOf("actions.append(detail)") < serviceRouter.indexOf("fetch('/api/region-card-preview?"),'region detail link must render before optional image fetch');
-  assert.ok(serviceRouter.indexOf("image.addEventListener('error'") < serviceRouter.indexOf("fetch('/api/region-card-preview?"),'regional image error fallback must be registered before asynchronous preview loading');
-  assert.match(serviceRouter,/lookupController=new AbortController\(\)/,'region lookup should support cancellation');
-  assert.match(serviceRouter,/setTimeout\(\(\)=>lookupController\.abort\(\),8000\)/,'region lookup must not hang indefinitely');
-  assert.match(serviceRouter,/clearTimeout\(lookupTimeout\)/,'region lookup timeout must be cleared after completion');
-  assert.match(serviceRouter,/previewController=new AbortController\(\)/,'optional regional image preview must be cancellable');
-  assert.match(serviceRouter,/setTimeout\(\(\)=>previewController\.abort\(\),5000\)/,'regional image preview must not wait indefinitely');
-  assert.match(serviceRouter,/clearTimeout\(previewTimeout\)/,'preview request timeout must be cleaned up');
-  assert.match(serviceRouter,/data=await response\.json\(\)/,'region lookup must parse the API response body before completing');
-   assert.match(serviceRouter,/\}finally\{clearTimeout\(lookupTimeout\)\}/,'region lookup timeout must remain active across API and fallback response parsing');
-  assert.match(serviceRouter,/cardData=await cardResponse\.json\(\)\}finally\{clearTimeout\(previewTimeout\)\}/,'preview timeout must cover response body parsing');
-  assert.match(serviceRouter,/catch\(_\)\{image\.src=common;image\.alt=full\+' '\+service\+' 공통 안내 이미지';imageNote\.textContent='지역 전용 이미지 정보를 확인하지 못해 서비스 공통 안내 이미지를 표시합니다\.'/,'preview API failure must explain the generic image fallback');
-assert.match(serviceRouter,/card\.kind===kind/,'region image selection must not cross chauffeur and vehicle-delivery services');
-assert.match(serviceRouter,/exactCards\.length===1/,'ambiguous regional image matches must not be selected');
-assert.ok(serviceRouter.includes(String.raw`/\.svg(?:\?|$)/i.test(path)`),'dynamic regional images must be SVG-only to exclude raster car and people photos');
-assert.ok(serviceRouter.includes(String.raw`\/card\/area-\d+`),'dynamic regional image allowlist must require exact area-card SVG paths');
-assert.ok(serviceRouter.includes(String.raw`\/keyword-card\/`),'dynamic regional image allowlist must restrict keyword-card SVG paths');
-assert.ok(!serviceRouter.includes(String.raw`/assets\\/service-(?:daeri|taksong|golf)-visual\\.svg`),'dynamic preview allowlist must not accept generic assets SVG paths');
-assert.ok(!serviceRouter.includes("['/card/','/keyword-card/','/assets/'].some"),'do not accept arbitrary SVG files under the general assets directory');
+assert.match(serviceRouter,/image\.addEventListener\('error'/,'broken generic SVG must not block fare and phone actions');
+assert.ok(serviceRouter.includes("const fare=document.createElement('a')"),'regional fare link is created after exact service confirmation');
+assert.ok(serviceRouter.includes("actions.prepend(fare)"),'verified fare link is visible before the generic image loads');
+assert.ok(serviceRouter.indexOf("actions.prepend(fare)") < serviceRouter.indexOf("image.src=common"),'fare action must remain available even if the SVG fails');
+assert.ok(serviceRouter.indexOf("actions.append(detail)") < serviceRouter.indexOf("image.src=common"),'region detail link must not depend on image loading');
+assert.match(serviceRouter,/lookupController=new AbortController\(\)/,'region lookup must be cancellable');
+assert.match(serviceRouter,/setTimeout\(\(\)=>lookupController\.abort\(\),8000\)/,'region lookup must time out');
+assert.match(serviceRouter,/clearTimeout\(lookupTimeout\)/,'region lookup timeout must be cleared');
+assert.ok(serviceRouter.includes("p.services.includes(kind)"),'only the selected service can be displayed for a verified locality');
+assert.ok(serviceRouter.includes("matches.length!==1"),'ambiguous locality must not be auto-selected');
+assert.ok(serviceRouter.includes("image.src=common"),'photo-free common service SVG is the only displayed artwork');
+assert.ok(!serviceRouter.includes("fetch('/api/region-card-preview?"),'retired dynamic vehicle/person image probe must not return');
+assert.ok(!serviceRouter.includes("previewController=new AbortController()"),'retired image preview fetch must stay removed');
 
 // Validate all 17 official provinces against the actual region search destination,
 // not just against the preview image's dataset ordinal.
