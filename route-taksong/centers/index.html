@@ -18,7 +18,9 @@ if(query){
  const info=document.createElement('p');
  if(center){
   heading.textContent=center+' 인증센터 차량탁송 안내';
-  info.textContent='입력한 '+query+'의 인증센터 명칭을 '+center+'(으)로 확인했습니다. 차량 주차장, 출발·도착 방향과 인계 장소를 별도로 확인한 후 상담하세요.';
+  info.textContent=normalized===center
+   ? '선택한 지점은 이 페이지의 동해안 인증센터 목록에 있습니다. 실제 위치·주차장·차량 인계 장소와 종주 방향을 공식 안내 및 상담으로 확인하세요.'
+   : '입력한 검색어 '+query+'는 '+center+' 안내 항목과 연결했습니다. 주변 지명이나 통용 명칭은 공식 인증센터의 정확한 위치와 다를 수 있으므로, 현장 위치·주차장·차량 인계 장소를 반드시 확인하세요.';
  }else if(otherCenter){
   heading.textContent=otherCenter+' 자전거길 차량탁송 상담';
   info.textContent='이 지점은 동해안 17개 인증센터 이미지 목록과 별도로, 전국 자전거길 종주 상담 구간에 안내된 지점입니다. 실제 인증센터 위치·운영 상태와 차량 인계 장소는 공식 안내를 확인하세요.';
