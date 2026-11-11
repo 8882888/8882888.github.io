@@ -7,9 +7,9 @@ const root=path.resolve(__dirname,'..');
 const rules=[
   {
     "group": "deploy",
-    "path": ".github/workflows/cloudtype-redeploy.yml",
-    "name": "main trigger",
-    "needle": "branches: [main]"
+    "path": ".github/workflows/deploy-main.yml",
+    "name": "automatic main trigger",
+    "needle": "  push:\n    branches:\n      - main"
   },
   {
     "group": "deploy",
@@ -20,14 +20,14 @@ const rules=[
   {
     "group": "deploy",
     "path": ".github/workflows/cloudtype-redeploy.yml",
-    "name": "single release group",
-    "needle": "group: smart24-cloudtype-production-redeploy"
+    "name": "shared release group",
+    "needle": "group: cloudtype-production"
   },
   {
     "group": "deploy",
     "path": ".github/workflows/cloudtype-redeploy.yml",
-    "name": "cancel obsolete releases",
-    "needle": "cancel-in-progress: true"
+    "name": "queue instead of cancel in-flight release",
+    "needle": "cancel-in-progress: false"
   },
   {
     "group": "deploy",
