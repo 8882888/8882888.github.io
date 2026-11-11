@@ -10,8 +10,9 @@ const otherRouteCenters=['담양댐','영산강하구둑','섬진강댐','배알
 const otherAliases={'광양배알도':'배알도수변공원','배알도':'배알도수변공원','목포영산강하구둑':'영산강하구둑'};
 // Strip common search-intent suffixes only; do not guess unlisted certification centers.
 const normalized=query.replace(/\s+/g,'').replace(/(?:인증센터)?(?:자동차탁송|차량탁송|종주탁송|탁송|종주)?(?:인증센터)?$/,'');
-const center=officialCenters.find(name=>name===normalized)||knownAliases[normalized];
-const otherCenter=otherRouteCenters.find(name=>name===normalized)||otherAliases[normalized];
+const safeLookup=(table,key)=>Object.prototype.hasOwnProperty.call(table,key)?table[key]:undefined;
+const center=officialCenters.find(name=>name===normalized)||safeLookup(knownAliases,normalized);
+const otherCenter=otherRouteCenters.find(name=>name===normalized)||safeLookup(otherAliases,normalized);
 if(query){
  const heading=document.createElement('h2');
  const info=document.createElement('p');
