@@ -368,6 +368,20 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(cyclingSearchHtml.includes('id="cycling-direction-result"'),'cycling search must render direction result');
   assert.ok(cyclingSearchHtml.includes('noindex,follow'),'query result must not create indexable duplicate pages');
   assert.ok(cyclingSearchHtml.includes('tel:18114294'),'cycling search must retain homepage phone');
+  // High-intent taksong landing pages should render usable customer actions.
+  for(const route of ['/taksong/busan/','/taksong/daegu/','/taksong/ulsan/','/taksong/sejong/']){
+    const response=await get(route);
+    assert.equal(response.status,200,'priority taksong region must load '+route);
+    const html=await response.text();
+    assert.ok(html.includes('탁송'),'priority region must explain vehicle delivery '+route);
+    assert.ok(html.includes('tel:18114294'),'priority region must retain the taksong consultation number '+route);
+    assert.ok(html.includes('/fare/'),'priority region must link to the fare lookup '+route);
+  }
+  const taksongHubResponse=await get('/taksong/');
+  assert.equal(taksongHubResponse.status,200,'taksong service hub must load');
+  const taksongHubHtml=await taksongHubResponse.text();
+  assert.ok(taksongHubHtml.includes('24시탁송'),'taksong hub must explain overnight vehicle delivery');
+  assert.ok(taksongHubHtml.includes('/fare/?service=taksong'),'taksong hub must offer service-specific fare lookup');
   // Regional link volume must not crowd out verifiable completed rides in the main sitemap.
   const crypto=require('node:crypto');
   const firstRide=require('../data/public-reviewed-rides-202610.json')[0];
