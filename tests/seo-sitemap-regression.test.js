@@ -115,3 +115,9 @@ test('priority taksong locality discovery uses real legal regions before broad e
   assert.ok(focused.includes("'"+name+"'"),'missing priority innovation-city taksong '+name);
  }
 });
+
+
+test('local service-center taksong discovery links to the purpose-specific handover guide',()=>{
+ assert.ok(server.includes("['정비·서비스센터 차량 인계','/service/taksong-purpose/']"),
+  'regional service-center links must not point only to the generic taksong landing page');
+});
