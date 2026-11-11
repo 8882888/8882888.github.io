@@ -78,6 +78,8 @@ test('dynamic sitemap retains cycling guide before 499-URL cutoff',()=>{
  for(const route of ['/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/']){
   assert.ok(focused.includes("'"+route+"'"),'dynamic sitemap missing cycling route '+route);
  }
- assert.ok(focused.indexOf("'/route-taksong/centers/'")<focused.indexOf('...featuredTaksongRoutes.map('),
-  'cycling center guide must precede large route collections');
+ assert.ok(focused.indexOf("'/route-taksong/centers/'")<focused.indexOf('...provinceRegions.flatMap('),
+  'cycling center guide must precede province and locality expansion');
+ assert.ok(focused.indexOf("'/special/cycling-trail-transport/'")<focused.indexOf('...provinceRegions.flatMap('),
+  'cycling service guide must precede province and locality expansion');
 });
