@@ -29,7 +29,7 @@ function mount(href,storage=new Map()){
     {total_phone_clicks:2,phone_sources:[]}:
     {today_visits:5,total_visits:14})}};
  }
- const ctx={document,fetch,URL,location:{href,hostname:'jeongukdaeri.kr',pathname:'/'},
+ const ctx={document,fetch,URL,navigator:{userAgent:'Mozilla/5.0',webdriver:false},location:{href,hostname:'jeongukdaeri.kr',pathname:'/'},
   sessionStorage:storageAdapter(session),localStorage:storageAdapter(storage),
   window:{addEventListener(){}},Intl,Date,Number,String,JSON,console};
  vm.runInNewContext(script,ctx,{filename:'traffic-analytics.js',timeout:1000});
