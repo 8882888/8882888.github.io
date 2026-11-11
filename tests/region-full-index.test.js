@@ -19,11 +19,28 @@ assert(handoff.includes('if(matches.length!==1)'), 'regional handoff must reject
 assert(handoff.includes('if(matches.length===0)'), 'regional handoff must only retry the full index for zero matches, not ambiguous multiple matches');
 assert((handoff.match(/fetch\('\/api\/legal-region-index'/g)||[]).length===2,'regional handoff fallback must use accessible complete legal region index');
 assert(!handoff.includes("fetch('/data/regions.json'"),'regional handoff must not request blocked historical region seed');
-const pilot=JSON.parse(fs.readFileSync(path.join(root,'data/regions.json'),'utf8')).regions;
+const regionDataset=JSON.parse(fs.readFileSync(path.join(root,'data/regions.json'),'utf8'));
+const pilot=regionDataset.regions;
 assert(server.includes('const uniqueMatches=[...new Map(matches.map('),'regional confirmed rides must be deduplicated');
 assert(server.includes('const reviewCards=uniqueMatches.length?'),'regional review cards must use deduplicated records');
 assert(server.includes('uniqueMatches.slice(0,5).map('),'regional review cards must render deduplicated records');
-assert(pilot.length<1000,'static pilot unexpectedly became full nationwide data');
+// The committed region seed is deliberately small, but GitHub Pages CI may
+// import the official nationwide CSV before this check. Never reject valid
+// official input merely because the catalogue grew beyond pilot size.
+if(pilot.length>=1000){
+ assert.equal(regionDataset.source,'국토교통부_전국 법정동 (공공데이터포털)',
+  'Expanded nationwide catalogue must have the official government source');
+ assert.equal(regionDataset.source_url,'https://www.data.go.kr/data/15063424/fileData.do',
+  'Expanded nationwide catalogue must preserve source provenance');
+ assert.ok(new Set(pilot.map(r=>r.slug)).size===pilot.length,
+  'Expanded nationwide catalogue must not contain repeated legal-region slugs');
+ assert.ok(new Set(pilot.map(r=>r.slug.split('/')[0])).size>=15,
+  'Expanded nationwide catalogue must cover most province groups');
+} else {
+ assert.ok(pilot.length>0,'Committed pilot must be nonempty');
+ assert.ok(!regionDataset.source,
+  'Small pilot cannot advertise complete official nationwide coverage');
+}
 assert(server.includes("if(pathname==='/api/legal-region-index')"),'production legal index endpoint missing');
 assert(server.includes('level:x.level,services:x.services}));'),'public regional lookup must return service types required by client validation');
 assert(server.includes("candidates.length!==1||!(candidates[0].services||[]).includes(kind)"),'dynamic regional landing must reject services unsupported by the selected legal region');
