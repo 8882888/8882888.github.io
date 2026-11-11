@@ -46,5 +46,5 @@ test('cycling center discovery stays in priority and main sitemaps',()=>{
  assert.ok(page.includes('rel="canonical" href="https://jeongukdaeri.kr/route-taksong/centers/"'),'canonical must point to indexable base URL');
  assert.ok(page.includes('action="/route-taksong/centers/" method="get"'),'search must submit query before fragment');
  assert.ok(page.includes('name="q"'),'search input must be submitted as q');
- assert.equal((page.match(/href="\\?q=[^"]+#result"/g)||[]).length,25,'retain 25 center shortcuts');
+ assert.equal((page.match(/href="\?q=[^"]+#result"/g)||[]).length,25,'retain 25 center shortcuts');
 });
