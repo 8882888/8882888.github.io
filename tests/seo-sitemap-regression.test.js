@@ -83,3 +83,20 @@ test('dynamic sitemap retains cycling guide before 499-URL cutoff',()=>{
  assert.ok(focused.indexOf("'/special/cycling-trail-transport/'")<focused.indexOf('...provinceRegions.flatMap('),
   'cycling service guide must precede province and locality expansion');
 });
+
+test('automobile delivery service guides precede province expansion in dynamic sitemap',()=>{
+ const start=server.indexOf("if(pathname==='/sitemap.xml')");
+ const end=server.indexOf("const urls=[...new Set(focused)].slice(0,499)",start);
+ assert.ok(start>=0&&end>start,'dynamic sitemap source must be present');
+ const focused=server.slice(start,end);
+ const province=focused.indexOf('...provinceRegions.flatMap(');
+ assert.ok(province>0,'province expansion must exist');
+ for(const route of [
+  '/service/taksong/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
+  '/taksong/types/','/taksong/jeju/','/reviews/taksong/','/fare/',
+  '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/'
+ ]){
+  const index=focused.indexOf("'"+route+"'");
+  assert.ok(index>=0&&index<province,'priority automobile delivery guide missing or delayed: '+route);
+ }
+});
