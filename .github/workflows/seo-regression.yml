@@ -44,6 +44,8 @@ jobs:
         run: node tests/keyword-preview.test.js
       - name: Check retired homepage copy is removed, not keyword search
         run: node tests/homepage-copy.test.js
+      - name: Check sitemap and cycling center regression
+        run: npm run check:seo
       - name: Run real HTTP regional SEO regression
         env:
           CI: 'true'
