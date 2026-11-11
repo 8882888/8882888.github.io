@@ -26,6 +26,17 @@ if(query){
   heading.textContent='인증센터 검색 결과 확인';
   info.textContent='입력하신 명칭은 이 페이지에 안내된 동해안 인증센터 또는 주요 전국 종주 상담 지점 목록에서 확인되지 않았습니다. 공식 인증센터 명칭을 다시 확인하거나 대표번호 1811-4294로 문의해 주세요.';
  }
- result.replaceChildren(heading,info);
+ const actions=document.createElement('p');
+ const call=document.createElement('a');
+ call.href='tel:18114294';
+ call.textContent='차량 인계·배차 상담 1811-4294';
+ const separator=document.createTextNode(' · ');
+ const official=document.createElement('a');
+ official.href='https://www.bike.go.kr/';
+ official.target='_blank';
+ official.rel='noopener noreferrer';
+ official.textContent='자전거길 공식 안내 확인';
+ actions.append(call,separator,official);
+ result.replaceChildren(heading,info,actions);
 }
 </script></body></html>
