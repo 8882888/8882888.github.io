@@ -6,7 +6,7 @@ const result=document.getElementById('result');
 input.value=query;
 const officialCenters=['통일전망대','북천철교','봉포해변','영금정','동호해변','지경공원','경포해변','정동진','망상해변','추암촛대바위','한재공원','임원','울진은어다리','망양휴게소','월송정','고래불해변','해맞이공원'];
 const knownAliases={'고성통일전망대':'통일전망대','경포대':'경포해변','은어다리':'울진은어다리','영덕해맞이공원':'해맞이공원','삼척임원항':'임원'};
-const normalized=query.replace(/\\s+/g,'');
+const normalized=query.replace(/\s+/g,'');
 const center=officialCenters.find(name=>name===normalized)||knownAliases[normalized];
 if(query){
  const heading=document.createElement('h2');
