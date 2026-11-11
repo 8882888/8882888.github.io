@@ -395,6 +395,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(taksongHubHtml.includes('href="'+route+'"'),'taksong hub must link outdoor handover guide '+route);
   }
   assert.ok(taksongHubHtml.includes('id="taksong-outdoor-handover"'),'taksong hub must include practical outdoor handover guidance');
+  assert.ok(taksongHubHtml.includes('id="taksong-service-center-handover"'),'taksong hub must provide service center handover guidance');
+  assert.ok(taksongHubHtml.includes('href="/service/taksong-purpose/"'),'service center guidance must link to delivery purpose');
+  assert.ok(taksongHubHtml.includes('href="/business/rental-car/"'),'service center guidance must link rental and accident replacement cars');
+
 
   // A keyword-only region-service shortcut must not discard the customer's typed service.
   for(const keyword of ['부산대리운전','대구탁송','세종대리운전','속초탁송']){
