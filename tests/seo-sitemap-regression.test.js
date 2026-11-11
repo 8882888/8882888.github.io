@@ -154,3 +154,9 @@ test('booking journey labels distinguish vehicle handover from chauffeur pickup'
  assert.ok(server.includes("isT?'차량 인수·인계와 예약 준비':'출발지 확인과 기사 호출 준비'"),
   'service journey must use service-specific booking language');
 });
+
+test('national reservation guide does not reuse vehicle handover instructions for chauffeur',()=>{
+ assert.ok(server.includes("isT?'<ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치"));
+ assert.ok(server.includes(":'<ol><li>기사와 만날 출발지 주소 및 주차 위치"));
+ assert.ok(server.includes('차종·동승 인원과 차량 특이사항'));
+});
