@@ -281,7 +281,7 @@ const historyCounts=Object.freeze({taksong:historicalRides.filter(x=>x.service==
 if(historicalRides.length!==2591||historyCounts.taksong!==804||historyCounts.daeri!==1786||historyCounts.mixed!==1)throw Error('Completed ride classification changed unexpectedly');
 function vehicleGuideLink(kind){
  const label=kind==='taksong'?'자동차탁송':'대리운전';
- return '<p class="vehicle-guide-link"><a href="/'+kind+'/#vehicle-guide">국산차·수입차 '+label+' 차량 안내</a>에서 차종별 소개 이미지를 확인하세요. 예약할 때 차종, 차량 크기와 특이사항을 알려주시면 이용 조건을 상담합니다.</p>';
+ return '<p class="vehicle-guide-link"><a href="/'+kind+'/#vehicle-guide">국산차·수입차 '+label+' 차량 안내</a>에서 차종·차량 크기별 인수 조건과 예약 준비사항을 확인하세요. 예약할 때 차종, 차량 크기와 특이사항을 알려주시면 이용 조건을 상담합니다.</p>';
 }
 function serviceVehicleGallery(kind){
  const label=kind==='taksong'?'자동차탁송':'대리운전';
