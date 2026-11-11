@@ -68,3 +68,16 @@ test('all sitemap index entries are declared and handled',()=>{
  assert.ok(server.includes("const historySitemapMatch=pathname.match("),'history shard route must exist');
  assert.ok(server.includes("if(segment>total)return respond(res,404"),'history shards must reject out-of-range requests');
 });
+
+test('dynamic sitemap retains cycling guide before 499-URL cutoff',()=>{
+ const start=server.indexOf("if(pathname==='/sitemap.xml')");
+ assert.ok(start>=0,'dynamic main sitemap handler must exist');
+ const end=server.indexOf("const urls=[...new Set(focused)].slice(0,499)",start);
+ assert.ok(end>start,'main sitemap URL limit must remain explicit');
+ const focused=server.slice(start,end);
+ for(const route of ['/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/']){
+  assert.ok(focused.includes("'"+route+"'"),'dynamic sitemap missing cycling route '+route);
+ }
+ assert.ok(focused.indexOf("'/route-taksong/centers/'")<focused.indexOf('...featuredTaksongRoutes.map('),
+  'cycling center guide must precede large route collections');
+});
