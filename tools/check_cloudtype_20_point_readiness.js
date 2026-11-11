@@ -6,6 +6,7 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const deploy=read('.github/workflows/cloudtype-redeploy.yml');
+const autoDeploy=read('.github/workflows/deploy-main.yml');
 const audit=read('.github/workflows/official-production-audit.yml');
 const server=read('server.js');
 const home=read('index.html');
@@ -21,9 +22,9 @@ const start=home.indexOf('<nav id="homepage-primary-services-20261106"');
 const stop=home.indexOf('</nav>',start);
 const nav=start>=0&&stop>start?home.slice(start,stop):'';
 const checks=[
- ['01','Production deploy triggers on main',/push:[\s\S]*?branches:\s*\[main\]/.test(deploy)],
+ ['01','Automatic production deploy triggers on main',autoDeploy.includes('on:\n  push:\n    branches:\n      - main')],
  ['02','Manual dispatch enabled',/workflow_dispatch:/.test(deploy)],
- ['03','Production deploy serializes concurrent releases',deploy.includes('group: smart24-cloudtype-production-redeploy')],
+ ['03','Automatic and manual deploy serialize releases',deploy.includes('group: cloudtype-production')&&autoDeploy.includes('group: cloudtype-production')&&deploy.includes('cancel-in-progress: false')&&autoDeploy.includes('cancel-in-progress: false')],
  ['04','Production credentials missing => explicit failure',deploy.includes('No production redeploy was requested')&&deploy.includes('exit 1')],
  ['05','Cloudtype API key is a GitHub secret',deploy.includes('CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}')],
  ['06','Existing application YAML stored as secret',deploy.includes('CLOUDTYPE_DEPLOY_YAML: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}')],
