@@ -123,7 +123,7 @@ test('local service-center taksong discovery links to the purpose-specific hando
 });
 
 test('vehicle guide navigation does not promise removed promotional images',()=>{
- assert.ok(server.includes('차종·차량 크기별 인수 조건과 예약 준비사항을 확인하세요'),
+ assert.ok(server.includes('차종·차량 크기와 출발지·도착지, 희망 인수 시각을 알려주시면 차량 이동 조건을 상담합니다.'),
   'vehicle guide must explain available booking information');
  assert.ok(!server.includes('차종별 소개 이미지를 확인하세요'),
   'vehicle guide must not promise images that are intentionally hidden');
