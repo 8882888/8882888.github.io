@@ -128,3 +128,11 @@ test('vehicle guide navigation does not promise removed promotional images',()=>
  assert.ok(!server.includes('차종별 소개 이미지를 확인하세요'),
   'vehicle guide must not promise images that are intentionally hidden');
 });
+
+test('vehicle guide includes actionable handover details without promotional imagery',()=>{
+ for(const phrase of ['차량의 정확한 주차 위치','차량 키 전달 방법','시동·주행 가능 상태','정비 입출고나 렌트카 반납']){
+  assert.ok(server.includes(phrase),'missing handover information: '+phrase);
+ }
+ assert.ok(server.includes("kind==='taksong'?'자동차탁송 인수·인계 전 확인':'대리운전 출발 전 확인'"),
+  'vehicle guide heading must reflect the actual service');
+});
