@@ -372,7 +372,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const route of [
     '/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
     '/taksong/types/','/taksong/jeju/','/reviews/taksong/',
-    '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/'
+    '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/',
+    '/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/'
   ]){
     assert.ok(seoulMainMap.includes('<loc>https://example.com'+route+'</loc>'),
       'dynamic sitemap must include priority taksong intent '+route);
