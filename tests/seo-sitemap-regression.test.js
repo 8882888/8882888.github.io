@@ -36,6 +36,16 @@ test('reviewed regional sitemap is backed by source-reviewed pages only',()=>{
  }
 });
 
+test('Gijang-gun taksong has a direct homepage link and priority discovery URL',()=>{
+ const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
+ const priority=fs.readFileSync(path.join(root,'sitemap-priority.xml'),'utf8');
+ const url='https://jeongukdaeri.kr/taksong/busan/gijang-gun/';
+ assert.ok(home.includes('<a href="/taksong/busan/gijang-gun/">기장군탁송</a>'),'Missing county exact-match link from national homepage');
+ assert.ok(priority.includes('<loc>'+url+'</loc>'),'Gijang canonical missing from priority sitemap');
+ assert.equal(priority.split('<loc>'+url+'</loc>').length-1,1,'Gijang canonical appears more than once');
+ assert.ok(server.includes("'부산광역시 기장군'"),'Live dynamic priority sitemap must select a real legal region');
+});
+
 test('cycling center discovery stays in priority and main sitemaps',()=>{
  const main=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
  const priority=fs.readFileSync(path.join(root,'sitemap-priority.xml'),'utf8');
