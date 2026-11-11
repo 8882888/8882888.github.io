@@ -39,7 +39,7 @@ test('health diagnostics are resilient to an absent optional analytics file',()=
 const dynamicRegion=fs.readFileSync(path.join(root,'go/region-service/index.html'),'utf8');
 test('dynamic region landing requires a unique matching region and service',()=>{
   assert.ok(dynamicRegion.includes('matches.length!==1'));
-  assert.ok(dynamicRegion.includes('card.kind===kind'));
+  assert.ok(dynamicRegion.includes('p.services.includes(kind)'), 'region landing must verify the requested service in the public legal-region catalogue');
   assert.ok(dynamicRegion.includes('exactCards.length===1'));
 });
 test('dynamic region images have a fallback and cannot be mislabeled as real trips',()=>{
