@@ -100,3 +100,18 @@ test('automobile delivery service guides precede province expansion in dynamic s
   assert.ok(index>=0&&index<province,'priority automobile delivery guide missing or delayed: '+route);
  }
 });
+
+test('priority taksong locality discovery uses real legal regions before broad expansion',()=>{
+ const start=server.indexOf("if(pathname==='/sitemap.xml')");
+ const end=server.indexOf("const urls=[...new Set(focused)].slice(0,499)",start);
+ assert.ok(start>=0&&end>start,'dynamic sitemap handler exists');
+ const focused=server.slice(start,end);
+ const first=focused.indexOf("'부산광역시','대구광역시','울산광역시','세종특별자치시'");
+ const province=focused.indexOf('...provinceRegions.flatMap(');
+ assert.ok(first>=0&&first<province,'priority taksong localities must precede broad province list');
+ assert.ok(focused.includes(".map(name=>regionByFullName.get(name)).filter(Boolean).map(r=>servicePath(r,'taksong'))"),
+  'priority taksong regions must resolve official regions, never invent URL slugs');
+ for(const name of ['경상남도 창원시','경상남도 진주시','경상북도 김천시','강원특별자치도 원주시','전라남도 나주시']){
+  assert.ok(focused.includes("'"+name+"'"),'missing priority innovation-city taksong '+name);
+ }
+});
