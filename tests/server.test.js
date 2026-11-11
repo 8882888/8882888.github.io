@@ -377,6 +377,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(seoulMainMap.includes('<loc>https://example.com'+route+'</loc>'),
       'dynamic sitemap must include priority taksong intent '+route);
   }
+  const taksongPurposeResponse=await get('/service/taksong-purpose/');
+  assert.equal(taksongPurposeResponse.status,200,'service-purpose taksong guide must load');
+  const taksongPurposeHtml=await taksongPurposeResponse.text();
+  assert.ok(taksongPurposeHtml.includes('id="service-center-checklist"'),'service-purpose guide must show handover checklist');
+  assert.ok(taksongPurposeHtml.includes('href="/business/rental-car/"'),'service-purpose guide must link rental car handover');
+  assert.ok(taksongPurposeHtml.includes('href="/business/auction/"'),'service-purpose guide must link auction handover');
+  assert.ok(taksongPurposeHtml.includes('tel:18114294'),'service-purpose guide must retain consultation number');
   // High-intent taksong landing pages should render usable customer actions.
   for(const route of ['/taksong/busan/','/taksong/daegu/','/taksong/ulsan/','/taksong/sejong/']){
     const response=await get(route);
