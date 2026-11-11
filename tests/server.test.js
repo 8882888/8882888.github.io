@@ -391,6 +391,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const taksongHubHtml=await taksongHubResponse.text();
   assert.ok(taksongHubHtml.includes('24시탁송'),'taksong hub must explain overnight vehicle delivery');
   assert.ok(taksongHubHtml.includes('/fare/?service=taksong'),'taksong hub must offer service-specific fare lookup');
+  for(const route of ['/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/']){
+    assert.ok(taksongHubHtml.includes('href="'+route+'"'),'taksong hub must link outdoor handover guide '+route);
+  }
+  assert.ok(taksongHubHtml.includes('id="taksong-outdoor-handover"'),'taksong hub must include practical outdoor handover guidance');
+
   // A keyword-only region-service shortcut must not discard the customer's typed service.
   for(const keyword of ['부산대리운전','대구탁송','세종대리운전','속초탁송']){
     const response=await get('/go/region-service/?q='+encodeURIComponent(keyword));
