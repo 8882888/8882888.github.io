@@ -40,7 +40,10 @@ const dynamicRegion=fs.readFileSync(path.join(root,'go/region-service/index.html
 test('dynamic region landing requires a unique matching region and service',()=>{
   assert.ok(dynamicRegion.includes('matches.length!==1'));
   assert.ok(dynamicRegion.includes('p.services.includes(kind)'), 'region landing must verify the requested service in the public legal-region catalogue');
-  assert.ok(dynamicRegion.includes('exactCards.length===1'));
+  assert.ok(dynamicRegion.includes('if(matches.length===0)'), 'Fallback lookup must only run after zero exact matches');
+  assert.ok(dynamicRegion.includes('if(verified.length===1)matches=verified'), 'Fallback must select only a unique verified legal region');
+  assert.ok(dynamicRegion.includes('if(matches.length!==1)'), 'Ambiguous or missing regions must never auto-select a card');
+  assert.ok(dynamicRegion.includes('image.src=common'), 'Use verified service illustration instead of guessed region image IDs');
 });
 test('dynamic region images have a fallback and cannot be mislabeled as real trips',()=>{
   assert.ok(dynamicRegion.includes("image.addEventListener('error'"));
