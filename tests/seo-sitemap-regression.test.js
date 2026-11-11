@@ -55,3 +55,16 @@ test('cycling center discovery stays in priority and main sitemaps',()=>{
  }
 
 });
+
+test('all sitemap index entries are declared and handled',()=>{
+ const indexStart=server.indexOf("const rootSitemaps=pathname==='/sitemap-all.xml'");
+ assert.ok(indexStart>=0,'sitemap-all index handler must exist');
+ const indexCode=server.slice(indexStart,server.indexOf("const xml=",indexStart));
+ const expected=['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-history.xml'];
+ for(const route of expected){
+  assert.ok(indexCode.includes("'"+route+"'"),'sitemap-all missing '+route);
+  assert.ok(robots.includes('Sitemap: https://jeongukdaeri.kr'+route),'robots missing '+route);
+ }
+ assert.ok(server.includes("const historySitemapMatch=pathname.match("),'history shard route must exist');
+ assert.ok(server.includes("if(segment>total)return respond(res,404"),'history shards must reject out-of-range requests');
+});
