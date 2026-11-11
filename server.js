@@ -124,7 +124,7 @@ function naverFocus50Guide(r,kind){
  const info=focus50ByKey.get(kind+'|'+r.full_name);
  if(!info)return '';
  const related=kind==='taksong'
-  ?[['장거리 차량탁송','/service/long-distance-taksong/'],['중고차·매매차량 인수','/business/used-car/'],['정비·서비스센터 차량 인계','/service/taksong/']]
+  ?[['장거리 차량탁송','/service/long-distance-taksong/'],['중고차·매매차량 인수','/business/used-car/'],['정비·서비스센터 차량 인계','/service/taksong-purpose/']]
   :[['골프장 대리운전','/service/golf/'],['법인카드·법인 대리운전','/service/corporate/'],['일일기사·왕복 대기','/service/daily-driver/']];
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
  const intro='<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
