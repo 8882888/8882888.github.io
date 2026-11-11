@@ -149,3 +149,8 @@ test('vehicle guide introduction uses service-specific pickup terminology',()=>{
  assert.ok(server.includes("kind==='taksong'?'차종·차량 크기와 출발지·도착지, 희망 인수 시각"));
  assert.ok(server.includes(":'차종과 출발지·목적지, 희망 출발 시각"));
 });
+
+test('booking journey labels distinguish vehicle handover from chauffeur pickup',()=>{
+ assert.ok(server.includes("isT?'차량 인수·인계와 예약 준비':'출발지 확인과 기사 호출 준비'"),
+  'service journey must use service-specific booking language');
+});
