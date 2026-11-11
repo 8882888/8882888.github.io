@@ -393,6 +393,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(html.includes('tel:18114294'),'priority region must retain the taksong consultation number '+route);
     assert.ok(html.includes('/fare/'),'priority region must link to the fare lookup '+route);
   }
+  const dedicatedTaksongSitemapResponse=await get('/sitemap-taksong.xml');
+  assert.equal(dedicatedTaksongSitemapResponse.status,200,'dedicated taksong sitemap must load');
+  const dedicatedTaksongSitemap=await dedicatedTaksongSitemapResponse.text();
+  for(const route of [
+    '/service/taksong-purpose/','/service/heavy-truck-taksong/',
+    '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/'
+  ]){
+    assert.ok(dedicatedTaksongSitemap.includes('<loc>https://example.com'+route+'</loc>'),
+      'dedicated taksong sitemap must include high-intent guide '+route);
+  }
   const taksongHubResponse=await get('/taksong/');
   assert.equal(taksongHubResponse.status,200,'taksong service hub must load');
   const taksongHubHtml=await taksongHubResponse.text();
