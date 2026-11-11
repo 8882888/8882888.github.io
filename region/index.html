@@ -3,6 +3,15 @@ const eastCoastPairs=['경포대통일전망대','통일전망대경포대','고
 function isEastCoastRouteKeyword(clean){
  return eastCoastPairs.some(pair=>clean.startsWith(pair)&&/^(?:자전거길)?(?:종주|종주탁송|탁송|종주코스|코스|복귀)$/.test(clean.slice(pair.length)));
 }
+// National route searches: keep informational and vehicle-handover intents on the existing guide.
+const nationalCycleRoutes=['국토종주','아라','한강','남한강','북한강','새재','낙동강','금강','오천','영산강','섬진강','동해안','제주환상'];
+function isNationalCyclingKeyword(clean){
+ if(['전국자전거길코스','전국자전거길종주코스','전국자전거길종주','전국자전거길종주탁송','국토종주자전거길종주','국토종주자전거길종주탁송'].includes(clean))return true;
+ return nationalCycleRoutes.some(route=>{
+  const stems=[route+'자전거길',route+'자전거',route];
+  return stems.some(stem=>clean.startsWith(stem)&&/^(?:종주|종주탁송|탁송|종주코스|코스|완벽정리)$/.test(clean.slice(stem.length)));
+ });
+}
 const cyclingExactKeywords=new Set(['전국종주','전국종주탁송','전국자전거종주','전국자전거종주탁송','전국자전거길종주','전국자전거길종주탁송','국토종주탁송','국토종주완벽정리','자전거종주탁송','자전거길종주탁송','동해안종주탁송','동해안종주완벽정리','동해안자전거길종주탁송','고성통일전망대영덕해맞이공원종주탁송','영덕해맞이공원고성통일전망대종주탁송','국토종주자전거탁송','국토종주차량탁송','국토종주자전거길탁송','아라서해갑문탁송','낙동강하굿둑탁송','낙동강길종주','낙동강길종주탁송','동해안자전거길코스별종주','동해안자전거길코스별탁송','동해안자전거길완벽정리','전국자전거길종주코스','자전거길종주완벽정리','고성통일전망대영덕해맞이공원자전거길종주탁송','영덕해맞이공원임원항탁송','동해안강원종주','동해안강원종주탁송','동해안경북종주','동해안경북종주탁송','경포대영덕종주','경포대영덕탁송','고성영덕종주','고성영덕종주탁송','영덕해맞이공원고성통일전망대탁송','고성통일전망대경포대탁송','경포대임원항탁송','영덕해맞이공원은어다리종주','영덕해맞이공원은어다리탁송','은어다리영덕해맞이공원종주','통일전망대경포대종주','고성통일전망대영덕해맞이공원종주','영덕해맞이공원고성통일전망대종주','동해안자전거길강원구간종주','동해안자전거길경북구간종주']);
 function resolveKeywordDestination(term,kind){
  const clean=String(term||'').replace(/\s+/g,'').trim();
@@ -15,7 +24,7 @@ function resolveKeywordDestination(term,kind){
  if(['설악산','설악산탁송','설악산종주','설악산종주탁송'].includes(clean))return '/설악산탁송/#mountain-route-fare-table-202611';
  if(['지리산','지리산탁송','지리산종주','지리산종주탁송'].includes(clean))return '/지리산탁송/#mountain-route-fare-table-202611';
  // Information-first cycling searches should reach the existing guide, not an empty locality result.
- if(isEastCoastRouteKeyword(clean)||cyclingExactKeywords.has(clean)||/^(?:(?:전국|국토|동해안|낙동강|영산강|섬진강|금강|오천|아라|한강|남한강|북한강|새재|제주환상)(?:자전거길|자전거)?(?:종주|종주코스|종주완벽정리|코스|완벽정리)(?:탁송)?|(?:전국자전거길|국토종주자전거길)(?:종주|종주코스|코스|완벽정리)?(?:탁송)?|(?:동해안자전거길)?(?:강원|경북)구간(?:종주|탁송)|(?:경포대통일전망대|통일전망대경포대|은어다리영덕해맞이공원|영덕임원항|임원항경포대|영덕통일전망대|고성통일전망대영덕해맞이공원|영덕해맞이공원고성통일전망대)(?:자전거길)?(?:종주|종주탁송|탁송|코스|복귀)|(?:자전거길종주|자전거종주|국토종주))(?:탁송)?$/.test(clean)||/^(?:국토종주자전거길|동해안자전거길(?:종주)?|낙동강자전거길(?:종주)?)(?:탁송)?$/.test(clean))return '/special/cycling-trail-transport/';
+ if(isNationalCyclingKeyword(clean)||isEastCoastRouteKeyword(clean)||cyclingExactKeywords.has(clean)||/^(?:(?:전국|국토|동해안|낙동강|영산강|섬진강|금강|오천|아라|한강|남한강|북한강|새재|제주환상)(?:자전거길|자전거)?(?:종주|종주코스|종주완벽정리|코스|완벽정리)(?:탁송)?|(?:전국자전거길|국토종주자전거길)(?:종주|종주코스|코스|완벽정리)?(?:탁송)?|(?:동해안자전거길)?(?:강원|경북)구간(?:종주|탁송)|(?:경포대통일전망대|통일전망대경포대|은어다리영덕해맞이공원|영덕임원항|임원항경포대|영덕통일전망대|고성통일전망대영덕해맞이공원|영덕해맞이공원고성통일전망대)(?:자전거길)?(?:종주|종주탁송|탁송|코스|복귀)|(?:자전거길종주|자전거종주|국토종주))(?:탁송)?$/.test(clean)||/^(?:국토종주자전거길|동해안자전거길(?:종주)?|낙동강자전거길(?:종주)?)(?:탁송)?$/.test(clean))return '/special/cycling-trail-transport/';
  const suffix=['장거리자동차탁송','장거리차량탁송','렌트카탁송','사고대차탁송','장거리대리운전','골프장대리운전','대리운전업체','대리운전회사','대리운전요금','자동차탁송업체','자동차탁송회사','자동차탁송요금','차량탁송업체','차량탁송회사','차량탁송요금','자동차탁송','차량탁송','탁송업체','탁송회사','탁송요금','대리운전','탁송'].find(x=>clean.endsWith(x))||'';
  if(!suffix)return '';
  const place=clean.slice(0,-suffix.length),service=suffix.includes('대리운전')?'daeri':'taksong';
