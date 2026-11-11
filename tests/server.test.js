@@ -348,7 +348,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const seoulMainMap=await (await get('/sitemap.xml')).text();
   // Cycling handover pages must survive the live dynamic sitemap's 499-URL cap.
   for(const route of ['/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/']){
-    assert.ok(seoulMainMap.includes('<loc>https://example.com'+route+'</loc>'),'dynamic sitemap must include cycling guide '+route);
+    assert.ok(seoulMainMap.includes('<loc>'+new URL(route,'https://example.com').href+'</loc>'),'dynamic sitemap must include cycling guide '+route);
   }
   const cyclingCentersResponse=await get('/route-taksong/centers/');
   assert.equal(cyclingCentersResponse.status,200,'cycling center guide must load via HTTP');
@@ -375,7 +375,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/',
     '/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/'
   ]){
-    assert.ok(seoulMainMap.includes('<loc>https://example.com'+route+'</loc>'),
+    assert.ok(seoulMainMap.includes('<loc>'+new URL(route,'https://example.com').href+'</loc>'),
       'dynamic sitemap must include priority taksong intent '+route);
   }
   const taksongPurposeResponse=await get('/service/taksong-purpose/');
@@ -399,9 +399,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const dedicatedTaksongSitemap=await dedicatedTaksongSitemapResponse.text();
   for(const route of [
     '/service/taksong-purpose/','/service/heavy-truck-taksong/',
-    '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/'
+    '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/',
+    '/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/'
   ]){
-    assert.ok(dedicatedTaksongSitemap.includes('<loc>https://example.com'+route+'</loc>'),
+    assert.ok(dedicatedTaksongSitemap.includes('<loc>'+new URL(route,'https://example.com').href+'</loc>'),
       'dedicated taksong sitemap must include high-intent guide '+route);
   }
   const taksongHubResponse=await get('/taksong/');
