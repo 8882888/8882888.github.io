@@ -281,11 +281,11 @@ const historyCounts=Object.freeze({taksong:historicalRides.filter(x=>x.service==
 if(historicalRides.length!==2591||historyCounts.taksong!==804||historyCounts.daeri!==1786||historyCounts.mixed!==1)throw Error('Completed ride classification changed unexpectedly');
 function vehicleGuideLink(kind){
  const label=kind==='taksong'?'자동차탁송':'대리운전';
- return '<p class="vehicle-guide-link"><a href="/'+kind+'/#vehicle-guide">국산차·수입차 '+label+' 차량 안내</a>에서 차종·차량 크기별 인수 조건과 예약 준비사항을 확인하세요. 예약할 때 차종, 차량 크기와 특이사항을 알려주시면 이용 조건을 상담합니다.</p>';
+ return '<p class="vehicle-guide-link"><a href="/'+kind+'/#vehicle-guide">국산차·수입차 '+label+' 이용 안내</a>에서 '+(kind==='taksong'?'차량 인수·인계 조건과 예약 준비사항':'출발지·목적지와 기사 호출 전 확인사항')+'을 확인하세요. 예약할 때 차종과 희망 일정, 특이사항을 알려주시면 이용 조건을 상담합니다.</p>';
 }
 function serviceVehicleGallery(kind){
  const label=kind==='taksong'?'자동차탁송':'대리운전';
- return '<section id="vehicle-guide"><h2>국산차·수입차 '+label+' 안내</h2><p>차종·차량 크기와 출발지·도착지, 희망 인수 시각을 알려주시면 이용 조건을 상담합니다. 차량 홍보 이미지는 저작권 확인을 위해 표시하지 않습니다.</p><h3>'+ (kind==='taksong'?'자동차탁송 인수·인계 전 확인':'대리운전 출발 전 확인') +'</h3>'+(kind==='taksong'?'<ol><li>차량의 정확한 주차 위치와 출입·주차 제한</li><li>차량 키 전달 방법과 인수·인계 담당자 연락처</li><li>시동·주행 가능 상태, 경고등과 특이사항</li><li>장거리·야간 이동 시 희망 시간과 통행료 등 추가 조건</li></ol><p>정비 입출고나 렌트카 반납은 담당자 및 영업시간도 함께 확인해 주세요.</p>':'<ol><li>출발지의 정확한 위치와 주차장 출입 방법</li><li>목적지 주소와 경유지, 희망 출발 시각</li><li>차종과 차량 상태, 동승 인원 및 특이사항</li><li>야간·장거리 운행 시 기사 배차와 요금 확인</li></ol><p>실제 기사 배차 가능 여부와 최종 요금은 상담 시 확인해 주세요.</p>')+'<p><a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>';
+ return '<section id="vehicle-guide"><h2>국산차·수입차 '+label+' 안내</h2><p>'+(kind==='taksong'?'차종·차량 크기와 출발지·도착지, 희망 인수 시각을 알려주시면 차량 이동 조건을 상담합니다.':'차종과 출발지·목적지, 희망 출발 시각을 알려주시면 기사 배차 가능 여부와 이용 조건을 상담합니다.')+' 차량 홍보 이미지는 저작권 확인을 위해 표시하지 않습니다.</p><h3>'+ (kind==='taksong'?'자동차탁송 인수·인계 전 확인':'대리운전 출발 전 확인') +'</h3>'+(kind==='taksong'?'<ol><li>차량의 정확한 주차 위치와 출입·주차 제한</li><li>차량 키 전달 방법과 인수·인계 담당자 연락처</li><li>시동·주행 가능 상태, 경고등과 특이사항</li><li>장거리·야간 이동 시 희망 시간과 통행료 등 추가 조건</li></ol><p>정비 입출고나 렌트카 반납은 담당자 및 영업시간도 함께 확인해 주세요.</p>':'<ol><li>출발지의 정확한 위치와 주차장 출입 방법</li><li>목적지 주소와 경유지, 희망 출발 시각</li><li>차종과 차량 상태, 동승 인원 및 특이사항</li><li>야간·장거리 운행 시 기사 배차와 요금 확인</li></ol><p>실제 기사 배차 가능 여부와 최종 요금은 상담 시 확인해 주세요.</p>')+'<p><a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>';
 }
 function serviceJourneyLinks(kind){
  const isT=kind==='taksong',label=isT?'자동차탁송':'대리운전';
