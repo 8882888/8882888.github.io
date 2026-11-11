@@ -368,6 +368,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(cyclingSearchHtml.includes('id="cycling-direction-result"'),'cycling search must render direction result');
   assert.ok(cyclingSearchHtml.includes('noindex,follow'),'query result must not create indexable duplicate pages');
   assert.ok(cyclingSearchHtml.includes('tel:18114294'),'cycling search must retain homepage phone');
+  // Service-intent taksong pages must be present in the HTTP-generated discovery map.
+  for(const route of [
+    '/service/taksong/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
+    '/taksong/types/','/taksong/jeju/','/reviews/taksong/',
+    '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/'
+  ]){
+    assert.ok(seoulMainMap.includes('<loc>https://example.com'+route+'</loc>'),
+      'dynamic sitemap must include priority taksong intent '+route);
+  }
   // High-intent taksong landing pages should render usable customer actions.
   for(const route of ['/taksong/busan/','/taksong/daegu/','/taksong/ulsan/','/taksong/sejong/']){
     const response=await get(route);
