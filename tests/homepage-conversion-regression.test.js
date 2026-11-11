@@ -136,7 +136,7 @@ for(const id of ['224445300887','224433939509','224452085535']){
  assert(busanEditorial.includes('https://blog.naver.com/wjdtnr4757/'+id),'Published Busan review missing '+id);
 }
 const serverBusan=read('server.js');
-assert(serverBusan.includes('busanReviewPage?busanReviewTitle:kind===\'taksong\'?taksongReviewTitle:daeriReviewTitle'),
+assert(serverBusan.includes('busanReviewPage?busanReviewTitle:gijangTaksongPage?\'기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내\':kind===\'taksong\'?taksongReviewTitle:daeriReviewTitle'),
  'Dynamic canonical Busan page must display a genuine review topic in title and H1');
 const busanRender=serverBusan.slice(serverBusan.indexOf('const rendered=layout(searchTitle,searchDesc,'));
 assert(busanRender.indexOf('+busanReviewLead+')>=0 &&
