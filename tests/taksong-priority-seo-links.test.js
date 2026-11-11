@@ -25,7 +25,9 @@ for(const [url,label] of priority){
 assert(server.includes("const body=taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice"),'Transport trust proof must precede nationwide keyword and operational notice panels');
 assert(home.includes('id="taksong-first-trust-home-20261106"'),'Home transport navigation missing');
 assert(home.includes('href="/taksong/"'),'Transport hub link missing');
-assert(!sitemap.includes('<loc>https://jeongukdaeri.kr/taksong/</loc>'),'Node-only transport hub must not be advertised as a missing static GitHub Pages page');
+assert(sitemap.includes('<loc>https://jeongukdaeri.kr/taksong/</loc>'),'Taksong canonical hub must remain discoverable in the official site inventory');
+assert(server.includes("const gijangTaksongPage=kind==='taksong'&&r.full_name==='부산광역시 기장군'"),'Gijang county must have its own unambiguous SEO target');
+assert(server.includes("gijangTaksongPage?'기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내'"),'Gijang title must preserve the exact county keyword');
 const rule=rules.pages.find(x=>x.path==='/taksong/');
 assert(rule && rule.title.includes('탁송') && /운행(?:기록|후기)/.test(rule.description),'Transport title and description missing');
 assert(!panel.includes('100% 최상위') && !panel.includes('확정 배차'),'No unsupported guarantees');
