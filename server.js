@@ -2643,7 +2643,7 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  // Both sitemaps now prioritize useful province hubs and operationally relevant city/district pages.
  // Other valid regional URLs remain available through navigation and search; no data is deleted.
  // Use the same nationwide selection rules for both services; avoid city-only boosts.
- const baseRoutes=['/'+service+'/',...(service==='daeri'?daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor):['/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/','/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/'])];
+ const baseRoutes=['/'+service+'/',...(service==='daeri'?daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor):['/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/','/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/','/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/'])];
  // Always retain the first three verified 50-keyword batches in discovery,
  // before rotating through the remaining curated 2,700 locality targets.
  const primaryRegions=regions.filter(r=>r.level==='시도'||priorityByKey.has(service+'|'+r.full_name));
