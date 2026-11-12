@@ -7,6 +7,8 @@ const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto')
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
 const {createEngine:createLocalServiceEngine}=require('./data/smart24-region-automation/lib/engine');
 const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/smart24-region-automation/data/regions.json'));
+const {createEnhancer:createLocalServiceEnhancer}=require('./data/smart24-region-automation/lib/enhance');
+const localServiceEvidenceForPath=createLocalServiceEnhancer(path.join(ROOT,'data/smart24-region-automation/data/regions.json'),path.join(ROOT,'data/smart24-region-automation/data/trips.json'));
 const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');
 const {removeRetiredHomepageCopy}=require('./lib/homepage-copy');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
@@ -2859,7 +2861,15 @@ if(pathname==='/region-live/'||pathname==='/region-live'){return (async()=>{
  return respond(res,200,body,'text/html; charset=utf-8');
 })().catch(err=>{console.error('region-live handler error',err);return respond(res,500,'지역 검색 오류')})}
 const hierarchicalMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/?$/);
-if(hierarchicalMatch){const r=byPath.get(hierarchicalMatch[2]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');const target=servicePath(r,hierarchicalMatch[1]);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return servicePage(r,hierarchicalMatch[1]).then(html=>respond(res,200,html)).catch(err=>{console.error('regional page error',err);respond(res,500,'페이지 생성 오류')})}
+if(hierarchicalMatch){const r=byPath.get(hierarchicalMatch[2]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');const target=servicePath(r,hierarchicalMatch[1]);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return servicePage(r,hierarchicalMatch[1]).then(html=>{
+ // Add the original-source, direction-labelled v2 evidence on two canonical pages only.
+ // Existing article title, canonical, fare engine, reviews and regional navigation stay unchanged.
+ if(target==='/daeri/sejong/'||target==='/taksong/busan/'){
+  try{const evidence=localServiceEvidenceForPath(target);if(evidence&&html.includes('</main>'))html=html.replace('</main>',evidence+'</main>');}
+  catch(error){console.error('v2 regional evidence unavailable:',error.message);}
+ }
+ return respond(res,200,html);
+}).catch(err=>{console.error('regional page error',err);respond(res,500,'페이지 생성 오류')})}
 const serviceMatch=pathname.match(/^\/service\/(area-[0-9]+)\/(daeri|taksong)\/?$/);if(serviceMatch){const r=bySlug.get(serviceMatch[1]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');res.writeHead(301,{location:servicePath(r,serviceMatch[2])});return res.end()}
 const curatedRegionFiles=new Set(['seoul-daeri-taksong','gyeonggi-daeri-taksong','incheon-daeri-taksong','busan-daeri-taksong','daegu-daeri-taksong','gangwon-daeri-taksong','gangneung-taksong','detail']);
 const match=pathname.match(/^\/region\/([^/]+)\/?$/);

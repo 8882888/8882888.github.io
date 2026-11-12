@@ -1,0 +1,20 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const http=require('node:http');const os=require('node:os');
+const {validate,pages,sitemap,createEngine}=require('../lib/engine');const {renderEnhancement,selectRecords,validateEvidence,integrationPlan,dateOK}=require('../lib/enhance');
+const read=n=>JSON.parse(fs.readFileSync(path.join(__dirname,'../data/'+n+'.json')));const data=()=>read('regions');const trips=()=>read('trips');
+test('기존 URL은 신규 사이트맵에 중복 제출하지 않음',()=>{const d=validate(data()),p=pages(d);assert.equal(p.size,29);assert.equal(p.get('/local-service/sejong/daeri/').redirectTo,d.origin+'/daeri/sejong/');assert(!sitemap(d,p).includes('/sejong/daeri/'));assert.equal(integrationPlan(d,trips()).filter(x=>x.targetPath).length,2);});
+test('도착 기록을 출발 요금으로 오인시키지 않음',()=>{const html=renderEnhancement(data(),trips(),'sejong','daeri');assert.equal((html.match(/도착 기록/g)||[]).length,2);assert(!html.includes('출발 기록'));assert(html.includes('청주 → 세종시'));assert(html.includes('service=daeri'));assert(!html.includes('<h1>'));});
+test('탁송만 연결, 대리운전 혼입 방지',()=>{const rows=selectRecords(trips(),'busan','taksong');assert.equal(rows.length,2);assert(!rows.some(x=>x.id==='excel-2249'));});
+test('원문 미확인 또는 공개 제외 기록은 표시하지 않음',()=>{const ts=trips();ts[0].verified=false;ts[1].publicAllowed=false;assert.equal(selectRecords(ts,'sejong','daeri').length,0);});
+test('기록 id 중복, 외부 원문, 잘못된 날짜 거부',()=>{const d=data();assert.throws(()=>validateEvidence(d,[trips()[0],trips()[0]]));const ts=trips();ts[0].sourceUrl='https://example.com/reviews/x/';assert.throws(()=>validateEvidence(d,ts));assert.equal(dateOK('2026-02-30'),false);});
+test('기존 URL로 외부 도메인/접두 경로 이동 차단',()=>{const d=data();d.regions[0].services.daeri.existingPath='//evil.example/';assert.throws(()=>validate(d));});
+test('모듈 오류가 다른 기존 페이지를 가로채지 않음 및 301 확인',async t=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'enhance-test-'));const f=path.join(dir,'data.json');fs.writeFileSync(f,JSON.stringify(data()));const h=createEngine(f);const server=http.createServer((req,res)=>{if(!h(req,res)){res.writeHead(200);res.end('existing app');}});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});});const base='http://127.0.0.1:'+server.address().port;
+ let r=await fetch(base+'/local-service/sejong/daeri/',{redirect:'manual'});assert.equal(r.status,301);assert.equal(r.headers.get('location'),'https://jeongukdaeri.kr/daeri/sejong/');
+ fs.writeFileSync(f,'broken');r=await fetch(base+'/existing/');assert.equal(await r.text(),'existing app');r=await fetch(base+'/local-service/');assert.equal(r.status,503);
+});
+test('동명이인 지역명은 임의 첫 지역으로 연결하지 않음',async t=>{
+ const d=data();d.regions[0].aliases.push('공통동');d.regions[1].aliases.push('공통동');const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ambiguous-'));const f=path.join(dir,'d.json');fs.writeFileSync(f,JSON.stringify(d));const h=createEngine(f);const server=http.createServer(h);await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});});const r=await fetch('http://127.0.0.1:'+server.address().port+'/local-service/search?q='+encodeURIComponent('공통동탁송'),{redirect:'manual'});assert.equal(r.status,200);assert.equal(r.headers.get('x-robots-tag'),'noindex');const html=await r.text();assert(html.includes('세종'));assert(html.includes('부산'));
+});
+test('기존 페이지 블록도 데이터 변경을 자동 반영',()=>{
+ const {createEnhancer}=require('../lib/enhance');const dir=fs.mkdtempSync(path.join(os.tmpdir(),'reload-block-'));try{const rf=path.join(dir,'regions.json'),tf=path.join(dir,'trips.json');const d=data();fs.writeFileSync(rf,JSON.stringify(d));fs.writeFileSync(tf,JSON.stringify(trips()));const block=createEnhancer(rf,tf);assert(block('/daeri/sejong/').includes('청주 → 세종시'));assert.equal(block('/unknown/'),'');d.regions[0].services.daeri.details[0].guidance='갱신된 장소 안내';fs.writeFileSync(rf,JSON.stringify(d));assert(block('/daeri/sejong/').includes('갱신된 장소 안내'));}finally{fs.rmSync(dir,{recursive:true,force:true});}
+});

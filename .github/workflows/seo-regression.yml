@@ -40,12 +40,17 @@ jobs:
           node --check lib/blog-search-topics.js
           node --check lib/naver-blog-feed.js
           node --check data/smart24-region-automation/lib/engine.js
+          node --check data/smart24-region-automation/lib/enhance.js
           node --check scripts/blog-search-coverage.js
           node --check tests/homepage-copy.test.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
-      - name: Test isolated regional automation, noindex and alias routing
-        run: node --test data/smart24-region-automation/tests/engine.test.js
+      - name: Test v2 regional automation (16 Node tests, 4 Python tools tests)
+        run: |
+          node --test data/smart24-region-automation/tests/engine.test.js data/smart24-region-automation/tests/enhance.test.js
+          python3 -m unittest discover -s data/smart24-region-automation/tests -p 'test_*.py'
+      - name: Verify regional v2 canonical pages, verified rides and noindex redirects
+        run: node --test tests/regional-v2-integration.test.js
       - name: Verify six cycling-course mobile direct-call buttons
         run: node tests/cycling-mobile-call.test.js
       - name: Check keyword-to-text-image previews

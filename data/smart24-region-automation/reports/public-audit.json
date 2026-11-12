@@ -1,0 +1,248 @@
+{
+  "checkedAt": "2026-11-12T04:48:29.454091+00:00",
+  "method": "HTTP HTML sample; no JS execution; fetchMs is NOT Core Web Vitals",
+  "naverRankChecked": false,
+  "mobilePhoneAppChecked": false,
+  "results": [
+    {
+      "url": "https://gosudaeri.com/",
+      "finalUrl": "https://gosudaeri.com/",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "xRobotsTag": "",
+      "bytes": 40088,
+      "fetchMs": 6735,
+      "sha256": "31f0758975c664dd63a200f619905d10c80974d3fa5e300c47c6ace503794390",
+      "inspection": "html",
+      "title": "고수 대리운전 1577-1145",
+      "description": "서울·경기·인천 대리운전, 장거리·일일기사·법인 후불 안내. 1577-1145에서 24시간 상담합니다.",
+      "canonical": [
+        "https://gosudaeri.com/"
+      ],
+      "h1Count": 1,
+      "viewport": "width=device-width, initial-scale=1",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "telephoneLinks": [
+        "tel:1577-1145"
+      ],
+      "internalLinkCount": 57,
+      "jsonLdCount": 1,
+      "jsonLdErrors": 0,
+      "visibleTextChars": 5946,
+      "reviewItems": []
+    },
+    {
+      "url": "https://gosudaeri.com/대리운전-요금/",
+      "finalUrl": "https://gosudaeri.com/%EB%8C%80%EB%A6%AC%EC%9A%B4%EC%A0%84-%EC%9A%94%EA%B8%88/",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "xRobotsTag": "",
+      "bytes": 139552,
+      "fetchMs": 6822,
+      "sha256": "dcf432549dae05c88475961d9d33e9a555145f6302029eb2a098ed101521bbbc",
+      "inspection": "html",
+      "title": "지역·구간별 대리운전 요금표 - 고수대리운전",
+      "description": "도시별 주요 목적지와 출발·도착 구간의 대리운전 요금·비용을 실제 운행 자료로 비교하세요. 정확한 요금은 1577-1145로 문의하세요.",
+      "canonical": [
+        "https://gosudaeri.com/%EB%8C%80%EB%A6%AC%EC%9A%B4%EC%A0%84-%EC%9A%94%EA%B8%88/"
+      ],
+      "h1Count": 1,
+      "viewport": "width=device-width, initial-scale=1",
+      "robots": "index, follow",
+      "telephoneLinks": [
+        "tel:1577-1145"
+      ],
+      "internalLinkCount": 764,
+      "jsonLdCount": 1,
+      "jsonLdErrors": 0,
+      "visibleTextChars": 25629,
+      "reviewItems": []
+    },
+    {
+      "url": "https://kdaeri.com/",
+      "finalUrl": "https://kdaeri.com/",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "xRobotsTag": "",
+      "bytes": 119109,
+      "fetchMs": 7380,
+      "sha256": "862813f95d681a60355dfd47b1fa07696c10f5fdac2172aa0d7c91eb7e608b3e",
+      "inspection": "html",
+      "title": "전국 대리운전 지역 케이대리운전 | 대리운전 비용 대리비 📞1666-4255",
+      "description": "대리운전 비용 안내 전국 서울, 인천, 경기 수원, 고양시 일산, 안양, 안산, 군포, 성남 분당 판교, 충청도, 대전, 세종, 경상도 대구, 경산, 부산, 광주 대리운전 비용, 대리비 계산 케이대리운전 콜센터 1666-4255",
+      "canonical": [
+        "https://kdaeri.com/"
+      ],
+      "h1Count": 1,
+      "viewport": "width=device-width, initial-scale=1",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "telephoneLinks": [
+        "tel:1666-4255"
+      ],
+      "internalLinkCount": 39,
+      "jsonLdCount": 1,
+      "jsonLdErrors": 0,
+      "visibleTextChars": 10805,
+      "reviewItems": []
+    },
+    {
+      "url": "https://kdaeri.com/강남-대리운전-업체-비용/",
+      "finalUrl": "https://kdaeri.com/%EA%B0%95%EB%82%A8-%EB%8C%80%EB%A6%AC%EC%9A%B4%EC%A0%84-%EC%97%85%EC%B2%B4-%EB%B9%84%EC%9A%A9/",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "xRobotsTag": "",
+      "bytes": 115247,
+      "fetchMs": 8326,
+      "sha256": "86142963245596e787880a7415262e6c56d74603487cc82a18e6e2a70f4e4e0c",
+      "inspection": "html",
+      "title": "강남 대리운전 - 케이대리운전 | 대리운전 비용 대리비 📞1666-4255",
+      "description": "서울시 강남구 대리운전 대리비 얼마일까요? 보다 저렴한 대리운전 비용으로 빠르고 안전하게 요청하신 장소까지 대리운전 후 주차까지 빠르고 안전하게 도와드립니다. 케이드라이브 고객센터(아래버튼) 전화하셔서 강남대리운전 신청하세요",
+      "canonical": [
+        "https://kdaeri.com/강남-대리운전-업체-비용/"
+      ],
+      "h1Count": 1,
+      "viewport": "width=device-width, initial-scale=1",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "telephoneLinks": [
+        "tel:1666-4255"
+      ],
+      "internalLinkCount": 81,
+      "jsonLdCount": 1,
+      "jsonLdErrors": 0,
+      "visibleTextChars": 7395,
+      "reviewItems": []
+    },
+    {
+      "url": "https://jeongukdaeri.kr/",
+      "finalUrl": "https://jeongukdaeri.kr/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "xRobotsTag": "",
+      "bytes": 226003,
+      "fetchMs": 6701,
+      "sha256": "07ec80d10c50545399915373ea328bc22105946941356a62ae9be0b45097ea03",
+      "inspection": "html",
+      "title": "전국대리운전 실제 운행후기·24시탁송 | 전국탁송 스마트24",
+      "description": "전국대리운전·전국탁송·24시탁송 상담. 실제 완료 운행기록 2,591건과 지역별 자동차탁송·대리운전 안내. 대리비·대리비견적과 탁송비·탁송견적·탁송비견적은 출발·도착지 기준으로 참고요금을 조회하고, 최종 배차와 요금은 1811-4294로 확인하세요.",
+      "canonical": [
+        "https://jeongukdaeri.kr/"
+      ],
+      "h1Count": 1,
+      "viewport": "width=device-width, initial-scale=1",
+      "robots": "index,follow,max-image-preview:large",
+      "telephoneLinks": [
+        "tel:18114294",
+        "tel:18775245"
+      ],
+      "internalLinkCount": 260,
+      "jsonLdCount": 4,
+      "jsonLdErrors": 0,
+      "visibleTextChars": 29545,
+      "reviewItems": []
+    },
+    {
+      "url": "https://jeongukdaeri.kr/daeri/sejong/",
+      "finalUrl": "https://jeongukdaeri.kr/daeri/sejong/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "xRobotsTag": "",
+      "bytes": 74509,
+      "fetchMs": 7085,
+      "sha256": "63a20cbfc3f0d4146d85aeafb9ced7f17140fc806d8a67892bee3489a964ad46",
+      "inspection": "html",
+      "title": "세종대리운전｜요금·예약·출발 위치 안내 | 스마트전국대리운전 스마트24탁송",
+      "description": "세종대리운전. 세종 정부청사·나성동·어진동·조치원 출발 위치와 목적지, 희망 시각을 확인해 요금·배차를 상담합니다. 확인된 실제 운행정보만 후기에 연결합니다. 상담 1811-4294.",
+      "canonical": [
+        "https://jeongukdaeri.kr/daeri/sejong/"
+      ],
+      "h1Count": 1,
+      "viewport": "width=device-width,initial-scale=1",
+      "robots": "index,follow,max-image-preview:large",
+      "telephoneLinks": [
+        "tel:18114294"
+      ],
+      "internalLinkCount": 135,
+      "jsonLdCount": 1,
+      "jsonLdErrors": 0,
+      "visibleTextChars": 10438,
+      "reviewItems": []
+    },
+    {
+      "url": "https://jeongukdaeri.kr/taksong/busan/",
+      "finalUrl": "https://jeongukdaeri.kr/taksong/busan/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "xRobotsTag": "",
+      "bytes": 69115,
+      "fetchMs": 6763,
+      "sha256": "c143352d1fa7e5ad1d8dd929685756f08452ca0972a015975af0ac411fb20776",
+      "inspection": "html",
+      "title": "부산탁송 예약·예상요금｜구·군별 차량 인수·인계 | 스마트전국대리운전 스마트24탁송",
+      "description": "부산탁송 예약과 예상요금, 구·군별 출발지의 차량 인수·인계 안내. 부산 출발 실제 운행기록과 당시 요금도 확인할 수 있습니다.",
+      "canonical": [
+        "https://jeongukdaeri.kr/taksong/busan/"
+      ],
+      "h1Count": 1,
+      "viewport": "width=device-width,initial-scale=1",
+      "robots": "index,follow,max-image-preview:large",
+      "telephoneLinks": [
+        "tel:18114294"
+      ],
+      "internalLinkCount": 121,
+      "jsonLdCount": 1,
+      "jsonLdErrors": 0,
+      "visibleTextChars": 11837,
+      "reviewItems": []
+    },
+    {
+      "url": "https://gosudaeri.com/robots.txt",
+      "finalUrl": "https://gosudaeri.com/robots.txt",
+      "status": 200,
+      "contentType": "text/plain",
+      "xRobotsTag": "",
+      "bytes": 116,
+      "fetchMs": 3971,
+      "sha256": "e043e08418ba6459b13aa3d1bfb97b4a6a1e8a3ef010313a5fba22901f65e430",
+      "inspection": "non-html",
+      "sitemaps": [
+        "https://gosudaeri.com/sitemap_index.xml",
+        "https://gosudaeri.com/sitemap.xml"
+      ]
+    },
+    {
+      "url": "https://kdaeri.com/robots.txt",
+      "finalUrl": "https://kdaeri.com/robots.txt",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "xRobotsTag": "noindex, follow",
+      "bytes": 168,
+      "fetchMs": 5301,
+      "sha256": "e5a70a3b1d0a7015c597f13f3460163d51389b70a8dd0d40b69633e4f54492f2",
+      "inspection": "non-html",
+      "sitemaps": [
+        "https://kdaeri.com/sitemap_index.xml"
+      ]
+    },
+    {
+      "url": "https://jeongukdaeri.kr/robots.txt",
+      "finalUrl": "https://jeongukdaeri.kr/robots.txt",
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "xRobotsTag": "",
+      "bytes": 389,
+      "fetchMs": 1910,
+      "sha256": "437cea92d645d52b0378fb0164f29445670ca0830a3d530423a7ec4bbde0005f",
+      "inspection": "non-html",
+      "sitemaps": [
+        "https://jeongukdaeri.kr/sitemap-priority.xml",
+        "https://jeongukdaeri.kr/sitemap.xml",
+        "https://jeongukdaeri.kr/sitemap-reviewed-routes.xml",
+        "https://jeongukdaeri.kr/sitemap-taksong.xml",
+        "https://jeongukdaeri.kr/sitemap-daeri.xml",
+        "https://jeongukdaeri.kr/sitemap-all.xml",
+        "https://jeongukdaeri.kr/sitemap-history.xml"
+      ]
+    }
+  ],
+  "normalizationNote": "Canonical Unicode and percent-encoded UTF-8 normalized before comparison; encoded slash stays distinct."
+}

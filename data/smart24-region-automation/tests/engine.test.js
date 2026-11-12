@@ -1,6 +1,6 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const os=require('node:os');const path=require('node:path');const http=require('node:http');
 const {validate,pages,sitemap,createEngine}=require('../lib/engine');
-const seed=()=>JSON.parse(fs.readFileSync(path.join(__dirname,'../data/regions.json')));
+const seed=()=>{const d=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/regions.json')));d.regions=d.regions.slice(0,12);for(const r of d.regions)for(const p of Object.values(r.services))delete p.existingPath;return d;};
 const approve=d=>{const p=d.regions[0].services.daeri;p.approved=true;p.reviewedBy='테스트 검토자';p.updatedAt='2026-01-01';p.text+='실제 출발 주차층과 차량 진입 방향을 확인하고, 목적지 주차장 출입에 필요한 정보를 함께 준비해 주세요.';return d;};
 test('초기 24개 서비스 초안은 사이트맵에 제출되지 않음',()=>{const d=validate(seed()),p=pages(d);assert.equal(p.size,25);assert.equal([...p.values()].filter(x=>x.indexable).length,0);assert(!sitemap(d,p).includes('<url>'));});
 test('승인한 서비스만 사이트맵에 포함',()=>{const d=validate(approve(seed()));const xml=sitemap(d,pages(d));assert(xml.includes('/sejong/daeri/'));assert(!xml.includes('/sejong/taksong/'));});

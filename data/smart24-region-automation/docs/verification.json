@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "testDate": "2026-11-12",
+  "nodeTestsPassed": 16,
+  "pythonTestsPassed": 4,
+  "failed": 0,
+  "publicURLsChecked": 10,
+  "htmlSamples": 7,
+  "robotsSamples": 3,
+  "regions": 14,
+  "serviceSlots": 28,
+  "existingPageBlocks": 2,
+  "verifiedPublicRecords": 4,
+  "productionDeployed": false,
+  "mobilePhoneAppTested": false,
+  "naverRankVerified": false
+}

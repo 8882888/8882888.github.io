@@ -1,0 +1,58 @@
+[
+  {
+    "id": "excel-2230",
+    "service": "daeri",
+    "date": "2026-05-09",
+    "from": "청주",
+    "to": "세종시",
+    "fromRegion": "cheongju",
+    "toRegion": "sejong",
+    "fare": 50000,
+    "sourceUrl": "https://jeongukdaeri.kr/reviews/history/excel-2230/",
+    "checkedAt": "2026-11-12",
+    "verified": true,
+    "publicAllowed": true
+  },
+  {
+    "id": "excel-2249",
+    "service": "daeri",
+    "date": "2026-05-08",
+    "from": "부산",
+    "to": "세종시",
+    "fromRegion": "busan",
+    "toRegion": "sejong",
+    "fare": 150000,
+    "sourceUrl": "https://jeongukdaeri.kr/reviews/history/excel-2249/",
+    "checkedAt": "2026-11-12",
+    "verified": true,
+    "publicAllowed": true
+  },
+  {
+    "id": "excel-1165",
+    "service": "taksong",
+    "date": "2026-07-31",
+    "from": "부산",
+    "to": "대구",
+    "fromRegion": "busan",
+    "toRegion": "daegu",
+    "fare": 80000,
+    "sourceUrl": "https://jeongukdaeri.kr/reviews/history/excel-1165/",
+    "checkedAt": "2026-11-12",
+    "verified": true,
+    "publicAllowed": true
+  },
+  {
+    "id": "excel-0979",
+    "service": "taksong",
+    "date": "2026-08-14",
+    "from": "광주",
+    "to": "부산",
+    "fromRegion": "gwangju",
+    "toRegion": "busan",
+    "fare": 100000,
+    "sourceUrl": "https://jeongukdaeri.kr/reviews/history/excel-0979/",
+    "checkedAt": "2026-11-12",
+    "verified": true,
+    "publicAllowed": true
+  }
+]
