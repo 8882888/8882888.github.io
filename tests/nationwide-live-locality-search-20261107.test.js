@@ -47,7 +47,7 @@ assert(server.includes("if(pathname==='/api/locality-suggest'){"),'Autocomplete 
 assert(server.includes('nationwideExplorer.suggestions(query,{kind,limit:8})'),'API must use real 17-province dataset');
 assert(server.includes("res.setHeader('x-robots-tag','noindex, nofollow')"),'Autocomplete must not be indexed');
 const first=home.indexOf('id="homepage-fare-form"'),search=home.indexOf('id="nationwide-live-locality-20261107"'),services=home.indexOf('id="homepage-primary-services-20261106"');
-assert(first>0&&first<search&&search<services,'One-screen quote and live locality search must precede primary service browsing');
+assert(first>0&&first<services&&services<search,'Keep the quote first, primary services directly below it, and live locality search afterward');
 assert(!home.includes('id="dynamic-service-card-search-20261103"'),'Retired dynamic card search must not reappear');
 assert(home.includes('id="nationwide-live-query-20261107"')&&home.includes('id="nationwide-live-results-20261107"'),'Accessible input and live results missing');
 assert(home.includes("fetch('/api/locality-suggest?'"),'Client must query actual locality suggestions');
