@@ -2187,6 +2187,10 @@ if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){
 }
 // Publish the public IndexNow ownership key at the root on Cloudtype.
 if(pathname==='/770f921af32e749f64c1d447c607ea42.txt')return respond(res,200,fs.readFileSync(path.join(ROOT,'770f921af32e749f64c1d447c607ea42.txt'),'utf8'),'text/plain; charset=utf-8');
+// Redirect legacy Gangneung spelling to the existing canonical regional pages.
+if(/^\/(?:taksong|daeri)\/gangwon\/gangneung-si\/?$/.test(pathname)){
+ res.writeHead(301,{location:pathname.replace('gangneung-si','gangreung-si')+u.search});return res.end();
+}
 // Consolidate default-document URLs without changing query parameters.
 if(/\/index\.html$/.test(pathname)){const target=u.pathname.slice(0,-'index.html'.length);res.writeHead(301,{location:target+u.search});return res.end()}
 // Two legacy nationwide driver pages share the /daeri/ canonical. Redirect
