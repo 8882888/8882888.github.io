@@ -40,6 +40,8 @@ jobs:
           node --check tests/homepage-copy.test.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
+      - name: Verify six cycling-course mobile direct-call buttons
+        run: node tests/cycling-mobile-call.test.js
       - name: Check keyword-to-text-image previews
         run: node tests/keyword-preview.test.js
       - name: Check retired homepage copy is removed, not keyword search

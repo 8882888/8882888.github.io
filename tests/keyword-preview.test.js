@@ -46,8 +46,8 @@ assert.ok(!html.includes('#dynamic-service-card-search-20261103{display:none!imp
 assert.ok(client.includes('function localKeywordSvg(raw,kind)'),'typed keyword SVG builder must exist');
 assert.ok(client.includes('-brand-v7.png')&&!client.includes('-brand-v6.png'),
  'instant region previews should use the cache-busting photo-free v7 image');
-assert.ok(html.includes('region-card-preview.js?v=20261109-mobile-v11'),
- 'homepage must load the current mobile-v11 image preview client instead of an old cached script');
+assert.ok(html.includes('region-card-preview.js?v=20261112-mobile-v12'),
+ 'homepage must load the current mobile-v12 image preview client instead of an old cached script');
 assert.ok(client.includes("showDraft(query,inferred||select?.value||'taksong')"),'keyword should show immediately');
 assert.ok(client.includes('picture.append(fallback)')&&client.includes('if(!fallback.isConnected)return;')&&client.includes('tryNext();'),'image failures must preserve the immediately visible exact-keyword SVG until a verified image loads');
 assert.ok(client.includes("const href=picture.getAttribute('href');")&&client.includes('if(zoom&&href)'),
