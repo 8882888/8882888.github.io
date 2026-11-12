@@ -39,18 +39,33 @@ for(const full of provinces){
     full+' must provide one quote link for every child');
  }
 }
-// Every *complete, unambiguous legal address* must resolve to itself.
-for(const r of regions){
- if(r.name==='(직할)')continue;
- const ride=explorer.resolve(r.full_name+'대리운전');
- const price=explorer.resolve(r.full_name+'탁송비견적');
- assert(ride&&ride.region.full_name===r.full_name&&ride.kind==='daeri',
-  'Wrong full-name driver route: '+r.full_name);
- assert(price&&price.region.full_name===r.full_name&&price.kind==='taksong'&&price.quote,
-  'Wrong full-name vehicle quote route: '+r.full_name);
- assert(price.url.startsWith('/fare/?service=taksong&from=')&&!price.url.includes('%25'),
-  'Encoded quote destination must not be encoded twice');
+// Full legal names must agree across service links, estimates and card artwork.
+const {render:renderKeywordCard}=require('../lib/exact-keyword-card');
+let checked=0;
+for(const region of regions){
+ if(region.name==='(직할)')continue;
+ for(const [kind,service,estimate] of [
+  ['daeri','대리운전','대리비견적'],['taksong','탁송','탁송비견적']
+ ]){
+  const keyword=region.full_name+service;
+  const detail=explorer.resolve(keyword);
+  assert.equal(detail?.region,region,'Incorrect locality for '+keyword);
+  assert.equal(detail.kind,kind,keyword);
+  assert.equal(detail.url,'/'+kind+'/'+region.slug+'/',keyword);
+  const price=explorer.resolve(region.full_name+estimate);
+  assert.equal(price?.region,region,keyword);
+  assert.equal(price.kind,kind,keyword);
+  assert.equal(price.quote,true,keyword);
+  const quoteUrl=new URL(price.url,'https://jeongukdaeri.kr');
+  assert.equal(quoteUrl.pathname,'/fare/',keyword);
+  assert.equal(quoteUrl.searchParams.get('service'),kind,keyword);
+  assert.equal(quoteUrl.searchParams.get('from'),region.full_name,keyword);
+  const svg=renderKeywordCard({keyword,region:region.full_name,kind,phone:'1811-4294'});
+  assert(svg.includes('<title id="title">'+keyword+' | 스마트24 1811-4294</title>'),keyword);
+  checked++;
+ }
 }
+console.log('PASS '+checked+' nationwide locality and service combinations');
 const ganghwa=byFull.get('인천광역시 강화군');
 const official=['강화읍','선원면','불은면','길상면','화도면','양도면','내가면','하점면','양사면','송해면','교동면','삼산면','서도면'];
 assert.deepEqual(explorer.childrenFor(ganghwa).map(r=>r.name),official,
