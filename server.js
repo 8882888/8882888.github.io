@@ -1788,7 +1788,8 @@ function applySeo(html,route){
   html=replaceTag(html,/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i,'<meta name="description" content="'+esc(rule.description)+'">');
   html=replaceTag(html,/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i,'<meta property="og:description" content="'+esc(rule.description)+'">');
  }
- if(['/daeri/','/taksong/','/reviews/','/service/long-distance-daeri/','/recruit/daeri/','/recruit/taksong/'].includes(route)){
+ if(['/daeri/','/taksong/','/reviews/','/service/long-distance-daeri/','/recruit/daeri/','/recruit/taksong/'].includes(route)
+    &&!html.includes('"@type":"WebPage"')){
   const host='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
   const name=rule.title||(route==='/daeri/'?'전국 대리운전':route==='/taksong/'?'전국 자동차탁송':'실제 완료 운행 기록');
   const schema={
@@ -1811,8 +1812,8 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   let html=Buffer.isBuffer(body)?body.toString('utf8'):String(body);
   // These three audited information pages are rendered without central SEO
   // overrides by their legacy handlers; synchronize their head and WebPage data.
-  if(['/service/long-distance-daeri/','/recruit/daeri/','/recruit/taksong/'].includes(res._smartPath||'')
-     &&!html.includes('"@type":"WebPage"'))html=applySeo(html,res._smartPath);
+  if(['/service/long-distance-daeri/','/recruit/daeri/','/recruit/taksong/'].includes(res._smartPath||''))
+    html=applySeo(html,res._smartPath);
   // A legacy release still advertised the retired dynamic-card headline.
   // Remove that display copy from the homepage without disabling keyword search.
   if(res._smartPath==='/')html=removeRetiredHomepageCopy(html);
