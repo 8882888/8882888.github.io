@@ -37,6 +37,9 @@ jobs:
           node --check assets/region-card-preview.js
           node --check lib/visual-policy.js
           node --check lib/homepage-copy.js
+          node --check lib/blog-search-topics.js
+          node --check lib/naver-blog-feed.js
+          node --check scripts/blog-search-coverage.js
           node --check tests/homepage-copy.test.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
@@ -44,6 +47,12 @@ jobs:
         run: node tests/cycling-mobile-call.test.js
       - name: Check keyword-to-text-image previews
         run: node tests/keyword-preview.test.js
+      - name: Verify public Naver-blog SEO topic matching and mobile call CTAs
+        run: node tests/blog-search-topics.test.js
+      - name: Verify Naver RSS fallback and safe public source rendering
+        run: node tests/blog-feed-render.test.js
+      - name: Generate 18-topic published-title coverage audit
+        run: node scripts/blog-search-coverage.js > /tmp/blog-search-coverage.json
       - name: Check retired homepage copy is removed, not keyword search
         run: node tests/homepage-copy.test.js
       - name: Check sitemap and cycling center regression
