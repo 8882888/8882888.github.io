@@ -23,15 +23,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
-      - name: Require successful Cloudtype deployment before comparing hashes
+      - name: Report automatic deploy status and independently verify manual releases
         if: github.event_name == 'workflow_run'
         shell: bash
         env:
           DEPLOY_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         run: |
           if [ "$DEPLOY_CONCLUSION" != "success" ]; then
-            echo "::error::Cloudtype deployment did not succeed ($DEPLOY_CONCLUSION); do not claim the running server is fresh."
-            exit 1
+            echo "::warning::Cloudtype automatic deployment did not succeed ($DEPLOY_CONCLUSION). Comparing the actual live release anyway; the owner may have manually deployed."
+            echo "Automatic deployment: $DEPLOY_CONCLUSION. The next step checks the real production release hash independently and must pass before any up-to-date claim." >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Check out the exact commit attempted by Cloudtype
         uses: actions/checkout@v4
