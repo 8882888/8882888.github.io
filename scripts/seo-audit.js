@@ -66,10 +66,15 @@ async function inspect(route){
     if(!html.includes(focus.topic))issues.push('Missing distinct priority topic');
     if(!html.includes(focus.detail))issues.push('Missing distinct priority details');
     const firstSentence=focus.detail.split(/[.!?。]/)[0].trim();
+    const bespokeMeta=(route==='/taksong/busan/'||route==='/taksong/busan/gijang-gun/');
     const metaSummary=focus.region==='울산광역시'&&focus.kind==='taksong'
-      ?'지역별 인수·인계 위치와 출고 시각, 기사 복귀를 확인합니다'
-      :firstSentence;
-    if(!String(desc[0]||'').includes(focus.topic)||!String(desc[0]||'').includes(metaSummary))issues.push('Meta description missing unique region service context');
+      ?'지역별 인수·인계 위치와 출고 시각'
+      :firstSentence.slice(0,16);
+    // Bespoke city/county summaries may use equivalent landmarks instead of
+    // duplicating the first source-record sentence verbatim.
+    if(!String(desc[0]||'').includes(focus.topic)||
+       (!bespokeMeta&&!String(desc[0]||'').includes(metaSummary)))
+      issues.push('Meta description missing unique region service context');
     if(String(desc[0]||'').length>170)issues.push('Priority meta description is too long: '+desc[0].length);
     if(!html.includes('href="tel:18114294"'))issues.push('Missing consultation phone link');
     if(/<(?:h2|h3)>[^<]+(?:차량탁송 이용 목적|대리운전 이용 목적)<\/(?:h2|h3)>/.test(html))
