@@ -48,6 +48,8 @@ jobs:
         run: node tests/site-name.test.js
       - name: Verify 823k keyword intents resolve to regional canonical URLs
         run: node --test tests/keyword-canonical-bridge.test.js
+      - name: Test regional evidence-link audit classification
+        run: node --test tests/indexability-scope.test.mjs
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
       - name: Test v2 regional automation (16 Node tests, 4 Python tools tests)

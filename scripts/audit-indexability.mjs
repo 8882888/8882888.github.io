@@ -3,6 +3,7 @@
 // All sitemap URLs are checked, including recursively linked sitemap indexes.
 import {writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
+import {reviewLinkCoverage} from './indexability-scope.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const transportOrigin=process.env.AUDIT_TRANSPORT_ORIGIN||origin;
 const sitemapPaths=['/sitemap-all.xml','/sitemap-history.xml','/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
@@ -93,7 +94,8 @@ for(const r of results){if(r.title&&titles.get(r.title).length>1)r.problems.push
 const bodies=new Map();
 for(const r of results){if(!r.bodyHash)continue;const group=bodies.get(r.bodyHash)||[];group.push(r.url);bodies.set(r.bodyHash,group)}
 for(const r of results){if(r.bodyHash&&bodies.get(r.bodyHash).length>1)r.problems.push('duplicate_exact_body')}
-const counts={discovered:list.length,checked:results.length,listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,regionalPagesWithoutReviewLink:results.filter(r=>r.status===200&&r.title&&/\/(?:region|taksong|daeri)\//.test(new URL(r.url).pathname)&&!r.hasRideLink).length,passed:results.filter(r=>r.problems.length===0).length,
+const regionalCoverage=reviewLinkCoverage(results);
+const counts={discovered:list.length,checked:results.length,listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,...regionalCoverage,passed:results.filter(r=>r.problems.length===0).length,
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,crawlerDiagnostics,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
@@ -109,6 +111,8 @@ const lines=[
  'Generated: '+new Date().toISOString(),
  'Scope: '+(transportOrigin===origin?'production HTTP':'local source responses; not production verification'),
  'Discovered: '+counts.discovered+' | Checked: '+counts.checked+' | Critical: '+critical.length+' | Review: '+review.length,
+ 'Canonical region-service landings: '+counts.regionalServicePages+' | Missing a link to the ride record archive: '+counts.regionalPagesWithoutReviewLink,
+ 'Recruitment, vehicle-type, travel and activity guides are excluded from locality evidence-link counts.',
  '',
  '> This audit measures technical indexability, not Naver confirmed index inclusion.',
  '',

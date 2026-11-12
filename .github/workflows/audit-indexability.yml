@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Verify locality coverage metrics exclude nonregional service pages
+        run: node --test tests/indexability-scope.test.mjs
       - name: Read-only full sitemap audit
         run: node scripts/audit-indexability.mjs
       - name: Upload full audit results
