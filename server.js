@@ -1,10 +1,12 @@
 'use strict';
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const ROOT=__dirname,PORT=Number(process.env.PORT||3000),BRAND='스마트전국대리운전 스마트24탁송',PHONE='1811-4294';
+const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/smart24-region-automation/data/regions.json'));
 const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFileSync(__filename)).digest('hex');
 // Keep /health available even if the optional analytics asset is absent from a deployment.
 const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'assets/traffic-analytics.js'))).digest('hex').slice(0,16)}catch(_){return 'unavailable'}})();
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
+const {createEngine:createLocalServiceEngine}=require('./data/smart24-region-automation/lib/engine');
 const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');
 const {removeRetiredHomepageCopy}=require('./lib/homepage-copy');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
@@ -2032,6 +2034,10 @@ function publicSiteQuality(){
 const regionSearchCache=new Map(); // Shared bounded regional search cache across requests.
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
 res._smartPath=pathname;
+// Isolated, explicitly noindex regional drafts; preserve existing /daeri/ and /taksong/ pages.
+if(pathname==='/local-service'||pathname.startsWith('/local-service/')){
+ return localServiceRegionHandler(req,res);
+}
 // Central public media allow-list: only audited text cards, fare tables, and scenery-only SVGs.
 // Blocks direct photo URLs as well as images removed from rendered HTML, including forgotten nested folders.
 if(/\.(?:png|jpe?g|webp|avif|svg|gif)$/i.test(pathname)&&!isSafeVisual(pathname)){

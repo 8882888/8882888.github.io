@@ -1,0 +1,20 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const os=require('node:os');const path=require('node:path');const http=require('node:http');
+const {validate,pages,sitemap,createEngine}=require('../lib/engine');
+const seed=()=>JSON.parse(fs.readFileSync(path.join(__dirname,'../data/regions.json')));
+const approve=d=>{const p=d.regions[0].services.daeri;p.approved=true;p.reviewedBy='테스트 검토자';p.updatedAt='2026-01-01';p.text+='실제 출발 주차층과 차량 진입 방향을 확인하고, 목적지 주차장 출입에 필요한 정보를 함께 준비해 주세요.';return d;};
+test('초기 24개 서비스 초안은 사이트맵에 제출되지 않음',()=>{const d=validate(seed()),p=pages(d);assert.equal(p.size,25);assert.equal([...p.values()].filter(x=>x.indexable).length,0);assert(!sitemap(d,p).includes('<url>'));});
+test('승인한 서비스만 사이트맵에 포함',()=>{const d=validate(approve(seed()));const xml=sitemap(d,pages(d));assert(xml.includes('/sejong/daeri/'));assert(!xml.includes('/sejong/taksong/'));});
+test('승인 검토자 누락 차단',()=>{const d=approve(seed());d.regions[0].services.daeri.reviewedBy='';assert.throws(()=>validate(d));});
+test('지역 중복 차단',()=>{const d=seed();d.regions.push(d.regions[0]);assert.throws(()=>validate(d));});
+test('본문 HTML 안전 출력, 구조화 데이터 script 탈출 차단',()=>{const d=seed();d.regions[0].services.daeri.text='<script>alert(1)</script>';d.brand='</script><script>alert(2)</script>';const p=pages(d).get('/local-service/sejong/daeri/').html;assert(!p.includes('<script>alert'));assert(p.includes('&lt;script&gt;'));});
+test('모든 페이지 전화번호와 모바일 viewport 포함',()=>{for(const p of pages(seed()).values()){assert(p.html.includes('href="tel:18114294"'));assert(p.html.includes('name="viewport"'));}});
+test('HTTP 검색, 301, 404, HEAD 및 파일 변경 자동 반영',async t=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'region-test-')),file=path.join(dir,'data.json');const d=seed();fs.writeFileSync(file,JSON.stringify(d));const handler=createEngine(file);const server=http.createServer((req,res)=>{if(!handler(req,res)){res.writeHead(404);res.end();}});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});});const base='http://127.0.0.1:'+server.address().port;
+ let r=await fetch(base+'/local-service/search?q='+encodeURIComponent('부산시탁송'),{redirect:'manual'});assert.equal(r.status,301);assert.equal(r.headers.get('location'),'/local-service/busan/taksong/');
+ r=await fetch(base+'/local-service/sejong/daeri?utm_source=x',{redirect:'manual'});assert.equal(r.status,301);
+ r=await fetch(base+'/local-service/no-such/daeri/');assert.equal(r.status,404);
+ r=await fetch(base+'/local-service/sejong/daeri/',{method:'HEAD'});assert.equal(r.status,200);assert.equal(await r.text(),'');assert.match(r.headers.get('x-robots-tag'),/noindex/);
+ d.regions[0].services.daeri.text='수정한 안내가 서버 재시작 없이 표시됩니다.';fs.writeFileSync(file,JSON.stringify(d));r=await fetch(base+'/local-service/sejong/daeri/');assert((await r.text()).includes('수정한 안내'));
+ fs.writeFileSync(file,'invalid');r=await fetch(base+'/local-service/sejong/daeri/');assert.equal(r.status,503);
+ fs.writeFileSync(file,JSON.stringify(d));r=await fetch(base+'/local-service/sejong/daeri/');assert.equal(r.status,200);
+});

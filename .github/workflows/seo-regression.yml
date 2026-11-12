@@ -39,10 +39,13 @@ jobs:
           node --check lib/homepage-copy.js
           node --check lib/blog-search-topics.js
           node --check lib/naver-blog-feed.js
+          node --check data/smart24-region-automation/lib/engine.js
           node --check scripts/blog-search-coverage.js
           node --check tests/homepage-copy.test.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
+      - name: Test isolated regional automation, noindex and alias routing
+        run: node --test data/smart24-region-automation/tests/engine.test.js
       - name: Verify six cycling-course mobile direct-call buttons
         run: node tests/cycling-mobile-call.test.js
       - name: Check keyword-to-text-image previews
