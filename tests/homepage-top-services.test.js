@@ -26,3 +26,12 @@ assert(server.includes('if(!complete||!present.includes(\'position:sticky\'))'),
 assert(server.includes("headers['x-smart24-primary-nav']='four-services-sticky-20261106'"),'Homepage must expose diagnostic navigation version');
 assert(server.includes("headers['cache-control']='no-store, max-age=0, must-revalidate'"),'Home menu must not be served from stale intermediate caches');
 console.log('PASS: four primary services available above fare search on desktop and mobile');
+
+const fareStart = source.indexOf('<section id="homepage-fare-top"');
+assert(source.slice(fareStart, start).trimEnd().endsWith('</section>'),
+  'Close the fare section before the independent service navigation');
+const quickLinksStart = source.indexOf('<nav class="smart24-clean-quicklinks"');
+const quickLinks = source.slice(quickLinksStart, source.indexOf('</nav>', quickLinksStart));
+for (const href of ['tel:18114294', '/special/24-hour-service/', '/recruit/daeri/', '/recruit/taksong/']) {
+  assert(quickLinks.includes('href="' + href + '"'), 'Missing top quick link: ' + href);
+}
