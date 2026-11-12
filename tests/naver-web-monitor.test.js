@@ -63,7 +63,7 @@ assert.deepEqual(legacy.map(x=>x.position),[1,5]);
 
 const {selectQueries}=require('../scripts/naver-web-monitor');
 const planned=selectQueries(new Date('2026-11-02T00:00:00Z'));
-assert.equal(planned.length,20,'daily Naver checks use 16 priority and 4 rotating keywords');
+assert.equal(planned.length,22,'daily Naver checks include two rotating general-service keywords');
 assert.equal(new Set(planned).size,planned.length,'all daily Naver queries are distinct');
 for(const key of ['강화대리운전','설악산탁송','지리산탁송','오색탁송','한계령탁송','부산탁송','대구탁송','창원탁송','기장군탁송'])
  assert.ok(planned.includes(key),'always check critical route: '+key);
@@ -96,8 +96,8 @@ const observed=new Set();
 for(let i=0;i<45;i++){
  const date=new Date(Date.UTC(2026,10,4+i));
  const sample=selectQueries(date);
- assert.equal(sample.length,20,'respect Naver API daily request budget');
- assert.equal(new Set(sample).size,20,'do not submit repeated search queries');
+ assert.equal(sample.length,22,'bound daily Naver search queries');
+ assert.equal(new Set(sample).size,22,'do not submit repeated search queries');
  for(const q of sample)if(FOCUS_150.includes(q))observed.add(q);
  assert.ok(sample.filter(q=>FOCUS_150.includes(q)).length>=4,'sample 4 curated regional searches each day');
 }
