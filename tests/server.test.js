@@ -548,7 +548,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(recreationMainXml.includes('https://example.com/blog/daeri-regions/'));
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>'+require('../data/seo-pages.json').pages.find(x=>x.path==='/').title+'</title>'),'homepage title matches the centrally configured SEO title');
-  assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'),'homepage Open Graph names the Korean brand');
+  assert.ok(seoHome.includes('property="og:site_name" content="스마트24 전국대리운전"'),'homepage Open Graph names the Korean brand');
   const visibleHeading=(seoHome.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)||[])[1]||'';
   assert.ok(visibleHeading.includes('전국자동차탁송')&&visibleHeading.includes('전국대리운전')&&
    visibleHeading.includes('href="tel:18114294"')&&seoHome.includes(require('../data/seo-pages.json').pages.find(x=>x.path==='/').description),
@@ -556,7 +556,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const schemaNodes=[...seoHome.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m=>JSON.parse(m[1]));
   const homeWebsite=schemaNodes.find(x=>x['@type']==='WebSite');
   assert.ok(homeWebsite,'homepage declares WebSite JSON-LD');
-  assert.equal(homeWebsite.name,'스마트24 전국대리운전·24시탁송');
+  assert.equal(homeWebsite.name,'스마트24 전국대리운전');
   assert.equal(homeWebsite.url,'https://jeongukdaeri.kr/');
   const koreanTaksong=await (await get('/taksong/')).text();
   const koreanDaeri=await (await get('/daeri/')).text();
@@ -594,8 +594,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((duplicateDaeriService.match(/<meta name="robots"/g)||[]).length,1,'service daeri has a single robots meta tag');
   assert.ok(koreanTaksong.includes('<title>'+require('../data/seo-pages.json').pages.find(x=>x.path==='/taksong/').title+'</title>'),'taksong hub title matches central SEO rules');
   assert.ok(koreanDaeri.includes('<title>'+require('../data/seo-pages.json').pages.find(x=>x.path==='/daeri/').title+'</title>'),'daeri hub title matches central SEO rules');
-  assert.ok(koreanTaksong.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
-  assert.ok(koreanDaeri.includes('property="og:site_name" content="스마트24 전국대리운전·24시탁송"'));
+  assert.ok(koreanTaksong.includes('property="og:site_name" content="스마트24 전국대리운전"'));
+  assert.ok(koreanDaeri.includes('property="og:site_name" content="스마트24 전국대리운전"'));
   assert.ok(koreanDaeri.includes('id="national-driver-guide"'),'national driving hub explains general, long-distance and golf reservation differences');
   const regionalDriverNav=koreanDaeri.split('id="priority-regions"')[1]?.split('</section>')[0]||'';
   for(const [path,keyword] of [['/daeri/seoul/','서울대리운전'],['/daeri/busan/','부산대리운전'],['/daeri/daegu/','대구대리운전'],['/daeri/incheon/','인천대리운전'],['/daeri/gangwon/sokcho-si/','속초대리운전']]){

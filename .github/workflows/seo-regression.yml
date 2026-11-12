@@ -43,6 +43,8 @@ jobs:
           node --check data/smart24-region-automation/lib/enhance.js
           node --check scripts/blog-search-coverage.js
           node --check tests/homepage-copy.test.js
+      - name: Validate preferred Korean site name and structured data
+        run: node tests/site-name.test.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
       - name: Test v2 regional automation (16 Node tests, 4 Python tools tests)
