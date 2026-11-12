@@ -1,12 +1,12 @@
 'use strict';
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const ROOT=__dirname,PORT=Number(process.env.PORT||3000),BRAND='스마트전국대리운전 스마트24탁송',PHONE='1811-4294';
-const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/smart24-region-automation/data/regions.json'));
 const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFileSync(__filename)).digest('hex');
 // Keep /health available even if the optional analytics asset is absent from a deployment.
 const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'assets/traffic-analytics.js'))).digest('hex').slice(0,16)}catch(_){return 'unavailable'}})();
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
 const {createEngine:createLocalServiceEngine}=require('./data/smart24-region-automation/lib/engine');
+const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/smart24-region-automation/data/regions.json'));
 const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');
 const {removeRetiredHomepageCopy}=require('./lib/homepage-copy');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
