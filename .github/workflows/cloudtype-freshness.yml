@@ -37,6 +37,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 90
       - name: Use Node 22
         uses: actions/setup-node@v4
         with:
@@ -46,3 +47,9 @@ jobs:
           LIVE_SITE_URL: https://jeongukdaeri.kr
           DEPLOY_CHECK_ATTEMPTS: '4'
         run: node tools/check_cloudtype_freshness.js
+      - name: Identify the previous Cloudtype release when freshness fails
+        if: failure()
+        continue-on-error: true
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+        run: node tools/identify-cloudtype-release.js
