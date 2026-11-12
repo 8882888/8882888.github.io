@@ -624,7 +624,7 @@ html{scroll-padding-top:95px}
     if(!item||!/^\/(?:daeri|taksong)\/[a-z0-9/\-]+\/$/.test(item.service_url||'')||!/^\/fare\/\?service=(?:daeri|taksong)&from=/.test(item.quote_url||''))continue;
     const line=document.createElement('div');line.style.cssText='display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:7px 0;border-bottom:1px solid #d8e5f2';
     const place=document.createElement('strong');place.textContent=item.full_name;place.style.cssText='flex:1 1 170px;font-size:15px';
-    line.append(place,link('지역 안내',item.service_url,true),link(kind==='daeri'?'대리비견적':'탁송비견적',item.quote_url,false));
+    line.append(place,link('지역 안내',item.service_url,true),link(data.service==='daeri'?'대리비견적':'탁송비견적',item.quote_url,false));
     output.append(line);
    }
   }catch(_){

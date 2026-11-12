@@ -2400,8 +2400,13 @@ if(pathname==='/api/public-region-lookup'){
 if(pathname==='/api/locality-suggest'){
  const query=clean(u.searchParams.get('q')||'');
  const requested=u.searchParams.get('service');
- const kind=requested==='daeri'?'daeri':'taksong';
- const items=nationwideExplorer.suggestions(query,{kind,limit:8});
+ const exact=resolveRegionalCardKeyword(query);
+ const kind=exact?.kind||(requested==='daeri'?'daeri':'taksong');
+ const items=exact?[{
+  name:exact.region.name,full_name:exact.region.full_name,
+  service_url:servicePath(exact.region,kind),
+  quote_url:nationwideExplorer.estimateUrl(exact.region,kind)
+ }]:nationwideExplorer.suggestions(query,{kind,limit:8});
  res.setHeader('cache-control','private, no-store, max-age=0');
  res.setHeader('x-robots-tag','noindex, nofollow');
  return respond(res,200,JSON.stringify({query,service:kind,items,notice:'실제 등록된 행정구역만 표시합니다. 지역 지점·즉시 배차나 요금 확정이 아닙니다.'}),'application/json; charset=utf-8');
