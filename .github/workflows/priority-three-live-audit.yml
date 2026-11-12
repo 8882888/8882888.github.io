@@ -1,0 +1,24 @@
+name: Smart24 priority three live indexability verification
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/check-live-priority-three.mjs'
+      - 'tests/check-live-priority-three.test.mjs'
+      - '.github/workflows/priority-three-live-audit.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test priority URL and mobile-phone validator
+        run: node --test tests/check-live-priority-three.test.mjs
+      - name: Inspect real Cloudtype indexability on first 3 region URLs
+        run: node tools/check-live-priority-three.mjs
