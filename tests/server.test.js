@@ -1252,6 +1252,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const r=await get(asset);assert.equal(r.status,200,asset);
    const body=await r.text();assert.ok(body.length>600&&/card-(?:preview|dialog)/.test(body),'live card asset has functional code: '+asset);
   }
+  const filteredDirectory=await get('/region/?service=taksong');
+  assert.equal(filteredDirectory.status,200);
+  assert.match(filteredDirectory.headers.get('x-robots-tag')||'',/noindex,\s*follow/);
+  assert.doesNotMatch((await get('/region/')).headers.get('x-robots-tag')||'',/noindex/);
   const regionInteractive=await (await get('/region/?q='+encodeURIComponent('부산'))).text();
   assert.ok(regionInteractive.includes('data-card-preview-form')&&regionInteractive.includes('data-card-preview-output'),'region result page offers in-place live switching');
   assert.ok(regionInteractive.includes('region-card-preview.js')&&regionInteractive.includes('region-card-preview.css'),'region page loads live preview assets');
