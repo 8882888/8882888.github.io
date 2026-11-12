@@ -22,9 +22,10 @@ const fixedPriorityPaths=[
  '/blog/', '/route-taksong/centers/', '/travel/food-map/', '/taksong/jeju/',
  '/recruit/daeri/', '/recruit/taksong/'
 ];
-// New curated locality guides are also indexed in sitemap-priority.xml.
-// Scale the coverage window with the published guide count; do not reject valid
-// 2,900+ URL sitemaps against an obsolete 200-URL ceiling.
+// The priority sitemap is intentionally a *curated discovery list*, NOT a
+// dump of every 2,900 focus target. Deeper service URLs have separate sitemaps.
+// Require the complete core set of editorial/booking entry URLs, rather than
+// pretending that every keyword or locality must be indexed separately.
 const focusFiles=fs.readdirSync(path.join(root,'data')).filter(name=>
  /^naver-regional-focus.*\.json$/.test(name)&&!name.includes('candidates'));
 const focusCount=focusFiles.reduce((total,name)=>{
@@ -35,7 +36,8 @@ const focusCount=focusFiles.reduce((total,name)=>{
 // Village guides without confirmed local trips intentionally remain noindex.
 // They must not be required for sitemap coverage or IndexNow notification.
 const sparseVillageAllowance=focusFiles.reduce((total,name)=>total+JSON.parse(fs.readFileSync(path.join(root,'data',name),'utf8')).priority.filter(entry=>entry.region.endsWith('리')).length,0);
-const minimumCount=Math.max(fixedPriorityPaths.length+require('../data/priority-regions.json').pages.length,focusCount-sparseVillageAllowance);
+const requiredPaths=[...new Set([...fixedPriorityPaths,...priorityPaths,...blogHashtagPaths])];
+const minimumCount=requiredPaths.length;
 const maximumCount=focusCount+500;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function get(rel){
@@ -108,7 +110,10 @@ async function verify(){
  return new Set(normalizedUrls);
 }
 async function main(){
- const files=filesInRevision();
+ // Dry-run is a read-only sitemap/key health test. It must not require HEAD^:
+ // scheduled workflow checkouts and pull request merges may be shallow.
+ // Real notifications still demand an explicit changed-file list and fail closed.
+ const files=dryRun?[]:filesInRevision();
  const targets=changedPaths(files,process.env.INDEXNOW_URLS||'');
  console.log('Changed repository files: '+(files.join(', ')||'(none)'));
  if(!dryRun&&!targets.length){console.log('No relevant published URLs changed; skipping repeat IndexNow submission');return}
@@ -134,4 +139,4 @@ async function main(){
  console.log('Submission acknowledgement only; real crawler requests, URL indexing and ranking are unconfirmed.');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
-module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,sitemapWindow:{focusCount,sparseVillageAllowance,minimumCount,maximumCount}};
+module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,sitemapWindow:{focusCount,sparseVillageAllowance,minimumCount,maximumCount,requiredPaths}};
