@@ -119,6 +119,12 @@ for(const r of regions){const parentPath=r.parent_slug?pathBySlug.get(r.parent_s
  const segment=romanOverrides[r.name]||(suffixMatch&&suffixMatch[1]?romanizeKorean(suffixMatch[1])+'-'+suffixLabels[suffixMatch[2]]:romanizeKorean(r.name));const proposed=(parentPath?parentPath+'/':'')+segment;const unique=byPath.has(proposed)?proposed+'-'+r.slug:proposed;pathBySlug.set(r.slug,unique);byPath.set(unique,r)}
 function servicePath(r,kind){return '/'+kind+'/'+pathBySlug.get(r.slug)+'/'}
 const nationwideExplorer=createNationwideLocalityExplorer({regions,bySlug,childrenByParent,servicePath,escapeHtml:esc});
+function resolveRegionalCardKeyword(query){
+ const focus=findInnovationFocus(query);
+ const region=focus&&regionByFullName.get(focus.region);
+ return region?{region,kind:focus.kind,url:servicePath(region,focus.kind)}:nationwideExplorer.resolve(query);
+}
+
 
 function naverFocus50Guide(r,kind){
  const info=focus50ByKey.get(kind+'|'+r.full_name);
@@ -2256,7 +2262,7 @@ const regionalServiceTarget=(value)=>{
 const nationwideRegionTarget=phrase=>{const matched=nationwideExplorer.resolve(phrase);return matched?matched.url:null};
 // SVG previews are generated only for a verified, unambiguous locality and service.
 if(pathname==='/api/nationwide-locality-card.svg'){
- const q=clean(u.searchParams.get('q')||''),matched=nationwideExplorer.resolve(q);
+ const q=clean(u.searchParams.get('q')||''),matched=resolveRegionalCardKeyword(q);
  const requested=u.searchParams.get('service');
  if(!matched||requested!==matched.kind)return respond(res,404,'행정구역과 서비스 검색어가 일치하지 않습니다');
  const contact=matched.kind==='taksong'&&matched.region.full_name==='제주특별자치도'?'1877-5245':PHONE;
@@ -2402,7 +2408,7 @@ if(pathname==='/api/locality-suggest'){
 }
 if(pathname==='/api/region-card-preview'){
  const query=clean(u.searchParams.get('q')||'');
- const national=nationwideExplorer.resolve(query);
+ const national=resolveRegionalCardKeyword(query);
  if(national){
   const requested=u.searchParams.get('service'),kind=national.kind;
   if(requested&&['daeri','taksong'].includes(requested)&&requested!==kind){
