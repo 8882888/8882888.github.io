@@ -6,7 +6,7 @@ const root=path.resolve(__dirname,'..');
 const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const rides=JSON.parse(fs.readFileSync(path.join(root,'data/ride-history.json'),'utf8'));
 assert.equal(rides.length,2591,'Do not inflate actual completed ride counts');
-assert.match(home,/<title>전국대리운전 실제 운행후기·24시탁송 \| 전국탁송 스마트24<\/title>/,'Home title must preserve agreed review-first search headline');
+assert(home.includes('<title>전국대리운전 실제 운행후기·24시탁송 | 스마트24 전국대리운전</title>'),'Home title retains review-first search intent and preferred Korean site name');
 assert(home.includes('2,591건 실제 운행후기')&&home.includes('href="/reviews/history/"'),
  'First screen must link the verified 2,591-ride archive without requiring a duplicate claim');
 assert(home.includes('2,591건 실제 운행후기'),'First screen CTA should link actual archive');
