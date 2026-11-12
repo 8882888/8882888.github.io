@@ -195,7 +195,6 @@
    const original=exact||imagePath(card.image);
    const preview=exact||imagePath(card.previewImage);
    const serviceFallback=card.kind==='daeri'?'/assets/service-daeri-visual.svg':'/assets/service-taksong-visual.svg';
-   const legacy=imagePath(card.image);
    const page=guidePath(card.url);
    if(!page||!['daeri','taksong'].includes(card.kind))return null;
    const article=node('article','smart24-card-panel');
@@ -210,7 +209,7 @@
    img.alt=keyword+' · '+(card.kind==='daeri'?'대리운전':'자동차탁송')+' 안내 명함';
    img.width=1200;img.height=800;img.loading='eager';img.decoding='async';
    let zoomButton=null,fullLink=null;
-   const sources=[...new Set([preview,original,legacy].filter(Boolean))];
+   const sources=exact?[exact]:[...new Set([preview,original].filter(Boolean))];
    let sourceIndex=0;
    const tryNext=()=>{if(sourceIndex<sources.length)img.src=sources[sourceIndex++];};
    img.addEventListener('load',()=>{
