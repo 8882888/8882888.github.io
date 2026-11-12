@@ -86,7 +86,7 @@ for(const phrase of [
  "const nationwideSubareaChoices=regionalNationwideSubareaChooser(r,kind);",
  "nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)",
  "const nationalDirect=rawQuery?nationwideExplorer.resolve(rawQuery):null",
- "const national=nationwideExplorer.resolve(query)",
+ "const national=resolveRegionalCardKeyword(query)",
  "if(pathname==='/api/nationwide-locality-card.svg')"
 ])assert(server.includes(phrase),'Missing nationwide server integration: '+phrase);
 assert(server.indexOf('  directQuoteForm+nationwideSubareaChoices+')<
