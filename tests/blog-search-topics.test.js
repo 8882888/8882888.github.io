@@ -9,7 +9,7 @@ const feed = [
   {title:'세종탁송 차량 인수·인계 안내',link:u('224453077690')},
   {title:'원주 반곡동 대리운전 출발 위치 안내',link:u('224453077691')},
   {title:'세종대리운전 악성 링크',link:'https://evil.example/224453077693'},
-  {title:'<script>alert(1)</script> 지리산탁송 성삼재 안내',link:u('224453077692')}
+  {title:'<script>alert(1)</script> 울산 대리운전 안내',link:u('224453077692')}
 ];
 const saved = [
   {title:'영산강길자전거종주탁송｜담양댐→영산강하구둑 요금 (중복)',url:u('224453077688')},
