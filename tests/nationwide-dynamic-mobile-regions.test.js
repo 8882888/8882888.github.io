@@ -66,6 +66,23 @@ for(const region of regions){
  }
 }
 console.log('PASS '+checked+' nationwide locality and service combinations');
+let categoriesChecked=0;
+for(const region of regions){
+ if(region.name==='(직할)')continue;
+ for(const category of ['음식점','계곡','펜션','관광지','항구','골프장','카페','캠핑장','해수욕장','축제']){
+  for(const [service,kind] of [['대리운전','daeri'],['장거리대리운전','daeri'],['탁송','taksong'],['장거리탁송','taksong']]){
+   const keyword=region.full_name+' '+category+' '+service;
+   const match=explorer.resolvePlaceCategory(keyword);
+   assert.equal(match?.region,region,keyword);
+   assert.equal(match.kind,kind,keyword);
+   assert.equal(match.url,'/'+kind+'/'+region.slug+'/',keyword);
+   categoriesChecked++;
+  }
+ }
+}
+assert.equal(explorer.resolvePlaceCategory('광주 항구 탁송'),null);
+console.log('PASS '+categoriesChecked+' regional place-category search combinations');
+
 const ganghwa=byFull.get('인천광역시 강화군');
 const official=['강화읍','선원면','불은면','길상면','화도면','양도면','내가면','하점면','양사면','송해면','교동면','삼산면','서도면'];
 assert.deepEqual(explorer.childrenFor(ganghwa).map(r=>r.name),official,

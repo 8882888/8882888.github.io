@@ -1699,6 +1699,23 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const ambiguousGwangjuCard=await get('/keyword-card/exact/area-1464-taksong.svg?q='+encodeURIComponent('광주탁송'));
   assert.equal(ambiguousGwangjuCard.status,404,'ambiguous 광주 must not resolve to an unrelated legal city');
   console.log('PASS exact province SVGs and ambiguous city name protection');
+  for(const [phrase,kind,route] of [
+   ['부산 음식점 장거리대리운전','daeri','/daeri/busan/'],
+   ['기장군 항구 탁송','taksong','/taksong/busan/gijang-gun/'],
+   ['세종 관광지 장거리탁송','taksong','/taksong/sejong/'],
+   ['부산탁송회사','taksong','/taksong/busan/']
+  ]){
+   const result=await (await get('/api/region-card-preview?q='+encodeURIComponent(phrase))).json();
+   assert.equal(result.status,'matched',phrase);
+   const [card]=result.cards;
+   assert.equal(card.kind,kind,phrase);
+   assert.equal(card.url,route,phrase);
+   const image=await get(card.keywordImage||card.image);
+   assert.equal(image.status,200,phrase);
+   assert.match(image.headers.get('x-robots-tag')||'',/noindex/);
+   assert.ok((await image.text()).includes(phrase),phrase);
+  }
+
   // Twenty different combinations must paint the *entire typed query* on
   // the live preview/zoom SVG while original canonical PNG cards remain stable.
   const exactTerms=require('../data/exact-image-priority-20.json');

@@ -122,7 +122,9 @@ const nationwideExplorer=createNationwideLocalityExplorer({regions,bySlug,childr
 function resolveRegionalCardKeyword(query){
  const focus=findInnovationFocus(query);
  const region=focus&&regionByFullName.get(focus.region);
- return region?{region,kind:focus.kind,url:servicePath(region,focus.kind)}:nationwideExplorer.resolve(query);
+ if(region)return {region,kind:focus.kind,url:servicePath(region,focus.kind)};
+ const normalized=keywordExpansion.normalizeCompanyKeyword(query);
+ return nationwideExplorer.resolve(query)||nationwideExplorer.resolvePlaceCategory(normalized);
 }
 
 
@@ -2425,7 +2427,7 @@ if(pathname==='/api/region-card-preview'){
   const data={status:'matched',query,locality:national.region.full_name,service:kind,
    region:national.region.full_name,cards:[{kind,label:query,image,previewImage:image,
     url:national.url,phone:contact,displayKeyword:query,
-    description:'등록된 행정구역과 검색어가 일치하는 안내용 이미지입니다. 지역 지점·상주기사·실제 운행완료를 의미하지 않으며 예상요금과 배차는 상담 후 확인합니다.'}],
+    description:national.category?'지역 서비스 안내용 명함입니다. 특정 시설의 소재나 제휴 여부는 별도로 확인해 주세요.':'등록된 행정구역과 검색어가 일치하는 안내용 이미지입니다. 지역 지점·상주기사·실제 운행완료를 의미하지 않으며 예상요금과 배차는 상담 후 확인합니다.'}],
    candidates:[],source:'전국 17개 시·도 행정구역 데이터와 일치하는 검색어입니다. 요금·배차는 상담 후 확정합니다.'};
   res.setHeader('x-robots-tag','noindex,nofollow');
   return respond(res,200,JSON.stringify(data),'application/json; charset=utf-8');
@@ -2522,6 +2524,9 @@ if(pathname==='/region/'){
  const directTarget=nationalDirect?nationalDirect.url:rawQuery&&!(compoundExactLocality||exactLocalKeyword)?
   (mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
  if(directTarget){res.writeHead(302,{location:directTarget.startsWith('/fare/?')?directTarget:encodeURI(directTarget),'cache-control':'no-store'});return res.end()}
+ const categoryTarget=rawQuery&&!directTopic&&!exactLocalKeyword
+  ?nationwideExplorer.resolvePlaceCategory(normalizedCompound):null;
+ if(categoryTarget){res.writeHead(302,{location:categoryTarget.url,'cache-control':'no-store'});return res.end()}
  const requestedService=u.searchParams.get('service');
  // Strip only a trailing service name. A typed keyword like 부산대리운전
  // should expand 부산, while an ambiguous 광주 still requires a choice.
