@@ -7,7 +7,7 @@ const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto')
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
 const {canonicalForKeywordRecord,resolveRegionalKeywordVariant}=require('./lib/keyword-canonical-bridge');
 const {createEngine:createLocalServiceEngine}=require('./data/smart24-region-automation/lib/engine');
-const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/smart24-region-automation/data/regions.json'));
+const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/smart24-region-automation/data/regions.json'),path.join(ROOT,'data/smart24-region-automation/data/trips.json'));
 const {createEnhancer:createLocalServiceEnhancer}=require('./data/smart24-region-automation/lib/enhance');
 const localServiceEvidenceForPath=createLocalServiceEnhancer(path.join(ROOT,'data/smart24-region-automation/data/regions.json'),path.join(ROOT,'data/smart24-region-automation/data/trips.json'));
 const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');

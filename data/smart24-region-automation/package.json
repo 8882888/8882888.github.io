@@ -1,6 +1,6 @@
 {
   "name": "smart24-region-automation",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "type": "commonjs",
   "engines": {
@@ -13,6 +13,7 @@
     "build": "node scripts/build.js",
     "enhance": "node scripts/enhance.js",
     "audit": "python3 scripts/audit.py",
-    "metrics": "python3 scripts/metrics.py"
+    "metrics": "python3 scripts/metrics.py",
+    "opportunities": "node scripts/opportunities.js"
   }
 }

@@ -1,0 +1,8 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');
+const {plan,similarity}=require('../lib/opportunity');const {pages}=require('../lib/engine');
+const seed=()=>JSON.parse(fs.readFileSync(require('node:path').join(__dirname,'../data/regions.json'),'utf8'));const trips=()=>JSON.parse(fs.readFileSync(require('node:path').join(__dirname,'../data/trips.json'),'utf8'));
+test('통계가 없으면 실제 성과를 만들어내지 않음',()=>{const p=plan(seed(),trips());assert.equal(p.summary.measured,0);assert(p.pages.every(x=>x.impressions===null&&x.ctr===null));});
+test('유사 본문 검출 및 측정 통계 우선순위 반영',()=>{const d=seed();d.regions[1].services.daeri.text=d.regions[0].services.daeri.text.replaceAll('세종','부산');const p=plan(d,trips(),[{region:'sejong',service:'daeri',impressions:100,clicks:1}]);const row=p.pages.find(x=>x.region==='sejong'&&x.service==='daeri');assert.equal(row.ctr,0.01);assert(row.duplicates.length);assert(row.actions.some(x=>x.includes('제목')));assert.equal(similarity('동일한본문입니다','동일한본문입니다'),1);});
+test('잘못된 지표 거부',()=>{assert.throws(()=>plan(seed(),trips(),[{region:'sejong',service:'daeri',impressions:1,clicks:2}]));});
+test('서버 렌더링 페이지에 지역 상세 안내·실제 근거 표시',()=>{const html=pages(seed(),trips()).get('/local-service/sejong/daeri/').html;assert(html.includes('정부세종청사'));assert(html.includes('예상요금 조회'));assert(html.includes('smart24-regional-evidence'));});
+test('명시한 인접 지역의 기존 대표 주소를 링크',()=>{const d=seed();d.regions.find(x=>x.id==='yangsan').related=['busan'];const html=pages(d,trips()).get('/local-service/yangsan/taksong/').html;assert(html.includes('href="/taksong/busan/"'));});

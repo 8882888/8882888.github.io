@@ -56,9 +56,9 @@ jobs:
         run: node --test tests/cloudtype-freshness-workflow.test.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
-      - name: Test v2 regional automation (16 Node tests, 4 Python tools tests)
+      - name: Test v3 regional automation (21 Node tests, 4 Python tools tests)
         run: |
-          node --test data/smart24-region-automation/tests/engine.test.js data/smart24-region-automation/tests/enhance.test.js
+          node --test data/smart24-region-automation/tests/*.test.js
           python3 -m unittest discover -s data/smart24-region-automation/tests -p 'test_*.py'
       - name: Verify regional v2 canonical pages, verified rides and noindex redirects
         run: node --test tests/regional-v2-integration.test.js

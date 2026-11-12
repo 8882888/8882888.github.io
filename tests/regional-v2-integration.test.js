@@ -22,6 +22,7 @@ test('v2 official canonical pages and isolated redirect/noindex routes', {timeou
    const r=await get(source);assert.equal(r.status,301,source);assert.equal(r.headers.get('location'),target);
   }
   const draft=await get('/local-service/ulsan/daeri/');assert.equal(draft.status,200);assert.match((draft.headers.get('x-robots-tag')||'').toLowerCase(),/noindex/);assert.match(await draft.text(),/noindex,follow/);
+  const detail=await get('/local-service/daegu/taksong/');const detailHTML=await detail.text();assert.equal(detail.status,200);assert(detailHTML.includes('smart24-regional-evidence'));assert(detailHTML.includes('예상요금 조회'));assert(detailHTML.includes('/reviews/history/excel-1165/'));assert(!detailHTML.includes('/reviews/history/excel-0979/'));
   const seg=await get('/daeri/sejong/');assert.equal(seg.status,200);const segHTML=await seg.text();assert(segHTML.includes('smart24-regional-evidence'));assert(segHTML.includes('/reviews/history/excel-2230/'));assert(segHTML.includes('/reviews/history/excel-2249/'));assert(segHTML.includes('도착 기록'));assert(segHTML.includes('tel:18114294'));
   const bus=await get('/taksong/busan/');assert.equal(bus.status,200);const busHTML=await bus.text();assert(busHTML.includes('smart24-regional-evidence'));assert(busHTML.includes('/reviews/history/excel-1165/'));assert(busHTML.includes('/reviews/history/excel-0979/'));assert(busHTML.includes('tel:18114294'));
   const xml=await get('/local-service/sitemap.xml');assert.equal(xml.status,200);assert(!(await xml.text()).includes('/local-service/sejong/daeri/'));

@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const {localPath,dateOK} = require('./enhance');
+const {localPath,dateOK,renderEnhancement,validateEvidence} = require('./enhance');
 const ROOT = '/local-service/';
 const services = {daeri:'대리운전',taksong:'탁송'};
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -37,12 +37,13 @@ const route=(r,k)=>ROOT+r.id+'/'+k+'/';
 function layout(d,title,description,url,body,indexable,json){
  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(description)}"><meta name="robots" content="${indexable?'index,follow':'noindex,follow'}"><link rel="canonical" href="${esc(url)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${esc(url)}"><meta property="og:type" content="website"><style>body{font:17px/1.8 system-ui,sans-serif;margin:0;color:#17324d;background:#f4f8fc}header,main,footer{max-width:940px;margin:auto;padding:24px}a{color:#075eb4}h1{line-height:1.4}article,nav{background:white;padding:24px;border-radius:16px;margin:18px 0}nav a{display:inline-block;margin:8px;padding:8px}label{display:block}input,select,button{font:inherit;padding:10px;max-width:90%}.call{display:block;text-align:center;background:#075eb4;color:white;padding:16px;border-radius:12px}.fixed{position:sticky;bottom:0;background:#fff;padding:12px}p{white-space:pre-line;overflow-wrap:anywhere}</style>${json?'<script type="application/ld+json">'+JSON.stringify(json).replace(/</g,'\\u003c')+'</script>':''}</head><body><header><a href="${ROOT}">${esc(d.brand)}</a><p>24시 대리운전·자동차탁송 상담</p><a class="call" href="tel:${d.phone.replace(/-/g,'')}">요금·배차 상담 ${esc(d.phone)}</a></header><main>${body}</main><footer>요금은 출발지·도착지·차종·이용 시간 확인 후 안내합니다. 배차 가능 여부는 상담 시 확인해 주세요.</footer><div class="fixed"><a class="call" href="tel:${d.phone.replace(/-/g,'')}">전화상담 ${esc(d.phone)}</a></div></body></html>`;
 }
-function pages(d){
+function pages(d,records=[]){
+ validateEvidence(d,records);
  const out=new Map();
  for(const r of d.regions) for(const [k,label] of Object.entries(services)){
   const p=r.services[k],loc=route(r,k),title=`${r.name}${label} 예약·요금 안내 | ${d.brand}`;
-  const related=d.regions.filter(x=>x.id!==r.id&&x.services[k].approved).slice(0,8);
-  const body=`<a href="${ROOT}">지역별 서비스</a><h1>${esc(r.name+label)} 예약 안내</h1>${p.approved?'':'<p>검토 중인 안내 초안입니다.</p>'}<article><h2>${esc(r.name)} 이용 안내</h2><p>${esc(p.text)}</p></article><article><h2>${label} 예약 시 알려주실 내용</h2><p>${k==='daeri'?'출발 주차장과 목적지, 출발 시간, 경유지, 장거리 이동 여부를 알려주세요.':'차량 인수·인계 장소, 차종, 키 전달 방법과 인수 가능 시간을 알려주세요.'}</p></article><nav aria-label="관련 서비스"><a href="${route(r,k==='daeri'?'taksong':'daeri')}">${esc(r.name+services[k==='daeri'?'taksong':'daeri'])}</a>${related.map(x=>`<a href="${route(x,k)}">${esc(x.name+label)}</a>`).join('')}</nav>`;
+  const related=d.regions.filter(x=>x.id!==r.id&&(x.services[k].approved||x.services[k].existingPath)).sort((a,b)=>Number(!(r.related||[]).includes(a.id))-Number(!(r.related||[]).includes(b.id))||a.id.localeCompare(b.id)).slice(0,8);
+  const body=`<a href="${ROOT}">지역별 서비스</a><h1>${esc(r.name+label)} 예약 안내</h1>${p.approved?'':'<p>검토 중인 안내 초안입니다.</p>'}<article><h2>${esc(r.name)} 이용 안내</h2><p>${esc(p.text)}</p></article><article><h2>${label} 예약 시 알려주실 내용</h2><p>${k==='daeri'?'출발 주차장과 목적지, 출발 시간, 경유지, 장거리 이동 여부를 알려주세요.':'차량 인수·인계 장소, 차종, 키 전달 방법과 인수 가능 시간을 알려주세요.'}</p></article>${renderEnhancement(d,records,r.id,k)}<nav aria-label="관련 서비스"><a href="${route(r,k==='daeri'?'taksong':'daeri')}">${esc(r.name+services[k==='daeri'?'taksong':'daeri'])}</a>${related.map(x=>`<a href="${x.services[k].existingPath||route(x,k)}">${esc(x.name+label)}</a>`).join('')}</nav>`;
   out.set(loc,{html:layout(d,title,`${r.name} ${label} 출발지·도착지 확인 및 예약 상담. ${p.text.slice(0,90)}`,d.origin+(p.existingPath||loc),body,p.approved&&!p.existingPath,{'@context':'https://schema.org','@type':'Service',name:r.name+label,serviceType:label,areaServed:r.name,url:d.origin+(p.existingPath||loc),provider:{'@type':'Organization',name:d.brand,telephone:d.phone,url:d.origin}}),indexable:p.approved&&!p.existingPath,redirectTo:p.existingPath?d.origin+p.existingPath:null,updatedAt:p.updatedAt});
  }
  const links=[...out].filter(([,p])=>p.indexable||p.redirectTo).map(([url,p])=>{const parts=url.split('/'); const r=d.regions.find(x=>x.id===parts[2]);return `<a href="${p.redirectTo||url}">${esc(r.name+services[parts[3]])}</a>`;}).join('');
@@ -50,9 +51,9 @@ function pages(d){
  return out;
 }
 function sitemap(d,all){return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+[...all].filter(([,p])=>p.indexable).map(([loc,p])=>`<url><loc>${esc(d.origin+loc)}</loc>${p.updatedAt?'<lastmod>'+p.updatedAt+'</lastmod>':''}</url>`).join('')+'</urlset>';}
-function createEngine(file){
+function createEngine(file,tripFile){
  let signature='',snapshot;
- function refresh(){const raw=fs.readFileSync(file,'utf8');const next=crypto.createHash('sha256').update(raw).digest('hex');if(next!==signature){const d=validate(JSON.parse(raw)),all=pages(d);snapshot={d,all};signature=next;}return snapshot;}
+ function refresh(){const raw=fs.readFileSync(file,'utf8');const tripRaw=tripFile?fs.readFileSync(tripFile,'utf8'):'[]';const next=crypto.createHash('sha256').update(raw+'\n'+tripRaw).digest('hex');if(next!==signature){const d=validate(JSON.parse(raw)),all=pages(d,JSON.parse(tripRaw));snapshot={d,all};signature=next;}return snapshot;}
  refresh();
  return function handler(req,res){
   const u=new URL(req.url,'http://localhost');
