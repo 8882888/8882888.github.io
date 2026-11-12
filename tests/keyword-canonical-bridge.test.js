@@ -24,7 +24,7 @@ test('all 40 verified 2026 regional keyword variants map to one canonical per se
    const lookup=q=>{
     const service=q.endsWith('대리운전')?'daeri':q.endsWith('탁송')?'taksong':null;
     if(!service||!q.startsWith('강원특별자치도강릉시강동면안인리'))return null;
-    return {kind:service,canonical:'/\'+service+'/gangwon/gangneung-si/gangdong-myeon/anin-ri/'};
+    return {kind:service,canonical:'/'+service+'/gangwon/gangneung-si/gangdong-myeon/anin-ri/'};
    };
    // Model a normalized legal-region resolver without DB network dependency.
    const normalizeQuery=q=>lookup(q.replace(/\s+/g,''));
