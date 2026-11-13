@@ -787,10 +787,12 @@ function regionalIntentPage(r,kind,topic){
  }else{
   content='<section><h2>탁송 예약에 필요한 정보</h2><ol><li>출발지·도착지의 정확한 주소와 차량 주차 위치</li><li>차종·변속기·차량 크기와 정상 운행 여부</li><li>인수·인계 담당자와 연락 가능한 시간</li><li>차량 키 전달 방법, 출입 등록·출차 승인 절차</li><li>정비소·매매단지 등의 입출고 마감 시각</li></ol></section><section><h2>차량을 맡기기 전</h2><p>차량 외관과 계기판·주행거리·연료 또는 충전량을 사진으로 남기세요. 경고등·배터리 이상·수리 중인 부분·적재물·별도 조작이 있으면 기사에게 설명합니다.</p><p>운행이 어려운 차량은 직접 운전하는 로드탁송과 필요한 운송 방식이 다를 수 있으므로, 차량 상태를 먼저 상담하세요.</p></section><section><h2>배정 확인부터 목적지 인계까지</h2><ol><li>상담 접수 후 실제 기사 배정과 도착 예상 연락을 확인합니다.</li><li>차량 위치·키 전달·보험 적용 및 보상 조건을 확인합니다.</li><li>통행료·주유비·주차비·경유·대기 비용과 최종 금액을 확인합니다.</li><li>목적지 담당자가 차량 상태와 키를 확인한 뒤 인계합니다.</li></ol><p>접수가 곧 기사 배정 완료를 뜻하지 않습니다. 일정이나 인수자가 바뀌면 출발 전에 알려주세요.</p></section><section><h2>이용 상황별 인수 준비</h2><h3>중고차 거래</h3><p>판매자·구매자의 차량 준비 여부와 인수 가능 시간을 맞추고 키·서류의 전달 범위를 미리 정하세요.</p><h3>정비소 입출고</h3><p>입고 예약과 출고 승인, 담당자, 마감 시각을 먼저 확인하세요. 정상 주행 가능 여부도 함께 전달합니다.</p><h3>산행·자전거 일정의 차량 회수</h3><p>차량 주차장과 회수 목적지를 구분하고, 일정 종료 예상 시간과 주차장 출입 조건을 협의하세요. 키 보관 방법은 상담을 통해 안전하게 정합니다.</p></section>';
  }
+ const reviewedGuide=priorityRegionalPages.find(entry=>entry.kind===kind&&entry.region===r.full_name&&entry.topic&&entry.detail);
+ const reviewedLocal=reviewedGuide?'<section id="regional-intent-reviewed-context"><h2>'+esc(reviewedGuide.topic)+'</h2><p>'+esc(reviewedGuide.detail)+'</p></section>':'';
  const children=(childrenByParent.get(r.slug)||[]).slice(0,12);
  const local='<section><h2>'+full+' 내 출발 지역 확인</h2><p>'+esc(regionContext(r))+'에서 차량을 인수할 정확한 도로명주소와 건물명·주차 위치를 알려주세요. 아래 지역 안내에서 실제 출발지를 더 구체적으로 찾을 수 있습니다.</p><ul>'+children.map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.full_name)+' '+service+'</a></li>').join('')+'</ul></section>';
  const data=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',url:base+pathname,name:title,description:desc,primaryImageOfPage:{'@type':'ImageObject',contentUrl:base+image,width:1200,height:800}}).replace(/</g,'\\u003c');
- const page=layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+content+remoteRegionGuidance(r)+local+regionalGuideReviewLinks(r,kind)+regionalIntentNav(r,pathname),base+pathname,base+image);
+ const page=layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+reviewedLocal+content+remoteRegionGuidance(r)+local+regionalGuideReviewLinks(r,kind)+regionalIntentNav(r,pathname),base+pathname,base+image);
  // Move the actual keyword image to the first visible element, before fare lookup and navigation.
  return page.replace('<body><header>','<body>'+card+'<header>').replace(intro+card,intro);
 }
@@ -3031,9 +3033,15 @@ if(pathname==='/sitemap-regional-guides.xml'){
  const cached=sitemapCache.get(pathname);
  if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ // Do not submit every locality/topic permutation. Keep the pages available,
+ // but prioritize guides with reviewed, service-specific local information.
+ const reviewedGuideKeys=new Set(priorityRegionalPages
+  .filter(entry=>entry.region&&entry.topic&&entry.detail)
+  .map(entry=>entry.kind+'|'+entry.region));
  const urls=new Set(regionalIntentAreas.flatMap(region=>
   Object.entries(regionalIntentTypes).flatMap(([kind,topics])=>
-   topics.map(topic=>regionalIntentPath(region,kind,topic)))));
+   reviewedGuideKeys.has(kind+'|'+region.full_name)
+    ?topics.map(topic=>regionalIntentPath(region,kind,topic)):[])));
  for(const [name] of placeCategories)urls.add('/places/'+encodeURIComponent(name)+'/');
  for(const route of keywordEngine.activityUrls)urls.add(route);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
