@@ -2911,6 +2911,18 @@ if(pathname==='/sitemap-verified-regions.xml'){
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
+if(pathname==='/sitemap-regional-guides.xml'){
+ const cached=sitemapCache.get(pathname);
+ if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const urls=new Set(regionalIntentAreas.flatMap(region=>
+  Object.entries(regionalIntentTypes).flatMap(([kind,topics])=>
+   topics.map(topic=>regionalIntentPath(region,kind,topic)))));
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
+  [...urls].map(route=>'<url><loc>'+esc(new URL(route,base).href)+'</loc></url>').join('')+'</urlset>';
+ sitemapCache.set(pathname,xml);
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 if(pathname==='/sitemap-coast.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
@@ -2920,7 +2932,7 @@ if(pathname==='/sitemap-coast.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
