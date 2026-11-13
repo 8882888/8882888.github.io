@@ -2229,6 +2229,14 @@ const resolvedLiveCardAliases=raw=>{
  const major=found.filter(r=>['시도','시','군','구'].includes(r.level));
  return major.length===1?major:found;
 };
+function directionalServiceTarget(query,resolve){
+ const match=String(query||'').normalize('NFKC').trim().match(/^(.{2,80}?)(?:에서|→|->)\s*(.{2,80}?)\s*(자동차탁송|차량탁송|탁송|대리운전|대리)$/);
+ if(!match)return null;
+ const [,from,to,service]=match;
+ const origins=resolve(from.trim()),destinations=resolve(to.trim());
+ if(origins.length!==1||destinations.length!==1)return null;
+ return '/route-search/?'+new URLSearchParams({from:origins[0].full_name,to:destinations[0].full_name,service:service.endsWith('탁송')?'taksong':'daeri'});
+}
 const liveCardLabel=(r,kind)=>seoRegionLabel(r)+(kind==='daeri'?'대리운전':'탁송');
 const liveCardPublicData=(r,kind)=>({
  kind,label:liveCardLabel(r,kind),
@@ -2571,6 +2579,12 @@ if(pathname==='/api/nationwide-locality-card.svg'){
 const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search';
 const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
 const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):null;
+const directionalKeyword=searchIntent||(pathname==='/region/'?explicitKeyword:null);
+const directionalTarget=directionalKeyword&&directionalServiceTarget(directionalKeyword,resolvedLiveCardAliases);
+if(directionalTarget){
+ res.writeHead(302,{location:directionalTarget,'cache-control':'no-store'});
+ return res.end();
+}
 if(searchIntent){
  const normalized=compact(searchIntent).toLowerCase();
  const place=normalized.match(/^(?:전국)?(.+?)(?:대리운전|대리)$/);
