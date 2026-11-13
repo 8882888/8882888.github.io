@@ -70,11 +70,15 @@ test('all sitemap index entries are declared and handled',()=>{
  const indexStart=server.indexOf("const rootSitemaps=pathname==='/sitemap-all.xml'");
  assert.ok(indexStart>=0,'sitemap-all index handler must exist');
  const indexCode=server.slice(indexStart,server.indexOf("const xml=",indexStart));
- const expected=['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-history.xml'];
+ const expected=['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
  for(const route of expected){
   assert.ok(indexCode.includes("'"+route+"'"),'sitemap-all missing '+route);
   assert.ok(robots.includes('Sitemap: https://jeongukdaeri.kr'+route),'robots missing '+route);
  }
+ assert.ok(indexCode.includes("...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)}"),'root must link every canonical history shard directly');
+ assert.ok(indexCode.includes("'/sitemap-history-'+(i+1)+'.xml'"),'root must emit numbered history shard URLs');
+ assert.ok(!indexCode.includes("'/sitemap-history.xml'"),'do not nest a sitemap index inside the root index');
+ assert.ok(robots.includes('Sitemap: https://jeongukdaeri.kr/sitemap-history.xml'),'standalone history index remains advertised');
  assert.ok(server.includes("const historySitemapMatch=pathname.match("),'history shard route must exist');
  assert.ok(server.includes("if(segment>total)return respond(res,404"),'history shards must reject out-of-range requests');
 });
@@ -231,7 +235,7 @@ test('verified regional discovery uses completed source records, canonical pages
  assert.ok(code.includes("matchingHistoryRegion(x,r,regions)"),'regional evidence must be geographically verified');
  assert.ok(code.includes("['시도','시','군','구'].includes(r.level)"),'avoid village-scale templated pages');
  assert.ok(code.includes("servicePath(r,kind)"),'use canonical region routing');
- assert.ok(server.includes("'/sitemap-verified-regions.xml','/sitemap-taksong.xml'"),'integrated sitemap must link new discovery supplement');
+ assert.ok(server.slice(server.indexOf("const rootSitemaps="),server.indexOf("const historySitemapMatch=")).includes("'/sitemap-verified-regions.xml'"),'integrated sitemap must link new discovery supplement');
 });
 
 test('verified regional discovery is cached and advertised to crawlers',()=>{
@@ -246,7 +250,7 @@ test('verified regional discovery is cached and advertised to crawlers',()=>{
 test('national answer-first content is visible, useful and tied to real consultation',()=>{
  assert.ok(server.includes('id="national-taksong-direct-answer"'),'national taksong needs a direct-answer summary');
  assert.ok(server.includes('id="national-daeri-direct-answer"'),'national daeri needs a direct-answer summary');
- assert.ok(server.includes('const body=answerFirst+taksongTrustFirst+'),'answer-first section must lead rendered national hubs');
+ assert.ok(/const body=answerFirst\+[^;\n]*\+taksongTrustFirst\+/.test(server),'answer-first section must lead rendered national hubs');
  assert.ok(server.includes('24시 상담 안내는 전국 모든 지역의 즉시 배차 보장을 의미하지 않습니다'),'do not promise universal dispatch');
  assert.ok(server.includes('/reviews/history/?kind=taksong'),'cite actual completed taksong records in visible answer');
  assert.ok(server.includes('/fare/?service=daeri'),'include actual fare lookup');
@@ -285,7 +289,7 @@ test('national commercial hubs link only canonical evidence-backed regional ride
  assert.ok(server.includes("!usedRides.has(x.id)"),'do not list duplicate records');
  assert.ok(server.includes("records.length>=12"),'limit nationwide hub outbound link count');
  assert.ok(server.includes('id="national-verified-history-links"'),'visible server-rendered national evidence section');
- assert.ok(server.includes("const body=answerFirst+nationwideEvidenceSection(kind)+"),'both national commercial hubs must expose real evidence near top');
+ assert.ok(/const body=answerFirst\+(?:nationwidePlaceIntentLinks\(kind\)\+)?nationwideEvidenceSection\(kind\)\+/.test(server),'both national commercial hubs must expose real evidence near top');
  assert.ok(server.includes("encodeURIComponent(ride.id)"),'link directly to canonical source ride detail');
 });
 
