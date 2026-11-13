@@ -148,6 +148,19 @@ jobs:
             test "$code" = 200
           done
 
+      - name: Verify Yeti priority indexing audit checks
+        run: node --test tests/yeti-priority-indexability.test.cjs
+      - name: Probe priority landing pages with Naver Yeti User-Agent
+        run: node scripts/check-yeti-priority-indexability.cjs
+      - name: Keep Yeti priority indexability evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yeti-priority-indexability
+          path: audit/yeti-priority-indexability.json
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Verify real driving-distance API response
         shell: bash
         run: |
