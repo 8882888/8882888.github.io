@@ -7,7 +7,7 @@ function scopedRegionalParts(value){
  let pathname;try{pathname=new URL(value,'https://jeongukdaeri.kr/').pathname}catch{return null}
  if(!pathname.endsWith('/'))return null;
  const parts=pathname.split('/').filter(Boolean);
- if(parts.length<3||!['daeri','taksong'].includes(parts[0])||!provinces.has(parts[1])||
+ if(parts.length<2||!['daeri','taksong'].includes(parts[0])||!provinces.has(parts[1])||
     !parts.slice(2).every(p=>/^[a-z0-9-]+$/.test(p)))return null;
  return parts;
 }
