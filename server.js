@@ -2695,7 +2695,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  }).join('')+'</channel></rss>';
  return respond(res,200,rss,'application/rss+xml; charset=utf-8');
 }
-if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-all.xml','Sitemap: '+base+'/sitemap-history.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
+if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-verified-regions.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-all.xml','Sitemap: '+base+'/sitemap-history.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 // Full discoverability inventory for genuine historical completed rides.
 // Six bounded shards; preserve all original 2,591 records and never fabricate rides.
 // Source-reviewed regional service pages only; no fabricated trip URLs.
@@ -2711,6 +2711,8 @@ if(pathname==='/sitemap-reviewed-routes.xml'){
 // Discovery supplement: only regional pages supported by real completed ride records.
 // Do not expose templated village pages or create synthetic route URLs.
 if(pathname==='/sitemap-verified-regions.xml'){
+ const cached=sitemapCache.get(pathname);
+ if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const supported=regions.filter(r=>['시도','시','군','구'].includes(r.level)).flatMap(r=>{
   const applicable=['taksong','daeri'].filter(kind=>
@@ -2719,6 +2721,7 @@ if(pathname==='/sitemap-verified-regions.xml'){
  });
  const urls=[...new Set(supported)].slice(0,2000);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(route=>'<url><loc>'+esc(new URL(base+route).href)+'</loc></url>').join('')+'</urlset>';
+ sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
