@@ -222,3 +222,14 @@ test('dynamic priority sitemap puts nationwide commercial-intent pages before re
  assert.ok(early>=0,'national taksong, recruitment and metro intent URLs must lead discovery sitemap');
  assert.ok(early<block.indexOf('...nationwideProvinceHubs'),'national intent URLs must precede province inventory');
 });
+
+test('verified regional discovery uses completed source records, canonical pages and stays in sitemap-all',()=>{
+ const start=server.indexOf("if(pathname==='/sitemap-verified-regions.xml')");
+ assert.ok(start>=0,'verified-region sitemap route is missing');
+ const code=server.slice(start,server.indexOf("if(pathname==='/sitemap-history.xml'",start));
+ assert.ok(code.includes("indexableHistoricalRides.some("),'only canonical finished records may support discovery');
+ assert.ok(code.includes("matchingHistoryRegion(x,r,regions)"),'regional evidence must be geographically verified');
+ assert.ok(code.includes("['시도','시','군','구'].includes(r.level)"),'avoid village-scale templated pages');
+ assert.ok(code.includes("servicePath(r,kind)"),'use canonical region routing');
+ assert.ok(server.includes("'/sitemap-verified-regions.xml','/sitemap-taksong.xml'"),'integrated sitemap must link new discovery supplement');
+});
