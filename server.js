@@ -310,7 +310,7 @@ function peakDispatchNotice(){
  return '<section><h2>피크타임·지방·오지의 당일 호출과 요금</h2><p>주말, 야간·새벽, 피크타임 또는 기사 접근·복귀가 어려운 지방·산간·오지에서는 예약 없이 급히 호출하면 기사 배차가 어렵거나 지연될 수 있습니다. 먼 곳에서 기사를 이동시키고 복귀 교통편을 확보해야 하는 경우도 있습니다.</p><p><strong>긴급 배차는 평소보다 훨씬 높은 요금, 상황에 따라 2배 이상의 금액이 제시될 수도 있습니다.</strong> 이는 모든 호출에 적용되는 고정 할증률이 아니며 기사 수급, 접근·복귀, 차량 조건에 따라 실제 금액이 달라집니다.</p><p>운영자가 확인해 준 바로는 지금까지 예약 확정한 운행은 안내 금액 그대로 100% 배차·운행완료했습니다. 이는 이미 예약 확정해 수행한 건에 관한 실적이며 앞으로 모든 요청에 동일한 배차를 보장한다는 뜻은 아닙니다.</p><p>해당 운행 기록에 표시된 요금이 긴급 할증금액이었다는 의미도 아닙니다. 기록된 사실과 일반적인 배차 안내는 구분해 설명합니다.</p></section>';
 }
 // Region backlinks only use the existing conservative locality matcher.
-const completedReviewRegionCandidates=regions.filter(r=>['시도','시','군','구'].includes(r.level));
+const completedReviewRegionCandidates=regions;
 const completedReviewRegionCache=new Map();
 function completedReviewRegionLinks(x){
  if(completedReviewRegionCache.has(x.id))return completedReviewRegionCache.get(x.id);
