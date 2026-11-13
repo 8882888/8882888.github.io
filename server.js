@@ -739,6 +739,17 @@ function regionalIntentNav(r,current){
  return '<section aria-label="지역별 요금과 이용 안내"><h2>'+esc(area.full_name)+' 요금·예약 안내</h2><ul>'+entries.map(x=>'<li>'+(x.url===current?'<strong aria-current="page">'+esc(x.title)+'</strong>':'<a href="'+x.url+'">'+esc(x.title)+'</a>')+'</li>').join('')+'</ul><p><a href="'+servicePath(area,'daeri')+'">'+esc(area.name)+' 대리운전</a> · <a href="'+servicePath(area,'taksong')+'">'+esc(area.name)+' 탁송</a></p></section>';
 }
 function regionalQuoteForm(r,kind){return '<form action="/fare/" method="get"><input type="hidden" name="service" value="'+kind+'"><input type="hidden" name="auto" value="1"><label for="guide-from">출발지 주소</label><input id="guide-from" name="from" maxlength="150" required value="'+esc(r.full_name)+'" style="display:block;width:100%;padding:12px;font:inherit"><label for="guide-to">도착지 주소</label><input id="guide-to" name="to" maxlength="150" required placeholder="차량이 도착할 주소 또는 건물명" style="display:block;width:100%;padding:12px;font:inherit"><button type="submit" class="cta" style="border:0;font:inherit;cursor:pointer;margin-top:12px">도로거리·예상요금 조회</button></form>'}
+function regionalGuideReviewLinks(region,kind){
+ const matches=indexableHistoricalRides.filter(ride=>
+  ride.service===kind&&ride.departure&&ride.destination&&
+  ride.departure!=='지역 비공개'&&ride.destination!=='지역 비공개'&&
+  matchingHistoryRegion(ride,region,regions)).slice(0,4);
+ if(!matches.length)return '';
+ return '<section><h2>'+esc(region.full_name)+' 실제 운행후기</h2><ul>'+
+  matches.map(ride=>'<li><a href="/reviews/history/'+esc(ride.id)+'/">'+
+   esc(ride.departure+' → '+ride.destination)+'</a> · '+esc(ride.date)+
+   ' · 당시 운행요금 '+esc(ride.fare)+'</li>').join('')+'</ul></section>';
+}
 function regionalIntentPage(r,kind,topic){
  const title=regionalIntentTitle(r,kind,topic),full=esc(r.full_name),service=kind==='daeri'?'대리운전':'탁송',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const pathname=regionalIntentPath(r,kind,topic),image=regionalIntentImage(r,kind,topic);
@@ -770,7 +781,7 @@ function regionalIntentPage(r,kind,topic){
  const children=(childrenByParent.get(r.slug)||[]).slice(0,12);
  const local='<section><h2>'+full+' 내 출발 지역 확인</h2><p>'+esc(regionContext(r))+'에서 차량을 인수할 정확한 도로명주소와 건물명·주차 위치를 알려주세요. 아래 지역 안내에서 실제 출발지를 더 구체적으로 찾을 수 있습니다.</p><ul>'+children.map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.full_name)+' '+service+'</a></li>').join('')+'</ul></section>';
  const data=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',url:base+pathname,name:title,description:desc,primaryImageOfPage:{'@type':'ImageObject',contentUrl:base+image,width:1200,height:800}}).replace(/</g,'\\u003c');
- const page=layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+content+remoteRegionGuidance(r)+local+regionalIntentNav(r,pathname),base+pathname,base+image);
+ const page=layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+content+remoteRegionGuidance(r)+local+regionalGuideReviewLinks(r,kind)+regionalIntentNav(r,pathname),base+pathname,base+image);
  // Move the actual keyword image to the first visible element, before fare lookup and navigation.
  return page.replace('<body><header>','<body>'+card+'<header>').replace(intro+card,intro);
 }
@@ -1174,7 +1185,7 @@ async function servicePage(r,kind){
  const hierarchyNote='행정구역 경로: '+regionAncestors(r).map(a=>a.name).join(' → ')+'. '+(r.level==='리'?'마을 단위 상세 위치와 차량 인수 지점을 확인합니다.':r.level==='동'?'건물 출입구와 주차 위치를 확인합니다.':r.level==='면'?'면 소재지와 외곽의 기사 이동 여건을 확인합니다.':'지역별 출발지와 목적지의 이동 조건을 확인합니다.');
  const aliasTerms=[...new Set(regionAliases(r).map(x=>x+service))].filter(x=>x!==name+' '+service&&x!==keyword);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
  const intro=kind==='taksong'?'자동차탁송은 고객이 지정한 출발지에서 차량을 인수해 목적지로 이동시키는 서비스입니다. 차량 인수·인계 장소와 차종, 도로거리, 시간대, 기사 접근·복귀 동선, 통행료에 따라 요금이 달라집니다.':'대리운전은 고객 차량을 기사에게 맡겨 목적지까지 이동하는 서비스입니다. 고객의 동승 여부와 이용 조건을 상담 시 확인하며, 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
- const historicalMatches=historicalRides.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure&&x.destination&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개').slice(0,6);
+ const historicalMatches=indexableHistoricalRides.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure&&x.destination&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개').slice(0,6);
  const historicalCards=historicalMatches.length?'<section><h2>'+esc(name)+' 탁송·대리운전 실제 후기 | 운행구간·km조회·배차현황·빠른배차·예약배차</h2><p>아래 완료 기록은 과거 배차현황이며 현재 빠른배차 가능 여부와 예약배차 확정은 전화 상담 후 안내합니다. 기록에 없는 실제 주행 km와 실시간 기사 현황은 표시하지 않습니다.</p><p>기존 운행기록 중 이 지역명이 실제 출발·도착 내용에 포함된 기록을 정리했습니다. 아래 금액은 각 운행 당시 요금으로 새로운 예약 견적이 아닙니다. 원본에 예약 여부나 배차 시간 정보가 없는 건은 추측하지 않습니다.</p>'+historicalMatches.map(x=>'<article style="border-top:1px solid #d6e0ee;padding:14px 0"><h3><a href="/reviews/history/'+x.id+'/">'+esc(x.departure+' → '+x.destination+' '+service+' 완료 후기')+'</a></h3><p>운행일 '+esc(x.date)+' · 당시 배차요금 <strong>'+esc(x.fare)+'</strong></p><p>원본 배차기록에는 실제 주행거리(km)가 기록되어 있지 않습니다. <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(x.departure)+'&amp;to='+encodeURIComponent(x.destination)+'">'+esc(x.departure+' → '+x.destination)+' 도로거리(km) 및 현재 예상요금 조회</a>에서 출발·도착 주소별 참고 거리를 확인하세요. 지도상 도로거리와 당시 실주행거리는 다를 수 있습니다.</p><p>기사 수급이 어려운 피크타임이나 지방·오지 지역에서 급히 호출하면 배차가 지연되거나 요금이 크게 오를 수 있으므로 미리 가능 여부를 확인하는 것이 중요합니다.</p></article>').join('')+'</section>':'';
  const localitySpecificAdvice=({
   '시도':'광역권 이동은 출발 시·군·구와 도착 시·군·구를 함께 확인합니다.',
@@ -1188,7 +1199,7 @@ async function servicePage(r,kind){
  })[r.level]||'정확한 출발 주소와 차량 위치를 확인합니다.';
  const regionalLocalityChecklist=priorityMeta?
   '<section id="priority-locality-customer-checklist-20261105"><h2>'+esc(keyword)+' 예약 전 지역별 확인사항</h2><p>'+esc(localitySpecificAdvice)+'</p><p>'+(kind==='taksong'?'차량 운행 가능 상태와 인수·인계 담당자, 열쇠 전달 방법을 확인합니다.':'고객 동승·경유·대기 여부와 목적지 주차 위치를 확인합니다.')+' 희망 날짜와 시각, 차종, 실제 출발·도착 주소를 알려주시면 현재 요금과 배차 가능 여부를 확인합니다.</p><p>해당 지역의 과거 운행이 기록되지 않았다면 완료 후기를 임의로 만들지 않습니다.</p><p><a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">'+esc(keyword)+' 확인된 지역 후기</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">출발지 요금조회</a> · <a href="tel:18114294">1811-4294 예약상담</a></p></section>':'';
- const regionalBatchMatches=historicalRides.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개').filter((x,i,arr)=>arr.findIndex(y=>y.date===x.date&&y.departure===x.departure&&y.destination===x.destination&&y.fare===x.fare)===i).slice(0,20);
+ const regionalBatchMatches=indexableHistoricalRides.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개').filter((x,i,arr)=>arr.findIndex(y=>y.date===x.date&&y.departure===x.departure&&y.destination===x.destination&&y.fare===x.fare)===i).slice(0,20);
  // Resolve geography from the original dispatch fields, not provisional batch labels.
  // Unqualified neighborhoods and same-name cities must pass the shared locality matcher.
  const regionalBatchLinks=regionalBatchMatches.length?'<section id="regional-archive-matched-ride-links"><h2>'+esc(keyword)+' 실제 운행완료 후기 · 지역별 연결</h2><p>기존 2,591건 중 해당 행정구역이 확인된 운행기록을 연결했습니다. 고객정보와 원본 배차 메모는 공개하지 않습니다.</p><ul>'+regionalBatchMatches.map(old=>'<li><a href="/reviews/history/'+old.id+'/">'+esc(keyword+' 운행완료 후기｜'+old.departure+' → '+old.destination)+'</a> · '+esc(old.date)+' · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(old.departure==='지역 비공개'?'':old.departure)+'&amp;to='+encodeURIComponent(old.destination==='지역 비공개'?'':old.destination)+'">예상요금 조회</a> · <a href="tel:18114294">예약상담</a></li>').join('')+'</ul><p><a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">이 지역 실제 운행완료 후기 전체 보기</a></p></section>':'';
