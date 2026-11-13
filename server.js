@@ -1459,6 +1459,13 @@ const coastalLocalities=new Map([
  ['오이도','경기도 시흥시']
 ]);
 function coastalLocalityService(keyword, findRegion, pathForService){
+ const island=keyword.match(/^(석모도|교동도|동검도)(?:음식점|음심점|식당|맛집|골프장|골프클럽)(대리운전|대리|자동차탁송|차량탁송|탁송)$/);
+ if(island){
+  const township={석모도:'삼산면',교동도:'교동면',동검도:'길상면'}[island[1]];
+  const county='인천광역시 강화군';
+  const region=findRegion(county+' '+township)||findRegion(county);
+  return region?pathForService(region,island[2].endsWith('탁송')?'taksong':'daeri'):null;
+ }
  const match=keyword.match(/^(강화도|대부도|영종도|제부도|오이도)(?:횟집|회센터|장어집|장어구이|캠핑장|야영장|오토캠핑장|글램핑장|낚시터|낙시터|펜션|팬션|풀빌라)(대리운전|대리|자동차탁송|차량탁송|탁송)$/);
  if(!match)return null;
  const full=coastalLocalities.get(match[1]);
