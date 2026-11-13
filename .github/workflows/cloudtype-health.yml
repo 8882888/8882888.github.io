@@ -149,8 +149,10 @@ jobs:
           done
 
       - name: Verify Yeti priority indexing audit checks
+        if: always()
         run: node --test tests/yeti-priority-indexability.test.cjs
       - name: Probe priority landing pages with Naver Yeti User-Agent
+        if: always()
         run: node scripts/check-yeti-priority-indexability.cjs
       - name: Keep Yeti priority indexability evidence
         if: always()
