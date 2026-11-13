@@ -269,3 +269,12 @@ test('favicon is retained and served as a valid crawlable icon instead of deleti
  assert.ok(server.includes("req.method==='HEAD'?undefined:icon"),'favicon HEAD must return the same status without a response body');
  assert.ok(!server.includes("pathname==='/favicon.ico')return respond(res,400"),'favicon must not be treated as a malformed request');
 });
+
+test('nationwide coverage exposes crawlable region and original ride links only with evidence',()=>{
+ assert.ok(server.includes('id="verified-coverage-crawl-links"'),'nationwide hub must have visible crawlable evidence links');
+ assert.ok(server.includes("const ride=indexableHistoricalRides.find(x=>x.service===p.kind"),'region links must be grounded in completed immutable records');
+ assert.ok(server.includes("matchingHistoryRegion(x,r,regions)"),'rides must match canonical administrative region');
+ assert.ok(server.includes("'+cards+'</div></section>'+verifiedCoverageHtml"),'evidence links must appear in nationwide HTML');
+ assert.ok(server.includes("encodeURIComponent(x.ride.id)"),'original completed record must have a direct crawlable URL');
+ assert.ok(server.includes("}).slice(0,36)"),'limit hub links to avoid indiscriminate mass linking');
+});
