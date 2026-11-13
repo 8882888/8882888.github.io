@@ -287,6 +287,8 @@ const historicalRides=(Array.isArray(rides)?rides:[]).map((x,i)=>{
 });
 const historicalRideById=new Map(historicalRides.map(x=>[x.id,x]));
 const historyCanonicalById=load('data/seo-history-duplicates.json').canonicalById;
+// Only canonical completed-record URLs belong in sitemaps; retain all originals as accessible records.
+const indexableHistoricalRides=historicalRides.filter(x=>!historyCanonicalById[x.id]||historyCanonicalById[x.id]===x.id);
 const historyTitleCounts=new Map();
 function historyBaseTitle(x){const kind=x.service==='taksong'?'자동차탁송':x.service==='mixed'?'탁송+대리운전':'대리운전';return (x.departure==='지역 비공개'&&x.destination==='지역 비공개'?'전국 '+kind+' 완료내역 기반 후기':x.departure==='지역 비공개'?x.destination+' 도착 '+kind+' 운행완료 후기':x.destination==='지역 비공개'?x.departure+' 출발 '+kind+' 운행완료 후기':x.departure+'에서 '+x.destination+'까지 '+kind+' 운행완료 후기')+'｜'+x.date+' · 당시 요금 '+x.fare;}
 for(const x of historicalRides){const t=historyBaseTitle(x);historyTitleCounts.set(t,(historyTitleCounts.get(t)||0)+1);}
@@ -2708,17 +2710,17 @@ if(pathname==='/sitemap-reviewed-routes.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',...Array.from({length:Math.ceil(historicalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
-  :Array.from({length:Math.ceil(historicalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
+  :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
 const historySitemapMatch=pathname.match(/^\/sitemap-history-([1-9][0-9]*)\.xml$/);
 if(historySitemapMatch){
- const segment=Number(historySitemapMatch[1]),total=Math.ceil(historicalRides.length/500);
+ const segment=Number(historySitemapMatch[1]),total=Math.ceil(indexableHistoricalRides.length/500);
  if(segment>total)return respond(res,404,'존재하지 않는 운행후기 사이트맵입니다.');
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const selected=historicalRides.slice((segment-1)*500,segment*500);
+ const selected=indexableHistoricalRides.slice((segment-1)*500,segment*500);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+selected.map(x=>'<url><loc>'+esc(new URL(base+'/reviews/history/'+x.id+'/').href)+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
