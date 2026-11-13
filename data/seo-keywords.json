@@ -2,7 +2,7 @@
   "schema_version": 1,
   "brand": "스마트전국대리운전 스마트24탁송",
   "note": "검색어 타깃 목록입니다. 숨겨진 키워드나 무관한 반복 문구로 게시하지 말고, 관련 서비스 페이지의 제목·설명·본문에 자연스럽게 적용합니다.",
-  "total": 1160,
+  "total": 2031,
   "keywords": [
     {
       "keyword": "전국대리",
@@ -4643,6 +4643,3490 @@
     {
       "keyword": "한림항탁송",
       "cluster": "전국 항구·항만·포구 서비스"
+    },
+    {
+      "keyword": "1톤스틱탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "1톤탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "2.5톤탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "24시간대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "24시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "25톤암롯탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "25톤탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "3.5톤탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "5톤탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "8.5톤탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "KTX역탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가남대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가남대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가남탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가락동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가래비대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가래비대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가양동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가좌동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평군대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평군탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평설악대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평설악대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평설악탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평현리대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평현리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "가평현리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강남대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강남대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강남탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강릉대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강릉시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강릉시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강릉시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강서구대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강서구탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강서대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원도고성대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원도고성대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원도고성탁소",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원도고성탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원도골프장대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원랜드대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원랜드대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강원랜드탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강촌대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강촌대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강촌탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강화대교대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강화대교대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강화대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강화도골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강화도골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "강흥시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "개인탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "거제대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "거제시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "거제시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "거제시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "거창군대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "거창군대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "거창군탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "걸포동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "걸포동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경기도골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경기도골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경산시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경산시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경산시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경상도골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경상도골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경상도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경상도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경상도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "경주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "계룡시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "계룡시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "계룡시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고급차대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고급차대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고급차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고막리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고색동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고성군대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고성군대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고성군탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고성대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고성대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고성탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고양시골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고양시골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고양시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고양시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고양시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고창대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고창대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고창탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "고촌탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "곡성탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "공주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "공주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "공주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "공주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "과천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "과천대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광교산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광교산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광교산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광양대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광양시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광양시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광양시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광적대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광적대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광적탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광주광역시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광주광역시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광주광역시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광탄대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광탄대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "광탄탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "괴림동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "괴림동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "괴림동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "교동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "교하대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "교화대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "교화대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "교화탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구래대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구래동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구리대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구문천리대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구문천리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구문천리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구미대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구미시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구미시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구미시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구산동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구산동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "구산동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "국제업무단지대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "국제업무단지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "군산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "군하리대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "군하리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "군하리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "궁평항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "궁평항대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "궁평항탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "궁형항대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "귀전리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "근거리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "기산저수지대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "기산저수지대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "기산저수지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "기장군탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김제대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김제대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김제탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김천시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김천시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김천시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포CC대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포CC대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포CC탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포골프장대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포골프장대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포공항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포공항대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포공항탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포시골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포시골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포시청대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포시청대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김포시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김해공항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김해공항대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김해공항탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김해대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김해시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김해시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "김해시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "나주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "나주대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "나주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "나주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "나주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "나주탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "남양읍대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "남양읍대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "남양읍탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "남양주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "남한산성대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "남한산성대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "남한산성탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "냠양주대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "노량진대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "노량진대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "노량진탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "노원구탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "노원대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "논산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "논산시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "논산시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "논현동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "논현역대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "당진대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "당진대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "당진탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대곶대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대곶탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대관령대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대관령대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대관령탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대구대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대구시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대구시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대구시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대리운전예약",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대명대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대명대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대명리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대명항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대부도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대부도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대부도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대전대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대전시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대전시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대전시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대치동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대형차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "대형탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "덕유산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "덕유산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "덕유산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "도봉산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "도봉산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "도봉산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동두천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동두천대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동두천탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동수원대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동수원대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동수원탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동탄역대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동탄역탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동패동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동패동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동해시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동해시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "동해시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "두리리대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "두지리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "둔내대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "둔내탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "둔포대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "둔포대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "둔포탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "등촌동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마송대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마송대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마송탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "마이티탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "매매단지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "매산로대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "매산로대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "매산로탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "메가탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "목포대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "목포시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "목포시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "목포시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "무의도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "무의도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "무의도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "무주구천동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "무주구천동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문경대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문경대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문경시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문경시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문경시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문경탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문발대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문발대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문발동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문발동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문발동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "문발탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "밀양대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "밀양대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "밀양시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "밀양시대운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "밀양시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "밀양탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "반원대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "반원탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "반월대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "발안대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "발안대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "발안탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "밤일마을대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "밤일마을대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백담사탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백석읍대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백석읍탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백운계곡대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백운계곡대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백운계곡탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백학대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백학면대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백학면대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "백학면탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "벌교대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "벌교대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "벌교탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "법곳동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "법곳동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "법곳동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "벡석읍대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "보성탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "봉담대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "봉담대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "봉담탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "부산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "부산시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "부산시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "부산시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "부안대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "부안대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "부안탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "북변동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "북변동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "북한산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "북한산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "북한산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "분당대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "분당대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "분당탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사북대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사북대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사북읍대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사북읍대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사북읍탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사북탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천공항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천공항대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천공항탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "사천탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "산본대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "산본대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "산본탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "산정호수대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "산정호수대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "삼목항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "삼정동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "삼척시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "삼척시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "삼척시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "상주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "상주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "상주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "상주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서신대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서신대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서신탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서울역대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서울역대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서패동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서패동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서평택대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서평택대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "서평택탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "석모도골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "석모도골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "석모도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "석모도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "선재도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "선재도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "선재도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악면대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악면대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악면탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "설악탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "성남대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "성능시험장탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "세종대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "세종사탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "세종시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "세종시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "세종시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "소공원탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "소래포구대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "소래포구대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "소래포구탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "속초골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "속초대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "속초시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "속초시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "속초시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송내대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송도수출단지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송도유원지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송악대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송악대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송악탁소",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송추대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송추대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송추탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송탄대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송탄대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "송탄탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수서대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수서대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수서동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수서역탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수안보대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수안보탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수원대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수원성능시험장탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수입차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수출단지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "수출차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "순창탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "순천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "순천시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "순천시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "순천시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "스틱대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "스틱탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "승용차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "신사동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "신월동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "심학산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "심학산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "심한산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "아산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안동시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안동시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안동시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안산매매단지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안양대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안중대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안중대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "안중탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "압구정동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양산시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양산시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양산시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양야장거리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양공항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양공항대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양공항탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양군대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양군대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양군탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양장거리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양양탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양촌대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양촌대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양촌탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양평대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양평대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "양평탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "엠파크탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "엠파크허브탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "여수대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "여수시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "여수시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "여수시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "여주골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "여주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "연산다리대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "연산다리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "연안부두대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "연안부두대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "연안부두탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "연천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "연천대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "연천탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영덕대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영덕대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영덕탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영묵면탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영북면대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영서대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영서탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영종도골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영종도골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영종도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영종도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영종도성능시험장탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영종도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영중면대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영중면탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영천대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영천시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영천시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영천시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영천탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영흥도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영흥도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영흥도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "영흥동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "예천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "예천대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "예천탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오대산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오도동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오도동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오뚜기대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오뚜기대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오리정대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오색대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오색대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오색탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오창대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오창대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "오창탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "옥길동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "옥길동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "옥천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "옥천대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "옥천탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "와동동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "완도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "완도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "완도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "외제차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용문대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용문대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용문탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용분대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용인골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용인대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용평대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용평대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "용평탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "운양도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "운양동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "운양동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "운양동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "운정대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "운정대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "운정탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울산시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울산시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울산시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울주대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울주탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울진대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울진대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "울진탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "원산리대리원전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "원주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "원주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "원통대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "원통대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "원통탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "월곶대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "월곶대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "월곶탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "월미도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "월미도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "월미도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "율생리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "율생리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "의왕대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "의왕대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "의왕탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "의정부대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "이동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "이동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "이천골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "이천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "이천시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "이천시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "이천시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "익산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "익산시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "익산시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "익산시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인구대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인구대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인구탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인구해변대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인구해변대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인구해변탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인제대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인제대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인천공항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인천공항대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인천공항탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인천국제공항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인천국제공항대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "인천국제공항탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일산가좌동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일산구산동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일산구산동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일영유원지대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일영유원지대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "일일기사",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "임진강대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "임진강대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "임진강탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장거리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장수동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장수동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장항1동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장항1동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장항1동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장흥유원지대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장흥유원지대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "장흥유원지탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "적성대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "적성대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "적성탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전곡대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전곡탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전국골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전국골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전기차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전라도골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전라도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전라도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전라도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "전호리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정동진대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정동진대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정동진탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정선군대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정선군대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정선군탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정선대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정선카지노대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정선카지노대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정읍대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정읍대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정읍시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정읍시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정읍시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "정읍탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "제부도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "제부도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "제부도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "제주대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "제천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "조지대교대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "조치원대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "조치원대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "조치원탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "종합탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "주문진대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "주문진대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "주문진탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "죽도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "중고차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "지리산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "지리산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "지방탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "진도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "진주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "진주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "진주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "진주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "진해대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "진해대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "진해탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "창원대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "창원시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "창원시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "창원시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "천안대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "천안시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "천안시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "천안시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청계산대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청계산대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청담동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청라탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청송대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청송대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청송탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "청주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "초지대교대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "춘천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충주시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충주시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충주시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충청도골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충청도골프대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충청도대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충청도대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "충청도탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "치악산탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "칠곡대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "칠곡대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "칠곡탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "캠핑카탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "타워돔탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "태백시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "태백시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "태백시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "태안탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "테슬라전기차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "테슬라탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "통영대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "통영시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "통영시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "통영시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "통진대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "통진대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "통진탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "퇴촌대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "퇴촌탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "트럭탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "특장렉커탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "특장전문탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "특장차량탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "특장차전문탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "특장차탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "특장트럭탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "틁",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "파라다이스대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "파라다이스대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "파라다이스탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "파주골프대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "파주대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "판교대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "판교대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "판교탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평촌대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평촌대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평촌탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평택고덕대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평택고덕대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평택고덕탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평택대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "평택항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포내리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포승공단대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포승공단대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포승공단탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포천시청대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포천시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포천이동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포천이동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포천이동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포천일동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포천일동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포천일동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포항대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포항시대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포항시대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "포항시탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "풍암매매탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "프리미엄대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "프리미엄대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "하성대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "하성대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "하성탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "한계령탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "합천군대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "합천군대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "합천군탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "해남대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "해남대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "해남탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향남1지구대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향남1지구대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향남1지구탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향남2지구대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향남2지구대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향남대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향남대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향남탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향동대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향동대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향동탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "향산리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "현리대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "현리대리운전",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "현리탁송",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "홍천대리",
+      "cluster": "파워링크 원본 키워드"
+    },
+    {
+      "keyword": "횡성대리",
+      "cluster": "파워링크 원본 키워드"
     }
   ]
 }
