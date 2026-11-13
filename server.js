@@ -1451,7 +1451,18 @@ function regionPage(r){
 }
 // Service-specific, human-readable category pages: no invented dispatch or completion claims.
 // Category discovery pages describe service contexts; they do not invent individual Naver Place listings.
+const placeSearchTargets=new Map([
+ ['캠핑장','/daeri/activities/camping/'],['야영장','/daeri/activities/camping/'],
+ ['글램핑장','/daeri/activities/camping/'],['펜션','/daeri/activities/stay/'],
+ ['팬션','/daeri/activities/stay/'],['관광지','/daeri/activities/leisure/'],
+ ['유명관광지','/daeri/activities/leisure/'],['계곡','/daeri/activities/valley/'],
+ ['낚시터','/places/'+encodeURIComponent('낚시터')+'/'],
+ ['해수욕장','/coast/'],['해변','/coast/'],['항구','/coast/'],
+ ['항','/coast/'],['포구','/coast/'],['포','/coast/'],
+ ['강원랜드','/daeri/#gangwonland-daeri'],['정선카지노','/daeri/#gangwonland-daeri']
+]);
 const placeCategories=[
+ ['낚시터','낚시터·낚시 출항지','낚시터 이름, 차량이 있는 주차장, 낚시 종료 또는 입항 시각과 도착 주소를 알려주세요. 야간에는 기사 접근과 복귀 여건을 확인합니다.'],
  ['펜션','펜션·풀빌라·리조트','숙박시설의 정확한 출입구·주차 위치와 야간 배차 조건을 확인합니다.'],
  ['캠핑장','캠핑장·글램핑장','산간·외곽 진입로와 주차장, 기사 복귀 동선을 확인합니다.'],
  ['관광지','유원지·관광지·계곡','주차장 위치와 성수기 교통통제, 차량 인수 장소를 확인합니다.'],
@@ -1811,7 +1822,7 @@ function serviceHub(kind){
  const featuredLinks='<section><h2>실제 운행 구간별 '+label+' 안내</h2><ul>'+(isT?featuredTaksongRoutes.map(x=>'<li><a href="/taksong/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 탁송')+'</a></li>'):featuredDaeriRoutes.map(x=>'<li><a href="/daeri/route/'+x.slug+'/">'+esc(x.from+' → '+x.to+' 대리운전')+'</a></li>')).join('')+'</ul></section>';
  const nightTaksongPriority=isT?'<section id="24-hour-taksong" aria-label="24시탁송 야간·심야 차량탁송"><h2>24시간 즉시배차 요청 · 24시탁송 · 야간·심야 자동차탁송</h2><p>밤늦은 차량 이동, 새벽 차량 인수·인계, 장거리탁송 및 지방 간 이동을 상담합니다. 24시간 즉시배차 요청을 우선 접수하고 가능한 기사 배차를 신속히 확인합니다. 다만 지역·시간대별 기사 수급에 따라 즉시 배차가 어려울 수 있어 모든 지역의 즉시 배차를 보장하지는 않습니다. 지역·시간·기사 접근 및 복귀 교통편에 따라 가능 여부가 달라집니다.</p><h3>24시탁송 예약 전 확인사항</h3><ol><li>출발지 주소·주차장 위치와 도착지 주소</li><li>차종·차량 상태 및 차량 키 전달 방식</li><li>희망 인수·인계 날짜와 시간, 현장 담당자</li><li>경유지·통행료·야간 출입 제한과 기사 복귀 조건</li></ol><p>홈페이지 예상요금은 참고용이며 심야·장거리·외곽 지역은 실제 배차 조건을 확인한 뒤 금액을 안내합니다. 확인되지 않은 운행사례나 확정 요금은 표시하지 않습니다.</p><p><a class="cta" href="tel:18114294">24시탁송 상담 1811-4294</a> · <a href="/fare/?service=taksong">탁송 예상요금 조회</a> · <a href="/reviews/history/">실제 운행기록 확인</a></p><h3>지역별 24시탁송 상담</h3><p><a href="/taksong/busan/">부산탁송</a> · <a href="/taksong/daegu/">대구탁송</a> · <a href="/taksong/ulsan/">울산탁송</a> · <a href="/taksong/gangwon/">강원도탁송</a> · <a href="/region/">전국 지역 검색</a></p></section>':'';
  const taksongSearchSignals=isT?'<section id="taksong-search-intent"><h2>자동차탁송 · 24시탁송 · 장거리탁송 지역별 안내</h2><p>차량탁송, 자동차탁송, 24시탁송, 야간탁송, 심야탁송은 출발 지역과 도착 지역, 차량 인수·인계 시간에 따라 상담 조건이 달라집니다. 지역명만 바꾼 운행후기 대신 확인된 운행기록과 실제 서비스 조건을 구분해 제공합니다.</p><h3>차량탁송 이용 목적별 안내</h3><p><a href="/service/taksong-purpose/">서비스센터 입고·출고, 렌트카, 중고차, 경매장 탁송</a> · <a href="/taksong/types/">차종별 탁송</a> · <a href="/reviews/history/?kind=taksong">확인된 운행기록</a></p><h3>지방 주요 도시 탁송</h3><p><a href="/taksong/busan/">부산자동차탁송</a> · <a href="/taksong/daegu/">대구자동차탁송</a> · <a href="/taksong/ulsan/">울산자동차탁송</a> · <a href="/taksong/gangwon/">강원도탁송</a> · '+[['세종','세종특별자치시'],['창원','경상남도 창원시'],['대전','대전광역시'],['속초','강원특별자치도 속초시'],['강릉','강원특별자치도 강릉시']].map(([name,full])=>{const r=regionByFullName.get(full);if(!r)throw Error('Missing canonical priority taksong region: '+full);return '<a href="'+esc(servicePath(r,'taksong'))+'">'+esc(name+'자동차탁송')+'</a>'}).join(' · ')+' · <a href="/region/">전국 지역 검색</a></p><p><a href="/fare/?service=taksong">출발·도착 예상요금 확인</a> · <a href="tel:18114294">24시탁송 상담 1811-4294</a></p></section>':'';
- const casinoPriority=kind==='daeri'?'<section id="gangwonland-daeri"><h2>강원랜드대리운전 · 정선 사북 심야·장거리 예약</h2><p>강원랜드 주변 정선 사북읍·고한읍에서 출발하는 심야·새벽 대리운전은 기사 접근 및 복귀 교통편에 따라 배차 조건이 달라집니다. 태백·영월 등 인접 지역과 장거리 목적지는 출발 주차장, 희망 시각, 도착 주소를 먼저 확인해 상담하세요. 기사 상주나 즉시 배차를 보장하지 않습니다.</p><p><a class="cta" href="tel:18114294">강원랜드 대리운전 상담 1811-4294</a> · <a href="/fare/?service=daeri">출발·도착 예상요금 조회</a> · <a href="/keyword-search/?q=%EA%B0%95%EC%9B%90%EB%9E%9C%EB%93%9C%EB%8C%80%EB%A6%AC%EC%9A%B4%EC%A0%84">강원랜드 지역 안내</a></p><p>요금은 참고금액과 실제 배차 확정금액을 구분하며, 확인되지 않은 운행완료 후기는 표시하지 않습니다.</p></section>':'';
+ const casinoPriority=kind==='daeri'?'<section id="gangwonland-daeri"><h2>강원랜드대리운전 · 정선카지노대리운전 · 사북 심야 예약</h2><p>강원랜드 주변 정선 사북읍·고한읍에서 출발하는 심야·새벽 대리운전은 기사 접근 및 복귀 교통편에 따라 배차 조건이 달라집니다. 태백·영월 등 인접 지역과 장거리 목적지는 출발 주차장, 희망 시각, 도착 주소를 먼저 확인해 상담하세요. 기사 상주나 즉시 배차를 보장하지 않습니다.</p><p><a class="cta" href="tel:18114294">강원랜드 대리운전 상담 1811-4294</a> · <a href="/fare/?service=daeri">출발·도착 예상요금 조회</a> · <a href="/keyword-search/?q=%EA%B0%95%EC%9B%90%EB%9E%9C%EB%93%9C%EB%8C%80%EB%A6%AC%EC%9A%B4%EC%A0%84">강원랜드 지역 안내</a></p><p>요금은 참고금액과 실제 배차 확정금액을 구분하며, 확인되지 않은 운행완료 후기는 표시하지 않습니다.</p></section>':'';
  const intro=isT?'자동차탁송은 고객이 지정한 장소에서 차량을 인수하여 목적지로 이동시키는 서비스입니다. 장거리 차량 이동, 중고차 인도, 서비스센터 입출고 등 이용 목적에 따라 차량 인수·인계 조건을 먼저 확인합니다.':'대리운전은 고객의 차량을 기사가 운전하는 서비스입니다. 장거리 이동, 골프장 이동, 야간 운전 등 상황에 따라 출발 시간과 기사 배차·복귀 조건을 확인합니다.';
  const faq=isT?[
  ['탁송요금은 어떻게 결정되나요?','출발지와 도착지의 실제 도로거리, 차량 종류, 운행 시간대, 기사 접근·복귀 교통편, 통행료 및 인수·인계 조건을 종합하여 상담합니다. 홈페이지 계산 결과는 참고요금이며 확정 금액이 아닙니다.'],
@@ -2474,12 +2485,17 @@ const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u
 const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):null;
 if(searchIntent){
  const normalized=compact(searchIntent).toLowerCase();
+ const place=normalized.match(/^(?:전국)?(.+?)(?:대리운전|대리)$/);
+ const placeTarget=place&&placeSearchTargets.get(place[1]);
+ const truck=normalized.match(/^(?:전국)?(?:화물차)?([0-9]+(?:\.[0-9]+)?톤)(?:화물차)?(윙바디)?(?:차량|자동차)?탁송$/);
+ const truckTopic=truck&&truck[1]+(truck[2]||'')+'탁송';
+ const truckTarget=truckTopic&&(vehicleTopicMap.has(truckTopic)?vehicleTopicPath(truckTopic):'/service/heavy-truck-taksong/');
  const mountain=mountainTarget(searchIntent);
  const cycle=/((?:자전거|자전)길|자전거종주|국토종주|동해안|섬진강|영산강|낙동강|금강|오천).*(?:종주|탁송|완벽정리|코스|인증센터)|(?:전국)?자전길탁송/.test(normalized);
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=mountain||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ const target=placeTarget||truckTarget||mountain||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
@@ -2491,7 +2507,7 @@ if(searchIntent){
    '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
    '일일기사':'/service/daily-driver/'
   }[normalized])||(named&&named.url);
- if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
+ if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:(placeTarget===target?target:encodeURI(target)),'cache-control':'no-store','vary':'Referer'});return res.end();}
 }
 if(pathname==='/keyword-search/'||pathname==='/keyword-search'){
  const target=keywordEngine.topicUrl(u.searchParams.get('category'));
@@ -2871,10 +2887,16 @@ if(pathname==='/sitemap-verified-regions.xml'){
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
+if(pathname==='/sitemap-coast.xml'){
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
+  keywordEngine.coastal.urls.map(p=>'<url><loc>'+esc(new URL(p,base).href)+'</loc></url>').join('')+'</urlset>';
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
