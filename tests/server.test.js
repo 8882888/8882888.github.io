@@ -860,7 +860,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(recordHtml.includes('100% 배차·운행완료'));
   assert.ok(recordHtml.includes('자료에 예약 여부') ,'do not invent booking status');
   const gyeongsan=await (await get('/taksong/gyeongbuk/gyeongsan-si/')).text();
-  assert.ok(gyeongsan.includes('실제 완료 운행내역에서 작성한 후기'));
+  assert.ok(gyeongsan.includes('해당 행정구역이 확인된 운행기록'));
   const gyeongsanEvidence=gyeongsan.split('id="regional-archive-matched-ride-links"')[1].split('</section>')[0];
   const gyeongsanIds=[...gyeongsanEvidence.matchAll(/href="\/reviews\/history\/(excel-\d{4})\/"/g)].map(x=>x[1]);
   assert.ok(gyeongsanIds.length,'region-specific reviewed historical dispatch linked');
@@ -930,7 +930,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(priorityRegions.some(p=>p.kind==='taksong'&&p.region==='울산광역시'),
     'Ulsan is an actual curated taksong priority, not a generic province directory');
   const ulsanHtml=await (await get('/taksong/ulsan/')).text();
-  assert.ok(ulsanHtml.includes('<title>울산탁송 후기') && ulsanHtml.includes('남구 삼산동') && ulsanHtml.includes('동구 방어진'),
+  assert.ok(ulsanHtml.includes('<title>울산탁송｜자동차탁송·빠른배차·예약배차') && ulsanHtml.includes('남구 삼산동') && ulsanHtml.includes('동구 방어진'),
     'Ulsan title gives locality-first service intent');
   assert.ok(ulsanHtml.includes('id="southeast-taksong-local-evidence"') &&
     ulsanHtml.includes('href="/taksong/ulsan/ulju-gun/"'),
@@ -971,7 +971,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 
   assert.ok(hubHtml.includes('href="/taksong/ulsan/"')&&hubHtml.includes('>울산탁송</a>'),
     'national taksong hub uses a concise Ulsan keyword anchor');
-  const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 예약·예상요금｜구·군별 차량 인수·인계'),'Busan service title must distinguish booking from the local editorial');
+  const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 실제 운행후기｜부산→대구 8만원·km조회·빠른배차·예약배차 안내'),'Busan title retains the source-backed review and booking intent');
   const reviewLeadPos=busanHtml.indexOf('id="busan-taksong-real-review-first-20261104"');
   assert.ok(reviewLeadPos>0&&reviewLeadPos<busanHtml.indexOf('id="regional-provider-keywords"'),'Busan true reviews precede provider copy');
   assert.ok(busanHtml.includes('https://blog.naver.com/wjdtnr4757/224445300887'),'Busan review contains the existing original post');
@@ -1325,8 +1325,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
   const crawlRobots=await (await get('/robots.txt')).text();
   const submittedMaps=crawlRobots.split('\n').filter(line=>line.startsWith('Sitemap: '));
-  assert.equal(submittedMaps.length,7,'robots advertises original five sitemaps plus full history discovery indexes');
-   for(const sitemap of ['sitemap-priority.xml','sitemap.xml','sitemap-reviewed-routes.xml','sitemap-taksong.xml','sitemap-daeri.xml','sitemap-all.xml','sitemap-history.xml'])assert.ok(submittedMaps.some(x=>x.endsWith('/'+sitemap)),'robots retains '+sitemap);
+  assert.equal(submittedMaps.length,8,'robots advertises canonical discovery indexes and verified regions');
+   for(const sitemap of ['sitemap-priority.xml','sitemap.xml','sitemap-reviewed-routes.xml','sitemap-verified-regions.xml','sitemap-taksong.xml','sitemap-daeri.xml','sitemap-all.xml','sitemap-history.xml'])assert.ok(submittedMaps.some(x=>x.endsWith('/'+sitemap)),'robots retains '+sitemap);
   assert.ok(submittedMaps.some(x=>x.includes('/sitemap-priority.xml')));
   assert.ok(submittedMaps.some(x=>x.includes('/sitemap-reviewed-routes.xml')));
   assert.ok(!submittedMaps.some(x=>x.includes('nationwide-route')),'avoid diluting crawl effort across hundreds of thousands of generated combinations');
