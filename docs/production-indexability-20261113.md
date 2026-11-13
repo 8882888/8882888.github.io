@@ -39,3 +39,14 @@
 - https://jeongukdaeri.kr/reviews/history/excel-1955/ — HTTP 200, canonical matches, no redirect/noindex detected.
 - https://jeongukdaeri.kr/reviews/history/excel-1957/ — HTTP 200, canonical matches, no redirect/noindex detected.
 - https://jeongukdaeri.kr/reviews/history/excel-1959/ — HTTP 200, canonical matches, no redirect/noindex detected.
+
+## Follow-up — 2026-11-14 06:34 KST run
+
+- Main before changes: adb061c25b837d75a41fc05001adcdd15550af14. All seven exposed production hashes still match.
+- Latest completed full audit 43495199204 checked 36,608 URLs; 33 fetch failures, no sitemap errors or crawler diagnostics. These 33 were not retried in this run and must not be described as recovered based on the earlier 13-URL retry. Artifact 14077639227 preserves the exact affected URLs.
+- Reproduced four failures in tests/seo-sitemap-regression.test.js from job 132165405427. They required the retired nested history sitemap or exact adjacency of source fragments even though additional legitimate sections were inserted.
+- Commit b325adcced61ad94a0b6fc96b88cc49895292230 corrects these expectations while retaining direct history-shard coverage, evidence-backed regional sitemap membership, answer-first content, and near-top verified-history requirements. All 30 tests in this file pass locally (previously 26).
+- Production recheck: robots.txt HTTP 200 with root sitemap declaration; sitemap-all.xml HTTP 200 with 21 children including all six history shards directly and no nested history index; history shard six HTTP 200 with 82 URLs.
+- Both national /taksong/ and /daeri/ return HTTP 200 and contain their direct-answer and national-verified-history-links sections in server HTML.
+- This is a test repair, not a runtime/site content change. Existing server.test.js copy/title failures still block the broader deployment verification job; no claim that the whole CI suite passes. Missing CLOUDTYPE_PROJECT remains unresolved.
+- No new deployment workflow or additional full-audit run was created; existing audit 43506608474 was already running.
