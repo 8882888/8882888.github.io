@@ -190,3 +190,13 @@ test('history sitemaps publish canonical ride URLs only while preserving origina
  assert.ok(server.includes("indexableHistoricalRides.slice((segment-1)*500,segment*500)"),'history sitemap shards must use filtered canonical records');
  assert.ok(server.includes("const historicalRides=(Array.isArray(rides)?rides:[]).map("),'original ride dataset must remain intact');
 });
+
+test('primary taksong and recruitment titles retain the approved search intent',()=>{
+ const pages=JSON.parse(fs.readFileSync(path.join(root,'data/seo-pages.json'),'utf8')).pages;
+ const titles=new Map(pages.map(p=>[p.path,p.title]));
+ assert.equal(titles.get('/taksong/'),'전국자동차탁송｜실제 운행후기·24시탁송·요금조회');
+ assert.equal(titles.get('/recruit/taksong/'),'탁송기사모집｜전국 로드탁송기사 지원·등록 안내');
+ assert.equal(titles.get('/recruit/daeri/'),'대리운전기사모집｜전국 대리기사 지원·등록 안내');
+ assert.ok(server.includes("r.full_name==='울산광역시'?'울산탁송｜자동차탁송·빠른배차·예약배차'"),'Ulsan title override must remain');
+ assert.ok(server.includes("r.full_name==='세종특별자치시'?'세종탁송｜장거리 차량탁송·거리조회·예약'"),'Sejong title override must remain');
+});
