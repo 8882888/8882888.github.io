@@ -1456,6 +1456,7 @@ const placeSearchTargets=new Map([
  ['글램핑장','/daeri/activities/camping/'],['펜션','/daeri/activities/stay/'],
  ['팬션','/daeri/activities/stay/'],['관광지','/daeri/activities/leisure/'],
  ['유명관광지','/daeri/activities/leisure/'],['계곡','/daeri/activities/valley/'],
+ ['골프장','/service/golf/'],
  ['음식점','/daeri/activities/food/'],['식당','/daeri/activities/food/'],['맛집','/daeri/activities/food/'],
  ['낚시터','/places/'+encodeURIComponent('낚시터')+'/'],
  ['해수욕장','/coast/'],['해변','/coast/'],['항구','/coast/'],
@@ -2505,6 +2506,7 @@ if(searchIntent){
    '탁송비':'/fare/?service=taksong','탁송견적':'/fare/?service=taksong','탁송비견적':'/fare/?service=taksong',
    '골프대리운전':'/service/golf/','골프장대리운전':'/service/golf/',
    '법인대리운전':'/service/corporate/','법인카드대리운전':'/service/corporate/',
+   '대리운전예약':'/taksongdaeri/','단체대리운전':'/service/corporate/',
    '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
    '일일기사':'/service/daily-driver/'
   }[normalized])||(named&&named.url);
