@@ -2567,7 +2567,7 @@ if(searchIntent){
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||truckTarget||mountain||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ const target=mountain||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||truckTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
@@ -2805,8 +2805,9 @@ if(pathname==='/region/'){
  const exactRegions=exactIntent?resolvedLiveCardAliases(exactIntent.region):[];
  const exactLocalKeyword=exactRegions.length===1&&Boolean(exactRegionalKeywordCard(exactRegions[0],exactIntent.kind,rawQuery));
  const nationalDirect=rawQuery?nationwideExplorer.resolve(rawQuery):null;
- const directTarget=nationalDirect?nationalDirect.url:rawQuery&&!(compoundExactLocality||exactLocalKeyword)?
-  (mountainTarget(rawQuery)||regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null;
+ const mountainDirect=rawQuery?mountainTarget(rawQuery):null;
+ const directTarget=mountainDirect||(nationalDirect?nationalDirect.url:rawQuery&&!(compoundExactLocality||exactLocalKeyword)?
+  (regionalServiceTarget(rawQuery)||(directTopic&&directTopic.url)):null);
  if(directTarget){res.writeHead(302,{location:directTarget.startsWith('/fare/?')?directTarget:encodeURI(directTarget),'cache-control':'no-store'});return res.end()}
  const categoryTarget=rawQuery&&!directTopic&&!exactLocalKeyword
   ?nationwideExplorer.resolvePlaceCategory(normalizedCompound):null;
