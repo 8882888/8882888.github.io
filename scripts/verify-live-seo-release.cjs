@@ -41,6 +41,24 @@ async function main(){
      throw Error(keyword+' on '+entry+' returned '+response.status+' '+(location||'without Location'));
     }
    }
+   for(const [city,fullName] of [['여수','전라남도 여수시'],['부산','부산광역시'],['대구','대구광역시']]){
+    for(const [from,to,origin,destination] of [
+     ['서울',city,'서울특별시',fullName],[city,'서울',fullName,'서울특별시']
+    ]){
+     for(const [label,service] of [['탁송','taksong'],['대리운전','daeri']]){
+      const entry=new URL('/keyword-search/',base);
+      entry.searchParams.set('q',from+'에서 '+to+' '+label);
+      const response=await fetch(entry,{redirect:'manual',signal:AbortSignal.timeout(10000)});
+      const location=response.headers.get('location');
+      await response.body?.cancel();
+      const expectedRoute=new URL('/route-search/',base);
+      expectedRoute.search=new URLSearchParams({from:origin,to:destination,service});
+      if(response.status!==302||!location||new URL(location,entry).href!==expectedRoute.href){
+       throw Error('Unexpected route for '+entry.searchParams.get('q')+': '+response.status+' '+(location||'without Location'));
+      }
+     }
+    }
+   }
    const root=await read('/sitemap-all.xml');
    if(!/<sitemapindex\b/i.test(root))throw Error('Invalid sitemap index');
    const localityLevels=['province','city','county','district','eup','myeon','dong'];
