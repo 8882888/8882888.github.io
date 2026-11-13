@@ -10,14 +10,35 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.CLOUDTYPE_AUTO_DEPLOY == 'true')
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate server and install runtime
+        run: |
+          node --check server.js
+          npm install --omit=dev --no-audit --no-fund
+      - name: Validate local server startup
+        run: |
+          node server.js > startup.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/health > local-health.json; then
+              exit 0
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat startup.log
+              exit 1
+            fi
+            sleep 2
+          done
+          cat startup.log
+          exit 1
       - name: Check deployment configuration
         env:
           CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}
@@ -41,3 +62,21 @@ jobs:
           yaml: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
       - name: Verify deployed release and sitemaps
         run: node scripts/verify-live-seo-release.cjs
+      - name: Audit nationwide production URLs
+        run: node scripts/audit-indexability.cjs > indexability-report.json
+      - name: Summarize 45000 URL target
+        if: ${{ always() }}
+        run: |
+          if test -s indexability-report.json; then
+            node scripts/summarize-seo-target.cjs
+          fi
+      - name: Retain deployment evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-seo-evidence
+          path: |
+            startup.log
+            local-health.json
+            indexability-report.json
+            seo-target-progress.json
