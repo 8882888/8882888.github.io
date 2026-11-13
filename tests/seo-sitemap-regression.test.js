@@ -261,3 +261,11 @@ test('regional AEO direct answers cover all nationwide administrative levels wit
  assert.ok(server.includes('과거 요금은 현재 고정 요금이 아닙니다'),'past completed ride fares cannot be presented as current quotes');
  assert.ok(server.includes('확인되지 않은 후기를 작성하지 않습니다'),'do not fabricate regional ride evidence');
 });
+
+test('favicon is retained and served as a valid crawlable icon instead of deleting its URL',()=>{
+ assert.ok(server.includes("if(pathname==='/favicon.ico')"),'favicon must have an explicit server route');
+ assert.ok(server.includes("fs.readFileSync(path.join(ROOT,'favicon.ico'))"),'favicon route must load its actual binary asset');
+ assert.ok(server.includes("res.writeHead(200,{'content-type':'image/x-icon'"),'favicon GET must return HTTP 200 and icon MIME');
+ assert.ok(server.includes("req.method==='HEAD'?undefined:icon"),'favicon HEAD must return the same status without a response body');
+ assert.ok(!server.includes("pathname==='/favicon.ico')return respond(res,400"),'favicon must not be treated as a malformed request');
+});
