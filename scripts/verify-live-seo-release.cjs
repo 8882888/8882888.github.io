@@ -26,6 +26,21 @@ async function main(){
    if(!schemas.some(schema=>schema?.['@type']==='WebSite'&&schema.name==='스마트24 전국대리운전'&&schema.url===homeUrl)){
     throw Error('Homepage WebSite name or canonical URL is missing');
    }
+   for(const [entry,keyword,destination] of [
+    ['/','설악산탁송','/설악산탁송/'],
+    ['/region/','설악산탁송','/설악산탁송/'],
+    ['/keyword-search/','부산대리운전','/daeri/busan/'],
+    ['/keyword-search/','부산탁송','/taksong/busan/']
+   ]){
+    const url=new URL(entry,base);
+    url.searchParams.set('q',keyword);
+    const response=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(10000),cache:'no-store'});
+    const location=response.headers.get('location');
+    await response.body?.cancel();
+    if(response.status!==302||!location||new URL(location,url).href!==new URL(destination,base).href){
+     throw Error(keyword+' on '+entry+' returned '+response.status+' '+(location||'without Location'));
+    }
+   }
    const root=await read('/sitemap-all.xml');
    if(!/<sitemapindex\b/i.test(root))throw Error('Invalid sitemap index');
    for(const path of ['/sitemap-regional-guides.xml','/sitemap-history-1.xml']){
