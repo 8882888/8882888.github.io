@@ -1456,6 +1456,7 @@ const placeSearchTargets=new Map([
  ['글램핑장','/daeri/activities/camping/'],['펜션','/daeri/activities/stay/'],
  ['팬션','/daeri/activities/stay/'],['관광지','/daeri/activities/leisure/'],
  ['유명관광지','/daeri/activities/leisure/'],['계곡','/daeri/activities/valley/'],
+ ['음식점','/daeri/activities/food/'],['식당','/daeri/activities/food/'],['맛집','/daeri/activities/food/'],
  ['낚시터','/places/'+encodeURIComponent('낚시터')+'/'],
  ['해수욕장','/coast/'],['해변','/coast/'],['항구','/coast/'],
  ['항','/coast/'],['포구','/coast/'],['포','/coast/'],
