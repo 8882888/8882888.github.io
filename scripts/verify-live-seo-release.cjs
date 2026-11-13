@@ -43,12 +43,29 @@ async function main(){
    }
    const root=await read('/sitemap-all.xml');
    if(!/<sitemapindex\b/i.test(root))throw Error('Invalid sitemap index');
+   const localityLevels=['province','city','county','district','eup','myeon','dong'];
+   const villageMap='/sitemap-localities-ri.xml';
+   const hasVillageMap=root.includes(new URL(villageMap,base).href);
+   if(hasVillageMap)localityLevels.push('ri');
+   const localityCounts={};
+   for(const level of localityLevels){
+    const path='/sitemap-localities-'+level+'.xml';
+    if(!root.includes(new URL(path,base).href))throw Error('Missing locality sitemap: '+level);
+    const xml=await read(path);
+    const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>new URL(match[1]));
+    if(!/<urlset\b/i.test(xml)||!urls.length||
+     urls.some(url=>url.origin!==base.origin||!/^\/(daeri|taksong)\//.test(url.pathname))){
+     throw Error('Invalid locality URLs: '+level);
+    }
+    localityCounts[level]=urls.length;
+   }
+   if(!hasVillageMap)localityCounts.ri=0;
    for(const path of ['/sitemap-regional-guides.xml','/sitemap-history-1.xml']){
     if(!root.includes(new URL(path,base).href))throw Error('Missing sitemap: '+path);
     const xml=await read(path);
     if(!/<urlset\b/i.test(xml)||!/<loc>https?:\/\//i.test(xml))throw Error('Empty or invalid sitemap: '+path);
    }
-   console.log(JSON.stringify({origin:base.origin,release:expected,verified:true}));
+   console.log(JSON.stringify({origin:base.origin,release:expected,verified:true,localityCounts}));
    return;
   }catch(error){
    console.error('Attempt '+attempt+'/12: '+error.message);
