@@ -1706,16 +1706,11 @@ function nationwideServiceIntentHub(kind){
   const r=regionByFullName.get(full);
   return r?'<li><a href="'+esc(servicePath(r,kind))+'">'+esc(short+service)+'</a></li>':'';
  }).filter(Boolean).join('');
- const focus=[
-  ['경상남도 창원시','창원'],['강원특별자치도 원주시','원주'],
-  ['경상남도 진주시','진주'],['전라남도 나주시','나주'],
-  ['경상북도 김천시','김천'],['강원특별자치도 속초시','속초'],
-  ['강원특별자치도 강릉시','강릉']
- ];
- const focusLinks=focus.map(([full,name])=>{
-  const r=regionByFullName.get(full);
-  return r?'<li><a href="'+esc(servicePath(r,kind))+'">'+esc(name+service)+'</a></li>':'';
- }).filter(Boolean).join('');
+ const focusLinks=provinces.map(([full,short])=>{
+  const links=regions.filter(r=>['시','군','구'].includes(r.level)&&r.full_name.startsWith(full+' '))
+   .map(r=>'<li><a href="'+esc(servicePath(r,kind))+'">'+esc(r.full_name+' '+service)+'</a></li>');
+  return links.length?'<li><details><summary>'+esc(short)+' 시·군·구</summary><ul>'+links.join('')+'</ul></details></li>':'';
+ }).join('');
  const heading=isT?'전국자동차탁송 예약 · 차량탁송·로드탁송·장거리탁송':'전국대리운전 예약 · 심야대리운전·장거리대리운전';
  const lead=isT
   ?'전국탁송·전국자동차탁송을 찾는 고객은 일반 로드탁송, 정비차량 입출고, 장거리 차량 이동 중 목적을 먼저 구분하세요. 자동차탁송업체·차량탁송회사 상담 시 운행 가능한 차량인지, 차량 열쇠와 인수·인계 담당자가 누구인지 확인합니다.'
