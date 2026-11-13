@@ -722,7 +722,9 @@ function dispatchCopy(kind){return kind==='daeri'?'대리운전 빠른배차 상
 function dispatchNotice(kind){return '<aside aria-label="빠른배차 상담" style="margin:12px 0;padding:16px;background:#eaf8ff;border:1px solid #8bcfe5;border-radius:12px;color:#123f60"><strong style="font-size:1.15em">'+dispatchCopy(kind)+'</strong><p style="margin:8px 0">출발지·도착지·차종·희망 시간을 알려주세요. 실제 배차 가능 여부와 소요시간은 출발 위치·시간대·기사 수급을 확인해 안내합니다.</p><a class="cta" href="tel:18114294">배차 상담 '+PHONE+'</a></aside>'}
 // Regional guides have separate tasks, canonical URLs and related service links.
 const regionalIntentTypes={daeri:['fare','long-distance'],taksong:['fare','handover']};
-const regionalIntentAreas=regions.filter(r=>['시도','시','군','구'].includes(r.level));
+const regionalIntentAreas=regions.filter(r=>
+ ['시도','시','군','구','읍','면','동'].includes(r.level)||
+ (r.level==='리'&&['daeri','taksong'].some(kind=>priorityRegionalPages.some(entry=>entry.kind===kind&&entry.region===r.full_name))));
 const regionalIntentSlugs=new Set(regionalIntentAreas.map(r=>r.slug));
 function regionalIntentArea(r){return [...regionAncestors(r)].reverse().find(x=>regionalIntentSlugs.has(x.slug))||r}
 function regionalIntentPath(r,kind,topic){return servicePath(regionalIntentArea(r),kind)+topic+'/'}
@@ -2918,6 +2920,8 @@ if(pathname==='/sitemap-regional-guides.xml'){
  const urls=new Set(regionalIntentAreas.flatMap(region=>
   Object.entries(regionalIntentTypes).flatMap(([kind,topics])=>
    topics.map(topic=>regionalIntentPath(region,kind,topic)))));
+ for(const [name] of placeCategories)urls.add('/places/'+encodeURIComponent(name)+'/');
+ for(const route of keywordEngine.activityUrls)urls.add(route);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
   [...urls].map(route=>'<url><loc>'+esc(new URL(route,base).href)+'</loc></url>').join('')+'</urlset>';
  sitemapCache.set(pathname,xml);
