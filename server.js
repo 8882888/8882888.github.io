@@ -1562,6 +1562,12 @@ function vehicleTopicsHub(){
 }
 const sitemapCache=new Map();
 let villageServiceKeys;
+function localitySitemapUrls(key){
+ const level=localitySitemapLevels[key];
+ return new Set(regions.filter(region=>region.level===level).flatMap(region=>
+  ['daeri','taksong'].filter(kind=>level!=='리'||eligibleVillageServiceKeys().has(kind+'|'+region.full_name))
+   .map(kind=>servicePath(region,kind))));
+}
 function eligibleVillageServiceKeys(){
  if(villageServiceKeys)return villageServiceKeys;
  const keys=new Set();
@@ -2386,6 +2392,11 @@ if(keywordImageMatch){
  return respond(res,200,svg,'image/svg+xml; charset=utf-8');
 }
 // Public diagnostics for deployment freshness; reports source HTML only, not Naver indexing.
+if(pathname==='/health/locality-sitemaps.json'){
+ const counts=Object.fromEntries(Object.keys(localitySitemapLevels).map(key=>[key,localitySitemapUrls(key).size]));
+ res.setHeader('X-Robots-Tag','noindex');
+ return respond(res,200,JSON.stringify(counts),'application/json; charset=utf-8');
+}
 if(pathname==='/health/seo.json'){
  res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
  res.setHeader('surrogate-control','no-store');
@@ -2973,10 +2984,7 @@ if(localityMapMatch){
  const cached=sitemapCache.get(pathname);
  if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const level=localitySitemapLevels[localityMapMatch[1]];
- const urls=new Set(regions.filter(region=>region.level===level).flatMap(region=>
-  ['daeri','taksong'].filter(kind=>level!=='리'||eligibleVillageServiceKeys().has(kind+'|'+region.full_name))
-   .map(kind=>servicePath(region,kind))));
+ const urls=localitySitemapUrls(localityMapMatch[1]);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
   [...urls].map(route=>'<url><loc>'+esc(new URL(route,base).href)+'</loc></url>').join('')+'</urlset>';
  sitemapCache.set(pathname,xml);
