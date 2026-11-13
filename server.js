@@ -1157,7 +1157,7 @@ async function servicePage(r,kind){
  const busanReviewPage=kind==='taksong'&&r.full_name==='부산광역시';
  const gijangTaksongPage=kind==='taksong'&&r.full_name==='부산광역시 기장군';
  const ganghwaReviewPage=kind==='daeri'&&r.full_name==='인천광역시 강화군';
- const busanServiceTitle='부산탁송 예약·예상요금｜구·군별 차량 인수·인계';
+ const busanServiceTitle='부산탁송 실제 운행후기｜부산→대구 8만원·km조회·빠른배차·예약배차 안내';
  const verifiedTitleTrip=kind==='taksong'?publicRides.find(x=>x.service==='taksong'&&tripMatchesRegion(x,r)):null;
  const historicalTitleTrip=historicalRides.find(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개');
  const taksongReviewTitle=verifiedTitleTrip?keyword+' 실제후기｜'+verifiedTitleTrip.departure+'→'+verifiedTitleTrip.destination+' · km조회·배차안내':historicalTitleTrip&&kind==='taksong'?keyword+' 실제후기｜'+historicalTitleTrip.departure+'→'+historicalTitleTrip.destination+' · km조회·배차안내':keyword+'｜빠른배차·예약배차·km조회·배차현황 안내';
