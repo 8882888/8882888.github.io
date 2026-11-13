@@ -1451,6 +1451,20 @@ function regionPage(r){
 }
 // Service-specific, human-readable category pages: no invented dispatch or completion claims.
 // Category discovery pages describe service contexts; they do not invent individual Naver Place listings.
+const coastalLocalities=new Map([
+ ['강화도','인천광역시 강화군'],
+ ['대부도','경기도 안산시 단원구'],
+ ['영종도','인천광역시 중구'],
+ ['제부도','경기도 화성시 서신면'],
+ ['오이도','경기도 시흥시']
+]);
+function coastalLocalityService(keyword, findRegion, pathForService){
+ const match=keyword.match(/^(강화도|대부도|영종도|제부도|오이도)(?:횟집|회센터|장어집|장어구이|캠핑장|야영장|오토캠핑장|글램핑장|낚시터|낙시터|펜션|팬션|풀빌라)(대리운전|대리|자동차탁송|차량탁송|탁송)$/);
+ if(!match)return null;
+ const full=coastalLocalities.get(match[1]);
+ const region=findRegion(full)||findRegion(full.slice(0,full.lastIndexOf(' ')));
+ return region?pathForService(region,match[2].endsWith('탁송')?'taksong':'daeri'):null;
+}
 const placeSearchTargets=new Map([
  ['캠핑장','/daeri/activities/camping/'],['야영장','/daeri/activities/camping/'],
  ['글램핑장','/daeri/activities/camping/'],['펜션','/daeri/activities/stay/'],
@@ -2497,7 +2511,7 @@ if(searchIntent){
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=placeTarget||truckTarget||mountain||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ const target=coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||truckTarget||mountain||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
