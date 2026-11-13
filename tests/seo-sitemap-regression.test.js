@@ -181,3 +181,12 @@ test('national taksong hub builds priority city links from canonical region path
  assert.ok(!server.includes("regions.find(x=>x.name===name+'시'"),
   'ambiguous city-name fallback must never choose the wrong province');
 });
+
+test('history sitemaps publish canonical ride URLs only while preserving original records',()=>{
+ const duplicates=JSON.parse(fs.readFileSync(path.join(root,'data/seo-history-duplicates.json'),'utf8')).canonicalById;
+ assert.ok(Object.keys(duplicates).length>0,'duplicate mappings should be evaluated');
+ assert.ok(server.includes("const indexableHistoricalRides=historicalRides.filter("),'sitemap-specific canonical ride list must exist');
+ assert.ok(server.includes("!historyCanonicalById[x.id]||historyCanonicalById[x.id]===x.id"),'noncanonical originals must be excluded from discovery');
+ assert.ok(server.includes("indexableHistoricalRides.slice((segment-1)*500,segment*500)"),'history sitemap shards must use filtered canonical records');
+ assert.ok(server.includes("const historicalRides=(Array.isArray(rides)?rides:[]).map("),'original ride dataset must remain intact');
+});
