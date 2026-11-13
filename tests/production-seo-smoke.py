@@ -19,7 +19,7 @@ PAGES = {
     "/recruit/taksong/": "탁송기사모집",
     "/recruit/daeri/": "대리운전기사모집",
 }
-SITEMAPS = ["/sitemap-priority.xml", "/sitemap-all.xml"]
+SITEMAPS = ["/sitemap-priority.xml", "/sitemap-verified-regions.xml", "/sitemap-all.xml"]
 UA = "Smart24-ReadOnly-SEO-Healthcheck/1.0"
 
 class Head(HTMLParser):
@@ -81,8 +81,10 @@ def verify(result):
                 for required in ["/taksong/", "/daeri/", "/recruit/taksong/", "/recruit/daeri/"]:
                     if ROOT + required not in locs:
                         problems.append("Missing priority URL " + required)
-            if path == "/sitemap-all.xml" and ROOT + "/sitemap-priority.xml" not in locs:
-                problems.append("Missing priority sitemap reference")
+            if path == "/sitemap-all.xml":
+                for required in ["/sitemap-priority.xml", "/sitemap-verified-regions.xml"]:
+                    if ROOT + required not in locs:
+                        problems.append("Missing sitemap reference " + required)
             if any(loc and not loc.startswith(ROOT + "/") for loc in locs):
                 problems.append("Off-domain sitemap URL")
         except ET.ParseError as exc:
