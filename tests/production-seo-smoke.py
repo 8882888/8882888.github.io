@@ -22,6 +22,9 @@ PAGES = {
     "/recruit/taksong/": "탁송기사모집",
     "/recruit/daeri/": "대리운전기사모집",
     "/coverage/": "전국 17개 시·도",
+    "/reviews/history/excel-0013/": "자동차탁송",
+    "/reviews/history/excel-0031/": "자동차탁송",
+    "/reviews/history/excel-0071/": "대리운전",
 }
 SITEMAPS = ["/sitemap-priority.xml", "/sitemap-verified-regions.xml", "/sitemap-all.xml"]
 UA = "Smart24-ReadOnly-SEO-Healthcheck/1.0"
