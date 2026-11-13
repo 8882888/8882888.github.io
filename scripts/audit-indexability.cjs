@@ -8,6 +8,7 @@ const urls=new Set(),maps=new Set(),issues=[],fingerprints=new Map();
 const localityLevels={province:'시·도',city:'시',county:'군',district:'구',eup:'읍',myeon:'면',dong:'동',ri:'리'};
 const localityCoverage=Object.fromEntries(Object.entries(localityLevels).map(([key,level])=>
  [key,{level,sitemapSeen:false,urls:new Set()}]));
+const titles=new Map();
 const fetchUrl=url=>fetch(url,{redirect:'manual',signal:AbortSignal.timeout(15000)});
 async function sitemap(url){
  if(maps.has(url))return;
@@ -40,6 +41,12 @@ async function inspect(url){
    return;
   }
   const html=await response.text();
+  const title=decode(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]||'').replace(/\s+/g,' ').trim();
+  if(!title)issues.push({url,reason:'missing-title'});
+  else{
+   if(!titles.has(title))titles.set(title,[]);
+   titles.get(title).push(url);
+  }
   const canonicals=(html.match(/<link\b[^>]*>/gi)||[]).filter(tag=>attr(tag,'rel').toLowerCase().split(/\s+/).includes('canonical'));
   const canonical=canonicals.length===1&&attr(canonicals[0],'href');
   if(!canonical||new URL(canonical,url).href!==url)issues.push({url,reason:'canonical',canonical:canonical||null,count:canonicals.length});
@@ -68,7 +75,10 @@ async function main(){
   [key,{level:entry.level,sitemapSeen:entry.sitemapSeen,urls:entry.urls.size,
    urlsWithFindings:[...entry.urls].filter(url=>failedUrls.has(url)).length}]));
  const identicalGuideGroups=[...fingerprints.values()].filter(group=>group.length>1);
- process.stdout.write(JSON.stringify({checkedAt:new Date().toISOString(),sitemaps:maps.size,urls:urls.size,localitySummary,issues,identicalGuideGroups},null,2)+'\n');
+ const blockers=new Set(['sitemap-fetch','external-sitemap-entry','http-status','canonical','noindex','page-fetch']);
+ const priorityFindings=issues.filter(issue=>blockers.has(issue.reason));
+ const duplicateTitles=[...titles].filter(([,pages])=>pages.length>1).map(([title,pages])=>({title,pages:pages.sort()}));
+ process.stdout.write(JSON.stringify({checkedAt:new Date().toISOString(),sitemaps:maps.size,urls:urls.size,localitySummary,priorityFindings,duplicateTitles,issues,identicalGuideGroups},null,2)+'\n');
  if(issues.length||identicalGuideGroups.length||!urls.size)process.exitCode=1;
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});
