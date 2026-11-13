@@ -11,9 +11,8 @@ const unescapeXml=s=>s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/
 const all=new Map(),sitemapErrors=[],processed=new Set(),advertisedSitemaps=new Set(sitemapPaths.map(p=>origin+p));
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 async function get(url){
- const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),15000);
- try{return await fetch(transportOrigin===origin?url:transportOrigin+new URL(url).pathname+new URL(url).search,{redirect:'follow',signal:ctrl.signal,headers:{'User-Agent':'Smart24-ReadOnlyIndexabilityAudit/1.0'}})}
- finally{clearTimeout(timer)}
+ // Keep the deadline active while callers consume the response body, not only its headers.
+ return fetch(transportOrigin===origin?url:transportOrigin+new URL(url).pathname+new URL(url).search,{redirect:'follow',signal:AbortSignal.timeout(15000),headers:{'User-Agent':'Smart24-ReadOnlyIndexabilityAudit/1.0'}});
 }
 function urls(xml){return [...xml.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/gi)].map(m=>unescapeXml(m[1].trim()))}
 async function scanSitemap(url,depth=0){
@@ -80,7 +79,7 @@ async function worker(){
     if(!title)problem.push('missing_title');
     if(/<meta\b[^>]*http-equiv=["']refresh["']/i.test(html))problem.push('meta_refresh');
    }
-  }catch(e){problem.push(e?.name==='AbortError'?'timeout':'fetch_error:'+String(e).slice(0,100))}
+  }catch(e){problem.push((e?.name==='AbortError'||e?.name==='TimeoutError')?'timeout':'fetch_error:'+String(e).slice(0,100))}
   results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,problems:problem};
   done++;
   if(done%500===0)console.log('Checked',done,'/',list.length);
