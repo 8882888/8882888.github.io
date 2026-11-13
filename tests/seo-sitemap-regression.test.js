@@ -233,3 +233,12 @@ test('verified regional discovery uses completed source records, canonical pages
  assert.ok(code.includes("servicePath(r,kind)"),'use canonical region routing');
  assert.ok(server.includes("'/sitemap-verified-regions.xml','/sitemap-taksong.xml'"),'integrated sitemap must link new discovery supplement');
 });
+
+test('verified regional discovery is cached and advertised to crawlers',()=>{
+ const start=server.indexOf("if(pathname==='/sitemap-verified-regions.xml')");
+ const end=server.indexOf("if(pathname==='/sitemap-history.xml'",start);
+ const block=server.slice(start,end);
+ assert.ok(block.includes("sitemapCache.get(pathname)"),'repeated verified sitemap requests should reuse cached XML');
+ assert.ok(block.includes("sitemapCache.set(pathname,xml)"),'verified region XML must be cached');
+ assert.ok(server.includes("'Sitemap: '+base+'/sitemap-verified-regions.xml'"),'robots.txt should expose the evidence-backed sitemap');
+});
