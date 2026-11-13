@@ -2,7 +2,8 @@ name: Full sitemap URL indexability audit
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ['Deploy to Cloudtype']
+    # A verified manual release must also start the audit when auto-deploy is unavailable.
+    workflows: ['Verify official Cloudtype release matches GitHub main']
     types: [completed]
     branches: [main]
   schedule:
