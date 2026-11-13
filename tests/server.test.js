@@ -324,19 +324,20 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(sitemapIndexRes.status,200,'complete sitemap index is accessible');
   const sitemapIndex=await sitemapIndexRes.text();
   assert(sitemapIndex.includes('<sitemapindex'),'complete sitemap is a proper sitemap index');
-  assert(sitemapIndex.includes('https://example.com/sitemap-history.xml'),'all sitemap references original ride archive index');
+  assert(!sitemapIndex.includes('<loc>https://example.com/sitemap-history.xml</loc>'),'root sitemap must not nest another sitemap index');
   const historyIndex=await (await get('/sitemap-history.xml')).text();
   const shards=[...historyIndex.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
-  assert.equal(shards.length,6,'2,591 rides require exactly six bounded sitemap shards');
+  assert.equal(shards.length,6,'representative rides require six bounded sitemap shards');
+  for(const shard of shards)assert(sitemapIndex.includes('<loc>'+shard+'</loc>'),'root index directly exposes every history shard');
   const duplicateCanonical=require('../data/seo-history-duplicates.json').canonicalById;
   const expected=new Set(Array.from({length:2591},(_,i)=>'https://example.com/reviews/history/excel-'+String(i+1).padStart(4,'0')+'/').filter(url=>!duplicateCanonical[url.split('/').at(-2)]));
+  const expectedTotal=expected.size;
   for(let index=1;index<=6;index++){
    const response=await get('/sitemap-history-'+index+'.xml');
    assert.equal(response.status,200,'history sitemap shard '+index+' exists');
    const xml=await response.text();
    const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
-   const omitted=Object.keys(duplicateCanonical).filter(id=>Math.ceil(Number(id.slice(6))/500)===index).length;
-   assert.equal(urls.length,(index<6?500:91)-omitted,'sitemap omits only exact public duplicates');
+   assert.equal(urls.length,Math.min(500,expectedTotal-(index-1)*500),'canonical rides are packed into bounded shards after deduplication');
    for(const url of urls)assert(expected.delete(url),'sitemap contains each source ride exactly once: '+url);
   }
   assert.equal(expected.size,0,'all representative ride URLs are discoverable; original records remain accessible');
