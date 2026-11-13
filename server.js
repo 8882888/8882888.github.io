@@ -2234,13 +2234,26 @@ const resolvedLiveCardAliases=raw=>{
  const major=found.filter(r=>['시도','시','군','구'].includes(r.level));
  return major.length===1?major:found;
 };
-function directionalServiceTarget(query,resolve){
- const match=String(query||'').normalize('NFKC').trim().match(/^(.{2,80}?)(?:에서|→|->)\s*(.{2,80}?)\s*(자동차탁송|차량탁송|탁송|대리운전|대리)$/);
- if(!match)return null;
- const [,from,to,service]=match;
+function directionalServiceTarget(query,resolve,defaultService='taksong'){
+ const input=String(query||'').normalize('NFKC').trim();
+ const explicit=input.match(/^(.{2,80}?)(?:에서|→|->)\s*(.{2,80}?)\s*(자동차탁송|차량탁송|탁송|대리운전|대리)$/);
+ let from,to,service;
+ if(explicit){
+  [,from,to,service]=explicit;
+ }else{
+  const joined=input.replace(/\s+/g,'').match(/^(.+?)(자동차탁송|차량탁송|탁송|대리운전|대리)?$/);
+  if(!joined||joined[1].length>80)return null;
+  const [,pair,suffix]=joined;
+  if(pair.startsWith('서울')&&pair.length>=4){from='서울';to=pair.slice(2);}
+  else if(pair.endsWith('서울')&&pair.length>=4){from=pair.slice(0,-2);to='서울';}
+  else return null;
+  if(!suffix&&resolve(pair).length)return null;
+  service=suffix;
+ }
  const origins=resolve(from.trim()),destinations=resolve(to.trim());
- if(origins.length!==1||destinations.length!==1)return null;
- return '/route-search/?'+new URLSearchParams({from:origins[0].full_name,to:destinations[0].full_name,service:service.endsWith('탁송')?'taksong':'daeri'});
+ if(origins.length!==1||destinations.length!==1||origins[0].full_name===destinations[0].full_name)return null;
+ const kind=service?(service.endsWith('탁송')?'taksong':'daeri'):defaultService;
+ return '/route-search/?'+new URLSearchParams({from:origins[0].full_name,to:destinations[0].full_name,service:kind});
 }
 const liveCardLabel=(r,kind)=>seoRegionLabel(r)+(kind==='daeri'?'대리운전':'탁송');
 const liveCardPublicData=(r,kind)=>({
@@ -2585,7 +2598,7 @@ const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/ke
 const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
 const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):null;
 const directionalKeyword=searchIntent||(pathname==='/region/'?explicitKeyword:null);
-const directionalTarget=directionalKeyword&&directionalServiceTarget(directionalKeyword,resolvedLiveCardAliases);
+const directionalTarget=directionalKeyword&&directionalServiceTarget(directionalKeyword,resolvedLiveCardAliases,u.searchParams.get('service')==='daeri'?'daeri':'taksong');
 if(directionalTarget){
  res.writeHead(302,{location:directionalTarget,'cache-control':'no-store'});
  return res.end();
