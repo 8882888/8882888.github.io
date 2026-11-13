@@ -15,7 +15,7 @@ const TARGETS=[
  '/taksong/gyeongbuk/gimcheon-si/',
  '/taksong/jeonnam/naju-si/',
  '/taksong/busan/fare/',
- '/special/seoraksan-transport/'
+ '/설악산탁송/'
 ];
 function attribute(tag,name){
  const m=tag.match(new RegExp('(?:\\s|<)'+name+'\\s*=\\s*(?:"([^"]*)"|\\x27([^\\x27]*)\\x27|([^\\s>]+))','i'));

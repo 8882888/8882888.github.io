@@ -8,6 +8,8 @@ test('priority audit covers indexable nationwide and regional URLs',()=>{
  assert.ok(TARGETS.length>=10);
  assert.ok(TARGETS.includes('/taksong/busan/gijang-gun/'));
  assert.ok(TARGETS.includes('/daeri/sejong/'));
+ assert.ok(TARGETS.includes('/설악산탁송/'));
+ assert.ok(!TARGETS.includes('/special/seoraksan-transport/'), 'consolidated aliases are not standalone index targets');
  assert.equal(new Set(TARGETS).size,TARGETS.length);
 });
 test('proper Yeti agent, canonical and rendered title/H1 pass',async()=>{
