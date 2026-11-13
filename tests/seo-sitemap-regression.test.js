@@ -300,3 +300,15 @@ test('nationwide place intent discovery covers requested airport valley beach an
  assert.ok(server.includes('regionByFullName.get(full)'),'place links must resolve known canonical administrative pages');
  assert.ok(server.includes('해당 장소에 기사가 상주한다거나 현재 배차가 확정됐다는 뜻이 아닙니다'),'do not fabricate local dispatch presence');
 });
+
+test('nationwide beach and Incheon coastal search intents resolve to existing region links',()=>{
+ for(const term of ['영종도탁송','강화도탁송','을왕리대리운전','을왕리해수욕장대리운전','삼목항대리운전','구읍뱃터대리운전','동막해수욕장대리운전','민머루해수욕장대리운전']){
+  assert.ok(server.includes("'"+term+"'"),'required user keyword missing: '+term);
+ }
+ for(const term of ['꽃지해수욕장대리운전','무창포해수욕장대리운전','선유도해수욕장대리운전','낙산해수욕장대리운전','광안리해수욕장대리운전','영일대해수욕장대리운전','구조라해수욕장대리운전','함덕해수욕장대리운전']){
+  assert.ok(server.includes("'"+term+"'"),'nationwide beach keyword missing: '+term);
+ }
+ assert.ok(server.includes("regionByFullName.get(full)"),'beach keyword must link to existing administrative region');
+ assert.ok(server.includes("servicePath(r,service)"),'beach keywords cannot point to synthetic keyword URLs');
+ assert.ok(server.includes('기사가 상주한다거나 현재 배차가 확정됐다는 뜻이 아닙니다'),'no unsupported immediate dispatch claims');
+});
