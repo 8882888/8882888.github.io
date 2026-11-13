@@ -1,7 +1,7 @@
 // Read-only SEO indexability audit. This is not proof of Naver indexing.
 // Run: node scripts/audit-indexability.mjs [https://jeongukdaeri.kr]
 // All sitemap URLs are checked, including recursively linked sitemap indexes.
-import {writeFileSync} from 'node:fs';
+import {writeFileSync,renameSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {reviewLinkCoverage} from './indexability-scope.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
@@ -51,6 +51,17 @@ for(const url of advertisedSitemaps)await scanSitemap(url);
 const list=[...all.values()];
 console.log('Sitemap URLs discovered:',list.length,'Sitemap errors:',sitemapErrors.length);
 let current=0,done=0;const results=Array(list.length);
+function saveCheckpoint(){
+ const checked=results.filter(Boolean);
+ const snapshot={generatedAt:new Date().toISOString(),origin,transportOrigin,
+  scope:transportOrigin===origin?'production HTTP':'local source responses; not production verification',
+  complete:false,duplicateAnalysisComplete:false,
+  counts:{discovered:list.length,checked:checked.length,remaining:list.length-checked.length,sitemapErrors,crawlerDiagnostics},
+  results:checked};
+ writeFileSync('indexability-audit.json.tmp',JSON.stringify(snapshot));
+ renameSync('indexability-audit.json.tmp','indexability-audit.json');
+}
+saveCheckpoint();
 async function worker(){
  while(true){
   const i=current++;if(i>=list.length)return;
@@ -82,7 +93,7 @@ async function worker(){
   }catch(e){problem.push((e?.name==='AbortError'||e?.name==='TimeoutError')?'timeout':'fetch_error:'+String(e).slice(0,100))}
   results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,problems:problem};
   done++;
-  if(done%500===0)console.log('Checked',done,'/',list.length);
+  if(done%500===0){saveCheckpoint();console.log('Checked',done,'/',list.length);}
   await delay(transportOrigin===origin?100:0);
  }
 }
@@ -98,7 +109,7 @@ const counts={discovered:list.length,checked:results.length,listedMultipleTimes:
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,crawlerDiagnostics,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
-writeFileSync('indexability-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,transportOrigin,scope:transportOrigin===origin?'production HTTP':'local source responses; not production verification',counts,results},null,2));
+writeFileSync('indexability-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,transportOrigin,complete:true,duplicateAnalysisComplete:true,scope:transportOrigin===origin?'production HTTP':'local source responses; not production verification',counts,results},null,2));
 writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,body_hash,has_ride_link,problems,listed_in',
  ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.bodyHash,r.hasRideLink,r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
 const criticalTypes=new Set(['http_error','x_robots_noindex','meta_noindex','missing_canonical','canonical_mismatch','timeout','not_html']);
