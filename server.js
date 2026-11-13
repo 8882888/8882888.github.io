@@ -2307,6 +2307,11 @@ function publicSiteQuality(){
 }
 const regionSearchCache=new Map(); // Shared bounded regional search cache across requests.
 http.createServer((req,res)=>{observeCrawlerRequest(req,res);let u;try{u=new URL(req.url,'http://localhost')}catch{return respond(res,400,'잘못된 요청')};let pathname;try{pathname=decodeURIComponent(u.pathname)}catch{return respond(res,400,'잘못된 주소')}
+// Route estimates are private-to-the-query views of the public fare calculator.
+if(/^\/fare(?:\/index\.html|\/)?$/.test(pathname)&&
+ ['from','to'].some(key=>u.searchParams.get(key)?.trim())){
+ res.setHeader('X-Robots-Tag','noindex, follow');
+}
 res._smartPath=pathname;
 // Isolated, explicitly noindex regional drafts; preserve existing /daeri/ and /taksong/ pages.
 if(pathname==='/local-service'||pathname.startsWith('/local-service/')){
