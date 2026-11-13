@@ -67,7 +67,20 @@ async function main(){
     }
     for(const kind of ['daeri','taksong']){
      const sample=urls.find(url=>url.pathname.startsWith('/'+kind+'/'));
-     if(sample)await read(sample.pathname);
+     if(!sample)continue;
+     const page=await fetch(sample,{redirect:'manual',signal:AbortSignal.timeout(10000),cache:'no-store'});
+     const html=await page.text();
+     const head=html.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1]||'';
+     const links=[...head.matchAll(/<link\b[^>]*>/gi)].map(match=>match[0]);
+     const canonical=links.filter(tag=>/\brel=["']canonical["']/i.test(tag));
+     const href=canonical[0]?.match(/\bhref=["']([^"']+)["']/i)?.[1];
+     const robots=[...head.matchAll(/<meta\b[^>]*>/gi)].map(match=>match[0])
+      .filter(tag=>/\bname=["'](?:robots|yeti)["']/i.test(tag))
+      .map(tag=>tag.match(/\bcontent=["']([^"']+)["']/i)?.[1]||'');
+     if(page.status!==200||canonical.length!==1||!href||new URL(href,sample).href!==sample.href||
+      /\b(?:noindex|none)\b/i.test([...robots,page.headers.get('x-robots-tag')].join(' '))){
+      throw Error('Sample page is not indexable: '+level+' '+kind+' '+sample.href+' HTTP '+page.status);
+     }
     }
     localityCounts[level]=uniqueCount;
    }
