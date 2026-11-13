@@ -46,6 +46,10 @@ async function main(){
    const localityLevels=['province','city','county','district','eup','myeon','dong'];
    const villageMap='/sitemap-localities-ri.xml';
    const hasVillageMap=root.includes(new URL(villageMap,base).href);
+   const expectedCounts=JSON.parse(await read('/health/locality-sitemaps.json'));
+   if(!Number.isInteger(expectedCounts.ri)||expectedCounts.ri<0||hasVillageMap!==(expectedCounts.ri>0)){
+    throw Error('Village sitemap presence does not match expected coverage');
+   }
    if(hasVillageMap)localityLevels.push('ri');
    const localityCounts={};
    for(const level of localityLevels){
@@ -57,7 +61,11 @@ async function main(){
      urls.some(url=>url.origin!==base.origin||!/^\/(daeri|taksong)\//.test(url.pathname))){
      throw Error('Invalid locality URLs: '+level);
     }
-    localityCounts[level]=urls.length;
+    const uniqueCount=new Set(urls.map(url=>url.href)).size;
+    if(uniqueCount!==urls.length||uniqueCount!==expectedCounts[level]){
+     throw Error('Locality sitemap count mismatch: '+level+' expected '+expectedCounts[level]+' received '+uniqueCount);
+    }
+    localityCounts[level]=uniqueCount;
    }
    if(!hasVillageMap)localityCounts.ri=0;
    for(const path of ['/sitemap-regional-guides.xml','/sitemap-history-1.xml']){
