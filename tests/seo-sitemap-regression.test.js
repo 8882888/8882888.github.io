@@ -200,3 +200,14 @@ test('primary taksong and recruitment titles retain the approved search intent',
  assert.ok(server.includes("r.full_name==='울산광역시'?'울산탁송｜자동차탁송·빠른배차·예약배차'"),'Ulsan title override must remain');
  assert.ok(server.includes("r.full_name==='세종특별자치시'?'세종탁송｜장거리 차량탁송·거리조회·예약'"),'Sejong title override must remain');
 });
+
+test('national commercial keywords and recruitment hubs stay in priority discovery',()=>{
+ const priority=fs.readFileSync(path.join(root,'sitemap-priority.xml'),'utf8');
+ const paths=['/taksong/','/daeri/','/taksong/daegu/','/taksong/ulsan/','/taksong/sejong/',
+              '/daeri/daegu/','/daeri/ulsan/','/daeri/sejong/','/recruit/taksong/','/recruit/daeri/'];
+ for(const p of paths){
+  const url='<loc>https://jeongukdaeri.kr'+p+'</loc>';
+  assert.equal(priority.split(url).length-1,1,'Expected one canonical nationwide priority URL: '+p);
+ }
+ assert.ok(server.includes("'/recruit/daeri/','/recruit/taksong/'"),'Dynamic priority should retain recruitment hubs');
+});
