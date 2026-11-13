@@ -2705,7 +2705,7 @@ if(pathname==='/sitemap-reviewed-routes.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-history.xml']
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',...Array.from({length:Math.ceil(historicalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(historicalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
