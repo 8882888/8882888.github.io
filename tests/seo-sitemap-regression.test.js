@@ -278,3 +278,13 @@ test('nationwide coverage exposes crawlable region and original ride links only 
  assert.ok(server.includes("encodeURIComponent(x.ride.id)"),'original completed record must have a direct crawlable URL');
  assert.ok(server.includes("}).slice(0,36)"),'limit hub links to avoid indiscriminate mass linking');
 });
+
+test('national commercial hubs link only canonical evidence-backed regional rides',()=>{
+ assert.ok(server.includes("const evidenceByService=Object.freeze("),'evidence must be derived from immutable ride inventory');
+ assert.ok(server.includes("indexableHistoricalRides.find(x=>x.service===kind"),'only canonical records for the correct service');
+ assert.ok(server.includes("!usedRides.has(x.id)"),'do not list duplicate records');
+ assert.ok(server.includes("records.length>=12"),'limit nationwide hub outbound link count');
+ assert.ok(server.includes('id="national-verified-history-links"'),'visible server-rendered national evidence section');
+ assert.ok(server.includes("const body=answerFirst+nationwideEvidenceSection(kind)+"),'both national commercial hubs must expose real evidence near top');
+ assert.ok(server.includes("encodeURIComponent(ride.id)"),'link directly to canonical source ride detail');
+});
