@@ -1552,6 +1552,27 @@ function vehicleTopicsHub(){
  return layout('전국 차종별 탁송 · 서비스센터탁송','전기차, 화물차, 윙바디, 수입차·국산차 서비스센터 탁송 안내. '+PHONE,body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/taksong/types/',null);
 }
 const sitemapCache=new Map();
+let villageServiceKeys;
+function eligibleVillageServiceKeys(){
+ if(villageServiceKeys)return villageServiceKeys;
+ const keys=new Set();
+ const villages=regions.filter(region=>region.level==='리');
+ for(const entry of priorityRegionalPages){
+  if(regionByFullName.get(entry.region)?.level==='리')keys.add(entry.kind+'|'+entry.region);
+ }
+ for(const ride of indexableHistoricalRides){
+  if(!['daeri','taksong'].includes(ride.service)||!ride.departure||!ride.destination||
+   ride.departure==='지역 비공개'||ride.destination==='지역 비공개')continue;
+  const fields=[String(ride.rawDeparture||''),String(ride.rawDestination||'')];
+  for(const region of villages){
+   const key=ride.service+'|'+region.full_name;
+   if(!keys.has(key)&&fields.some(field=>field.includes(region.name))&&matchingHistoryRegion(ride,region,regions))keys.add(key);
+  }
+ }
+ villageServiceKeys=keys;
+ return keys;
+}
+
 const localitySitemapLevels={province:'시도',city:'시',county:'군',district:'구',eup:'읍',myeon:'면',dong:'동',ri:'리'};
 const majorRegionNames=['서울특별시','부산광역시','인천광역시','대구광역시','광주광역시','대전광역시','울산광역시','세종특별자치시','경기도','강원특별자치도','충청북도','충청남도','전북특별자치도','전라남도','경상북도','경상남도','제주특별자치도'];
 const regionQuickNames=['서울특별시','부산광역시','인천광역시','대구광역시','광주광역시','대전광역시','울산광역시','세종특별자치시','수원시','성남시','고양시','용인시','화성시','평택시','안산시','부천시','김포시','의정부시','남양주시','파주시','강릉시','속초시','원주시','춘천시','태백시','청주시','충주시','천안시','아산시','당진시','서산시','공주시','전주시','군산시','익산시','남원시','목포시','여수시','순천시','광양시','포항시','경주시','구미시','안동시','경산시','창원시','김해시','양산시','진주시','거제시','통영시','제주시','서귀포시'];
@@ -2937,7 +2958,7 @@ if(localityMapMatch){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const level=localitySitemapLevels[localityMapMatch[1]];
  const urls=new Set(regions.filter(region=>region.level===level).flatMap(region=>
-  ['daeri','taksong'].filter(kind=>level!=='리'||priorityByKey.has(kind+'|'+region.full_name))
+  ['daeri','taksong'].filter(kind=>level!=='리'||eligibleVillageServiceKeys().has(kind+'|'+region.full_name))
    .map(kind=>servicePath(region,kind))));
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
   [...urls].map(route=>'<url><loc>'+esc(new URL(route,base).href)+'</loc></url>').join('')+'</urlset>';
@@ -2967,7 +2988,7 @@ if(pathname==='/sitemap-coast.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Object.keys(localitySitemapLevels).filter(key=>key!=='ri'||priorityRegionalPages.some(entry=>regionByFullName.get(entry.region)?.level==='리')).map(key=>'/sitemap-localities-'+key+'.xml'),...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Object.keys(localitySitemapLevels).filter(key=>key!=='ri'||eligibleVillageServiceKeys().size>0).map(key=>'/sitemap-localities-'+key+'.xml'),...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
