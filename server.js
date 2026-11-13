@@ -2708,10 +2708,23 @@ if(pathname==='/sitemap-reviewed-routes.xml'){
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+routes.map(route=>'<url><loc>'+esc(new URL(base+route).href)+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
+// Discovery supplement: only regional pages supported by real completed ride records.
+// Do not expose templated village pages or create synthetic route URLs.
+if(pathname==='/sitemap-verified-regions.xml'){
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const supported=regions.filter(r=>['시도','시','군','구'].includes(r.level)).flatMap(r=>{
+  const applicable=['taksong','daeri'].filter(kind=>
+   indexableHistoricalRides.some(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개'));
+  return applicable.map(kind=>servicePath(r,kind));
+ });
+ const urls=[...new Set(supported)].slice(0,2000);
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(route=>'<url><loc>'+esc(new URL(base+route).href)+'</loc></url>').join('')+'</urlset>';
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
