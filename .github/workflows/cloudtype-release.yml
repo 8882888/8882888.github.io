@@ -1,0 +1,43 @@
+name: Deploy Cloudtype and verify SEO
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: cloudtype-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.CLOUDTYPE_AUTO_DEPLOY == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check deployment configuration
+        env:
+          CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}
+          CLOUDTYPE_PROJECT: ${{ vars.CLOUDTYPE_PROJECT }}
+          CLOUDTYPE_STAGE: ${{ vars.CLOUDTYPE_STAGE }}
+          CLOUDTYPE_DEPLOY_YAML: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
+        run: |
+          for key in CLOUDTYPE_TOKEN CLOUDTYPE_PROJECT CLOUDTYPE_STAGE CLOUDTYPE_DEPLOY_YAML; do
+            if [[ -z "${!key}" ]]; then
+              echo "::error::Missing Cloudtype configuration: $key"
+              exit 1
+            fi
+          done
+      - name: Deploy existing Cloudtype service
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          endpoint: https://app.cloudtype.io/api
+          project: ${{ vars.CLOUDTYPE_PROJECT }}
+          stage: ${{ vars.CLOUDTYPE_STAGE }}
+          yaml: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
+      - name: Verify deployed release and sitemaps
+        run: node scripts/verify-live-seo-release.cjs
