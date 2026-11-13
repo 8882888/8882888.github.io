@@ -4,7 +4,7 @@ const file=process.argv[2]||'indexability-report.json';
 const report=JSON.parse(fs.readFileSync(file,'utf8'));
 const findings=report.issues||[];
 const blocked=new Set(findings.map(item=>item.url));
-const target=45000;
+const target=20000;
 const total=Number(report.urls)||0;
 const summary={
  checkedAt:report.checkedAt,
@@ -13,6 +13,7 @@ const summary={
  urlsWithFindings:blocked.size,
  urlsWithoutReportedFindings:Math.max(0,total-blocked.size),
  sitemapUrlGapToTarget:Math.max(0,target-total),
+ technicalSitemapPoolOnly:true,
  naverIndexedUrls:null,
  naverIndexingTargetVerified:false,
  localitySummary:report.localitySummary||{},

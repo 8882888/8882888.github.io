@@ -3,7 +3,7 @@
 // All sitemap URLs are checked, including recursively linked sitemap indexes.
 import {writeFileSync,renameSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {reviewLinkCoverage} from './indexability-scope.mjs';
+import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink} from './indexability-scope.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const transportOrigin=process.env.AUDIT_TRANSPORT_ORIGIN||origin;
 const sitemapPaths=['/sitemap-all.xml','/sitemap-history.xml','/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
@@ -76,7 +76,7 @@ async function worker(){
    if(/noindex/i.test(robots))problem.push('x_robots_noindex');
    if(/text\/html/i.test(type)){
     const html=await r.text();
-    hasRideLink=/href=["'][^"']*\/reviews\/(?:history|local|ride-record-stories|verified)/i.test(html);
+    hasRideLink=hasDirectRideRecordLink(html);
     const visible=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
     if(visible.length>150)bodyHash=createHash('sha256').update(visible).digest('hex').slice(0,20);
     const cm=html.match(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*\bhref=["']([^"']+)["']/i)
@@ -105,7 +105,12 @@ const bodies=new Map();
 for(const r of results){if(!r.bodyHash)continue;const group=bodies.get(r.bodyHash)||[];group.push(r.url);bodies.set(r.bodyHash,group)}
 for(const r of results){if(r.bodyHash&&bodies.get(r.bodyHash).length>1)r.problems.push('duplicate_exact_body')}
 const regionalCoverage=reviewLinkCoverage(results);
-const counts={discovered:list.length,checked:results.length,listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,...regionalCoverage,passed:results.filter(r=>r.problems.length===0).length,
+const guideCoverage=regionalGuideCoverage(results);
+const technicallyClean=results.filter(r=>r.status===200&&r.problems.length===0).length;
+const counts={discovered:list.length,checked:results.length,targetNaverIndexed:20000,
+ naverIndexed:null,technicallyClean,technicalGapTo20000:Math.max(0,20000-technicallyClean),
+ listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,
+ ...regionalCoverage,...guideCoverage,passed:results.filter(r=>r.problems.length===0).length,
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,crawlerDiagnostics,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
@@ -121,8 +126,13 @@ const lines=[
  'Generated: '+new Date().toISOString(),
  'Scope: '+(transportOrigin===origin?'production HTTP':'local source responses; not production verification'),
  'Discovered: '+counts.discovered+' | Checked: '+counts.checked+' | Critical: '+critical.length+' | Review: '+review.length,
- 'Canonical region-service landings: '+counts.regionalServicePages+' | Missing a link to the ride record archive: '+counts.regionalPagesWithoutReviewLink,
+ 'Canonical region-service landings: '+counts.regionalServicePages+' | Without a DIRECT ride-history document link: '+counts.regionalPagesWithoutReviewLink,
+ 'Regional intent guides: '+counts.regionalIntentGuidePages+' | Without a direct ride-history document link: '+counts.regionalGuidesWithoutDirectRideLink,
+ 'Naver indexing goal: 20,000 | Real Naver indexed URLs: not accessible from this HTTP audit.',
+ 'Technically clean URLs: '+counts.technicallyClean+' | Technical pool gap: '+counts.technicalGapTo20000,
  'Recruitment, vehicle-type, travel and activity guides are excluded from locality evidence-link counts.',
+ 'No ride-record link does not establish a broken page. Do not invent rides, prices, or reviews.',
+ 'Sitemap discovery and technical HTTP validity do not prove Naver indexing.',
  '',
  '> This audit measures technical indexability, not Naver confirmed index inclusion.',
  '',

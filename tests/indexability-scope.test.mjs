@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {isRegionalServiceUrl,reviewLinkCoverage} from '../scripts/indexability-scope.mjs';
+import {isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage} from '../scripts/indexability-scope.mjs';
 test('actual nationwide region/service canonical pages count as locality landings',()=>{
  for(const route of ['/taksong/busan/','/daeri/sejong/','/taksong/busan/gijang-gun/',
  '/daeri/gangwon/wonju-si/','/taksong/sejong/jikhal/naseong-dong/'])
@@ -23,4 +23,28 @@ test('count only region landing evidence links, not unrelated service informatio
  {url:'https://jeongukdaeri.kr/daeri/gangwon/wonju-si/',status:404,hasRideLink:false}
  ];
  assert.deepEqual(reviewLinkCoverage(reports),{regionalServicePages:2,regionalPagesWithoutReviewLink:1});
+});
+
+test('intent guides and regional canonical landings have different scope',()=>{
+ for(const path of ['/taksong/busan/gijang-gun/fare/','/daeri/sejong/long-distance/',
+                    '/taksong/gyeonggi/icheon-si/yulhyeon-dong/handover/']){
+  const url='https://jeongukdaeri.kr'+path;
+  assert.equal(isRegionalServiceUrl(url),false,path);
+  assert.equal(isRegionalIntentGuideUrl(url),true,path);
+ }
+ assert.equal(isRegionalIntentGuideUrl('https://jeongukdaeri.kr/daeri/busan/handover/'),false);
+ assert.equal(isRegionalServiceUrl('https://jeongukdaeri.kr/taksong/busan/gijang-gun/'),true);
+});
+test('ride evidence means a specific history document, not a search archive',()=>{
+ assert.equal(hasDirectRideRecordLink('<a href="/reviews/history/excel-1955/">기록</a>'),true);
+ assert.equal(hasDirectRideRecordLink('<a href="/reviews/history/?kind=taksong">검색</a>'),false);
+ assert.equal(hasDirectRideRecordLink('<a href="/reviews/history/">목록</a>'),false);
+ assert.equal(hasDirectRideRecordLink('<a href="/reviews/local/taksong/busan/">안내</a>'),false);
+ const reports=[
+  {url:'https://jeongukdaeri.kr/taksong/busan/fare/',status:200,hasRideLink:false},
+  {url:'https://jeongukdaeri.kr/taksong/busan/handover/',status:200,hasRideLink:true},
+  {url:'https://jeongukdaeri.kr/taksong/busan/',status:200,hasRideLink:false}
+ ];
+ assert.deepEqual(regionalGuideCoverage(reports),{regionalIntentGuidePages:2,regionalGuidesWithoutDirectRideLink:1});
+ assert.deepEqual(reviewLinkCoverage(reports),{regionalServicePages:1,regionalPagesWithoutReviewLink:1});
 });
