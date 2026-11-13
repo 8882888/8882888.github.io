@@ -734,8 +734,17 @@ function regionalIntentTitle(r,kind,topic){
  return place+(kind==='daeri'?' 장거리대리운전':' 자동차탁송 예약·인계');
 }
 function regionalIntentImage(r,kind,topic){return cardPngPath(r.slug,kind)}
+// A broad internal-link graph can negate a curated sitemap by still promoting
+// 20k near-identical topic permutations. Link the reviewed guide cohort only;
+// preserve the pre-existing page URLs and canonicals for direct visitors.
+const reviewedIntentLinkKeys=new Set(priorityRegionalPages
+ .filter(entry=>entry.kind&&entry.region&&entry.topic&&entry.detail)
+ .map(entry=>entry.kind+'|'+entry.region));
 function regionalIntentNav(r,current){
- const area=regionalIntentArea(r),entries=Object.entries(regionalIntentTypes).flatMap(([kind,topics])=>topics.map(topic=>({kind,topic,title:regionalIntentTitle(area,kind,topic),url:regionalIntentPath(area,kind,topic)})));
+ const area=regionalIntentArea(r),entries=Object.entries(regionalIntentTypes)
+  .flatMap(([kind,topics])=>topics.map(topic=>({kind,topic,title:regionalIntentTitle(area,kind,topic),url:regionalIntentPath(area,kind,topic)})))
+  .filter(entry=>reviewedIntentLinkKeys.has(entry.kind+'|'+area.full_name));
+ if(!entries.length)return '';
  return '<section aria-label="지역별 요금과 이용 안내"><h2>'+esc(area.full_name)+' 요금·예약 안내</h2><ul>'+entries.map(x=>'<li>'+(x.url===current?'<strong aria-current="page">'+esc(x.title)+'</strong>':'<a href="'+x.url+'">'+esc(x.title)+'</a>')+'</li>').join('')+'</ul><p><a href="'+servicePath(area,'daeri')+'">'+esc(area.name)+' 대리운전</a> · <a href="'+servicePath(area,'taksong')+'">'+esc(area.name)+' 탁송</a></p></section>';
 }
 function regionalQuoteForm(r,kind){return '<form action="/fare/" method="get"><input type="hidden" name="service" value="'+kind+'"><input type="hidden" name="auto" value="1"><label for="guide-from">출발지 주소</label><input id="guide-from" name="from" maxlength="150" required value="'+esc(r.full_name)+'" style="display:block;width:100%;padding:12px;font:inherit"><label for="guide-to">도착지 주소</label><input id="guide-to" name="to" maxlength="150" required placeholder="차량이 도착할 주소 또는 건물명" style="display:block;width:100%;padding:12px;font:inherit"><button type="submit" class="cta" style="border:0;font:inherit;cursor:pointer;margin-top:12px">도로거리·예상요금 조회</button></form>'}

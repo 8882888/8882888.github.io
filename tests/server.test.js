@@ -1326,6 +1326,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const focusedGuides=await (await get('/sitemap-regional-guides.xml')).text();
   assert.ok(focusedGuides.includes('/taksong/busan/fare/'),'reviewed regional fare guide remains submitted');
   assert.ok(!focusedGuides.includes('/taksong/gyeonggi/icheon-si/yulhyeon-dong/fare/'),'unreviewed locality/topic permutations do not crowd the guide sitemap');
+  // Focus crawlable internal navigation on reviewed guides rather than all locality/topic permutations.
+  const unreviewedLanding=await (await get('/taksong/gyeonggi/icheon-si/yulhyeon-dong/')).text();
+  assert.ok(!unreviewedLanding.includes('href="/taksong/gyeonggi/icheon-si/yulhyeon-dong/fare/"'),
+    'Unreviewed guide is preserved but no longer promoted by the broad locality navigation');
+  const reviewedLanding=await (await get('/taksong/busan/')).text();
+  assert.ok(reviewedLanding.includes('href="/taksong/busan/fare/"'),
+    'Reviewed Busan guide remains linked from its canonical service landing');
   const retainedGuide=await get('/taksong/gyeonggi/icheon-si/yulhyeon-dong/fare/');
   assert.equal(retainedGuide.status,200,'sitemap prioritization does not delete existing useful guides');
   const reviewedGuideHtml=await (await get('/taksong/busan/fare/')).text();
