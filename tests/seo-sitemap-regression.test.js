@@ -288,3 +288,15 @@ test('national commercial hubs link only canonical evidence-backed regional ride
  assert.ok(server.includes("const body=answerFirst+nationwideEvidenceSection(kind)+"),'both national commercial hubs must expose real evidence near top');
  assert.ok(server.includes("encodeURIComponent(ride.id)"),'link directly to canonical source ride detail');
 });
+
+test('nationwide place intent discovery covers requested airport valley beach and Gyeonggi searches',()=>{
+ for(const word of ['백운계곡대리운전','포천영북면대리운전','산정호수대리운전','남한산성대리운전','인천공항대리운전','인천공항탁송','인구대리운전','인구해변대리운전','가평현리대리운전','가평설악대리운전','포천일동대리운전','포천이동대리운전']){
+  assert.ok(server.includes(word),'missing requested local search phrase '+word);
+ }
+ for(const word of ['대천해수욕장대리운전','전주한옥마을대리운전','해운대대리운전','경주보문단지대리운전','여수돌산대리운전','제주공항탁송']){
+  assert.ok(server.includes(word),'missing nationwide intent region '+word);
+ }
+ assert.ok(server.includes('const body=answerFirst+nationwidePlaceIntentLinks(kind)+'),'both national service hubs must expose nationwide place links');
+ assert.ok(server.includes('regionByFullName.get(full)'),'place links must resolve known canonical administrative pages');
+ assert.ok(server.includes('해당 장소에 기사가 상주한다거나 현재 배차가 확정됐다는 뜻이 아닙니다'),'do not fabricate local dispatch presence');
+});
