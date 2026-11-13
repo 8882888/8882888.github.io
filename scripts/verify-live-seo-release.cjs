@@ -65,6 +65,10 @@ async function main(){
     if(uniqueCount!==urls.length||uniqueCount!==expectedCounts[level]){
      throw Error('Locality sitemap count mismatch: '+level+' expected '+expectedCounts[level]+' received '+uniqueCount);
     }
+    for(const kind of ['daeri','taksong']){
+     const sample=urls.find(url=>url.pathname.startsWith('/'+kind+'/'));
+     if(sample)await read(sample.pathname);
+    }
     localityCounts[level]=uniqueCount;
    }
    if(!hasVillageMap)localityCounts.ri=0;
