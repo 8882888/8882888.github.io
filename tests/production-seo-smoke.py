@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Read-only production SEO smoke test. No index submissions or rank claims."""
 import concurrent.futures
+import hashlib
+import json
+from pathlib import Path
 import re
 import sys
 import urllib.error
@@ -18,6 +21,7 @@ PAGES = {
     "/taksong/sejong/": "세종탁송",
     "/recruit/taksong/": "탁송기사모집",
     "/recruit/daeri/": "대리운전기사모집",
+    "/coverage/": "전국 17개 시·도",
 }
 SITEMAPS = ["/sitemap-priority.xml", "/sitemap-verified-regions.xml", "/sitemap-all.xml"]
 UA = "Smart24-ReadOnly-SEO-Healthcheck/1.0"
@@ -70,6 +74,11 @@ def verify(result):
             problems.append("Missing/incorrect canonical: " + str(parser.canonical))
         if not parser.robots or any("noindex" in x.lower() for x in parser.robots):
             problems.append("Missing indexable robots meta: " + str(parser.robots))
+        if path == "/coverage/":
+            if 'id="verified-coverage-crawl-links"' not in body:
+                problems.append("Missing evidence-backed nationwide links: latest deployment may be absent")
+            if '/reviews/history/' not in body:
+                problems.append("Missing original ride record links")
     elif path in SITEMAPS:
         try:
             xml = ET.fromstring(body)
@@ -91,17 +100,33 @@ def verify(result):
             problems.append("Invalid sitemap XML: " + str(exc))
     return path, problems
 
+def check_deployed_source():
+    path = "/health/seo.json"
+    _, status, _, _, body, err = fetch(path)
+    if err or status != 200:
+        return path, ["Deployment proof unavailable: " + str(err or status)]
+    try:
+        payload = json.loads(body)
+        observed = payload.get("deployment_hashes", {}).get("server.js", "")
+        expected = hashlib.sha256((Path(__file__).resolve().parents[1] / "server.js").read_bytes()).hexdigest()
+        if observed != expected:
+            return path, ["Deployed server.js hash differs from checked-out GitHub source (deployment stale or different revision)"]
+        return path, []
+    except (ValueError, OSError, TypeError) as exc:
+        return path, ["Invalid deployment proof: " + str(exc)]
+
 def main():
     paths = list(PAGES) + SITEMAPS
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         results = list(pool.map(fetch, paths))
     failures = 0
-    for path, problems in map(verify, results):
+    checks = list(map(verify, results)) + [check_deployed_source()]
+    for path, problems in checks:
         print(("[FAIL]" if problems else "[PASS]"), path)
         for issue in problems:
             failures += 1
             print("  -", issue)
-    print("Checked", len(paths), "URLs; errors", failures)
+    print("Checked", len(checks), "URLs; errors", failures)
     return 1 if failures else 0
 
 if __name__ == "__main__":
