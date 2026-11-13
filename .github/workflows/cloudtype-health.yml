@@ -6,6 +6,8 @@ on:
     paths:
       - 'server.js'
       - 'tests/server.test.js'
+      - 'tests/yeti-priority-indexability.test.cjs'
+      - 'scripts/check-yeti-priority-indexability.cjs'
       - 'Dockerfile'
       - 'data/legal-regions/**'
       - 'data/verified-trips.json'
