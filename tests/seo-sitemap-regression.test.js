@@ -252,8 +252,10 @@ test('national answer-first content is visible, useful and tied to real consulta
  assert.ok(server.includes('/fare/?service=daeri'),'include actual fare lookup');
 });
 
-test('regional AEO direct answers require province hub or verified local ride evidence',()=>{
- assert.ok(server.includes("r.level==='시도'||(['시','군','구'].includes(r.level)&&(historicalMatches.length>0||matches.length>0))"),'do not replicate answer-first sections on thin neighborhood templates');
+test('regional AEO direct answers cover all nationwide administrative levels without artificial indexability',()=>{
+ assert.ok(server.includes("['시도','시','군','구','읍','면','동','리'].includes(r.level)"),'all existing administrative levels need visible region answers');
+ assert.ok(server.includes("const regionalAnswerContext=r.level==='시도'"),'answer text must distinguish province city and neighborhood conditions');
+ assert.ok(server.includes('외곽이나 심야에는 배차가 제한될 수 있습니다'),'sparse rural locality guidance must not promise instant dispatch');
  assert.ok(server.includes('id="regional-direct-answer"'),'indexable region answers should be visible in HTML');
  assert.ok(server.includes("const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+"),'direct answer should lead the regional content');
  assert.ok(server.includes('과거 요금은 현재 고정 요금이 아닙니다'),'past completed ride fares cannot be presented as current quotes');
