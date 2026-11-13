@@ -1559,7 +1559,17 @@ const majorRegions=majorRegionNames.map(n=>regions.find(r=>r.full_name===n)).fil
 const quickRegions=regionQuickNames.map(n=>regions.find(r=>r.name===n||r.full_name===n)).filter(Boolean);
 function customerVisibleRegions(items){return items.filter(x=>x&&x.name&&x.name!=='(직할)'&&x.name!=='직할'&&x.level!=='리')}
 function regionServiceLinks(items,kind){items=customerVisibleRegions(items);const label=kind==='taksong'?'탁송':'대리운전';return '<ul class="region-service-links">'+items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(seoRegionLabel(r)+label)+'</a></li>').join('')+'</ul>'}
-function hierarchyServiceLinks(r,kind){const label=kind==='taksong'?'탁송':'대리운전';const parent=r.parent_slug?bySlug.get(r.parent_slug):null;const children=customerVisibleRegions(childrenByParent.get(r.slug)||[]);return '<section><h2>'+esc(r.name)+' 하위 행정구역 '+label+'</h2>'+(parent?'<p>상위 지역: <a href="'+servicePath(parent,kind)+'">'+esc(parent.full_name)+' '+label+'</a></p>':'')+(children.length?regionServiceLinks(children,kind):'<p>등록된 하위 법정 행정구역이 없습니다.</p>')+'</section>'}
+function hierarchyServiceLinks(r,kind){
+ const label=kind==='taksong'?'탁송':'대리운전';
+ const parent=r.parent_slug?bySlug.get(r.parent_slug):null;
+ const children=(childrenByParent.get(r.slug)||[]).filter(x=>x.name&&x.name!=='(직할)'&&x.name!=='직할');
+ if(!parent&&!children.length)return '';
+ const up=parent?'<p><a href="'+esc(servicePath(parent,kind))+'">'+esc(parent.full_name)+' '+label+' 안내</a></p>':'';
+ const down=children.length?'<details><summary>하위 행정구역 '+children.length+'곳</summary><ul>'+
+  children.map(child=>'<li><a href="'+esc(servicePath(child,kind))+'">'+esc(child.name)+' '+label+'</a></li>').join('')+
+  '</ul></details>':'';
+ return '<nav aria-label="상위·하위 행정구역">'+up+down+'</nav>';
+}
 
 function homepageTaksongIntentLinks(){
  const groups=[
