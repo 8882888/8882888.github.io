@@ -1501,7 +1501,7 @@ const placeSearchTargets=new Map([
  ['유명관광지','/daeri/activities/leisure/'],['계곡','/daeri/activities/valley/'],
  ['골프장','/service/golf/'],
  ['음식점','/daeri/activities/food/'],['식당','/daeri/activities/food/'],['맛집','/daeri/activities/food/'],
- ['낚시터','/places/'+encodeURIComponent('낚시터')+'/'],
+ ['낚시터','/places/낚시터/'],
  ['해수욕장','/coast/'],['해변','/coast/'],['항구','/coast/'],
  ['항','/coast/'],['포구','/coast/'],['포','/coast/'],
  ['강원랜드','/daeri/#gangwonland-daeri'],['정선카지노','/daeri/#gangwonland-daeri']
@@ -2635,7 +2635,7 @@ if(searchIntent){
    '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
    '일일기사':'/service/daily-driver/'
   }[normalized])||(named&&named.url);
- if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:(placeTarget===target?target:encodeURI(target)),'cache-control':'no-store','vary':'Referer'});return res.end();}
+ if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
 }
 if(pathname==='/keyword-search/'||pathname==='/keyword-search'){
  const target=keywordEngine.topicUrl(u.searchParams.get('category'));
