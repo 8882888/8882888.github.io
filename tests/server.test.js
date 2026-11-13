@@ -1323,6 +1323,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(fareHtml.includes('통행료·주유비·주차비'),'estimator discloses costs to confirm');
   const homeHtml=await (await get('/')).text();
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
+  const focusedGuides=await (await get('/sitemap-regional-guides.xml')).text();
+  assert.ok(focusedGuides.includes('/taksong/busan/fare/'),'reviewed regional fare guide remains submitted');
+  assert.ok(!focusedGuides.includes('/taksong/gyeonggi/icheon-si/yulhyeon-dong/fare/'),'unreviewed locality/topic permutations do not crowd the guide sitemap');
+  const retainedGuide=await get('/taksong/gyeonggi/icheon-si/yulhyeon-dong/fare/');
+  assert.equal(retainedGuide.status,200,'sitemap prioritization does not delete existing useful guides');
+  const reviewedGuideHtml=await (await get('/taksong/busan/fare/')).text();
+  assert.ok(reviewedGuideHtml.includes('id="regional-intent-reviewed-context"'),'submitted guide renders reviewed local context');
+  const busanGuideSource=priorityRegions.find(p=>p.kind==='taksong'&&p.region==='부산광역시');
+  assert.ok(reviewedGuideHtml.includes(busanGuideSource.detail.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')),'local guidance uses the existing reviewed source');
   const crawlRobots=await (await get('/robots.txt')).text();
   const submittedMaps=crawlRobots.split('\n').filter(line=>line.startsWith('Sitemap: '));
   assert.equal(submittedMaps.length,8,'robots advertises canonical discovery indexes and verified regions');
