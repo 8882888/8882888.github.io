@@ -242,3 +242,12 @@ test('verified regional discovery is cached and advertised to crawlers',()=>{
  assert.ok(block.includes("sitemapCache.set(pathname,xml)"),'verified region XML must be cached');
  assert.ok(server.includes("'Sitemap: '+base+'/sitemap-verified-regions.xml'"),'robots.txt should expose the evidence-backed sitemap');
 });
+
+test('national answer-first content is visible, useful and tied to real consultation',()=>{
+ assert.ok(server.includes('id="national-taksong-direct-answer"'),'national taksong needs a direct-answer summary');
+ assert.ok(server.includes('id="national-daeri-direct-answer"'),'national daeri needs a direct-answer summary');
+ assert.ok(server.includes('const body=answerFirst+taksongTrustFirst+'),'answer-first section must lead rendered national hubs');
+ assert.ok(server.includes('24시 상담 안내는 전국 모든 지역의 즉시 배차 보장을 의미하지 않습니다'),'do not promise universal dispatch');
+ assert.ok(server.includes('/reviews/history/?kind=taksong'),'cite actual completed taksong records in visible answer');
+ assert.ok(server.includes('/fare/?service=daeri'),'include actual fare lookup');
+});
