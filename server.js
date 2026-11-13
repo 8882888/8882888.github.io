@@ -1985,7 +1985,9 @@ function routeKeywordSearchPage(from,to,kind,page=1){
  const matches=regions.filter(r=>[r.full_name,r.name,...regionAliases(r)].some(n=>compact(n)===compact(from)));
  const origin=matches.length===1?matches[0]:(matches.length===0?routeKeywordPages.resolveOrigin(from):null);
  const originName=origin?(origin.address||origin.full_name):from,originLabel=origin?(origin.kind==='airport'?origin.name:seoRegionLabel(origin)):from;
- const destinations=from&&!to?regions.filter(r=>!origin||r.slug!==origin.slug):[];
+ const seoulDirectory=origin?.full_name==='서울특별시'&&!to;
+ const destinations=from&&!to?regions.filter(r=>(!origin||r.slug!==origin.slug)&&
+  (!seoulDirectory||['시도','시','군','구','읍'].includes(r.level))):[];
  const total=Math.max(1,Math.ceil(destinations.length/100)),current=Math.min(total,Math.max(1,parseInt(page,10)||1));
  const items=to?[{full_name:to,name:to}]:destinations.slice((current-1)*100,current*100);
  const navUrl=n=>'/route-search/?'+new URLSearchParams({from:originName,service:kind,page:String(n)}).toString();
@@ -1997,7 +1999,10 @@ function routeKeywordSearchPage(from,to,kind,page=1){
   const destinationMatches=r.slug?[r]:regions.filter(x=>[x.full_name,x.name,...regionAliases(x)].some(alias=>compact(alias)===compact(r.name)));
   const dest=destinationMatches.length===1?destinationMatches[0]:(destinationMatches.length===0?routeKeywordPages.resolveOrigin(r.name):null);
   const target=origin&&dest&&origin.slug!==dest.slug?routeKeywordPages.path(origin,dest,kind):fare;
-  return '<li><a href="'+esc(target)+'">'+esc(terms[0]||'')+'</a><p>'+esc(terms.slice(1).join(' · '))+'</p><p>출발: '+esc(originName)+' / 도착: '+esc(r.full_name)+'</p></li>';
+  const reverse=seoulDirectory?'<p><a href="'+esc('/route-search/?'+new URLSearchParams({
+   from:r.full_name,to:originName,service:kind
+  }))+'">'+esc(label+'에서 서울 '+service)+'</a></p>':'';
+  return '<li><a href="'+esc(target)+'">'+esc(terms[0]||'')+'</a>'+reverse+'<p>'+esc(terms.slice(1).join(' · '))+'</p><p>출발: '+esc(originName)+' / 도착: '+esc(r.full_name)+'</p></li>';
  }).join('');
  const examples=[['부산','인천'],['기장군','대구'],['대구',''],['서울',''],['김해공항','서울'],['김해공항',''],['강릉','부산']];
  const body='<section><h2>출발지에서 전국 지역으로 '+service+'</h2><form action="/route-search/" method="get"><label>출발지 <input name="from" maxlength="80" required value="'+esc(from)+'" placeholder="예: 대구, 부산, 기장군"></label> <label>도착지 <input name="to" maxlength="80" value="'+esc(to)+'" placeholder="비우면 전국 지역 전체"></label> <label>서비스 <select name="service"><option value="taksong"'+(kind==='taksong'?' selected':'')+'>탁송</option><option value="daeri"'+(kind==='daeri'?' selected':'')+'>대리운전</option></select></label> <button type="submit">구간 찾기</button></form><p>시·도, 시·군·구, 읍·면·동·리 출발·도착 조합입니다. 구간을 선택하면 해당 구간의 예약 안내로 연결되고 요금계산기에서 주소를 확인할 수 있습니다. 실제 운행 사례나 확정 요금이 아니며 배차 가능 여부는 상담으로 확인합니다.</p><ul>'+examples.map(([a,b])=>'<li><a href="'+esc('/route-search/?'+new URLSearchParams({from:a,to:b,service:kind}))+'">'+esc(a+'에서 '+(b||'전국 지역')+' '+service)+'</a></li>').join('')+'</ul></section>'+choices+nav+(rows?'<section><h2>'+esc(originLabel)+' 출발 '+service+' 구간</h2><ul>'+rows+'</ul></section>':'')+nav;
