@@ -211,3 +211,14 @@ test('national commercial keywords and recruitment hubs stay in priority discove
  }
  assert.ok(server.includes("'/recruit/daeri/','/recruit/taksong/'"),'Dynamic priority should retain recruitment hubs');
 });
+
+test('dynamic priority sitemap puts nationwide commercial-intent pages before regional inventories',()=>{
+ const at=server.indexOf("if(pathname==='/sitemap-priority.xml')");
+ assert.ok(at>=0,'dynamic priority sitemap handler required');
+ const block=server.slice(at,server.indexOf("if(pathname==='/sitemap-daeri.xml'",at));
+ assert.ok(block.includes("const nationwideCommercialPriority=['대구광역시','울산광역시','세종특별자치시']"),'metro focus routes must use real legal regions');
+ assert.ok(block.includes("servicePath(r,'taksong'),servicePath(r,'daeri')"),'metro routes must use canonical service paths');
+ const early=block.indexOf("const urls=['/','/taksong/','/daeri/','/service/taksong/','/service/long-distance-taksong/','/recruit/taksong/','/recruit/daeri/',...nationwideCommercialPriority");
+ assert.ok(early>=0,'national taksong, recruitment and metro intent URLs must lead discovery sitemap');
+ assert.ok(early<block.indexOf('...nationwideProvinceHubs'),'national intent URLs must precede province inventory');
+});
