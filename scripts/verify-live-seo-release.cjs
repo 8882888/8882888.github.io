@@ -18,6 +18,14 @@ async function main(){
   try{
    const health=JSON.parse(await read('/health'));
    if(health.release!==expected)throw Error('Expected '+expected+', received '+(health.release||'no release fingerprint'));
+   const home=await read('/');
+   const schemas=[...home.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)].flatMap(match=>{
+    try{return [JSON.parse(match[1])];}catch{return [];}
+   });
+   const homeUrl=new URL('/',base).href;
+   if(!schemas.some(schema=>schema?.['@type']==='WebSite'&&schema.name==='스마트24 전국대리운전'&&schema.url===homeUrl)){
+    throw Error('Homepage WebSite name or canonical URL is missing');
+   }
    const root=await read('/sitemap-all.xml');
    if(!/<sitemapindex\b/i.test(root))throw Error('Invalid sitemap index');
    for(const path of ['/sitemap-regional-guides.xml','/sitemap-history-1.xml']){
