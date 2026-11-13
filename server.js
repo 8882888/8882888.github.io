@@ -2563,11 +2563,18 @@ if(searchIntent){
  const truckTopic=truck&&truck[1]+(truck[2]||'')+'탁송';
  const truckTarget=truckTopic&&(vehicleTopicMap.has(truckTopic)?vehicleTopicPath(truckTopic):'/service/heavy-truck-taksong/');
  const mountain=mountainTarget(searchIntent);
+ const exactCycle=[
+  [/^섬진강(?:길)?자전거(?:길)?종주(?:탁송)?$/,'/route-taksong/courses/seomjin/'],
+  [/^낙동강(?:길)?자전거(?:길)?종주?(?:탁송)?$/,'/route-taksong/courses/nakdonggang/'],
+  [/^백두대간자전거(?:길)?종주(?:탁송)?$/,'/special/cycling-trail-transport/#baekdudaegan-cycling'],
+  [/^국토종주자전거길종주(?:탁송)?$/,'/special/cycling-trail-transport/#national-cycle-tour']
+ ].find(([pattern])=>pattern.test(normalized))?.[1];
+
  const cycle=/((?:자전거|자전)길|자전거종주|국토종주|동해안|섬진강|영산강|낙동강|금강|오천).*(?:종주|탁송|완벽정리|코스|인증센터)|(?:전국)?자전길탁송/.test(normalized);
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=mountain||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||truckTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ const target=exactCycle||mountain||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||truckTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
