@@ -18,3 +18,21 @@ jobs:
         with:
           node-version: '22'
       - run: node scripts/verify-live-seo-release.cjs
+  nationwide-audit:
+    needs: verify
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Audit the production sitemap tree
+        run: node scripts/audit-indexability.cjs https://jeongukdaeri.kr/sitemap-all.xml > indexability-report.json
+      - name: Publish URL-level findings
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: nationwide-indexability-report
+          path: indexability-report.json
