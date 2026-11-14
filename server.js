@@ -5,6 +5,7 @@ const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFi
 // Keep /health available even if the optional analytics asset is absent from a deployment.
 const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'assets/traffic-analytics.js'))).digest('hex').slice(0,16)}catch(_){return 'unavailable'}})();
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
+const {loadPublishedCases}=require('./lib/published-case-feed');
 const {canonicalForKeywordRecord,resolveRegionalKeywordVariant}=require('./lib/keyword-canonical-bridge');
 const {createEngine:createLocalServiceEngine}=require('./data/smart24-region-automation/lib/engine');
 const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/smart24-region-automation/data/regions.json'),path.join(ROOT,'data/smart24-region-automation/data/trips.json'));
@@ -1571,6 +1572,7 @@ function vehicleTopicsHub(){
  const body='<section><h2>차종·톤급·서비스센터별 탁송 안내</h2><p>차량 유형별 조건과 기사 배차 가능 여부를 확인하는 상담 안내입니다. 실제 완료 운행이나 공식 서비스센터 제휴를 뜻하지 않습니다.</p></section>'+editorial+groups.map(g=>'<section><h2>'+esc(g)+'</h2><ul>'+vehicleTopics.filter(x=>x[1]===g).map(([name])=>'<li><a href="'+vehicleTopicPath(name)+'">'+esc(name)+'</a></li>').join('')+'</ul></section>').join('');
  return layout('전국 차종별 탁송 · 서비스센터탁송','전기차, 화물차, 윙바디, 수입차·국산차 서비스센터 탁송 안내. '+PHONE,body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/taksong/types/',null);
 }
+const publishedCaseEntries=loadPublishedCases(ROOT);
 const sitemapCache=new Map();
 let villageServiceKeys;
 function localitySitemapUrls(key){
@@ -2985,23 +2987,41 @@ if(pathname==='/health'){
 }
 if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const all=[...publicRideById.values()].sort((a,b)=>b.date.localeCompare(a.date)||a.publicId.localeCompare(b.publicId));
- const recent=all.slice(0,20),latest=all[0]?.date;
- const rss='<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>'+esc(BRAND+' 실제 완료 운행기록')+'</title><link>'+base+'/reviews/</link><description>'+esc('공개 운행기록 '+all.length+'건 중 최근 '+recent.length+'건'+(latest?' · 최신 운행일 '+latest:'')+'. 운행일 기준 정렬이며 게시·수정 시각을 뜻하지 않습니다.')+'</description><language>ko</language>'+recent.map(x=>{
+ // Newly PUBLISHED cases lead the feed, ordered by the saved publication time.
+ // The original ride date is never used as a fake publication timestamp.
+ const published=publishedCaseEntries.slice(0,20);
+ const archival=[...publicRideById.values()]
+  .sort((a,b)=>b.date.localeCompare(a.date)||a.publicId.localeCompare(b.publicId))
+  .slice(0,Math.max(0,20-published.length));
+ const publishedItems=published.map(x=>{
+  const url=base+x.path;
+  return '<item><title>'+esc(x.title)+'</title><link>'+esc(url)+'</link>'+
+   '<guid isPermaLink="true">'+esc(url)+'</guid><description>'+esc(x.description)+'</description>'+
+   '<pubDate>'+new Date(x.publishedAt).toUTCString()+'</pubDate></item>';
+ });
+ const archiveItems=archival.map(x=>{
   const url=base+rideUrl(x),label=x.service==='taksong'?'자동차탁송':'대리운전';
   const title=x.date+' '+x.departure+' → '+x.destination+' '+label+' 운행완료'+(x.fare?' · 당시 요금 '+x.fare:'');
   const full=ridePage(x).split('<main>')[1]?.split('</main>')[0]||'';
-  // Publication timestamps are emitted only when explicitly recorded; trip dates are not publication dates.
-  const published=typeof x.publishedAt==='string'?new Date(x.publishedAt):null;
-  const pubDate=published&&Number.isFinite(published.getTime())?'<pubDate>'+published.toUTCString()+'</pubDate>':'';
+  // Historical ride dates are not publication dates.
+  const pubDate=x.publishedAt&&Number.isFinite(Date.parse(x.publishedAt))?'<pubDate>'+new Date(x.publishedAt).toUTCString()+'</pubDate>':'';
   return '<item><title>'+esc(title)+'</title><link>'+esc(url)+'</link><guid isPermaLink="true">'+esc(url)+'</guid><description>'+esc(full)+'</description>'+pubDate+'</item>';
- }).join('')+'</channel></rss>';
+ });
+ const rss='<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>'+esc(BRAND+' 실제 완료 운행기록')+'</title><link>'+base+'/reviews/verified/</link><description>'+esc('실제 완료 운행사례 공개 게시일 기준 최신 '+published.length+'건과 기존 운행기록 안내. 실제 운행일과 게시일은 서로 다릅니다.')+'</description><language>ko</language>'+[...publishedItems,...archiveItems].join('')+'</channel></rss>';
  return respond(res,200,rss,'application/rss+xml; charset=utf-8');
 }
 if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-verified-regions.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-all.xml','Sitemap: '+base+'/sitemap-history.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 // Full discoverability inventory for genuine historical completed rides.
 // Six bounded shards; preserve all original 2,591 records and never fabricate rides.
 // Source-reviewed regional service pages only; no fabricated trip URLs.
+// Source-backed saved-case sitemap. A new verified case is included after its
+// repository page and publication manifest are saved and the Node app redeploys.
+if(pathname==='/sitemap-published.xml'){
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
+  publishedCaseEntries.map(x=>'<url><loc>'+esc(base+x.path)+'</loc><lastmod>'+esc(x.publishedAt.slice(0,10))+'</lastmod></url>').join('')+'</urlset>';
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 if(pathname==='/sitemap-reviewed-routes.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const routes=[...new Set(priorityRegionalPages.flatMap(entry=>{
@@ -3067,7 +3087,7 @@ if(pathname==='/sitemap-coast.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Object.keys(localitySitemapLevels).filter(key=>key!=='ri'||eligibleVillageServiceKeys().size>0).map(key=>'/sitemap-localities-'+key+'.xml'),...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Object.keys(localitySitemapLevels).filter(key=>key!=='ri'||eligibleVillageServiceKeys().size>0).map(key=>'/sitemap-localities-'+key+'.xml'),...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
@@ -3220,7 +3240,7 @@ if(pathname==='/sitemap.xml'){
  
   ...daeriTravelGuides.destinations.map(daeriTravelGuides.pathFor),
   '/','/coverage/','/taksongdaeri/','/daeri/','/taksong/','/travel/food-map/','/taksong/jeju/','/fare/','/fare/jeju/',
-  '/reviews/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/','/routes/reviewed/','/blog/','/blog/archive/','/find/',
+  '/reviews/','/reviews/history/','/reviews/taksong/','/reviews/ride-record-stories/','/reviews/verified/',...publishedCaseEntries.slice(0,40).map(x=>x.path),'/routes/reviewed/','/blog/','/blog/archive/','/find/',
   // Search value comes from publicly verified completed rides, not mass-generated localities.
   ...publicRides.slice(0,60).map(rideUrl),
   '/route-taksong/','/route-taksong/centers/','/설악산탁송/','/지리산탁송/','/special/cycling-trail-transport/',

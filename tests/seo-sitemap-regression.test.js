@@ -15,6 +15,15 @@ test('every declared sitemap has an explicit server route',()=>{
   assert.ok(server.includes("pathname==='"+route+"'"),'missing sitemap handler: '+route);
  }
 });
+test('latest published cases connect to main sitemap, dedicated sitemap and RSS',()=>{
+ assert.ok(server.includes("const publishedCaseEntries=loadPublishedCases(ROOT)"));
+ assert.ok(server.includes("if(pathname==='/sitemap-published.xml')"));
+ assert.ok(server.includes("'../reviews/verified/'")===false,'do not fabricate case path URL');
+ assert.ok(server.includes("...publishedCaseEntries.slice(0,40).map(x=>x.path)"));
+ assert.ok(server.includes("published=publishedCaseEntries.slice(0,20)"));
+ assert.ok(server.includes("'/sitemap-published.xml'"),'sitemap root index links published cases');
+});
+
 test('sitemap index includes reviewed routes and history inventory',()=>{
  for(const route of ['/sitemap-reviewed-routes.xml','/sitemap-history.xml','/sitemap-priority.xml']){
   assert.ok(server.includes("'"+route+"'"),'missing sitemap index reference: '+route);

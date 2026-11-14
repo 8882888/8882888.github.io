@@ -886,6 +886,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    for(const target of reviewLinks.slice(0,2))assert.equal((await get(target)).status,200,route+' -> '+target);
   }
   assert.ok(regionalReviewCount>0,'known regional samples must link to published reviews');
+  const publishedXml=await (await get('/sitemap-published.xml')).text();
+  const publishedRoutes=[...publishedXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
+  assert.ok(publishedRoutes.length>0,'published sitemap includes existing verified case pages');
+  assert.ok(publishedRoutes.every(x=>x.startsWith('https://example.com/reviews/verified/')));
+  assert.equal(new Set(publishedRoutes).size,publishedRoutes.length);
+  const rootSitemap=await (await get('/sitemap-all.xml')).text();
+  assert.ok(rootSitemap.includes('https://example.com/sitemap-published.xml'));
+  const primaryXml=await (await get('/sitemap.xml')).text();
+  assert.ok(primaryXml.includes(publishedRoutes[0]),'recent published verified case must also be visible in main sitemap');
   const rssResponse=await get('/rss.xml'),rssXml=await rssResponse.text();
   assert.equal(rssResponse.status,200);
   const feedItems=[...rssXml.matchAll(new RegExp('<item>([^]*?)</item>','g'))].map(m=>m[1]);
@@ -893,10 +902,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const feedUrls=feedItems.map(item=>item.match(new RegExp('<link>(.*?)</link>'))[1]);
   assert.equal(new Set(feedUrls).size,feedUrls.length);
   assert.ok(feedUrls.every(url=>url.startsWith('https://example.com/reviews/')));
-  const feedDates=feedItems.map(item=>item.match(new RegExp('<title>([0-9]{4}-[0-9]{2}-[0-9]{2})'))[1]);
-  assert.deepEqual(feedDates,[...feedDates].sort().reverse());
-  assert.ok(feedItems.every(item=>item.includes('&lt;article&gt;')),'RSS includes full public record body');
-  assert.ok(rssXml.includes('운행일 기준 정렬이며 게시·수정 시각을 뜻하지 않습니다.'));
+  const publishedFeedItems=feedItems.filter(item=>item.includes('/reviews/verified/'));
+  assert.ok(publishedFeedItems.length>0,'RSS prioritizes actual newly published case URLs');
+  const publishedDates=publishedFeedItems.map(item=>Date.parse(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]));
+  assert.deepEqual(publishedDates,[...publishedDates].sort((a,b)=>b-a),
+   'RSS sorts published cases by saved publication timestamps, not historical ride dates');
+  assert.ok(feedItems.every(item=>item.includes('&lt;article')),'RSS contains original case article content');
+  assert.ok(rssXml.includes('실제 운행일과 게시일은 서로 다릅니다.'));
   assert.equal(await (await get('/feed.xml')).text(),rssXml);
   for(const target of feedUrls.slice(0,2))assert.equal((await get(new URL(target).pathname)).status,200);
   const h=await get('/health');assert.equal(h.status,200);const health=await h.json();assert.equal(health.regions,regions.length);
