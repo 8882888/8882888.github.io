@@ -72,6 +72,28 @@ async function main(){
   assert.equal(bareHome.status,200,'Bare homepage must remain navigable without keyword');
   // Protected /data/ must remain blocked, while the regional handoff needs a
   // narrowly scoped lookup to avoid a permanent loading/error state.
+  // Naver Yeti must receive crawlable official URLs and complete sitemap
+  // declarations from the real Node HTTP handler (not merely source fixtures).
+  const robotsFile=await request(port,'/robots.txt',{'User-Agent':'Mozilla/5.0 (compatible; Yeti/1.1; +https://naver.me/spd)'});
+  assert.equal(robotsFile.status,200,'Yeti robots.txt must respond HTTP 200');
+  assert(robotsFile.body.includes('User-agent: *')&&robotsFile.body.includes('Allow: /'),
+    'Yeti must not be blocked by root robots');
+  for(const map of ['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml',
+    '/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',
+    '/sitemap-all.xml','/sitemap-history.xml']){
+    assert(robotsFile.body.includes('Sitemap: https://jeongukdaeri.kr'+map),
+      'Missing official Naver-discoverable sitemap '+map);
+  }
+  const naverPriority=await request(port,'/sitemap-priority.xml');
+  assert.equal(naverPriority.status,200,'Yeti priority sitemap HTTP 200');
+  assert(/<urlset\\b/.test(naverPriority.body),'Priority XML must be a urlset');
+  assert(naverPriority.body.includes('<loc>https://jeongukdaeri.kr/taksong/busan/gijang-gun/</loc>'),
+    'Verified priority Gijang target must remain discoverable');
+  const currentSitemap=await request(port,'/sitemap-published.xml');
+  assert.equal(currentSitemap.status,200,'Newly published verified cases sitemap HTTP 200');
+  assert(/<urlset\\b/.test(currentSitemap.body),'Published case sitemap must be valid URL inventory');
+  assert(!/noindex/i.test(String(currentSitemap.headers['x-robots-tag']||'')),
+    'Published case sitemap must not be marked noindex');
   const blockedSource=await request(port,'/data/regions.json');
   assert.equal(blockedSource.status,403,'regional source data must stay protected');
   for(const [region,parent,kind] of [
@@ -172,7 +194,11 @@ async function main(){
   const warmAt=Date.now(),homePage=await request(port,'/');
   const warmMs=Date.now()-warmAt;
   assert.equal(homePage.status,200,'homepage must open');
-  assert(homePage.body.includes('id="mountain-cycling-fare-first-20261103"'),'homepage first-screen fare links missing');
+  assert(homePage.body.includes('id="mountain-cycling-before-fare-20261107"')
+    && homePage.body.includes('href="/설악산탁송/"')
+    && homePage.body.includes('href="/지리산탁송/"')
+    && homePage.body.includes('href="/route-taksong/"'),
+    'Homepage mountain and cycling course links must remain server-rendered and crawlable');
   assert(homePage.body.indexOf('class="hero hero-with-photo"')<homePage.body.indexOf('id="homepage-verified-reviews-first-20261106"')&&homePage.body.indexOf('id="homepage-fare-top"')<homePage.body.indexOf('id="keyword-service-navigation-20261106"'),'Compact hero and review-first layout with service keyword search required');
   // Text-only route charts replace retired vehicle/person promotional photos.
   for(const path of ['/assets/seoraksan-taksong-fares.svg','/assets/jirisan-taksong-fares.svg','/assets/service-taksong-visual.svg','/assets/cycling-routes/eastcoast-taksong.svg']){
