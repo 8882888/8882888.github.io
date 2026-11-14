@@ -1118,7 +1118,7 @@ async function servicePage(r,kind){
  // source-empty village pages. Keep the canonical village address, navigation
  // and customer quote/call accessible, but do not index a templated no-evidence page.
  if(r.level==='리'&&!priorityByKey.has(kind+'|'+r.full_name)&&!focus50ByKey.has(kind+'|'+r.full_name)){
-  const actualPublic=publicRides.some(x=>tripMatchesRegion(x,r));
+  const actualPublic=publicRides.some(x=>x.service===kind&&tripMatchesRegion(x,r));
   const actualHistory=regionalServiceEvidence(r,kind).length>0;
   if(!actualPublic&&!actualHistory){
    const parent=r.parent_slug?bySlug.get(r.parent_slug):null;
@@ -2144,8 +2144,8 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    // pages (even though those HTML pages deliberately return index,follow).
    if(r&&r.level==='리'&&!priorityByKey.has(service[1]+'|'+r.full_name)&&!focus50ByKey.has(service[1]+'|'+r.full_name)){
     const kind=service[1];
-    const confirmed=publicRides.some(x=>{const raw=String(x.departure||'')+' '+String(x.destination||'');const type=String(x.service||x.service_type||x.kind||'').toLowerCase();return tripMatchesRegion(x,r)&&(kind==='taksong'?/탁송|taksong/.test(type)||(!type&&/탁\//.test(raw)):/대리|daeri/.test(type)||(!type&&!/탁\//.test(raw)))});
-    if(!confirmed&&!historicalRides.some(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)))return '';
+    const confirmed=publicRides.some(x=>x.service===kind&&tripMatchesRegion(x,r));
+    if(!confirmed&&!regionalServiceEvidence(r,kind).length)return '';
    }
    return entry;
   });
