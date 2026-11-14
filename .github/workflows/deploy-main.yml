@@ -216,8 +216,16 @@ jobs:
                     and 'smart24_explicit_quote_submit' in fare_page
                     and "preset.get('auto')==='1'" in fare_page
                     and 'form.requestSubmit()' in fare_page
-                    and all(('>'+term+'</a>') in home for term in
-                      ['대리비','대리비견적','탁송비','탁송견적','탁송비견적'])
+                    # Validate the real above-the-fold GET quote form instead of
+                    # requiring five hard-coded anchors that the UI never renders.
+                    and 'action="/fare/" method="get" id="homepage-fare-form"' in home
+                    and 'name="auto" value="1"' in home
+                    and 'name="from" required' in home
+                    and 'name="to" required' in home
+                    and 'name="service"' in home
+                    and '<option value="taksong">탁송</option>' in home
+                    and '<option value="daeri">대리운전</option>' in home
+                    and 'href="tel:18114294"' in home
                     and all(term in fare_page for term in
                       ['대리비','대리비견적','탁송비','탁송견적','탁송비견적']))
                   with urllib.request.urlopen(urllib.request.Request(
@@ -238,7 +246,10 @@ jobs:
                     and 'id="phone-source-list"' in home
                     and 'id="top-fare-calculator"' in home
                     and '/routes/taksong/area-494/area-1174/' in home
-                    and '20261030-count-accuracy' in home
+                    # Check actual counter components rather than a retired
+                    # release marker removed from the homepage source.
+                    and all('id="'+item+'"' in home for item in
+                      ['today-visit-number','total-visit-number','phone-click-number'])
                     and 'traffic-summary.css?v=20261030' in home
                     and 'smart24_exclude_own_visits_v1' in tracker
                     and 'smart24_last_recorded_visit_day' in tracker
