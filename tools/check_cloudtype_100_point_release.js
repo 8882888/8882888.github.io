@@ -411,7 +411,7 @@ const rules=[
     "group": "seo",
     "path": "data/seo-pages.json",
     "name": "taksong title",
-    "needle": "전국자동차탁송 실제 운행기록·후기 | 24시탁송"
+    "needle": "전국자동차탁송｜실제 운행후기·24시탁송·요금조회"
   },
   {
     "group": "seo",
