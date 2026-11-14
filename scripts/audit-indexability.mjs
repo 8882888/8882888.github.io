@@ -3,7 +3,7 @@
 // All sitemap URLs are checked, including recursively linked sitemap indexes.
 import {writeFileSync,renameSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink} from './indexability-scope.mjs';
+import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink,blockedMetaIndexAgents} from './indexability-scope.mjs';
 import {fetchWithRetry} from './indexability-retry.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const transportOrigin=process.env.AUDIT_TRANSPORT_ORIGIN||origin;
@@ -84,8 +84,9 @@ async function worker(){
     const cm=html.match(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*\bhref=["']([^"']+)["']/i)
       ||html.match(/<link\b(?=[^>]*\bhref=["']([^"']+)["'])[^>]*\brel=["']canonical["']/i);
     canonical=cm?new URL(cm[1],finalUrl).href:'';
-    const meta=[...html.matchAll(/<meta\b[^>]*>/gi)].map(m=>m[0]);
-    if(meta.some(tag=>/\bname=["']robots["']/i.test(tag)&&/noindex/i.test(tag)))problem.push('meta_noindex');
+    // Treat crawler-specific noindex (Yeti/Googlebot/Bingbot) as an index blocker.
+    for(const agent of blockedMetaIndexAgents(html))
+     problem.push(agent==='robots'?'meta_noindex':'meta_'+agent+'_noindex');
     const t=html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);title=t?t[1].replace(/\s+/g,' ').trim():'';
     if(!canonical)problem.push('missing_canonical');
     else if(canonical!==item.url)problem.push('canonical_mismatch');
@@ -122,7 +123,7 @@ const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
 writeFileSync('indexability-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,transportOrigin,complete:true,duplicateAnalysisComplete:true,scope:transportOrigin===origin?'production HTTP':'local source responses; not production verification',counts,results},null,2));
 writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,body_hash,has_ride_link,problems,listed_in',
  ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.bodyHash,r.hasRideLink,r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
-const criticalTypes=new Set(['http_error','x_robots_noindex','meta_noindex','missing_canonical','canonical_mismatch','timeout','not_html']);
+const criticalTypes=new Set(['http_error','x_robots_noindex','meta_noindex','meta_yeti_noindex','meta_googlebot_noindex','meta_bingbot_noindex','missing_canonical','canonical_mismatch','timeout','not_html']);
 const critical=results.filter(r=>r.problems.some(p=>criticalTypes.has(p)||p.startsWith('fetch_error')));
 const review=results.filter(r=>r.problems.length&&!critical.includes(r));
 const lines=[

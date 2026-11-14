@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage} from '../scripts/indexability-scope.mjs';
+import {isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage,blockedMetaIndexAgents} from '../scripts/indexability-scope.mjs';
 test('actual nationwide region/service canonical pages count as locality landings',()=>{
  for(const route of ['/taksong/busan/','/daeri/sejong/','/taksong/busan/gijang-gun/',
  '/daeri/gangwon/wonju-si/','/taksong/sejong/jikhal/naseong-dong/'])
@@ -47,4 +47,12 @@ test('ride evidence means a specific history document, not a search archive',()=
  ];
  assert.deepEqual(regionalGuideCoverage(reports),{regionalIntentGuidePages:2,regionalGuidesWithoutDirectRideLink:1});
  assert.deepEqual(reviewLinkCoverage(reports),{regionalServicePages:1,regionalPagesWithoutReviewLink:1});
+});
+
+test('Yeti/Googlebot-specific noindex cannot silently pass the full sitemap audit',()=>{
+ assert.deepEqual(blockedMetaIndexAgents('<meta name="Yeti" content="NOINDEX, FOLLOW">'),['yeti']);
+ assert.deepEqual(blockedMetaIndexAgents('<meta content="none" NAME="googlebot">'),['googlebot']);
+ assert.deepEqual(blockedMetaIndexAgents("<meta name='robots' content='INDEX, FOLLOW'>"),[]);
+ assert.deepEqual(blockedMetaIndexAgents('<meta name="description" content="NOINDEX">'),[]);
+ assert.deepEqual(blockedMetaIndexAgents('<meta name="bingbot" content="noindex"><meta name="robots" content="noindex">'),['bingbot','robots']);
 });

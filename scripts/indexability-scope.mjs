@@ -36,3 +36,19 @@ export function reviewLinkCoverage(results){
  return {regionalServicePages:pages.length,
          regionalPagesWithoutReviewLink:pages.filter(r=>!r.hasRideLink).length};
 }
+
+/** Returns search bots excluded from indexing by server-rendered meta tags. */
+export function blockedMetaIndexAgents(html){
+ const agents=[];
+ for(const match of String(html||'').matchAll(/<meta\b[^>]*>/gi)){
+  const tag=match[0];
+  const attribute=name=>{
+   const found=tag.match(new RegExp('(?:\\s|<)'+name+'\\s*=\\s*(?:"([^"]*)"|\\x27([^\\x27]*)\\x27|([^\\s>]+))','i'));
+   return String(found?.[1]??found?.[2]??found?.[3]??'').trim().toLowerCase();
+  };
+  const agent=attribute('name');
+  if(!['robots','yeti','googlebot','bingbot'].includes(agent))continue;
+  if(/(?:^|[\s,;])(?:noindex|none)(?=$|[\s,;])/i.test(attribute('content')))agents.push(agent);
+ }
+ return [...new Set(agents)];
+}
