@@ -77,3 +77,29 @@ export function blockedXRobotsIndexAgents(value){
  }
  return [...blocked];
 }
+
+
+/** Detect a root-wide robots.txt disallow as it applies to Yeti, not another bot.
+ * This is a conservative root-block signal, not a complete robots parser.
+ * An explicit Yeti group takes precedence over the wildcard group.
+ */
+export function naverRobotsDisallowAll(content){
+ const groups=[];let current=null;let hasRules=false;
+ for(const raw of String(content||'').split(/\r?\n/)){
+  const line=raw.replace(/\s*#.*$/,'').trim();
+  const colon=line.indexOf(':');if(colon<0)continue;
+  const key=line.slice(0,colon).trim().toLowerCase();
+  const value=line.slice(colon+1).trim().toLowerCase();
+  if(key==='user-agent'){
+   if(!current||hasRules){current={agents:[],rules:[]};groups.push(current);hasRules=false;}
+   current.agents.push(value);
+  }else if(current&&(key==='allow'||key==='disallow')){
+   current.rules.push({key,path:value});hasRules=true;
+  }
+ }
+ const specific=groups.filter(g=>g.agents.includes('yeti'));
+ const applicable=specific.length?specific:groups.filter(g=>g.agents.includes('*'));
+ const rules=applicable.flatMap(g=>g.rules);
+ return rules.some(r=>r.key==='disallow'&&r.path==='/')
+     && !rules.some(r=>r.key==='allow'&&r.path==='/');
+}
