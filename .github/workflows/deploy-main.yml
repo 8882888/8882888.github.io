@@ -23,7 +23,7 @@ jobs:
       CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}
       CLOUDTYPE_PROJECT: ${{ vars.CLOUDTYPE_PROJECT }}
       CLOUDTYPE_APP: ${{ vars.CLOUDTYPE_APP || 'smart24-taksong-backup' }}
-      CLOUDTYPE_STAGE: ${{ vars.CLOUDTYPE_STAGE }}
+      CLOUDTYPE_STAGE: ${{ vars.CLOUDTYPE_STAGE || 'main' }}
       CLOUDTYPE_DEPLOY_YAML: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
     steps:
       - name: Checkout
@@ -78,8 +78,9 @@ jobs:
         uses: cloudtype-github-actions/deploy@v1
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          endpoint: https://app.cloudtype.io/api
           project: ${{ vars.CLOUDTYPE_PROJECT }}
-          stage: ${{ vars.CLOUDTYPE_STAGE }}
+          stage: ${{ vars.CLOUDTYPE_STAGE || 'main' }}
           allStages: false
           yaml: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
       - name: Deploy using committed original-app manifest
@@ -87,8 +88,9 @@ jobs:
         uses: cloudtype-github-actions/deploy@v1
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          endpoint: https://app.cloudtype.io/api
           project: ${{ vars.CLOUDTYPE_PROJECT }}
-          stage: ${{ vars.CLOUDTYPE_STAGE }}
+          stage: ${{ vars.CLOUDTYPE_STAGE || 'main' }}
           allStages: false
           file: .cloudtype/app.yaml
 
