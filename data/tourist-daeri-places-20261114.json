@@ -1,0 +1,422 @@
+{
+  "version": 1,
+  "updated": "2026-11-14",
+  "policy": "통칭·공식 명칭을 하나의 장소로 병합. 대리/대리운전 검색 의도는 기존 법정 행정구역 대리운전 대표 URL로 연결. 관광지별 복제 색인 페이지·실제 운행후기·요금·상주기사 주장 금지.",
+  "places": [
+    {
+      "name": "속초관광수산시장",
+      "region": "강원특별자치도 속초시",
+      "category": "전통시장",
+      "aliases": [
+        "속초관광시장",
+        "속초중앙시장"
+      ]
+    },
+    {
+      "name": "아바이마을",
+      "region": "강원특별자치도 속초시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "영금정",
+      "region": "강원특별자치도 속초시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "강릉중앙시장",
+      "region": "강원특별자치도 강릉시",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "정선아리랑시장",
+      "region": "강원특별자치도 정선군",
+      "category": "전통시장",
+      "aliases": [
+        "정선오일장"
+      ]
+    },
+    {
+      "name": "인구해변",
+      "region": "강원특별자치도 양양군",
+      "category": "해변·항구",
+      "aliases": [
+        "양양인구해변"
+      ]
+    },
+    {
+      "name": "광장시장",
+      "region": "서울특별시 종로구",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "남대문시장",
+      "region": "서울특별시 중구",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "통인시장",
+      "region": "서울특별시 종로구",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "망원시장",
+      "region": "서울특별시 마포구",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "노량진수산시장",
+      "region": "서울특별시 동작구",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "홍대거리",
+      "region": "서울특별시 마포구",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "자갈치시장",
+      "region": "부산광역시 중구",
+      "category": "전통시장",
+      "aliases": [
+        "부산자갈치시장"
+      ]
+    },
+    {
+      "name": "국제시장",
+      "region": "부산광역시 중구",
+      "category": "전통시장",
+      "aliases": [
+        "부산국제시장"
+      ]
+    },
+    {
+      "name": "부평깡통시장",
+      "region": "부산광역시 중구",
+      "category": "전통시장",
+      "aliases": [
+        "부산깡통시장"
+      ]
+    },
+    {
+      "name": "서문시장",
+      "region": "대구광역시 중구",
+      "category": "전통시장",
+      "aliases": [
+        "대구서문시장"
+      ]
+    },
+    {
+      "name": "동성로",
+      "region": "대구광역시 중구",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "신포국제시장",
+      "region": "인천광역시 중구",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "강화풍물시장",
+      "region": "인천광역시 강화군",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "교동대룡시장",
+      "region": "인천광역시 강화군",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "월미도",
+      "region": "인천광역시 중구",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "구읍뱃터",
+      "region": "인천광역시 중구",
+      "category": "해변·항구",
+      "aliases": [
+        "영종도구읍뱃터"
+      ]
+    },
+    {
+      "name": "1913송정역시장",
+      "region": "광주광역시 광산구",
+      "category": "전통시장",
+      "aliases": [
+        "광주송정역시장"
+      ]
+    },
+    {
+      "name": "국립아시아문화전당",
+      "region": "광주광역시 동구",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "대전중앙시장",
+      "region": "대전광역시 동구",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "대전오월드",
+      "region": "대전광역시 중구",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "태화강국가정원",
+      "region": "울산광역시 중구",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "장생포고래문화마을",
+      "region": "울산광역시 남구",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "세종호수공원",
+      "region": "세종특별자치시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "국립세종수목원",
+      "region": "세종특별자치시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "수원남문시장",
+      "region": "경기도 수원시",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "행궁동",
+      "region": "경기도 수원시",
+      "category": "관광명소",
+      "aliases": [
+        "수원행궁동"
+      ]
+    },
+    {
+      "name": "아침고요수목원",
+      "region": "경기도 가평군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "포천허브아일랜드",
+      "region": "경기도 포천시",
+      "category": "관광명소",
+      "aliases": [
+        "허브아일랜드"
+      ]
+    },
+    {
+      "name": "단양구경시장",
+      "region": "충청북도 단양군",
+      "category": "전통시장",
+      "aliases": [
+        "구경시장"
+      ]
+    },
+    {
+      "name": "청주육거리종합시장",
+      "region": "충청북도 청주시",
+      "category": "전통시장",
+      "aliases": [
+        "청주육거리시장"
+      ]
+    },
+    {
+      "name": "도담삼봉",
+      "region": "충청북도 단양군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "공주산성시장",
+      "region": "충청남도 공주시",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "서천특화시장",
+      "region": "충청남도 서천군",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "부여궁남지",
+      "region": "충청남도 부여군",
+      "category": "관광명소",
+      "aliases": [
+        "궁남지"
+      ]
+    },
+    {
+      "name": "안면도꽃지해수욕장",
+      "region": "충청남도 태안군",
+      "category": "해변·항구",
+      "aliases": [
+        "꽃지해수욕장"
+      ]
+    },
+    {
+      "name": "전주남부시장",
+      "region": "전북특별자치도 전주시",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "전주한옥마을",
+      "region": "전북특별자치도 전주시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "군산경암동철길마을",
+      "region": "전북특별자치도 군산시",
+      "category": "관광명소",
+      "aliases": [
+        "경암동철길마을"
+      ]
+    },
+    {
+      "name": "광한루원",
+      "region": "전북특별자치도 남원시",
+      "category": "관광명소",
+      "aliases": [
+        "남원광한루"
+      ]
+    },
+    {
+      "name": "여수낭만포차거리",
+      "region": "전라남도 여수시",
+      "category": "관광명소",
+      "aliases": [
+        "여수낭만포차"
+      ]
+    },
+    {
+      "name": "여수이순신광장",
+      "region": "전라남도 여수시",
+      "category": "관광명소",
+      "aliases": [
+        "이순신광장"
+      ]
+    },
+    {
+      "name": "순천만국가정원",
+      "region": "전라남도 순천시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "담양죽녹원",
+      "region": "전라남도 담양군",
+      "category": "관광명소",
+      "aliases": [
+        "죽녹원"
+      ]
+    },
+    {
+      "name": "안동구시장",
+      "region": "경상북도 안동시",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "황리단길",
+      "region": "경상북도 경주시",
+      "category": "관광명소",
+      "aliases": [
+        "경주황리단길"
+      ]
+    },
+    {
+      "name": "보문관광단지",
+      "region": "경상북도 경주시",
+      "category": "관광명소",
+      "aliases": [
+        "경주보문단지"
+      ]
+    },
+    {
+      "name": "통영중앙시장",
+      "region": "경상남도 통영시",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "진주중앙시장",
+      "region": "경상남도 진주시",
+      "category": "전통시장",
+      "aliases": []
+    },
+    {
+      "name": "화개장터",
+      "region": "경상남도 하동군",
+      "category": "전통시장",
+      "aliases": [
+        "하동화개장터"
+      ]
+    },
+    {
+      "name": "남해독일마을",
+      "region": "경상남도 남해군",
+      "category": "관광명소",
+      "aliases": [
+        "독일마을"
+      ]
+    },
+    {
+      "name": "제주동문시장",
+      "region": "제주특별자치도 제주시",
+      "category": "전통시장",
+      "aliases": [
+        "동문재래시장",
+        "제주동문재래시장"
+      ]
+    },
+    {
+      "name": "서귀포매일올레시장",
+      "region": "제주특별자치도 서귀포시",
+      "category": "전통시장",
+      "aliases": [
+        "서귀포올레시장",
+        "매일올레시장"
+      ]
+    },
+    {
+      "name": "성산일출봉",
+      "region": "제주특별자치도 서귀포시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "중문관광단지",
+      "region": "제주특별자치도 서귀포시",
+      "category": "관광명소",
+      "aliases": []
+    }
+  ]
+}

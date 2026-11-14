@@ -1347,6 +1347,24 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(!/\d{6}[- ]?[1-4]\d{6}|01[016789][- ]?\d{3,4}[- ]?\d{4}|고객전화|기사명/.test(completedHtml),'no private dispatch identifiers are exposed');
   const fareHtml=await (await get('/fare/')).text();
   assert.ok(fareHtml.includes('통행료·주유비·주차비'),'estimator discloses costs to confirm');
+  const touristPage=await get('/daeri/tourist-spots/');
+  assert.equal(touristPage.status,200,'nationwide attraction and market daeri directory is public');
+  const touristHtml=await touristPage.text();
+  for(const required of ['속초관광시장대리운전','속초관광시장대리','속초관광수산시장대리운전','속초중앙시장대리운전']){
+   assert.ok(touristHtml.includes(required),'exact colloquial or official Sokcho market alias is searchable: '+required);
+  }
+  assert.ok(touristHtml.includes('1811-4294')&&touristHtml.includes('href="/fare/?service=daeri"'),'tourism page preserves national phone and estimate inquiry');
+  const touristPaths=[];
+  for(const term of ['속초관광시장대리운전','속초관광시장대리','속초관광수산시장대리운전','속초중앙시장대리']){
+   const response=await fetch('http://127.0.0.1:'+port+'/?q='+encodeURIComponent(term),{redirect:'manual'});
+   assert.equal(response.status,302,'tourist keyword canonical route: '+term);
+   const destination=response.headers.get('location');
+   assert.ok(destination&&destination.startsWith('/daeri/'),'tourist keyword must resolve to the legal region page: '+term);
+   touristPaths.push(destination);
+  }
+  assert.equal(new Set(touristPaths).size,1,'colloquial market spellings must share one regional canonical');
+  const touristSitemap=await (await get('/sitemap-priority.xml')).text();
+  assert.ok(touristSitemap.includes('/daeri/tourist-spots/'),'tourist directory must be in priority sitemap');
   const homeHtml=await (await get('/')).text();
   assert.ok(homeHtml.includes('href="/reviews/completed-calls-20261114/"')&&homeHtml.includes('href="/reviews/integrated-20261114/"'),'indexed homepage links directly to the two anonymized completed-call evidence collections');
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
