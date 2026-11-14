@@ -2139,7 +2139,10 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    if(history&&historyCanonicalById[history[1]])return '';
    const service=route.match(/^\/(taksong|daeri)\/(.+)\/$/);
    const r=service&&byPath.get(service[2]);
-   if(r&&r.level==='리'&&!priorityByKey.has(service[1]+'|'+r.full_name)){
+   // Match the region servicePage indexable focus-page gate. Otherwise the XML
+   // response filter silently discards genuine curated /daeri/ and /taksong/
+   // pages (even though those HTML pages deliberately return index,follow).
+   if(r&&r.level==='리'&&!priorityByKey.has(service[1]+'|'+r.full_name)&&!focus50ByKey.has(service[1]+'|'+r.full_name)){
     const kind=service[1];
     const confirmed=publicRides.some(x=>{const raw=String(x.departure||'')+' '+String(x.destination||'');const type=String(x.service||x.service_type||x.kind||'').toLowerCase();return tripMatchesRegion(x,r)&&(kind==='taksong'?/탁송|taksong/.test(type)||(!type&&/탁\//.test(raw)):/대리|daeri/.test(type)||(!type&&!/탁\//.test(raw)))});
     if(!confirmed&&!historicalRides.some(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)))return '';
