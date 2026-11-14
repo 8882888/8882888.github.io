@@ -70,7 +70,30 @@ async function check(){
  if(!/noindex/i.test(queryRes.headers.get('x-robots-tag')||'')){
   throw Error('Live tourism search-result variation must carry X-Robots-Tag noindex');
  }
- return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),tourismGuide:'canonical+priority-sitemap+search-noindex verified'};
+
+ // Source identity for static B2B portal is checked separately from server.js
+ // because a Cloudtype partial release can serve an updated Node bundle but old HTML.
+ const businessPath='/business/';
+ const b2bRes=await fetch(base+businessPath,{
+  signal:AbortSignal.timeout(15000),
+  headers:{Accept:'text/html','Cache-Control':'no-cache'},redirect:'error'
+ });
+ if(!b2bRes.ok)throw Error('Live business portal HTTP '+b2bRes.status);
+ const liveBusiness=Buffer.from(await b2bRes.arrayBuffer());
+ const expectedBusiness=fs.readFileSync(path.join(__dirname,'..','business/index.html'));
+ const contentHash=v=>crypto.createHash('sha256').update(v).digest('hex');
+ if(contentHash(liveBusiness)!==contentHash(expectedBusiness)){
+  throw Error('Live business portal HTML differs from committed source');
+ }
+ if(/noindex/i.test(b2bRes.headers.get('x-robots-tag')||'')){
+  throw Error('Live canonical business portal has unexpected noindex header');
+ }
+ const tradePaths=['/business/','/business/used-car/','/business/rental-car/','/business/export-port/','/business/scrapyard/','/business/auction/'];
+ for(const tradePath of tradePaths){
+  const loc='<loc>'+base+tradePath+'</loc>';
+  if(priorityXml.split(loc).length!==2)throw Error('Live priority sitemap trade URL missing or duplicated: '+tradePath);
+ }
+ return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),tourismGuide:'verified',businessPortal:'source-hash+priority-sitemap verified'};
 }
 async function main(){
  const attempts=Math.min(6,Math.max(1,Number(process.env.DEPLOY_CHECK_ATTEMPTS)||4));
