@@ -32,6 +32,8 @@ jobs:
         run: |
           node --check server.js
           node tests/cycling-centers.test.js
+      - name: Validate Naver Yeti noindex interpretation and sitemap audit classifications
+        run: node --test tests/indexability-scope.test.mjs tests/yeti-priority-indexability.test.cjs
       - name: Install production dependencies
         run: npm install --omit=dev --no-audit --no-fund
       - name: Verify Naver notification targets and prevent duplicate URL floods
