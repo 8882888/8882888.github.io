@@ -3,18 +3,50 @@ on:
   push:
     branches:
       - main
+    # Code/data that can affect the official Node site still trigger deploy.
+    # Tests, audits and workflows alone must not create Cloudtype releases.
+    paths-ignore:
+      - 'tests/**'
+      - 'scripts/**'
+      - 'tools/**'
+      - '.github/workflows/**'
+      - '*.md'
   workflow_dispatch:
-  workflow_run:
-    workflows: [Keyword automation]
-    types: [completed]
-    branches: [main]
+# Keyword automation commits to main already trigger the push event.
+# A second workflow_run trigger duplicated each successful automation release.
 concurrency:
   # Keep automatic deployment and manual recovery mutually exclusive without canceling an in-flight release.
   group: cloudtype-production
   cancel-in-progress: false
 jobs:
+  # Fail in seconds on a missing Cloudtype binding, before launching a large
+  # test matrix and queuing an impossible deployment.
+  preflight:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDTYPE_PROJECT: ${{ vars.CLOUDTYPE_PROJECT }}
+      CLOUDTYPE_APP: ${{ vars.CLOUDTYPE_APP || 'smart24-taksong-backup' }}
+      CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}
+    steps:
+      - name: Check existing Cloudtype project binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$CLOUDTYPE_PROJECT" =~ ^[^/]+/8882888$ ]]; then
+            echo "::error::CLOUDTYPE_PROJECT must be the verified existing space/8882888. Current value does not identify the project. Open repository Settings > Secrets and variables > Actions > Variables."
+            exit 1
+          fi
+          if [ -z "$CLOUDTYPE_TOKEN" ]; then
+            echo "::error::CLOUDTYPE_TOKEN secret is missing."
+            exit 1
+          fi
+          if [ "$CLOUDTYPE_APP" != smart24-taksong-backup ]; then
+            echo "::error::Refusing to deploy a service other than the existing smart24-taksong-backup."
+            exit 1
+          fi
+          echo "Preflight passed; existing Cloudtype project and app are configured."
   verify:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    needs: preflight
     uses: ./.github/workflows/smart24-server-check.yml
   deploy:
     needs: verify
