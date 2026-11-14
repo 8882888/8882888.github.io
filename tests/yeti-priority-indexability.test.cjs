@@ -1,12 +1,14 @@
 'use strict';
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {TARGETS,PROVINCE_DAERI_TARGETS,YETI,noindex,inspectHtml,checkOne,run}=require('../scripts/check-yeti-priority-indexability.cjs');
+const {TARGETS,PROVINCE_DAERI_TARGETS,PROVINCE_TAKSONG_TARGETS,YETI,noindex,inspectHtml,checkOne,run}=require('../scripts/check-yeti-priority-indexability.cjs');
 const url='https://jeongukdaeri.kr/taksong/busan/gijang-gun/';
 const body=(canonical=url,robots='index,follow')=>'<html><head><title>기장군탁송 | 24시상담</title><meta name="description" content="기장군 차량 인계·요금 안내"><link href="'+canonical+'" rel="canonical"><meta content="'+robots+'" name="robots"></head><body><h1>기장군탁송</h1></body></html>';
 test('priority audit covers indexable nationwide and regional URLs',()=>{
  assert.ok(TARGETS.length>=10);
  assert.equal(PROVINCE_DAERI_TARGETS.length,17,'must audit all 17 provincial daeri landing pages');
+ assert.equal(PROVINCE_TAKSONG_TARGETS.length,17,'must audit all 17 provincial taksong landing pages');
+ assert.ok(PROVINCE_TAKSONG_TARGETS.every(route=>TARGETS.includes(route)),'provincial taksong coverage must not be silently dropped');
  assert.ok(PROVINCE_DAERI_TARGETS.every(route=>TARGETS.includes(route)),'province coverage cannot be silently dropped');
  assert.ok(TARGETS.includes('/taksong/busan/gijang-gun/'));
  assert.ok(TARGETS.includes('/daeri/sejong/'));
@@ -58,6 +60,18 @@ test('SEO report flags duplicate provincial daeri titles across otherwise valid 
  assert.equal(report.provincialDaeriCount,17);
  assert.equal(report.provincialDaeriFailed,17);
  assert.ok(report.results.filter(x=>PROVINCE_DAERI_TARGETS.includes(x.route)).every(x=>x.issues.includes('duplicate_provincial_title')));
+});
+test('GEO/AEO province and national direct answers must exist in server-rendered HTML',()=>{
+ const plain=inspectHtml(body(),url,new Headers(),{provinceHub:true});
+ assert.ok(plain.issues.includes('missing_regional_answer_first'));
+ assert.ok(plain.issues.includes('missing_regional_answer_question'));
+ assert.ok(plain.issues.includes('missing_regional_fare_lookup'));
+ assert.ok(plain.issues.includes('missing_regional_history_lookup'));
+ const enriched=body().replace('<h1>기장군탁송</h1>',
+  '<section id="regional-direct-answer"><h2 id="regional-direct-question">탁송 예약은?</h2>'+
+  '<p><a href="/fare/?service=taksong">요금조회</a> <a href="/reviews/history/?region=busan">운행기록</a></p></section><h1>기장군탁송</h1>');
+ assert.deepEqual(inspectHtml(enriched,url,new Headers(),{provinceHub:true}).issues,[]);
+ assert.ok(inspectHtml(body(),url,new Headers(),{nationalService:'taksong'}).issues.includes('missing_national_answer_first'));
 });
 test('missing description is reported separately from canonical and indexability',()=>{
  const html=body().replace(/<meta name="description"[^>]+>/,'');
