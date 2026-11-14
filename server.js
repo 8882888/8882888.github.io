@@ -1443,6 +1443,20 @@ function regionPage(r){
  const qualifiedDaeri=fullName+' 대리';
  const intro=fullName+' 대리운전·탁송, '+shortPlace(r.name)+' 대리운전·탁송 상담 안내. 정식 행정구역명과 간략 지역명을 함께 안내합니다. 출발지와 도착지, 차종, 예약 시간에 따라 기사 배차 가능 여부와 요금이 달라집니다. 전국대리운전·24시탁송·장거리 서비스도 상담합니다.';
  const matches=verifiedRides.filter(x=>tripMatchesRegion(x,r)).slice(0,12);
+ // Archived completed dispatches are independently preserved in the historical
+ // inventory. A village must not get noindex merely because its documented
+ // archived ride was never copied into the smaller public/verified ride feed.
+ const archivedVillageTrips=r.level==='리'
+  ?[...new Map([...regionalServiceEvidence(r,'taksong'),...regionalServiceEvidence(r,'daeri')]
+     .map(ride=>[ride.id,ride])).values()].slice(0,8)
+  :[];
+ const archivedVillageEvidence=archivedVillageTrips.length
+  ?'<section id="archived-village-ride-evidence"><h2>'+esc(fullName)+' 실제 완료 운행기록</h2>'+
+   '<p>아래 기록은 보존된 과거 운행정보입니다. 현재 배차 여부나 요금은 별도 상담 후 확인합니다.</p><ul>'+
+   archivedVillageTrips.map(ride=>'<li><a href="/reviews/history/'+esc(ride.id)+'/">'+
+    esc(ride.departure+' → '+ride.destination+' · '+(ride.service==='taksong'?'탁송':'대리운전')+' · '+ride.date)+
+    '</a></li>').join('')+'</ul></section>'
+  :'';
  const records=matches.length?'<ul>'+matches.map(x=>'<li>'+esc([x.date,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':regionalUsage(r,'taksong')+'<p><a href="'+servicePath(r,'daeri')+'">'+esc(fullName)+' 대리운전 이용 안내 보기</a></p>';
  const children=childrenByParent.get(r.slug)||[];
  const parent=r.parent_slug?bySlug.get(r.parent_slug):null;
@@ -1471,6 +1485,7 @@ function regionPage(r){
  <section><h2>${full} 일일기사·골프장 이동</h2><p>일일기사 이용 시 출발·종료 시각, 대기 시간, 경유지와 왕복 여부를 알려주세요. 골프장 방문이나 지방출장 일정은 도착 희망 시각과 복귀 계획까지 함께 확인하면 좋습니다.</p></section>
  <section><h2>${short} 탁송·대리운전 예약 전 확인사항</h2><p>정확한 도로명주소 또는 인근 위치, 이용 날짜와 시간, 차량 종류, 출발지·도착지, 경유 및 대기 여부를 준비해 주세요. 실제 배차 가능 여부와 요금은 상담 후 확정됩니다.</p></section>
  <section><h2>${full} ${matches.length?'실제 공개 운행정보':'상황별 이용 안내'}</h2>${records}</section>
+ ${archivedVillageEvidence}
  ${nearby}
  ${parent?'<section><h2>상위 지역 안내</h2><p><a href="'+canonical(parent.slug)+'">'+esc(parent.full_name)+' 대리운전·탁송</a></p></section>':''}
  ${children.length?'<section><h2>인접 행정 단계의 하위 지역 찾기</h2><ul>'+children.map(x=>'<li><a href="'+canonical(x.slug)+'">'+esc(x.name)+' 지역 안내</a> · <a href="'+servicePath(x,'taksong')+'">'+esc(x.name)+'탁송</a> · <a href="'+servicePath(x,'daeri')+'">'+esc(x.name)+'대리운전</a></li>').join('')+'</ul></section>':''}`;
@@ -1481,7 +1496,11 @@ function regionPage(r){
  // Preserve the regional promo card, but place it after substantive local guide content.
  const withCard=placeRegionalCardAfterIntro(page,regionHero,regionHero.replace('loading="eager" fetchpriority="high"',r.level==='리'?'loading="lazy"':'loading="eager" fetchpriority="high"'));
  const decoratedCard=withCard.replace('</head>','<meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="800"><meta property="og:image:alt" content="'+full+' 지역별 자동차탁송 맞춤 명함"></head>');
- return r.level==='리'&&!matches.length?decoratedCard.replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">'):decoratedCard;
+ // Preserve noindex for source-empty village directories; allow genuinely
+ // completed archived rides to support an indexable, evidence-linked hub.
+ return r.level==='리'&&!matches.length&&!archivedVillageTrips.length
+  ?decoratedCard.replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">')
+  :decoratedCard;
 }
 // Service-specific, human-readable category pages: no invented dispatch or completion claims.
 // Category discovery pages describe service contexts; they do not invent individual Naver Place listings.
