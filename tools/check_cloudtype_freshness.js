@@ -6,7 +6,7 @@ const crypto=require('node:crypto');
 const path=require('node:path');
 const base=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const sha=name=>crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'..',name))).digest('hex');
-const serverHash=sha('server.js'),homeHash=sha('index.html'),businessHash=sha('business/index.html'),regionalGuidePath='data/naver-regional-focus-twelfth-taksong-100.json',regionalGuideHash=sha(regionalGuidePath);
+const serverHash=sha('server.js'),homeHash=sha('index.html'),businessHash=sha('business/index.html'),regionalGuidePath='data/naver-regional-focus-twelfth-taksong-100.json',regionalGuideHash=sha(regionalGuidePath),serviceKeywordPath='lib/service-keyword-entry.js',serviceKeywordHash=sha(serviceKeywordPath);
 const serverSource=fs.readFileSync(path.join(__dirname,'..','server.js'),'utf8');
 const guardCounts=[...serverSource.matchAll(/naverFocus(\d+)\.length!==(\d+)/g)]
  .filter(match=>match[1]===match[2])
@@ -27,6 +27,7 @@ async function check(){
  if(hashes['index.html']!==homeHash)mismatches.push('index.html fingerprint does not match GitHub');
  if(hashes['business/index.html']!==businessHash)mismatches.push('business/index.html source fingerprint does not match GitHub');
  if(hashes[regionalGuidePath]!==regionalGuideHash)mismatches.push(regionalGuidePath+' fingerprint does not match GitHub; latest regional text edits not verified live');
+ if(hashes[serviceKeywordPath]!==serviceKeywordHash)mismatches.push(serviceKeywordPath+' fingerprint does not match GitHub; 전국탁송·대리운전·대리 keyword updates not verified live');
  if(actualCount!==expectedCount)mismatches.push('curated guide count: live '+actualCount+' / source '+expectedCount);
  if(!String(resp.headers.get('cache-control')||'').includes('no-store'))mismatches.push('health endpoint not marked no-store');
  if(mismatches.length)throw Error(mismatches.join('; '));
@@ -103,7 +104,7 @@ async function check(){
   const loc='<loc>'+base+tradePath+'</loc>';
   if(priorityXml.split(loc).length!==2)throw Error('Live priority sitemap trade URL missing or duplicated: '+tradePath);
  }
- return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),regionalGuideSha:regionalGuideHash.slice(0,16),tourismGuide:'verified',businessPortal:'source-hash+priority-sitemap verified'};
+ return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),regionalGuideSha:regionalGuideHash.slice(0,16),serviceKeywordSha:serviceKeywordHash.slice(0,16),tourismGuide:'verified',businessPortal:'source-hash+priority-sitemap verified'};
 }
 async function main(){
  const attempts=Math.min(6,Math.max(1,Number(process.env.DEPLOY_CHECK_ATTEMPTS)||4));
