@@ -186,5 +186,13 @@ fs.writeFileSync('seo-priority-live-report.md',[
  'A 200 response or successful sitemap submission does not prove Naver indexing.'
 ].join('\n'));
 console.log(JSON.stringify(result.summary,null,2));
+// Surface actual slow URLs in the CI log, not only an artifact, so recurring
+// latency can be localized without falsely treating it as an indexing count.
+const slowest=result.pageChecks
+ .filter(p=>Number.isFinite(p.durationMs))
+ .sort((a,b)=>b.durationMs-a.durationMs)
+ .slice(0,10);
+if(slowest.length)console.log('Slowest sampled HTML routes (ms, attempts):\n'+
+ slowest.map(p=>p.durationMs+'ms / '+p.attempts+' attempt(s) / '+p.url).join('\n'));
 if(problems.length){console.log('Findings:',problems.slice(0,30).join('\n'));}
 if(result.crawlerFindings.length||result.siteMapChecks.some(x=>x.problems.length)||result.pageChecks.some(x=>x.problems.some(y=>/^(collection_limited|index_excluded)/.test(y))))process.exitCode=1;
