@@ -22,7 +22,7 @@ jobs:
     env:
       CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}
       CLOUDTYPE_PROJECT: ${{ vars.CLOUDTYPE_PROJECT }}
-      CLOUDTYPE_APP: ${{ vars.CLOUDTYPE_APP }}
+      CLOUDTYPE_APP: ${{ vars.CLOUDTYPE_APP || 'smart24-taksong-backup' }}
       CLOUDTYPE_STAGE: ${{ vars.CLOUDTYPE_STAGE }}
       CLOUDTYPE_DEPLOY_YAML: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
     steps:
@@ -38,8 +38,6 @@ jobs:
           [ -z "$CLOUDTYPE_TOKEN" ] && missing="${missing} CLOUDTYPE_TOKEN(secret)"
           [ -z "$CLOUDTYPE_PROJECT" ] && missing="${missing} CLOUDTYPE_PROJECT(variable)"
           [ -z "$CLOUDTYPE_APP" ] && missing="${missing} CLOUDTYPE_APP(variable)"
-          [ -z "$CLOUDTYPE_STAGE" ] && missing="${missing} CLOUDTYPE_STAGE(variable)"
-          [ -z "$CLOUDTYPE_DEPLOY_YAML" ] && missing="${missing} CLOUDTYPE_DEPLOY_YAML(secret)"
           if [ -n "$missing" ]; then
             echo "### Cloudtype production redeploy BLOCKED" >> "$GITHUB_STEP_SUMMARY"
             echo "Missing configuration:$missing" >> "$GITHUB_STEP_SUMMARY"
@@ -47,8 +45,18 @@ jobs:
             echo "::error::No production redeploy was requested. Missing:$missing"
             exit 1
           fi
-          # Fail closed if the supplied YAML is for a different application.
-          printf '%s\n' "$CLOUDTYPE_DEPLOY_YAML" > "$RUNNER_TEMP/cloudtype-existing-app.yml"
+          # Only the original target Cloudtype project is eligible. Never infer a namespace.
+          if [[ "$CLOUDTYPE_PROJECT" != */8882888 ]]; then
+            echo "::error::CLOUDTYPE_PROJECT must be the existing [space]/8882888 project, not a new destination."
+            exit 1
+          fi
+          # Prefer the operator's existing private configuration, with a safe
+          # fallback to the exact app-name/port/dockerfile manifest they supplied.
+          if [ -n "$CLOUDTYPE_DEPLOY_YAML" ]; then
+            printf '%s\n' "$CLOUDTYPE_DEPLOY_YAML" > "$RUNNER_TEMP/cloudtype-existing-app.yml"
+          else
+            cp .cloudtype/app.yaml "$RUNNER_TEMP/cloudtype-existing-app.yml"
+          fi
           export ORIGINAL_APP="$CLOUDTYPE_APP"
           python3 - <<'PY'
           import os,re,pathlib,sys
@@ -65,7 +73,8 @@ jobs:
           echo "enabled=true" >> "$GITHUB_OUTPUT"
           echo "### Existing Cloudtype application binding validated" >> "$GITHUB_STEP_SUMMARY"
           echo "Target: pre-existing project/stage and application name from repository configuration. No new project or domain created." >> "$GITHUB_STEP_SUMMARY"
-      - name: Deploy
+      - name: Deploy with existing Cloudtype YAML secret
+        if: env.CLOUDTYPE_DEPLOY_YAML != ''
         uses: cloudtype-github-actions/deploy@v1
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
@@ -73,6 +82,15 @@ jobs:
           stage: ${{ vars.CLOUDTYPE_STAGE }}
           allStages: false
           yaml: ${{ secrets.CLOUDTYPE_DEPLOY_YAML }}
+      - name: Deploy using committed original-app manifest
+        if: env.CLOUDTYPE_DEPLOY_YAML == ''
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: ${{ vars.CLOUDTYPE_PROJECT }}
+          stage: ${{ vars.CLOUDTYPE_STAGE }}
+          allStages: false
+          file: .cloudtype/app.yaml
 
       - name: Verify deployed regional service revision
         env:
