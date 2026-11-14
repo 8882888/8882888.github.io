@@ -1331,6 +1331,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(regional.includes('/fare/?service='+service+'&amp;from='+encodeURIComponent('강원특별자치도 강릉시')),'regional calculator retains service and departure');
    assert.ok(regional.includes(service==='taksong'?'면책금':'동승 인원'),'service-specific booking checks are visible');
   }
+  const completedCollection=await get('/reviews/completed-calls-20261114/');
+  assert.equal(completedCollection.status,200,'anonymized 72-record collection has HTTP 200');
+  const completedHtml=await completedCollection.text();
+  assert.ok(completedHtml.includes('467건')&&completedHtml.includes('서비스 유형 미확정 종료 운행기록 28건'),'complete totals and unconfirmed services are visible');
+  assert.equal((completedHtml.match(/<article class="ride"/g)||[]).length,72,'only 72 safe deduplicated route records are publicly rendered');
+  assert.ok(completedHtml.includes('href="/fare/"')&&completedHtml.includes('href="tel:18114294"'),'fare quote and call actions are visible');
+  assert.ok(completedHtml.includes('rel="canonical" href="https://jeongukdaeri.kr/reviews/completed-calls-20261114/"'),'the collection has a stable canonical');
+  assert.ok(!/\d{6}[- ]?[1-4]\d{6}|01[016789][- ]?\d{3,4}[- ]?\d{4}|고객전화|기사명/.test(completedHtml),'no private dispatch identifiers are exposed');
   const fareHtml=await (await get('/fare/')).text();
   assert.ok(fareHtml.includes('통행료·주유비·주차비'),'estimator discloses costs to confirm');
   const homeHtml=await (await get('/')).text();
