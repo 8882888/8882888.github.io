@@ -15,6 +15,14 @@ test('every declared sitemap has an explicit server route',()=>{
   assert.ok(server.includes("pathname==='"+route+"'"),'missing sitemap handler: '+route);
  }
 });
+test('homepage declares the authoritative automatically updated RSS feed',()=>{
+ const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
+ assert.ok(home.includes('<link rel="alternate" type="application/rss+xml"'),
+  'homepage must advertise RSS to readers and crawlers');
+ assert.ok(home.includes('href="https://jeongukdaeri.kr/rss.xml"'),
+  'advertised feed uses the same canonical production host');
+});
+
 test('latest published cases connect to main sitemap, dedicated sitemap and RSS',()=>{
  assert.ok(server.includes("const publishedCaseEntries=loadPublishedCases(ROOT)"));
  assert.ok(server.includes("if(pathname==='/sitemap-published.xml')"));
