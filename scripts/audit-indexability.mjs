@@ -7,7 +7,7 @@ import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink,blocked
 import {fetchWithRetry} from './indexability-retry.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const transportOrigin=process.env.AUDIT_TRANSPORT_ORIGIN||origin;
-const sitemapPaths=['/sitemap-all.xml','/sitemap-history.xml','/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
+const sitemapPaths=['/sitemap-all.xml','/sitemap-history.xml','/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
 const unescapeXml=s=>s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 const all=new Map(),sitemapErrors=[],processed=new Set(),advertisedSitemaps=new Set(sitemapPaths.map(p=>origin+p));
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
