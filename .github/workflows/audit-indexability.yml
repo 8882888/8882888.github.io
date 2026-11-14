@@ -2,7 +2,7 @@ name: Full sitemap URL indexability audit
 on:
   workflow_dispatch:
   workflow_run:
-    # A verified manual release must also start the audit when auto-deploy is unavailable.
+    # Always inspect production after a release check, including failed ones.
     workflows: ['Verify official Cloudtype release matches GitHub main']
     types: [completed]
     branches: [main]
@@ -15,16 +15,16 @@ concurrency:
   cancel-in-progress: false
 jobs:
   audit:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # Failed deployments can leave stale URL inventory; audit independently.
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ref: main
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Verify locality coverage metrics exclude nonregional service pages
         run: node --test tests/indexability-scope.test.mjs
       - name: Test bounded transient HTTP retries
