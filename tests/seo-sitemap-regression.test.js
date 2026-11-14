@@ -10,7 +10,8 @@ const reviewed=JSON.parse(fs.readFileSync(path.join(root,'data/priority-regions.
 
 test('every declared sitemap has an explicit server route',()=>{
  const routes=[...robots.matchAll(/^Sitemap:\s+https:\/\/jeongukdaeri\.kr(\/[^\s]+)$/gm)].map(m=>m[1]);
- assert.equal(routes.length,7,'keep seven published sitemap declarations');
+ assert.equal(routes.length,8,'keep eight published sitemap declarations, including source-backed cases');
+ assert.ok(routes.includes('/sitemap-published.xml'),'source-backed real case sitemap must be discoverable');
  for(const route of routes){
   assert.ok(server.includes("pathname==='"+route+"'"),'missing sitemap handler: '+route);
  }
@@ -38,6 +39,18 @@ test('latest published cases connect to main sitemap, dedicated sitemap and RSS'
  assert.ok(server.includes("...publishedCaseEntries.slice(0,40).map(x=>x.path)"));
  assert.ok(server.includes("published=publishedCaseEntries.slice(0,20)"));
  assert.ok(server.includes("'/sitemap-published.xml'"),'sitemap root index links published cases');
+});
+
+test('eight robots sitemap declarations have consistent official host and verified cases',()=>{
+ const sitemapPaths=[...robots.matchAll(/^Sitemap:\s+(https:\/\/[^\s]+)$/gm)].map(m=>new URL(m[1]).pathname);
+ assert.equal(new Set(sitemapPaths).size,8,'no duplicate sitemap declarations');
+ const wanted=['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-all.xml','/sitemap-history.xml'];
+ assert.deepEqual(sitemapPaths,wanted);
+ const rootIndex=server.slice(server.indexOf("if(pathname==='/sitemap-history.xml'"),server.indexOf("const historySitemapMatch="));
+ assert.ok(rootIndex.includes("'/sitemap-published.xml'"),'root sitemap index must include real published cases');
+ const publishedHandler=server.slice(server.indexOf("if(pathname==='/sitemap-published.xml')"),server.indexOf("if(pathname==='/sitemap-reviewed-routes.xml')"));
+ assert.ok(publishedHandler.includes("publishedCaseEntries.map"),'published sitemap must only use existing published records');
+ assert.ok(publishedHandler.includes("x.publishedAt.slice(0,10)"),'lastmod must reflect publish dates');
 });
 
 test('sitemap index includes reviewed routes and history inventory',()=>{
