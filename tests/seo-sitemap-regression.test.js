@@ -15,6 +15,14 @@ test('every declared sitemap has an explicit server route',()=>{
   assert.ok(server.includes("pathname==='"+route+"'"),'missing sitemap handler: '+route);
  }
 });
+test('live release verifies actual saved case URLs in both sitemap and RSS',()=>{
+ const live=fs.readFileSync(path.join(root,'scripts/verify-live-seo-release.cjs'),'utf8');
+ assert.ok(live.includes("const publishedXml=await read('/sitemap-published.xml'),feedXml=await read('/rss.xml')"));
+ assert.ok(live.includes("if(!root.includes(new URL('/sitemap-published.xml',base).href))"));
+ assert.ok(live.includes("if(!publishedXml.includes('<loc>'+canonical+'</loc>'))"));
+ assert.ok(live.includes("if(!feedXml.includes('<link>'+canonical+'</link>')"));
+});
+
 test('homepage declares the authoritative automatically updated RSS feed',()=>{
  const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
  assert.ok(home.includes('<link rel="alternate" type="application/rss+xml"'),

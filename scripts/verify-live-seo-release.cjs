@@ -61,6 +61,28 @@ async function main(){
    }
    const root=await read('/sitemap-all.xml');
    if(!/<sitemapindex\b/i.test(root))throw Error('Invalid sitemap index');
+   // A verified publication is only complete if its real canonical page is
+   // discoverable through the published-case sitemap and newest RSS feed.
+   const publishedCases=require('../lib/published-case-feed').loadPublishedCases(require('node:path').resolve(__dirname,'..'));
+   if(publishedCases.length){
+    const latest=publishedCases.slice(0,20);
+    const publishedXml=await read('/sitemap-published.xml'),feedXml=await read('/rss.xml');
+    if(!root.includes(new URL('/sitemap-published.xml',base).href))
+     throw Error('Root sitemap index omits published verified cases');
+    if(!/<urlset\b/i.test(publishedXml)||!/<rss\b/i.test(feedXml))
+     throw Error('Published-case sitemap or RSS feed is invalid');
+    for(const x of publishedCases){
+     const canonical=new URL(x.path,base).href;
+     if(!publishedXml.includes('<loc>'+canonical+'</loc>'))
+      throw Error('Published case not in live sitemap: '+x.path);
+    }
+    for(const x of latest){
+     const canonical=new URL(x.path,base).href;
+     if(!feedXml.includes('<link>'+canonical+'</link>')||
+        !feedXml.includes('<pubDate>'+new Date(x.publishedAt).toUTCString()+'</pubDate>'))
+      throw Error('New saved case missing publication timestamp or RSS link: '+x.path);
+    }
+   }
    // Production release must not re-submit low-distinctiveness locality/topic
    // permutations through the priority sitemap after pruning the guide sitemap.
    const priorityXml=await read('/sitemap-priority.xml');
