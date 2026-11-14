@@ -38,4 +38,5 @@ for(const [word,expected] of test){
  assert(catalog.keywords.some(k=>k.keyword===word),'Missing editorial keyword '+word);
 }
 assert.equal(catalog.total,catalog.keywords.length,'Keyword catalog count must equal entries');
+assert.equal(new Set(catalog.keywords.map(x=>x.keyword)).size,catalog.total,'SEO editorial keyword catalog must not contain duplicated phrases');
 console.log('PASS: nationwide driver and 24-hour taksong metadata, visible copy, keyword routes and no dispatch promises');
