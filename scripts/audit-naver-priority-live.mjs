@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import {blockedXRobotsIndexAgents} from './indexability-scope.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const origin=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const userAgent='Mozilla/5.0 (compatible; Yeti/1.1; +https://naver.me/spd)';
@@ -72,7 +73,7 @@ async function checkSitemap(src){
   if(item.duplicates)item.problems.push('duplicate_urls');
   if(Buffer.byteLength(r.body)>10_000_000)item.problems.push('over_10mb');
   if(entries.length>50000)item.problems.push('over_50000_entries');
-  if(/noindex/i.test(r.xRobots))item.problems.push('x_robots_noindex');
+  if(blockedXRobotsIndexAgents(r.xRobots).some(agent=>agent==='robots'||agent==='yeti'))item.problems.push('x_robots_noindex');
  }catch(e){item.problems.push('fetch_error_'+String(e).slice(0,110));}
  result.siteMapChecks.push(item);
 }
@@ -82,7 +83,7 @@ async function checkPage(p){
   const r=await read(p);item.status=r.status;
   if(r.status!==200){item.problems.push(r.status>=300&&r.status<400?'collection_limited_redirect':'collection_limited_http_'+r.status);item.location=r.location;}
   if(!/text\/html/i.test(r.contentType))item.problems.push('not_html');
-  if(/noindex/i.test(r.xRobots))item.problems.push('index_excluded_x_robots');
+  if(blockedXRobotsIndexAgents(r.xRobots).some(agent=>agent==='robots'||agent==='yeti'))item.problems.push('index_excluded_x_robots');
   const html=r.body;
   item.title=extract(html,/<title\b[^>]*>([\s\S]*?)<\/title>/i);
   const descriptionTag=content(html,'description');
