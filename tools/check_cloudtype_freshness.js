@@ -28,7 +28,49 @@ async function check(){
  if(actualCount!==expectedCount)mismatches.push('curated guide count: live '+actualCount+' / source '+expectedCount);
  if(!String(resp.headers.get('cache-control')||'').includes('no-store'))mismatches.push('health endpoint not marked no-store');
  if(mismatches.length)throw Error(mismatches.join('; '));
- return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16)};
+
+ // A matching release hash alone does not prove the newly published tourism
+ // landing page or its crawl entry is present on the real Cloudtype server.
+ const touristPath='/daeri/tourist-spots/';
+ const touristRes=await fetch(base+touristPath,{
+  signal:AbortSignal.timeout(15000),
+  headers:{Accept:'text/html','Cache-Control':'no-cache'},redirect:'error'
+ });
+ if(!touristRes.ok)throw Error('Live tourism daeri HTML HTTP '+touristRes.status);
+ const touristHtml=await touristRes.text();
+ const expectedTouristHtml=[
+  '<h1>전국 유명 관광지·전통시장 대리운전·대리 검색</h1>',
+  '속초관광시장대리운전',
+  '인천광역시 제물포구',
+  '인천광역시 영종구',
+  'rel="canonical" href="'+base+touristPath+'"'
+ ];
+ for(const marker of expectedTouristHtml){
+  if(!touristHtml.includes(marker))throw Error('Live tourism daeri page missing marker: '+marker);
+ }
+ if(/noindex/i.test(touristRes.headers.get('x-robots-tag')||'')||
+    /<meta[^>]+name=["']robots["'][^>]+noindex/i.test(touristHtml)){
+  throw Error('Live canonical tourism guide is incorrectly noindex');
+ }
+ const priorityRes=await fetch(base+'/sitemap-priority.xml',{
+  signal:AbortSignal.timeout(15000),
+  headers:{Accept:'application/xml','Cache-Control':'no-cache'},redirect:'error'
+ });
+ if(!priorityRes.ok)throw Error('Live priority sitemap HTTP '+priorityRes.status);
+ const priorityXml=await priorityRes.text();
+ const touristLoc='<loc>'+base+touristPath+'</loc>';
+ if(priorityXml.split(touristLoc).length!==2){
+  throw Error('Live priority sitemap must include exactly one canonical tourism guide URL');
+ }
+ const queryRes=await fetch(base+touristPath+'?q='+encodeURIComponent('속초관광시장대리운전'),{
+  signal:AbortSignal.timeout(15000),
+  headers:{Accept:'text/html','Cache-Control':'no-cache'},redirect:'error'
+ });
+ if(!queryRes.ok)throw Error('Live tourism search HTTP '+queryRes.status);
+ if(!/noindex/i.test(queryRes.headers.get('x-robots-tag')||'')){
+  throw Error('Live tourism search-result variation must carry X-Robots-Tag noindex');
+ }
+ return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),tourismGuide:'canonical+priority-sitemap+search-noindex verified'};
 }
 async function main(){
  const attempts=Math.min(6,Math.max(1,Number(process.env.DEPLOY_CHECK_ATTEMPTS)||4));
