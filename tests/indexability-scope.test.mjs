@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage,blockedMetaIndexAgents} from '../scripts/indexability-scope.mjs';
+import {isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage,blockedMetaIndexAgents,blockedXRobotsIndexAgents} from '../scripts/indexability-scope.mjs';
 test('actual nationwide region/service canonical pages count as locality landings',()=>{
  for(const route of ['/taksong/busan/','/daeri/sejong/','/taksong/busan/gijang-gun/',
  '/daeri/gangwon/wonju-si/','/taksong/sejong/jikhal/naseong-dong/'])
@@ -55,4 +55,14 @@ test('Yeti/Googlebot-specific noindex cannot silently pass the full sitemap audi
  assert.deepEqual(blockedMetaIndexAgents("<meta name='robots' content='INDEX, FOLLOW'>"),[]);
  assert.deepEqual(blockedMetaIndexAgents('<meta name="description" content="NOINDEX">'),[]);
  assert.deepEqual(blockedMetaIndexAgents('<meta name="bingbot" content="noindex"><meta name="robots" content="noindex">'),['bingbot','robots']);
+});
+
+test('Naver Yeti is not blocked by Googlebot/Bingbot-only X-Robots-Tag',()=>{
+ assert.deepEqual(blockedXRobotsIndexAgents('googlebot: noindex, nofollow'),['googlebot']);
+ assert.deepEqual(blockedXRobotsIndexAgents('Googlebot: noindex, Yeti: index'),['googlebot']);
+ assert.deepEqual(blockedXRobotsIndexAgents('Yeti: noindex, Googlebot: index'),['yeti']);
+ assert.deepEqual(blockedXRobotsIndexAgents('noindex, follow'),['robots']);
+ assert.deepEqual(blockedXRobotsIndexAgents('googlebot: noindex\nYeti: noindex'),['googlebot','yeti']);
+ assert.deepEqual(blockedXRobotsIndexAgents('googlebot: noindex, bingbot: noindex'),['googlebot','bingbot']);
+ assert.deepEqual(blockedXRobotsIndexAgents('index, follow'),[]);
 });
