@@ -12,6 +12,8 @@ on:
       - "daeri/**"
       - "taksong/**"
       - "scripts/audit-naver-priority-live.mjs"
+      - "scripts/indexability-scope.mjs"
+      - "tests/indexability-scope.test.mjs"
       - ".github/workflows/naver-priority-indexability.yml"
   workflow_run:
     workflows: ["Deploy to Cloudtype"]
@@ -27,11 +29,10 @@ concurrency:
   cancel-in-progress: false
 jobs:
   read-only-audit:
-    # A failed Cloudtype deploy already has its own drift report. Run this audit after successful deploys,
-    # and independently on pushes / the daily schedule even while deployment is blocked.
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # Inspect the REAL live site even after a failed deploy. Otherwise drift
+    # is exactly when the indexability audit would have been skipped.
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - name: Checkout current source for comparison with live release
         uses: actions/checkout@v4
@@ -41,9 +42,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validate read-only auditor syntax
-        run: node --check scripts/audit-naver-priority-live.mjs
-      - name: Check live HTTP, 8 sitemaps, noindex and canonical
+      - name: Validate Naver crawler rules and read-only auditor syntax
+        run: |
+          node --test tests/indexability-scope.test.mjs
+          node --check scripts/audit-naver-priority-live.mjs
+      - name: Check live HTTP, 8 sitemaps, 17 provinces and canonical
         env:
           LIVE_SITE_URL: https://jeongukdaeri.kr
         run: node scripts/audit-naver-priority-live.mjs
