@@ -11,7 +11,7 @@ const server=read('server.js');
 assert(!home.includes('출발지의 탁 표시')&&!home.includes('도착지의 톨포'),'Corrupted ride history guidance must not appear on homepage');
 assert(!home.includes('시·도·시·군·구')&&!server.includes('시·도·시·군·구'),'Duplicated administrative-region wording must not reappear');
 const intro=home.indexOf('<div class="hero hero-with-photo">');
-const firstFares=home.indexOf('id="mountain-cycling-fare-first-20261103"');
+const firstFares=home.indexOf('id="mobile-direct-image-priority"');
 const regionalEntry=home.indexOf('id="regional-quick-entry-20261106"');
 assert(intro>0&&firstFares>0&&regionalEntry>intro,
  'Preserve the approved homepage hero and keep the regional service entry available without reordering the protected first screen');
