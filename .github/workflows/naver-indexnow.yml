@@ -1,33 +1,28 @@
-name: Notify Naver of updated pages
+name: Manually notify Naver of explicitly updated canonical pages
 on:
   workflow_dispatch:
     inputs:
       urls:
-        description: 'Updated URLs on jeongukdaeri.kr, separated by spaces (optional)'
-        required: false
+        description: 'Verified published canonical URLs, separated by spaces'
+        required: true
         type: string
 permissions:
   contents: read
 jobs:
   notify:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      - name: Wait for production deploy
-        run: sleep 120
-      - name: Detect changed files
-        id: diff
-        shell: bash
-        run: |
-          if git rev-parse HEAD^ >/dev/null 2>&1; then
-            echo "files=$(git diff --name-only HEAD^ HEAD | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
-          else
-            echo "files=server.js" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Submit changed pages to Naver IndexNow
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify canonical input and notifier tests
+        run: node tests/indexnow-targeting.test.js
+      - name: Submit only explicitly selected published URLs after live verification
         env:
-          CHANGED_FILES: ${{ steps.diff.outputs.files }}
+          INDEXNOW_CHANGED_FILES: ''
           INDEXNOW_URLS: ${{ inputs.urls }}
-        run: node .github/scripts/indexnow.js
+        run: node scripts/indexnow-notify.js

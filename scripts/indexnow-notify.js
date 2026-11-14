@@ -59,6 +59,15 @@ function changedPaths(files,manual=''){
   return chosen;
  }
  const input=new Set(files);
+ // Publishing writes a real /reviews/verified/{id}/index.html as well as a
+ // state row. Notify only the saved page URL, never the whole archive/region.
+ const caseFiles=files.filter(file=>/^reviews\/verified\/[a-f0-9]{16}\/index\.html$/.test(file));
+ if(caseFiles.length){
+  if(caseFiles.length>10)throw Error('More than ten saved cases changed; batch explicitly after deployment');
+  return [...new Set(caseFiles.map(file=>'/'+file.slice(0,-'index.html'.length)))];
+ }
+ // The manifest alone is not evidence that a new canonical page was saved.
+ if(input.has('data/published-ride-case-ids.json'))return [];
  // A content-focused blog update should notify its actual article URLs, not
  // resubmit unrelated service landing pages in the same commit.
  if(input.has('data/blog-hashtags-priority.json'))return blogHashtagPaths.slice(-10);
@@ -66,9 +75,11 @@ function changedPaths(files,manual=''){
  if(changedBlogs.length)return changedBlogs.slice(0,10);
  const selected=new Set();
  const include=paths=>paths.forEach(p=>selected.add(p));
+ // Runtime code-only changes do not prove these ten pages were updated.
+ // Explicit changes to reviewed source content can announce their canonicals.
  if([...input].some(p=>[
-   'server.js','data/region-journey-links.json','data/priority-regions.json',
-   'data/priority-blog-links.json','lib/regional-history-evidence.js'
+   'data/region-journey-links.json','data/priority-regions.json',
+   'data/priority-blog-links.json'
   ].includes(p)))include(priorityPaths);
  if(input.has('index.html'))include(['/']);
  if(input.has('data/seo-pages.json'))include(['/','/taksong/','/daeri/','/region/']);
@@ -106,8 +117,16 @@ async function verify(){
  if(busan.status!==200)throw Error('Busan taksong HTTP '+busan.status);
  const body=await busan.text();
  if(!body.includes('id="priority-region-guide"'))throw Error('Busan priority source not deployed');
- console.log('Verified '+urls.length+' canonical priority URLs and index key at '+base.origin);
- return new Set(normalizedUrls);
+ const publishedMap=await get('/sitemap-published.xml');
+ if(publishedMap.status!==200)throw Error('Published case sitemap HTTP '+publishedMap.status);
+ const publishedXml=await publishedMap.text();
+ if(!/<urlset\b/i.test(publishedXml))throw Error('Invalid published case sitemap');
+ const publishedUrls=[...publishedXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>new URL(m[1]).href);
+ if(publishedUrls.some(url=>!/^https:\/\/jeongukdaeri\.kr\/reviews\/verified\/[a-f0-9]{16}\/$/.test(url))||
+    new Set(publishedUrls).size!==publishedUrls.length)
+  throw Error('Noncanonical or duplicated published case URLs');
+ console.log('Verified '+urls.length+' priority URLs, '+publishedUrls.length+' saved case URLs and IndexNow key at '+base.origin);
+ return new Set([...normalizedUrls,...publishedUrls]);
 }
 async function main(){
  // Dry-run is a read-only sitemap/key health test. It must not require HEAD^:
@@ -127,7 +146,23 @@ async function main(){
  }
  if(dryRun){console.log('Dry run: target paths '+targets.join(', ')+'; no IndexNow submission');return}
  const urls=targets.map(route=>new URL(route,'https://jeongukdaeri.kr').href);
- for(const url of urls)if(!accepted.has(url))throw Error('Changed URL not present in official priority sitemap: '+url);
+ for(const url of urls){
+  if(!accepted.has(url))throw Error('Changed URL not in published or priority sitemap: '+url);
+  const u=new URL(url);
+  const page=await get(u.pathname);
+  if(page.status!==200||!/^text\/html/i.test(page.headers.get('content-type')||'')){
+   await page.body?.cancel();
+   throw Error('Not a published HTTP 200 HTML URL: '+url+' status='+page.status);
+  }
+  if(/(?:^|[\s,;])noindex(?:$|[\s,;])/i.test(page.headers.get('x-robots-tag')||'')){
+   await page.body?.cancel();throw Error('Page is X-Robots-Tag noindex: '+url);
+  }
+  const html=await page.text();
+  const canonicals=[...html.matchAll(/<link\b[^>]*\brel=["']canonical["'][^>]*>/gi)].map(x=>x[0]);
+  if(canonicals.length!==1||!canonicals[0].includes('href="'+url+'"')||
+    /<meta\b[^>]*\bname=["']robots["'][^>]*\bcontent=["'][^"']*\bnoindex\b/i.test(html))
+   throw Error('Published page canonical or robots mismatch: '+url);
+ }
  const response=await fetch('https://searchadvisor.naver.com/indexnow',{
   method:'POST',headers:{'content-type':'application/json; charset=utf-8','user-agent':'Smart24-IndexNow-Notifier/2.0'},
   body:JSON.stringify({host:'jeongukdaeri.kr',key,keyLocation:'https://jeongukdaeri.kr/'+key+'.txt',urlList:urls}),
