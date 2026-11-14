@@ -1,0 +1,35 @@
+name: Verify and notify Naver of updated priority regional pages
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/submit-priority-regions-once.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: smart24-regional-indexnow-once
+  cancel-in-progress: false
+jobs:
+  verify-and-notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Ensure IndexNow sends only valid changed canonicals
+        run: node tests/indexnow-targeting.test.js
+      - name: Verify live SEO canonicals and notify Naver once
+        env:
+          INDEXNOW_CHANGED_FILES: ''
+          INDEXNOW_URLS: >-
+            https://jeongukdaeri.kr/taksong/busan/gijang-gun/
+            https://jeongukdaeri.kr/daeri/sejong/
+            https://jeongukdaeri.kr/taksong/sejong/
+            https://jeongukdaeri.kr/daeri/busan/
+            https://jeongukdaeri.kr/taksong/busan/
+        run: node scripts/indexnow-notify.js
