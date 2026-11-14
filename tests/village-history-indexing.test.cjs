@@ -21,3 +21,14 @@ test('source-empty villages remain noindex and global service pages are unchange
  assert.match(source,/source-empty-village-20261107/);
  assert.match(source,/2591/,'preserved historical ride inventory unchanged');
 });
+
+test('evidence-backed village hubs are in the verified sitemap, never empty village templates',()=>{
+ const start=source.indexOf("if(pathname==='/sitemap-verified-regions.xml')");
+ const end=source.indexOf("const localityMapMatch=",start);
+ assert.ok(start>0&&end>start,'verified sitemap handler is present');
+ const handler=source.slice(start,end);
+ assert.match(handler,/eligibleVillageServiceKeys\(\)/);
+ assert.match(handler,/eligibleVillageKeys\.has\(kind\+'\|'\+r\.full_name\)/);
+ assert.match(handler,/\.map\(r=>canonical\(r\.slug\)\)/);
+ assert.match(handler,/\.\.\.supported,\.\.\.verifiedVillageHubs/);
+});
