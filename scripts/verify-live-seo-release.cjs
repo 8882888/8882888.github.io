@@ -61,6 +61,16 @@ async function main(){
    }
    const root=await read('/sitemap-all.xml');
    if(!/<sitemapindex\b/i.test(root))throw Error('Invalid sitemap index');
+   // Production release must not re-submit low-distinctiveness locality/topic
+   // permutations through the priority sitemap after pruning the guide sitemap.
+   const priorityXml=await read('/sitemap-priority.xml');
+   const reviewedXml=await read('/sitemap-regional-guides.xml');
+   const reviewedSample='/taksong/busan/gijang-gun/fare/';
+   const unreviewedSample='/taksong/gangwon/taebaek-si/fare/';
+   if(!priorityXml.includes(reviewedSample)||!reviewedXml.includes(reviewedSample)||
+      priorityXml.includes(unreviewedSample)||reviewedXml.includes(unreviewedSample)){
+    throw Error('Priority and regional guide sitemap quality gates differ on LIVE Cloudtype');
+   }
    const localityLevels=['province','city','county','district','eup','myeon','dong'];
    const villageMap='/sitemap-localities-ri.xml';
    const hasVillageMap=root.includes(new URL(villageMap,base).href);

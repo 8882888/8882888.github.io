@@ -48,6 +48,16 @@ test('priority sitemap guide selection respects the reviewed region and service 
    'reviewed regional guide entries remain discoverable');
 });
 
+test('live release verifier rejects unreviewed priority guide resurrection',()=>{
+ const verifier=fs.readFileSync(path.join(root,'scripts/verify-live-seo-release.cjs'),'utf8');
+ assert.ok(verifier.includes("const priorityXml=await read('/sitemap-priority.xml')"),
+  'verify the actual priority sitemap after Cloudtype deployment');
+ assert.ok(verifier.includes("const reviewedXml=await read('/sitemap-regional-guides.xml')"),
+  'compare priority and reviewed sitemap on the same release');
+ assert.ok(verifier.includes("priorityXml.includes(unreviewedSample)"),
+  'release must fail if a template-only priority guide is reintroduced');
+});
+
 test('Gijang-gun taksong has a direct homepage link and priority discovery URL',()=>{
  const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
  const priority=fs.readFileSync(path.join(root,'sitemap-priority.xml'),'utf8');

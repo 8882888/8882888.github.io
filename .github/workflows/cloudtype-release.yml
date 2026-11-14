@@ -64,7 +64,7 @@ jobs:
         run: node scripts/verify-live-seo-release.cjs
       - name: Audit nationwide production URLs
         run: node scripts/audit-indexability.cjs > indexability-report.json
-      - name: Summarize 45000 URL target
+      - name: Summarize 20000 indexed-document goal (technical URLs only)
         if: ${{ always() }}
         run: |
           if test -s indexability-report.json; then
