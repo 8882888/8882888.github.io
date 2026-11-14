@@ -1,0 +1,57 @@
+name: Check Naver priority crawlability and 8 sitemaps
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "server.js"
+      - "index.html"
+      - "robots.txt"
+      - "sitemap*.xml"
+      - "business/**"
+      - "daeri/**"
+      - "taksong/**"
+      - "scripts/audit-naver-priority-live.mjs"
+      - ".github/workflows/naver-priority-indexability.yml"
+  workflow_run:
+    workflows: ["Deploy to Cloudtype"]
+    types: [completed]
+    branches: [main]
+  schedule:
+    # Daily 09:45 Asia/Seoul; audit works even when auto deployment is blocked.
+    - cron: "45 0 * * *"
+permissions:
+  contents: read
+concurrency:
+  group: smart24-naver-priority-live
+  cancel-in-progress: true
+jobs:
+  read-only-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact source revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate read-only auditor syntax
+        run: node --check scripts/audit-naver-priority-live.mjs
+      - name: Check live HTTP, 8 sitemaps, noindex and canonical
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+        run: node scripts/audit-naver-priority-live.mjs
+      - name: Save report for Naver Search Advisor comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-naver-priority-crawl-audit
+          retention-days: 30
+          path: |
+            seo-priority-live-report.json
+            seo-priority-live-report.csv
+            seo-priority-live-report.md
+          if-no-files-found: warn
