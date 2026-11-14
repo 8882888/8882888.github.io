@@ -1,0 +1,21 @@
+name: Audit curated region canonical path collisions
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit-focused-index-paths.cjs
+      - .github/workflows/focused-canonical-audit.yml
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check all curated localities resolve to distinct canonical paths
+        run: node scripts/audit-focused-index-paths.cjs
