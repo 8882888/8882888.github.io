@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - scripts/audit-focused-index-paths.cjs
+      - data/naver-regional-focus-twelfth-taksong-100.json
       - .github/workflows/focused-canonical-audit.yml
 permissions:
   contents: read
