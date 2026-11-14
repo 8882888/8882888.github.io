@@ -140,6 +140,37 @@ check('Sejong real town works without internal direct-admin label',async()=>{
   assert.equal(d.cards[0].kind,kind);
  }
 });
+check('Nationwide B2B portal, canonical and five industry handoff links',async()=>{
+ const home=await get('/');
+ assert.equal(home.status,200);
+ assert.ok(home.body.includes('id="nationwide-b2b-entry-20261114"'),'homepage must expose B2B hub');
+ const hub=await get('/business/');
+ assert.equal(hub.status,200);
+ assert.match(hub.headers.get('content-type')||'',/text\/html/);
+ assert.ok(hub.body.includes('<link rel="canonical" href="https://jeongukdaeri.kr/business/">'));
+ assert.ok(hub.body.includes('name="robots" content="index,follow"'));
+ assert.ok(hub.body.includes('tel:18114294'));
+ assert.ok(hub.body.includes('id="business-copy"'));
+ const industries=['used-car','rental-car','export-port','scrapyard','auction'];
+ for(const industry of industries){
+  const route='/business/'+industry+'/';
+  assert.ok(hub.body.includes('href="'+route+'"'),'industry link missing: '+route);
+  const detail=await get(route);
+  assert.equal(detail.status,200,route);
+  assert.ok(detail.body.includes('tel:18114294'),route+' contact missing');
+  assert.ok(detail.body.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),route+' canonical');
+ }
+ for(const sitemap of ['/sitemap-priority.xml','/sitemap.xml']){
+  const xml=await get(sitemap);
+  assert.equal(xml.status,200,sitemap);
+  for(const route of ['/business/',...industries.map(v=>'/business/'+v+'/')]){
+   const loc='<loc>https://jeongukdaeri.kr'+route+'</loc>';
+   assert.equal(xml.body.split(loc).length-1,1,sitemap+' duplicate/missing '+route);
+  }
+ }
+ assert.ok(hub.body.includes('기사 수급'),'must state dispatch limitations');
+ assert.ok(hub.body.includes('견인'),'must distinguish road driving and towing');
+});
 (async()=>{
  let ok=0;
  for(const t of tasks){try{await t.fn();ok++;console.log('PASS '+t.name)}catch(e){console.error('FAIL '+t.name+': '+String(e?.message||e))}}
