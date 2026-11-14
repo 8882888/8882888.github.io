@@ -3101,10 +3101,15 @@ if(pathname==='/sitemap-priority.xml'){
   const r=regions.find(x=>x.full_name===full);
   return r?[servicePath(r,'taksong'),servicePath(r,'daeri')]:[];
  }),...sourceVerifiedRoutes])];
+ // The priority sitemap must follow the same reviewed source gate as
+ // sitemap-regional-guides.xml and the internal guide links. Without this gate,
+ // dozens of near-duplicate unreviewed fare/handover pages are still advertised
+ // as priority targets even after their main guide-sitemap removal.
  const priorityRegionalGuides=priorityLocalities.flatMap(full=>{
   const region=regionByFullName.get(full);
   return region?Object.entries(regionalIntentTypes).flatMap(([kind,topics])=>
-   topics.map(topic=>regionalIntentPath(region,kind,topic))):[];
+   reviewedIntentLinkKeys.has(kind+'|'+region.full_name)
+    ?topics.map(topic=>regionalIntentPath(region,kind,topic)):[]):[];
  });
  const nationwideRecruitmentHubs=regions.filter(r=>r.level==='시도').flatMap(r=>['/recruit/daeri/'+r.slug+'/','/recruit/taksong/'+r.slug+'/']);
  // Prioritize nationwide commercial-intent pages before broad regional inventories.

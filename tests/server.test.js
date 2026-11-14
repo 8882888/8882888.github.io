@@ -1323,6 +1323,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(fareHtml.includes('통행료·주유비·주차비'),'estimator discloses costs to confirm');
   const homeHtml=await (await get('/')).text();
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
+  // The priority sitemap must not re-introduce guides rejected by the
+  // reviewed-guide sitemap. The legal-region landing itself remains prioritized.
+  const priorityGuideXml=await (await get('/sitemap-priority.xml')).text();
+  assert.ok(priorityGuideXml.includes('/taksong/busan/gijang-gun/'),
+    'Gijang landing remains in priority discovery');
+  assert.ok(priorityGuideXml.includes('/taksong/busan/gijang-gun/fare/'),
+    'Source-reviewed Gijang taksong guide is eligible for priority discovery');
+  assert.ok(!priorityGuideXml.includes('/taksong/gangwon/taebaek-si/fare/'),
+    'Unreviewed Taebaek fare permutation cannot leak into priority sitemap');
+  assert.ok(!priorityGuideXml.includes('/daeri/busan/gijang-gun/fare/'),
+    'An unreviewed service counterpart must not borrow another service evidence');
   const focusedGuides=await (await get('/sitemap-regional-guides.xml')).text();
   assert.ok(focusedGuides.includes('/taksong/busan/fare/'),'reviewed regional fare guide remains submitted');
   assert.ok(!focusedGuides.includes('/taksong/gyeonggi/icheon-si/yulhyeon-dong/fare/'),'unreviewed locality/topic permutations do not crowd the guide sitemap');

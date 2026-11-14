@@ -36,6 +36,18 @@ test('reviewed regional sitemap is backed by source-reviewed pages only',()=>{
  }
 });
 
+test('priority sitemap guide selection respects the reviewed region and service gate',()=>{
+ const start=server.indexOf("if(pathname==='/sitemap-priority.xml')");
+ assert.ok(start>=0,'dynamic priority sitemap handler must exist');
+ const code=server.slice(start,server.indexOf("if(pathname==='/sitemap-daeri.xml'",start));
+ assert.ok(code.includes("reviewedIntentLinkKeys.has(kind+'|'+region.full_name)"),
+   'priority sitemap must not relist all unreviewed topic permutations');
+ assert.ok(code.includes('...priorityLocalityRoutes'),
+   'original canonical locality landings remain discoverable');
+ assert.ok(code.includes('...priorityRegionalGuides'),
+   'reviewed regional guide entries remain discoverable');
+});
+
 test('Gijang-gun taksong has a direct homepage link and priority discovery URL',()=>{
  const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
  const priority=fs.readFileSync(path.join(root,'sitemap-priority.xml'),'utf8');
