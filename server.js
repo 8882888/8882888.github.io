@@ -3069,7 +3069,15 @@ if(pathname==='/sitemap-verified-regions.xml'){
    indexableHistoricalRides.some(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개'));
   return applicable.map(kind=>servicePath(r,kind));
  });
- const urls=[...new Set(supported)].slice(0,2000);
+ // Include village hubs ONLY when the same preserved completed-ride
+ // evidence gate already admits a village service URL. Their /region/ hub now
+ // links directly to that real archived trip and is not marked noindex.
+ // No source-empty village directory pages enter this discoverability feed.
+ const eligibleVillageKeys=eligibleVillageServiceKeys();
+ const verifiedVillageHubs=regions.filter(r=>r.level==='리'&&
+  ['daeri','taksong'].some(kind=>eligibleVillageKeys.has(kind+'|'+r.full_name)))
+  .map(r=>canonical(r.slug));
+ const urls=[...new Set([...supported,...verifiedVillageHubs])].slice(0,2000);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(route=>'<url><loc>'+esc(new URL(base+route).href)+'</loc></url>').join('')+'</urlset>';
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
