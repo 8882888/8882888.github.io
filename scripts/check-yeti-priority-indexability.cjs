@@ -33,6 +33,20 @@ function attribute(tag,name){
 function noindex(value){
  return /(?:^|[\s,;])(?:noindex|none)(?:$|[\s,;])/i.test(String(value||''));
 }
+function xRobotsIndexAgents(value){
+ const out=new Set();
+ for(const line of String(value||'').split(/\r?\n/)){
+  let agent='robots';
+  for(const part of line.split(',')){
+   const text=part.trim();
+   const scoped=text.match(/^([a-z][a-z0-9_-]*)\s*:\s*(.*)$/i);
+   const directive=scoped?scoped[2]:text;
+   if(scoped)agent=scoped[1].toLowerCase();
+   if(noindex(directive))out.add(agent);
+  }
+ }
+ return [...out];
+}
 function inspectHtml(html,expectedUrl,headers,options={}){
  const issues=[];
  const title=(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]||'').replace(/<[^>]+>/g,'').trim();
@@ -49,7 +63,10 @@ function inspectHtml(html,expectedUrl,headers,options={}){
  const robots=(html.match(/<meta\b[^>]*>/gi)||[]).filter(tag=>/^(robots|yeti)$/i.test(attribute(tag,'name')))
   .map(tag=>attribute(tag,'content'));
  if(robots.some(noindex))issues.push('html_noindex');
- if(noindex(headers.get('x-robots-tag')))issues.push('header_noindex');
+ // "Googlebot: noindex" does not block Naver Yeti. Header directives
+ // without an agent or specifically scoped to Yeti do.
+ if(xRobotsIndexAgents(headers.get('x-robots-tag')).some(agent=>agent==='robots'||agent==='yeti'))
+  issues.push('header_noindex');
  const descriptionTags=(html.match(/<meta\b[^>]*>/gi)||[]).filter(tag=>attribute(tag,'name').toLowerCase()==='description');
  const description=descriptionTags.length===1?attribute(descriptionTags[0],'content').trim():'';
  if(!description)issues.push('missing_description');
@@ -124,4 +141,4 @@ if(require.main===module){
   if(report.failed)process.exitCode=1;
  }).catch(e=>{console.error(e);process.exitCode=1});
 }
-module.exports={TARGETS,PROVINCE_DAERI_TARGETS,PROVINCE_TAKSONG_TARGETS,YETI,attribute,noindex,inspectHtml,checkOne,run};
+module.exports={TARGETS,PROVINCE_DAERI_TARGETS,PROVINCE_TAKSONG_TARGETS,YETI,attribute,noindex,xRobotsIndexAgents,inspectHtml,checkOne,run};
