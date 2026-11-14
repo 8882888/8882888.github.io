@@ -24,9 +24,12 @@ permissions:
   contents: read
 concurrency:
   group: smart24-naver-priority-live
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   read-only-audit:
+    # A failed Cloudtype deploy already has its own drift report. Run this audit after successful deploys,
+    # and independently on pushes / the daily schedule even while deployment is blocked.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
