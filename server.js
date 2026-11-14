@@ -3060,6 +3060,21 @@ if(pathname==='/sitemap-reviewed-routes.xml'){
 }
 // Discovery supplement: only regional pages supported by real completed ride records.
 // Do not expose templated village pages or create synthetic route URLs.
+// Single discovery feed for existing 2,900 curated local service guides.
+// It never creates new landing pages, and makes no claim of verified local trips.
+if(pathname==='/sitemap-focused-regions.xml'){
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const cached=sitemapCache.get(pathname);
+ if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
+ const routes=[...new Set([...priorityRegionalPages,...naverFocus2900].map(entry=>{
+  const region=regionByFullName.get(entry.region);
+  return region&&['daeri','taksong'].includes(entry.kind)?servicePath(region,entry.kind):null;
+ }).filter(Boolean))];
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
+  routes.map(route=>'<url><loc>'+esc(new URL(base+route).href)+'</loc></url>').join('')+'</urlset>';
+ sitemapCache.set(pathname,xml);
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 if(pathname==='/sitemap-verified-regions.xml'){
  const cached=sitemapCache.get(pathname);
  if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
@@ -3122,7 +3137,7 @@ if(pathname==='/sitemap-coast.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Object.keys(localitySitemapLevels).filter(key=>key!=='ri'||eligibleVillageServiceKeys().size>0).map(key=>'/sitemap-localities-'+key+'.xml'),...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Object.keys(localitySitemapLevels).filter(key=>key!=='ri'||eligibleVillageServiceKeys().size>0).map(key=>'/sitemap-localities-'+key+'.xml'),...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
