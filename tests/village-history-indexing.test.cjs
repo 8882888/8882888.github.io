@@ -32,3 +32,13 @@ test('evidence-backed village hubs are in the verified sitemap, never empty vill
  assert.match(handler,/\.map\(r=>canonical\(r\.slug\)\)/);
  assert.match(handler,/\.\.\.supported,\.\.\.verifiedVillageHubs/);
 });
+
+test('sitemap exclusion and village HTML use same service-specific real ride evidence gates',()=>{
+ const page=source.slice(source.indexOf('function servicePage(r,kind)'),source.indexOf('function regionPage(r)'));
+ assert.match(page,/publicRides\.some\(x=>x\.service===kind&&tripMatchesRegion\(x,r\)\)/);
+ const xml=source.slice(source.indexOf("if(type.startsWith('application/xml;'))"),
+  source.indexOf("// Negotiate compression for large HTML only"));
+ assert.match(xml,/!focus50ByKey\.has\(service\[1\]\+'\|'\+r\.full_name\)/);
+ assert.match(xml,/const confirmed=publicRides\.some\(x=>x\.service===kind&&tripMatchesRegion\(x,r\)\)/);
+ assert.match(xml,/!regionalServiceEvidence\(r,kind\)\.length/);
+});
