@@ -84,7 +84,7 @@ async function check(){
  // Compare the deployed original file SHA via /health/seo.json instead of
  // comparing rendered live bytes with the unmodified repository HTML.
  const liveBusiness=await b2bRes.text();
- if(!/<html[\s>]/i.test(liveBusiness)||!/<title>[\s\\S]*?<\/title>/i.test(liveBusiness)||
+ if(!/<html[\s>]/i.test(liveBusiness)||!/<title>[\s\S]*?<\/title>/i.test(liveBusiness)||
     !/<h1[\s>]/i.test(liveBusiness)){
   throw Error('Live business portal HTML lacks essential HTML/title/H1 structure');
  }
