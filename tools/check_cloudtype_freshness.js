@@ -6,7 +6,7 @@ const crypto=require('node:crypto');
 const path=require('node:path');
 const base=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const sha=name=>crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'..',name))).digest('hex');
-const serverHash=sha('server.js'),homeHash=sha('index.html');
+const serverHash=sha('server.js'),homeHash=sha('index.html'),businessHash=sha('business/index.html');
 const serverSource=fs.readFileSync(path.join(__dirname,'..','server.js'),'utf8');
 const guardCounts=[...serverSource.matchAll(/naverFocus(\d+)\.length!==(\d+)/g)]
  .filter(match=>match[1]===match[2])
@@ -25,6 +25,7 @@ async function check(){
  const mismatches=[];
  if(hashes['server.js']!==serverHash)mismatches.push('server.js fingerprint does not match GitHub');
  if(hashes['index.html']!==homeHash)mismatches.push('index.html fingerprint does not match GitHub');
+ if(hashes['business/index.html']!==businessHash)mismatches.push('business/index.html source fingerprint does not match GitHub');
  if(actualCount!==expectedCount)mismatches.push('curated guide count: live '+actualCount+' / source '+expectedCount);
  if(!String(resp.headers.get('cache-control')||'').includes('no-store'))mismatches.push('health endpoint not marked no-store');
  if(mismatches.length)throw Error(mismatches.join('; '));
@@ -79,11 +80,19 @@ async function check(){
   headers:{Accept:'text/html','Cache-Control':'no-cache'},redirect:'error'
  });
  if(!b2bRes.ok)throw Error('Live business portal HTTP '+b2bRes.status);
- const liveBusiness=Buffer.from(await b2bRes.arrayBuffer());
- const expectedBusiness=fs.readFileSync(path.join(__dirname,'..','business/index.html'));
- const contentHash=v=>crypto.createHash('sha256').update(v).digest('hex');
- if(contentHash(liveBusiness)!==contentHash(expectedBusiness)){
-  throw Error('Live business portal HTML differs from committed source');
+ // Server-side SEO, analytics and keyword enhancers legitimately change HTML.
+ // Compare the deployed original file SHA via /health/seo.json instead of
+ // comparing rendered live bytes with the unmodified repository HTML.
+ const liveBusiness=await b2bRes.text();
+ if(!/<html[\\s>]/i.test(liveBusiness)||!/<title>[\\s\\S]*?<\\/title>/i.test(liveBusiness)||
+    !/<h1[\\s>]/i.test(liveBusiness)){
+  throw Error('Live business portal HTML lacks essential HTML/title/H1 structure');
+ }
+ if(/<meta[^>]+name=["']robots["'][^>]+noindex/i.test(liveBusiness)){
+  throw Error('Live canonical business portal has unexpected noindex meta');
+ }
+ if(!liveBusiness.includes('https://jeongukdaeri.kr/business/')){
+  throw Error('Live business portal lacks expected canonical URL reference');
  }
  if(/noindex/i.test(b2bRes.headers.get('x-robots-tag')||'')){
   throw Error('Live canonical business portal has unexpected noindex header');
