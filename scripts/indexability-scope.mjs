@@ -52,3 +52,28 @@ export function blockedMetaIndexAgents(html){
  }
  return [...new Set(agents)];
 }
+
+
+/** Separate Yeti/global X-Robots-Tag exclusions from other engines' directives.
+ * Handles agent-scoped comma lists and repeated header lines without mistaking
+ * "googlebot: noindex" for an instruction to Naver.
+ */
+export function blockedXRobotsIndexAgents(value){
+ const blocked=new Set();
+ const raw=Array.isArray(value)?value.join('\n'):String(value||'');
+ for(const line of raw.split(/\r?\n/)){
+  let agent='robots';
+  for(const piece of line.split(',')){
+   const segment=piece.trim();
+   const scoped=segment.match(/^([a-z][a-z0-9_-]*)\s*:\s*(.*)$/i);
+   let directive=segment;
+   if(scoped){
+    agent=scoped[1].toLowerCase();
+    directive=scoped[2];
+   }
+   if(/(?:^|[\s;])(?:noindex|none)(?=$|[\s;])/i.test(directive))
+    blocked.add(agent);
+  }
+ }
+ return [...blocked];
+}
