@@ -1,0 +1,14 @@
+# Existing Cloudtype service provided by the operator; never create a new app.
+# Project/space is intentionally NOT guessed here; supply CLOUDTYPE_PROJECT
+# as the GitHub repository Actions variable with Cloudtype's space/project value.
+name: smart24-taksong-backup
+app: dockerfile
+resources: null
+options:
+  ports: "3000"
+  env: []
+  args: []
+context:
+  git:
+    url: https://github.com/8882888/8882888.github.io.git
+    ref: refs/heads/main
