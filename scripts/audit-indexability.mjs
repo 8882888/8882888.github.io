@@ -4,6 +4,7 @@
 import {writeFileSync,renameSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink} from './indexability-scope.mjs';
+import {fetchWithRetry} from './indexability-retry.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const transportOrigin=process.env.AUDIT_TRANSPORT_ORIGIN||origin;
 const sitemapPaths=['/sitemap-all.xml','/sitemap-history.xml','/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
@@ -19,7 +20,7 @@ async function scanSitemap(url,depth=0){
  if(processed.has(url)||depth>4)return;
  processed.add(url);
  try{
-  const response=await get(url),body=await response.text();
+  const {response}=await fetchWithRetry(url,get),body=await response.text();
   if(!response.ok||!/<(?:urlset|sitemapindex)\b/i.test(body))throw Error('HTTP '+response.status+' or invalid sitemap XML');
   const entries=urls(body);
   if(/<sitemapindex\b/i.test(body)){for(const child of entries)await scanSitemap(child,depth+1);return}
@@ -35,7 +36,7 @@ async function scanSitemap(url,depth=0){
 // A disallow rule or unavailable robots.txt can suppress crawl even when pages return 200.
 const crawlerDiagnostics=[];
 try{
- const robotsResponse=await get(origin+'/robots.txt');
+ const {response:robotsResponse}=await fetchWithRetry(origin+'/robots.txt',get);
  const robotsBody=await robotsResponse.text();
  if(!robotsResponse.ok) crawlerDiagnostics.push('robots_http_'+robotsResponse.status);
  for(const match of robotsBody.matchAll(/^sitemap\s*:\s*(https?:\/\/\S+)/gim))advertisedSitemaps.add(match[1]);
@@ -65,9 +66,10 @@ saveCheckpoint();
 async function worker(){
  while(true){
   const i=current++;if(i>=list.length)return;
-  const item=list[i];let status=0,finalUrl='',canonical='',robots='',title='',bodyHash='',hasRideLink=false,problem=[];
+  const item=list[i];let status=0,finalUrl='',canonical='',robots='',title='',bodyHash='',hasRideLink=false,fetchAttempts=0,problem=[];
   try{
-   const r=await get(item.url);status=r.status;finalUrl=transportOrigin===origin?r.url:origin+new URL(r.url).pathname+new URL(r.url).search;
+   const fetched=await fetchWithRetry(item.url,get);fetchAttempts=fetched.attempts;
+   const r=fetched.response;status=r.status;finalUrl=transportOrigin===origin?r.url:origin+new URL(r.url).pathname+new URL(r.url).search;
    const type=r.headers.get('content-type')||'';
    robots=r.headers.get('x-robots-tag')||'';
    if(!r.ok)problem.push('http_error');
@@ -90,8 +92,9 @@ async function worker(){
     if(!title)problem.push('missing_title');
     if(/<meta\b[^>]*http-equiv=["']refresh["']/i.test(html))problem.push('meta_refresh');
    }
-  }catch(e){problem.push((e?.name==='AbortError'||e?.name==='TimeoutError')?'timeout':'fetch_error:'+String(e).slice(0,100))}
-  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,problems:problem};
+  }catch(e){fetchAttempts=e?.retryAttempts||fetchAttempts||1;
+   problem.push((e?.name==='AbortError'||e?.name==='TimeoutError')?'timeout':'fetch_error:'+String(e).slice(0,100))}
+  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,fetchAttempts,problems:problem};
   done++;
   if(done%500===0){saveCheckpoint();console.log('Checked',done,'/',list.length);}
   await delay(transportOrigin===origin?100:0);
@@ -110,6 +113,8 @@ const technicallyClean=results.filter(r=>r.status===200&&r.problems.length===0).
 const counts={discovered:list.length,checked:results.length,targetNaverIndexed:20000,
  naverIndexed:null,technicallyClean,technicalGapTo20000:Math.max(0,20000-technicallyClean),
  listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,
+ transientRecoveredAfterRetry:results.filter(r=>r.fetchAttempts>1&&r.status===200).length,
+ persistentRequestErrors:results.filter(r=>r.problems.some(p=>p==='timeout'||p.startsWith('fetch_error'))).length,
  ...regionalCoverage,...guideCoverage,passed:results.filter(r=>r.problems.length===0).length,
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,crawlerDiagnostics,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
@@ -126,6 +131,8 @@ const lines=[
  'Generated: '+new Date().toISOString(),
  'Scope: '+(transportOrigin===origin?'production HTTP':'local source responses; not production verification'),
  'Discovered: '+counts.discovered+' | Checked: '+counts.checked+' | Critical: '+critical.length+' | Review: '+review.length,
+ 'Recovered transient HTTP failures after bounded retries: '+counts.transientRecoveredAfterRetry+
+ ' | Still failing after retry: '+counts.persistentRequestErrors,
  'Canonical region-service landings: '+counts.regionalServicePages+' | Without a DIRECT ride-history document link: '+counts.regionalPagesWithoutReviewLink,
  'Regional intent guides: '+counts.regionalIntentGuidePages+' | Without a direct ride-history document link: '+counts.regionalGuidesWithoutDirectRideLink,
  'Naver indexing goal: 20,000 | Real Naver indexed URLs: not accessible from this HTTP audit.',
