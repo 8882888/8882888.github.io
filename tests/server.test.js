@@ -406,7 +406,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const focusedResponse=await get('/sitemap-focused-regions.xml');
   assert.equal(focusedResponse.status,200,'curated service page discovery feed must load');
   const focusedXml=await focusedResponse.text();
-  const focusedUrls=[...focusedXml.matchAll(/<loc>([^<]+)<\\/loc>/g)].map(m=>m[1]);
+  const focusedUrls=[...focusedXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
   assert.ok(focusedUrls.length>=2900&&focusedUrls.length<3100,
     'focused sitemap should include curated canonical pages, not all template regions: '+focusedUrls.length);
   assert.equal(new Set(focusedUrls).size,focusedUrls.length,'focused map contains unique URLs');
