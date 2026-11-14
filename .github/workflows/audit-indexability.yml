@@ -1,11 +1,10 @@
 name: Full sitemap URL indexability audit
 on:
   workflow_dispatch:
-  workflow_run:
-    # Always inspect production after a release check, including failed ones.
-    workflows: ['Verify official Cloudtype release matches GitHub main']
-    types: [completed]
-    branches: [main]
+  # Full HTTP scans are expensive. Do not enqueue a 120-minute scan on every
+  # frequent deployment-parity check (including failed releases): those runs
+  # create a backlog and prevent one complete diagnostic from finishing.
+  # Hourly Yeti/priority sitemap monitoring remains in its separate workflow.
   schedule:
     - cron: '30 2 * * *'
 permissions:
