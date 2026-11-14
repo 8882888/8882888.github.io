@@ -1,6 +1,7 @@
 // Read-only synthetic Yeti user-agent check of live crawlability.
 // This is NOT evidence that Naver indexed a URL, or that the real Yeti crawler's IP was allowed.
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import {blockedXRobotsIndexAgents,blockedMetaIndexAgents,naverRobotsDisallowAll} from './indexability-scope.mjs';
@@ -136,6 +137,12 @@ async function checkPage(p){
   if(heads.length!==1)item.problems.push('seo_h1_count_'+heads.length);
   const visible=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
   item.visibleChars=visible.length;
+  // Diagnostic only: hash the article/main copy, excluding shared navigation,
+  // scripts and styles. Never turn a similarity warning into a noindex rule.
+  const mainHtml=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1]||'';
+  const editorial=mainHtml.replace(/<(?:script|style|nav|footer|header)\b[^>]*>[\s\S]*?<\/(?:script|style|nav|footer|header)>/gi,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+  item.editorialChars=editorial.length;
+  item.editorialFingerprint=editorial.length>=300?createHash('sha256').update(editorial).digest('hex').slice(0,20):null;
   if(visible.length<250)item.problems.push('quality_thin_content_review');
   if(/<meta\b[^>]*http-equiv=["']refresh["']/i.test(html))item.problems.push('index_excluded_meta_refresh');
  }catch(e){item.problems.push('collection_limited_fetch_error_'+String(e).slice(0,120));}
@@ -152,9 +159,18 @@ for(let i=0;i<paths.length;i+=2){
 const titles=new Map();
 for(const p of result.pageChecks){if(!p.title)continue;const a=titles.get(p.title)||[];a.push(p);titles.set(p.title,a);}
 for(const p of result.pageChecks)if(p.title&&titles.get(p.title).length>1)p.problems.push('quality_duplicate_title_in_sample');
+const editorialDuplicates=new Map();
+for(const p of result.pageChecks){
+ if(!p.editorialFingerprint)continue;
+ const group=editorialDuplicates.get(p.editorialFingerprint)||[];
+ group.push(p.url);editorialDuplicates.set(p.editorialFingerprint,group);
+}
+result.duplicateEditorialGroups=[...editorialDuplicates.values()].filter(g=>g.length>1);
+for(const p of result.pageChecks)if(result.duplicateEditorialGroups.some(g=>g.includes(p.url)))p.problems.push('quality_identical_main_text_in_sample');
 result.summary={
  expectedSitemaps:8,sourceSitemaps:srcSitemaps.length,liveSitemaps:result.liveSitemaps.length,
  checkedPages:result.pageChecks.length,provinceHubPages:provincePages.length,cleanPages:result.pageChecks.filter(p=>p.problems.length===0).length,
+ identicalEditorialGroups:result.duplicateEditorialGroups.length,
  slowPagesOver8s:result.pageChecks.filter(p=>(p.durationMs||0)>8000).length,
  retriedPages:result.pageChecks.filter(p=>(p.attempts||0)>1).length,
  collectionLimitations:result.pageChecks.filter(p=>p.problems.some(x=>x.startsWith('collection_limited'))).length,
@@ -166,8 +182,8 @@ result.summary={
 const csv=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
 fs.writeFileSync('seo-priority-live-report.json',JSON.stringify(result,null,2));
 fs.writeFileSync('seo-priority-live-report.csv',[
- 'url,status,title,h1,canonical,visible_chars,duration_ms,attempts,problems',
- ...result.pageChecks.map(p=>[p.url,p.status,p.title,p.h1,p.canonical,p.visibleChars,p.durationMs??'',p.attempts??'',p.problems.join(';')].map(csv).join(','))
+ 'url,status,title,h1,canonical,visible_chars,editorial_chars,duration_ms,attempts,problems',
+ ...result.pageChecks.map(p=>[p.url,p.status,p.title,p.h1,p.canonical,p.visibleChars,p.editorialChars??'',p.durationMs??'',p.attempts??'',p.problems.join(';')].map(csv).join(','))
 ].join('\n'));
 const problems=[
  ...result.crawlerFindings.map(v=>'- robots / sitemap declaration: '+v),
