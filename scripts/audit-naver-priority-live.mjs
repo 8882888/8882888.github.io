@@ -44,6 +44,7 @@ const namedMeta=(html,name)=>[...html.matchAll(/<meta\b[^>]*>/gi)]
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function read(route){
  const url=new URL(route,origin);
+ const started=Date.now();
  // The live service has a small Cloudtype instance. Do not flood it with
  // parallel synthetic-crawler requests; retry a transient timeout once.
  let lastError;
@@ -52,7 +53,7 @@ async function read(route){
   try{
    const response=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(20000),headers:{'User-Agent':userAgent,'Accept':'text/html,application/xml,text/plain,*/*','Cache-Control':'no-cache'}});
    const body=await response.text();
-   return {status:response.status,contentType:response.headers.get('content-type')||'',location:response.headers.get('location')||'',xRobots:response.headers.get('x-robots-tag')||'',body};
+   return {status:response.status,contentType:response.headers.get('content-type')||'',location:response.headers.get('location')||'',xRobots:response.headers.get('x-robots-tag')||'',body,durationMs:Date.now()-started,attempts:attempt+1};
   }catch(error){
    lastError=error;
    if(!/timeout|aborted|fetch failed/i.test(String(error)))break;
@@ -107,7 +108,7 @@ async function checkSitemap(src){
 async function checkPage(p){
  const item={url:new URL(p,origin).href,status:0,title:'',h1:'',canonical:'',visibleChars:0,problems:[]};
  try{
-  const r=await read(p);item.status=r.status;
+  const r=await read(p);item.status=r.status;item.durationMs=r.durationMs;item.attempts=r.attempts;
   if(r.status!==200){item.problems.push(r.status>=300&&r.status<400?'collection_limited_redirect':'collection_limited_http_'+r.status);item.location=r.location;}
   if(!/text\/html/i.test(r.contentType))item.problems.push('not_html');
   if(blockedXRobotsIndexAgents(r.xRobots).some(agent=>agent==='robots'||agent==='yeti'))item.problems.push('index_excluded_x_robots');
@@ -154,6 +155,8 @@ for(const p of result.pageChecks)if(p.title&&titles.get(p.title).length>1)p.prob
 result.summary={
  expectedSitemaps:8,sourceSitemaps:srcSitemaps.length,liveSitemaps:result.liveSitemaps.length,
  checkedPages:result.pageChecks.length,provinceHubPages:provincePages.length,cleanPages:result.pageChecks.filter(p=>p.problems.length===0).length,
+ slowPagesOver8s:result.pageChecks.filter(p=>(p.durationMs||0)>8000).length,
+ retriedPages:result.pageChecks.filter(p=>(p.attempts||0)>1).length,
  collectionLimitations:result.pageChecks.filter(p=>p.problems.some(x=>x.startsWith('collection_limited'))).length,
  excludedOrCanonical:result.pageChecks.filter(p=>p.problems.some(x=>x.startsWith('index_excluded'))).length,
  siteMapProblems:result.siteMapChecks.filter(p=>p.problems.length).length,
@@ -163,8 +166,8 @@ result.summary={
 const csv=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
 fs.writeFileSync('seo-priority-live-report.json',JSON.stringify(result,null,2));
 fs.writeFileSync('seo-priority-live-report.csv',[
- 'url,status,title,h1,canonical,visible_chars,problems',
- ...result.pageChecks.map(p=>[p.url,p.status,p.title,p.h1,p.canonical,p.visibleChars,p.problems.join(';')].map(csv).join(','))
+ 'url,status,title,h1,canonical,visible_chars,duration_ms,attempts,problems',
+ ...result.pageChecks.map(p=>[p.url,p.status,p.title,p.h1,p.canonical,p.visibleChars,p.durationMs??'',p.attempts??'',p.problems.join(';')].map(csv).join(','))
 ].join('\n'));
 const problems=[
  ...result.crawlerFindings.map(v=>'- robots / sitemap declaration: '+v),
