@@ -3,11 +3,14 @@
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import {blockedXRobotsIndexAgents} from './indexability-scope.mjs';
+import {blockedXRobotsIndexAgents,blockedMetaIndexAgents,naverRobotsDisallowAll} from './indexability-scope.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const origin=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const userAgent='Mozilla/5.0 (compatible; Yeti/1.1; +https://naver.me/spd)';
-const paths=[
+const provinces=['seoul','busan','daegu','incheon','gwangju','daejeon','ulsan','sejong',
+ 'gyeonggi','gangwon','chungbuk','chungnam','jeonbuk','jeonnam','gyeongbuk','gyeongnam','jeju'];
+const provincePages=provinces.flatMap(province=>['/daeri/'+province+'/','/taksong/'+province+'/']);
+const paths=[...new Set([
  '/','/taksong/','/daeri/','/service/taksong/','/service/long-distance-taksong/',
  '/service/long-distance-daeri/','/service/corporate/','/service/golf/','/fare/',
  '/coverage/','/region/','/recruit/daeri/','/recruit/taksong/','/reviews/history/',
@@ -16,8 +19,14 @@ const paths=[
  '/business/scrapyard/','/business/auction/','/taksong/busan/','/daeri/busan/',
  '/taksong/daegu/','/daeri/daegu/','/taksong/busan/gijang-gun/',
  '/taksong/jeju/','/region/innovation-cities/','/special/cycling-trail-transport/',
- '/route-taksong/centers/'
-];
+ '/route-taksong/centers/',
+ // Explicitly protect the province hubs and four innovation-city search targets.
+ ...provincePages,
+ '/daeri/gangwon/wonju-si/','/taksong/gangwon/wonju-si/',
+ '/daeri/gyeongnam/jinju-si/','/taksong/gyeongnam/jinju-si/',
+ '/daeri/jeonnam/naju-si/','/taksong/jeonnam/naju-si/',
+ '/daeri/gyeongbuk/gimcheon-si/','/taksong/gyeongbuk/gimcheon-si/'
+])];
 const sourceRobots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
 const srcSitemaps=[...sourceRobots.matchAll(/^Sitemap:\s*(\S+)/gim)].map(m=>m[1]);
 const result={generatedAt:new Date().toISOString(),origin,scope:'live public HTTP checks using a synthetic Yeti user agent; not Naver account data',naverIndexed:null,reportedNaverIndexed:null,sourceSitemaps:srcSitemaps,liveSitemaps:[],siteMapChecks:[],pageChecks:[],crawlerFindings:[],warnings:[]};
@@ -25,7 +34,13 @@ const xmlUnescape=s=>String(s||'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').re
 const locs=xml=>[...xml.matchAll(/<loc\b[^>]*>([^<]+)<\/loc>/gi)].map(m=>xmlUnescape(m[1].trim()));
 const extract=(s,pattern)=>s.match(pattern)?.[1]?.replace(/\s+/g,' ').trim()||'';
 const content=(s,needle)=>new RegExp('<meta\\s+[^>]*name=["\\x27]'+needle+'["\\x27][^>]*>','i').exec(s)?.[0]||'';
-const metaValue=(tag)=>extract(tag,/\bcontent=["']([^"']+)["']/i);
+const htmlAttr=(tag,name)=>{
+ const match=String(tag||'').match(new RegExp('\\s'+name+'\\s*=\\s*(?:"([^"]*)"|\\x27([^\\x27]*)\\x27|([^\\s>]+))','i'));
+ return match?(match[1]??match[2]??match[3]??''):'';
+};
+const metaValue=(tag)=>htmlAttr(tag,'content');
+const namedMeta=(html,name)=>[...html.matchAll(/<meta\b[^>]*>/gi)]
+ .map(m=>m[0]).find(tag=>htmlAttr(tag,'name').toLowerCase()===name)||'';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function read(route){
  const url=new URL(route,origin);
@@ -43,7 +58,7 @@ async function checkRobots(){
   result.robotsStatus=r.status;
   result.liveSitemaps=[...r.body.matchAll(/^Sitemap:\s*(\S+)/gim)].map(m=>m[1]);
   if(r.status!==200)result.crawlerFindings.push('robots_http_'+r.status);
-  if(/(?:^|\n)\s*Disallow:\s*\/\s*(?:#.*)?(?:\n|$)/i.test(r.body))result.crawlerFindings.push('robots_disallow_all_manual_review');
+  if(naverRobotsDisallowAll(r.body))result.crawlerFindings.push('robots_yeti_disallow_all_manual_review');
   if(result.liveSitemaps.length!==8)result.crawlerFindings.push('live_sitemaps_'+result.liveSitemaps.length+'_expected_8');
   for(const source of srcSitemaps)if(!result.liveSitemaps.includes(source))result.crawlerFindings.push('missing_live_sitemap_declaration_'+source);
  }catch(e){result.crawlerFindings.push('robots_fetch_error_'+String(e).slice(0,130));}
@@ -78,7 +93,7 @@ async function checkSitemap(src){
  result.siteMapChecks.push(item);
 }
 async function checkPage(p){
- const item={url:origin+p,status:0,title:'',h1:'',canonical:'',visibleChars:0,problems:[]};
+ const item={url:new URL(p,origin).href,status:0,title:'',h1:'',canonical:'',visibleChars:0,problems:[]};
  try{
   const r=await read(p);item.status=r.status;
   if(r.status!==200){item.problems.push(r.status>=300&&r.status<400?'collection_limited_redirect':'collection_limited_http_'+r.status);item.location=r.location;}
@@ -86,16 +101,21 @@ async function checkPage(p){
   if(blockedXRobotsIndexAgents(r.xRobots).some(agent=>agent==='robots'||agent==='yeti'))item.problems.push('index_excluded_x_robots');
   const html=r.body;
   item.title=extract(html,/<title\b[^>]*>([\s\S]*?)<\/title>/i);
-  const descriptionTag=content(html,'description');
+  const descriptionTag=namedMeta(html,'description');
   item.description=metaValue(descriptionTag);
-  const metaRobots=content(html,'robots')+' '+content(html,'yeti');
-  if(/\bnoindex\b/i.test(metaRobots))item.problems.push('index_excluded_meta_noindex');
+  const blocked=blockedMetaIndexAgents(html);
+  if(blocked.some(agent=>agent==='robots'||agent==='yeti'))item.problems.push('index_excluded_meta_noindex');
+  const metaRobots=metaValue(namedMeta(html,'robots'))+' '+metaValue(namedMeta(html,'yeti'));
   if(/\bnofollow\b/i.test(metaRobots))item.problems.push('crawl_links_blocked_nofollow');
-  const canonicals=[...html.matchAll(/<link\b[^>]*\brel=["']canonical["'][^>]*>/gi)].map(m=>m[0]);
-  const href=canonicals.length===1?extract(canonicals[0],/\bhref=["']([^"']+)["']/i):'';
-  item.canonical=href?new URL(href,origin).href:'';
+  const canonicals=[...html.matchAll(/<link\b[^>]*>/gi)]
+   .map(m=>m[0]).filter(tag=>htmlAttr(tag,'rel').toLowerCase().split(/\s+/).includes('canonical'));
+  const href=canonicals.length===1?htmlAttr(canonicals[0],'href'):'';
   if(canonicals.length!==1)item.problems.push('index_excluded_canonical_count_'+canonicals.length);
-  else if(item.canonical!==item.url)item.problems.push('index_excluded_canonical_mismatch');
+  else {
+   try{item.canonical=new URL(href,origin).href;}
+   catch{item.problems.push('index_excluded_invalid_canonical');}
+   if(item.canonical!==item.url)item.problems.push('index_excluded_canonical_mismatch');
+  }
   if(!item.title)item.problems.push('seo_missing_title');
   if(!item.description)item.problems.push('seo_missing_description');
   const heads=[...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
@@ -120,7 +140,7 @@ for(const p of result.pageChecks){if(!p.title)continue;const a=titles.get(p.titl
 for(const p of result.pageChecks)if(p.title&&titles.get(p.title).length>1)p.problems.push('quality_duplicate_title_in_sample');
 result.summary={
  expectedSitemaps:8,sourceSitemaps:srcSitemaps.length,liveSitemaps:result.liveSitemaps.length,
- checkedPages:result.pageChecks.length,cleanPages:result.pageChecks.filter(p=>p.problems.length===0).length,
+ checkedPages:result.pageChecks.length,provinceHubPages:provincePages.length,cleanPages:result.pageChecks.filter(p=>p.problems.length===0).length,
  collectionLimitations:result.pageChecks.filter(p=>p.problems.some(x=>x.startsWith('collection_limited'))).length,
  excludedOrCanonical:result.pageChecks.filter(p=>p.problems.some(x=>x.startsWith('index_excluded'))).length,
  siteMapProblems:result.siteMapChecks.filter(p=>p.problems.length).length,
