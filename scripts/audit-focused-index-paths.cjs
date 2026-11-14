@@ -57,9 +57,15 @@ for(const entry of focus){
  const missing=guidanceFields.filter(field=>String(entry[field]||'').trim().length<(field==='topic'?3:35));
  if(missing.length)weak.push({region:entry.region,kind:entry.kind,missing});
 }
+// The manually reviewed twelfth taksong batch now has 100 independently
+// written handover instructions. Guard against accidental boilerplate regressions.
+const twelfthTaksong=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-twelfth-taksong-100.json'),'utf8')).priority;
+const twelfthHandoverCount=new Set(twelfthTaksong.map(x=>String(x.handover||'').trim())).size;
+const twelfthDuplicated=twelfthTaksong.length-twelfthHandoverCount;
 const result={regionCount:regions.length,focusFiles:sourceFiles.length,focusCount:focus.length,
  kinds:kindCounts,uniqueCanonicalUrls:seen.size,collisions:collisions.slice(0,25),
  collisionTotal:collisions.length,unknownCount:unknown.length,emptyCount:empty.length,
- weakGuidanceCount:weak.length,weakGuidanceExamples:weak.slice(0,15),repeatedGuidance};
+ weakGuidanceCount:weak.length,weakGuidanceExamples:weak.slice(0,15),repeatedGuidance,
+ twelfthTaksongGuideCount:twelfthTaksong.length,twelfthDuplicated};
 console.log(JSON.stringify(result,null,2));
-if(focus.length!==2900||unknown.length||empty.length||collisions.length||weak.length)process.exitCode=1;
+if(focus.length!==2900||unknown.length||empty.length||collisions.length||weak.length||twelfthTaksong.length!==100||twelfthDuplicated)process.exitCode=1;
