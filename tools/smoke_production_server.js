@@ -86,12 +86,12 @@ async function main(){
   }
   const naverPriority=await request(port,'/sitemap-priority.xml');
   assert.equal(naverPriority.status,200,'Yeti priority sitemap HTTP 200');
-  assert(/<urlset\\b/.test(naverPriority.body),'Priority XML must be a urlset');
+  assert(/<urlset\b/.test(naverPriority.body),'Priority XML must be a urlset');
   assert(naverPriority.body.includes('<loc>https://jeongukdaeri.kr/taksong/busan/gijang-gun/</loc>'),
     'Verified priority Gijang target must remain discoverable');
   const currentSitemap=await request(port,'/sitemap-published.xml');
   assert.equal(currentSitemap.status,200,'Newly published verified cases sitemap HTTP 200');
-  assert(/<urlset\\b/.test(currentSitemap.body),'Published case sitemap must be valid URL inventory');
+  assert(/<urlset\b/.test(currentSitemap.body),'Published case sitemap must be valid URL inventory');
   assert(!/noindex/i.test(String(currentSitemap.headers['x-robots-tag']||'')),
     'Published case sitemap must not be marked noindex');
   const blockedSource=await request(port,'/data/regions.json');
