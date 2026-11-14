@@ -44,9 +44,21 @@ const namedMeta=(html,name)=>[...html.matchAll(/<meta\b[^>]*>/gi)]
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function read(route){
  const url=new URL(route,origin);
- const response=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(12000),headers:{'User-Agent':userAgent,'Accept':'text/html,application/xml,text/plain,*/*','Cache-Control':'no-cache'}});
- const body=await response.text();
- return {status:response.status,contentType:response.headers.get('content-type')||'',location:response.headers.get('location')||'',xRobots:response.headers.get('x-robots-tag')||'',body};
+ // The live service has a small Cloudtype instance. Do not flood it with
+ // parallel synthetic-crawler requests; retry a transient timeout once.
+ let lastError;
+ for(let attempt=0;attempt<2;attempt++){
+  if(attempt)await sleep(1100);
+  try{
+   const response=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(20000),headers:{'User-Agent':userAgent,'Accept':'text/html,application/xml,text/plain,*/*','Cache-Control':'no-cache'}});
+   const body=await response.text();
+   return {status:response.status,contentType:response.headers.get('content-type')||'',location:response.headers.get('location')||'',xRobots:response.headers.get('x-robots-tag')||'',body};
+  }catch(error){
+   lastError=error;
+   if(!/timeout|aborted|fetch failed/i.test(String(error)))break;
+  }
+ }
+ throw lastError;
 }
 function safeUrl(value){
  try{const u=new URL(value,origin);return u.origin===origin && !u.search && !u.hash && u.pathname.endsWith('/');}
@@ -131,9 +143,10 @@ async function checkPage(p){
 await checkRobots();
 if(srcSitemaps.length!==8)result.crawlerFindings.push('source_sitemaps_'+srcSitemaps.length+'_expected_8');
 for(const sitemap of srcSitemaps){await checkSitemap(sitemap);await sleep(90);}
-for(let i=0;i<paths.length;i+=4){
- await Promise.all(paths.slice(i,i+4).map(checkPage));
- await sleep(170);
+// Keep load low enough to distinguish server-side availability from auditor overload.
+for(let i=0;i<paths.length;i+=2){
+ await Promise.all(paths.slice(i,i+2).map(checkPage));
+ await sleep(350);
 }
 const titles=new Map();
 for(const p of result.pageChecks){if(!p.title)continue;const a=titles.get(p.title)||[];a.push(p);titles.set(p.title,a);}
