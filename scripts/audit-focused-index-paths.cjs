@@ -40,8 +40,26 @@ for(const x of focus){
  if(seen.has(url))collisions.push({url,first:seen.get(url),second:x.kind+'|'+x.region});
  else seen.set(url,x.kind+'|'+x.region);
 }
+// Assess whether the curated 2,900 destinations have substantive differentiated
+// on-page guidance, rather than mistaking 2,900 generated URLs for 2,900
+// independently useful, index-ready pages.
+const guidanceFields=['topic','pickup','handover'];
+const weak=[],repeatedGuidance={};
+for(const field of guidanceFields){
+ const counts=new Map();
+ for(const entry of focus){
+  const v=String(entry[field]||'').replace(/\s+/g,' ').trim();
+  if(v)counts.set(v,(counts.get(v)||0)+1);
+ }
+ repeatedGuidance[field]=[...counts.values()].filter(n=>n>1).reduce((a,b)=>a+b,0);
+}
+for(const entry of focus){
+ const missing=guidanceFields.filter(field=>String(entry[field]||'').trim().length<(field==='topic'?3:35));
+ if(missing.length)weak.push({region:entry.region,kind:entry.kind,missing});
+}
 const result={regionCount:regions.length,focusFiles:sourceFiles.length,focusCount:focus.length,
  kinds:kindCounts,uniqueCanonicalUrls:seen.size,collisions:collisions.slice(0,25),
- collisionTotal:collisions.length,unknownCount:unknown.length,emptyCount:empty.length};
+ collisionTotal:collisions.length,unknownCount:unknown.length,emptyCount:empty.length,
+ weakGuidanceCount:weak.length,weakGuidanceExamples:weak.slice(0,15),repeatedGuidance};
 console.log(JSON.stringify(result,null,2));
-if(focus.length!==2900||unknown.length||empty.length||collisions.length)process.exitCode=1;
+if(focus.length!==2900||unknown.length||empty.length||collisions.length||weak.length)process.exitCode=1;
