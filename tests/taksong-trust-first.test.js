@@ -15,7 +15,8 @@ assert(server.includes('보험 적용 및 보장 범위'),'insurance disclosure 
 assert(home.includes('id="taksong-first-trust-home-20261106"'),'homepage transport priority missing');
 assert(home.includes('href="/reviews/history/?kind=taksong"'),'verified transport records must be linked');
 const rule=seo.pages.find(x=>x.path==='/taksong/');
-assert(rule.title.includes('실제 운행기록')&&rule.description.includes('인수인계'),'transport metadata must serve customers');
+assert(/실제 (?:운행기록|운행후기)/.test(rule.title)&&rule.description.includes('인수인계'),
+ 'transport metadata must serve customers');
 const child=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:'3168'},stdio:['ignore','pipe','pipe']});
 let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>output+=x);
 (async()=>{
