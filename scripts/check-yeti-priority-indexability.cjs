@@ -12,10 +12,12 @@ const PROVINCE_DAERI_TARGETS=Object.freeze([
  '/daeri/jeonbuk/','/daeri/jeonnam/','/daeri/gyeongbuk/','/daeri/gyeongnam/',
  '/daeri/jeju/'
 ]);
+const PROVINCE_TAKSONG_TARGETS=Object.freeze(PROVINCE_DAERI_TARGETS.map(route=>route.replace(/^\/daeri\//,'/taksong/')));
 const TARGETS=[
  '/',
  '/daeri/','/taksong/',
  ...PROVINCE_DAERI_TARGETS,
+ ...PROVINCE_TAKSONG_TARGETS,
  '/taksong/busan/gijang-gun/',
  '/taksong/gangwon/wonju-si/',
  '/taksong/gyeongnam/jinju-si/',
@@ -31,7 +33,7 @@ function attribute(tag,name){
 function noindex(value){
  return /(?:^|[\s,;])(?:noindex|none)(?:$|[\s,;])/i.test(String(value||''));
 }
-function inspectHtml(html,expectedUrl,headers){
+function inspectHtml(html,expectedUrl,headers,options={}){
  const issues=[];
  const title=(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]||'').replace(/<[^>]+>/g,'').trim();
  if(!title)issues.push('missing_title');
@@ -51,6 +53,19 @@ function inspectHtml(html,expectedUrl,headers){
  const descriptionTags=(html.match(/<meta\b[^>]*>/gi)||[]).filter(tag=>attribute(tag,'name').toLowerCase()==='description');
  const description=descriptionTags.length===1?attribute(descriptionTags[0],'content').trim():'';
  if(!description)issues.push('missing_description');
+ // GEO/AEO must be visible in the server response, not populated only by JavaScript.
+ // Only the 17 province hubs and two national service hubs are required here;
+ // sparse village pages retain their existing quality/noindex protections.
+ if(options.provinceHub){
+  if(!/<section\b[^>]*\bid=["']regional-direct-answer["']/i.test(html))issues.push('missing_regional_answer_first');
+  if(!/<h2\b[^>]*\bid=["']regional-direct-question["']/i.test(html))issues.push('missing_regional_answer_question');
+  if(!/href=["']\/fare\/\?service=(?:daeri|taksong)/i.test(html))issues.push('missing_regional_fare_lookup');
+  if(!/href=["']\/reviews\/history\/\?region=/i.test(html))issues.push('missing_regional_history_lookup');
+ }
+ if(options.nationalService){
+  const answerId='national-'+options.nationalService+'-direct-answer';
+  if(!html.includes('id="'+answerId+'"'))issues.push('missing_national_answer_first');
+ }
  return {title,description,canonical:target,issues};
 }
 async function checkOne(route,fetchImpl=fetch,base=BASE){
@@ -67,7 +82,10 @@ async function checkOne(route,fetchImpl=fetch,base=BASE){
  try{html=await response.text()}catch(e){issues.push('response_body_failure')}
  let title='',description='',canonical='';
  if(html&&/text\/html/i.test(contentType)){
-  const parsed=inspectHtml(html,url,response.headers);
+  const parsed=inspectHtml(html,url,response.headers,{
+   provinceHub:PROVINCE_DAERI_TARGETS.includes(route)||PROVINCE_TAKSONG_TARGETS.includes(route),
+   nationalService:route==='/daeri/'?'daeri':route==='/taksong/'?'taksong':null
+  });
   title=parsed.title;description=parsed.description;canonical=parsed.canonical;issues.push(...parsed.issues);
  }
  return {route,url,status,contentType,title,description,canonical,issues:[...new Set(issues)]};
@@ -77,16 +95,22 @@ async function run(fetchImpl=fetch,base=BASE){
  for(const route of TARGETS)results.push(await checkOne(route,fetchImpl,base));
  // Each provincial designated-driver landing should carry its own title.
  // Identical titles signal a major Naver deduplication risk despite HTTP 200.
- const provincial=results.filter(x=>PROVINCE_DAERI_TARGETS.includes(x.route));
- const titleCounts=new Map();
- for(const item of provincial)if(item.status===200&&item.title)
-  titleCounts.set(item.title,(titleCounts.get(item.title)||0)+1);
- for(const item of provincial)if(item.title&&titleCounts.get(item.title)>1)
-  item.issues.push('duplicate_provincial_title');
+ const provinceDaeri=results.filter(x=>PROVINCE_DAERI_TARGETS.includes(x.route));
+ const provinceTaksong=results.filter(x=>PROVINCE_TAKSONG_TARGETS.includes(x.route));
+ // Detect copied titles within the same service rather than cross-service labels.
+ for(const provincial of [provinceDaeri,provinceTaksong]){
+  const titleCounts=new Map();
+  for(const item of provincial)if(item.status===200&&item.title)
+   titleCounts.set(item.title,(titleCounts.get(item.title)||0)+1);
+  for(const item of provincial)if(item.title&&titleCounts.get(item.title)>1)
+   item.issues.push('duplicate_provincial_title');
+ }
  const failures=results.filter(item=>item.issues.length);
  return {generatedAt:new Date().toISOString(),base,checked:results.length,passed:results.length-failures.length,
-  failed:failures.length,provincialDaeriCount:provincial.length,
-  provincialDaeriFailed:provincial.filter(item=>item.issues.length).length,
+  failed:failures.length,provincialDaeriCount:provinceDaeri.length,
+  provincialDaeriFailed:provinceDaeri.filter(item=>item.issues.length).length,
+  provincialTaksongCount:provinceTaksong.length,
+  provincialTaksongFailed:provinceTaksong.filter(item=>item.issues.length).length,
   userAgent:YETI,scope:'User-Agent compatibility; not verified Yeti IP or Naver indexing',
   results};
 }
@@ -100,4 +124,4 @@ if(require.main===module){
   if(report.failed)process.exitCode=1;
  }).catch(e=>{console.error(e);process.exitCode=1});
 }
-module.exports={TARGETS,PROVINCE_DAERI_TARGETS,YETI,attribute,noindex,inspectHtml,checkOne,run};
+module.exports={TARGETS,PROVINCE_DAERI_TARGETS,PROVINCE_TAKSONG_TARGETS,YETI,attribute,noindex,inspectHtml,checkOne,run};
