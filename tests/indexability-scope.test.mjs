@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage,blockedMetaIndexAgents,blockedXRobotsIndexAgents} from '../scripts/indexability-scope.mjs';
+import {isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage,blockedMetaIndexAgents,blockedXRobotsIndexAgents,naverRobotsDisallowAll} from '../scripts/indexability-scope.mjs';
 test('actual nationwide region/service canonical pages count as locality landings',()=>{
  for(const route of ['/taksong/busan/','/daeri/sejong/','/taksong/busan/gijang-gun/',
  '/daeri/gangwon/wonju-si/','/taksong/sejong/jikhal/naseong-dong/'])
@@ -65,4 +65,19 @@ test('Naver Yeti is not blocked by Googlebot/Bingbot-only X-Robots-Tag',()=>{
  assert.deepEqual(blockedXRobotsIndexAgents('googlebot: noindex\nYeti: noindex'),['googlebot','yeti']);
  assert.deepEqual(blockedXRobotsIndexAgents('googlebot: noindex, bingbot: noindex'),['googlebot','bingbot']);
  assert.deepEqual(blockedXRobotsIndexAgents('index, follow'),[]);
+});
+
+
+test('Yeti robots.txt rules ignore disallow set only for Googlebot',()=>{
+ const cases=[
+  ['User-agent: Googlebot\nDisallow: /\n\nUser-agent: *\nAllow: /\n',false],
+  ['User-agent: *\nDisallow: /\n',true],
+  ['User-agent: *\nDisallow: /\nUser-agent: Yeti\nAllow: /\n',false],
+  ['User-agent: Yeti\nDisallow: /\nUser-agent: *\nAllow: /\n',true],
+  ['User-agent: *\nDisallow: /private/\nAllow: /\n',false],
+  ['User-agent: Yeti\nDisallow: /\nAllow: /\n',false],
+  ['User-agent: *\nAllow: /\n',false]
+ ];
+ for(const [robots,blocked] of cases)
+  assert.equal(naverRobotsDisallowAll(robots),blocked,robots);
 });
