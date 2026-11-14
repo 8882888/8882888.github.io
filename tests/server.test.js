@@ -1342,6 +1342,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const fareHtml=await (await get('/fare/')).text();
   assert.ok(fareHtml.includes('통행료·주유비·주차비'),'estimator discloses costs to confirm');
   const homeHtml=await (await get('/')).text();
+  assert.ok(homeHtml.includes('href="/reviews/completed-calls-20261114/"')&&homeHtml.includes('href="/reviews/integrated-20261114/"'),'indexed homepage links directly to the two anonymized completed-call evidence collections');
   assert.ok(homeHtml.includes('/fare/?service=taksong')&&homeHtml.includes('/fare/?service=daeri'),'homepage offers both service calculators');
   // The priority sitemap must not re-introduce guides rejected by the
   // reviewed-guide sitemap. The legal-region landing itself remains prioritized.
