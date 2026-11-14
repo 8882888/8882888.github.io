@@ -1,11 +1,13 @@
 'use strict';
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {TARGETS,YETI,noindex,inspectHtml,checkOne}=require('../scripts/check-yeti-priority-indexability.cjs');
+const {TARGETS,PROVINCE_DAERI_TARGETS,YETI,noindex,inspectHtml,checkOne,run}=require('../scripts/check-yeti-priority-indexability.cjs');
 const url='https://jeongukdaeri.kr/taksong/busan/gijang-gun/';
-const body=(canonical=url,robots='index,follow')=>'<html><head><title>기장군탁송 | 24시상담</title><link href="'+canonical+'" rel="canonical"><meta content="'+robots+'" name="robots"></head><body><h1>기장군탁송</h1></body></html>';
+const body=(canonical=url,robots='index,follow')=>'<html><head><title>기장군탁송 | 24시상담</title><meta name="description" content="기장군 차량 인계·요금 안내"><link href="'+canonical+'" rel="canonical"><meta content="'+robots+'" name="robots"></head><body><h1>기장군탁송</h1></body></html>';
 test('priority audit covers indexable nationwide and regional URLs',()=>{
  assert.ok(TARGETS.length>=10);
+ assert.equal(PROVINCE_DAERI_TARGETS.length,17,'must audit all 17 provincial daeri landing pages');
+ assert.ok(PROVINCE_DAERI_TARGETS.every(route=>TARGETS.includes(route)),'province coverage cannot be silently dropped');
  assert.ok(TARGETS.includes('/taksong/busan/gijang-gun/'));
  assert.ok(TARGETS.includes('/daeri/sejong/'));
  assert.ok(TARGETS.includes('/설악산탁송/'));
@@ -44,4 +46,21 @@ test('generic archive or malformed head cannot pass crawl check',()=>{
  assert.ok(res.issues.includes('missing_title'));
  assert.ok(res.issues.includes('missing_server_rendered_h1'));
  assert.ok(res.issues.includes('missing_or_multiple_canonical'));
+});
+
+test('SEO report flags duplicate provincial daeri titles across otherwise valid HTTP pages',async()=>{
+ const fake=async(url)=>({
+  status:200,
+  headers:new Headers({'content-type':'text/html; charset=utf-8'}),
+  text:async()=>'<html><head><title>공통 지역 대리운전</title><meta name="description" content="지역별 대리운전 예약 안내"><link rel="canonical" href="'+url+'"></head><body><h1>대리운전</h1></body></html>'
+ });
+ const report=await run(fake);
+ assert.equal(report.provincialDaeriCount,17);
+ assert.equal(report.provincialDaeriFailed,17);
+ assert.ok(report.results.filter(x=>PROVINCE_DAERI_TARGETS.includes(x.route)).every(x=>x.issues.includes('duplicate_provincial_title')));
+});
+test('missing description is reported separately from canonical and indexability',()=>{
+ const html=body().replace(/<meta name="description"[^>]+>/,'');
+ const report=inspectHtml(html,url,new Headers());
+ assert.deepEqual(report.issues,['missing_description']);
 });

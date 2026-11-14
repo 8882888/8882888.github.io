@@ -5,10 +5,17 @@ const fs=require('node:fs');
 const path=require('node:path');
 const BASE='https://jeongukdaeri.kr';
 const YETI='Mozilla/5.0 (compatible; Yeti/1.1; +https://naver.me/spd)';
+const PROVINCE_DAERI_TARGETS=Object.freeze([
+ '/daeri/seoul/','/daeri/busan/','/daeri/daegu/','/daeri/incheon/',
+ '/daeri/gwangju/','/daeri/daejeon/','/daeri/ulsan/','/daeri/sejong/',
+ '/daeri/gyeonggi/','/daeri/gangwon/','/daeri/chungbuk/','/daeri/chungnam/',
+ '/daeri/jeonbuk/','/daeri/jeonnam/','/daeri/gyeongbuk/','/daeri/gyeongnam/',
+ '/daeri/jeju/'
+]);
 const TARGETS=[
  '/',
  '/daeri/','/taksong/',
- '/daeri/sejong/',
+ ...PROVINCE_DAERI_TARGETS,
  '/taksong/busan/gijang-gun/',
  '/taksong/gangwon/wonju-si/',
  '/taksong/gyeongnam/jinju-si/',
@@ -41,7 +48,10 @@ function inspectHtml(html,expectedUrl,headers){
   .map(tag=>attribute(tag,'content'));
  if(robots.some(noindex))issues.push('html_noindex');
  if(noindex(headers.get('x-robots-tag')))issues.push('header_noindex');
- return {title,canonical:target,issues};
+ const descriptionTags=(html.match(/<meta\b[^>]*>/gi)||[]).filter(tag=>attribute(tag,'name').toLowerCase()==='description');
+ const description=descriptionTags.length===1?attribute(descriptionTags[0],'content').trim():'';
+ if(!description)issues.push('missing_description');
+ return {title,description,canonical:target,issues};
 }
 async function checkOne(route,fetchImpl=fetch,base=BASE){
  const url=new URL(route,base).href;
@@ -55,19 +65,29 @@ async function checkOne(route,fetchImpl=fetch,base=BASE){
  if(!/text\/html/i.test(contentType))issues.push('unexpected_content_type');
  let html='';
  try{html=await response.text()}catch(e){issues.push('response_body_failure')}
- let title='',canonical='';
+ let title='',description='',canonical='';
  if(html&&/text\/html/i.test(contentType)){
   const parsed=inspectHtml(html,url,response.headers);
-  title=parsed.title;canonical=parsed.canonical;issues.push(...parsed.issues);
+  title=parsed.title;description=parsed.description;canonical=parsed.canonical;issues.push(...parsed.issues);
  }
- return {route,url,status,contentType,title,canonical,issues:[...new Set(issues)]};
+ return {route,url,status,contentType,title,description,canonical,issues:[...new Set(issues)]};
 }
 async function run(fetchImpl=fetch,base=BASE){
  const results=[];
  for(const route of TARGETS)results.push(await checkOne(route,fetchImpl,base));
+ // Each provincial designated-driver landing should carry its own title.
+ // Identical titles signal a major Naver deduplication risk despite HTTP 200.
+ const provincial=results.filter(x=>PROVINCE_DAERI_TARGETS.includes(x.route));
+ const titleCounts=new Map();
+ for(const item of provincial)if(item.status===200&&item.title)
+  titleCounts.set(item.title,(titleCounts.get(item.title)||0)+1);
+ for(const item of provincial)if(item.title&&titleCounts.get(item.title)>1)
+  item.issues.push('duplicate_provincial_title');
  const failures=results.filter(item=>item.issues.length);
  return {generatedAt:new Date().toISOString(),base,checked:results.length,passed:results.length-failures.length,
-  failed:failures.length,userAgent:YETI,scope:'User-Agent compatibility; not verified Yeti IP or Naver indexing',
+  failed:failures.length,provincialDaeriCount:provincial.length,
+  provincialDaeriFailed:provincial.filter(item=>item.issues.length).length,
+  userAgent:YETI,scope:'User-Agent compatibility; not verified Yeti IP or Naver indexing',
   results};
 }
 if(require.main===module){
@@ -80,4 +100,4 @@ if(require.main===module){
   if(report.failed)process.exitCode=1;
  }).catch(e=>{console.error(e);process.exitCode=1});
 }
-module.exports={TARGETS,YETI,attribute,noindex,inspectHtml,checkOne,run};
+module.exports={TARGETS,PROVINCE_DAERI_TARGETS,YETI,attribute,noindex,inspectHtml,checkOne,run};

@@ -17,12 +17,12 @@ const priority = [
   ['/taksong/gangwon/gangreung-si/','강릉탁송'],
   ['/설악산탁송/','설악산종주 차량탁송']
 ];
-const panel=server.slice(server.indexOf('const taksongTrustFirst='),server.indexOf('const body=taksongTrustFirst+'));
+const panel=server.slice(server.indexOf('const taksongTrustFirst='),server.indexOf('const body=answerFirst+'));
 assert(panel.length>1000,'Taksong trust panel missing');
 for(const [url,label] of priority){
  assert(panel.includes('href="'+url+'">'+label+'</a>'),'Missing intended transport link '+label);
 }
-assert(server.includes("const body=taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice"),'Transport trust proof must precede nationwide keyword and operational notice panels');
+assert(server.includes("taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice"),'Transport trust proof must precede nationwide keyword and operational notice panels');
 assert(home.includes('id="taksong-first-trust-home-20261106"'),'Home transport navigation missing');
 assert(home.includes('href="/taksong/"'),'Transport hub link missing');
 assert(sitemap.includes('<loc>https://jeongukdaeri.kr/taksong/</loc>'),'Taksong canonical hub must remain in the priority inventory even when the Pages build rewrites sitemap.xml');
