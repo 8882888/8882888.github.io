@@ -1,0 +1,57 @@
+name: Recover existing Cloudtype service using deployment webhook
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cloudtype-existing-webhook-recovery.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cloudtype-production
+  cancel-in-progress: false
+jobs:
+  recover:
+    if: github.repository == '8882888/8882888.github.io' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm this is only the original dockerfile application
+        run: |
+          set -euo pipefail
+          grep -qx 'name: smart24-taksong-backup' .cloudtype/app.yaml
+          grep -qx 'app: dockerfile' .cloudtype/app.yaml
+          grep -q 'url: https://github.com/8882888/8882888.github.io.git' .cloudtype/app.yaml
+          grep -q 'ref: refs/heads/main' .cloudtype/app.yaml
+      - name: Request existing service update via documented legacy webhook
+        env:
+          CLOUDTYPE_TOKEN: ${{ secrets.CLOUDTYPE_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$CLOUDTYPE_TOKEN" ]; then
+            echo "::error::Cloudtype token missing: no deployment requested"
+            exit 1
+          fi
+          # The webhook only updates the pre-existing named app, not an arbitrary
+          # space, new project or new domain. Its owner-confirmed project is 8882888.
+          payload='{"project":"8882888","app":"smart24-taksong-backup","stage":"main"}'
+          status=$(curl -sS --connect-timeout 12 --max-time 35 -o "$RUNNER_TEMP/cloudtype-webhook-response.json" -w '%{http_code}' \
+            -H 'Content-Type: application/json' \
+            -H "Authorization: Bearer $CLOUDTYPE_TOKEN" \
+            -X POST --data-raw "$payload" https://api.cloudtype.io/webhooks/deploy)
+          echo "Cloudtype existing-service webhook: HTTP $status"
+          if [[ "$status" != 2* ]]; then
+            echo "::error::Cloudtype webhook unavailable or request rejected; no success claimed"
+            exit 1
+          fi
+          echo "Webhook accepted. Deployment is NOT yet verified."
+      - name: Verify the live release matches the original GitHub repository
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+          DEPLOY_CHECK_ATTEMPTS: '8'
+        run: node tools/check_cloudtype_freshness.js
