@@ -53,6 +53,19 @@ test('eight robots sitemap declarations have consistent official host and verifi
  assert.ok(publishedHandler.includes("x.publishedAt.slice(0,10)"),'lastmod must reflect publish dates');
 });
 
+test('runtime robots handler matches static robots exactly, including verified publication sitemap',()=>{
+ const a=server.indexOf("if(pathname==='/robots.txt')");
+ const b=server.indexOf("// Full discoverability inventory",a);
+ assert.ok(a>0&&b>a,'runtime robots handler must remain present');
+ const handler=server.slice(a,b);
+ const paths=[...robots.matchAll(/^Sitemap:\s+https:\/\/jeongukdaeri\.kr(\/[^\s]+)$/gm)].map(m=>m[1]);
+ for(const path of paths){
+  assert.ok(handler.includes("'Sitemap: '+base+'"+path+"'"),'runtime robots sitemap missing '+path);
+ }
+ const declared=[...handler.matchAll(/'Sitemap: '\+base\+'(\/sitemap(?:-[^']+)?\.xml)'/g)].map(m=>m[1]);
+ assert.deepEqual(declared,paths,'runtime and static robots must list the same exact eight sitemaps in the same order');
+});
+
 test('sitemap index includes reviewed routes and history inventory',()=>{
  for(const route of ['/sitemap-reviewed-routes.xml','/sitemap-history.xml','/sitemap-priority.xml']){
   assert.ok(server.includes("'"+route+"'"),'missing sitemap index reference: '+route);
