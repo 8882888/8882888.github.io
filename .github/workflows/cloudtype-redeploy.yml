@@ -26,6 +26,20 @@ jobs:
     steps:
       - name: Checkout production source
         uses: actions/checkout@v4
+      - name: Fail fast when original Cloudtype project binding is missing
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$CLOUDTYPE_PROJECT" ]; then
+            echo '### Cloudtype deployment blocked before running expensive tests' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Required repository variable: CLOUDTYPE_PROJECT (existing Cloudtype space/8882888)' >> "$GITHUB_STEP_SUMMARY"
+            echo '::error::Set CLOUDTYPE_PROJECT to the verified existing Cloudtype space/8882888. No deployment attempted.'
+            exit 1
+          fi
+          if [[ "$CLOUDTYPE_PROJECT" != */8882888 ]]; then
+            echo '::error::CLOUDTYPE_PROJECT must identify the existing Cloudtype space/8882888.'
+            exit 1
+          fi
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
