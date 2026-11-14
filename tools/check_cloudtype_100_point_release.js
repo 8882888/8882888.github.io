@@ -98,8 +98,8 @@ const rules=[
   {
     "group": "deploy-safety",
     "path": ".github/workflows/cloudtype-redeploy.yml",
-    "name": "block missing yaml",
-    "needle": "CLOUDTYPE_DEPLOY_YAML(secret)"
+    "name": "fallback to original app manifest when YAML secret is absent",
+    "needle": "cp .cloudtype/app.yaml"
   },
   {
     "group": "deploy-safety",
