@@ -1,0 +1,36 @@
+name: Compare Manus and Smart24 public SEO landing pages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/compare-manus-smart24-live.cjs'
+      - '.github/workflows/manus-smart24-parity.yml'
+permissions:
+  contents: read
+concurrency:
+  group: manuscript-smart24-public-comparison
+  cancel-in-progress: true
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check comparison script syntax
+        run: node --check scripts/compare-manus-smart24-live.cjs
+      - name: Compare original publicly reachable pages
+        run: node scripts/compare-manus-smart24-live.cjs
+      - name: Upload crawler-facing report without claiming indexed counts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manus-smart24-public-indexability-comparison
+          retention-days: 14
+          path: |
+            audit/manus-smart24-comparison.json
+            audit/manus-smart24-comparison.md
+          if-no-files-found: warn
