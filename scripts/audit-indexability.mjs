@@ -3,7 +3,7 @@
 // All sitemap URLs are checked, including recursively linked sitemap indexes.
 import {writeFileSync,renameSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink,blockedMetaIndexAgents} from './indexability-scope.mjs';
+import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink,blockedMetaIndexAgents,blockedXRobotsIndexAgents} from './indexability-scope.mjs';
 import {fetchWithRetry} from './indexability-retry.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const transportOrigin=process.env.AUDIT_TRANSPORT_ORIGIN||origin;
@@ -66,7 +66,7 @@ saveCheckpoint();
 async function worker(){
  while(true){
   const i=current++;if(i>=list.length)return;
-  const item=list[i];let status=0,finalUrl='',canonical='',robots='',title='',bodyHash='',hasRideLink=false,fetchAttempts=0,problem=[];
+  const item=list[i];let status=0,finalUrl='',canonical='',robots='',title='',bodyHash='',hasRideLink=false,fetchAttempts=0,problem=[],otherBotNoindex=[];
   try{
    const fetched=await fetchWithRetry(item.url,get);fetchAttempts=fetched.attempts;
    const r=fetched.response;status=r.status;finalUrl=transportOrigin===origin?r.url:origin+new URL(r.url).pathname+new URL(r.url).search;
@@ -75,7 +75,11 @@ async function worker(){
    if(!r.ok)problem.push('http_error');
    if(r.redirected)problem.push('redirect');
    if(!/text\/html/i.test(type))problem.push('not_html');
-   if(/noindex/i.test(robots))problem.push('x_robots_noindex');
+   for(const agent of blockedXRobotsIndexAgents(robots)){
+    if(agent==='robots')problem.push('x_robots_noindex');
+    else if(agent==='yeti')problem.push('x_robots_yeti_noindex');
+    else otherBotNoindex.push('header_'+agent);
+   }
    if(/text\/html/i.test(type)){
     const html=await r.text();
     hasRideLink=hasDirectRideRecordLink(html);
@@ -84,9 +88,13 @@ async function worker(){
     const cm=html.match(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*\bhref=["']([^"']+)["']/i)
       ||html.match(/<link\b(?=[^>]*\bhref=["']([^"']+)["'])[^>]*\brel=["']canonical["']/i);
     canonical=cm?new URL(cm[1],finalUrl).href:'';
-    // Treat crawler-specific noindex (Yeti/Googlebot/Bingbot) as an index blocker.
-    for(const agent of blockedMetaIndexAgents(html))
-     problem.push(agent==='robots'?'meta_noindex':'meta_'+agent+'_noindex');
+    // Generic/Yeti exclusions block Naver. Other engine-specific directives
+    // are recorded for cross-engine SEO without inflating Naver blockers.
+    for(const agent of blockedMetaIndexAgents(html)){
+     if(agent==='robots')problem.push('meta_noindex');
+     else if(agent==='yeti')problem.push('meta_yeti_noindex');
+     else otherBotNoindex.push('meta_'+agent);
+    }
     const t=html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);title=t?t[1].replace(/\s+/g,' ').trim():'';
     if(!canonical)problem.push('missing_canonical');
     else if(canonical!==item.url)problem.push('canonical_mismatch');
@@ -95,7 +103,7 @@ async function worker(){
    }
   }catch(e){fetchAttempts=e?.retryAttempts||fetchAttempts||1;
    problem.push((e?.name==='AbortError'||e?.name==='TimeoutError')?'timeout':'fetch_error:'+String(e).slice(0,100))}
-  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,fetchAttempts,problems:problem};
+  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,fetchAttempts,otherBotNoindex:[...new Set(otherBotNoindex)],problems:problem};
   done++;
   if(done%500===0){saveCheckpoint();console.log('Checked',done,'/',list.length);}
   await delay(transportOrigin===origin?100:0);
@@ -115,15 +123,16 @@ const counts={discovered:list.length,checked:results.length,targetNaverIndexed:5
  naverIndexed:null,technicallyClean,technicalGapTo50000:Math.max(0,50000-technicallyClean),
  listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,
  transientRecoveredAfterRetry:results.filter(r=>r.fetchAttempts>1&&r.status===200).length,
+ otherSearchBotsExcluded:results.filter(r=>r.otherBotNoindex.length).length,
  persistentRequestErrors:results.filter(r=>r.problems.some(p=>p==='timeout'||p.startsWith('fetch_error'))).length,
  ...regionalCoverage,...guideCoverage,passed:results.filter(r=>r.problems.length===0).length,
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,crawlerDiagnostics,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
 writeFileSync('indexability-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,transportOrigin,complete:true,duplicateAnalysisComplete:true,scope:transportOrigin===origin?'production HTTP':'local source responses; not production verification',counts,results},null,2));
-writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,body_hash,has_ride_link,problems,listed_in',
- ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.bodyHash,r.hasRideLink,r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
-const criticalTypes=new Set(['http_error','x_robots_noindex','meta_noindex','meta_yeti_noindex','meta_googlebot_noindex','meta_bingbot_noindex','missing_canonical','canonical_mismatch','timeout','not_html']);
+writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,body_hash,has_ride_link,other_bot_noindex,problems,listed_in',
+ ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.bodyHash,r.hasRideLink,r.otherBotNoindex.join(';'),r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
+const criticalTypes=new Set(['http_error','x_robots_noindex','meta_noindex','meta_yeti_noindex','x_robots_yeti_noindex','missing_canonical','canonical_mismatch','timeout','not_html']);
 const critical=results.filter(r=>r.problems.some(p=>criticalTypes.has(p)||p.startsWith('fetch_error')));
 const review=results.filter(r=>r.problems.length&&!critical.includes(r));
 const lines=[
@@ -132,6 +141,7 @@ const lines=[
  'Generated: '+new Date().toISOString(),
  'Scope: '+(transportOrigin===origin?'production HTTP':'local source responses; not production verification'),
  'Discovered: '+counts.discovered+' | Checked: '+counts.checked+' | Critical: '+critical.length+' | Review: '+review.length,
+ 'Pages with other search bot-specific exclusions (not Yeti blockers): '+counts.otherSearchBotsExcluded,
  'Recovered transient HTTP failures after bounded retries: '+counts.transientRecoveredAfterRetry+
  ' | Still failing after retry: '+counts.persistentRequestErrors,
  'Canonical region-service landings: '+counts.regionalServicePages+' | Without a DIRECT ride-history document link: '+counts.regionalPagesWithoutReviewLink,
