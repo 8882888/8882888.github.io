@@ -26,7 +26,7 @@ assert(home.includes('실제 배차·최종 요금은 별도 확정합니다.'),
 assert(home.includes('href="/special/24-hour-service/"'),'24-hour query must link to relevant service guide');
 assert(home.includes('href="/daeri/"')&&home.includes('href="/taksong/"'),'Keep primary service routes');
 const test=[
- ['대리','/daeri/'],['전국대리운전','/daeri/'],['전국대리','/daeri/'],['전국24시대리운전','/daeri/'],
+ ['대리','/daeri/'],['전국대리운전','/daeri/'],['전국대리','/daeri/'],['24시대리운전','/daeri/'],['24시간대리운전','/daeri/'],['전국24시대리운전','/daeri/'],['전국24시간대리운전','/daeri/'],
  ['24시탁송','/special/24-hour-service/'],['24탁송','/special/24-hour-service/'],
  ['전국24시탁송','/special/24-hour-service/'],['24시간탁송','/special/24-hour-service/'],
  ['전국24시간탁송','/special/24-hour-service/'],['심야탁송','/special/24-hour-service/'],
