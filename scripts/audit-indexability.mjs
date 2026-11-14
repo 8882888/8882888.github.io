@@ -110,8 +110,8 @@ for(const r of results){if(r.bodyHash&&bodies.get(r.bodyHash).length>1)r.problem
 const regionalCoverage=reviewLinkCoverage(results);
 const guideCoverage=regionalGuideCoverage(results);
 const technicallyClean=results.filter(r=>r.status===200&&r.problems.length===0).length;
-const counts={discovered:list.length,checked:results.length,targetNaverIndexed:20000,
- naverIndexed:null,technicallyClean,technicalGapTo20000:Math.max(0,20000-technicallyClean),
+const counts={discovered:list.length,checked:results.length,targetNaverIndexed:50000,
+ naverIndexed:null,technicallyClean,technicalGapTo50000:Math.max(0,50000-technicallyClean),
  listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,
  transientRecoveredAfterRetry:results.filter(r=>r.fetchAttempts>1&&r.status===200).length,
  persistentRequestErrors:results.filter(r=>r.problems.some(p=>p==='timeout'||p.startsWith('fetch_error'))).length,
@@ -135,8 +135,8 @@ const lines=[
  ' | Still failing after retry: '+counts.persistentRequestErrors,
  'Canonical region-service landings: '+counts.regionalServicePages+' | Without a DIRECT ride-history document link: '+counts.regionalPagesWithoutReviewLink,
  'Regional intent guides: '+counts.regionalIntentGuidePages+' | Without a direct ride-history document link: '+counts.regionalGuidesWithoutDirectRideLink,
- 'Naver indexing goal: 20,000 | Real Naver indexed URLs: not accessible from this HTTP audit.',
- 'Technically clean URLs: '+counts.technicallyClean+' | Technical pool gap: '+counts.technicalGapTo20000,
+ 'Naver indexing goal: 50,000 | Real Naver indexed URLs: not accessible from this HTTP audit.',
+ 'Technically clean URLs: '+counts.technicallyClean+' | Technical pool gap: '+counts.technicalGapTo50000,
  'Recruitment, vehicle-type, travel and activity guides are excluded from locality evidence-link counts.',
  'No ride-record link does not establish a broken page. Do not invent rides, prices, or reviews.',
  'Sitemap discovery and technical HTTP validity do not prove Naver indexing.',
