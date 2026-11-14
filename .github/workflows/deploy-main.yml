@@ -133,6 +133,8 @@ jobs:
           python3 - <<'PYVERIFY'
           import os,time,json,urllib.request,urllib.parse
           url='https://jeongukdaeri.kr/taksong/busan/?release-check='+os.environ['DEPLOYED_COMMIT']
+          last_failed=[]
+          last_error=''
           for attempt in range(24):
               try:
                   with urllib.request.urlopen(url,timeout=10) as response:
@@ -244,13 +246,34 @@ jobs:
                     and '유입 경로 미확인' in tracker and 'acquisition();' in tracker)
                   region_stats_ok=('id="traffic-stats-panel"' in page
                     and 'id="exclude-my-visits"' in page)
-                  if 'BreadcrumbList' in page and 'href="/taksong/">전국 탁송' in page and guide.count('<h1>')==1 and 'v.length===4' in home and icon_ok and stats_ok and region_stats_ok and regional_brand_ok and mobile_quote_ok and nationwide_dynamic_ok and locality_live_ok and regional_direct_quote_ok:
+                  checks={
+                    'regional_breadcrumb':'BreadcrumbList' in page,
+                    'regional_main_taksong_link':'href="/taksong/">전국 탁송' in page,
+                    'guide_single_h1':guide.count('<h1>')==1,
+                    'homepage_four_part_validity':'v.length===4' in home,
+                    'favicon_image_http200':icon_ok,
+                    'visitor_phone_statistics':stats_ok,
+                    'regional_statistics':region_stats_ok,
+                    'daegu_brand_label':regional_brand_ok,
+                    'mobile_fare_quote':mobile_quote_ok,
+                    'administrative_region_links':nationwide_dynamic_ok,
+                    'locality_autocomplete':locality_live_ok,
+                    'regional_direct_quote':regional_direct_quote_ok,
+                  }
+                  last_failed=[name for name,ok in checks.items() if not ok]
+                  if not last_failed:
                       print('PASS: live Cloudtype stats, region labels, phone actions, and regional hierarchy verified')
                       break
-              except Exception:
-                  pass
+                  # Keep the exact failing checks, rather than reporting a generic cache error
+                  # after 20 minutes of retries without actionable evidence.
+                  if attempt in (0,5,11,17,23):
+                      print('Cloudtype live check %d/24 failed checks: %s' % (attempt+1, ', '.join(last_failed)),flush=True)
+              except Exception as exc:
+                  last_error='%s: %s' % (type(exc).__name__,str(exc)[:240])
+                  if attempt in (0,5,11,17,23):
+                      print('Cloudtype live check %d/24 request error: %s' % (attempt+1,last_error),flush=True)
               if attempt==23:
-                  raise SystemExit('Deployment accepted, but live HTML/compact counters/own-visit opt-out did NOT reflect the new release; investigate Cloudtype rollout or cache.')
+                  raise SystemExit('Cloudtype deployment accepted but live verification failed. Missing checks: %s. Last request error: %s' % (', '.join(last_failed) or 'unavailable after request failure',last_error or 'none'))
               time.sleep(5)
           PYVERIFY
       - name: Verify current Naver-focused and Seoul taksong editorial landing pages
