@@ -1397,8 +1397,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(reviewedGuideHtml.includes(busanGuideSource.detail.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')),'local guidance uses the existing reviewed source');
   const crawlRobots=await (await get('/robots.txt')).text();
   const submittedMaps=crawlRobots.split('\n').filter(line=>line.startsWith('Sitemap: '));
-  assert.equal(submittedMaps.length,8,'robots advertises canonical discovery indexes and verified regions');
-   for(const sitemap of ['sitemap-priority.xml','sitemap.xml','sitemap-reviewed-routes.xml','sitemap-verified-regions.xml','sitemap-taksong.xml','sitemap-daeri.xml','sitemap-all.xml','sitemap-history.xml'])assert.ok(submittedMaps.some(x=>x.endsWith('/'+sitemap)),'robots retains '+sitemap);
+  assert.equal(submittedMaps.length,8,'robots advertises eight canonical discovery indexes and published cases');
+   for(const sitemap of ['sitemap-priority.xml','sitemap.xml','sitemap-reviewed-routes.xml','sitemap-published.xml','sitemap-taksong.xml','sitemap-daeri.xml','sitemap-all.xml','sitemap-history.xml'])assert.ok(submittedMaps.some(x=>x.endsWith('/'+sitemap)),'robots retains '+sitemap);
   assert.ok(submittedMaps.some(x=>x.includes('/sitemap-priority.xml')));
   assert.ok(submittedMaps.some(x=>x.includes('/sitemap-reviewed-routes.xml')));
   assert.ok(!submittedMaps.some(x=>x.includes('nationwide-route')),'avoid diluting crawl effort across hundreds of thousands of generated combinations');
