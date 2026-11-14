@@ -1,0 +1,23 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const source=fs.readFileSync(path.join(__dirname,'../server.js'),'utf8');
+const start=source.indexOf('function regionPage(r){');
+const end=source.indexOf('\nfunction ',start+1);
+const regionPage=source.slice(start,end);
+test('village region hub considers preserved completed history before noindex',()=>{
+ assert.ok(start>0,'regionPage renderer must exist');
+ assert.match(regionPage,/regionalServiceEvidence\(r,'taksong'\)/);
+ assert.match(regionPage,/regionalServiceEvidence\(r,'daeri'\)/);
+ assert.match(regionPage,/!matches\.length&&!archivedVillageTrips\.length/);
+ assert.match(regionPage,/archived-village-ride-evidence/);
+ assert.match(regionPage,/\/reviews\/history\//);
+});
+test('source-empty villages remain noindex and global service pages are unchanged',()=>{
+ assert.match(regionPage,/<meta name="robots" content="noindex,follow">/);
+ assert.match(source,/if\(r\.level==='리'&&!priorityByKey\.has\(kind\+'\|'\+r\.full_name\)/);
+ assert.match(source,/source-empty-village-20261107/);
+ assert.match(source,/2591/,'preserved historical ride inventory unchanged');
+});
