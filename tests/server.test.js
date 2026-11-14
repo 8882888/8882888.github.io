@@ -401,6 +401,19 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(html.includes('tel:18114294'),'priority region must retain the taksong consultation number '+route);
     assert.ok(html.includes('/fare/'),'priority region must link to the fare lookup '+route);
   }
+  // Existing curated local guides deserve one complete discovery feed,
+  // while preserving the original 500-URL national service sitemaps.
+  const focusedResponse=await get('/sitemap-focused-regions.xml');
+  assert.equal(focusedResponse.status,200,'curated service page discovery feed must load');
+  const focusedXml=await focusedResponse.text();
+  const focusedUrls=[...focusedXml.matchAll(/<loc>([^<]+)<\\/loc>/g)].map(m=>m[1]);
+  assert.ok(focusedUrls.length>=2900&&focusedUrls.length<3100,
+    'focused sitemap should include curated canonical pages, not all template regions: '+focusedUrls.length);
+  assert.equal(new Set(focusedUrls).size,focusedUrls.length,'focused map contains unique URLs');
+  assert.ok(focusedUrls.includes('https://example.com/taksong/busan/gijang-gun/'),'Gijang is included');
+  assert.ok(focusedUrls.includes('https://example.com/daeri/daejeon/'),'Daejeon is included');
+  const allSitemapIndex=await (await get('/sitemap-all.xml')).text();
+  assert.ok(allSitemapIndex.includes('/sitemap-focused-regions.xml'),'root sitemap index contains focused guide sitemap');
   const dedicatedTaksongSitemapResponse=await get('/sitemap-taksong.xml');
   assert.equal(dedicatedTaksongSitemapResponse.status,200,'dedicated taksong sitemap must load');
   const dedicatedTaksongSitemap=await dedicatedTaksongSitemapResponse.text();
