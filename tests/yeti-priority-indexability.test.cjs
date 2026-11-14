@@ -35,7 +35,7 @@ test('HTML noindex, header noindex and mismatched canonical fail independently',
   new Headers({'x-robots-tag':'googlebot: noindex, nofollow'}));
  assert.ok(html.issues.includes('canonical_mismatch'));
  assert.ok(html.issues.includes('html_noindex'));
- assert.ok(html.issues.includes('header_noindex'));
+ assert.ok(!html.issues.includes('header_noindex'), 'Googlebot-only noindex is not a Yeti exclusion');
 });
 test('robot-specific blocked status does not masquerade as a successful crawl',async()=>{
  const result=await checkOne('/taksong/busan/gijang-gun/',async()=>({
@@ -77,4 +77,11 @@ test('missing description is reported separately from canonical and indexability
  const html=body().replace(/<meta name="description"[^>]+>/,'');
  const report=inspectHtml(html,url,new Headers());
  assert.deepEqual(report.issues,['missing_description']);
+});
+
+test('X-Robots-Tag Yeti / generic exclusions block Naver but Googlebot-only does not',()=>{
+ assert.ok(!inspectHtml(body(),url,new Headers({'x-robots-tag':'googlebot: noindex'})).issues.includes('header_noindex'));
+ assert.ok(inspectHtml(body(),url,new Headers({'x-robots-tag':'Yeti: noindex, Googlebot: index'})).issues.includes('header_noindex'));
+ assert.ok(inspectHtml(body(),url,new Headers({'x-robots-tag':'noindex, follow'})).issues.includes('header_noindex'));
+ assert.ok(!inspectHtml(body(),url,new Headers({'x-robots-tag':'googlebot: noindex, Yeti: index'})).issues.includes('header_noindex'));
 });
