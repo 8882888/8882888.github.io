@@ -187,10 +187,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(!seoHome.includes('id="'+id+'"'),'duplicate homepage section removed: '+id);
   assert.ok(seoHome.indexOf('<header')<seoHome.indexOf('id="mobile-direct-image-priority"'),'general service header must precede mountain poster on homepage');
   const heroStart=seoHome.indexOf('<div class="hero hero-with-photo">');
-  const fareStart=seoHome.indexOf('<section id="mountain-cycling-fare-first-20261103"');
+  const fareStart=seoHome.indexOf('<section id="mobile-direct-image-priority"');
   const completedStart=seoHome.indexOf('<section id="real-completed-service-hubs-202611"');
   assert.ok(heroStart>=0&&heroStart<fareStart&&fareStart<completedStart,
    'homepage must present immediate booking, one consolidated fare section, then real completed rides');
+  assert.ok(!seoHome.includes('id="mountain-cycling-fare-first-20261103"'),
+   'the repeated second mountain fare section is removed');
+  for(const asset of ['seoraksan-taksong-fares.svg','jirisan-taksong-fares.svg']){
+   assert.equal((seoHome.match(new RegExp('<img\\s+src="/assets/'+asset.replace(/\\./g,'\\.')+'"','g'))||[]).length,1,
+    'each original mountain fare poster appears once on the nationwide homepage: '+asset);
+  }
   assert.ok(!seoHome.includes('id="homepage-mountain-fare-shortcuts-202611"'),
    'removed duplicate mountain shortcuts must not return');
   assert.ok(seoHome.includes('href="tel:18114294"')&&seoHome.includes('href="/fare/"'),
@@ -1184,7 +1190,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    'explicit Ulsan taksong filter must show the correct legal locality and taksong-only card');
   const homeCardSearch=(await (await get('/')).text());
   assert.ok(homeCardSearch.includes('id="nationwide-live-locality-form-20261107"')&&homeCardSearch.includes('action="/region/"')&&homeCardSearch.includes('지역명·서비스 검색'),'homepage offers responsive region service card search');
-  assert.ok(homeCardSearch.includes('id="mountain-cycling-fare-first-20261103"')&&homeCardSearch.includes('id="homepage-fare-top"'),'home retains original fare and calculator');
+  assert.ok(homeCardSearch.includes('id="mobile-direct-image-priority"')&&homeCardSearch.includes('id="homepage-fare-top"'),'home retains original fare and calculator');
 
   // Live business-card previews must work without a second page load.
   const getPreview=async(q,service='')=>{
