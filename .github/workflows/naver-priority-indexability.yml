@@ -33,10 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Checkout exact source revision
+      - name: Checkout current source for comparison with live release
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ref: main
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
