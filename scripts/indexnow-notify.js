@@ -125,6 +125,28 @@ function filesInRevision(){
  try{return execFileSync('git',['diff','--name-only','HEAD^','HEAD'],{cwd:root,encoding:'utf8',timeout:10000}).split(/\r?\n/).filter(Boolean)}
  catch(e){throw Error('Cannot identify changed commit files, refusing a blanket URL resubmission: '+e.message)}
 }
+async function livePriorityHrefMap(){
+ const map=new Map();
+ for(const kind of ['daeri','taksong']){
+  const response=await get('/'+kind+'/');
+  if(response.status!==200)throw Error('Cannot inspect published priority hub '+kind+' HTTP '+response.status);
+  const html=await response.text();
+  const section=html.match(/<section id="priority-regions">([\s\S]*?)<\/section>/)?.[1];
+  if(!section)throw Error('Published priority hub source links unavailable: '+kind);
+  for(const match of section.matchAll(/<a href="([^"]+)" data-region="([^"]+)"/g)){
+   const [_,href,region]=match;
+   const key=kind+'|'+region;
+   if(map.has(key))throw Error('Duplicate published region/service target: '+key);
+   if(!href.startsWith('/'+kind+'/')||!href.endsWith('/')||href.includes('?')||href.includes('#'))
+    throw Error('Invalid published region URL '+href);
+   map.set(key,href);
+  }
+ }
+ const all=require('../data/priority-regions.json').pages;
+ for(const entry of all)if(!map.has(entry.kind+'|'+entry.region))
+  throw Error('Missing published priority region URL: '+entry.kind+'|'+entry.region);
+ return map;
+}
 async function verify(){
  const verification=await get('/'+key+'.txt');
  if(verification.status!==200)throw Error('Key HTTP '+verification.status);
@@ -165,15 +187,32 @@ async function main(){
  // scheduled workflow checkouts and pull request merges may be shallow.
  // Real notifications still demand an explicit changed-file list and fail closed.
  const files=dryRun?[]:filesInRevision();
- const targets=changedPaths(files,process.env.INDEXNOW_URLS||'');
+ const manual=process.env.INDEXNOW_URLS||'';
  console.log('Changed repository files: '+(files.join(', ')||'(none)'));
- if(!dryRun&&!targets.length){console.log('No relevant published URLs changed; skipping repeat IndexNow submission');return}
- let accepted;
- for(let attempt=0;attempt<(dryRun?1:16);attempt++){
-  try{accepted=await verify();break}catch(e){
-   if(dryRun||attempt===15)throw e;
-   console.log('Cloudtype not yet confirmed ('+(attempt+1)+'/16): '+e.message);
-   await pause(10000);
+ const needsPublishedMap=!dryRun&&!manual.trim()&&files.some(file=>
+  ['data/priority-regions.json','data/priority-blog-links.json'].includes(file));
+ // Derive exact changed region IDs from source and resolve their canonical
+ // URLs from the published service hubs. Do not equate data source filenames
+ // with one unrelated fixed set of ten links.
+ let targets,accepted;
+ if(needsPublishedMap){
+  for(let attempt=0;attempt<16;attempt++){
+   try{accepted=await verify();break}catch(e){
+    if(attempt===15)throw e;
+    console.log('Cloudtype not yet confirmed ('+(attempt+1)+'/16): '+e.message);
+    await pause(10000);
+   }
+  }
+  targets=changedPaths(files,manual,{priorityHrefMap:await livePriorityHrefMap()});
+ }else targets=changedPaths(files,manual);
+ if(!dryRun&&!targets.length){console.log('No genuinely modified published URLs; skipping repeat IndexNow submission');return}
+ if(!accepted){
+  for(let attempt=0;attempt<(dryRun?1:16);attempt++){
+   try{accepted=await verify();break}catch(e){
+    if(dryRun||attempt===15)throw e;
+    console.log('Cloudtype not yet confirmed ('+(attempt+1)+'/16): '+e.message);
+    await pause(10000);
+   }
   }
  }
  if(dryRun){console.log('Dry run: target paths '+targets.join(', ')+'; no IndexNow submission');return}
