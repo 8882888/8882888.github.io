@@ -60,7 +60,7 @@ export function issuesForSample(row,kind,expectedMime){
  const problems=[];
  if(row.status!==200)problems.push('http_'+row.status);
  if(row.location)problems.push('redirect');
- if(blocked(row.xRobotsTag))problems.push('x_robots_noindex');
+ if(kind==='page'&&blocked(row.xRobotsTag))problems.push('x_robots_noindex');
  if(kind==='robots'&&!/^text\/plain(?:;|$)/i.test(row.contentType))problems.push('robots_not_text_plain');
  if(kind==='page'&&!/^text\/html(?:;|$)/i.test(row.contentType))problems.push('not_html');
  if(kind==='resource'&&!row.contentType.toLowerCase().includes(expectedMime))problems.push('resource_wrong_mime');
