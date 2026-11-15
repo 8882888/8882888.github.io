@@ -36,7 +36,7 @@ jobs:
           path: /tmp/smart24-live-locality-100.json
           if-no-files-found: warn
           retention-days: 14
-  verify-1000-html-webp:
+  verify-1000-html-policy:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -44,9 +44,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Verify SEO HTML and text-only regional PNG/WebP availability on 250 localities
+      - name: Check 250 localities for indexable HTML, WebP assets or correct noindex/noimage
         run: python tools/audit_live_1000.py
-      - name: Keep every individual canonical, WebP and latency result
+      - name: Keep every canonical, WebP, noindex and latency result
         if: always()
         uses: actions/upload-artifact@v4
         with:
