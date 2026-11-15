@@ -1,5 +1,12 @@
 name: Verify live Busan taksong review-first titles
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'tools/audit_live_busan_reviews.py'
+      - 'tests/test_busan_review_titles.py'
+      - '.github/workflows/live-busan-review-first.yml'
   push:
     branches: [main]
     paths:
