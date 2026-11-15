@@ -46,7 +46,7 @@ async function get(rel){
   signal:AbortSignal.timeout(10000),redirect:'manual'
  });
 }
-function changedPaths(files,manual=''){
+function changedPaths(files,manual='',options={}){
  const explicit=String(manual||'').trim().split(/[\s,]+/).filter(Boolean);
  if(explicit.length){
   if(explicit.length>10)throw Error('Only ten intentional IndexNow URLs per request');
@@ -68,24 +68,56 @@ function changedPaths(files,manual=''){
  }
  // The manifest alone is not evidence that a new canonical page was saved.
  if(input.has('data/published-ride-case-ids.json'))return [];
- // A content-focused blog update should notify its actual article URLs, not
- // resubmit unrelated service landing pages in the same commit.
- if(input.has('data/blog-hashtags-priority.json'))return blogHashtagPaths.slice(-10);
- const changedBlogs=blogHashtagPaths.filter(url=>input.has(url.slice(1)+'index.html'));
- if(changedBlogs.length)return changedBlogs.slice(0,10);
+ // Match exact modified source records to canonical live pages.
+ // Never submit a fixed unrelated group merely because any JSON source changed.
+ const reviewedSources=['data/priority-regions.json','data/region-journey-links.json',
+  'data/priority-blog-links.json','data/blog-hashtags-priority.json'];
  const selected=new Set();
  const include=paths=>paths.forEach(p=>selected.add(p));
- // Runtime code-only changes do not prove these ten pages were updated.
- // Explicit changes to reviewed source content can announce their canonicals.
- if([...input].some(p=>[
-   'data/region-journey-links.json','data/priority-regions.json',
-   'data/priority-blog-links.json'
-  ].includes(p)))include(priorityPaths);
+ const getSnapshot=(filename,side)=>{
+  const provided=side==='before'?options.previousDocuments?.[filename]:options.currentDocuments?.[filename];
+  if(provided)return provided;
+  if(side==='after')return JSON.parse(fs.readFileSync(path.join(root,filename),'utf8'));
+  try{return JSON.parse(execFileSync('git',['show','HEAD^:'+filename],
+   {cwd:root,encoding:'utf8',timeout:10000}))}
+  catch(e){throw Error('Cannot inspect previous source records for '+filename+'; refusing unrelated IndexNow notification')}
+ };
+ const modifiedRows=(filename,keyFn)=>{
+  const old=getSnapshot(filename,'before'),now=getSnapshot(filename,'after');
+  if(!Array.isArray(old.pages||old.articles)||!Array.isArray(now.pages||now.articles))
+   throw Error('Changed source has no reviewed rows: '+filename);
+  const older=new Map((old.pages||old.articles).map(row=>[keyFn(row),row]));
+  return (now.pages||now.articles).filter(row=>{
+   const key=keyFn(row);
+   if(!key||key.includes('undefined'))throw Error('Incomplete reviewed row in '+filename);
+   return JSON.stringify(older.get(key))!==JSON.stringify(row);
+  });
+ };
+ for(const filename of reviewedSources){
+  if(!input.has(filename))continue;
+  if(filename==='data/region-journey-links.json'){
+   include(modifiedRows(filename,row=>row.path).map(row=>row.path));
+  }else if(filename==='data/blog-hashtags-priority.json'){
+   include(modifiedRows(filename,row=>row.slug).map(row=>'/blog/daeri-regions/'+row.slug+'/'));
+  }else{
+   const hrefMap=options.priorityHrefMap;
+   if(!(hrefMap instanceof Map))throw Error('Live published priority URL lookup is required for '+filename);
+   include(modifiedRows(filename,row=>row.kind+'|'+row.region).map(row=>{
+    const route=row.path||hrefMap.get(row.kind+'|'+row.region);
+    if(!route||!route.startsWith('/'+row.kind+'/')||!route.endsWith('/'))
+     throw Error('Cannot confirm published canonical for '+row.kind+'|'+row.region);
+    return route;
+   }));
+  }
+ }
+ const changedBlogs=blogHashtagPaths.filter(url=>input.has(url.slice(1)+'index.html'));
+ include(changedBlogs);
  if(input.has('index.html'))include(['/']);
  if(input.has('data/seo-pages.json'))include(['/','/taksong/','/daeri/','/region/']);
  if(input.has('blog/posts.json'))include(['/blog/','/blog/archive/']);
  if([...input].some(p=>/^(data\/ride-history\.json|data\/public-reviewed-rides-202610\.json)$/.test(p)))include(['/reviews/history/','/reviews/taksong/']);
- return [...selected].slice(0,10);
+ if(selected.size>10)throw Error('More than ten genuine changed URLs; batch explicitly after deployment, never truncate');
+ return [...selected];
 }
 function filesInRevision(){
  const override=process.env.INDEXNOW_CHANGED_FILES;
