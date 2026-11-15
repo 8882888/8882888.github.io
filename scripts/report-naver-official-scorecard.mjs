@@ -44,7 +44,7 @@ export function searchComparison(baseline,snapshot){
   status:'OWNER_REPORTED_COMPARISON__NOT_LIVE_API'};
 }
 const baseline=read('data/naver-searchadvisor-official-baseline.json');
-const searchBase=read(baseline.searchClicksBaselineFile);
+const searchBase=baseline.searchClicksBaselineOwnerReported??read(baseline.searchClicksBaselineFile);
 const supplied=process.env.NAVER_SEARCHADVISOR_SNAPSHOT_FILE
  ?JSON.parse(fs.readFileSync(process.env.NAVER_SEARCHADVISOR_SNAPSHOT_FILE,'utf8'))
  :baseline.latestOfficialSnapshot;
