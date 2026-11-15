@@ -11,6 +11,12 @@ on:
       - "business/**"
       - "daeri/**"
       - "taksong/**"
+      # Changes to regional guidance must refresh the human review queue.
+      - "data/naver-regional-focus-*.json"
+      - "data/priority-regions.json"
+      - "data/legal-regions/**"
+      - "lib/nationwide-locality-explorer.js"
+      - "scripts/ai-index-quality-triage.mjs"
       - "scripts/audit-naver-priority-live.mjs"
       - "scripts/indexability-scope.mjs"
       - "tests/indexability-scope.test.mjs"
@@ -68,4 +74,4 @@ jobs:
             ai-index-quality-review.json
             ai-index-quality-review.csv
             ai-index-quality-review.md
-          if-no-files-found: warn
+          if-no-files-found: error
