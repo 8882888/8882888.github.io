@@ -1,0 +1,39 @@
+name: Coverage metadata and legacy host canonical audit
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'tests/coverage-innovation-meta-20261116.test.js'
+      - 'scripts/check-legacy-host-canonical.js'
+      - '.github/workflows/seo-legacy-canonical-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'tests/coverage-innovation-meta-20261116.test.js'
+      - 'scripts/check-legacy-host-canonical.js'
+permissions:
+  contents: read
+jobs:
+  check-metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check parser and semantic meta descriptions
+        run: |
+          node --check server.js
+          node --test tests/coverage-innovation-meta-20261116.test.js
+  compare-legacy-host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Probe legacy GitHub Pages canonical and official Cloudtype
+        run: node scripts/check-legacy-host-canonical.js
