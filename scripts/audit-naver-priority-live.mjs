@@ -153,6 +153,18 @@ async function checkPage(p){
    if(localHrefs.length<34)item.problems.push('quality_missing_province_service_links');
    if(!html.includes('nationwide-seventeen-province-coverage'))
     item.problems.push('quality_missing_nationwide_coverage_section');
+   // This directory was deliberately changed in main to distinct province copy.
+   // A live page still using the old identical card text indicates stale Cloudtype
+   // deployment, not necessarily a Naver crawler problem.
+   const provinceRevisionProof=[
+    '공항 주차장이나 항만 시설에서 인수한다면',
+    '산행 차량 회수는 산행 시작 주차장',
+    '제주도 안에서 차량을 이동하는 일정'
+   ];
+   item.provinceRevisionMatches=provinceRevisionProof.filter(needle=>html.includes(needle)).length;
+   if(item.provinceRevisionMatches!==provinceRevisionProof.length)
+    item.problems.push('deployment_drift_nationwide_province_guidance');
+
   }
   if(visible.length<250)item.problems.push('quality_thin_content_review');
   if(/<meta\b[^>]*http-equiv=["']refresh["']/i.test(html))item.problems.push('index_excluded_meta_refresh');
@@ -222,4 +234,4 @@ const slowest=result.pageChecks
 if(slowest.length)console.log('Slowest sampled HTML routes (ms, attempts):\n'+
  slowest.map(p=>p.durationMs+'ms / '+p.attempts+' attempt(s) / '+p.url).join('\n'));
 if(problems.length){console.log('Findings:',problems.slice(0,30).join('\n'));}
-if(result.crawlerFindings.length||result.siteMapChecks.some(x=>x.problems.length)||result.pageChecks.some(x=>x.problems.some(y=>/^(collection_limited|index_excluded)/.test(y))))process.exitCode=1;
+if(result.crawlerFindings.length||result.siteMapChecks.some(x=>x.problems.length)||result.pageChecks.some(x=>x.problems.some(y=>/^(collection_limited|index_excluded|deployment_drift)/.test(y))))process.exitCode=1;
