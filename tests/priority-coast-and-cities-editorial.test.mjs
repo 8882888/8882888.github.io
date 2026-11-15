@@ -47,3 +47,14 @@ test('coastal destination advice distinguishes mountain/cycling transfer from co
   assert.doesNotMatch(note,/종주(?:탁송)?\s*(?:완료|배차완료)/);
  }
 });
+
+test('all 59 priority pages avoid the two copied innovation-city bulk templates',()=>{
+ assert.equal(pages.length,59);
+ const repetitive=pages.filter(row=>/일대에서 공공기관·법인차량|특히 혁신도시 공공기관·업무시설/.test(row.detail));
+ assert.deepEqual(repetitive.map(row=>row.region+' '+row.kind),[]);
+ const ulsan=pages.find(row=>row.region==='울산광역시 중구'&&row.kind==='daeri');
+ assert.ok(ulsan);
+ assert.ok(ulsan.detail.includes('우정혁신도시')&&ulsan.detail.includes('성남동')&&ulsan.detail.includes('태화강'));
+ assert.match(ulsan.detail,/(차량|주차장)/);
+ assert.match(ulsan.detail,/(대리운전|귀가)/);
+});
