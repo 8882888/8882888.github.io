@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Check published sitemap scope policy before network regression
+        run: node --test tests/live-sitemap-scope.test.mjs
       - run: node scripts/verify-live-seo-release.cjs
   nationwide-audit:
     needs: verify
