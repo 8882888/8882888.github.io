@@ -1,0 +1,29 @@
+name: Naver sparse local topic indexability gate
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'tests/local-topic-indexability-20261116.test.cjs'
+      - '.github/workflows/local-topic-indexability-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'tests/local-topic-indexability-20261116.test.cjs'
+permissions:
+  contents: read
+jobs:
+  sparse-topics:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install runtime dependencies
+        run: npm install --omit=dev --no-fund --no-audit
+      - name: Syntax and live-rendered HTML checks
+        run: |
+          node --check server.js
+          node --test tests/local-topic-indexability-20261116.test.cjs
