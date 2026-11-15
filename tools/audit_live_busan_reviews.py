@@ -41,6 +41,17 @@ def is_review_first(text):
     # are review-first. Do not weaken this check to unrelated regional titles.
     return re.match(r"^부산탁송\s*(?:실제\s*)?(?:운행)?후기",html.unescape(str(text)).strip()) is not None
 
+def has_review_near_top(sections):
+    # Direct answer and booking can precede the evidence section; unrelated
+    # SEO blocks, or a review pushed down the page, are still rejected.
+    review_section="busan-taksong-real-review-first-20261104"
+    permitted_prefix=("regional-direct-answer","regional-booking-first")
+    try:
+        position=sections.index(review_section)
+    except ValueError:
+        return False
+    return position<=2 and all(section in permitted_prefix for section in sections[:position])
+
 def audit(route):
     url=BASE+route+"?audit_busan_review_first=20261104"
     request=Request(url,headers={"User-Agent":"Smart24-Busan-Review-Integrity/1.0","Cache-Control":"no-cache"})
@@ -53,16 +64,7 @@ def audit(route):
         raise AssertionError(f"{route}: title is not review-first: {p.title!r}")
     if not is_review_first(p.h1):
         raise AssertionError(f"{route}: H1 is not review-first: {p.h1!r}")
-    # Two directly useful sections (what this service does / how to book)
-    # can precede the verified review. Reject unrelated sections above it.
-    review_section="busan-taksong-real-review-first-20261104"
-    permitted_prefix=("regional-direct-answer","regional-booking-first")
-    try:
-        review_position=p.sections.index(review_section)
-    except ValueError:
-        review_position=-1
-    if review_position<0 or review_position>2 or any(
-            section not in permitted_prefix for section in p.sections[:review_position]):
+    if not has_review_near_top(p.sections):
         raise AssertionError(f"{route}: verified review missing from top content: {p.sections[:5]!r}")
     if not p.tags:raise AssertionError(f"{route}: local hashtag paragraph missing")
     tags=p.tags.split()
