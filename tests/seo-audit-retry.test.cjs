@@ -55,6 +55,6 @@ test('release-triggered Naver monitor compares the exact Cloudtype commit',()=>{
  const audit=fs.readFileSync(path.join(root,'scripts/seo-audit.js'),'utf8');
  assert.ok(workflow.includes('ref: ${{ github.event.workflow_run.head_sha || github.sha }}'));
  assert.match(workflow,/github\.event\.workflow_run\.conclusion == 'success'/);
- assert.ok(audit.includes("require('../scripts/seo-audit-retry')"));
+ assert.ok(audit.includes("require('./seo-audit-retry')"));
  assert.match(audit,/await fetchSeoWithRetry\(url/);
 });
