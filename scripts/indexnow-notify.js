@@ -110,6 +110,33 @@ function changedPaths(files,manual='',options={}){
    }));
   }
  }
+ // A curated regional JSON edit can change an already reviewed public
+ // canonical page even though its published priority-regions.json row did not
+ // change. Notify ONLY the changed approved locality/service URLs present in
+ // the live 59-page priority hubs; most of the 2,900 editorial rows are NOT
+ // proactively indexable and must never be bulk-submitted.
+ const changedCuratedFiles=files.filter(file=>
+  /^data\/naver-regional-focus-[^/]+\.json$/.test(file)&&!file.includes('candidates'));
+ if(changedCuratedFiles.length){
+  const hrefMap=options.priorityHrefMap;
+  if(!(hrefMap instanceof Map))throw Error('Live published priority URL lookup is required for curated regional source changes');
+  const editorial=entry=>JSON.stringify([entry.topic,entry.pickup,entry.handover,entry.related]);
+  for(const filename of changedCuratedFiles){
+   const before=getSnapshot(filename,'before'),after=getSnapshot(filename,'after');
+   if(!Array.isArray(before.priority)||!Array.isArray(after.priority))
+    throw Error('Changed curated region source has no priority records: '+filename);
+   const oldByKey=new Map(before.priority.map(entry=>[entry.kind+'|'+entry.region,entry]));
+   for(const entry of after.priority){
+    if(!['daeri','taksong'].includes(entry.kind)||!entry.region)
+     throw Error('Invalid curated region/service source row: '+filename);
+    const identity=entry.kind+'|'+entry.region;
+    const old=oldByKey.get(identity);
+    if(old&&editorial(old)===editorial(entry))continue;
+    const route=hrefMap.get(identity);
+    if(route)include([route]); // Source-only village candidates cannot enter IndexNow.
+   }
+  }
+ }
  const changedBlogs=blogHashtagPaths.filter(url=>input.has(url.slice(1)+'index.html'));
  include(changedBlogs);
  if(input.has('index.html'))include(['/']);
@@ -190,7 +217,8 @@ async function main(){
  const manual=process.env.INDEXNOW_URLS||'';
  console.log('Changed repository files: '+(files.join(', ')||'(none)'));
  const needsPublishedMap=!dryRun&&!manual.trim()&&files.some(file=>
-  ['data/priority-regions.json','data/priority-blog-links.json'].includes(file));
+  ['data/priority-regions.json','data/priority-blog-links.json'].includes(file)||
+  (/^data\/naver-regional-focus-[^/]+\.json$/.test(file)&&!file.includes('candidates')));
  // Derive exact changed region IDs from source and resolve their canonical
  // URLs from the published service hubs. Do not equate data source filenames
  // with one unrelated fixed set of ten links.
