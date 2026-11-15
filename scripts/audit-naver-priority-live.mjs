@@ -132,9 +132,13 @@ async function checkPage(p){
   }
   // Confirm a route to consultation on sampled, canonical service pages.
   if(/^\/(?:daeri|taksong)\/(?:[a-z0-9-]+\/)+$/.test(p)){
-   item.hasCallAction=/<a\b[^>]*href=["']tel:18114294["'][^>]*>/i.test(html);
+   // Jeju vehicle transport intentionally has its own verified 1877-5245
+   // consultation number; other regions use the national 1811-4294 line.
+   const expectedPhone=p==='/taksong/jeju/'?'18775245':'18114294';
+   item.hasCallAction=[...html.matchAll(/<a\b[^>]*>/gi)]
+    .some(m=>htmlAttr(m[0],'href')==='tel:'+expectedPhone);
    item.hasFarePath=/href=["']\/fare\//i.test(html)||/action=["']\/fare\//i.test(html);
-   if(!item.hasCallAction)item.problems.push('conversion_missing_phone_18114294');
+   if(!item.hasCallAction)item.problems.push('conversion_missing_phone_'+expectedPhone);
    if(!item.hasFarePath)item.problems.push('conversion_missing_fare_path');
   }
   if(!item.title)item.problems.push('seo_missing_title');
