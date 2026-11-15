@@ -432,6 +432,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert(parsedSchemas(html).some(x=>x['@type']==='WebPage'&&x.url==='https://example.com'+route),
       'service hub must retain canonical WebPage JSON-LD '+route);
   }
+  // Representative province pages guard the shared 17-province renderer;
+  // the read-only live auditor checks every taksong/daeri province pair.
+  for(const route of ['/taksong/busan/','/daeri/busan/','/taksong/sejong/','/daeri/jeju/']){
+    const response=await get(route);
+    assert.equal(response.status,200,'province service HTML must load '+route);
+    const nodes=parsedSchemas(await response.text());
+    assert(nodes.some(x=>x['@type']==='WebPage'&&x.url==='https://example.com'+route),
+      'province service WebPage schema matches canonical URL '+route);
+    assert(nodes.some(x=>x['@type']==='BreadcrumbList'),
+      'province service must retain BreadcrumbList '+route);
+  }
   const rootImage=rootSchemas.find(x=>x['@type']==='ImageObject')?.contentUrl;
   if(rootImage){
     const imagePath=new URL(rootImage).pathname;
