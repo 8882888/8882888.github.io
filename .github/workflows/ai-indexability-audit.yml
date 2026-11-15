@@ -64,6 +64,14 @@ jobs:
           set -euo pipefail
           curl -fsSL --retry 2 --connect-timeout 8 --max-time 30 -H 'Cache-Control: no-cache' -D /tmp/ai-live-health-headers.txt https://jeongukdaeri.kr/health -o /tmp/ai-live-health.json
           node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('/tmp/ai-live-health.json','utf8'));console.log('PUBLIC /health release:',j.release||'missing')"
+          expected="sha256-$(sha256sum server.js | cut -c1-16)"
+          actual="$(node -p "JSON.parse(require('fs').readFileSync('/tmp/ai-live-health.json','utf8')).release || ''")"
+          echo "GitHub checked-out server.js release: $expected"
+          if [ "$expected" != "$actual" ]; then
+            echo "::error::Official Cloudtype deployment differs from source: expected $expected, live $actual"
+            exit 1
+          fi
+          echo "Live Cloudtype server.js release matches current PR parent/main source."
       - name: Check real production crawl path (without requests for indexing)
         shell: bash
         run: |
