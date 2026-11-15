@@ -14,6 +14,8 @@ const routes=[
   '/special/cycling-trail-transport/'
 ];
 const timeout=Number(process.env.SEO_AUDIT_TIMEOUT_MS||15000);
+// This valuable secondary guide deliberately consolidates to the Korean primary page.
+const intendedAliases=new Map([['/special/seoraksan-transport/','/설악산탁송/']]);
 const matchAll=(s,re)=>[...s.matchAll(re)].map(x=>x[1]);
 const htmlText=s=>s.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
 const attr=(tag,key)=>{const m=tag.match(new RegExp('\\b'+key+'\\s*=\\s*(["\\x27])([^"\\x27]*?)\\1','i'));return m?m[2]:''};
@@ -69,20 +71,32 @@ async function read(route){
    if(title.length!==1||!title[0])entry.errors.push('missing or multiple title');
    if(h1.length!==1||!h1[0])entry.errors.push('missing or multiple H1');
    if(robots.some(x=>/\bnoindex\b/i.test(x)))entry.errors.push('robots meta noindex');
-   if(canonical.length!==1||canonical[0]!==new URL(requested.pathname,'https://jeongukdaeri.kr').href)entry.errors.push('canonical mismatch');
+   const expectedCanonical=new URL(intendedAliases.get(requested.pathname)||requested.pathname,'https://jeongukdaeri.kr').href;
+   if(canonical.length!==1||canonical[0]!==expectedCanonical)entry.errors.push('canonical mismatch');
+   if(intendedAliases.has(requested.pathname)){
+    entry.canonicalAlias=expectedCanonical;
+    try{
+     const primary=await read(intendedAliases.get(requested.pathname));
+     if(!primary.res.ok)entry.errors.push('canonical primary HTTP '+primary.res.status);
+     const primaryCanonical=matchAll(primary.body,/(<link\b[^>]*>)/gi).filter(x=>attr(x,'rel').toLowerCase()==='canonical').map(x=>attr(x,'href'));
+     if(primaryCanonical.length!==1||primaryCanonical[0]!==expectedCanonical)
+      entry.errors.push('canonical primary is not self-canonical');
+     if(/\bnoindex\b/i.test(primary.res.headers.get('x-robots-tag')||''))entry.errors.push('canonical primary header noindex');
+    }catch(e){entry.errors.push('canonical primary fetch failed: '+e.message)}
+   }
    const scripts=matchAll(body,/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
    const graph=[];
    for(const s of scripts){try{graph.push(...nodes(JSON.parse(s)))}catch{entry.errors.push('invalid JSON-LD')}}
    entry.schemaTypes=[...new Set(graph.flatMap(types))];
    if(!scripts.length)entry.warnings.push('No structured JSON-LD');
    const webPages=graph.filter(x=>types(x).includes('WebPage'));
-   if(!webPages.length)entry.warnings.push('No WebPage JSON-LD');
+   if(!webPages.length&&!(route==='/'&&entry.schemaTypes.includes('WebSite')))entry.warnings.push('No WebPage JSON-LD');
    for(const node of webPages){
     const declared=node.url||(typeof node['@id']==='string'?node['@id'].replace(/#.*$/,''):'');
-    if(declared&&new URL(declared,ORIGIN).pathname!==requested.pathname)
+    if(declared&&new URL(declared,ORIGIN).href!==expectedCanonical)
       entry.warnings.push('WebPage schema URL differs from canonical path');
    }
-   if(!mapped.has(requested.pathname))entry.warnings.push('Not in sampled priority/service sitemaps (may be in other published sitemap)');
+   if(!intendedAliases.has(requested.pathname)&&!mapped.has(requested.pathname))entry.warnings.push('Not in sampled priority/service sitemaps (may be in other published sitemap)');
    if(/후기|실제 운행/.test(body)&&!(/운행기록|완료/.test(body)))entry.warnings.push('Review claim requires evidence verification');
    entry.title=title[0]||'';
   }catch(e){entry.errors.push('request failed: '+e.message)}
