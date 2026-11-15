@@ -434,7 +434,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   // Representative province pages guard the shared 17-province renderer;
   // the read-only live auditor checks every taksong/daeri province pair.
-  for(const route of ['/taksong/busan/','/daeri/busan/','/taksong/sejong/','/daeri/jeju/']){
+  for(const route of ['/taksong/busan/','/daeri/busan/','/taksong/sejong/','/taksong/jeju/','/daeri/jeju/']){
     const response=await get(route);
     assert.equal(response.status,200,'province service HTML must load '+route);
     const nodes=parsedSchemas(await response.text());
@@ -443,6 +443,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert(nodes.some(x=>x['@type']==='BreadcrumbList'),
       'province service must retain BreadcrumbList '+route);
   }
+  const jejuNodes=parsedSchemas(await (await get('/taksong/jeju/')).text());
+  assert.equal(jejuNodes.find(x=>x['@type']==='WebPage')?.about?.provider?.telephone,'1877-5245',
+    'Jeju taksong JSON-LD preserves its distinct consultation telephone');
   const rootImage=rootSchemas.find(x=>x['@type']==='ImageObject')?.contentUrl;
   if(rootImage){
     const imagePath=new URL(rootImage).pathname;

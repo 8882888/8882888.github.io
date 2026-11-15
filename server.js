@@ -1351,7 +1351,18 @@ async function servicePage(r,kind){
  const visibleCard=card?card.replace('</figure>',caption+'</figure>'):'';
  const jejuLead=jejuSearchPage?jejuTaksongBlogEditorial():'';
  const gangwonArchiveLead=kind==='taksong'&&r.name==='강원특별자치도'?'<section id="gangwon-source-archive" aria-labelledby="gangwon-source-archive-heading"><h2 id="gangwon-source-archive-heading">강원도탁송 영동·영서 실제 블로그 글과 차량 인수 안내</h2><p>영동의 속초·양양·주문진·강릉·동해·삼척, 영서의 춘천·원주·홍천·횡성·평창·정선은 차량 인수 위치와 기사 복귀 여건이 서로 다릅니다. 별도 지역 홍보글을 반복하기보다 실제 공개된 원문과 주차장·인계 준비사항을 함께 확인할 수 있도록 정리했습니다.</p><p><a href="/blog/archive/gangwon-taksong/">강원도탁송 영동·영서 블로그 자료실 읽기</a> · <a href="/blog/archive/mountain-cycle/">설악산 종주 차량회수 관련 글</a> · <a href="tel:18114294">전국탁송 상담 1811-4294</a></p></section>':'';
- const jejuPageSchema=jejuSearchPage?JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:searchTitle,description:searchDesc,url:pageUrl,primaryImageOfPage:{'@type':'ImageObject',url:imageUrl,contentUrl:imageUrl,name:'제주도탁송 지역명 맞춤 명함',width:1200,height:800,encodingFormat:'image/png'},about:{'@type':'Service',name:'제주탁송',provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}}).replace(/</g,'\\u003c'):'';
+ const jejuPageSchema=jejuSearchPage?JSON.stringify({
+  '@context':'https://schema.org',
+  '@graph':[
+   {'@type':'WebPage','@id':pageUrl,url:pageUrl,name:searchTitle,description:searchDesc,
+    breadcrumb:{'@id':pageUrl+'#breadcrumb'},
+    primaryImageOfPage:{'@type':'ImageObject',url:imageUrl,contentUrl:imageUrl,
+     name:'제주도탁송 지역명 맞춤 명함',width:1200,height:800,encodingFormat:'image/png'},
+    about:{'@type':'Service',name:'제주탁송',
+     provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}},
+   {'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}
+  ]
+ }).replace(/</g,'\\u003c'):'';
  const jejuContact=jejuSearchPage?'<section id="jeju-dedicated-contact"><h2>제주탁송 대표번호 1877-5245</h2><p>제주도 차량 선적·항구 인계 및 육지 연계 탁송은 제주탁송 전용 번호로 상담해 주세요.</p><p><a class="cta" href="tel:18775245">제주탁송 전화 상담 1877-5245</a></p></section>':'';
  // GEO/AEO: nationwide answer-first guidance for every valid administrative region.
  // Keep sparse neighborhood pages' existing noindex rules and avoid fabricated rides, mileage or dispatch promises.
