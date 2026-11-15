@@ -47,7 +47,7 @@ async function read(route){
    const {res,body}=await read(route);
    if(!res.ok||!/<urlset\b/i.test(body))sitemapProblems.push(route+': invalid sitemap HTTP/XML');
    for(const raw of matchAll(body,/<loc>([^<]+)<\/loc>/g)){
-    try{const u=new URL(raw.replace(/&amp;/g,'&'));if(u.origin===ORIGIN)mapped.add(u.pathname)}catch{sitemapProblems.push(route+': malformed <loc>')}
+    try{const u=new URL(raw.replace(/&amp;/g,'&'));if(u.origin==='https://jeongukdaeri.kr')mapped.add(u.pathname)}catch{sitemapProblems.push(route+': malformed <loc>')}
    }
   }catch(e){sitemapProblems.push(route+': '+e.message)}
  }
@@ -69,7 +69,7 @@ async function read(route){
    if(title.length!==1||!title[0])entry.errors.push('missing or multiple title');
    if(h1.length!==1||!h1[0])entry.errors.push('missing or multiple H1');
    if(robots.some(x=>/\bnoindex\b/i.test(x)))entry.errors.push('robots meta noindex');
-   if(canonical.length!==1||canonical[0]!=='https://jeongukdaeri.kr'+requested.pathname)entry.errors.push('canonical mismatch');
+   if(canonical.length!==1||canonical[0]!==new URL(requested.pathname,'https://jeongukdaeri.kr').href)entry.errors.push('canonical mismatch');
    const scripts=matchAll(body,/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
    const graph=[];
    for(const s of scripts){try{graph.push(...nodes(JSON.parse(s)))}catch{entry.errors.push('invalid JSON-LD')}}
