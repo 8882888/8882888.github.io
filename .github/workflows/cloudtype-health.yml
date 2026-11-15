@@ -119,8 +119,20 @@ jobs:
             raise SystemExit('FAIL: photo-free mountain fare charts are missing or reversed on live homepage: '+str(order))
           if 'src="/assets/smart24-business-card-inline.webp"' in first_section:
             raise SystemExit('FAIL: removed promotional artwork was restored above text-only mountain charts')
-          if '@media(max-width:1199px)' not in page or '#mobile-direct-image-priority{display:block' not in page:
-            raise SystemExit('FAIL: mobile media rule does not show fare posters')
+          # Current CSS deliberately displays the photo-free fare charts at
+          # every viewport width and switches to one column for small phones.
+          # Do not require the retired max-width:1199px breakpoint: a
+          # globally visible section is also visible on mobile.
+          match=re.search(r'<style id="mobile-direct-image-priority-20261102">(.*?)</style>',page,re.S)
+          if not match:
+            raise SystemExit('FAIL: approved photo-free fare chart stylesheet missing')
+          fare_css=match.group(1)
+          if not re.search(r'#mobile-direct-image-priority\\s*\\{\\s*display\\s*:\\s*block\\b',fare_css):
+            raise SystemExit('FAIL: approved fare charts are not visible at the default viewport')
+          if not re.search(r'@media\\s*\\(max-width:\\s*650px\\).*?#mobile-direct-image-priority\\s+\\.original-fare-grid\\s*\\{\\s*grid-template-columns\\s*:\\s*1fr',fare_css,re.S):
+            raise SystemExit('FAIL: fare charts do not switch to one column for small phones')
+          if re.search(r'#mobile-direct-image-priority\\s*\\{\\s*display\\s*:\\s*none',fare_css):
+            raise SystemExit('FAIL: fare posters were explicitly hidden in the approved stylesheet')
           for p in original:
             image_data,_=fetch(p+'?mobile-fare-verify=1')
             if not image_data.lstrip().startswith(b'<svg') or b'<image' in image_data.lower():
