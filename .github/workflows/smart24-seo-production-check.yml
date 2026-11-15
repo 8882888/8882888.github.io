@@ -1,5 +1,9 @@
 name: SMART24 production SEO smoke check
 on:
+  workflow_run:
+    workflows: [Deploy to Cloudtype]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: "17 1 * * *"
@@ -7,10 +11,16 @@ permissions:
   contents: read
 jobs:
   audit:
+    # Never test a commit as deployed if Cloudtype rejected that release.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Compare against the exact revision deployed, not a later automated
+          # keyword/archive commit on main.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
