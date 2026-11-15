@@ -1,0 +1,72 @@
+name: Validate 59 source-backed priority WebPage and Service JSON-LD URLs
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'tools/audit_live_priority_59_jsonld.py'
+      - 'tests/test_priority_59_jsonld.py'
+      - '.github/workflows/priority-59-jsonld.yml'
+  workflow_run:
+    workflows: [Deploy to Cloudtype]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smart24-priority59-jsonld-${{ github.event.workflow_run.head_sha || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  schema-unit:
+    name: Validate WebPage, Service and BreadcrumbList parsers without network access
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax-check data and run five schema/visible-description tests
+        run: |
+          python -m py_compile tools/audit_live_priority_59_jsonld.py
+          python -m unittest discover -s tests -p test_priority_59_jsonld.py
+
+  live-schema-after-cloudtype:
+    name: Confirm 59 live HTML pages agree with source, canonical and JSON-LD
+    needs: schema-unit
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify the deployed source data fingerprint matches GitHub before inspecting regions
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+          DEPLOY_CHECK_ATTEMPTS: '5'
+        run: node tools/check_cloudtype_freshness.js
+      - name: Verify 59 real source-backed region/service HTML and JSON-LD documents
+        env:
+          SMART24_AUDIT_BASE: https://jeongukdaeri.kr
+        run: python tools/audit_live_priority_59_jsonld.py
+      - name: Preserve URL-by-URL findings without creating any search submissions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-priority-59-jsonld
+          path: /tmp/smart24-priority-59-jsonld.json
+          if-no-files-found: warn
+          retention-days: 30
