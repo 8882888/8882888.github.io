@@ -1,0 +1,48 @@
+name: Verify 50 live priority SEO, approved v7 WebP and safe mountain SVG pages
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/audit_live_seo_mobile_50.py'
+      - 'tests/test_mobile_fifty_current_visuals.py'
+      - '.github/workflows/live-fifty-mobile-contract.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/audit_live_seo_mobile_50.py'
+      - 'tests/test_mobile_fifty_current_visuals.py'
+      - '.github/workflows/live-fifty-mobile-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: smart24-fifty-mobile-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  inspect-50:
+    name: Check 40 region/service URLs plus 10 important hubs
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax and image contract regression tests
+        run: |
+          python -m py_compile tools/audit_live_seo_mobile_50.py
+          python -m unittest discover -s tests -p test_mobile_fifty_current_visuals.py
+      - name: Compare actual Cloudtype HTML, mobile WebP assets and safe historical mountain SVG charts
+        run: python tools/audit_live_seo_mobile_50.py
+        env:
+          SMART24_AUDIT_BASE: https://jeongukdaeri.kr
+      - name: Preserve 50 actual HTTP audit findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-live-mobile-50-current
+          retention-days: 30
+          path: /tmp/smart24-live-seo-mobile-50.json
+          if-no-files-found: warn
