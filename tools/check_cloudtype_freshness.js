@@ -4,6 +4,8 @@
 const fs=require('node:fs');
 const crypto=require('node:crypto');
 const path=require('node:path');
+const {fingerprintCuratedRegionSources}=require('../lib/curated-region-sources-fingerprint');
+const curatedFingerprint=fingerprintCuratedRegionSources(path.join(__dirname,'..'));
 const base=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const sha=name=>crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'..',name))).digest('hex');
 const serverHash=sha('server.js'),homeHash=sha('index.html'),businessHash=sha('business/index.html'),regionalGuidePath='data/naver-regional-focus-twelfth-taksong-100.json',regionalGuideHash=sha(regionalGuidePath),priorityGuidesPath='data/priority-regions.json',priorityGuidesHash=sha(priorityGuidesPath),serviceKeywordPath='lib/service-keyword-entry.js',serviceKeywordHash=sha(serviceKeywordPath);
@@ -27,6 +29,8 @@ async function check(){
  if(hashes['index.html']!==homeHash)mismatches.push('index.html fingerprint does not match GitHub');
  if(hashes['business/index.html']!==businessHash)mismatches.push('business/index.html source fingerprint does not match GitHub');
  if(hashes[regionalGuidePath]!==regionalGuideHash)mismatches.push(regionalGuidePath+' fingerprint does not match GitHub; latest regional text edits not verified live');
+ if(hashes['data/naver-regional-focus-*.json']!==curatedFingerprint.sha256)mismatches.push('Combined curated region sources fingerprint mismatches: some of the published regional guidance files are stale');
+ if(Number(data.curated_region_file_count)!==curatedFingerprint.count)mismatches.push('Curated regional source file count mismatch: live '+data.curated_region_file_count+' vs GitHub '+curatedFingerprint.count);
  if(hashes[priorityGuidesPath]!==priorityGuidesHash)mismatches.push(priorityGuidesPath+' fingerprint does not match GitHub; source-backed priority locality edits not verified live');
  if(hashes[serviceKeywordPath]!==serviceKeywordHash)mismatches.push(serviceKeywordPath+' fingerprint does not match GitHub; 전국탁송·대리운전·대리 keyword updates not verified live');
  if(actualCount!==expectedCount)mismatches.push('curated guide count: live '+actualCount+' / source '+expectedCount);
@@ -105,7 +109,7 @@ async function check(){
   const loc='<loc>'+base+tradePath+'</loc>';
   if(priorityXml.split(loc).length!==2)throw Error('Live priority sitemap trade URL missing or duplicated: '+tradePath);
  }
- return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),regionalGuideSha:regionalGuideHash.slice(0,16),priorityGuidesSha:priorityGuidesHash.slice(0,16),serviceKeywordSha:serviceKeywordHash.slice(0,16),tourismGuide:'verified',businessPortal:'source-hash+priority-sitemap verified'};
+ return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),regionalGuideSha:regionalGuideHash.slice(0,16),curatedRegionalSourcesSha:curatedFingerprint.sha256.slice(0,16),curatedRegionalFiles:curatedFingerprint.count,priorityGuidesSha:priorityGuidesHash.slice(0,16),serviceKeywordSha:serviceKeywordHash.slice(0,16),tourismGuide:'verified',businessPortal:'source-hash+priority-sitemap verified'};
 }
 async function main(){
  const attempts=Math.min(6,Math.max(1,Number(process.env.DEPLOY_CHECK_ATTEMPTS)||4));

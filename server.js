@@ -21,6 +21,8 @@ const exactKeywordCard=require('./lib/exact-keyword-card');
 const {createNationwideLocalityExplorer}=require('./lib/nationwide-locality-explorer');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const load=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
+const {fingerprintCuratedRegionSources}=require('./lib/curated-region-sources-fingerprint');
+const CURATED_REGION_FINGERPRINT=fingerprintCuratedRegionSources(ROOT);
 const baseRegions=load('data/regions.json').regions||[];
 function loadLegalRegions(){
  const folder=path.join(ROOT,'data/legal-regions');
@@ -2504,7 +2506,7 @@ if(pathname==='/health/seo.json'){
   }catch{pages[key]={error:'source unavailable'}}
  }
  res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,naver_focus_region_count:naverFocus2900.length,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','business/index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json','data/naver-regional-focus-twelfth-taksong-100.json','lib/service-keyword-entry.js'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]))}),'application/json; charset=utf-8');
+ return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,naver_focus_region_count:naverFocus2900.length,curated_region_file_count:CURATED_REGION_FINGERPRINT.count,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','business/index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json','data/naver-regional-focus-twelfth-taksong-100.json','lib/service-keyword-entry.js'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]).concat([['data/naver-regional-focus-*.json',CURATED_REGION_FINGERPRINT.sha256]]))}),'application/json; charset=utf-8');
 }
 // Human-readable Cloudtype deployment proof. This page is deliberately not indexable.
 if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){

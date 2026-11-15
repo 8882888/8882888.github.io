@@ -47,6 +47,8 @@ jobs:
           node --check tests/homepage-copy.test.js
       - name: Syntax-check current production SEO auditors
         run: python3 -m py_compile tools/check_live_taksong_deploy.py tools/audit_live_seo.py
+      - name: Confirm all curated region data edits affect the production deployment fingerprint
+        run: node --test tests/curated-region-sources-fingerprint.test.js
       - name: Validate preferred Korean site name and structured data
         run: node tests/site-name.test.js
       - name: Verify 823k keyword intents resolve to regional canonical URLs
