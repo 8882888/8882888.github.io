@@ -14,5 +14,9 @@ test('production sitemap smoke is deployed-commit-aware and runs after Cloudtype
  assert.match(workflow,/run: python tests\/production-seo-smoke\.py/);
  assert.match(workflow,/workflow_dispatch:/);
  assert.match(workflow,/schedule:/);
+ assert.ok(workflow.includes('  push:'),'Workflow-only edits must trigger an immediate production sanity check');
+ assert.ok(workflow.includes("'tests/production-seo-smoke.py'"),'Only smoke-checker edits should trigger push audits');
+ assert.match(workflow,/group: smart24-production-sitemap-smoke/);
+ assert.match(workflow,/cancel-in-progress: false/);
  assert.doesNotMatch(workflow,/pull_request:/,'Do not audit predeployment PR code as if it is already live');
 });
