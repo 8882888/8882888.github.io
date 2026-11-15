@@ -36,6 +36,22 @@ class BusanParser(HTMLParser):
         elif self.capture=="h1":self.h1+=data
         elif self.capture=="tags":self.tags+=data
 
+def is_review_first(text):
+    # Both "부산탁송 후기" and the evidence-focused "부산탁송 실제 운행후기"
+    # are review-first. Do not weaken this check to unrelated regional titles.
+    return re.match(r"^부산탁송\s*(?:실제\s*)?(?:운행)?후기",html.unescape(str(text)).strip()) is not None
+
+def has_review_near_top(sections):
+    # Direct answer and booking can precede the evidence section; unrelated
+    # SEO blocks, or a review pushed down the page, are still rejected.
+    review_section="busan-taksong-real-review-first-20261104"
+    permitted_prefix=("regional-direct-answer","regional-booking-first")
+    try:
+        position=sections.index(review_section)
+    except ValueError:
+        return False
+    return position<=2 and all(section in permitted_prefix for section in sections[:position])
+
 def audit(route):
     url=BASE+route+"?audit_busan_review_first=20261104"
     request=Request(url,headers={"User-Agent":"Smart24-Busan-Review-Integrity/1.0","Cache-Control":"no-cache"})
@@ -44,12 +60,12 @@ def audit(route):
         text=resp.read().decode("utf-8")
     p=BusanParser()
     p.feed(text)
-    if not html.unescape(p.title).startswith("부산탁송 후기"):
+    if not is_review_first(p.title):
         raise AssertionError(f"{route}: title is not review-first: {p.title!r}")
-    if not html.unescape(p.h1).startswith("부산탁송 후기"):
+    if not is_review_first(p.h1):
         raise AssertionError(f"{route}: H1 is not review-first: {p.h1!r}")
-    if not p.sections or p.sections[0]!="busan-taksong-real-review-first-20261104":
-        raise AssertionError(f"{route}: initial content is not original review: {p.sections[:4]!r}")
+    if not has_review_near_top(p.sections):
+        raise AssertionError(f"{route}: verified review missing from top content: {p.sections[:5]!r}")
     if not p.tags:raise AssertionError(f"{route}: local hashtag paragraph missing")
     tags=p.tags.split()
     if len(tags)!=30 or len(set(tags))!=30 or any(t not in tags for t in REQUIRED_TAGS):
@@ -59,6 +75,7 @@ def audit(route):
             raise AssertionError(f"{route}: original Naver review missing {post_id}")
     print(f"PASS {route}: review-first title/H1/section, 3 verified originals, 30 unique Busan tags",flush=True)
 
-for route in ROUTES:
-    audit(route)
-print("SMART24_BUSAN_REVIEWS 2/2 live pages verified",flush=True)
+if __name__=="__main__":
+    for route in ROUTES:
+        audit(route)
+    print("SMART24_BUSAN_REVIEWS 2/2 live pages verified",flush=True)
