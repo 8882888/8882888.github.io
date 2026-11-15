@@ -8,6 +8,22 @@ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 const robots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
 const reviewed=JSON.parse(fs.readFileSync(path.join(root,'data/priority-regions.json'),'utf8')).pages;
 
+test('service sitemaps do not promote village pages that remain deliberately noindex',()=>{
+ const start=server.indexOf("if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml')");
+ const end=server.indexOf("if(pathname==='/sitemap.xml')",start);
+ assert(start>=0&&end>start,'Driver and vehicle service sitemap source must exist');
+ const code=server.slice(start,end);
+ assert(code.includes("const sitemapRegionIndexable=r=>"),'Indexability predicate must be applied before sitemap selection');
+ assert(code.includes("r.level!=='리'"),'Restrict noindex rule to unsupported village scale');
+ assert(code.includes("regionalServiceEvidence(r,service).length"),'Allow already documented real village rides');
+ assert(code.includes("publicRides.some(ride=>ride.service===service&&tripMatchesRegion(ride,r))"),
+  'Keep verified public trip village routes in the eligible set');
+ const filtered=code.indexOf('.filter(sitemapRegionIndexable)');
+ const cutoff=code.indexOf('.slice(0,Math.max(0,500-uniqueBaseRoutes.length))');
+ assert(filtered>=0&&cutoff>filtered,'Filter noindex village candidates BEFORE 500-entry cutoff');
+ assert(server.includes('content="noindex,follow"'),'Do not remove the original noindex protections merely to fix sitemap errors');
+});
+
 test('every declared sitemap has an explicit server route',()=>{
  const routes=[...robots.matchAll(/^Sitemap:\s+https:\/\/jeongukdaeri\.kr(\/[^\s]+)$/gm)].map(m=>m[1]);
  assert.equal(routes.length,8,'keep eight published sitemap declarations, including source-backed cases');

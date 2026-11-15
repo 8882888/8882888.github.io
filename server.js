@@ -3292,7 +3292,22 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  // keywords can disappear from the sitemap as the 2,900-target set grows.
  const firstFocusNames=new Set([...naverFocus50,...naverFocusNext50,...naverFocusThird50].filter(x=>x.kind===service).map(x=>x.region));
  const firstFocusRegions=regions.filter(r=>firstFocusNames.has(r.full_name));
- const discoveryRegions=[...new Map([...provinceHubs,...firstFocusRegions,...balancedRegions,...unmatchedRegions].map(r=>[r.slug,r])).values()].slice(0,Math.max(0,500-uniqueBaseRoutes.length));
+ // A URL advertised in a sitemap must not answer with a noindex meta tag.
+ // The 2026-11-15 full crawler audit found 67 such URLs; every one was a
+ // source-only '리' village, not a reviewed priority landing page.  Keep the
+ // actual village pages available for directions and quote lookup, but promote
+ // only villages with a real public completion or preserved ride-history
+ // evidence; editing a 2,900-keyword guide alone is not ride evidence.
+ const sitemapRegionIndexable=r=>{
+  if(r.level!=='리'||priorityByKey.has(service+'|'+r.full_name))return true;
+  if(regionalServiceEvidence(r,service).length)return true;
+  return publicRides.some(ride=>ride.service===service&&tripMatchesRegion(ride,r));
+ };
+ // Filter before the 500-entry limit: excluded noindex villages must not
+ // waste sitemap slots, and the next useful district/municipality stays visible.
+ const discoveryRegions=[...new Map([...provinceHubs,...firstFocusRegions,...balancedRegions,...unmatchedRegions]
+  .filter(sitemapRegionIndexable).map(r=>[r.slug,r])).values()]
+  .slice(0,Math.max(0,500-uniqueBaseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
  // Keep actual HTML region pages and all on-page images intact.
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+uniqueBaseRoutes.map(route=>'<url><loc>'+esc(new URL(base+route).href)+'</loc></url>').join('')+discoveryRegions.map(r=>'<url><loc>'+esc(new URL(base+servicePath(r,service)).href)+'</loc></url>').join('')+'</urlset>';sitemapCache.set(pathname,xml);return respond(res,200,xml,'application/xml; charset=utf-8')}
