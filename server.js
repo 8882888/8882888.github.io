@@ -1134,6 +1134,37 @@ function boundedRegionalSearchDescription(value){
  if(lastSpace>Math.floor(budget*0.65))part=part.slice(0,lastSpace);
  return part.replace(/[\s.,，·]+$/,'')+'…'+suffix;
 }
+// The completed-ride sources are fixed at boot. Cache the exact evidence
+// matches by official region and service instead of scanning all archived
+// rides on every anonymous crawler request. The small LRU protects 512MB apps
+// from caching every 읍/면/동/리 in the national directory.
+const regionalRideLookupCache=new Map();
+function cachedRegionalRideLookups(r,kind){
+ const key=kind+'|'+r.slug;
+ if(regionalRideLookupCache.has(key)){
+  const cached=regionalRideLookupCache.get(key);
+  regionalRideLookupCache.delete(key);
+  regionalRideLookupCache.set(key,cached);
+  return cached;
+ }
+ const regionalBatchMatches=indexableHistoricalRides.filter(x=>
+  x.service===kind&&matchingHistoryRegion(x,r,regions)&&
+  x.departure!=='지역 비공개'&&x.destination!=='지역 비공개')
+  .filter((x,i,arr)=>arr.findIndex(y=>y.date===x.date&&y.departure===x.departure&&y.destination===x.destination&&y.fare===x.fare)===i)
+  .slice(0,20);
+ const matches=publicRides.filter(x=>{
+  const raw=String(x.departure||'')+' '+String(x.destination||'');
+  const type=String(x.service||x.service_type||x.kind||'').toLowerCase();
+  return tripMatchesRegion(x,r)&&(kind==='taksong'
+   ?/탁송|taksong/.test(type)||(!type&&/탁\//.test(raw))
+   :/대리|daeri/.test(type)||(!type&&!/탁\//.test(raw)));
+ });
+ const result={regionalBatchMatches,matches};
+ if(regionalRideLookupCache.size>=128)
+  regionalRideLookupCache.delete(regionalRideLookupCache.keys().next().value);
+ regionalRideLookupCache.set(key,result);
+ return result;
+}
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  // Avoid constructing the repeated, very long provider/keyword editorial for
@@ -1243,12 +1274,12 @@ async function servicePage(r,kind){
  })[r.level]||'정확한 출발 주소와 차량 위치를 확인합니다.';
  const regionalLocalityChecklist=priorityMeta?
   '<section id="priority-locality-customer-checklist-20261105"><h2>'+esc(keyword)+' 예약 전 지역별 확인사항</h2><p>'+esc(localitySpecificAdvice)+'</p><p>'+(kind==='taksong'?'차량 운행 가능 상태와 인수·인계 담당자, 열쇠 전달 방법을 확인합니다.':'고객 동승·경유·대기 여부와 목적지 주차 위치를 확인합니다.')+' 희망 날짜와 시각, 차종, 실제 출발·도착 주소를 알려주시면 현재 요금과 배차 가능 여부를 확인합니다.</p><p>해당 지역의 과거 운행이 기록되지 않았다면 완료 후기를 임의로 만들지 않습니다.</p><p><a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">'+esc(keyword)+' 확인된 지역 후기</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">출발지 요금조회</a> · <a href="tel:18114294">1811-4294 예약상담</a></p></section>':'';
- const regionalBatchMatches=indexableHistoricalRides.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개').filter((x,i,arr)=>arr.findIndex(y=>y.date===x.date&&y.departure===x.departure&&y.destination===x.destination&&y.fare===x.fare)===i).slice(0,20);
+ const {regionalBatchMatches,matches}=cachedRegionalRideLookups(r,kind);
  // Resolve geography from the original dispatch fields, not provisional batch labels.
  // Unqualified neighborhoods and same-name cities must pass the shared locality matcher.
  const regionalBatchLinks=regionalBatchMatches.length?'<section id="regional-archive-matched-ride-links"><h2>'+esc(keyword)+' 실제 운행완료 후기 · 지역별 연결</h2><p>기존 2,591건 중 해당 행정구역이 확인된 운행기록을 연결했습니다. 고객정보와 원본 배차 메모는 공개하지 않습니다.</p><ul>'+regionalBatchMatches.map(old=>'<li><a href="/reviews/history/'+old.id+'/">'+esc(keyword+' 운행완료 후기｜'+old.departure+' → '+old.destination)+'</a> · '+esc(old.date)+' · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(old.departure==='지역 비공개'?'':old.departure)+'&amp;to='+encodeURIComponent(old.destination==='지역 비공개'?'':old.destination)+'">예상요금 조회</a> · <a href="tel:18114294">예약상담</a></li>').join('')+'</ul><p><a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">이 지역 실제 운행완료 후기 전체 보기</a></p></section>':'';
  const regionHistoryAllLink=regionalBatchLinks+'<p><a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">'+esc(keyword)+' 실제 운행완료 후기 전체 보기</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(keyword)+' 예상요금 조회</a> · <a href="tel:18114294">전화 예약상담 1811-4294</a> · <a href="/reviews/history/">전국 2,591건 운행후기</a></p>';
- const matches=publicRides.filter(x=>{const raw=String(x.departure||'')+' '+String(x.destination||'');const type=String(x.service||x.service_type||x.kind||'').toLowerCase();return tripMatchesRegion(x,r)&&(kind==='taksong'?/탁송|taksong/.test(type)||(!type&&/탁\//.test(raw)):/대리|daeri/.test(type)||(!type&&!/탁\//.test(raw)))});
+ 
  // Deduplicate repeated public records before rendering SEO review cards.
  const uniqueMatches=[...new Map(matches.map(x=>[String(x.date||'')+'|'+String(x.departure||'')+'|'+String(x.destination||'')+'|'+String(x.service||x.service_type||x.kind||''),x])).values()].slice(0,8);
  const reviewCards=uniqueMatches.length?'<section><h2>'+esc(keyword)+' 실제 운행완료 후기 · 출발지·도착지·요금</h2><p>확인된 완료 운행 자료만 사용합니다. 예약 시각·배차 과정 등 미제공 정보는 임의로 작성하지 않습니다. 현재 요금은 이용 조건에 따라 달라집니다.</p>'+uniqueMatches.slice(0,5).map(x=>'<article style="border-top:1px solid #d6e0ee;padding:14px 0"><h3>'+esc(x.departure+' → '+x.destination+' '+service+' 운행완료')+'</h3><p><strong>운행일:</strong> '+esc(x.date)+' · <strong>출발:</strong> '+esc(x.departure)+' · <strong>도착:</strong> '+esc(x.destination)+' · <strong>운행요금:</strong> '+esc(x.fare||'미기록')+'</p><p><strong>예약·배차:</strong> 운행완료 확인. 예약 접수 및 배차 세부 과정은 미기록입니다.</p><p><a href="'+rideUrl(x)+'">운행 기록 보기</a> · <a href="tel:18114294">예약·배차 상담 '+PHONE+'</a></p></article>').join('')+'</section>':historicalMatches.length?historicalCards:priorityMeta?'<section><h2>'+esc(keyword)+' 운행기록 확인 현황</h2><p>현재 공개 가능한 완료 운행기록에서 이 지역의 출발 또는 도착이 명확하게 확인된 사례는 찾지 못했습니다. 다른 지역의 운행을 이 지역의 실적으로 표시하지 않습니다.</p><p><a href="/reviews/history/?kind='+kind+'">전국 실제 운행기록 확인</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 예상요금 상담</a></p></section>':'<section><h2>'+esc(name)+' 실제 운행기록 확인 안내</h2><p>현재 공개 가능한 기록에서 이 행정구역의 출발 또는 도착이 확인된 운행은 없습니다. 이름이 비슷한 다른 지역의 운행사례를 이곳의 실적으로 표시하지 않습니다.</p><p><a href="/reviews/history/?kind='+kind+'">전국 전체 운행기록 보기</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 예상요금·예약 안내</a></p></section>';
