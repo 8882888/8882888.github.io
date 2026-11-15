@@ -10,6 +10,7 @@ on:
     paths:
       - 'server.js'
       - 'tests/gijang-blog-locality-guard.test.cjs'
+      - '.github/workflows/gijang-blog-locality-guard.yml'
 permissions:
   contents: read
 jobs:
@@ -27,3 +28,40 @@ jobs:
         run: |
           node --check server.js
           node --test tests/gijang-blog-locality-guard.test.cjs
+
+  verify-live-gijang:
+    if: github.event_name == 'push'
+    needs: protect-local-source-links
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify actual Cloudtype page no longer advertises unrelated stadium ride
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            echo "Live Gijang verification attempt $attempt/24"
+            if node - <<'NODE'
+          (async()=>{
+            const url='https://jeongukdaeri.kr/taksong/busan/gijang-gun/?seo-blog-release='+Date.now();
+            const response=await fetch(url,{signal:AbortSignal.timeout(16000),headers:{'Cache-Control':'no-cache'}});
+            if(response.status!==200)throw Error('production HTTP '+response.status);
+            const html=await response.text();
+            const section=html.match(/<section id="regional-blog-links">([\s\S]*?)<\/section>/);
+            if(!section)throw Error('Gijang blog section not present');
+            if(/축구전용경기장|완주군\s*봉동/.test(section[1]))throw Error('stale unrelated stadium blog link');
+            if(!/기장군탁송|부산기장군탁송|경동오토필드/.test(section[1]))throw Error('real Gijang blog originals missing');
+            console.log('PASS live HTTP 200, local original preserved, stadium false link excluded');
+          })().catch(e=>{console.error(e.message);process.exitCode=1});
+          NODE
+            then
+              exit 0
+            fi
+            if [ "$attempt" -lt 24 ]; then sleep 10; fi
+          done
+          echo "::error::Cloudtype still serves stale or invalid Gijang blog links"
+          exit 1
