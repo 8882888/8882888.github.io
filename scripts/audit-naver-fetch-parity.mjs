@@ -21,6 +21,11 @@ export const agents={
  simulatedYeti:'Mozilla/5.0 (compatible; Yeti/1.1; +https://naver.me/spd)'
 };
 export const blocked=value=>/(?:^|[\s,;])(?:noindex|none)(?:$|[\s,;])/i.test(String(value||''));
+export function normalizeRobotsRules(source){
+ return String(source||'').split(/\r?\n/).map(line=>line.trim()).filter(line=>line&&!line.startsWith('#'))
+  .map(line=>{const colon=line.indexOf(':');return colon<0?line:line.slice(0,colon).toLowerCase()+':'+line.slice(colon+1).trim()})
+  .join('\n');
+}
 export function attr(tag,name){
  const match=String(tag||'').match(new RegExp('(?:^|\\s)'+name+'\\s*=\\s*(?:"([^"]*)"|\\x27([^\\x27]*)\\x27)','i'));
  return match?(match[1]??match[2]??''):'';
@@ -84,7 +89,7 @@ async function main(){
      row=await retrieve(route,agent,kind==='page'||kind==='robots');
      if(kind==='page'){row.html=inspectHead(row.body,new URL(route,origin).href,row.xRobotsTag)}
      if(kind==='robots'){
-      row.robotsSourceMatch=row.body.trim()===sourceRobots.trim();
+      row.robotsSourceMatch=normalizeRobotsRules(row.body)===normalizeRobotsRules(sourceRobots);
       if(!row.robotsSourceMatch)issues.push({route,agent,reason:'robots_source_live_mismatch'});
       if(/^\s*Disallow:/mi.test(row.body))issues.push({route,agent,reason:'unexpected_robots_disallow_manual_review'});
      }
