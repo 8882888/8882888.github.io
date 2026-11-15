@@ -2,12 +2,23 @@ name: Verify live SEO release
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-live-seo.yml'
+      - 'scripts/verify-live-seo-release.cjs'
+      - 'tests/live-sitemap-scope.test.mjs'
   workflow_dispatch:
+  schedule:
+    # 03:30 Asia/Seoul: one full sitemap crawl daily, not on every SEO commit
+    - cron: '30 18 * * *'
 permissions:
   contents: read
 concurrency:
-  group: live-seo-verification
-  cancel-in-progress: true
+  # Keep frequent push verifications replaceable, but never cancel the full
+  # daily audit just because a new content patch lands on main.
+  group: live-seo-verification-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -22,7 +33,9 @@ jobs:
       - run: node scripts/verify-live-seo-release.cjs
   nationwide-audit:
     needs: verify
-    if: ${{ !cancelled() }}
+    # A full URL walk can take much longer than a quick release check. Let
+    # scheduled/manual audits finish rather than restarting on every push.
+    if: ${{ success() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
