@@ -58,7 +58,7 @@ class Live50VisualContractTest(unittest.TestCase):
         '<meta name="robots" content="index,follow"></head>'
         '<body><h1>설악산탁송</h1>1811-4294 '
         '<section id="mountain-route-fare-table-202611"><img src="'+chart+'"></section></body></html>').encode()
-  svg=b'<svg xmlns="http://www.w3.org/2000/svg"><text>설악산탁송 코스별 요금표</text></svg>'
+  svg='<svg xmlns="http://www.w3.org/2000/svg"><text>설악산탁송 코스별 요금표</text></svg>'.encode('utf-8')
   def fetch(path):
    if path==mountain:return 200,BASE+path,{"content-type":"text/html"},html,1
    if path==chart:return 200,BASE+path,{"content-type":"image/svg+xml"},svg,2
