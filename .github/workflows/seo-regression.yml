@@ -50,6 +50,8 @@ jobs:
         run: node --test tests/keyword-canonical-bridge.test.js
       - name: Test regional evidence-link audit classification
         run: node --test tests/indexability-scope.test.mjs
+      - name: Ensure official Naver indexed count is not fabricated from crawl tests
+        run: node --test tests/naver-official-scorecard.test.mjs
       - name: Verify read-only indexability retry behavior
         run: node --test tests/indexability-retry.test.mjs
       - name: Validate saved-case publication URLs and feed record integrity
