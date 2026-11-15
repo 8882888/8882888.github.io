@@ -38,13 +38,13 @@ test('v2 official canonical pages and isolated redirect/noindex routes', {timeou
    xmlByService.set(kind,xml);
    assert(xml.includes('https://jeongukdaeri.kr/'+kind+'/sejong/'),
     'Keep original verified Sejong province hub in '+kind+' sitemap');
-   const paths=[...xml.matchAll(/<loc>([^<]+)<\\/loc>/g)].map(m=>new URL(m[1]).pathname);
+   const paths=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>new URL(m[1]).pathname);
    assert(paths.length>20&&paths.length<=500,'Keep curated crawl scope bounded');
    assert.equal(new Set(paths).size,paths.length,'No duplicate service canonical URLs');
    for(const villagePath of paths.filter(p=>p.endsWith('-ri/'))){
     const village=await get(villagePath);
     assert.equal(village.status,200,'Any promoted village must be reachable: '+villagePath);
-    assert.doesNotMatch(await village.text(),/<meta\\s+name="robots"\\s+content="noindex/i,
+    assert.doesNotMatch(await village.text(),/<meta\s+name="robots"\s+content="noindex/i,
      'Village without ride evidence must never appear in indexable sitemap: '+villagePath);
    }
   }
@@ -62,7 +62,7 @@ test('v2 official canonical pages and isolated redirect/noindex routes', {timeou
    const village=await get(route);
    assert.equal(village.status,200,'Village quote page must remain available: '+route);
    const html=await village.text();
-   assert.match(html,/<meta\\s+name="robots"\\s+content="noindex,follow"/i,
+   assert.match(html,/<meta\s+name="robots"\s+content="noindex,follow"/i,
     'Unverified village must remain safely noindex: '+route);
    assert(html.includes('href="/fare/"')||html.includes('action="/fare/"'),
     'Village booking/quote link should not be deleted: '+route);
