@@ -63,6 +63,8 @@ jobs:
         run: node --test tests/priority-coast-and-cities-editorial.test.mjs
       - name: Preserve 16 high-priority regional guide edits and accurate Sejong locality boundaries
         run: node --test tests/priority-locality-editorial-20261115.test.mjs
+      - name: Protect 24 additional Sejong, Wonju and Naju source-specific locality guides
+        run: node --test tests/priority-locality-editorial-24-20261115.test.cjs
       - name: Protect public sitemap scope and release verifier from stale locality checks
         run: node --test tests/live-sitemap-scope.test.mjs
       - name: Test regional evidence-link audit classification
