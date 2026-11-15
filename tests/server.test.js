@@ -418,13 +418,19 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(focusedResponse.status,200,'curated service page discovery feed must load');
   const focusedXml=await focusedResponse.text();
   const focusedUrls=[...focusedXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
-  assert.ok(focusedUrls.length>=2900&&focusedUrls.length<3100,
-    'focused sitemap should include curated canonical pages, not all template regions: '+focusedUrls.length);
+  assert.equal(focusedUrls.length,require('../data/priority-regions.json').pages.length,
+    'focused sitemap should list only individually reviewed local service guides, not all 2,900 template candidates');
   assert.equal(new Set(focusedUrls).size,focusedUrls.length,'focused map contains unique URLs');
   assert.ok(focusedUrls.includes('https://example.com/taksong/busan/gijang-gun/'),'Gijang is included');
   assert.ok(focusedUrls.includes('https://example.com/daeri/daejeon/'),'Daejeon is included');
   const allSitemapIndex=await (await get('/sitemap-all.xml')).text();
   assert.ok(allSitemapIndex.includes('/sitemap-focused-regions.xml'),'root sitemap index contains focused guide sitemap');
+  for(const level of ['eup','myeon','dong','ri'])
+    assert.ok(!allSitemapIndex.includes('/sitemap-localities-'+level+'.xml'),
+      'root sitemap index must not advertise bulk unverified '+level+' locality pages');
+  for(const level of ['province','city','county','district'])
+    assert.ok(allSitemapIndex.includes('/sitemap-localities-'+level+'.xml'),
+      'root sitemap preserves province/city/county/district exploration '+level);
   const dedicatedTaksongSitemapResponse=await get('/sitemap-taksong.xml');
   assert.equal(dedicatedTaksongSitemapResponse.status,200,'dedicated taksong sitemap must load');
   const dedicatedTaksongSitemap=await dedicatedTaksongSitemapResponse.text();
