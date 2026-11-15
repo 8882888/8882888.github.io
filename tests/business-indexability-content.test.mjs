@@ -6,8 +6,8 @@ import {fileURLToPath} from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const categories=[
- ['used-car','used-car-practical-questions','매매상사'],
- ['rental-car','rental-practical-questions','렌터카'],
+ ['used-car','used-car-practical-questions','중고차'],
+ ['rental-car','rental-practical-questions','렌트카'],
  ['export-port','export-practical-questions','수출단지'],
  ['scrapyard','scrapyard-practical-questions','폐차장'],
  ['auction','auction-practical-questions','경매장']
