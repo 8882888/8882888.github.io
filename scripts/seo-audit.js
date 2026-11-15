@@ -2,7 +2,7 @@
 'use strict';
 const config=require('../data/seo-pages.json');
 const priority=require('../data/priority-regions.json').pages;
-const {fetchSeoWithRetry}=require('../lib/seo-audit-retry');
+const {fetchSeoWithRetry}=require('./seo-audit-retry');
 const base=new URL(process.argv[2]||'http://localhost:3000/');
 const routes=[...new Set([...config.pages.map(p=>p.path),'/taksongdaeri/','/favicon.ico','/sitemap.xml','/robots.txt'])];
 const rules=new Map(config.pages.map(p=>[p.path,p]));
