@@ -1,0 +1,39 @@
+name: Notify Naver IndexNow once for seven updated Smart24 canonical pages (2026-11-15)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/indexnow-seven-canonicals-20261115.yml'
+permissions:
+  contents: read
+concurrency:
+  group: smart24-indexnow-seven-canonicals-20261115
+  cancel-in-progress: false
+jobs:
+  verify-and-notify-once:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout current published main revision
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 2
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Regression-check strict URL targeting
+        run: node tests/indexnow-targeting.test.js
+      - name: Verify seven canonical 200 pages and notify Naver IndexNow
+        env:
+          INDEXNOW_CHANGED_FILES: ''
+          INDEXNOW_URLS: >-
+            https://jeongukdaeri.kr/
+            https://jeongukdaeri.kr/business/
+            https://jeongukdaeri.kr/business/used-car/
+            https://jeongukdaeri.kr/business/rental-car/
+            https://jeongukdaeri.kr/business/export-port/
+            https://jeongukdaeri.kr/business/scrapyard/
+            https://jeongukdaeri.kr/business/auction/
+        run: node scripts/indexnow-notify.js
