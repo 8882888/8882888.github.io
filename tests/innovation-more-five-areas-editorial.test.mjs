@@ -43,3 +43,32 @@ test('driver service and vehicle delivery guides give distinct customer preparat
   assert.notEqual(daeri,taksong);
  }
 });
+
+test('eight subdistrict service guides keep practical, non-repeated booking and handover guidance',()=>{
+ const files=['twelfth-daeri-100','twelfth-taksong-100','fourteenth-daeri-100','fourteenth-taksong-100'];
+ const curated=files.flatMap(name=>JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+name+'.json'),'utf8')).priority);
+ const cases=[
+  ['원주반곡동법인카드대리운전','daeri',['혁신도시','지하주차장']],
+  ['원주반곡동차량탁송','taksong',['혁신도시','차량','인계']],
+  ['원주지정면대리운전회사','daeri',['지정면','기업도시']],
+  ['원주지정면탁송','taksong',['지정면','가곡리']],
+  ['세종종촌동대리운전회사','daeri',['종촌동','복합커뮤니티센터']],
+  ['세종종촌동차량탁송','taksong',['종촌동','지하주차장']],
+  ['세종다정동법인대리운전','daeri',['다정동','가온마을']],
+  ['세종다정동차량탁송','taksong',['다정동','가온마을']]
+ ];
+ const signatures=[];
+ for(const [keyword,kind,phrases] of cases){
+  const matches=curated.filter(item=>item.keyword===keyword&&item.kind===kind);
+  assert.equal(matches.length,1,'Must map to one legal locality: '+keyword);
+  const row=matches[0];
+  assert.ok(row.pickup.length>=80,'Pickup preparation is too generic for '+keyword);
+  assert.ok(row.handover.length>=75,'Handover preparation is too generic for '+keyword);
+  const guide=row.pickup+' '+row.handover;
+  for(const phrase of phrases)assert.ok(guide.includes(phrase),'Missing actual location/service detail '+phrase+' '+keyword);
+  assert.doesNotMatch(guide,/100%\\s*배차|무조건\\s*배차|즉시\\s*배차\\s*보장|운행완료했습니다/);
+  assert.notEqual(row.pickup,row.handover);
+  signatures.push(row.pickup.slice(0,80)+'|'+row.handover.slice(0,75));
+ }
+ assert.equal(new Set(signatures).size,8,'No locality should repeat the same pickup/hand-over template');
+});
