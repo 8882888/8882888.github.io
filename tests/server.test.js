@@ -415,7 +415,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   // Existing curated local guides deserve one complete discovery feed,
   // while preserving the original 500-URL national service sitemaps.
   // Browser-visible text strips JSON-LD, but the raw server HTML MUST retain it.
-  const parsedSchemas=html=>[...html.matchAll(/<script\\b[^>]*type=["']application\\/ld\\+json["'][^>]*>([\\s\\S]*?)<\\/script>/gi)].flatMap(m=>{
+  const parsedSchemas=html=>[...html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)].flatMap(m=>{
     const node=JSON.parse(m[1]);
     return Array.isArray(node['@graph'])?node['@graph']:[node];
   });
