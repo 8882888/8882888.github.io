@@ -67,12 +67,23 @@ assert.equal(observeCrawlerRequest({method:'GET',url:'/',headers:{'user-agent':'
 normalRes.emit('finish');
 assert.equal(observedCrawlerLogs.length,1,'ordinary visitors are not logged');
 
-const port=30000+Math.floor(Math.random()*10000);
-const child=spawn(process.execPath,['server.js'],{cwd:require('node:path').resolve(__dirname,'..'),env:{...process.env,PORT:String(port),PUBLIC_HOST:'example.com'},stdio:['ignore','pipe','pipe']});
-let stderr='';child.stderr.on('data',d=>stderr+=d);
+// Ask the OS for an available port instead of guessing a random fixed port.
+// This avoids CI EADDRINUSE failures when other test jobs share the runner.
+const net=require('node:net');
+async function availablePort(){
+ const probe=net.createServer();
+ await new Promise((resolve,reject)=>{probe.once('error',reject);probe.listen(0,'127.0.0.1',resolve)});
+ const assigned=probe.address().port;
+ await new Promise((resolve,reject)=>probe.close(e=>e?reject(e):resolve()));
+ return assigned;
+}
+let port,child,stderr='';
 async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 (async()=>{
  try{
+  port=await availablePort();
+  child=spawn(process.execPath,['server.js'],{cwd:require('node:path').resolve(__dirname,'..'),env:{...process.env,PORT:String(port),PUBLIC_HOST:'example.com'},stdio:['ignore','pipe','pipe']});
+  child.stderr.on('data',d=>stderr+=d);
   for(let i=0;i<50;i++){try{const r=await get('/health');if(r.ok)break}catch{}await delay(100)}
   // Copyright-safe removal policy: old photo files are unavailable, text-only graphics remain.
   for(const retired of ['/assets/photos/busan-rainy-dongnae.avif','/assets/smart24-business-card-art.webp','/assets/seoraksan-taksong-original-fare.png','/assets/jirisan-taksong-original-fare.png']){
@@ -2037,5 +2048,5 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert(finderSitemap.includes('https://example.com/find/'),'finder has one discoverable canonical');
   console.log('PASS million-query finder HTTP, search, intent, API and noindex guard');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
- }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{child.kill()}
+ }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{if(child)child.kill()}
 })();
