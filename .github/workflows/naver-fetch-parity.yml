@@ -1,0 +1,47 @@
+name: Compare browser and synthetic Yeti crawlability (seven canonical pages)
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit-naver-fetch-parity.mjs'
+      - 'tests/naver-fetch-parity.test.mjs'
+      - '.github/workflows/naver-fetch-parity.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-naver-fetch-parity.mjs'
+      - 'tests/naver-fetch-parity.test.mjs'
+      - '.github/workflows/naver-fetch-parity.yml'
+permissions:
+  contents: read
+concurrency:
+  group: smart24-naver-fetch-parity-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  compare-http:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate target URL and header-classification logic without network requests
+        run: |
+          node --check scripts/audit-naver-fetch-parity.mjs
+          node --test tests/naver-fetch-parity.test.mjs
+      - name: Compare published browser and simulated Yeti requests without changing server state
+        run: node scripts/audit-naver-fetch-parity.mjs
+        env:
+          SMART24_ORIGIN: https://jeongukdaeri.kr
+      - name: Save source-vs-live crawl diagnostics for official Naver comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naver-fetch-parity-report
+          retention-days: 30
+          path: |
+            naver-fetch-parity.json
+            naver-fetch-parity.md
+          if-no-files-found: warn
