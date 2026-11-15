@@ -57,6 +57,8 @@ jobs:
         run: node --test tests/innovation-five-city-editorial.test.mjs
       - name: Verify ten additional innovation-area driver and delivery guides are distinct
         run: node --test tests/innovation-more-five-areas-editorial.test.mjs
+      - name: Verify ten key city and coastal SEO guides reject generic source templates
+        run: node --test tests/priority-coast-and-cities-editorial.test.mjs
       - name: Protect public sitemap scope and release verifier from stale locality checks
         run: node --test tests/live-sitemap-scope.test.mjs
       - name: Test regional evidence-link audit classification
