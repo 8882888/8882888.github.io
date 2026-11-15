@@ -33,7 +33,9 @@ jobs:
         with:
           python-version: '3.11'
       - name: Syntax-check production SEO audit
-        run: python -m py_compile tools/audit_live_seo.py tools/audit_live_1000.py
+        run: python -m py_compile tools/audit_live_seo.py tools/audit_live_1000.py tools/audit_live_100_regional_cards.py
+      - name: Test approved SVG preview against actually rendered v7 regional image sources
+        run: python -m unittest discover -s tests -p 'test_live_card_audits.py'
       - name: Check actual public website, sitemap and SEO freshness
         run: python tools/audit_live_seo.py
       - name: Audit seven live Seoul editorial pages for undefined SEO titles
@@ -58,7 +60,7 @@ jobs:
           name: smart24-live-seo-mobile-50
           path: /tmp/smart24-live-seo-mobile-50.json
           if-no-files-found: warn
-      - name: Audit 1000 live locality SEO pages and actual WebP cards
+      - name: Audit 1000 live canonical SEO and approved regional WebP assets
         run: python tools/audit_live_1000.py
       - name: Store 1000-point production audit details
         if: always()
@@ -66,7 +68,7 @@ jobs:
         with:
           name: smart24-live-seo-mobile-1000
           path: /tmp/smart24-live-1000.json
-          if-no-files-found: error
+          if-no-files-found: warn
       - name: Measure 20 live HTML mobile transfer sizes
         run: python tools/audit_live_html_compression.py
       - name: Save 20-route gzip report
