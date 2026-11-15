@@ -124,18 +124,29 @@ def verify(result):
 
 def check_deployed_source():
     path = "/health/seo.json"
-    _, status, _, _, body, err = fetch(path)
-    if err or status != 200:
-        return path, ["Deployment proof unavailable: " + str(err or status)]
-    try:
-        payload = json.loads(body)
-        observed = payload.get("deployment_hashes", {}).get("server.js", "")
-        expected = hashlib.sha256((Path(__file__).resolve().parents[1] / "server.js").read_bytes()).hexdigest()
-        if observed != expected:
-            return path, ["Deployed server.js hash differs from checked-out GitHub source (deployment stale or different revision)"]
-        return path, []
-    except (ValueError, OSError, TypeError) as exc:
-        return path, ["Invalid deployment proof: " + str(exc)]
+    expected = hashlib.sha256((Path(__file__).resolve().parents[1] / "server.js").read_bytes()).hexdigest()
+    # Cloudtype reports a successful deploy before all public requests
+    # necessarily observe its new source hash. Recheck a brief, finite window.
+    # Persistent stale deployments must still fail.
+    for attempt in range(3):
+        _, status, _, _, body, err = fetch(path)
+        if err or status != 200:
+            issue = "Deployment proof unavailable: " + str(err or status)
+        else:
+            try:
+                payload = json.loads(body)
+                observed = payload.get("deployment_hashes", {}).get("server.js", "")
+                if observed == expected:
+                    if attempt:
+                        print(f"[WARN] Cloudtype release hash verified after {attempt + 1} attempts; deployment was still settling")
+                    return path, []
+                issue = "Deployed server.js hash differs from checked-out GitHub source (deployment stale or different revision)"
+            except (ValueError, OSError, TypeError) as exc:
+                return path, ["Invalid deployment proof: " + str(exc)]
+        if attempt < 2:
+            print(f"[WARN] Cloudtype release check {attempt + 1}/3: {issue}")
+            time.sleep(3)
+    return path, [issue]
 
 def main():
     # Customer HTML probes may run concurrently, but large sitemap cold-cache
