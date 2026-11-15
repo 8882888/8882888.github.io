@@ -1,0 +1,54 @@
+name: Verify direct discovery links to priority service hubs
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'tests/priority-hub-links-20261116.test.cjs'
+      - '.github/workflows/priority-hub-discovery-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'tests/priority-hub-links-20261116.test.cjs'
+      - '.github/workflows/priority-hub-discovery-qa.yml'
+permissions:
+  contents: read
+jobs:
+  local-link-regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install minimal production dependencies
+        run: npm install --omit=dev --no-audit --no-fund
+      - name: Verify existing pages and direct first-hop links
+        run: |
+          node --check server.js
+          node --test tests/priority-hub-links-20261116.test.cjs
+  verify-public-discovery:
+    if: github.event_name == 'push'
+    needs: local-link-regression
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Wait for official domain to serve newly linked guides
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            echo "Production discovery verification attempt $attempt/24"
+            if SMART24_AUDIT_LIVE=1 node --test tests/priority-hub-links-20261116.test.cjs; then
+              echo "### PASS: 3 main-to-hub links and 2 hub crosslinks verified on Cloudtype" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$attempt" -lt 24 ]; then sleep 12; fi
+          done
+          echo "::error::Official Cloudtype HTML still does not expose priority discovery links"
+          exit 1
