@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""1000 live checks: 250 localities x 2 services x (HTML SEO + approved v7 WebP).
+"""1000 live checks: 250 localities x 2 services x (HTML SEO + actual WebP or intentional noimage policy).
 Only reads production HTTP endpoints; does not change ride records or pricing.
 """
 from concurrent.futures import ThreadPoolExecutor
