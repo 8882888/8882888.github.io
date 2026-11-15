@@ -3,7 +3,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {fetchSeoWithRetry,isTransientTransportError}=require('../lib/seo-audit-retry');
+const {fetchSeoWithRetry,isTransientTransportError}=require('../scripts/seo-audit-retry');
 const root=path.resolve(__dirname,'..');
 
 test('one transient fetch failure is retried and recovered on exactly the same priority URL',async()=>{
@@ -55,6 +55,6 @@ test('release-triggered Naver monitor compares the exact Cloudtype commit',()=>{
  const audit=fs.readFileSync(path.join(root,'scripts/seo-audit.js'),'utf8');
  assert.ok(workflow.includes('ref: ${{ github.event.workflow_run.head_sha || github.sha }}'));
  assert.match(workflow,/github\.event\.workflow_run\.conclusion == 'success'/);
- assert.ok(audit.includes("require('../lib/seo-audit-retry')"));
+ assert.ok(audit.includes("require('../scripts/seo-audit-retry')"));
  assert.match(audit,/await fetchSeoWithRetry\(url/);
 });
