@@ -42,17 +42,49 @@ async function read(route){
 }
 (async()=>{
  const results=[];
- const sitemapSources=['/sitemap-priority.xml','/sitemap-daeri.xml','/sitemap-taksong.xml'];
+ const sitemapSources=['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-all.xml','/sitemap-history.xml'];
  const mapped=new Set();
  const sitemapProblems=[];
+ try{
+  const {res,body}=await read('/robots.txt');
+  if(!res.ok||!/User-agent:\s*\*/i.test(body)||/Disallow:\s*\/\s*(?:\r?\n|$)/i.test(body))
+    sitemapProblems.push('/robots.txt: invalid response or root blocked');
+  for(const item of sitemapSources){
+   if(!body.includes('Sitemap: https://jeongukdaeri.kr'+item))
+    sitemapProblems.push('/robots.txt missing '+item);
+  }
+ }catch(e){sitemapProblems.push('/robots.txt: '+e.message)}
  for(const route of sitemapSources){
   try{
    const {res,body}=await read(route);
-   if(!res.ok||!/<urlset\b/i.test(body))sitemapProblems.push(route+': invalid sitemap HTTP/XML');
+   if(!res.ok||!/<(?:urlset|sitemapindex)\b/i.test(body))sitemapProblems.push(route+': invalid sitemap HTTP/XML');
+   if(!/xml/i.test(res.headers.get('content-type')||''))sitemapProblems.push(route+': invalid sitemap content-type');
+   const sitemapLocs=matchAll(body,/<loc>([^<]+)<\/loc>/g);
+   if(new Set(sitemapLocs).size!==sitemapLocs.length)sitemapProblems.push(route+': duplicate <loc> entries');
+   for(const loc of sitemapLocs){try{if(new URL(loc.replace(/&amp;/g,'&')).origin!=='https://jeongukdaeri.kr')sitemapProblems.push(route+': foreign host <loc>')}catch{sitemapProblems.push(route+': malformed <loc>')}}
    for(const raw of matchAll(body,/<loc>([^<]+)<\/loc>/g)){
     try{const u=new URL(raw.replace(/&amp;/g,'&'));if(u.origin==='https://jeongukdaeri.kr')mapped.add(u.pathname)}catch{sitemapProblems.push(route+': malformed <loc>')}
    }
   }catch(e){sitemapProblems.push(route+': '+e.message)}
+ }
+ // Explicitly regression-test the villages that were incorrectly advertised
+ // before the 67-URL noindex/sitemap fix. Do not make these pages indexable.
+ const noindexVillages=[
+  '/daeri/sejong/jikhal/bugang-myeon/galsan-ri/',
+  '/taksong/sejong/jikhal/bugang-myeon/galsan-ri/',
+  '/daeri/sejong/jikhal/geumnam-myeon/gamseong-ri/',
+  '/taksong/sejong/jikhal/geumnam-myeon/gamseong-ri/',
+  '/daeri/gyeonggi/gapyeong-gun/jojong-myeon/hyeon-ri/',
+  '/taksong/chungbuk/goesan-gun/sosu-myeon/su-ri/'
+ ];
+ for(const route of noindexVillages){
+  if(mapped.has(route))sitemapProblems.push('noindex village still advertised: '+route);
+  try{
+   const {res,body}=await read(route);
+   if(res.status!==200)sitemapProblems.push('noindex village unavailable: '+route+' HTTP '+res.status);
+   if(!/<meta\\b[^>]*name=["']robots["'][^>]*content=["']noindex/i.test(body))
+    sitemapProblems.push('unreviewed village unexpectedly indexable: '+route);
+  }catch(e){sitemapProblems.push('noindex village fetch failed: '+route+' '+e.message)}
  }
  for(const route of routes){
   const entry={route,errors:[],warnings:[],schemaTypes:[]};
