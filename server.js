@@ -4,7 +4,8 @@ const ROOT=__dirname,PORT=Number(process.env.PORT||3000),BRAND='스마트전국�
 const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFileSync(__filename)).digest('hex');
 // Keep /health available even if the optional analytics asset is absent from a deployment.
 const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'assets/traffic-analytics.js'))).digest('hex').slice(0,16)}catch(_){return 'unavailable'}})();
-const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
+const {matchingHistoryRegion,publicPlace,PROVINCE_ALIASES}=require('./lib/regional-history-evidence');
+const {verifiedBroadRegionServiceKeys}=require('./lib/verified-broad-region-evidence');
 const {buildVillagePrefixIndex,villageCandidatesForFields}=require('./lib/verified-village-candidates');
 const {loadPublishedCases}=require('./lib/published-case-feed');
 const {canonicalForKeywordRecord,resolveRegionalKeywordVariant}=require('./lib/keyword-canonical-bridge');
@@ -3113,11 +3114,13 @@ if(pathname==='/sitemap-verified-regions.xml'){
  const cached=sitemapCache.get(pathname);
  if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const supported=regions.filter(r=>['시도','시','군','구'].includes(r.level)).flatMap(r=>{
-  const applicable=['taksong','daeri'].filter(kind=>
-   indexableHistoricalRides.some(x=>x.service===kind&&matchingHistoryRegion(x,r,regions)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개'));
-  return applicable.map(kind=>servicePath(r,kind));
- });
+ // Extract only named region candidates from the original ride fields,
+ // then use the unchanged exact evidence matcher. This preserves the
+ // sitemap set and its original locality order with much less cold CPU.
+ const verifiedKeys=verifiedBroadRegionServiceKeys(regions,indexableHistoricalRides,matchingHistoryRegion,PROVINCE_ALIASES);
+ const supported=regions.filter(r=>['시도','시','군','구'].includes(r.level)).flatMap(r=>
+  ['taksong','daeri'].filter(kind=>verifiedKeys.has(kind+'|'+r.full_name))
+   .map(kind=>servicePath(r,kind)));
  // Include village hubs ONLY when the same preserved completed-ride
  // evidence gate already admits a village service URL. Their /region/ hub now
  // links directly to that real archived trip and is not marked noindex.
