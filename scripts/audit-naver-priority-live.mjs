@@ -130,6 +130,13 @@ async function checkPage(p){
    catch{item.problems.push('index_excluded_invalid_canonical');}
    if(item.canonical!==item.url)item.problems.push('index_excluded_canonical_mismatch');
   }
+  // Confirm a route to consultation on sampled, canonical service pages.
+  if(/^\/(?:daeri|taksong)\/(?:[a-z0-9-]+\/)+$/.test(p)){
+   item.hasCallAction=/<a\b[^>]*href=["']tel:18114294["'][^>]*>/i.test(html);
+   item.hasFarePath=/href=["']\/fare\//i.test(html)||/action=["']\/fare\//i.test(html);
+   if(!item.hasCallAction)item.problems.push('conversion_missing_phone_18114294');
+   if(!item.hasFarePath)item.problems.push('conversion_missing_fare_path');
+  }
   if(!item.title)item.problems.push('seo_missing_title');
   if(!item.description)item.problems.push('seo_missing_description');
   const heads=[...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
@@ -200,6 +207,7 @@ result.summary={
  excludedOrCanonical:result.pageChecks.filter(p=>p.problems.some(x=>x.startsWith('index_excluded'))).length,
  siteMapProblems:result.siteMapChecks.filter(p=>p.problems.length).length,
  sourceOrCrawlerProblems:result.crawlerFindings.length,
+ missingBookingActions:result.pageChecks.filter(p=>p.problems.some(x=>x.startsWith('conversion_missing_'))).length,
  naverRealIndexed:null
 };
 const csv=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
