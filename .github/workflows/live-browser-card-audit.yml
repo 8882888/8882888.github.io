@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'tools/audit_live_browser_cards.cjs'
+      - 'tools/audit_mobile_100.cjs'
       - '.github/workflows/live-browser-card-audit.yml'
   push:
     branches: [main]
@@ -82,7 +83,9 @@ jobs:
               time.sleep(6)
           PY
       - name: Syntax-check interactive browser audit before live testing
-        run: node --check tools/audit_live_browser_cards.cjs
+        run: |
+          node --check tools/audit_live_browser_cards.cjs
+          node --check tools/audit_mobile_100.cjs
       - name: Install isolated browser test tooling
         run: |
           mkdir -p /tmp/smart24-browser-tooling
