@@ -82,7 +82,7 @@ async function read(route){
   try{
    const {res,body}=await read(route);
    if(res.status!==200)sitemapProblems.push('noindex village unavailable: '+route+' HTTP '+res.status);
-   if(!/<meta\\b[^>]*name=["']robots["'][^>]*content=["']noindex/i.test(body))
+   if(!/<meta\b[^>]*name=["']robots["'][^>]*content=["']noindex/i.test(body))
     sitemapProblems.push('unreviewed village unexpectedly indexable: '+route);
   }catch(e){sitemapProblems.push('noindex village fetch failed: '+route+' '+e.message)}
  }
