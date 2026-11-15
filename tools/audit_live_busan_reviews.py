@@ -44,9 +44,12 @@ def audit(route):
         text=resp.read().decode("utf-8")
     p=BusanParser()
     p.feed(text)
-    if not html.unescape(p.title).startswith("부산탁송 후기"):
+    # An evidence-led title may say "부산탁송 실제 운행후기", not only
+    # the old exact "부산탁송 후기". Preserve the informative live wording.
+    review_first=re.compile(r"^부산탁송\s*(?:실제\s*)?(?:운행)?후기")
+    if not review_first.search(html.unescape(p.title).strip()):
         raise AssertionError(f"{route}: title is not review-first: {p.title!r}")
-    if not html.unescape(p.h1).startswith("부산탁송 후기"):
+    if not review_first.search(html.unescape(p.h1).strip()):
         raise AssertionError(f"{route}: H1 is not review-first: {p.h1!r}")
     if not p.sections or p.sections[0]!="busan-taksong-real-review-first-20261104":
         raise AssertionError(f"{route}: initial content is not original review: {p.sections[:4]!r}")
