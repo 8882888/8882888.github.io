@@ -262,9 +262,9 @@ def run():
                     errors.append("cycling hub lacks route-specific historical quote")
             if path.startswith(("/taksong/", "/daeri/")) and path.count("/") >= 3 and path not in ("/taksong/", "/daeri/"):
                 kind = "taksong" if path.startswith("/taksong/") else "daeri"
-                image_match = re.search(r'src="(/card/area-\d+-' + kind + r'-brand-v5\.png)"', body)
+                image_match = re.search(r'src="(/card/area-\d+-' + kind + r'-brand-v7\.png)"', body)
                 if not image_match:
-                    errors.append("region does not display current dynamic PNG v5")
+                    errors.append("region does not display current dynamic PNG v7")
                 else:
                     image_path = image_match.group(1)
                     if 'property="og:image" content="' + BASE + image_path + '"' not in body:
@@ -427,10 +427,13 @@ def run():
                         BASE + "/business/rental-car/", BASE + "/business/used-car/",
                         BASE + "/business/export-port/", BASE + "/business/auction/",
                     }
-                # Sparse village pages are deliberately noindex and excluded from sitemaps.
-                minimum_focus_count = sum(not entry['region'].endswith('리') for entry in focus_entries)
+                # Only 59 explicitly reviewed regional guides are promoted for discovery;
+                # the 2,900 template-keyword rows are NOT mandatory sitemap targets.
+                minimum_focus_count = len(json.loads(Path("data/priority-regions.json").read_text(encoding="utf-8"))["pages"])
                 if path == '/sitemap-priority.xml' and len(locs) < minimum_focus_count:
                     errors.append(f'priority sitemap has fewer URLs ({len(locs)}) than non-village curated targets ({minimum_focus_count})')
+                # Korean path components are percent-encoded in sitemap XML loc values.
+                expected = {BASE + quote(x[len(BASE):], safe="/%") for x in expected}
                 missing = expected - locs
                 if missing:
                     errors.append("required canonical URLs missing: " + ", ".join(sorted(missing)[:6]))
@@ -468,33 +471,32 @@ def run():
         print(f"{result}: {path} — " + ("; ".join(errors) if errors else "topical cycling picture delivered"))
         rows.append((path, status, result, "; ".join(errors) if errors else "topical cycling illustration and MIME delivered"))
 
-    # Live images are checked as bytes, not just as HTML filenames.
-    asset_probes = {
-        "/assets/seoraksan-taksong-original-fare.png": "image/png",
-        "/assets/jirisan-taksong-original-fare.png": "image/png",
-        "/assets/smart24-taksong-brand.webp": "image/webp",
-        "/assets/smart24-business-card-inline.webp": "image/webp",
-    }
-    for path, expected_type in asset_probes.items():
+    # These four old artwork files were intentionally retired; HTTP 410 is a
+    # correct outcome, not an image-delivery SEO failure. Never re-enable
+    # removed/generated car/person promotional images to silence an audit.
+    retired_assets = [
+        "/assets/seoraksan-taksong-original-fare.png",
+        "/assets/jirisan-taksong-original-fare.png",
+        "/assets/smart24-taksong-brand.webp",
+        "/assets/smart24-business-card-inline.webp",
+    ]
+    for path in retired_assets:
         errors = []
         status = "-"
         try:
             request = urllib.request.Request(BASE + path, headers=HEADERS)
             with urllib.request.urlopen(request, timeout=22) as response:
                 status = response.status
-                content_type = response.headers.get("Content-Type", "").split(";")[0]
-                cache_control = response.headers.get("Cache-Control", "")
-                etag = response.headers.get("ETag", "")
-                sample = response.read(64)
-                if status != 200 or content_type != expected_type or not sample:
-                    errors.append("image failed: HTTP/content type/empty response")
-                if "max-age=3600" not in cache_control or not etag:
-                    errors.append("image cache validation headers missing")
+                errors.append("retired promotional artwork is unexpectedly served as HTTP " + str(status))
+        except urllib.error.HTTPError as ex:
+            status = ex.code
+            if status not in (404, 410):
+                errors.append("retired artwork should return 404 or 410, got HTTP " + str(status))
         except Exception as ex:
             errors.append(type(ex).__name__ + ": " + str(ex)[:125])
         result = "PASS" if not errors else "FAIL"
         failures += bool(errors)
-        detail = "; ".join(errors) if errors else "live image delivered with caching and ETag"
+        detail = "; ".join(errors) if errors else "retired asset correctly unavailable"
         print(f"{result}: {path} — {detail}")
         rows.append((path, status, result, detail))
 
@@ -515,7 +517,7 @@ def run():
             with urllib.request.urlopen(req, timeout=22) as response:
                 status = response.status
                 payload = json.loads(response.read().decode("utf-8"))
-                if response.headers.get("X-Robots-Tag") != "noindex, nofollow":
+                if response.headers.get("X-Robots-Tag", "").replace(" ", "").lower() != "noindex,nofollow":
                     errors.append("preview endpoint not set to noindex")
                 if "application/json" not in response.headers.get("Content-Type", ""):
                     errors.append("preview endpoint must return JSON")
@@ -525,13 +527,13 @@ def run():
                 if wanted_service:
                     if len(cards) != 1 or cards[0].get("kind") != wanted_service:
                         errors.append("wrong driver/taksong card returned")
-                    elif not cards[0].get("image", "").endswith("-" + wanted_service + "-brand-v5.png"):
+                    elif not cards[0].get("image", "").endswith("-" + wanted_service + "-brand-v7.png"):
                         errors.append("wrong service card image version")
                     elif keyword == "제주도탁송" and cards[0].get("phone") != "1877-5245":
                         errors.append("Jeju dedicated phone not preserved")
                     if len(cards) == 1 and keyword in ("부산대리운전", "울산탁송"):
                         preview_path = cards[0].get("previewImage", "")
-                        if not re.fullmatch(r"/card/area-\d+-(?:daeri|taksong)-brand-v5\.webp", preview_path):
+                        if not re.fullmatch(r"/card/area-\d+-(?:daeri|taksong)-brand-v7\.webp", preview_path):
                             errors.append("optimized local preview URL missing")
                         else:
                             req2 = urllib.request.Request(BASE + preview_path, headers=HEADERS)
@@ -627,8 +629,8 @@ def run():
         ("법인대리운전", "daeri", "/keyword-card/corporate-daeri.svg", None, "1811-4294"),
         ("법인카드대리운전", "daeri", "/keyword-card/corporate-card-daeri.svg", None, "1811-4294"),
         ("부산골프대리운전", "daeri", "/keyword-card/golf-daeri/area-", "부산광역시", "1811-4294"),
-        ("부산탁송업체", "taksong", "-taksong-brand-v5.png", "부산광역시", "1811-4294"),
-        ("제주도탁송회사", "taksong", "-taksong-brand-v5.png", "제주특별자치도", "1877-5245"),
+        ("부산탁송업체", "taksong", "-taksong-brand-v7.png", "부산광역시", "1811-4294"),
+        ("제주도탁송회사", "taksong", "-taksong-brand-v7.png", "제주특별자치도", "1877-5245"),
         ("서울강남법인카드대리운전회사", "daeri", "/keyword-card/corporate-card-daeri/area-", "서울특별시 강남구", "1811-4294"),
     ]
     for keyword, expected_kind, image_fragment, expected_region, expected_phone in business_queries:
