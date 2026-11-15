@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {pages,resources,agents,blocked,inspectHead,issuesForSample} from '../scripts/audit-naver-fetch-parity.mjs';
+import {pages,resources,agents,blocked,inspectHead,issuesForSample,normalizeRobotsRules} from '../scripts/audit-naver-fetch-parity.mjs';
 
 test('only seven canonical business landing pages and actual static resources are probed',()=>{
  assert.deepEqual(pages,['/','/business/','/business/used-car/','/business/rental-car/',
@@ -15,6 +15,14 @@ test('only seven canonical business landing pages and actual static resources ar
  assert.ok(src.includes("'x-smart24-monitor':'github-health-probe'"),'synthetic Yeti cannot pollute genuine crawler logs');
  assert.ok(src.includes('officialNaverIndexed:null'),'no fabrication of official Naver index numbers');
 });
+test('robots directives are equal despite blank lines but not hidden disallow rules',()=>{
+ const local='User-agent: *\nAllow: /\n\nSitemap: https://jeongukdaeri.kr/sitemap-priority.xml\n';
+ const server='User-agent: *\nAllow: /\nSitemap: https://jeongukdaeri.kr/sitemap-priority.xml\n';
+ assert.equal(normalizeRobotsRules(local.replaceAll('\\n','\n')),normalizeRobotsRules(server.replaceAll('\\n','\n')));
+ assert.notEqual(normalizeRobotsRules(local.replaceAll('\\n','\n')),
+  normalizeRobotsRules(server.replaceAll('\\n','\n')+'Disallow: /business/\n'));
+});
+
 test('canonical and robots parser handles the page head and actual robots directives',()=>{
  const route='https://jeongukdaeri.kr/business/used-car/';
  const page='<!doctype html><html><head><title>중고차탁송 | 스마트24</title>'+
