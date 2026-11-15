@@ -11,6 +11,7 @@ const safePaths=[
  '/assets/smart24-taksong-brand.png',
  '/assets/service-taksong-visual.svg',
  '/assets/cycling-routes/eastcoast-taksong.svg',
+ '/assets/cycling/east-coast-certification-centers.svg',
  '/assets/cycling-routes/nakdonggang-taksong.svg',
  '/assets/seoraksan-taksong-fares.svg'
 ];
@@ -57,4 +58,10 @@ for(const p of ['nationwide','eastcoast','yeongsan','seomjin','geumgang','ocheon
  const svg=fs.readFileSync(path.join(__dirname,'../assets/cycling-routes',p+'-taksong.svg'),'utf8');
  assert.ok(svg.includes('<svg')&&!/<image\b|<circle\b|<ellipse\b/.test(svg),'vehicle-free cycling infographic '+p);
 }
+const cyclingCenters=fs.readFileSync(path.join(__dirname,'../assets/cycling/east-coast-certification-centers.svg'),'utf8');
+assert.ok(cyclingCenters.includes('<svg')&&!/<(?:image|script|foreignObject)\b/i.test(cyclingCenters),'East Coast centers diagram is text and shape only');
+const cyclingPage=fs.readFileSync(path.join(__dirname,'../special/cycling-trail-transport/index.html'),'utf8');
+const cyclingSafe=stripPersonVehicleImages(cyclingPage);
+assert.ok(cyclingSafe.includes('src="/assets/cycling/east-coast-certification-centers.svg"'),'approved diagram survives live HTML policy');
+assert.ok(cyclingSafe.includes('content="https://jeongukdaeri.kr/assets/cycling/east-coast-certification-centers.svg"'),'related social preview remains valid');
 console.log('PASS sitewide vehicle/person picture filtering, preserved text cards and live SVG asset safety');

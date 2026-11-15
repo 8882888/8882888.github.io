@@ -13,7 +13,7 @@ from pathlib import Path
 import sys
 import urllib.error
 import urllib.request
-from urllib.parse import quote, unquote, urlencode
+from urllib.parse import quote, unquote, urlencode, urlsplit, parse_qs
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 
@@ -90,7 +90,7 @@ for route in BLOG_HASHTAG_ARTICLES:
 FARE_VISUAL_ROUTES = {
     "/설악산탁송/": ("mountain-route-fare-table-202611", "original-mountain-fare-visual"),
     "/지리산탁송/": ("mountain-route-fare-table-202611", "original-mountain-fare-visual"),
-    "/special/cycling-trail-transport/": ("cycling-route-fare-table-202611", "keyword-image-first-202611"),
+    "/special/cycling-trail-transport/": ("cycling-route-fare-table-202611", "cycling-certification-centers-visual-20261111"),
     "/route-taksong/": ("cycling-visible-fare-table-20261103", None),
 }
 for route, (fare_id, visual_id) in FARE_VISUAL_ROUTES.items():
@@ -98,7 +98,7 @@ for route, (fare_id, visual_id) in FARE_VISUAL_ROUTES.items():
 
 CYCLING_COURSE_IDS = ("yeongsan", "seomjin", "eastcoast", "geumgang", "ocheon", "nakdonggang")
 for course_id in CYCLING_COURSE_IDS:
-    PATHS["/route-taksong/courses/" + course_id + "/"] = "cycling-course-primary-visual"
+    PATHS["/route-taksong/courses/" + course_id + "/"] = 'src="/assets/cycling-routes/' + course_id + '-taksong.svg"'
 
 JOURNEY_PLANS = {x["path"]: x for x in json.loads(Path("data/region-journey-links.json").read_text(encoding="utf-8"))["pages"]}
 JOURNEY_KEYWORDS = {
@@ -249,15 +249,15 @@ def run():
             if path in FARE_VISUAL_ROUTES:
                 fare_id, visual_id = FARE_VISUAL_ROUTES[path]
                 fare_pos = body.find('<section id="' + fare_id + '"')
-                visual_pos = body.find('<figure id="' + visual_id + '"') if visual_id else 999999999
+                visual_pos = body.find('id="' + visual_id + '"') if visual_id else -1
                 if fare_pos < 0 or not re.search(r'<table\b', body):
                     errors.append("historical fare table not available on page")
-                elif visual_id and path in ("/설악산탁송/", "/지리산탁송/") and (visual_pos < 0 or visual_pos > fare_pos or visual_pos > body.find("<header")):
-                    errors.append("original mountain fare poster is not the first visual")
-                elif visual_id and path == "/special/cycling-trail-transport/" and (visual_pos < 0 or fare_pos > visual_pos):
-                    errors.append("cycling fare table is hidden by a large banner")
+                elif visual_id and path in ("/설악산탁송/", "/지리산탁송/") and (visual_pos < 0 or visual_pos > fare_pos):
+                    errors.append("verified mountain fare SVG must precede route fare table")
+                elif visual_id and path == "/special/cycling-trail-transport/" and visual_pos < 0:
+                    errors.append("cycling certification-center diagram missing")
                 if not re.search(r'<img\b[^>]*src="/assets/', body):
-                    errors.append("visible photo/image missing from restored guide")
+                    errors.append("verified text-only infographic missing from guide")
                 if path == "/route-taksong/" and "생활체육공원 → 배알도" not in body:
                     errors.append("cycling hub lacks route-specific historical quote")
             if path.startswith(("/taksong/", "/daeri/")) and path.count("/") >= 3 and path not in ("/taksong/", "/daeri/"):
@@ -283,13 +283,13 @@ def run():
             if path in ("/route-taksong/", "/special/cycling-trail-transport/"):
                 if "national-cycling-true-topic-image" not in body or 'src="/assets/smart24-business-card-inline.webp"' in body:
                     errors.append("cycling hub retains common business card or lacks topical image")
-            if path == "/" and 'id="mountain-cycling-fare-first-20261103"' not in body:
-                errors.append("first-screen mountain/cycling fare and image panel missing")
+            if path == "/" and 'id="homepage-fare-top"' not in body:
+                errors.append("home fare-lookup-first section missing")
             if path == "/":
                 hero_pos = body.find('<div class="hero hero-with-photo">')
-                fares_pos = body.find('id="mountain-cycling-fare-first-20261103"')
-                if hero_pos < 0 or fares_pos < 0 or hero_pos > fares_pos:
-                    errors.append("latest conversion-first hero not before fare table (possibly stale Cloudtype release)")
+                fares_pos = body.find('id="homepage-fare-form"')
+                if hero_pos < 0 or fares_pos < 0 or fares_pos > hero_pos:
+                    errors.append("fare lookup must appear before homepage hero and service choices")
                 if 'class="mobile-consult-actions"' not in body or 'href="tel:18114294"' not in body:
                     errors.append("mobile phone/fare conversion bar missing")
                 if 'id="home-business-service-links-20261104"' not in body:
@@ -300,8 +300,8 @@ def run():
                                  "homepage-mountain-fare-shortcuts-202611"):
                     if 'id="' + stale_id + '"' in body:
                         errors.append("repeated old homepage section still deployed: " + stale_id)
-                if 'src="/assets/vehicles/santafe-1811.webp"' not in body:
-                    errors.append("primary vehicle image missing from homepage")
+                if 'src="/assets/vehicles/santafe-1811.webp"' in body:
+                    errors.append("retired vehicle image improperly restored to homepage")
             if path != "/health/seo-report/":
                 if parser.canonical_count != 1:
                     errors.append(f"expected exactly one canonical, got {parser.canonical_count}")
@@ -527,22 +527,44 @@ def run():
                 if wanted_service:
                     if len(cards) != 1 or cards[0].get("kind") != wanted_service:
                         errors.append("wrong driver/taksong card returned")
-                    elif not cards[0].get("image", "").endswith("-" + wanted_service + "-brand-v7.png"):
-                        errors.append("wrong service card image version")
-                    elif keyword == "제주도탁송" and cards[0].get("phone") != "1877-5245":
-                        errors.append("Jeju dedicated phone not preserved")
-                    if len(cards) == 1 and keyword in ("부산대리운전", "울산탁송"):
-                        preview_path = cards[0].get("previewImage", "")
-                        if not re.fullmatch(r"/card/area-\d+-(?:daeri|taksong)-brand-v7\.webp", preview_path):
-                            errors.append("optimized local preview URL missing")
+                    else:
+                        card = cards[0]
+                        image_path = card.get("image", "")
+                        preview_path = card.get("previewImage", "")
+                        if keyword == "제주도탁송" and card.get("phone") != "1877-5245":
+                            errors.append("Jeju dedicated phone not preserved")
+                        if image_path.startswith("/api/nationwide-locality-card.svg?"):
+                            # The national exact-keyword resolver uses a safe, text-only
+                            # SVG, not a generic v7 locality PNG/WebP card.
+                            parts = urlsplit(image_path)
+                            args = parse_qs(parts.query)
+                            if (parts.path != "/api/nationwide-locality-card.svg" or
+                                    args.get("service") != [wanted_service] or args.get("q") != [keyword] or
+                                    preview_path != image_path):
+                                errors.append("wrong service or keyword in national SVG card preview")
+                            else:
+                                req2 = urllib.request.Request(BASE + image_path, headers=HEADERS)
+                                with urllib.request.urlopen(req2, timeout=22) as picture:
+                                    preview_data = picture.read(1024)
+                                    if (picture.status != 200 or
+                                            picture.headers.get("Content-Type", "").split(";")[0] != "image/svg+xml" or
+                                            b"<svg" not in preview_data):
+                                        errors.append("safe national SVG card not served as SVG")
+                        elif image_path.endswith("-" + wanted_service + "-brand-v7.png"):
+                            # Legacy locality cards should still have their optimized WebP.
+                            if keyword in ("부산대리운전", "울산탁송"):
+                                if not re.fullmatch(r"/card/area-\d+-(?:daeri|taksong)-brand-v7\.webp", preview_path):
+                                    errors.append("optimized local preview URL missing")
+                                else:
+                                    req2 = urllib.request.Request(BASE + preview_path, headers=HEADERS)
+                                    with urllib.request.urlopen(req2, timeout=22) as picture:
+                                        header = picture.read(12)
+                                        etag = picture.headers.get("ETag", "")
+                                        if (picture.status != 200 or picture.headers.get("Content-Type", "").split(";")[0] != "image/webp"
+                                                or not header.startswith(b"RIFF") or header[8:12] != b"WEBP" or not etag):
+                                            errors.append("optimized WebP image invalid or missing cache ETag")
                         else:
-                            req2 = urllib.request.Request(BASE + preview_path, headers=HEADERS)
-                            with urllib.request.urlopen(req2, timeout=22) as picture:
-                                header = picture.read(12)
-                                etag = picture.headers.get("ETag", "")
-                                if (picture.status != 200 or picture.headers.get("Content-Type", "").split(";")[0] != "image/webp"
-                                        or not header.startswith(b"RIFF") or header[8:12] != b"WEBP" or not etag):
-                                    errors.append("optimized WebP image invalid or missing cache ETag")
+                            errors.append("unknown or mismatched service card visual")
                 elif cards:
                     errors.append("ambiguous name unexpectedly selects a card")
         except Exception as ex:
