@@ -1,0 +1,29 @@
+name: Verify live Busan taksong review-first titles
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'tools/audit_live_busan_reviews.py'
+      - 'tests/test_busan_review_titles.py'
+      - '.github/workflows/live-busan-review-first.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: smart24-busan-review-first-live
+  cancel-in-progress: true
+jobs:
+  live-review-first:
+    name: Verify two published Busan landing pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check valid regional review-first title variants
+        run: python -m unittest discover -s tests -p 'test_busan_review_titles.py'
+      - name: Verify actual published title, H1, first review, tags and original sources
+        run: python tools/audit_live_busan_reviews.py
