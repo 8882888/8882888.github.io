@@ -1,0 +1,31 @@
+name: Evidence-light provincial metadata regression
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'tests/regional-search-description-20261116.test.js'
+      - '.github/workflows/regional-search-description-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'tests/regional-search-description-20261116.test.js'
+permissions:
+  contents: read
+jobs:
+  province-metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install production packages
+        run: npm install --omit=dev --no-fund --no-audit
+      - name: Syntax checks
+        run: |
+          node --check server.js
+          node --check tests/regional-search-description-20261116.test.js
+      - name: HTTP response and description regression
+        run: node --test tests/regional-search-description-20261116.test.js
