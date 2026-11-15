@@ -113,5 +113,10 @@
     "id": "a5da235af0d8d2b5",
     "service": "daeri",
     "published_at": "2026-11-14T18:45:32.853874+00:00"
+  },
+  {
+    "id": "480cf66b7b224b95",
+    "service": "taksong",
+    "published_at": "2026-11-15T07:54:33.046878+00:00"
   }
 ]
