@@ -1,0 +1,68 @@
+name: Region speed, Cloudtype rollout and IndexNow diagnostic
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'server.js'
+      - 'scripts/verify-regional-evidence-cache.js'
+      - 'scripts/verify-cloudtype-regional-release.js'
+      - 'scripts/probe-indexnow-direct-20261116.js'
+      - '.github/workflows/region-perf-indexnow-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'scripts/verify-regional-evidence-cache.js'
+      - 'scripts/verify-cloudtype-regional-release.js'
+      - '.github/workflows/region-perf-indexnow-qa.yml'
+permissions:
+  contents: read
+
+jobs:
+  exact-evidence-regression:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install production dependencies
+        run: npm install --omit=dev --no-audit --no-fund
+      - name: Syntax check both current server and tests
+        run: |
+          node --check server.js
+          node --check scripts/verify-regional-evidence-cache.js
+      - name: Read exact pre-change server baseline
+        run: git show origin/main:server.js > server.main-baseline.js
+      - name: Test identical HTML and report latency after regional evidence memoization
+        run: node scripts/verify-regional-evidence-cache.js
+      - name: Probe Cloudtype SHA without expecting a PR branch to be deployed
+        run: node scripts/verify-cloudtype-regional-release.js
+
+  indexnow-one-shot:
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify live ownership key and submit precisely one previously changed URL
+        run: node scripts/probe-indexnow-direct-20261116.js --submit-once
+
+  prove-live-release:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Compare actual Cloudtype /health SHA and region meta after main merge
+        run: node scripts/verify-cloudtype-regional-release.js --strict
