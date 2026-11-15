@@ -110,7 +110,29 @@ def inspect(item):
   if len(p.canonical)!=1 or unquote(p.canonical[0])!=unquote(BASE+page):raise ValueError("canonical mismatch")
   if (kind=="taksong" and "탁송" not in p.title) or (kind=="daeri" and "대리운전" not in p.title):raise ValueError("title missing service")
   if len(p.meta.get("description",""))<35 or p.h1!=1:raise ValueError("SEO description or H1 missing")
-  if level!="village" and ("noindex" in p.meta.get("robots","").lower() or "noindex" in headers.get("x-robots-tag","").lower()):raise ValueError("indexable region noindexed")
+  has_noindex="noindex" in p.meta.get("robots","").lower() or "noindex" in headers.get("x-robots-tag","").lower()
+  source_empty='id="source-empty-village-20261107"' in raw.decode("utf-8","replace")
+  if level!="village" and has_noindex:raise ValueError("indexable region noindexed")
+  if source_empty:
+   # An evidence-empty 리 must intentionally be a small, noindex quote/
+   # phone page, without any synthetic location poster. Checking for WebP
+   # on these pages would reward publishing fabricated "local" content.
+   html=raw.decode("utf-8","replace")
+   if level!="village" or not has_noindex:
+    raise ValueError("source-empty village must remain noindex")
+   if p.img or any(src.get("srcset") for src in p.sources):
+    raise ValueError("unexpected imagery on source-empty village page")
+   if '<form action="/fare/"' not in html:
+    raise ValueError("source-empty village missing direct fare lookup")
+   if "tel:"+str(card.get("phone","")).replace("-","") not in p.links:
+    raise ValueError("source-empty village missing phone CTA")
+   if "완료 운행내역은 현재 확인되지 않았" not in html:
+    raise ValueError("source-empty village missing truthful no-ride disclosure")
+   a.update({"passed":True,"path":page,"title":p.title,"api_ms":api_ms,"html_ms":html_ms,
+             "html_bytes":len(raw),"noindex":True,"indexability":"intentional-noindex-no-evidence"})
+   b.update({"passed":True,"category":"source-empty-noimage","skipped":True,
+             "image":None,"reason":"No regional image should be promoted without real locality evidence"})
+   return a,b
   pngs=[img.get("src","") for img in p.img if re.fullmatch(r"/card/area-\d+-"+kind+r"-brand-v7\.png",img.get("src",""))]
   webps=[src.get("srcset","") for src in p.sources if src.get("type")=="image/webp" and
          re.fullmatch(r"/card/area-\d+-"+kind+r"-brand-v7\.webp",src.get("srcset",""))]
@@ -155,18 +177,21 @@ def main():
  passed=sum(r["passed"] for r in results)
  html=[r["html_ms"] for r in results if r["category"]=="html-seo" and r["passed"]]
  webp=[r["bytes"] for r in results if r["category"]=="live-webp" and r["passed"]]
+ policy_noimage=sum(r["category"]=="source-empty-noimage" and r["passed"] for r in results)
+ actual_webp=sum(r["category"]=="live-webp" and r["passed"] for r in results)
  report={"base":BASE,"checks":1000,"passed":passed,"failed":1000-passed,"localities":250,
-         "service_combinations":500,"levels":{k:sum(1 for x in samples if x[1]==k) for k in LIMITS},
+         "service_combinations":500,"approved_webp_verified":actual_webp,"source_empty_noindex_noimage":policy_noimage,
+         "levels":{k:sum(1 for x in samples if x[1]==k) for k in LIMITS},
          "html_median_ms":round(statistics.median(html)) if html else None,
          "webp_median_bytes":round(statistics.median(webp)) if webp else None,"results":results}
  OUT.parent.mkdir(parents=True,exist_ok=True)
  OUT.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
  for row in results:
   if not row["passed"]:print(f'FAIL {row["id"]:04d}/1000 {row["category"]} {row["query"]}: {row.get("error","unknown")}',flush=True)
- print(f'SMART24_LIVE_1000 {passed}/1000 passed; {1000-passed} failed; 500 HTML SEO and 500 actual WebP checks',flush=True)
+ print(f'SMART24_LIVE_1000 {passed}/1000 policy checks passed; {1000-passed} failed; {actual_webp} actual WebP verified; {policy_noimage} intentionally noimage/noindex',flush=True)
  if os.environ.get("GITHUB_STEP_SUMMARY"):
   with open(os.environ["GITHUB_STEP_SUMMARY"],"a",encoding="utf-8") as f:
-   f.write(f'\n## 1000 real locality SEO and image checks\n\n**{passed}/1000 passed**; {1000-passed} failed. 250 localities × 2 services × 2 independent checks. This does not establish Naver ranking or screenshot rendering.\n\n')
+   f.write(f'\n## 1000 live locality SEO and image-policy checks\n\n**{passed}/1000 passed**; {1000-passed} failed. **{actual_webp} actual WebP** responses verified, **{policy_noimage} intentionally noindex/noimage** checks. 250 localities × 2 services × 2 distinct contracts. This does not establish Naver indexing or ranking.\n\n')
    for row in results:
     if not row["passed"]:f.write(f'- {row["id"]}: {row["query"]} {row["category"]} — {row.get("error","unknown")}\n')
  return 0 if passed==1000 else 1
