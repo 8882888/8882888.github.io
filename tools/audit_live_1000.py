@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""1000 live checks: 250 official localities x 2 services x (HTML SEO + WebP image).
+"""1000 live checks: 250 localities x 2 services x (HTML SEO + approved v7 WebP).
 Only reads production HTTP endpoints; does not change ride records or pricing.
 """
 from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
-import json,os,statistics,sys,time
+import json,os,statistics,sys,time,re
 from pathlib import Path
-from urllib.parse import quote,unquote,urlencode
+from urllib.parse import quote,unquote,urlencode,urlsplit,parse_qs
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError,URLError
 
@@ -82,6 +82,7 @@ def inspect(item):
  a={"id":number*2-1,"category":"html-seo","area":area,"level":level,"service":kind,"query":query,"passed":False}
  b={"id":number*2,"category":"live-webp","area":area,"level":level,"service":kind,"query":query,"passed":False}
  card=None
+ webp=None
  try:
   status,_,headers,raw,api_ms=fetch("/api/region-card-preview?"+urlencode({"q":query}))
   if status!=200 or "application/json" not in headers.get("content-type",""):raise ValueError("region API HTTP or MIME failure")
@@ -91,10 +92,18 @@ def inspect(item):
   cards=data.get("cards") or []
   if len(cards)!=1 or cards[0].get("kind")!=kind:raise ValueError("service card mismatch")
   card=cards[0]
-  page=card.get("url","");png=card.get("image","");preview=card.get("previewImage","")
+  page=card.get("url","")
+  keyword_svg=card.get("image","")
+  keyword_preview=card.get("previewImage","")
   if not page.startswith("/"+kind+"/") or not page.endswith("/"):raise ValueError("wrong service page")
-  if not png.startswith("/card/") or not png.endswith("-"+kind+"-brand-v5.png"):raise ValueError("wrong regional PNG path")
-  if not preview.startswith("/card/") or not preview.endswith("-"+kind+"-brand-v5.webp"):raise ValueError("wrong WebP path")
+  parsed=urlsplit(keyword_svg)
+  params=parse_qs(parsed.query)
+  if (parsed.path!="/api/nationwide-locality-card.svg" or
+      params.get("service")!=[kind] or params.get("q")!=[query] or
+      keyword_preview!=keyword_svg):
+   raise ValueError("wrong exact-locality text-only SVG card URL")
+  # API search cards are exact-query SVGs; published service pages separately
+  # contain an approved, stable per-locality v7 PNG with a v7 WebP source.
   status,_,headers,raw,html_ms=fetch(page)
   if status!=200 or "text/html" not in headers.get("content-type",""):raise ValueError("landing page HTTP or MIME failure")
   p=Page();p.feed(raw.decode("utf-8","replace"))
@@ -102,8 +111,13 @@ def inspect(item):
   if (kind=="taksong" and "탁송" not in p.title) or (kind=="daeri" and "대리운전" not in p.title):raise ValueError("title missing service")
   if len(p.meta.get("description",""))<35 or p.h1!=1:raise ValueError("SEO description or H1 missing")
   if level!="village" and ("noindex" in p.meta.get("robots","").lower() or "noindex" in headers.get("x-robots-tag","").lower()):raise ValueError("indexable region noindexed")
-  if png not in [img.get("src") for img in p.img]:raise ValueError("full PNG fallback absent")
-  if preview not in [src.get("srcset") for src in p.sources if src.get("type")=="image/webp"]:raise ValueError("responsive WebP source absent")
+  pngs=[img.get("src","") for img in p.img if re.fullmatch(r"/card/area-\d+-"+kind+r"-brand-v7\.png",img.get("src",""))]
+  webps=[src.get("srcset","") for src in p.sources if src.get("type")=="image/webp" and
+         re.fullmatch(r"/card/area-\d+-"+kind+r"-brand-v7\.webp",src.get("srcset",""))]
+  if len(pngs)!=1:raise ValueError("expected one approved v7 locality PNG in rendered HTML")
+  if len(webps)!=1:raise ValueError("expected one approved v7 locality WebP in rendered HTML")
+  png=pngs[0];webp=webps[0]
+  if png.replace(".png",".webp")!=webp:raise ValueError("HTML PNG and WebP regions differ")
   if png not in p.links:raise ValueError("large-image link absent")
   if "tel:"+str(card.get("phone","")).replace("-","") not in p.links:raise ValueError("telephone CTA absent")
   if not any(link and link.startswith("/fare/") for link in p.links):raise ValueError("fare link absent")
@@ -113,13 +127,13 @@ def inspect(item):
  except Exception as error:a["error"]=str(error)
  if card:
   try:
-   preview=card["previewImage"]
-   status,_,headers,raw,webp_ms=fetch(preview)
+   if not webp:raise ValueError("Could not confirm an approved WebP asset from rendered canonical HTML")
+   status,_,headers,raw,webp_ms=fetch(webp)
    if status!=200 or "image/webp" not in headers.get("content-type",""):raise ValueError("WebP HTTP/MIME failure")
    if len(raw)<1000 or raw[:4]!=b"RIFF" or raw[8:12]!=b"WEBP":raise ValueError("bad WebP file signature")
    if len(raw)>1_000_000:raise ValueError("mobile WebP exceeds 1MB")
    if not headers.get("etag") or "max-age" not in headers.get("cache-control",""):raise ValueError("image caching headers absent")
-   b.update({"passed":True,"image":preview,"bytes":len(raw),"webp_ms":webp_ms})
+   b.update({"passed":True,"image":webp,"bytes":len(raw),"webp_ms":webp_ms})
   except Exception as error:b["error"]=str(error)
  else:b["error"]="API did not identify a corresponding image"
  return a,b
