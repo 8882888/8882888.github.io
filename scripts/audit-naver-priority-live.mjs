@@ -143,6 +143,17 @@ async function checkPage(p){
   const editorial=mainHtml.replace(/<(?:script|style|nav|footer|header)\b[^>]*>[\s\S]*?<\/(?:script|style|nav|footer|header)>/gi,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
   item.editorialChars=editorial.length;
   item.editorialFingerprint=editorial.length>=300?createHash('sha256').update(editorial).digest('hex').slice(0,20):null;
+  // Verify crawler-visible nationwide service links, not keyword-only text.
+  if(p==='/coverage/'){
+   const links=[...html.matchAll(/<a\b[^>]*>/gi)].map(m=>m[0]);
+   const localHrefs=links.map(tag=>htmlAttr(tag,'href')).filter(h=>/^\/(?:daeri|taksong)\//.test(h));
+   item.coverageServiceLinks=localHrefs.length;
+   if(/<a\b[^>]*>\s*\(직할\)(?:탁송|대리운전)?\s*<\/a>/i.test(html))
+    item.problems.push('quality_internal_placeholder_region_link');
+   if(localHrefs.length<34)item.problems.push('quality_missing_province_service_links');
+   if(!html.includes('nationwide-seventeen-province-coverage'))
+    item.problems.push('quality_missing_nationwide_coverage_section');
+  }
   if(visible.length<250)item.problems.push('quality_thin_content_review');
   if(/<meta\b[^>]*http-equiv=["']refresh["']/i.test(html))item.problems.push('index_excluded_meta_refresh');
  }catch(e){item.problems.push('collection_limited_fetch_error_'+String(e).slice(0,120));}
