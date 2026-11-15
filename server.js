@@ -3270,6 +3270,8 @@ if(pathname==='/sitemap.xml'){
  const focused=[
   // Give every province equal crawl-discovery priority before city-specific guides.
   '/','/coverage/','/region/','/daeri/','/taksong/',
+  // Keep all hand-reviewed locality pages ahead of the bounded 499-URL cutoff.
+  ...priorityRegionalPages.map(entry=>servicePath(regionByFullName.get(entry.region),entry.kind)),
   // Preserve core cycling handover guides before large regional lists and the 499-URL cutoff.
   '/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/',
   // Core automobile delivery services take priority in crawl discovery.
