@@ -62,9 +62,17 @@ async function run(){
     assert.equal(await links.count(),2);
     for(let i=0;i<2;i++){const b=await links.nth(i).boundingBox();assert(b&&b.height>=44&&b.width>=110,JSON.stringify(b))}
    });
-   await check('11 estimate form ahead of mountain fare',async()=>{
-    const p=await page.evaluate(()=>({a:document.getElementById('homepage-fare-top')?.compareDocumentPosition(document.getElementById('mountain-cycling-fare-first-20261103'))}));
-    assert((p.a&4)===4,'fare form must precede posters');
+   await check('11 estimate form before approved mountain fare posters',async()=>{
+    // The old mountain-cycling-fare-first section was removed. Check the
+    // real photo-free poster section, and do not compare against null nodes.
+    const p=await page.evaluate(()=>{
+      const estimate=document.getElementById('homepage-fare-top');
+      const posters=document.getElementById('mobile-direct-image-priority');
+      return {estimateFound:!!estimate,postersFound:!!posters,
+        order:estimate&&posters?!!(estimate.compareDocumentPosition(posters)&Node.DOCUMENT_POSITION_FOLLOWING):false};
+    });
+    assert(p.estimateFound&&p.postersFound,'approved fare form or mountain poster section missing: '+JSON.stringify(p));
+    assert(p.order,'fare form must precede approved mountain posters');
    });
    await check('12 only one complete fare form',async()=>assert.equal(await page.locator('form[action="/fare/"]').count(),1));
    await check('13 departure address required',async()=>{
