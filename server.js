@@ -1362,7 +1362,7 @@ async function servicePage(r,kind){
      provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}},
    {'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}
   ]
- }).replace(/</g,'\u003c'):'';
+ }).replace(/</g,'\\u003c'):'';
  const jejuContact=jejuSearchPage?'<section id="jeju-dedicated-contact"><h2>제주탁송 대표번호 1877-5245</h2><p>제주도 차량 선적·항구 인계 및 육지 연계 탁송은 제주탁송 전용 번호로 상담해 주세요.</p><p><a class="cta" href="tel:18775245">제주탁송 전화 상담 1877-5245</a></p></section>':'';
  // GEO/AEO: nationwide answer-first guidance for every valid administrative region.
  // Keep sparse neighborhood pages' existing noindex rules and avoid fabricated rides, mileage or dispatch promises.
