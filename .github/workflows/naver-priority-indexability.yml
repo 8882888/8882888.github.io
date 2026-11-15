@@ -50,6 +50,11 @@ jobs:
         env:
           LIVE_SITE_URL: https://jeongukdaeri.kr
         run: node scripts/audit-naver-priority-live.mjs
+      - name: Rank duplicate and thin local guidance for human AI editorial review
+        if: always()
+        run: |
+          node --check scripts/ai-index-quality-triage.mjs
+          node scripts/ai-index-quality-triage.mjs
       - name: Save report for Naver Search Advisor comparison
         if: always()
         uses: actions/upload-artifact@v4
@@ -60,4 +65,7 @@ jobs:
             seo-priority-live-report.json
             seo-priority-live-report.csv
             seo-priority-live-report.md
+            ai-index-quality-review.json
+            ai-index-quality-review.csv
+            ai-index-quality-review.md
           if-no-files-found: warn
