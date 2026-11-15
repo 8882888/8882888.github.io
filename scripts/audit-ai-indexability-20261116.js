@@ -18,6 +18,7 @@ const timeout=Number(process.env.SEO_AUDIT_TIMEOUT_MS||15000);
 const intendedAliases=new Map([['/special/seoraksan-transport/','/설악산탁송/']]);
 const matchAll=(s,re)=>[...s.matchAll(re)].map(x=>x[1]);
 const htmlText=s=>s.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+const normalizedUrl=v=>{try{return new URL(v,'https://jeongukdaeri.kr').href}catch{return ''}};
 const attr=(tag,key)=>{const m=tag.match(new RegExp('\\b'+key+'\\s*=\\s*(["\\x27])([^"\\x27]*?)\\1','i'));return m?m[2]:''};
 function nodes(json){
  const out=[];
@@ -72,14 +73,14 @@ async function read(route){
    if(h1.length!==1||!h1[0])entry.errors.push('missing or multiple H1');
    if(robots.some(x=>/\bnoindex\b/i.test(x)))entry.errors.push('robots meta noindex');
    const expectedCanonical=new URL(intendedAliases.get(requested.pathname)||requested.pathname,'https://jeongukdaeri.kr').href;
-   if(canonical.length!==1||canonical[0]!==expectedCanonical)entry.errors.push('canonical mismatch');
+   if(canonical.length!==1||normalizedUrl(canonical[0])!==expectedCanonical)entry.errors.push('canonical mismatch');
    if(intendedAliases.has(requested.pathname)){
     entry.canonicalAlias=expectedCanonical;
     try{
      const primary=await read(intendedAliases.get(requested.pathname));
      if(!primary.res.ok)entry.errors.push('canonical primary HTTP '+primary.res.status);
      const primaryCanonical=matchAll(primary.body,/(<link\b[^>]*>)/gi).filter(x=>attr(x,'rel').toLowerCase()==='canonical').map(x=>attr(x,'href'));
-     if(primaryCanonical.length!==1||primaryCanonical[0]!==expectedCanonical)
+     if(primaryCanonical.length!==1||normalizedUrl(primaryCanonical[0])!==expectedCanonical)
       entry.errors.push('canonical primary is not self-canonical');
      if(/\bnoindex\b/i.test(primary.res.headers.get('x-robots-tag')||''))entry.errors.push('canonical primary header noindex');
     }catch(e){entry.errors.push('canonical primary fetch failed: '+e.message)}
