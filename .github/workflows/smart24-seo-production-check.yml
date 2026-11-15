@@ -4,11 +4,20 @@ on:
     workflows: [Deploy to Cloudtype]
     types: [completed]
     branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'tests/production-seo-smoke.py'
+      - '.github/workflows/smart24-seo-production-check.yml'
   workflow_dispatch:
   schedule:
     - cron: "17 1 * * *"
 permissions:
   contents: read
+concurrency:
+  # Cold-cache XML checks should never compete with another copy of this audit.
+  group: smart24-production-sitemap-smoke
+  cancel-in-progress: false
 jobs:
   audit:
     # Never test a commit as deployed if Cloudtype rejected that release.
