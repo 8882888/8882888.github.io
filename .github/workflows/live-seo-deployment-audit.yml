@@ -60,7 +60,7 @@ jobs:
           name: smart24-live-seo-mobile-50
           path: /tmp/smart24-live-seo-mobile-50.json
           if-no-files-found: warn
-      - name: Audit 1000 live canonical SEO and approved regional WebP assets
+      - name: Audit 1000 SEO and approved WebP or intentionally noindexed noimage contracts
         run: python tools/audit_live_1000.py
       - name: Store 1000-point production audit details
         if: always()
