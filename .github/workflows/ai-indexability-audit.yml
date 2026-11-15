@@ -1,0 +1,85 @@
+name: AI and Naver indexability read-only audit
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-ai-indexability-20261116.js'
+      - '.github/workflows/ai-indexability-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-local:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install production dependencies
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Parse check of new AI auditor
+        run: node --check scripts/audit-ai-indexability-20261116.js
+      - name: Check locally rendered indexability and AI metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3000 node server.js > /tmp/smart24-audit-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 45); do
+            if curl -fsS --max-time 2 http://127.0.0.1:3000/health >/dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS --max-time 10 http://127.0.0.1:3000/health > /tmp/local-health.json
+          node scripts/audit-ai-indexability-20261116.js http://127.0.0.1:3000 > /tmp/ai-local-indexability.json || {
+            cat /tmp/ai-local-indexability.json
+            exit 1
+          }
+          node -e "const r=require('/tmp/ai-local-indexability.json');console.log(JSON.stringify(r.summary));for(const p of r.results){console.log(p.route, 'HTTP', p.status, 'ERRORS:',p.errors.join('|'),'WARNINGS:',p.warnings.join('|'))}"
+      - name: Upload read-only diagnostic output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-indexability-local
+          path: |
+            /tmp/ai-local-indexability.json
+            /tmp/local-health.json
+            /tmp/smart24-audit-server.log
+          if-no-files-found: ignore
+
+  audit-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Request actual public /health HTTP response
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 2 --connect-timeout 8 --max-time 30 -H 'Cache-Control: no-cache' -D /tmp/ai-live-health-headers.txt https://jeongukdaeri.kr/health -o /tmp/ai-live-health.json
+          node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('/tmp/ai-live-health.json','utf8'));console.log('PUBLIC /health release:',j.release||'missing')"
+      - name: Check real production crawl path (without requests for indexing)
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/audit-ai-indexability-20261116.js https://jeongukdaeri.kr > /tmp/ai-live-indexability.json || {
+            cat /tmp/ai-live-indexability.json
+            exit 1
+          }
+          node -e "const r=require('/tmp/ai-live-indexability.json');console.log(JSON.stringify(r.summary));for(const p of r.results){console.log(p.route,'HTTP',p.status,'ERRORS:',p.errors.join('|'),'WARNINGS:',p.warnings.join('|'))}"
+      - name: Upload public read-only HTTP findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-indexability-public
+          path: |
+            /tmp/ai-live-health.json
+            /tmp/ai-live-health-headers.txt
+            /tmp/ai-live-indexability.json
+          if-no-files-found: ignore
