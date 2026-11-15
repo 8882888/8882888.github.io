@@ -924,6 +924,9 @@ function regionalBlogLinks(r,kind){
  const chosen=publishedBlogPosts.filter(p=>{
   if(!blogPostMatchesService(p,kind))return false;
   const title=compact(p.title);
+  // '기장' is also a substring of '경기장'; require an actual Gijang locality
+  // or its known vehicle handoff site before attributing a blog link to Gijang-gun.
+  if(r.full_name==='부산광역시 기장군'&&!/(기장군|기장읍|부산기장|기장탁송|정관읍|일광읍|장안읍|철마면|경동오토필드)/.test(title))return false;
   if(r.name==='포항시'&&title.includes('삼길포항')&&!/포항시|포항탁송|경북동부|경상북도/.test(title))return false;
   if(r.full_name==='경상남도 김해시'&&/김해공항|김해국제공항/.test(title)&&!/김해시|장유|율하|진영/.test(title))return false;
   return names.some(n=>title.includes(n))&&(!ambiguous||parents.some(n=>title.includes(n)));
