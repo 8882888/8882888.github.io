@@ -59,6 +59,7 @@ jobs:
           node --test tests/priority-regions-quality.test.mjs
           node --test tests/innovation-five-city-editorial.test.mjs
           node --test tests/innovation-more-five-areas-editorial.test.mjs
+          node --test tests/priority-coast-and-cities-editorial.test.mjs
           node --check scripts/audit-naver-priority-live.mjs
       - name: Check live HTTP, 8 sitemaps, 17 provinces and canonical
         env:
