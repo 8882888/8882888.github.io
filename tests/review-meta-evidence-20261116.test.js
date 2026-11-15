@@ -32,3 +32,9 @@ test('dynamic reviewed route hub also has meaningful, evidence-safe metadata',()
  assert(desc.includes('운행기록')&&desc.includes('출발지')&&desc.includes('도착지'));
  assert(!/상시배차|100%|확정요금|최상위노출/.test(desc),'no unsupported promises in meta');
 });
+
+test('reviewed route title should only receive the shared Smart24 brand once',()=>{
+ const code=fs.readFileSync(path.join(root,'lib/route-keyword-pages.js'),'utf8');
+ assert(code.includes("return layout(t+' 요금·예약',desc,body,"),'route title must use the common layout suffix');
+ assert(!code.includes("t+' 요금·예약 | 스마트24'"),'no duplicate Smart24 suffix in generated titles');
+});
