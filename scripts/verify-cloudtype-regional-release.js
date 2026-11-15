@@ -6,6 +6,8 @@ const crypto=require('node:crypto');
 // Use the exact same production contract, not an inferred GitHub commit id.
 const official='https://jeongukdaeri.kr';
 const expected='sha256-'+crypto.createHash('sha256').update(fs.readFileSync(require('node:path').join(__dirname,'..','server.js'))).digest('hex').slice(0,16);
+const baselinePath=require('node:path').join(__dirname,'..','server.main-baseline.js');
+const baseline=fs.existsSync(baselinePath)?'sha256-'+crypto.createHash('sha256').update(fs.readFileSync(baselinePath)).digest('hex').slice(0,16):null;
 const strict=process.argv.includes('--strict');
 const maxAttempts=strict?24:1;
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
@@ -19,7 +21,7 @@ const meta=html=>html.match(/<meta\b[^>]*name=["']description["'][^>]*content=["
    if(!response.ok)throw Error('HTTP '+response.status);
    const health=await response.json();
    got=String(health.release||'');
-   console.log(JSON.stringify({attempt:n,expected,live:got,match:expected===got}));
+   console.log(JSON.stringify({attempt:n,expected,baselineMain:baseline,live:got,match:expected===got,baselineMainMatchesLive:baseline===got}));
    if(got===expected){
     for(const path of ['/daeri/gyeonggi/','/daeri/gangwon/','/taksong/gyeonggi/','/taksong/chungbuk/']){
      const res=await fetch(official+path+'?release-verification='+Date.now(),{signal:AbortSignal.timeout(16000),headers:{'Cache-Control':'no-cache'}});
