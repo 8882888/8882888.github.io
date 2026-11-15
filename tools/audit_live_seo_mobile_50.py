@@ -7,6 +7,7 @@ This checks the actual production HTTP responses, not Naver rankings or a visual
 from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
 import json
+import re
 import os
 from pathlib import Path
 import statistics
@@ -103,22 +104,35 @@ def inspect_case(t):
         if "noindex" in parsed.meta.get("robots","").lower() or "noindex" in headers.get("x-robots-tag","").lower():
             raise ValueError("unexpected noindex")
         if parsed.h1!=1:raise ValueError("not exactly one h1")
-        if c.get("image") not in [im.get("src") for im in parsed.images]:
-            raise ValueError("missing PNG fallback image")
-        if c.get("previewImage") not in [im.get("srcset") for im in parsed.sources if im.get("type")=="image/webp"]:
-            raise ValueError("missing mobile WebP picture source")
-        if c.get("image") not in parsed.links:raise ValueError("PNG zoom link unavailable")
+        # Query API intentionally supplies safe text-only SVG previews; the
+        # canonical landing HTML separately includes its own branded v7
+        # PNG fallback / WebP source. Never confuse the two contracts.
+        svg=c.get("image","")
+        if (not svg.startswith("/api/nationwide-locality-card.svg?") or
+            c.get("previewImage")!=svg):
+            raise ValueError("wrong exact keyword SVG in search-card API")
+        pngs=[im.get("src","") for im in parsed.images
+              if re.fullmatch(r"/card/area-\d+-"+kind+r"-brand-v7\.png",im.get("src",""))]
+        webps=[im.get("srcset","") for im in parsed.sources
+               if im.get("type")=="image/webp" and
+               re.fullmatch(r"/card/area-\d+-"+kind+r"-brand-v7\.webp",im.get("srcset",""))]
+        if len(pngs)!=1:raise ValueError("missing/duplicate approved v7 PNG fallback in HTML")
+        if len(webps)!=1:raise ValueError("missing/duplicate approved v7 WebP mobile source in HTML")
+        png=pngs[0];webp=webps[0]
+        if webp!=png.replace(".png",".webp"):
+            raise ValueError("v7 image and WebP represent different localities")
+        if png not in parsed.links:raise ValueError("approved PNG zoom link unavailable")
         if "tel:"+str(c.get("phone","")).replace("-","") not in parsed.links:
             raise ValueError("missing local call link")
         if number%5==0:
-            image_code,_,image_headers,image_bytes,image_ms=fetch(c.get("previewImage",""))
+            image_code,_,image_headers,image_bytes,image_ms=fetch(webp)
             if image_code!=200 or "image/webp" not in image_headers.get("content-type",""):
                 raise ValueError("WebP mobile image was not served")
             if image_bytes[:4]!=b"RIFF" or image_bytes[8:12]!=b"WEBP":
                 raise ValueError("Invalid mobile WebP bytes")
             if len(image_bytes)>1_000_000:
                 raise ValueError("Mobile preview exceeds 1 MB")
-            result.update({"webp_bytes":len(image_bytes),"webp_ms":image_ms})
+            result.update({"webp_bytes":len(image_bytes),"webp_ms":image_ms,"webp_path":webp})
         if "/fare/" not in body:raise ValueError("missing fare navigation")
         if "href" not in body or "운행" not in body:raise ValueError("missing service information")
         result.update({"passed":True,"page":path,"title":parsed.title,"api_ms":api_ms,"html_ms":page_ms,"html_bytes":len(payload)})
@@ -141,10 +155,17 @@ def inspect_hub(t):
             raise ValueError("hub accidentally noindexed")
         if p.h1<1:raise ValueError("no visible h1")
         if "1811-4294" not in body:raise ValueError("missing consultation number")
-        if path=="/설악산탁송/" and ("mountain-route-fare-table-202611" not in body or "seoraksan-taksong-original-fare.png" not in body):
-            raise ValueError("Seoraksan historic fare/visual missing")
-        if path=="/지리산탁송/" and ("mountain-route-fare-table-202611" not in body or "jirisan-taksong-original-fare.png" not in body):
-            raise ValueError("Jirisan historic fare/visual missing")
+        if path in ("/설악산탁송/","/지리산탁송/"):
+            chart="/assets/"+("seoraksan" if path=="/설악산탁송/" else "jirisan")+"-taksong-fares.svg"
+            if "mountain-route-fare-table-202611" not in body or chart not in body:
+                raise ValueError("approved photo-free historic mountain fare chart missing")
+            svg_status,_,svg_headers,svg,svg_ms=fetch(chart)
+            if svg_status!=200 or "image/svg+xml" not in svg_headers.get("content-type",""):
+                raise ValueError("historic mountain SVG not publicly accessible")
+            lower=svg.lower()
+            if not svg.lstrip().startswith(b"<svg") or any(p in lower for p in (b"<image",b"<script",b"<foreignobject")):
+                raise ValueError("historic mountain fare chart is not a safe text-only SVG")
+            result.update({"verified_mountain_chart":chart,"svg_bytes":len(svg),"svg_ms":svg_ms})
         if path=="/special/cycling-trail-transport/" and "cycling-route-fare-table-202611" not in body:
             raise ValueError("Cycling historic fares missing")
         if path=="/" and "data-card-preview-form" not in body:
