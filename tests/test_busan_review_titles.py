@@ -1,5 +1,5 @@
 import unittest
-from tools.audit_live_busan_reviews import is_review_first
+from tools.audit_live_busan_reviews import is_review_first, has_review_near_top
 
 class BusanReviewTitleTest(unittest.TestCase):
     def test_genuine_review_first_variations(self):
@@ -21,6 +21,19 @@ class BusanReviewTitleTest(unittest.TestCase):
         ):
             with self.subTest(title=title):
                 self.assertFalse(is_review_first(title))
+
+class BusanReviewPlacementTest(unittest.TestCase):
+    def test_direct_answer_and_booking_may_precede_verified_review(self):
+        review="busan-taksong-real-review-first-20261104"
+        self.assertTrue(has_review_near_top([review]))
+        self.assertTrue(has_review_near_top(["regional-direct-answer","regional-booking-first",review]))
+
+    def test_unrelated_content_or_buried_review_rejected(self):
+        review="busan-taksong-real-review-first-20261104"
+        self.assertFalse(has_review_near_top(["unrelated-seo-stuff",review]))
+        self.assertFalse(has_review_near_top(["regional-direct-answer","regional-booking-first","unrelated",review]))
+        self.assertFalse(has_review_near_top(["regional-direct-answer"]))
+        self.assertFalse(has_review_near_top([]))
 
 if __name__ == "__main__":
     unittest.main()
