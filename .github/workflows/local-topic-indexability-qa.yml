@@ -27,3 +27,28 @@ jobs:
         run: |
           node --check server.js
           node --test tests/local-topic-indexability-20261116.test.cjs
+
+  public-yeti-indexability:
+    if: github.event_name == 'push'
+    needs: sparse-topics
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Probe actual Cloudtype sparse/noindex topics after release
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 24); do
+            echo "Cloudtype sparse indexability check $i/24"
+            if SMART24_AUDIT_LIVE=1 node --test tests/local-topic-indexability-20261116.test.cjs; then
+              echo "### PASS: official site source-empty township topic noindex, core cities indexable" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$i" -lt 24 ]; then sleep 10; fi
+          done
+          echo "::error::Naver sparse page noindex gate is not live on Cloudtype"
+          exit 1
