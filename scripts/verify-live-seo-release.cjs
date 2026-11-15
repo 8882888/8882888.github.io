@@ -93,27 +93,25 @@ async function main(){
       priorityXml.includes(unreviewedSample)||reviewedXml.includes(unreviewedSample)){
     throw Error('Priority and regional guide sitemap quality gates differ on LIVE Cloudtype');
    }
-   const localityLevels=['province','city','county','district','eup','myeon','dong'];
-   const villageMap='/sitemap-localities-ri.xml';
-   const hasVillageMap=root.includes(new URL(villageMap,base).href);
+   // Only broad administrative hubs are advertised in the public sitemap
+   // index. Existing fine-grained 읍/면/동/리 routes still work for users,
+   // but should not be promoted as thousands of repetitive index targets.
+   const publishedLocalityLevels=['province','city','county','district'];
+   const withheldLocalityLevels=['eup','myeon','dong','ri'];
    const expectedCounts=JSON.parse(await read('/health/locality-sitemaps.json'));
-   if(!Number.isInteger(expectedCounts.ri)||expectedCounts.ri<0||hasVillageMap!==(expectedCounts.ri>0)){
-    throw Error('Village sitemap presence does not match expected coverage');
-   }
-   if(hasVillageMap)localityLevels.push('ri');
    const localityCounts={};
-   for(const level of localityLevels){
+   for(const level of publishedLocalityLevels){
     const path='/sitemap-localities-'+level+'.xml';
-    if(!root.includes(new URL(path,base).href))throw Error('Missing locality sitemap: '+level);
+    if(!root.includes(new URL(path,base).href))throw Error('Missing promoted locality sitemap: '+level);
     const xml=await read(path);
     const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>new URL(match[1]));
     if(!/<urlset\b/i.test(xml)||!urls.length||
-     urls.some(url=>url.origin!==base.origin||!/^\/(daeri|taksong)\//.test(url.pathname))){
-     throw Error('Invalid locality URLs: '+level);
+      urls.some(url=>url.origin!==base.origin||!/^\/(daeri|taksong)\//.test(url.pathname))){
+     throw Error('Invalid promoted locality URLs: '+level);
     }
     const uniqueCount=new Set(urls.map(url=>url.href)).size;
     if(uniqueCount!==urls.length||uniqueCount!==expectedCounts[level]){
-     throw Error('Locality sitemap count mismatch: '+level+' expected '+expectedCounts[level]+' received '+uniqueCount);
+     throw Error('Promoted locality sitemap count mismatch: '+level+' expected '+expectedCounts[level]+' received '+uniqueCount);
     }
     for(const kind of ['daeri','taksong']){
      const sample=urls.find(url=>url.pathname.startsWith('/'+kind+'/'));
@@ -134,13 +132,21 @@ async function main(){
     }
     localityCounts[level]=uniqueCount;
    }
-   if(!hasVillageMap)localityCounts.ri=0;
+   for(const level of withheldLocalityLevels){
+    const path='/sitemap-localities-'+level+'.xml';
+    if(root.includes(new URL(path,base).href))
+     throw Error('Thin or overlapping locality sitemap must not be promoted: '+level);
+    localityCounts[level]=0;
+   }
+   // Diagnostic counts describe routes the application can serve, not
+   // how many URLs are advertised for indexing in sitemap-all.xml.
+   const withheldLocalityCounts=Object.fromEntries(withheldLocalityLevels.map(level=>[level,expectedCounts[level]||0]));
    for(const path of ['/sitemap-regional-guides.xml','/sitemap-history-1.xml']){
     if(!root.includes(new URL(path,base).href))throw Error('Missing sitemap: '+path);
     const xml=await read(path);
     if(!/<urlset\b/i.test(xml)||!/<loc>https?:\/\//i.test(xml))throw Error('Empty or invalid sitemap: '+path);
    }
-   console.log(JSON.stringify({origin:base.origin,release:expected,verified:true,localityCounts}));
+   console.log(JSON.stringify({origin:base.origin,release:expected,verified:true,localityCounts,withheldLocalityCounts}));
    return;
   }catch(error){
    console.error('Attempt '+attempt+'/12: '+error.message);
