@@ -1,5 +1,6 @@
 name: Verified review SEO metadata regression
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'reviews/ride-record-stories/index.html'
@@ -16,6 +17,8 @@ on:
       - 'reviews/verified/index.html'
       - 'lib/route-keyword-pages.js'
       - 'tests/review-meta-evidence-20261116.test.js'
+      - 'scripts/verify-cloudtype-reviewed-metadata.js'
+      - '.github/workflows/review-meta-qa.yml'
 permissions:
   contents: read
 jobs:
@@ -31,3 +34,31 @@ jobs:
         run: node --check tests/review-meta-evidence-20261116.test.js
       - name: Validate four verified hub descriptions
         run: node --test tests/review-meta-evidence-20261116.test.js
+
+  verify-cloudtype-release:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: check-reviewed-hubs
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax-check deployment proof
+        run: node --check scripts/verify-cloudtype-reviewed-metadata.js
+      - name: Verify public HTML metadata after bounded Cloudtype rollout
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 12); do
+            echo "Public metadata check attempt $attempt/12"
+            if node scripts/verify-cloudtype-reviewed-metadata.js; then
+              echo "### Public Cloudtype HTML matches committed metadata" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$attempt" -ne 12 ]; then sleep 15; fi
+          done
+          echo "### Cloudtype metadata release NOT verified" >> "$GITHUB_STEP_SUMMARY"
+          echo "::error::Review metadata remains stale or inaccessible on the official domain."
+          exit 1
