@@ -44,7 +44,7 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 24); do
             echo "Production discovery verification attempt $attempt/24"
-            if node --test tests/priority-hub-links-20261116.test.cjs --live; then
+            if SMART24_AUDIT_LIVE=1 node --test tests/priority-hub-links-20261116.test.cjs; then
               echo "### PASS: 3 main-to-hub links and 2 hub crosslinks verified on Cloudtype" >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
