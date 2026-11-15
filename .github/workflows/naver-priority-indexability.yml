@@ -18,6 +18,7 @@ on:
       - "data/legal-regions/**"
       - "lib/nationwide-locality-explorer.js"
       - "scripts/ai-index-quality-triage.mjs"
+      - "scripts/audit-live-structured-data.mjs"
       - "scripts/report-naver-official-scorecard.mjs"
       - "tests/naver-official-scorecard.test.mjs"
       - "data/naver-searchadvisor-official-baseline.json"
@@ -66,6 +67,8 @@ jobs:
         run: |
           node --check scripts/ai-index-quality-triage.mjs
           node scripts/ai-index-quality-triage.mjs
+      - name: Verify schema.org JSON-LD in actual production HTML
+        run: node scripts/audit-live-structured-data.mjs
       - name: Generate official Naver baseline-vs-current scorecard (no fabricated counts)
         if: always()
         run: |
@@ -86,4 +89,6 @@ jobs:
             ai-index-quality-review.md
             naver-official-scorecard.json
             naver-official-scorecard.md
+            structured-data-live-report.json
+            structured-data-live-report.md
           if-no-files-found: error

@@ -1436,7 +1436,10 @@ function nationwideCoveragePage(){
   ?'<section id="verified-coverage-crawl-links"><h2>실제 완료 운행기록이 있는 주요 지역 서비스</h2><p>아래 지역은 보존된 완료 운행기록과 지역명을 대조해 선별했습니다. 운행기록은 과거 사실이며 현재 배차·요금을 보장하지 않습니다.</p><ul>'+verifiedCoverage.map(x=>'<li><a href="'+esc(x.url)+'">'+esc(x.label)+' 예약·지역 안내</a> · <a href="/reviews/history/'+encodeURIComponent(x.ride.id)+'/">'+esc(x.ride.date+' '+x.ride.departure+' → '+x.ride.destination+' 당시 완료기록')+'</a></li>').join('')+'</ul></section>'
   :'';
  const body='<section id="nationwide-seventeen-province-coverage-20261105"><h1>전국 17개 시·도 자동차탁송·대리운전 지역별 안내</h1><p>서울·경기·인천부터 강원·충청·호남·영남·제주까지 실제 행정구역으로 찾을 수 있습니다. 아래 연결은 서비스 안내이며 해당 지역 운행 실적을 의미하지 않습니다. 실제 완료 운행은 각 지역 후기 화면에서 별도로 확인합니다.</p><p><a href="/reviews/history/">전국 2,591건 운행내역</a> · <a href="/fare/">출발·도착 예상요금</a> · <a href="tel:18114294">예약상담 1811-4294</a></p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">'+cards+'</div></section>'+verifiedCoverageHtml;
- return layout('전국 17개 시·도 탁송·대리운전 지역 안내','서울·경기·인천·강원·충청·호남·영남·제주 자동차탁송과 대리운전 지역별 정보, 확인된 운행기록 및 예상요금 안내.',body,'https://'+host+'/coverage/');
+ const coverageUrl='https://'+host+'/coverage/';
+ const coverageDescription='서울·경기·인천·강원·충청·호남·영남·제주 자동차탁송과 대리운전 지역별 정보, 확인된 운행기록 및 예상요금 안내.';
+ const coverageJsonLd=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:'전국 17개 시·도 탁송·대리운전 지역 안내',url:coverageUrl,description:coverageDescription,inLanguage:'ko-KR',isPartOf:{'@type':'WebSite',name:SITE_NAME,url:'https://'+host+'/'}}).replace(/</g,'\\u003c');
+ return layout('전국 17개 시·도 탁송·대리운전 지역 안내',coverageDescription,'<script type="application/ld+json">'+coverageJsonLd+'</script>'+body,coverageUrl);
 }
 function regionPage(r){
  const fullName=r.full_name||[r.parent_name==='대한민국'?'':r.parent_name,r.name].filter(Boolean).join(' ');

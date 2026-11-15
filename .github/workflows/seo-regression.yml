@@ -31,6 +31,7 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check server.js
+          node --check scripts/audit-live-structured-data.mjs
           node --check tests/server.test.js
           node --check tests/visual-policy.test.js
           node --check tests/keyword-preview.test.js
