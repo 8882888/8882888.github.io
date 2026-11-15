@@ -3270,6 +3270,9 @@ if(pathname==='/sitemap.xml'){
  const focused=[
   // Give every province equal crawl-discovery priority before city-specific guides.
   '/','/coverage/','/region/','/daeri/','/taksong/',
+  // Protect factual mountain handover hubs: previously buried beyond the
+  // 499-entry cutoff and flagged missing by the production SEO monitor.
+  '/설악산탁송/','/지리산탁송/',
   // Keep all hand-reviewed locality pages ahead of the bounded 499-URL cutoff.
   ...priorityRegionalPages.map(entry=>servicePath(regionByFullName.get(entry.region),entry.kind)),
   // Preserve core cycling handover guides before large regional lists and the 499-URL cutoff.
@@ -3331,6 +3334,7 @@ if(pathname==='/sitemap.xml'){
  const sitemapUrls=new Set(urls);
  const missingReviewed=priorityRegionalPages.map(entry=>servicePath(regionByFullName.get(entry.region),entry.kind)).filter(p=>!sitemapUrls.has(p));
  if(missingReviewed.length)throw Error('Reviewed region guides missing from primary sitemap: '+missingReviewed.join(', '));
+ for(const hub of ['/설악산탁송/','/지리산탁송/'])if(!sitemapUrls.has(hub))throw Error('Priority mountain hub missing from main sitemap: '+hub);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(new URL(base+p).href)+'</loc></url>').join('')+'</urlset>';
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
