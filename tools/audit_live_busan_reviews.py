@@ -53,8 +53,17 @@ def audit(route):
         raise AssertionError(f"{route}: title is not review-first: {p.title!r}")
     if not is_review_first(p.h1):
         raise AssertionError(f"{route}: H1 is not review-first: {p.h1!r}")
-    if not p.sections or p.sections[0]!="busan-taksong-real-review-first-20261104":
-        raise AssertionError(f"{route}: initial content is not original review: {p.sections[:4]!r}")
+    # Two directly useful sections (what this service does / how to book)
+    # can precede the verified review. Reject unrelated sections above it.
+    review_section="busan-taksong-real-review-first-20261104"
+    permitted_prefix=("regional-direct-answer","regional-booking-first")
+    try:
+        review_position=p.sections.index(review_section)
+    except ValueError:
+        review_position=-1
+    if review_position<0 or review_position>2 or any(
+            section not in permitted_prefix for section in p.sections[:review_position]):
+        raise AssertionError(f"{route}: verified review missing from top content: {p.sections[:5]!r}")
     if not p.tags:raise AssertionError(f"{route}: local hashtag paragraph missing")
     tags=p.tags.split()
     if len(tags)!=30 or len(set(tags))!=30 or any(t not in tags for t in REQUIRED_TAGS):
