@@ -2,6 +2,7 @@
 'use strict';
 const config=require('../data/seo-pages.json');
 const priority=require('../data/priority-regions.json').pages;
+const {fetchSeoWithRetry}=require('../lib/seo-audit-retry');
 const base=new URL(process.argv[2]||'http://localhost:3000/');
 const routes=[...new Set([...config.pages.map(p=>p.path),'/taksongdaeri/','/favicon.ico','/sitemap.xml','/robots.txt'])];
 const rules=new Map(config.pages.map(p=>[p.path,p]));
@@ -12,7 +13,7 @@ function elements(html,tag){return [...html.matchAll(new RegExp('<'+tag+'\\b[^>]
 async function inspect(route){
  const url=new URL(route,base),issues=[],out={route,url:url.href};
  try{
-  const response=await fetch(url,{signal:AbortSignal.timeout(15000),headers:{'user-agent':'Smart24-SEO-Audit/1.1'}});
+  const response=await fetchSeoWithRetry(url,{headers:{'user-agent':'Smart24-SEO-Audit/1.1'}});
   out.status=response.status;out.finalUrl=response.url;
   out.cacheControl=response.headers.get('cache-control')||'';
   if(['/robots.txt','/sitemap.xml'].includes(route)&&!/no-cache|no-store|must-revalidate/i.test(out.cacheControl))issues.push('Crawler discovery response may be stale: missing cache revalidation header');
