@@ -1,0 +1,45 @@
+name: Audit Naver Yeti access to sitemap canonical pages
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-naver-yeti-sitemaps-20261116.js'
+      - '.github/workflows/naver-yeti-sitemap-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  naver-yeti:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate audit script syntax
+        run: node --check scripts/audit-naver-yeti-sitemaps-20261116.js
+      - name: Check live Naver Yeti GET for bounded priority sitemap samples
+        run: |
+          NAVER_YETI_SAMPLE_PER_MAP=12 node scripts/audit-naver-yeti-sitemaps-20261116.js > naver-yeti-diagnosis.json || {
+            node - <<'NODE'
+          const r=require('./naver-yeti-diagnosis.json');
+          console.log('Summary:',JSON.stringify(r.summary));
+          console.log('Errors:',JSON.stringify(r.errors,null,2));
+          console.log('Duplicate titles:',JSON.stringify(r.duplicateTitles,null,2));
+          NODE
+            exit 1
+          }
+          node - <<'NODE'
+          const r=require('./naver-yeti-diagnosis.json');
+          console.log('Summary:',JSON.stringify(r.summary));
+          console.log('Sitemaps:',JSON.stringify(r.sitemaps));
+          console.log('Duplicate titles:',JSON.stringify(r.duplicateTitles));
+          NODE
+      - name: Upload raw public HTTP evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naver-yeti-priority-sitemaps
+          path: naver-yeti-diagnosis.json
+          if-no-files-found: warn
+          retention-days: 14
