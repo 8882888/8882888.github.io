@@ -48,4 +48,8 @@ test('curated pages remain connected to existing public canonical route renderer
  assert.match(src,/function priorityLocalGuide\(r,kind\)/);
  assert.match(src,/priorityByKey\.get\(kind\+'\|'\+r\.full_name\)/);
  assert.match(src,/id="priority-region-guide"/);
+ assert.ok(src.includes("'data/priority-regions.json'"),'Live diagnostic publishes source-specific data fingerprint');
+ const verifier=fs.readFileSync(path.join(root,'tools/check_cloudtype_freshness.js'),'utf8');
+ assert.ok(verifier.includes("priorityGuidesHash=sha(priorityGuidesPath)"),'Production hash must be checked independently from server.js');
+ assert.ok(verifier.includes("hashes[priorityGuidesPath]!==priorityGuidesHash"));
 });
