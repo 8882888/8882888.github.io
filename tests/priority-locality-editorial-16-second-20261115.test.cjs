@@ -32,7 +32,7 @@ const expected={
 };
 const sourceMap=new Map(Object.entries(expected).map(([key])=>[key,JSON.parse(fs.readFileSync(
  path.join(root,'data/naver-regional-focus-'+key+'.json'),'utf8')).priority]));
-const possibleFake=/100%\\s*(?:배차|보장)|즉시\\s*배차\\s*보장|기사\\s*상시\\s*상주|운행(?:을)?\\s*완료했습니다|무조건\\s*배차/;
+const possibleFake=/100%\s*(?:배차|보장)|즉시\s*배차\s*보장|기사\s*상시\s*상주|운행(?:을)?\s*완료했습니다|무조건\s*배차/;
 test('16 edited Sejong rural, Wonju Munmak and Seoul locality guides remain useful and unique',()=>{
  const all=Object.entries(expected).flatMap(([file,rows])=>rows.map(([keyword,kind,phrases])=>({file,keyword,kind,phrases})));
  assert.equal(all.length,16);
@@ -46,7 +46,7 @@ test('16 edited Sejong rural, Wonju Munmak and Seoul locality guides remain usef
   assert.ok(row.handover.length>=135,'Handover conditions too short: '+item.keyword);
   assert.ok(row.related.startsWith('/'),'Existing related service link missing: '+item.keyword);
   const text=[row.topic,row.pickup,row.handover].join(' ');
-  const lastLocality=row.region.trim().split(/\\s+/).at(-1);
+  const lastLocality=row.region.trim().split(/\s+/).at(-1);
   assert.ok(text.includes(lastLocality),'Missing locality: '+item.keyword);
   for(const phrase of item.phrases)assert.ok(text.includes(phrase),'Missing relevant service/region fact '+phrase+' for '+item.keyword);
   assert.doesNotMatch(text,possibleFake,'Do not promise drivers or invent completed rides: '+item.keyword);
