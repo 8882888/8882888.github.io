@@ -304,8 +304,11 @@ test('verified regional discovery uses completed source records, canonical pages
  const start=server.indexOf("if(pathname==='/sitemap-verified-regions.xml')");
  assert.ok(start>=0,'verified-region sitemap route is missing');
  const code=server.slice(start,server.indexOf("if(pathname==='/sitemap-history.xml'",start));
- assert.ok(code.includes("indexableHistoricalRides.some("),'only canonical finished records may support discovery');
- assert.ok(code.includes("matchingHistoryRegion(x,r,regions)"),'regional evidence must be geographically verified');
+ assert.ok(code.includes("verifiedBroadRegionServiceKeys(regions,indexableHistoricalRides,matchingHistoryRegion,PROVINCE_ALIASES)"),'only original canonical finished records can support discovery');
+ const evidenceHelper=fs.readFileSync(path.join(root,'lib/verified-broad-region-evidence.js'),'utf8');
+ assert.ok(evidenceHelper.includes("match(ride,region,regions)"),'geographic evidence must use the same original matcher');
+ assert.ok(evidenceHelper.includes("ride.departure==='지역 비공개'"),'privacy exclusions must remain enforced');
+ assert.ok(code.includes("verifiedKeys.has(kind+'|'+r.full_name)"),'candidate results must be mapped back to legal region identities');
  assert.ok(code.includes("['시도','시','군','구'].includes(r.level)"),'avoid village-scale templated pages');
  assert.ok(code.includes("servicePath(r,kind)"),'use canonical region routing');
  assert.ok(server.slice(server.indexOf("const rootSitemaps="),server.indexOf("const historySitemapMatch=")).includes("'/sitemap-verified-regions.xml'"),'integrated sitemap must link new discovery supplement');
