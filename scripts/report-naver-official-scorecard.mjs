@@ -1,0 +1,99 @@
+// Read-only owner-reported Naver Search Advisor scorecard. Never infers index totals
+// from sitemaps, Naver site: searches, IndexNow, GitHub CI, or synthetic Yeti.
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const read=(p)=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
+const optional=(p)=>{try{return read(p)}catch(error){if(error.code==='ENOENT')return null;throw error}};
+const count=(v)=>Number.isSafeInteger(v)&&v>=0;
+export function delta(current,base){
+ return count(current)&&count(base)?current-base:null;
+}
+export function compareOfficial(baseline,snapshot){
+ const base=baseline.officialIndexBaseline;
+ if(!snapshot)return {baseline:base,current:null,indexDelta:null,collectionLimitedDelta:null,excludedDelta:null,status:'UNVERIFIED_NO_CURRENT_OFFICIAL_DATA'};
+ // This file must be transcribed from the site owner's authenticated diagnosis.
+ // A date and provenance are mandatory to prevent an anonymous API scrape or a
+ // sitemap/keyword count from being mislabeled as an official observation.
+ if(snapshot.sourceType!=='owner_reported_naver_searchadvisor'
+    ||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(snapshot.observedAt||''))
+  throw Error('Official snapshot must identify owner-reported Naver Search Advisor source and observation date');
+ for(const key of ['indexed','collectionLimited','excluded']){
+  if(!count(snapshot[key]))throw Error('Invalid official count: '+key);
+ }
+ const indexDelta=delta(snapshot.indexed,base.indexed);
+ return {baseline:base,current:snapshot,indexDelta,
+  collectionLimitedDelta:delta(snapshot.collectionLimited,base.collectionLimited),
+  excludedDelta:delta(snapshot.excluded,base.excluded),
+  status:indexDelta>0?'OFFICIAL_INCREASE':indexDelta===0?'OFFICIAL_UNCHANGED':'OFFICIAL_DECREASE'};
+}
+export function searchComparison(baseline,snapshot){
+ const prior={date:baseline.last_updated,period:baseline.period,
+  clicks:baseline.totals.clicks,impressionsApprox:baseline.totals.impressions_approx,
+  ctrPercent:baseline.totals.ctr_percent,source:baseline.source};
+ if(!snapshot||!snapshot.search||snapshot.search.period!==prior.period
+   ||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(snapshot.search.updatedAt||'')
+   ||snapshot.search.updatedAt<=prior.date)
+  return {baseline:prior,current:null,clickDelta:null,impressionsDeltaApprox:null,
+    status:'UNVERIFIED_OR_INCOMPARABLE_WINDOW'};
+ const now=snapshot.search;
+ if(!count(now.clicks)||!count(now.impressions))throw Error('Invalid current Naver search counts');
+ return {baseline:prior,current:now,clickDelta:delta(now.clicks,prior.clicks),
+  impressionsDeltaApprox:delta(now.impressions,prior.impressionsApprox),
+  status:'OWNER_REPORTED_COMPARISON__NOT_LIVE_API'};
+}
+const baseline=read('data/naver-searchadvisor-official-baseline.json');
+const searchBase=read(baseline.searchClicksBaselineFile);
+const supplied=process.env.NAVER_SEARCHADVISOR_SNAPSHOT_FILE
+ ?JSON.parse(fs.readFileSync(process.env.NAVER_SEARCHADVISOR_SNAPSHOT_FILE,'utf8'))
+ :baseline.latestOfficialSnapshot;
+const official=compareOfficial(baseline,supplied);
+const search=searchComparison(searchBase,supplied);
+const technical=optional('seo-priority-live-report.json')?.summary??null;
+const quality=optional('ai-index-quality-review.json')?.totals??null;
+const report={generatedAt:new Date().toISOString(),site:baseline.site,
+ scope:'OFFICIAL owner-reported data vs independent crawl and content tests',
+ official,search,technical,quality,
+ interpretation:'Official indexed count is only from the authenticated Search Advisor Site Diagnosis; unavailable current value means NO index-growth claim. Synthetic Yeti, sitemap and quality counts are NOT the official index count.',
+ dataLag:'Naver Search Advisor exposure/click reports can lag by approximately one week; compare aligned windows and do not equate clicks with calls.',
+ actionPriority:technical&&(
+  technical.collectionLimitations>0||technical.excludedOrCanonical>0||
+  technical.siteMapProblems>0||technical.sourceOrCrawlerProblems>0
+ )?'REPAIR_TECHNICAL_CRAWL_ERRORS':'REVIEW_DUPLICATE_AND_THIN_PRIORITY_REGION_CONTENT__VERIFY_OFFICIAL_DIAGNOSIS'
+};
+const safe=x=>x===null||x===undefined?'미확인':String(x);
+const md=[
+ '# 네이버 공식 색인·검색 성과표 (실제 측정과 자동 테스트 분리)',
+ '',
+ '- 생성: '+report.generatedAt,
+ '- 웹사이트: '+baseline.site,
+ '- 현재 최신 공식 데이터: '+(official.current?'사이트 소유자 보고 '+official.current.observedAt:'미제공 — 증감 산정 금지'),
+ '',
+ '| 지표 | 기존 공식 또는 사용자 제공 기준 | 최신 확인값 | 변화 |',
+ '|---|---:|---:|---:|',
+ '| 정상 색인 | '+safe(official.baseline.indexed)+' | '+safe(official.current?.indexed)+' | '+safe(official.indexDelta)+' |',
+ '| 수집제한 | '+safe(official.baseline.collectionLimited)+' | '+safe(official.current?.collectionLimited)+' | '+safe(official.collectionLimitedDelta)+' |',
+ '| 색인제외 | '+safe(official.baseline.excluded)+' | '+safe(official.current?.excluded)+' | '+safe(official.excludedDelta)+' |',
+ '| 검색 클릭 (30일) | '+safe(search.baseline.clicks)+' | '+safe(search.current?.clicks)+' | '+safe(search.clickDelta)+' |',
+ '| 노출 (30일·기준 근사치) | 약 '+safe(search.baseline.impressionsApprox)+' | '+safe(search.current?.impressions)+' | '+safe(search.impressionsDeltaApprox)+' |',
+ '',
+ '**출처 제한:** 정상 색인 14개는 이전 사이트 소유자 제공 수치이며 관측 날짜 불명. 클릭·노출 기준은 '+search.baseline.date+'의 사용자 제공 자료. 검색 클릭은 전화 상담 수가 아닙니다.',
+ '',
+ '## 실제 서버 자동 검사 (공식 색인 통계 아님)',
+ '',
+ technical?'검사 URL '+safe(technical.checkedPages)+', 정상 '+safe(technical.cleanPages)+', 8개 사이트맵 중 운영 '+safe(technical.liveSitemaps)+', 수집제한 '+safe(technical.collectionLimitations)+', canonical/색인 차단 '+safe(technical.excludedOrCanonical)+'.':'운영 서버 검사 자료 없음 — 공식 색인 증가로 간주 금지.',
+ quality?'지역 서비스 항목 '+safe(quality.reviewed)+', 추가 검토 '+safe(quality.needsReview)+', 이 기준 통과 '+safe(quality.fullyPassing)+'.':'지역 고유 콘텐츠 품질 자료 없음.',
+ '',
+ '## 판정',
+ '',
+ '- 공식 색인: **'+official.status+'**',
+ '- 검색 클릭·노출: **'+search.status+'**',
+ '- 개선 우선순위: **'+report.actionPriority+'**',
+ '- 새 페이지 양산·허위 후기·반복 수집 요청으로 지표를 부풀리지 않습니다.',
+ '- 네이버 서치어드바이저 > 사이트 진단의 실제 색인·수집제한·색인제외와 노출/클릭 리포트가 추가돼야 수치를 갱신할 수 있습니다.',
+ ''
+].join('\n');
+fs.writeFileSync(path.join(root,'naver-official-scorecard.json'),JSON.stringify(report,null,2)+'\n');
+fs.writeFileSync(path.join(root,'naver-official-scorecard.md'),md);
+console.log(JSON.stringify({officialStatus:official.status,baselineIndexed:official.baseline.indexed,currentIndexed:official.current?.indexed??null,indexDelta:official.indexDelta,searchStatus:search.status,technicalSample:technical?.checkedPages??null,qualityPending:quality?.needsReview??null}));
