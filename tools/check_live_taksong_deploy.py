@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 import sys
 from urllib import error, request
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -115,7 +115,8 @@ if sm["status"] == 200:
         report["checks"]["sitemap"]["parseable"] = True
         report["checks"]["sitemap"]["priority_count"] = len(urls)
         for path in ["/taksong/","/taksong/busan/","/taksong/daegu/","/taksong/ulsan/","/taksong/gyeongnam/changwon-si/","/taksong/sejong/","/taksong/gangwon/sokcho-si/","/taksong/gangwon/gangreung-si/","/설악산탁송/"]:
-            test(BASE + path in urls, "Priority sitemap omits commercial transport page: " + path)
+            # XML locs use percent-encoded Unicode; the path in logs is human-readable.
+            test(BASE + quote(path, safe="/") in urls, "Priority sitemap omits commercial transport page: " + path)
         test(all(x.startswith(BASE + "/") for x in urls), "Sitemap contains non-canonical host")
         test(len(urls) == len(set(urls)), "Priority sitemap has duplicate URLs")
     except ET.ParseError as ex:
