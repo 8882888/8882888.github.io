@@ -14,6 +14,7 @@ on:
       # Changes to regional guidance must refresh the human review queue.
       - "data/naver-regional-focus-*.json"
       - "data/priority-regions.json"
+      - "tests/priority-regions-quality.test.mjs"
       - "data/legal-regions/**"
       - "lib/nationwide-locality-explorer.js"
       - "scripts/ai-index-quality-triage.mjs"
@@ -51,6 +52,7 @@ jobs:
       - name: Validate Naver crawler rules and read-only auditor syntax
         run: |
           node --test tests/indexability-scope.test.mjs
+          node --test tests/priority-regions-quality.test.mjs
           node --check scripts/audit-naver-priority-live.mjs
       - name: Check live HTTP, 8 sitemaps, 17 provinces and canonical
         env:
