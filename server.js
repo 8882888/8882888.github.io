@@ -1122,6 +1122,18 @@ function concisePriorityMetaDescription(keyword,topic,detail,phone){
  }
  return prefix+summary+suffix;
 }
+function boundedRegionalSearchDescription(value){
+ // Keep source-specific customer guidance in the page body, not a 240-character search snippet.
+ // Only source-empty/non-priority regional snippets use this fallback, preserving hand-reviewed copy.
+ const text=String(value||'').replace(/\s+/g,' ').trim(),max=160;
+ if(text.length<=max)return text;
+ const suffix=' 상담 '+PHONE+'.';
+ const budget=max-suffix.length-1;
+ let part=text.slice(0,budget);
+ const lastSpace=part.lastIndexOf(' ');
+ if(lastSpace>Math.floor(budget*0.65))part=part.slice(0,lastSpace);
+ return part.replace(/[\s.,，·]+$/,'')+'…'+suffix;
+}
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  // Avoid constructing the repeated, very long provider/keyword editorial for
@@ -1212,7 +1224,8 @@ async function servicePage(r,kind){
  const innovationFocus=innovationSearchFocus(r.full_name,kind);
  const regionalRequestedTitle=kind==='taksong'&&r.full_name==='울산광역시'?'울산탁송｜자동차탁송·빠른배차·예약배차':kind==='taksong'&&r.full_name==='세종특별자치시'?'세종탁송｜장거리 차량탁송·거리조회·예약':null;
  const searchTitle=regionalRequestedTitle||(innovationFocus?innovationFocus.keyword+'｜요금·예약·'+(kind==='taksong'?'차량 인수·인계':'출발 위치 안내'):ganghwaReviewPage?'강화대리운전 실제 후기｜강화읍·선원면 운행완료·길상면·화도면 예약 안내':jejuSearchPage?'제주도탁송 후기｜차량선적·기존 운행정보 확인':busanReviewPage?busanServiceTitle:gijangTaksongPage?'기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내':kind==='taksong'?taksongReviewTitle:daeriReviewTitle);
- const searchDesc=priorityMeta&&innovationFocus?focusedDesc:innovationFocus?innovationFocus.keyword+'. '+innovationFocus.pickup+' 출발 위치와 목적지, 희망 시각을 확인해 요금·배차를 상담합니다. 확인된 실제 운행정보만 후기에 연결합니다. 상담 '+PHONE+'.':ganghwaReviewPage?'강화대리운전 완료 운행후기 2건: 강화읍→검단아라동 45,000원, 갑곳리→선원면 20,000원. 강화읍·길상면·화도면·양도면·내가면·교동도 원문과 예약상담 1811-4294.':jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':busanReviewPage?'부산탁송 예약과 예상요금, 구·군별 차량 인수·인계 안내. 부산항·감만동·해운대·기장 자동차탁송·입출고 상담과 실제 운행기록을 확인합니다.':gijangTaksongPage?'부산 기장군탁송·기장탁송 차량 인수·인계 안내. 기장읍·정관읍·일광읍 차량 인수 위치, 장안읍·철마면 출고 탁송과 예상요금·예약상담 1811-4294.':priorityMeta?focusedDesc:kind==='taksong'?(verifiedTitleTrip?keyword+' 기존 완료구간 '+verifiedTitleTrip.departure+'→'+verifiedTitleTrip.destination+'. ':'확인된 해당 지역 운행완료 후기는 아직 연결되지 않았습니다. ')+focusedDesc:(verifiedDaeriTitleTrip?keyword+' 기존 완료구간 '+verifiedDaeriTitleTrip.departure+'→'+verifiedDaeriTitleTrip.destination+'. ':'해당 지역에 확인된 완료 대리운전 후기가 없다면 일반 안내와 구분합니다. ')+focusedDesc;
+ const rawSearchDesc=priorityMeta&&innovationFocus?focusedDesc:innovationFocus?innovationFocus.keyword+'. '+innovationFocus.pickup+' 출발 위치와 목적지, 희망 시각을 확인해 요금·배차를 상담합니다. 확인된 실제 운행정보만 후기에 연결합니다. 상담 '+PHONE+'.':ganghwaReviewPage?'강화대리운전 완료 운행후기 2건: 강화읍→검단아라동 45,000원, 갑곳리→선원면 20,000원. 강화읍·길상면·화도면·양도면·내가면·교동도 원문과 예약상담 1811-4294.':jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':busanReviewPage?'부산탁송 예약과 예상요금, 구·군별 차량 인수·인계 안내. 부산항·감만동·해운대·기장 자동차탁송·입출고 상담과 실제 운행기록을 확인합니다.':gijangTaksongPage?'부산 기장군탁송·기장탁송 차량 인수·인계 안내. 기장읍·정관읍·일광읍 차량 인수 위치, 장안읍·철마면 출고 탁송과 예상요금·예약상담 1811-4294.':priorityMeta?focusedDesc:kind==='taksong'?(verifiedTitleTrip?keyword+' 기존 완료구간 '+verifiedTitleTrip.departure+'→'+verifiedTitleTrip.destination+'. ':'확인된 해당 지역 운행완료 후기는 아직 연결되지 않았습니다. ')+focusedDesc:(verifiedDaeriTitleTrip?keyword+' 기존 완료구간 '+verifiedDaeriTitleTrip.departure+'→'+verifiedDaeriTitleTrip.destination+'. ':'해당 지역에 확인된 완료 대리운전 후기가 없다면 일반 안내와 구분합니다. ')+focusedDesc;
+ const searchDesc=priorityMeta?rawSearchDesc:boundedRegionalSearchDescription(rawSearchDesc);
  const hierarchyNote='행정구역 경로: '+regionAncestors(r).map(a=>a.name).join(' → ')+'. '+(r.level==='리'?'마을 단위 상세 위치와 차량 인수 지점을 확인합니다.':r.level==='동'?'건물 출입구와 주차 위치를 확인합니다.':r.level==='면'?'면 소재지와 외곽의 기사 이동 여건을 확인합니다.':'지역별 출발지와 목적지의 이동 조건을 확인합니다.');
  const aliasTerms=[...new Set(regionAliases(r).map(x=>x+service))].filter(x=>x!==name+' '+service&&x!==keyword);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
  const intro=kind==='taksong'?'자동차탁송은 고객이 지정한 출발지에서 차량을 인수해 목적지로 이동시키는 서비스입니다. 차량 인수·인계 장소와 차종, 도로거리, 시간대, 기사 접근·복귀 동선, 통행료에 따라 요금이 달라집니다.':'대리운전은 고객 차량을 기사에게 맡겨 목적지까지 이동하는 서비스입니다. 고객의 동승 여부와 이용 조건을 상담 시 확인하며, 출발지·도착지·시간대·장거리 여부·기사 복귀 여건에 따라 요금과 배차가 달라집니다.';
