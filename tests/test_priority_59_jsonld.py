@@ -69,7 +69,10 @@ class Priority59SchemaValidation(unittest.TestCase):
         self.assertIn("breadcrumb_does_not_end_at_canonical",result["errors"])
 
     def test_jeju_dedicated_taksong_phone(self):
-        row=next(r for r in RECORDS if r["kind"]=="taksong" and r["region"]=="제주특별자치도")
+        # Synthetic fixture checks the dedicated Jeju provider number; Jeju is
+        # not one of the source-backed 59 regions in this specific sitemap.
+        row={"kind":"taksong","region":"제주특별자치도",
+             "topic":"제주항 차량 인계 준비","detail":"제주항의 차량 선적 위치와 인수 담당자, 도착 시각을 사전에 구분합니다."}
         path,src=self.make_html(row)
         result=assess(path,src,[row])
         self.assertTrue(result["passed"],result)
