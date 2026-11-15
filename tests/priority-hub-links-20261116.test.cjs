@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
 
-const live=process.argv.includes('--live');
+const live=process.env.SMART24_AUDIT_LIVE==='1';
 const port=39712;
 const origin=live?'https://jeongukdaeri.kr':'http://127.0.0.1:'+port;
 const paths=['/','/coverage/','/region/innovation-cities/','/taksong/busan/gijang-gun/'];
