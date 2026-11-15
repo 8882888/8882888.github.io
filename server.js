@@ -3327,6 +3327,10 @@ if(pathname==='/sitemap.xml'){
  // The primary discovery map stays intentionally under 500 URLs; deeper regional
  // and completed-route pages remain reachable in their dedicated sitemaps.
  const urls=[...new Set(focused)].slice(0,499);
+ // Never allow new keyword targets to displace reviewed regional guide URLs.
+ const sitemapUrls=new Set(urls);
+ const missingReviewed=priorityRegionalPages.map(entry=>servicePath(regionByFullName.get(entry.region),entry.kind)).filter(p=>!sitemapUrls.has(p));
+ if(missingReviewed.length)throw Error('Reviewed region guides missing from primary sitemap: '+missingReviewed.join(', '));
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(new URL(base+p).href)+'</loc></url>').join('')+'</urlset>';
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
