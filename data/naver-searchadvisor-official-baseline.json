@@ -11,5 +11,15 @@
   },
   "latestOfficialSnapshot": null,
   "searchClicksBaselineFile": "data/naver-search-baseline-20261105.json",
-  "important": "Do not treat indexed as sitemap URLs, source keyword counts, synthetic Yeti sample size, Search API results, or Google indexing. Until authenticated newer owner data is supplied, official delta is unknown (null)."
+  "important": "Do not treat indexed as sitemap URLs, source keyword counts, synthetic Yeti sample size, Search API results, or Google indexing. Until authenticated newer owner data is supplied, official delta is unknown (null).",
+  "searchClicksBaselineOwnerReported": {
+    "source": "Naver Search Advisor recent-30-day report reported by site owner on 2026-11-06; approximate impressions; includes possible owner verification clicks",
+    "period": "최근 30일",
+    "last_updated": "2026-11-06",
+    "totals": {
+      "clicks": 77,
+      "impressions_approx": 2000,
+      "ctr_percent": 3.8
+    }
+  }
 }
