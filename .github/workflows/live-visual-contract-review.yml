@@ -1,0 +1,56 @@
+name: Verify safe SVG/API and canonical WebP contracts on live service pages
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/audit_live_100_regional_cards.py'
+      - 'tools/audit_live_1000.py'
+      - 'tests/test_live_card_audits.py'
+      - '.github/workflows/live-visual-contract-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: live-regional-visual-review-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify-100-svg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check both audit scripts and offline examples
+        run: |
+          python -m py_compile tools/audit_live_100_regional_cards.py tools/audit_live_1000.py
+          python -m unittest discover -s tests -p test_live_card_audits.py
+      - name: Inspect real exact-keyword safe SVG API responses across 100 localities
+        run: python tools/audit_live_100_regional_cards.py
+      - name: Keep every individual HTTP and SVG result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-safe-locality-svg-100
+          path: /tmp/smart24-live-locality-100.json
+          if-no-files-found: warn
+          retention-days: 14
+  verify-1000-html-webp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify SEO HTML and text-only regional PNG/WebP availability on 250 localities
+        run: python tools/audit_live_1000.py
+      - name: Keep every individual canonical, WebP and latency result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-regional-html-webp-1000
+          path: /tmp/smart24-live-1000.json
+          if-no-files-found: warn
+          retention-days: 14
