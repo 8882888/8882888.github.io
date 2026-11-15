@@ -30,6 +30,10 @@ const paths=[...new Set([
 ])];
 const sourceRobots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
 const srcSitemaps=[...sourceRobots.matchAll(/^Sitemap:\s*(\S+)/gim)].map(m=>m[1]);
+// Indexable, genuinely public business pages. Each must be a final 200 URL,
+// with a self-referencing canonical and without noindex on the live response.
+const requiredBusinessPaths=['/business/','/business/used-car/','/business/rental-car/',
+ '/business/export-port/','/business/scrapyard/','/business/auction/'];
 const result={generatedAt:new Date().toISOString(),origin,scope:'live public HTTP checks using a synthetic Yeti user agent; not Naver account data',naverIndexed:null,reportedNaverIndexed:null,sourceSitemaps:srcSitemaps,liveSitemaps:[],siteMapChecks:[],pageChecks:[],crawlerFindings:[],warnings:[]};
 const xmlUnescape=s=>String(s||'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 const locs=xml=>[...xml.matchAll(/<loc\b[^>]*>([^<]+)<\/loc>/gi)].map(m=>xmlUnescape(m[1].trim()));
@@ -70,6 +74,10 @@ async function checkRobots(){
  try{
   const r=await read('/robots.txt');
   result.robotsStatus=r.status;
+  result.robotsContentType=r.contentType;
+  result.robotsXRobotsTag=r.xRobots;
+  if(!/^text\/plain(?:\s*;|$)/i.test(r.contentType))
+   result.crawlerFindings.push('robots_wrong_content_type_'+r.contentType);
   result.liveSitemaps=[...r.body.matchAll(/^Sitemap:\s*(\S+)/gim)].map(m=>m[1]);
   if(r.status!==200)result.crawlerFindings.push('robots_http_'+r.status);
   if(naverRobotsDisallowAll(r.body))result.crawlerFindings.push('robots_yeti_disallow_all_manual_review');
@@ -100,6 +108,13 @@ async function checkSitemap(src){
   }
   if(item.invalidUrls)item.problems.push('off_host_query_or_noncanonical_path');
   if(item.duplicates)item.problems.push('duplicate_urls');
+  // A sitemap is not proof that a page is indexable; verify each core
+  // business target separately via checkPage() below.
+  if(p==='/sitemap-priority.xml'){
+   const listed=new Set(entries);
+   const missing=requiredBusinessPaths.filter(route=>!listed.has(origin+route));
+   if(missing.length)item.problems.push('missing_final_business_urls_'+missing.join(','));
+  }
   if(Buffer.byteLength(r.body)>10_000_000)item.problems.push('over_10mb');
   if(entries.length>50000)item.problems.push('over_50000_entries');
   if(blockedXRobotsIndexAgents(r.xRobots).some(agent=>agent==='robots'||agent==='yeti'))item.problems.push('x_robots_noindex');
@@ -110,6 +125,10 @@ async function checkPage(p){
  const item={url:new URL(p,origin).href,status:0,title:'',h1:'',canonical:'',visibleChars:0,problems:[]};
  try{
   const r=await read(p);item.status=r.status;item.durationMs=r.durationMs;item.attempts=r.attempts;
+  item.contentType=r.contentType;
+  item.xRobotsTag=r.xRobots;
+  // Persist the response headers used to classify a collection limitation.
+  // A synthetic Yeti header check is not a Cloudtype request log from Naver.
   if(r.status!==200){item.problems.push(r.status>=300&&r.status<400?'collection_limited_redirect':'collection_limited_http_'+r.status);item.location=r.location;}
   if(!/text\/html/i.test(r.contentType))item.problems.push('not_html');
   if(blockedXRobotsIndexAgents(r.xRobots).some(agent=>agent==='robots'||agent==='yeti'))item.problems.push('index_excluded_x_robots');
@@ -217,8 +236,8 @@ result.summary={
 const csv=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
 fs.writeFileSync('seo-priority-live-report.json',JSON.stringify(result,null,2));
 fs.writeFileSync('seo-priority-live-report.csv',[
- 'url,status,title,h1,canonical,visible_chars,editorial_chars,duration_ms,attempts,problems',
- ...result.pageChecks.map(p=>[p.url,p.status,p.title,p.h1,p.canonical,p.visibleChars,p.editorialChars??'',p.durationMs??'',p.attempts??'',p.problems.join(';')].map(csv).join(','))
+ 'url,status,content_type,x_robots_tag,title,h1,canonical,visible_chars,editorial_chars,duration_ms,attempts,problems',
+ ...result.pageChecks.map(p=>[p.url,p.status,p.contentType??'',p.xRobotsTag??'',p.title,p.h1,p.canonical,p.visibleChars,p.editorialChars??'',p.durationMs??'',p.attempts??'',p.problems.join(';')].map(csv).join(','))
 ].join('\n'));
 const problems=[
  ...result.crawlerFindings.map(v=>'- robots / sitemap declaration: '+v),
