@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "site": "https://jeongukdaeri.kr",
+  "sourceType": "owner_reported_naver_searchadvisor",
+  "sourceNote": "Owner previously reported official Naver Search Advisor Site Diagnosis. Date of the 14-document snapshot not confirmed. This is not a live API reading.",
+  "officialIndexBaseline": {
+    "indexed": 14,
+    "collectionLimited": 1,
+    "excluded": 0,
+    "observedAt": null
+  },
+  "latestOfficialSnapshot": null,
+  "searchClicksBaselineFile": "data/naver-search-baseline-20261105.json",
+  "important": "Do not treat indexed as sitemap URLs, source keyword counts, synthetic Yeti sample size, Search API results, or Google indexing. Until authenticated newer owner data is supplied, official delta is unknown (null)."
+}
