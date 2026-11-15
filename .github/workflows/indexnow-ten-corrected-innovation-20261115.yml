@@ -1,0 +1,48 @@
+name: Naver IndexNow once for ten corrected innovation-city URLs (2026-11-15)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/indexnow-ten-corrected-innovation-20261115.yml'
+permissions:
+  contents: read
+concurrency:
+  group: smart24-indexnow-ten-corrected-innovation-20261115
+  cancel-in-progress: false
+jobs:
+  notify-corrected-ten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out published main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Regression-test exact changed source targeting before sending
+        run: |
+          node --check scripts/indexnow-notify.js
+          node tests/indexnow-targeting.test.js
+      - name: Verify Cloudtype is actually serving current priority-region descriptions
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+          DEPLOY_CHECK_ATTEMPTS: '4'
+        run: node tools/check_cloudtype_freshness.js
+      - name: Notify Naver once about ten actually revised canonical pages
+        env:
+          INDEXNOW_CHANGED_FILES: ''
+          INDEXNOW_URLS: >-
+            https://jeongukdaeri.kr/daeri/sejong/
+            https://jeongukdaeri.kr/taksong/sejong/
+            https://jeongukdaeri.kr/daeri/gangwon/wonju-si/
+            https://jeongukdaeri.kr/taksong/gangwon/wonju-si/
+            https://jeongukdaeri.kr/daeri/gyeongnam/jinju-si/
+            https://jeongukdaeri.kr/taksong/gyeongnam/jinju-si/
+            https://jeongukdaeri.kr/daeri/jeonnam/naju-si/
+            https://jeongukdaeri.kr/taksong/jeonnam/naju-si/
+            https://jeongukdaeri.kr/daeri/gyeongbuk/gimcheon-si/
+            https://jeongukdaeri.kr/taksong/gyeongbuk/gimcheon-si/
+        run: node scripts/indexnow-notify.js
