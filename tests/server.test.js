@@ -2057,7 +2057,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert(mainSitemap.includes('/taksong/busan/'),'sitemap includes Busan taksong');
   assert(mainSitemap.includes('/daeri/daegu/'),'sitemap includes Daegu daeri');
   for(const mountain of ['/설악산탁송/','/지리산탁송/'])
-   assert(mainSitemap.includes('https://example.com'+mountain),'primary sitemap retains verified mountain hub '+mountain);
+   assert(mainSitemap.includes(new URL('https://example.com'+mountain).href),'primary sitemap retains verified mountain hub '+mountain);
   console.log('PASS million-query finder HTTP, search, intent, API and noindex guard');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{if(child)child.kill()}
