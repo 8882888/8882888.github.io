@@ -1346,7 +1346,7 @@ async function servicePage(r,kind){
  const card=regionImagePath?'<figure class="regional-responsive-card" style="width:100%;max-width:700px;margin:16px auto;text-align:center"><a href="'+regionImagePath+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(name)+' '+service+' 지역명 맞춤 명함 이미지 크게 보기"><picture><source type="image/webp" srcset="'+cardPreviewWebpPath(r.slug,kind)+'"><img src="'+regionImagePath+'" alt="'+esc(displayBrand)+' 지역명 맞춤 명함 · 안내용 그래픽 · 상담 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" style="display:block;width:100%;max-width:100%;height:auto;border-radius:12px"></picture></a></figure>':'';
  const pageUrl='https://'+host+servicePath(r,kind);
  const imageId=imageUrl+'#image';
- const imageData=JSON.stringify({'@context':'https://schema.org','@graph':[{'@type':'WebPage','@id':pageUrl,url:pageUrl,name:searchTitle,breadcrumb:{'@id':pageUrl+'#breadcrumb'},...(imageUrl?{primaryImageOfPage:{'@id':imageId}}:{})},...(imageUrl?[{'@type':'ImageObject','@id':imageId,contentUrl:imageUrl,url:imageUrl,name:displayBrand+' 지역별 대표 이미지',caption:displayBrand+' 대표전화 '+PHONE,width:1200,height:800,encodingFormat:'image/png'}]:[]),{'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}]}).replace(/</g,'\\u003c');
+ const imageData=JSON.stringify({'@context':'https://schema.org','@graph':[{'@type':'WebPage','@id':pageUrl,url:pageUrl,name:searchTitle,description:searchDesc,inLanguage:'ko-KR',breadcrumb:{'@id':pageUrl+'#breadcrumb'},about:{'@type':'Service',name:displayBrand+' 이용 안내',serviceType:kind==='taksong'?'자동차탁송':'대리운전',areaServed:{'@type':'AdministrativeArea',name:r.full_name},provider:{'@type':'Organization',name:SITE_NAME,url:'https://'+host+'/',telephone:PHONE}},...(imageUrl?{primaryImageOfPage:{'@id':imageId}}:{})},...(imageUrl?[{'@type':'ImageObject','@id':imageId,contentUrl:imageUrl,url:imageUrl,name:displayBrand+' 지역별 대표 이미지',caption:displayBrand+' 대표전화 '+PHONE,width:1200,height:800,encodingFormat:'image/png'}]:[]),{'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}]}).replace(/</g,'\\u003c');
  const caption='<figcaption style="text-align:center">'+esc(displayBrand)+' · 출발지·도착지 확인 후 '+(kind==='taksong'?'자동차탁송':'대리운전')+' 상담 · <a href="tel:18114294">'+PHONE+'</a>'+dispatchNotice(kind)+'</figcaption>';
  const visibleCard=card?card.replace('</figure>',caption+'</figure>'):'';
  const jejuLead=jejuSearchPage?jejuTaksongBlogEditorial():'';
@@ -1354,11 +1354,11 @@ async function servicePage(r,kind){
  const jejuPageSchema=jejuSearchPage?JSON.stringify({
   '@context':'https://schema.org',
   '@graph':[
-   {'@type':'WebPage','@id':pageUrl,url:pageUrl,name:searchTitle,description:searchDesc,
+   {'@type':'WebPage','@id':pageUrl,url:pageUrl,name:searchTitle,description:searchDesc,inLanguage:'ko-KR',
     breadcrumb:{'@id':pageUrl+'#breadcrumb'},
     primaryImageOfPage:{'@type':'ImageObject',url:imageUrl,contentUrl:imageUrl,
      name:'제주도탁송 지역명 맞춤 명함',width:1200,height:800,encodingFormat:'image/png'},
-    about:{'@type':'Service',name:'제주탁송',
+    about:{'@type':'Service',name:'제주탁송',serviceType:'자동차탁송',areaServed:{'@type':'AdministrativeArea',name:r.full_name},
      provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}},
    {'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}
   ]
