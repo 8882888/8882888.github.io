@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""100 live locality+service image checks; no SEO ranking claims, no mutations."""
+"""100 live locality+service safe SVG checks; no SEO ranking claims or mutations."""
 import concurrent.futures
 import json
 import os
@@ -8,6 +8,7 @@ import re
 import sys
 import time
 import urllib.error
+from urllib.parse import urlsplit,parse_qs
 import urllib.parse
 import urllib.request
 
@@ -72,19 +73,28 @@ def check(item):
         card=cards[0]
         image=card.get("image","")
         preview=card.get("previewImage","")
-        if not image.startswith("/card/") or not image.endswith("-"+kind+"-brand-v5.png"):
-            raise AssertionError("Wrong locality full-resolution image URL: "+image)
-        if not preview.startswith("/card/") or not preview.endswith(".webp"):
-            raise AssertionError("Missing/incorrect optimized WebP preview: "+preview)
+        # Current exact-locality card API intentionally returns one text-only
+        # SVG for both image and preview, not a retired v5 PNG/WebP pair.
+        parsed=urlsplit(image)
+        args=parse_qs(parsed.query)
+        if (parsed.path!="/api/nationwide-locality-card.svg" or
+            args.get("service")!=[kind] or args.get("q")!=[query] or
+            preview!=image):
+            raise AssertionError("Wrong exact-keyword SVG or service preview: "+image+" / "+preview)
         if not card.get("url","").startswith("/"+kind+"/"):
             raise AssertionError("Wrong service detail URL")
         if not re.match(r"^\d{3,4}-\d{3,4}$",card.get("phone","")):
             raise AssertionError("Invalid consultation number")
         if number%10==0:
-            s,h,png=fetch(image)
-            if s!=200 or "image/png" not in h.get("content-type","") or not png.startswith(b"\x89PNG\r\n\x1a\n"):
-                raise AssertionError("Actual rendered PNG unavailable")
-            result["verified_image_bytes"]=len(png)
+            status_img,header_img,svg=fetch(image)
+            if (status_img!=200 or
+                "image/svg+xml" not in header_img.get("content-type","") or
+                not svg.startswith(b"<svg") or
+                b"<script" in svg or b"<image" in svg or b"<foreignObject" in svg):
+                raise AssertionError("Approved text-only SVG response missing or unsafe")
+            if query.encode("utf-8") not in svg:
+                raise AssertionError("Exact regional keyword missing from SVG")
+            result["verified_image_bytes"]=len(svg)
         result["image"]=image
         result["passed"]=True
     except Exception as error:
@@ -109,7 +119,7 @@ def main():
     print(f'SMART24_LOCALITY_CARD_100 {passed}/100 passed; median={times[49]}ms p95={times[94]}ms',flush=True)
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"],"a",encoding="utf-8") as f:
-            f.write(f'\n## Additional 100 live locality image checks\n\n**{passed}/100 passed**; API response median {times[49]} ms, p95 {times[94]} ms. This tests 50 official localities × 2 service identities, PNG links and 10 actual PNG bytes, **not Naver ranking or screenshot rendering**.\n\n')
+            f.write(f'\n## Additional 100 live locality image checks\n\n**{passed}/100 passed**; API response median {times[49]} ms, p95 {times[94]} ms. This tests 50 official localities × 2 service identities, the exact text-only SVG preview and ten real SVG responses, **not Naver ranking or screenshot rendering**.\n\n')
             for r in results:
                 if not r["passed"]: f.write(f'- FAIL {r["number"]}: {r["query"]} — {r.get("error","unknown")}\n')
     return 0 if passed==100 else 1
