@@ -73,6 +73,8 @@ jobs:
         run: node --test tests/cloudtype-freshness-workflow.test.js
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
+      - name: Validate 100/1000-point auditing logic against approved safe SVG and v7 HTML images
+        run: python3 -m unittest discover -s tests -p 'test_live_card_audits.py'
       - name: Match live SEO audit to safe cycling diagrams and fare-first homepage
         run: node --test tests/live-audit-current-visuals.test.mjs
       - name: Verify source-backed Busan review-first title compatibility
