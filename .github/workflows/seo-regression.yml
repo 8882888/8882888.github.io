@@ -83,6 +83,8 @@ jobs:
         run: node --test tests/identify-cloudtype-release.test.js
       - name: Verify manual Cloudtype release can be checked after auto-deploy failure
         run: node --test tests/cloudtype-freshness-workflow.test.js
+      - name: Reject false-positive retry of genuine SEO errors and preserve Cloudtype revision identity
+        run: node --test tests/seo-audit-retry.test.cjs
       - name: Check vehicle/person image-removal policy
         run: node tests/visual-policy.test.js
       - name: Validate 100/1000-point auditing logic against approved safe SVG and v7 HTML images
