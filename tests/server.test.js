@@ -2046,6 +2046,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert(gijangHtml.includes('경동오토필드')&&gijangHtml.includes('정관읍')&&gijangHtml.includes('일광읍'), 'Source-backed Gijang logistics and neighborhood guidance must remain');
   const finderSitemap=await(await get('/sitemap-priority.xml')).text();
   assert(finderSitemap.includes('https://example.com/find/'),'finder has one discoverable canonical');
+  // Factual regional editorial pages must never be truncated by the main sitemap limit.
+  const mainSitemap=await(await get('/sitemap.xml')).text();
+  const reviewedEntries=require('../data/priority-regions.json').pages;
+  assert(reviewedEntries.length>=59,'retain existing reviewed regions');
+  for(const item of reviewedEntries){
+   const matchingRegion=regions.find(r=>r.full_name===item.region);
+   assert(matchingRegion,'missing official region: '+item.region);
+  }
+  assert(mainSitemap.includes('/taksong/busan/'),'sitemap includes Busan taksong');
+  assert(mainSitemap.includes('/daeri/daegu/'),'sitemap includes Daegu daeri');
   console.log('PASS million-query finder HTTP, search, intent, API and noindex guard');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{if(child)child.kill()}
