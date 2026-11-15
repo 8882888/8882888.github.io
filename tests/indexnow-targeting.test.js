@@ -82,4 +82,64 @@ assert.deepEqual(changedPaths([], '/taksong/busan/,/taksong/daegu/'),['/taksong/
 assert.throws(()=>changedPaths([], 'https://other.example/taksong/busan/'),/Foreign host/);
 assert.throws(()=>changedPaths([], '/taksong/busan/?campaign=1'),/Noncanonical manual URL/);
 assert.throws(()=>changedPaths([],Array(11).fill('/taksong/busan/').join(',')),/Only ten/);
+
+// Curated source guides update the HTML of their existing locality/service
+// routes. Only already-reviewed priority sitemap pages qualify, never every
+// synonym or source-only village keyword from the 2,900 editorial candidates.
+const fs=require('node:fs'),path=require('node:path');
+const editedCurated={
+ 'data/naver-regional-focus-sixth-100.json':['세종시탁송','세종법인대리운전'],
+ 'data/naver-regional-focus-next-50.json':['원주탁송','진주탁송'],
+ 'data/naver-regional-focus-third-50.json':['원주일일기사'],
+ 'data/naver-regional-focus-fourth-50.json':['나주탁송','김천탁송'],
+ 'data/naver-regional-focus-fifth-daeri-50.json':['나주법인카드대리운전'],
+ 'data/naver-regional-focus-fifteenth-daeri-100.json':['세종반곡동대리업체','세종집현동대리운전업체'],
+ 'data/naver-regional-focus-fifteenth-taksong-100.json':['세종반곡동장거리탁송','세종집현동차량탁송'],
+ 'data/naver-regional-focus-thirteenth-daeri-100.json':['나주빛가람동법인대리운전','진주하대동대리운전'],
+ 'data/naver-regional-focus-thirteenth-taksong-100.json':['나주빛가람동자동차탁송','진주하대동차량탁송']
+};
+const verifiedCuratedUrls=new Map([
+ ['taksong|세종특별자치시','/taksong/sejong/'],
+ ['daeri|세종특별자치시','/daeri/sejong/'],
+ ['taksong|강원특별자치도 원주시','/taksong/gangwon/wonju-si/'],
+ ['daeri|강원특별자치도 원주시','/daeri/gangwon/wonju-si/'],
+ ['taksong|경상남도 진주시','/taksong/gyeongnam/jinju-si/'],
+ ['taksong|전라남도 나주시','/taksong/jeonnam/naju-si/'],
+ ['daeri|전라남도 나주시','/daeri/jeonnam/naju-si/'],
+ ['taksong|경상북도 김천시','/taksong/gyeongbuk/gimcheon-si/']
+]);
+const curatedOld={},curatedNew={};
+let nModifiedRows=0;
+for(const [filename,keywords] of Object.entries(editedCurated)){
+ const now=JSON.parse(fs.readFileSync(path.join(__dirname,'..',filename),'utf8'));
+ const before={...now,priority:now.priority.map(row=>{
+  if(!keywords.includes(row.keyword))return row;
+  nModifiedRows++;
+  return {...row,pickup:'Previous unedited source guide text'};
+ })};
+ curatedOld[filename]=before;curatedNew[filename]=now;
+}
+assert.equal(nModifiedRows,16,'Read 16 actually published source guide entries');
+const curatedOptions={previousDocuments:curatedOld,currentDocuments:curatedNew,priorityHrefMap:verifiedCuratedUrls};
+const publishedChangedUrls=changedPaths(Object.keys(editedCurated),'',curatedOptions);
+assert.equal(publishedChangedUrls.length,8,'16 editorial records modify only eight previously reviewed canonical priority pages');
+assert.deepEqual(publishedChangedUrls.slice().sort(),[...verifiedCuratedUrls.values()].sort(),
+ 'Do not submit unreviewed individual neighborhood/keyword permutations');
+assert.deepEqual(changedPaths(Object.keys(editedCurated),'',{...curatedOptions,previousDocuments:curatedNew}),[],
+ 'A formatting-only curated source change cannot resubmit an unchanged page');
+assert.throws(()=>changedPaths(Object.keys(editedCurated),'',{...curatedOptions,priorityHrefMap:null}),
+ /Live published priority URL lookup is required/,
+ 'Never map an editorial data file to a guessed canonical URL');
+assert.deepEqual(changedPaths(['data/naver-regional-focus-twenty-first-candidates.json']),[],
+ 'Draft candidate sources are not published IndexNow URL changes');
+const twelveSource='data/naver-regional-focus-test-12.json';
+const twelveOld={priority:Array.from({length:12},(_,i)=>({region:'가상지역'+i,kind:'taksong',pickup:'old'+i}))};
+const twelveNew={priority:twelveOld.priority.map((x,i)=>({...x,pickup:'new'+i}))};
+const twelveApproved=new Map(twelveNew.priority.map((x,i)=>[x.kind+'|'+x.region,'/taksong/approved-'+i+'/']));
+assert.throws(()=>changedPaths([twelveSource],'',{
+ previousDocuments:{[twelveSource]:twelveOld},currentDocuments:{[twelveSource]:twelveNew},
+ priorityHrefMap:twelveApproved
+}),/More than ten genuine changed URLs/,
+ 'Never silently truncate a genuine 11+ page change or send an unchecked batch');
+
 console.log('PASS: verified saved-case IndexNow selection is one URL per changed document; code-only commits skip');
