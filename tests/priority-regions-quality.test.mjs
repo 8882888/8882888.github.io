@@ -39,6 +39,6 @@ test('seven refined local daeri guides retain real place context, not unrelated 
 
 test('curated guidance never asserts guaranteed dispatch or artificial ride completion',()=>{
  for(const row of entries){
-  assert.doesNotMatch(row.detail,/100%\\s*(?:배차|운행)\\s*(?:보장|완료)|무조건\\s*배차|가상\\s*운행\\s*완료/);
+  assert.doesNotMatch(row.detail,/100%\s*(?:배차|운행)\s*(?:보장|완료)|무조건\s*배차|가상\s*운행\s*완료/);
  }
 });
