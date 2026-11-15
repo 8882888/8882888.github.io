@@ -18,6 +18,9 @@ on:
       - "data/legal-regions/**"
       - "lib/nationwide-locality-explorer.js"
       - "scripts/ai-index-quality-triage.mjs"
+      - "scripts/report-naver-official-scorecard.mjs"
+      - "tests/naver-official-scorecard.test.mjs"
+      - "data/naver-searchadvisor-official-baseline.json"
       - "scripts/audit-naver-priority-live.mjs"
       - "scripts/indexability-scope.mjs"
       - "tests/indexability-scope.test.mjs"
@@ -63,6 +66,11 @@ jobs:
         run: |
           node --check scripts/ai-index-quality-triage.mjs
           node scripts/ai-index-quality-triage.mjs
+      - name: Generate official Naver baseline-vs-current scorecard (no fabricated counts)
+        if: always()
+        run: |
+          node --test tests/naver-official-scorecard.test.mjs
+          node scripts/report-naver-official-scorecard.mjs
       - name: Save report for Naver Search Advisor comparison
         if: always()
         uses: actions/upload-artifact@v4
@@ -76,4 +84,6 @@ jobs:
             ai-index-quality-review.json
             ai-index-quality-review.csv
             ai-index-quality-review.md
+            naver-official-scorecard.json
+            naver-official-scorecard.md
           if-no-files-found: error
