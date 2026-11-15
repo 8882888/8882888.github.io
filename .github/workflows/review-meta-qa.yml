@@ -1,0 +1,33 @@
+name: Verified review SEO metadata regression
+on:
+  pull_request:
+    paths:
+      - 'reviews/ride-record-stories/index.html'
+      - 'reviews/taksong/index.html'
+      - 'reviews/verified/index.html'
+      - 'lib/route-keyword-pages.js'
+      - 'tests/review-meta-evidence-20261116.test.js'
+      - '.github/workflows/review-meta-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'reviews/ride-record-stories/index.html'
+      - 'reviews/taksong/index.html'
+      - 'reviews/verified/index.html'
+      - 'lib/route-keyword-pages.js'
+      - 'tests/review-meta-evidence-20261116.test.js'
+permissions:
+  contents: read
+jobs:
+  check-reviewed-hubs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: node --check tests/review-meta-evidence-20261116.test.js
+      - name: Validate four verified hub descriptions
+        run: node --test tests/review-meta-evidence-20261116.test.js
