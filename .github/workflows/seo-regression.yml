@@ -73,6 +73,8 @@ jobs:
         run: node tests/visual-policy.test.js
       - name: Match live SEO audit to safe cycling diagrams and fare-first homepage
         run: node --test tests/live-audit-current-visuals.test.mjs
+      - name: Verify source-backed Busan review-first title compatibility
+        run: python3 -m unittest discover -s tests -p 'test_busan_review_titles.py'
       - name: Test v3 regional automation (21 Node tests, 4 Python tools tests)
         run: |
           node --test data/smart24-region-automation/tests/*.test.js
