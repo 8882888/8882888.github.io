@@ -4,7 +4,8 @@ const assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
 const port=39763,root=path.join(__dirname,'..');
-const origin='http://127.0.0.1:'+port;
+const verifyLive=process.env.SMART24_AUDIT_LIVE==='1';
+const origin=verifyLive?'https://jeongukdaeri.kr':'http://127.0.0.1:'+port;
 const sparseCandidates=[
  '/daeri/sejong/jikhal/bugang-myeon/fare/',
  '/taksong/sejong/jikhal/geumnam-myeon/handover/',
@@ -25,12 +26,12 @@ async function get(route){
  return r.text();
 }
 test('sparse local topic pages are not search-index candidates, real sources and major hubs stay indexable',async()=>{
- const child=spawn(process.execPath,['server.js'],{
+ const child=verifyLive?null:spawn(process.execPath,['server.js'],{
   cwd:root,env:{...process.env,PORT:String(port),PUBLIC_HOST:'jeongukdaeri.kr'},stdio:'ignore'
  });
  try{
-  let ready=false;
-  for(let i=0;i<110;i++){
+  let ready=verifyLive;
+  for(let i=0;!verifyLive&&i<110;i++){
    if(child.exitCode!==null)throw Error('server unexpectedly terminated');
    try{if((await fetch(origin+'/health',{signal:AbortSignal.timeout(1100)})).status===200){ready=true;break}}catch{}
    await sleep(300);
@@ -59,5 +60,5 @@ test('sparse local topic pages are not search-index candidates, real sources and
    assert.equal(canonical(html),new URL(route,'https://jeongukdaeri.kr').href);
   }
   console.log('PASS '+sourceEmptyCount+' sparse township topic pages noindex, all sourced topics/main service pages remain indexable');
- }finally{child.kill()}
+ }finally{child?.kill()}
 });
