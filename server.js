@@ -166,7 +166,13 @@ function naverFocus50Guide(r,kind){
    '</p></nav></section>';
 }
 function naverFocus50Hub(kind){
- const selected=naverFocus2900.filter(x=>x.kind===kind);
+ // Stop advertising all 2,900 machine-expanded keyword candidates directly
+ // from high-authority national pages. Preserve search access to every region,
+ // but link only the original 150 editorial guide candidates and the 59
+ // separately reviewed regional guides until real Naver indexing improves.
+ const selected=[...new Map([
+  ...priorityRegionalPages,...naverFocus50,...naverFocusNext50,...naverFocusThird50
+ ].filter(x=>x.kind===kind).map(x=>[x.kind+'|'+x.region,x])).values()];
  const grouped=new Map();
  for(const entry of selected){
   const p=entry.region.split(' ')[0];
@@ -180,7 +186,7 @@ function naverFocus50Hub(kind){
    return '<a href="'+servicePath(r,kind)+'">'+esc(entry.keyword)+'</a>';
   }).join(' · ')+'</p></div>'
  ).join('');
- return '<section id="naver-focused-regional-discovery" aria-label="2900개 중 '+selected.length+'개 '+label+' 대표 지역 연결">'+
+ return '<section id="naver-focused-regional-discovery" aria-label="기존 검토 지역 '+selected.length+'개 '+label+' 안내 연결">'+
   '<h2>'+label+' 주요 지역 서비스 직접 찾기</h2>'+
   '<p>시·군·구별 차량 인수 장소와 예약 조건을 확인할 수 있는 기존 상세 페이지입니다. 지역별 별도 지점 설치나 기사 상주를 의미하지 않습니다.</p>'+
   directory+'</section>';
@@ -3071,7 +3077,10 @@ if(pathname==='/sitemap-focused-regions.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const cached=sitemapCache.get(pathname);
  if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
- const routes=[...new Set([...priorityRegionalPages,...naverFocus2900].map(entry=>{
+ // Expose only the 59 individually reviewed location/service guides to
+ // crawlers. The other 2,900 search candidates remain accessible to customers
+ // through existing routes, but are not proactively submitted as a bulk feed.
+ const routes=[...new Set(priorityRegionalPages.map(entry=>{
   const region=regionByFullName.get(entry.region);
   return region&&['daeri','taksong'].includes(entry.kind)?servicePath(region,entry.kind):null;
  }).filter(Boolean))];
@@ -3142,7 +3151,12 @@ if(pathname==='/sitemap-coast.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',...Object.keys(localitySitemapLevels).filter(key=>key!=='ri'||eligibleVillageServiceKeys().size>0).map(key=>'/sitemap-localities-'+key+'.xml'),...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',
+   // Do not promote thousands of formulaic 읍/면/동/리 locality pages in
+   // the public sitemap index. Keep routes and old shard URLs functional;
+   // retain province/city/county/district for broad navigation.
+   ...['province','city','county','district'].map(key=>'/sitemap-localities-'+key+'.xml'),
+   ...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
