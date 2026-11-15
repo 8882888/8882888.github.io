@@ -69,6 +69,10 @@ jobs:
         run: node --test tests/naver-official-scorecard.test.mjs
       - name: Verify read-only indexability retry behavior
         run: node --test tests/indexability-retry.test.mjs
+      - name: Ensure verified village sitemap candidate lookup retains every genuine ride match
+        run: node --test tests/verified-village-sitemap-candidates.test.cjs
+      - name: Syntax-check production sitemap smoke test
+        run: python3 -m py_compile tests/production-seo-smoke.py
       - name: Validate saved-case publication URLs and feed record integrity
         run: node --test tests/published-case-feed.test.js
       - name: Validate new content IndexNow URL selection
