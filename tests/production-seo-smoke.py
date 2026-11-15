@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -53,11 +54,29 @@ class Head(HTMLParser):
 
 def fetch(path):
     req = urllib.request.Request(ROOT + path, headers={"User-Agent": UA, "Accept": "text/html,application/xml,*/*"})
-    try:
-        with urllib.request.urlopen(req, timeout=14) as resp:
-            return path, resp.status, resp.url, dict(resp.headers.items()), resp.read(2_000_000).decode("utf-8", "replace"), None
-    except Exception as exc:
-        return path, None, None, {}, "", str(exc)
+    # The verified sitemap performs original-ride locality evidence checks.
+    # On a 512 MB Cloudtype instance, never send multiple sitemap cold-cache
+    # requests concurrently; allow exactly one bounded retry for timeouts.
+    retryable = path in {"/sitemap-verified-regions.xml", "/sitemap-all.xml"}
+    attempts = 2 if retryable else 1
+    timeout = 20 if retryable else 14
+    for attempt in range(attempts):
+        started = time.monotonic()
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                result = (path, resp.status, resp.url, dict(resp.headers.items()),
+                          resp.read(2_000_000).decode("utf-8", "replace"), None)
+            if attempt:
+                print(f"[WARN] {path} recovered after {attempt} timeout(s); inspect latency and crawler logs")
+            print(f"[HTTP] {path}: {round(time.monotonic() - started, 2)}s, status={result[1]}")
+            return result
+        except (TimeoutError, urllib.error.URLError) as exc:
+            if attempt + 1 >= attempts:
+                return path, None, None, {}, "", f"{exc} after {attempts} attempt(s)"
+            print(f"[WARN] {path} attempt {attempt + 1} timed out or disconnected: {exc}")
+            time.sleep(0.8)
+        except Exception as exc:
+            return path, None, None, {}, "", str(exc)
 
 def verify(result):
     path, status, final_url, headers, body, err = result
@@ -119,9 +138,12 @@ def check_deployed_source():
         return path, ["Invalid deployment proof: " + str(exc)]
 
 def main():
-    paths = list(PAGES) + SITEMAPS
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
-        results = list(pool.map(fetch, paths))
+    # Customer HTML probes may run concurrently, but large sitemap cold-cache
+    # probes must be serial; the previous 4-worker batch timed out both
+    # /sitemap-verified-regions.xml and /sitemap-all.xml under contention.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+        results = list(pool.map(fetch, PAGES))
+    results.extend(fetch(route) for route in SITEMAPS)
     failures = 0
     checks = list(map(verify, results)) + [check_deployed_source()]
     for path, problems in checks:
