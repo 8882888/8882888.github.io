@@ -414,6 +414,30 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   }
   // Existing curated local guides deserve one complete discovery feed,
   // while preserving the original 500-URL national service sitemaps.
+  // Browser-visible text strips JSON-LD, but the raw server HTML MUST retain it.
+  const parsedSchemas=html=>[...html.matchAll(/<script\\b[^>]*type=["']application\\/ld\\+json["'][^>]*>([\\s\\S]*?)<\\/script>/gi)].flatMap(m=>{
+    const node=JSON.parse(m[1]);
+    return Array.isArray(node['@graph'])?node['@graph']:[node];
+  });
+  const rawHome=await (await get('/')).text();
+  const rootSchemas=parsedSchemas(rawHome);
+  for(const type of ['WebSite','Organization','Service'])
+    assert(rootSchemas.some(x=>x['@type']===type),'root HTML JSON-LD includes '+type);
+  const rawCoverage=await (await get('/coverage/')).text();
+  const coverageSchemas=parsedSchemas(rawCoverage);
+  assert(coverageSchemas.some(x=>x['@type']==='WebPage'&&x.url==='https://example.com/coverage/'),
+    'province coverage HTML must include canonical WebPage JSON-LD');
+  for(const route of ['/taksong/','/daeri/']){
+    const html=await (await get(route)).text();
+    assert(parsedSchemas(html).some(x=>x['@type']==='WebPage'&&x.url==='https://example.com'+route),
+      'service hub must retain canonical WebPage JSON-LD '+route);
+  }
+  const rootImage=rootSchemas.find(x=>x['@type']==='ImageObject')?.contentUrl;
+  if(rootImage){
+    const imagePath=new URL(rootImage).pathname;
+    const imageResponse=await get(imagePath);
+    assert.equal(imageResponse.status,200,'homepage JSON-LD image URL must serve HTTP 200');
+  }
   const focusedResponse=await get('/sitemap-focused-regions.xml');
   assert.equal(focusedResponse.status,200,'curated service page discovery feed must load');
   const focusedXml=await focusedResponse.text();
