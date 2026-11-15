@@ -4,12 +4,22 @@ import fs from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const origin=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,'');
+// All 17 province hubs are public canonical landing pages, not a sample of
+// generated 읍/면/동/리 candidates. Audit both services per province.
+const provinceSlugs=[
+ 'seoul','busan','daegu','incheon','gwangju','daejeon','ulsan','sejong',
+ 'gyeonggi','gangwon','chungbuk','chungnam','jeonbuk','jeonnam',
+ 'gyeongbuk','gyeongnam','jeju'
+];
 const routes=[
  {path:'/',must:['WebSite','Organization','Service']},
  {path:'/taksong/',must:['WebPage']},
  {path:'/daeri/',must:['WebPage']},
  {path:'/coverage/',must:['WebPage']},
- {path:'/taksong/busan/gijang-gun/',must:['WebPage','BreadcrumbList']}
+ {path:'/taksong/busan/gijang-gun/',must:['WebPage','BreadcrumbList']},
+ ...provinceSlugs.flatMap(slug=>['taksong','daeri'].map(kind=>({
+  path:'/'+kind+'/'+slug+'/',must:['WebPage','BreadcrumbList']
+ })))
 ];
 function extractJsonLd(html){
  const errors=[],nodes=[];
