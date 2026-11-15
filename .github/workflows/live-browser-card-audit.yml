@@ -27,7 +27,8 @@ permissions:
   contents: read
 jobs:
   browser:
-    runs-on: ubuntu-latest
+    # Playwright 1.56.1 has no Ubuntu 26.04 Chromium build; pin supported runner.
+    runs-on: ubuntu-24.04
     timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
