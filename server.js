@@ -5,6 +5,7 @@ const DEPLOY_SHA256=require('node:crypto').createHash('sha256').update(fs.readFi
 // Keep /health available even if the optional analytics asset is absent from a deployment.
 const TRAFFIC_ANALYTICS_SHA256=(()=>{try{return 'sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'assets/traffic-analytics.js'))).digest('hex').slice(0,16)}catch(_){return 'unavailable'}})();
 const {matchingHistoryRegion,publicPlace}=require('./lib/regional-history-evidence');
+const {buildVillagePrefixIndex,villageCandidatesForFields}=require('./lib/verified-village-candidates');
 const {loadPublishedCases}=require('./lib/published-case-feed');
 const {canonicalForKeywordRecord,resolveRegionalKeywordVariant}=require('./lib/keyword-canonical-bridge');
 const {createEngine:createLocalServiceEngine}=require('./data/smart24-region-automation/lib/engine');
@@ -1628,6 +1629,7 @@ function eligibleVillageServiceKeys(){
  if(villageServiceKeys)return villageServiceKeys;
  const keys=new Set();
  const villages=regions.filter(region=>region.level==='리');
+ const candidatesByPrefix=buildVillagePrefixIndex(villages);
  for(const entry of priorityRegionalPages){
   if(regionByFullName.get(entry.region)?.level==='리')keys.add(entry.kind+'|'+entry.region);
  }
@@ -1635,9 +1637,11 @@ function eligibleVillageServiceKeys(){
   if(!['daeri','taksong'].includes(ride.service)||!ride.departure||!ride.destination||
    ride.departure==='지역 비공개'||ride.destination==='지역 비공개')continue;
   const fields=[String(ride.rawDeparture||''),String(ride.rawDestination||'')];
-  for(const region of villages){
+  for(const region of villageCandidatesForFields(fields,candidatesByPrefix)){
    const key=ride.service+'|'+region.full_name;
-   if(!keys.has(key)&&fields.some(field=>field.includes(region.name))&&matchingHistoryRegion(ride,region,regions))keys.add(key);
+   // The original source-field and parent-locality verification remains the
+   // final evidence gate. This only avoids scanning every unrelated village.
+   if(!keys.has(key)&&matchingHistoryRegion(ride,region,regions))keys.add(key);
   }
  }
  villageServiceKeys=keys;
