@@ -1147,7 +1147,7 @@ function regionalDecisionPanel(r,kind,verified,history){
   '<a href="/reviews/history/?kind='+kind+'&amp;q='+from+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">지역 실제 후기 검색</a>'+
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
   directQuoteForm+nationwideSubareaChoices+
-  '<h3>출발·도착지가 모두 공개된 완료 운행기록 '+distinct.length+'건</h3>'+tripItems+
+  '<h3>공개된 실제 완료 운행 '+distinct.length+'건</h3><p>이 건수는 출발지·도착지가 모두 확인된 공개 기록만 셉니다. 일부 구간이 비공개인 다른 완료 운행기록은 포함하지 않습니다.</p>'+tripItems+
   (distinct.length?'<p style="font-size:.93em">표시된 요금은 당시 운행금액이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>':'')+
   childLinks+'</section>';
 }
