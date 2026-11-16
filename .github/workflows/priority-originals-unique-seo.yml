@@ -68,7 +68,19 @@ jobs:
           done
           echo "::error::Live Naver original-source pages were not verified on Cloudtype"
           exit 1
-      - name: Verify 23 deployed Naver short metadata and canonical URLs
+      - name: Verify 23 deployed Naver short metadata and canonical URLs after Cloudtype rollout
+        shell: bash
         env:
           SMART24_META_LIVE: '1'
-        run: node --test tests/naver-priority-meta-80-20261116.test.cjs
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            echo "Naver 80-character live metadata check (Cloudtype rollout) $attempt/30"
+            if node --test tests/naver-priority-meta-80-20261116.test.cjs; then
+              echo "### PASS 23 production HTML metadata and canonical URLs" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$attempt" -lt 30 ]; then sleep 10; fi
+          done
+          echo "::error::23 production Naver metadata URLs did not match latest source"
+          exit 1
