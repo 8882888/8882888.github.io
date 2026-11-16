@@ -117,7 +117,9 @@ function priorityOriginalSourceMarkup(region,kind,inHub=false){
    '<p>도시 전체 안내는 혁신도시 특정 장소의 완료 운행 증빙과 구분합니다.</p></div>'
   :'<section id="priority-original-sources"><h2>'+esc(region)+' '+(kind==='daeri'?'대리운전':'자동차탁송')+
    ' 확인 가능한 블로그 원문</h2><p>공개 원문을 확인할 수 있도록 연결했습니다. 다른 서비스·인접 지역 자료는 이 지역의 완료 운행후기로 계산하지 않습니다. 실제 완료 운행기록은 별도 기록에서 확인합니다.</p><ul>'+
-   items+'</ul><p><a href="/reviews/verified/">검증된 완료 운행기록 보기</a> · <a href="/region/innovation-cities/">혁신도시 지역 안내</a></p></section>';
+   items+'</ul><p><a href="/reviews/verified/">검증된 완료 운행기록 보기</a> · '+
+   (region==='부산광역시 기장군'?'<a href="/taksong/busan/">부산탁송 전체 안내</a>':
+    '<a href="/region/innovation-cities/">세종·혁신도시 지역 안내</a>')+'</p></section>';
 }
 
 const priorityBlogLinksByKey=new Map(load('data/priority-blog-links.json').pages.map(p=>[p.kind+'|'+p.region,p]));
