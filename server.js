@@ -2301,8 +2301,20 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   }
   html=serviceKeywordEntry.enhance(html,res._smartPath||'');
   // Apply only to the final HTML head; never change canonical, robots or visible content.
+  // Keep all human-reviewed priority topic and first-source-sentence context.
+  // The 59 entries fit within 80 Unicode code points when boilerplate is omitted.
+  const priorityFocus=priorityRegionalPages.find(p=>{
+    const region=regionByFullName.get(p.region);
+    return region&&servicePath(region,p.kind)===(res._smartPath||'');
+  });
+  const metaFirstSentence=priorityFocus?
+    (priorityFocus.region==='울산광역시'&&priorityFocus.kind==='taksong'
+      ?'지역별 인수·인계 위치와 출고 시각'
+      :priorityFocus.detail.split(/[.!?。]/)[0].trim().slice(0,16)):'';
+  const priorityMetaDescription=priorityFocus?
+    priorityFocus.region+' · '+priorityFocus.topic+'. '+metaFirstSentence+' 상담 '+PHONE:'';
   body=normalizeSeoHead(stripPersonVehicleImages(keywordExpansion.enhance(html,res._smartPath||'')),
-    {xRobotsTag:res.getHeader('x-robots-tag')});
+    {xRobotsTag:res.getHeader('x-robots-tag'),preferredDescription:priorityMetaDescription});
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
  if(res._smartPath==='/'){headers['cache-control']='no-store, max-age=0, must-revalidate';headers['surrogate-control']='no-store';headers['x-smart24-primary-nav']='four-services-sticky-20261106';}

@@ -39,3 +39,15 @@ test('important regional hotline survives shortening without breaking 80 chars',
  const text=briefDescription(value);
  assert.ok([...text].length<=80);assert.match(text,/강원특별자치도/);assert.match(text,/1811-4294/);
 });
+
+test('source-reviewed priority topic and 16-char locality context survive shortening',()=>{
+ const topic='신서혁신도시 공공기관·동대구역 자동차탁송·입출고 상담';
+ const detail='대구 동구 신서혁신도시 공공';
+ const preferred='대구광역시 동구 · '+topic+'. '+detail+' 상담 1811-4294';
+ const result=normalizeSeoHead(html('index,follow','',long),{preferredDescription:preferred});
+ const tag=meta(result,'name="description"'),og=meta(result,'property="og:description"');
+ assert.ok([...preferred].length<=80);assert.match(tag,/신서혁신도시 공공기관/);
+ assert.match(tag,/대구 동구 신서혁신도시 공공/);
+ assert.match(tag,/1811-4294/);
+ assert.equal(tag.match(/content="([^"]*)"/)?.[1],og.match(/content="([^"]*)"/)?.[1]);
+});
