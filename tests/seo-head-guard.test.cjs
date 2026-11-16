@@ -81,3 +81,21 @@ test('unrelated BreadcrumbList and Service JSON-LD remain unmodified',()=>{
  assert.match(out,/unchanged original service/);
  assert.match(out,/noindex,follow/);
 });
+
+test('only verified route-pair paths can receive a factual WebPage JSON-LD',()=>{
+ const path='/routes/taksong/area-1175/area-2468/';
+ const unverified=normalizeSeoHead(html('index,follow','',long,path));
+ assert.doesNotMatch(unverified,/"@type":"WebPage"/);
+ const verified=normalizeSeoHead(html('index,follow','',long,path),{allowVerifiedRoute:true});
+ assert.equal((verified.match(/"@type":"WebPage"/g)||[]).length,1);
+ assert.match(verified,/"url":"https:\/\/jeongukdaeri.kr\/routes\/taksong\/area-1175\/area-2468\/"/);
+ assert.equal(normalizeSeoHead(verified,{allowVerifiedRoute:true}),verified);
+});
+test('even a verified route must respect noindex and never override robots',()=>{
+ const out=normalizeSeoHead(html('noindex,follow','',long,'/routes/daeri/area-1/area-2/'),{allowVerifiedRoute:true});
+ assert.match(out,/noindex,follow/); assert.doesNotMatch(out,/"@type":"WebPage"/);
+});
+test('airport and other arbitrary route combinations are excluded without exact evidence',()=>{
+ const result=normalizeSeoHead(html('index,follow','',long,'/routes/taksong/airport-gimhae/area-2/'));
+ assert.doesNotMatch(result,/"@type":"WebPage"/);
+});
