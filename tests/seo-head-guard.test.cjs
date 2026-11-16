@@ -57,3 +57,27 @@ test('845-million possible route pairs are never bulk-promoted with generic sche
  assert.doesNotMatch(value,/"@type":"WebPage"/);
  assert.match(value,/index,follow/);
 });
+
+test('existing verified WebPage JSON-LD description equals final 80-char meta',()=>{
+ const sourceDesc='대구광역시 동구탁송 · 신서혁신도시 공공기관·동대구역 자동차탁송·입출고 상담. 대구 동구 신서혁신도시 공공시설에서 탁송 차량의 실제 주차 위치와 인계 시간을 확인합니다. 문의 1811-4294';
+ const pageSchema={ '@context':'https://schema.org','@graph':[
+  {'@type':'WebPage',name:'신서혁신도시 탁송',url:'https://jeongukdaeri.kr/taksong/daegu/dong-gu/',description:sourceDesc},
+  {'@type':'Service',name:'자동차탁송',description:'기존 서비스 설명 유지'}
+ ]};
+ const ld='<script type="application/ld+json">'+JSON.stringify(pageSchema)+'</script>';
+ const preferred='대구광역시 동구 · 신서혁신도시 공공기관·동대구역 자동차탁송·입출고 상담. 대구 동구 신서혁신도시 공공 상담 1811-4294';
+ const page=html('index,follow',ld,sourceDesc,'/taksong/daegu/dong-gu/');
+ const out=normalizeSeoHead(page,{preferredDescription:preferred});
+ const finalDesc=meta(out,'name="description"').match(/content="([^"]*)"/)[1];
+ const graph=JSON.parse(out.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
+ assert.ok([...finalDesc].length<=80);
+ assert.equal(graph[0].description,finalDesc);
+ assert.equal(graph[1].description,'기존 서비스 설명 유지');
+ assert.equal(normalizeSeoHead(out,{preferredDescription:preferred}),out);
+});
+test('unrelated BreadcrumbList and Service JSON-LD remain unmodified',()=>{
+ const ld='<script type="application/ld+json">'+JSON.stringify({'@context':'https://schema.org','@type':'Service',description:'unchanged original service'})+'</script>';
+ const out=normalizeSeoHead(html('noindex,follow',ld,long));
+ assert.match(out,/unchanged original service/);
+ assert.match(out,/noindex,follow/);
+});
