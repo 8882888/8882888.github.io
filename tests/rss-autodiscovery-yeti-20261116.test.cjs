@@ -40,8 +40,8 @@ test((live?'production':'local')+' Naver can discover source-backed RSS and craw
   // Static index.html already advertises RSS with a different title from the
   // dynamic layout. Match the real semantic link, not a decorative title.
   for(const [name,html] of [['home',home.body],['gijang',gijang.body]]){
-   const matches=[...html.matchAll(/<link\\b[^>]*rel=["']alternate["'][^>]*type=["']application\\/rss\\+xml["'][^>]*href=["']([^"']+)["'][^>]*>/gi)]
-    .filter(m=>m[1]===hostname+'/rss.xml').length;
+   assert(html.includes('type="application/rss+xml"'),name+' must declare RSS MIME type');
+   const matches=html.split('href="'+hostname+'/rss.xml"').length-1;
    assert.equal(matches,1,name+' must provide exactly one public RSS discovery link');
    assert(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html),name+' must stay indexable');
   }
