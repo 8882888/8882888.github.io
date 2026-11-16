@@ -13,6 +13,8 @@ const LIMIT=Number(process.env.DYNAMIC_LIMIT||0);
 const SAMPLE_MODE=process.env.DYNAMIC_SAMPLE_MODE||'';
 if(!Number.isSafeInteger(LIMIT)||LIMIT<0)throw Error('DYNAMIC_LIMIT must be a nonnegative integer');
 if(!['','balanced'].includes(SAMPLE_MODE))throw Error('DYNAMIC_SAMPLE_MODE must be empty or balanced');
+const LIVE_DELAY_MS=Number(process.env.DYNAMIC_LIVE_DELAY_MS||900);
+if(!Number.isSafeInteger(LIVE_DELAY_MS)||LIVE_DELAY_MS<650||LIVE_DELAY_MS>30000)throw Error('DYNAMIC_LIVE_DELAY_MS must be 650..30000 ms for production safety');
 const MODE=process.env.DYNAMIC_MODE||'audit';
 if(!Number.isInteger(SHARDS)||SHARDS<1||SHARDS>24||!Number.isInteger(SHARD)||SHARD<0||SHARD>=SHARDS)throw Error('Invalid shard count/index');
 const outDir=process.env.DYNAMIC_OUTPUT_DIR||process.cwd();
@@ -177,7 +179,7 @@ async function main(){
    catch(e){row={...item,status:0,descriptionLength:0,description:'',jsonldBlocks:0,jsonldTypes:[],noindex:false,canonical:'',problems:['request_failure'],warnings:[],error:String(e).slice(0,130)}}
    rows.push(row);
    if(rows.length%500===0){report(rows);console.log('CHECKED '+rows.length+'/'+queue.length+' shard '+SHARD)}
-   if(ORIGIN===BASE)await delay(140);
+   if(ORIGIN===BASE)await delay(LIVE_DELAY_MS);
   }
  }
  await Promise.all(Array.from({length:Math.max(1,Math.min(workers,4))},worker));
