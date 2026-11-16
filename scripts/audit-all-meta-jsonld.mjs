@@ -51,6 +51,11 @@ try{
 for(const url of advertisedSitemaps)await scanSitemap(url);
 const inventory=[...all.values()];
 const maxSample=Number(process.env.AUDIT_MAX_URLS||0);
+const auditWorkers=Number(process.env.AUDIT_WORKERS||4);
+const auditLiveDelayMs=Number(process.env.AUDIT_LIVE_DELAY_MS||100);
+if(!Number.isInteger(auditWorkers)||auditWorkers<1||auditWorkers>8)throw Error('AUDIT_WORKERS must be 1..8');
+if(!Number.isInteger(auditLiveDelayMs)||auditLiveDelayMs<0||auditLiveDelayMs>10000)throw Error('AUDIT_LIVE_DELAY_MS must be 0..10000');
+if(transportOrigin===origin)console.log('Production pacing: workers='+auditWorkers+', pause per completed URL='+auditLiveDelayMs+'ms');
 const list=maxSample>0?inventory.filter((_,i)=>i%Math.max(1,Math.floor(inventory.length/maxSample))===0).slice(0,maxSample):inventory;
 console.log('Sitemap URLs discovered:',list.length,'Sitemap errors:',sitemapErrors.length);
 let current=0,done=0;const results=Array(list.length);
@@ -152,10 +157,10 @@ async function worker(){
    otherBotNoindex:[...new Set(otherBotNoindex)],problems:problem};
   done++;
   if(done%500===0){saveCheckpoint();console.log('Checked',done,'/',list.length);}
-  await delay(transportOrigin===origin?100:0);
+  await delay(transportOrigin===origin?auditLiveDelayMs:0);
  }
 }
-await Promise.all(Array.from({length:4},worker));
+await Promise.all(Array.from({length:auditWorkers},worker));
 const titles=new Map();
 for(const r of results){if(!r?.title)continue;let a=titles.get(r.title)||[];a.push(r.url);titles.set(r.title,a)}
 for(const r of results){if(r.title&&titles.get(r.title).length>1)r.problems.push('duplicate_title')}
