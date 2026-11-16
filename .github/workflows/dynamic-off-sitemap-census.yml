@@ -1,0 +1,97 @@
+name: All finite dynamic URLs outside sitemap - read only
+on:
+  pull_request:
+    paths:
+      - "scripts/dynamic-url-inventory.mjs"
+      - "scripts/audit-dynamic-off-sitemap.mjs"
+      - ".github/workflows/dynamic-off-sitemap-census.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: smart24-off-sitemap-dynamic-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  route-manifest:
+    name: Dynamic inventory and source route registration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax and route manifest
+        run: |
+          node --check scripts/dynamic-url-inventory.mjs
+          node --check scripts/audit-dynamic-off-sitemap.mjs
+          node scripts/dynamic-url-inventory.mjs
+          node --input-type=module -e "import {regionsFromLegal,buildInventory} from './scripts/dynamic-url-inventory.mjs'; const r=regionsFromLegal(),a=buildInventory(r); for(const p of ['/taksong/busan/gijang-gun/','/daeri/sejong/','/region/area-1/'])if(!a.items.some(x=>x.url===p))throw Error('Missing derived '+p);if(r.filter(x=>x.level==='시도').length!==17||a.items.length<50000)throw Error('Incomplete route registry');console.log('DYNAMIC_REGISTRY_OK '+JSON.stringify(a.stats))"
+      - name: Build inventory and compare with current local sitemap
+        run: |
+          npm install --omit=dev --no-audit --no-fund
+          PORT=39878 PUBLIC_HOST=jeongukdaeri.kr node server.js >/tmp/smart24-dynamic-inventory-server.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for n in $(seq 1 60); do
+            if curl -fsS --max-time 2 http://127.0.0.1:39878/health >/dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS --max-time 10 http://127.0.0.1:39878/health >/dev/null
+          DYNAMIC_MODE=inventory DYNAMIC_SHARDS=1 DYNAMIC_SHARD=0 AUDIT_TRANSPORT_ORIGIN=http://127.0.0.1:39878 node scripts/audit-dynamic-off-sitemap.mjs
+      - name: Upload complete inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dynamic-off-sitemap-entire-inventory
+          retention-days: 30
+          path: |
+            dynamic-outside-inventory-0.csv
+            dynamic-off-sitemap-00.json
+            dynamic-off-sitemap-00-summary.md
+          if-no-files-found: warn
+  source-html:
+    name: "Off-sitemap source HTML / shard ${{ matrix.shard }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Start isolated source server and inspect this shard
+        env:
+          DYNAMIC_SHARD: ${{ matrix.shard }}
+          DYNAMIC_SHARDS: "4"
+          DYNAMIC_CONCURRENCY: "2"
+          AUDIT_TRANSPORT_ORIGIN: http://127.0.0.1:39879
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/audit-dynamic-off-sitemap.mjs
+          npm install --omit=dev --no-audit --no-fund
+          PORT=39879 PUBLIC_HOST=jeongukdaeri.kr node server.js > /tmp/smart24-dynamic-source-server.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for n in $(seq 1 60); do
+            if curl -fsS --max-time 2 http://127.0.0.1:39879/health >/dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS --max-time 10 http://127.0.0.1:39879/health >/dev/null
+          node scripts/audit-dynamic-off-sitemap.mjs
+      - name: Preserve each URL and error even when SEO check is red
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dynamic-off-sitemap-shard-${{ matrix.shard }}
+          retention-days: 30
+          path: |
+            dynamic-off-sitemap-*.json
+            dynamic-off-sitemap-*.csv
+            dynamic-off-sitemap-*-summary.md
+            /tmp/smart24-dynamic-source-server.log
+          if-no-files-found: warn

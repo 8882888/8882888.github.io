@@ -17,6 +17,7 @@ const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');
 const {removeRetiredHomepageCopy}=require('./lib/homepage-copy');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
 const serviceKeywordEntry=require('./lib/service-keyword-entry');
+const {normalizeSeoHead}=require('./lib/seo-head-guard.cjs');
 const keywordExpansion=require('./lib/keyword-card-expansion');
 const regionalBlogKeywords=require('./lib/regional-blog-keywords');
 const exactKeywordCard=require('./lib/exact-keyword-card');
@@ -2299,7 +2300,21 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    html=html.replace('</body>','<script src="/assets/traffic-analytics.js?v=20261109-overnight-visit" defer></script></body>');
   }
   html=serviceKeywordEntry.enhance(html,res._smartPath||'');
-  body=stripPersonVehicleImages(keywordExpansion.enhance(html,res._smartPath||''));
+  // Apply only to the final HTML head; never change canonical, robots or visible content.
+  // Keep all human-reviewed priority topic and first-source-sentence context.
+  // The 59 entries fit within 80 Unicode code points when boilerplate is omitted.
+  const priorityFocus=priorityRegionalPages.find(p=>{
+    const region=regionByFullName.get(p.region);
+    return region&&servicePath(region,p.kind)===(res._smartPath||'');
+  });
+  const metaFirstSentence=priorityFocus?
+    (priorityFocus.region==='울산광역시'&&priorityFocus.kind==='taksong'
+      ?'지역별 인수·인계 위치와 출고 시각'
+      :priorityFocus.detail.split(/[.!?。]/)[0].trim().slice(0,16)):'';
+  const priorityMetaDescription=priorityFocus?
+    priorityFocus.region+' · '+priorityFocus.topic+'. '+metaFirstSentence+' 상담 '+PHONE:'';
+  body=normalizeSeoHead(stripPersonVehicleImages(keywordExpansion.enhance(html,res._smartPath||'')),
+    {xRobotsTag:res.getHeader('x-robots-tag'),preferredDescription:priorityMetaDescription});
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
  if(res._smartPath==='/'){headers['cache-control']='no-store, max-age=0, must-revalidate';headers['surrogate-control']='no-store';headers['x-smart24-primary-nav']='four-services-sticky-20261106';}

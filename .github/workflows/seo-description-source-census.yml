@@ -1,0 +1,56 @@
+name: Verify all sitemap source HTML metadata after shared guard
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'lib/seo-head-guard.cjs'
+      - 'tests/seo-head-guard.test.cjs'
+      - 'scripts/audit-all-meta-jsonld.mjs'
+      - '.github/workflows/seo-description-source-census.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: smart24-meta-source-only-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  full-sitemap-source:
+    name: Read-only ALL 5919 sitemap URLs from isolated source server
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and metadata safety tests
+        run: |
+          node --check server.js
+          node --check scripts/audit-all-meta-jsonld.mjs
+          node --test tests/seo-head-guard.test.cjs
+      - name: Install dependencies
+        run: npm install --omit=dev --no-audit --no-fund
+      - name: Check each sitemap URL on isolated local HTTP
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=39877 PUBLIC_HOST=jeongukdaeri.kr node server.js >/tmp/smart24-meta-source-only.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 60); do
+            if curl -fsS --max-time 2 http://127.0.0.1:39877/health >/dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS --max-time 10 http://127.0.0.1:39877/health >/dev/null
+          AUDIT_TRANSPORT_ORIGIN=http://127.0.0.1:39877 AUDIT_WORKERS=4 node scripts/audit-all-meta-jsonld.mjs
+      - name: Preserve full URL-level findings even when audit fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-meta-source-all-sitemap-urls
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            full-meta-jsonld-audit.csv
+            full-meta-jsonld-audit.json
+            full-meta-jsonld-summary.md
