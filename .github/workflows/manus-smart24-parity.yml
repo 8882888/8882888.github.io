@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install server dependencies
-        run: npm ci
+        run: npm install --no-package-lock --no-audit --no-fund
       - name: Validate fifteen reference-to-Smart24 topic paths and crawler links
         run: node --test tests/manus-topic-discovery-20261116.test.cjs
       - name: Check comparison script syntax
