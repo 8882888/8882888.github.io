@@ -1,0 +1,47 @@
+name: Diagnose intermittent Naver URL inspection access
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/probe-naver-url-inspection-20261116.cjs'
+      - 'tests/probe-naver-url-inspection-20261116.test.cjs'
+      - '.github/workflows/naver-url-access-diagnosis.yml'
+  workflow_run:
+    workflows: ["Deploy to Cloudtype"]
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: smart24-naver-url-access-diagnosis
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate probe script and failure classification
+        run: |
+          node --check scripts/probe-naver-url-inspection-20261116.cjs
+          node --test tests/probe-naver-url-inspection-20261116.test.cjs
+      - name: Repeat real production Yeti-style GETs and record 10-second failures
+        run: node scripts/probe-naver-url-inspection-20261116.cjs
+      - name: Show evidence and scope
+        if: always()
+        run: |
+          node -e "const fs=require('fs');if(fs.existsSync('audit/naver-url-access-intermittency.json')){const r=require('./audit/naver-url-access-intermittency.json');console.log(JSON.stringify({checked:r.checked,failed:r.failed,maxElapsedMs:r.maxElapsedMs,incidentRoutes:r.incidentRoutes},null,2))}"
+      - name: Save route-by-route HTTP evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naver-url-access-intermittency
+          path: audit/naver-url-access-intermittency.json
+          if-no-files-found: warn
+          retention-days: 14
