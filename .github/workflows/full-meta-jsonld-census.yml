@@ -52,9 +52,9 @@ jobs:
             /tmp/smart24-meta-audit-server.log
           if-no-files-found: warn
   production-sample:
-    name: Live 120 URL cross-check - NOT a full production audit
+    name: Live 100% sitemap URL census - rate limited
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -62,15 +62,17 @@ jobs:
           node-version: '22'
       - name: Syntax check
         run: node --check scripts/audit-all-meta-jsonld.mjs
-      - name: Rate-limited public HTML sample from ALL sitemap inventory
+      - name: Rate-limited FULL production HTML audit of every sitemap URL
         env:
-          AUDIT_MAX_URLS: '120'
+          AUDIT_MAX_URLS: '0'
+          AUDIT_WORKERS: '1'
+          AUDIT_LIVE_DELAY_MS: '800'
         run: node scripts/audit-all-meta-jsonld.mjs
       - name: Upload live URL inspection details even if audit fails
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: smart24-meta-jsonld-live-120-sample
+          name: smart24-meta-jsonld-live-full-census
           retention-days: 30
           path: |
             full-meta-jsonld-audit.json
