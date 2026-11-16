@@ -6,7 +6,8 @@ const path=require('node:path');
 const fs=require('node:fs');
 const root=path.join(__dirname,'..');
 const port=39817;
-const origin='http://127.0.0.1:'+port;
+const live=process.env.SMART24_AUDIT_LIVE==='1';
+const origin=live?'https://jeongukdaeri.kr':'http://127.0.0.1:'+port;
 const originals=JSON.parse(fs.readFileSync(path.join(root,'data/seo-reviewed-local-originals-20261116.json'),'utf8')).items;
 const posts=JSON.parse(fs.readFileSync(path.join(root,'blog/posts.json'),'utf8'));
 const byId=new Map(posts.map(x=>[String(x.id),x]));
@@ -35,12 +36,12 @@ test('curated links only reference actual public articles, not invented rides',(
  }
 });
 test('Sejong, Gijang, four innovation cities have distinct real sources without repeated keyword stuffing',async()=>{
- const child=spawn(process.execPath,['server.js'],{cwd:root,
+ const child=live?null:spawn(process.execPath,['server.js'],{cwd:root,
   env:{...process.env,PORT:String(port),PUBLIC_HOST:'jeongukdaeri.kr'},
   stdio:'ignore'});
  try{
-  let ready=false;
-  for(let i=0;i<105;i++){
+  let ready=live;
+  for(let i=0;!live&&i<105;i++){
    if(child.exitCode!==null)throw Error('server failed to start');
    try{if((await fetch(origin+'/health',{signal:AbortSignal.timeout(1200)})).ok){ready=true;break}}catch{}
    await pause(300);
@@ -72,5 +73,5 @@ test('Sejong, Gijang, four innovation cities have distinct real sources without 
   }
   assert(!hub.includes('이 혁신도시에서 운행을 완료했습니다.'),'no invented district completion');
   console.log('PASS seven priority service pages, original published links, concise SEO and innovation city hub');
- }finally{child.kill()}
+ }finally{child?.kill()}
 });
