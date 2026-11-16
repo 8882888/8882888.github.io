@@ -62,7 +62,8 @@ test('Sejong, Gijang, four innovation cities have distinct real sources without 
     assert(section[1].includes('href="/taksong/busan/"'),'Gijang originals should link to Busan instead of an unrelated innovation hub');
     assert(!section[1].includes('href="/region/innovation-cities/"'),'Gijang originals should not suggest an innovation-city location');
    }
-   assert(!html.includes('id="regional-provider-keywords"'),route+' no repetitive provider keyword block');
+   if(route==='/taksong/busan/gijang-gun/')assert(html.includes('id="regional-provider-keywords"'),'Gijang company-intent service must remain findable');
+   else assert(!html.includes('id="regional-provider-keywords"'),route+' no repetitive provider keyword block');
    assert(html.includes('href="https://jeongukdaeri.kr'+route+'"'),route+' canonical preserved');
    assert(!/<meta name="robots" content="noindex/.test(html),route+' indexable');
    assert(html.includes('1811-4294'),route+' phone preserved');
