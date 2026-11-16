@@ -10,6 +10,11 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const BASE='https://jeongukdaeri.kr', ORIGIN=(process.env.AUDIT_TRANSPORT_ORIGIN||BASE).replace(/\/$/,'');
 const SHARDS=Number(process.env.DYNAMIC_SHARDS||1),SHARD=Number(process.env.DYNAMIC_SHARD||0);
 const LIMIT=Number(process.env.DYNAMIC_LIMIT||0);
+const SAMPLE_MODE=process.env.DYNAMIC_SAMPLE_MODE||'';
+if(!Number.isSafeInteger(LIMIT)||LIMIT<0)throw Error('DYNAMIC_LIMIT must be a nonnegative integer');
+if(!['','balanced'].includes(SAMPLE_MODE))throw Error('DYNAMIC_SAMPLE_MODE must be empty or balanced');
+const LIVE_DELAY_MS=Number(process.env.DYNAMIC_LIVE_DELAY_MS||900);
+if(!Number.isSafeInteger(LIVE_DELAY_MS)||LIVE_DELAY_MS<650||LIVE_DELAY_MS>30000)throw Error('DYNAMIC_LIVE_DELAY_MS must be 650..30000 ms for production safety');
 const MODE=process.env.DYNAMIC_MODE||'audit';
 if(!Number.isInteger(SHARDS)||SHARDS<1||SHARDS>24||!Number.isInteger(SHARD)||SHARD<0||SHARD>=SHARDS)throw Error('Invalid shard count/index');
 const outDir=process.env.DYNAMIC_OUTPUT_DIR||process.cwd();
@@ -93,6 +98,25 @@ function classify(item,response){
  return {...item,status,descriptionLength:length,description,descriptionTagCount:desc.length,
   jsonldBlocks:jsonld.length,jsonldTypes:[...types],noindex,canonical,problems:[...new Set(problems)],warnings:[...new Set(warnings)]};
 }
+// Stable, reproducible family+index-policy stratification; every shard draws
+// from its full assigned inventory, not the first few thousand region paths.
+function balancedSample(items,limit){
+ const hash=value=>{let x=2166136261;for(const ch of String(value)){x^=ch.codePointAt(0);x=Math.imul(x,16777619)}return x>>>0};
+ const groups=new Map();
+ for(const item of items){const key=item.family+'|'+item.policy;
+  if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item);
+ }
+ const keys=[...groups.keys()].sort();
+ for(const key of keys)groups.get(key).sort((a,b)=>hash(a.url)-hash(b.url)||a.url.localeCompare(b.url));
+ const sampled=[];
+ for(let slot=0;sampled.length<Math.min(limit,items.length);slot++){
+  let added=false;for(const key of keys){const candidate=groups.get(key)[slot];
+   if(candidate){sampled.push(candidate);added=true;if(sampled.length>=limit)break}
+  }
+  if(!added)break;
+ }
+ return sampled;
+}
 const csv=s=>'"'+String(s??'').replace(/"/g,'""').replace(/\r?\n/g,' ')+'"';
 async function main(){
  const registry=buildInventory(regionsFromLegal());
@@ -106,7 +130,8 @@ async function main(){
   outsideSitemap:missing.length,outsideFamilies:familyCounts,
   potentialRoutePairURLs:registry.stats.potentialRoutePairURLs,
   excludedFromCompleteEnumeration:registry.stats.omittedFromExhaustiveHTTP,
-  scope:ORIGIN===BASE?'production source transport':'local source HTML; not deployed website or Naver index',
+  scope:ORIGIN===BASE?'production HTTP HTML; not official Naver indexing':'local source HTML; not deployed website or Naver index',
+  sampleMode:SAMPLE_MODE||'none',
   shard:SHARD,shards:SHARDS,complete:false,checked:0,issueCounts:{},uninspected:0};
  fs.mkdirSync(outDir,{recursive:true});
  const name='dynamic-off-sitemap-'+String(SHARD).padStart(2,'0');
@@ -126,7 +151,8 @@ async function main(){
    '- 동적 후보 URL: '+summary.registryCount,
    '- 사이트맵 밖: '+summary.outsideSitemap,
    '- 본 샤드 점검: '+summary.checked+' / '+summary.assigned,
-   '- 완료 여부: '+summary.complete,
+   '- 완료 여부(전체 모집단 대상): '+summary.complete,
+   '- 추출 방식: '+(summary.sampleMode==='balanced'?'유형·비색인 정책별 분산 표본(운영 서버 일부만 검사)':'원본 전수/앞부분 제한')+', 표본 수: '+summary.toCheck,
    '- **출발지×도착지 전체 조합 '+summary.potentialRoutePairURLs+'개는 HTTP 전수 검사 아님.** 대표 경로만 확인.',
    '- 무료 검색어·페이지번호·실시간 API 조합은 무한/가변이며 전수 목록 불가능.','',
    '| 유형 | 사이트맵 밖 URL 수 |','|---|---:|',
@@ -140,7 +166,7 @@ async function main(){
  const inventoryPath=path.join(outDir,'dynamic-outside-inventory-'+SHARD+'.csv');
  const allRows=['url,family,policy,in_sitemap',...registry.items.filter((x,i)=>i%SHARDS===SHARD).map(x=>[x.url,x.family,x.policy,site.urls.has(x.url)].map(csv).join(','))];
  fs.writeFileSync(inventoryPath,allRows.join('\n')+'\n');
- const assigned=missing.filter((x,i)=>i%SHARDS===SHARD),queue=LIMIT?assigned.slice(0,LIMIT):assigned;
+ const assigned=missing.filter((x,i)=>i%SHARDS===SHARD),queue=LIMIT?(SAMPLE_MODE==='balanced'?balancedSample(assigned,LIMIT):assigned.slice(0,LIMIT)):assigned;
  summary.assigned=assigned.length;summary.toCheck=queue.length;summary.uninspected=assigned.length-queue.length;
  if(MODE==='inventory'){
   summary.complete=false;report([]);console.log(JSON.stringify(summary));return;
@@ -153,13 +179,13 @@ async function main(){
    catch(e){row={...item,status:0,descriptionLength:0,description:'',jsonldBlocks:0,jsonldTypes:[],noindex:false,canonical:'',problems:['request_failure'],warnings:[],error:String(e).slice(0,130)}}
    rows.push(row);
    if(rows.length%500===0){report(rows);console.log('CHECKED '+rows.length+'/'+queue.length+' shard '+SHARD)}
-   if(ORIGIN===BASE)await delay(140);
+   if(ORIGIN===BASE)await delay(LIVE_DELAY_MS);
   }
  }
  await Promise.all(Array.from({length:Math.max(1,Math.min(workers,4))},worker));
  summary.complete=queue.length===assigned.length&&rows.length===assigned.length&&site.errors.length===0;
  report(rows);
  console.log(JSON.stringify({complete:summary.complete,checked:summary.checked,assigned:summary.assigned,outsideSitemap:summary.outsideSitemap,issueCounts:summary.issueCounts},null,2));
- if(!summary.complete||rows.some(r=>r.problems.length))process.exitCode=1;
+ if((!summary.complete&&SAMPLE_MODE!=='balanced')||rows.some(r=>r.problems.length)||site.errors.length)process.exitCode=1;
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
