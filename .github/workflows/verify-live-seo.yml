@@ -1,6 +1,8 @@
 name: Verify live SEO release
 on:
-  push:
+  workflow_run:
+    workflows: ["Deploy to Cloudtype"]
+    types: [completed]
     branches: [main]
   pull_request:
     branches: [main]
@@ -8,6 +10,7 @@ on:
       - '.github/workflows/verify-live-seo.yml'
       - 'scripts/verify-live-seo-release.cjs'
       - 'tests/live-sitemap-scope.test.mjs'
+      - 'tests/published-case-cloudtype-release.test.cjs'
   workflow_dispatch:
   schedule:
     # 03:30 Asia/Seoul: one full sitemap crawl daily, not on every SEO commit
@@ -15,12 +18,13 @@ on:
 permissions:
   contents: read
 concurrency:
-  # Keep frequent push verifications replaceable, but never cancel the full
-  # daily audit just because a new content patch lands on main.
+  # Verify once after Cloudtype completed, not on every content/test push.
+  # Preserve scheduled audits and prevent competing deployments from hiding drift.
   group: live-seo-verification-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'push' }}
+  cancel-in-progress: false
 jobs:
   verify:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -30,6 +34,8 @@ jobs:
           node-version: '22'
       - name: Check published sitemap scope policy before network regression
         run: node --test tests/live-sitemap-scope.test.mjs
+      - name: Check published-case manifest and Cloudtype dispatch integration
+        run: node --test tests/published-case-cloudtype-release.test.cjs
       - run: node scripts/verify-live-seo-release.cjs
   nationwide-audit:
     needs: verify

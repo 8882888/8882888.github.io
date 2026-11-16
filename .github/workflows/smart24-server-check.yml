@@ -104,6 +104,8 @@ jobs:
         run: node tests/review-first-500-services.test.js
       - name: Verify 102810 nationwide service review routes
         run: node tests/nationwide-review-first-102810.test.js
+      - name: Validate archived verified cases appear in the same Node sitemap and RSS
+        run: node --test tests/published-case-cloudtype-release.test.cjs
       - name: Verify Ganghwa canonical search recovery with true rides
         run: node tests/ganghwa-daeri-search-recovery.test.js
       - name: Verify nationwide million-choice search and preserved rides

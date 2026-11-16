@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: naver-blog-archive
   cancel-in-progress: false
@@ -33,6 +34,7 @@ jobs:
       - name: Verify core pages and preserved ride history
         run: python scripts/check_core_content.py
       - name: Commit archive and regional pages when changed
+        id: publication
         run: |
           git add blog/posts.json blog/index.html index.html region/ reviews/ride-record-stories/index.html reviews/verified/ data/published-ride-case-ids.json data/verified_fare_quotes.json
           if ! git diff --cached --quiet; then
@@ -40,4 +42,15 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git commit -m "Update Naver archive and regional review HTML"
             git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
+      - name: Deploy the verified new case to the existing Cloudtype service
+        if: steps.publication.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          echo "Published committed case ${{ steps.publication.outputs.commit }}; dispatching existing Cloudtype deployment."
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/actions/workflows/deploy-main.yml/dispatches" -f ref=main
+          echo "Cloudtype deployment requested for current main. Final published sitemap proof is checked by verify-live-seo.yml after the deploy succeeds."

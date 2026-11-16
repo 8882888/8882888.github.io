@@ -5,6 +5,8 @@ const {setTimeout:delay}=require('node:timers/promises');
 
 const base=new URL(process.argv[2]||'https://jeongukdaeri.kr');
 const expected='sha256-'+createHash('sha256').update(readFileSync(require.resolve('../server.js'))).digest('hex').slice(0,16);
+const localPublishedCases=require('../lib/published-case-feed').loadPublishedCases(require('node:path').resolve(__dirname,'..'));
+
 
 async function read(path){
  const url=new URL(path,base);
@@ -18,6 +20,8 @@ async function main(){
   try{
    const health=JSON.parse(await read('/health'));
    if(health.release!==expected)throw Error('Expected '+expected+', received '+(health.release||'no release fingerprint'));
+   if(health.publishedCases?.count!==localPublishedCases.length||health.publishedCases?.latestId!==(localPublishedCases[0]?.id||null))
+    throw Error('Deployed published-case manifest is stale: expected '+localPublishedCases.length+' cases; latest '+(localPublishedCases[0]?.id||'none')+', got '+JSON.stringify(health.publishedCases||null));
    const home=await read('/');
    const schemas=[...home.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)].flatMap(match=>{
     try{return [JSON.parse(match[1])];}catch{return [];}
@@ -63,7 +67,7 @@ async function main(){
    if(!/<sitemapindex\b/i.test(root))throw Error('Invalid sitemap index');
    // A verified publication is only complete if its real canonical page is
    // discoverable through the published-case sitemap and newest RSS feed.
-   const publishedCases=require('../lib/published-case-feed').loadPublishedCases(require('node:path').resolve(__dirname,'..'));
+   const publishedCases=localPublishedCases;
    if(publishedCases.length){
     const latest=publishedCases.slice(0,20);
     const publishedXml=await read('/sitemap-published.xml'),feedXml=await read('/rss.xml');
