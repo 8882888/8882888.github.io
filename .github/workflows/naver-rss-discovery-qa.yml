@@ -1,0 +1,54 @@
+name: Naver Yeti verified case RSS discovery
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'tests/rss-autodiscovery-yeti-20261116.test.cjs'
+      - '.github/workflows/naver-rss-discovery-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'tests/rss-autodiscovery-yeti-20261116.test.cjs'
+      - '.github/workflows/naver-rss-discovery-qa.yml'
+permissions:
+  contents: read
+jobs:
+  local-feed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install runtime dependencies
+        run: npm install --omit=dev --no-audit --no-fund
+      - name: Check actual Yeti HTML RSS link and original content
+        run: |
+          node --check server.js
+          node --test tests/rss-autodiscovery-yeti-20261116.test.cjs
+  production-feed:
+    if: github.event_name == 'push'
+    needs: local-feed
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Cloudtype publicly serves updated RSS autodiscovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            echo "Production RSS discovery check $attempt/24"
+            if SMART24_AUDIT_LIVE=1 node --test tests/rss-autodiscovery-yeti-20261116.test.cjs; then
+              echo "### Naver Yeti can discover real full-article RSS from Cloudtype" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$attempt" -lt 24 ]; then sleep 10; fi
+          done
+          echo "::error::Public Cloudtype RSS discovery not verified"
+          exit 1
