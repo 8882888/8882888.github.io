@@ -1,16 +1,10 @@
 name: Diagnose intermittent Naver URL inspection access
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/probe-naver-url-inspection-20261116.cjs'
-      - 'tests/probe-naver-url-inspection-20261116.test.cjs'
-      - '.github/workflows/naver-url-access-diagnosis.yml'
-  workflow_run:
-    workflows: ["Deploy to Cloudtype"]
-    types: [completed]
-    branches: [main]
+  # Run outside the burst of parallel post-deploy GitHub audits.
+  # Keep manual triggering for a real Search Advisor incident.
+  schedule:
+    - cron: '10 17 * * *' # 02:10 Asia/Seoul
 permissions:
   contents: read
 concurrency:

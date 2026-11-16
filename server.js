@@ -2516,6 +2516,13 @@ function exactRegionalKeywordCard(r,kind,raw){
  return null;
 }
 const millionServiceFinder=require('./lib/service-finder-million').create(regions,servicePath,process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+// These two national service hubs depend only on boot-time source data.
+ // Build their crawler-facing HTML once to avoid re-rendering all nationwide
+ // region links on every Yeti/user request to a 512MB Cloudtype instance.
+const cachedNationalServiceHubHtml=new Map([
+ ['taksong',applySeo(serviceHub('taksong'),'/taksong/')],
+ ['daeri',applySeo(serviceHub('daeri'),'/daeri/')]
+]);
 let cachedHomepageHtml=null;
 let cachedHomepageSignature='';
 // Read-only quality diagnostics: no advertising claims, no customer data.
@@ -2894,7 +2901,7 @@ if(placeCategoryMatch){const category=placeCategories.find(x=>x[0]===placeCatego
 const featuredRouteMatch=pathname.match(/^\/taksong\/route\/([a-z-]+)\/?$/);if(featuredRouteMatch){const route=featuredTaksongRoutes.find(x=>x.slug===featuredRouteMatch[1]);return route?respond(res,200,featuredTaksongRoutePage(route)):respond(res,404,'해당 구간을 찾을 수 없습니다.')}
 if(pathname==='/taksong'){res.writeHead(301,{location:'/taksong/'+u.search});return res.end()}
 if(pathname==='/coverage/'||pathname==='/coverage')return respond(res,200,nationwideCoveragePage());
-if(pathname==='/taksong/')return respond(res,200,applySeo(serviceHub('taksong'),'/taksong/'));
+if(pathname==='/taksong/')return respond(res,200,cachedNationalServiceHubHtml.get('taksong'));
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
 const daeriRouteMatch=pathname.match(/^\/daeri\/route\/([a-z-]+)\/?$/);if(daeriRouteMatch){const route=featuredDaeriRoutes.find(x=>x.slug===daeriRouteMatch[1]);return route?respond(res,200,featuredDaeriRoutePage(route)):respond(res,404,'해당 대리운전 구간을 찾을 수 없습니다.')}
@@ -2932,7 +2939,7 @@ if(pathname==='/daeri/tourist-spots/'){
  return respond(res,200,touristDaeri.page(query));
 }
 if(pathname==='/daeri'){res.writeHead(301,{location:'/daeri/'+u.search});return res.end()}
-if(pathname==='/daeri/')return respond(res,200,applySeo(serviceHub('daeri'),'/daeri/'));
+if(pathname==='/daeri/')return respond(res,200,cachedNationalServiceHubHtml.get('daeri'));
 if(pathname==='/route-taksong/centers/'||pathname==='/route-taksong/centers')return respond(res,200,require('./lib/cycling-centers').page(u.searchParams,{layout,esc,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'}));
 // Lightweight nationwide locality autocomplete for the first mobile screen.
 // Exact legal names and links only; no user-level visit data or false dispatch claims.
