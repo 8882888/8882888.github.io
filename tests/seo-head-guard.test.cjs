@@ -33,3 +33,9 @@ test('existing WebPage stays, ImageObject gets companion only if indexable',()=>
 test('safe Unicode and HTML entity counting',()=>{
  assert.ok([...briefDescription(('경기도 성남시 분당구 자동차탁송 예약 ').repeat(10)+'&amp;')].length<=80);
 });
+
+test('important regional hotline survives shortening without breaking 80 chars',()=>{
+ const value='강원특별자치도 대리운전과 장거리대리운전, 외곽 골프장 이동은 출발지 주소, 기사 복귀, 운행 일정과 요금조건, 인수 위치를 확인합니다. 전화 1811-4294';
+ const text=briefDescription(value);
+ assert.ok([...text].length<=80);assert.match(text,/강원특별자치도/);assert.match(text,/1811-4294/);
+});
