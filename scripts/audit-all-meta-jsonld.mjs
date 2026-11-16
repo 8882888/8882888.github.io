@@ -175,6 +175,7 @@ const counts={discovered:inventory.length,checked:results.length,scope:transport
  jsonldInvalid:results.filter(r=>r.problems.includes('jsonld_invalid_json')).length,
  ogDescriptionOver80:results.filter(r=>r.ogDescriptionLength>80).length,
  metaIssueUrls:results.filter(r=>r.problems.some(p=>p.startsWith('seo_')||p.startsWith('jsonld_'))||r.metadataWarnings.length).length,
+ metadataClean:results.filter(r=>!r.problems.some(p=>p.startsWith('seo_')||p.startsWith('jsonld_'))&&!r.metadataWarnings.length).length,
  targetNaverIndexed:50000,
  naverIndexed:null,technicallyClean,technicalGapTo50000:Math.max(0,50000-technicallyClean),
  listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,
@@ -242,4 +243,12 @@ writeFileSync('full-meta-jsonld-summary.md',lines.join('\n'));
 console.log('Critical:',critical.length,'Review:',review.length);
 console.log(JSON.stringify(counts,null,2));
 console.log('NOTE: 100% technical URL checks cannot establish Naver indexing. Check Naver Search Advisor URL inspection and site diagnosis separately.');
+// An Actions green check must never be interpreted as SEO compliance if
+// the 80-character house rule is still violated. JSON-LD presence remains an advisory.
+if(counts.descriptionOver80||counts.descriptionMissing||counts.descriptionDuplicates||counts.jsonldInvalid){
+ console.error('::error::META/JSON-LD REVIEW REQUIRED — descriptions >80='+counts.descriptionOver80+
+  ', missing description='+counts.descriptionMissing+', duplicated='+counts.descriptionDuplicates+
+  ', invalid JSON-LD='+counts.jsonldInvalid+'. JSON-LD absent='+counts.jsonldMissing+' (advisory).');
+ process.exitCode=1;
+}
 if(counts.sitemapErrors.length||counts.crawlerDiagnostics.length||counts.discovered===0||counts.checked!==list.length)process.exitCode=1;
