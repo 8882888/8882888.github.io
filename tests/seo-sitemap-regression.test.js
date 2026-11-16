@@ -409,3 +409,16 @@ test('nationwide beach and Incheon coastal search intents resolve to existing re
  assert.ok(server.includes("servicePath(r,service)"),'beach keywords cannot point to synthetic keyword URLs');
  assert.ok(server.includes('기사가 상주한다거나 현재 배차가 확정됐다는 뜻이 아닙니다'),'no unsupported immediate dispatch claims');
 });
+
+test('previously exposed Jegi-dong taksong remains discoverable without all-locality expansion',()=>{
+ const target='https://jeongukdaeri.kr/taksong/seoul/dongdaemun-gu/jegi-dong/';
+ for(const name of ['sitemap.xml','sitemap-priority.xml']){
+  const xml=fs.readFileSync(path.join(root,name),'utf8');
+  assert.equal(xml.split('<loc>'+target+'</loc>').length-1,1,name+' one canonical URL');
+ }
+ const priority=server.slice(server.indexOf("if(pathname==='/sitemap-priority.xml')"),server.indexOf("if(pathname==='/sitemap-daeri.xml')"));
+ const main=server.slice(server.indexOf("if(pathname==='/sitemap.xml')"),server.indexOf("const intentMatch=",server.indexOf("if(pathname==='/sitemap.xml')")));
+ assert.ok(priority.includes("'/taksong/seoul/dongdaemun-gu/jegi-dong/'"),'dynamic priority sitemap');
+ assert.ok(main.includes("'/taksong/seoul/dongdaemun-gu/jegi-dong/'"),'dynamic primary sitemap');
+ assert.ok(server.includes("...['province','city','county','district'].map"),'existing four-level sitemap policy unchanged');
+});
