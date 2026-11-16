@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "limit": 80,
+  "notes": "Hand-reviewed short meta and OG summaries for real canonical pages; not a Naver indexing claim. Full source-backed guidance remains in HTML body.",
+  "pages": [
+    {
+      "path": "/daeri/sejong/",
+      "description": "세종대리운전 정부세종청사·나성동·조치원 출발 위치와 장거리·법인 예약 안내. 요금·배차 상담 1811-4294."
+    },
+    {
+      "path": "/taksong/sejong/",
+      "description": "세종탁송 정부세종청사 업무차량·세종경매장 출고 인수인계와 장거리 예상요금·예약 상담 1811-4294."
+    },
+    {
+      "path": "/taksong/busan/gijang-gun/",
+      "description": "기장군탁송 기장읍·정관읍·일광읍 차량 인수·인계 안내. 경산·대구 장거리 탁송 예상요금·상담 1811-4294."
+    },
+    {
+      "path": "/taksong/gangwon/wonju-si/",
+      "description": "원주혁신도시탁송 반곡동 업무차량·정비 입출고와 인수·인계 안내. 장거리 차량탁송 상담 1811-4294."
+    },
+    {
+      "path": "/taksong/gyeongnam/jinju-si/",
+      "description": "진주혁신도시탁송 충무공동 법인차량·정비 차량 인수인계, 장거리 예상요금·예약 상담 1811-4294."
+    },
+    {
+      "path": "/taksong/jeonnam/naju-si/",
+      "description": "나주혁신도시탁송 빛가람동 공공기관 업무차량·나주역 차량 인수·인계 안내. 광주 연계 상담 1811-4294."
+    },
+    {
+      "path": "/taksong/gyeongbuk/gimcheon-si/",
+      "description": "김천혁신도시탁송 율곡동·김천구미역 차량 인수·인계, 구미·대구 장거리탁송 예약 상담 1811-4294."
+    },
+    {
+      "path": "/coverage/",
+      "description": "전국 17개 시·도 대리운전·자동차탁송 지역 검색. 실제 완료 운행기록·예상요금·예약상담 1811-4294."
+    },
+    {
+      "path": "/region/innovation-cities/",
+      "description": "세종·원주·진주·나주·김천 등 혁신도시 대리운전·탁송 안내. 지역별 출발지·차량 인수, 예약 상담 1811-4294."
+    },
+    {
+      "path": "/설악산탁송/",
+      "description": "설악산탁송 오색·한계령·소공원·백담사 종주 차량이동 요금표와 예약 안내. 코스별 인수·인계 상담 1811-4294."
+    },
+    {
+      "path": "/지리산탁송/",
+      "description": "지리산탁송 성삼재·중산리·백무동·대원사 종주 차량 이동과 출발·하산지 인계 안내. 예약 상담 1811-4294."
+    },
+    {
+      "path": "/route-taksong/",
+      "description": "국토종주·동해안·낙동강·섬진강 자전거길 코스별 차량탁송과 인증센터 인계 안내. 요금·예약 상담 1811-4294."
+    },
+    {
+      "path": "/special/cycling-trail-transport/",
+      "description": "국토종주자전거길탁송 동해안·낙동강·영산강·섬진강 코스별 차량 인수·회수, 예약 상담 1811-4294."
+    },
+    {
+      "path": "/service/corporate/",
+      "description": "법인대리운전 법인카드·단체 회식·업무차량 운행과 예약·결제 방식 안내. 상담 1811-4294."
+    },
+    {
+      "path": "/service/golf/",
+      "description": "골프장대리운전 라운딩 후 귀가와 장거리·단체 호출, 일일기사 왕복·대기 조건 안내. 상담 1811-4294."
+    },
+    {
+      "path": "/service/long-distance-taksong/",
+      "description": "장거리자동차탁송 전국 차량 인수·인계, 출발지·도착지 기준 요금조회와 예약 상담 1811-4294."
+    }
+  ]
+}

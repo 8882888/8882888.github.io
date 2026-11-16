@@ -14,6 +14,7 @@ on:
       # Changes to regional guidance must refresh the human review queue.
       - "data/naver-regional-focus-*.json"
       - "data/priority-regions.json"
+      - "data/naver-priority-meta-80-20261116.json"
       - "tests/priority-regions-quality.test.mjs"
       - "data/legal-regions/**"
       - "lib/nationwide-locality-explorer.js"
