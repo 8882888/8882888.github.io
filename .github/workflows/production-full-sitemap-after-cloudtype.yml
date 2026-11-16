@@ -1,0 +1,51 @@
+name: Read-only complete production HTTP sitemap audit after Cloudtype deployment
+on:
+  workflow_run:
+    workflows: [Deploy to Cloudtype]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: smart24-production-full-sitemap-http
+  cancel-in-progress: false
+jobs:
+  live-all-sitemap-html:
+    name: Verify release then audit ALL 5919 production HTML URLs
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - name: Checkout exact successfully deployed source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify public Cloudtype deployment matches this source revision
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+          DEPLOY_CHECK_ATTEMPTS: '5'
+        run: node tools/check_cloudtype_freshness.js
+      - name: Check complete audit syntax
+        run: node --check scripts/audit-all-meta-jsonld.mjs
+      - name: Rate-limited real HTTP census of every production sitemap URL
+        env:
+          AUDIT_MAX_URLS: '0'
+          AUDIT_WORKERS: '2'
+          AUDIT_LIVE_DELAY_MS: '650'
+        run: node scripts/audit-all-meta-jsonld.mjs
+      - name: Save all inspected URLs and exact issue categories even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-post-release-full-production-sitemap-http
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            full-meta-jsonld-audit.json
+            full-meta-jsonld-audit.csv
+            full-meta-jsonld-summary.md
