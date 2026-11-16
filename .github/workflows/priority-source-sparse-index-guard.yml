@@ -1,0 +1,25 @@
+name: Protect priority source SEO and sparse Naver index guards
+on:
+  pull_request:
+    paths:
+      - 'tests/site-performance-seo-five-priorities-20261107.test.js'
+      - '.github/workflows/priority-source-sparse-index-guard.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tests/site-performance-seo-five-priorities-20261107.test.js'
+permissions:
+  contents: read
+jobs:
+  verify-content-guards:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Naver duplicate suppression and source-linked SEO quality
+        run: |
+          node --check tests/site-performance-seo-five-priorities-20261107.test.js
+          node tests/site-performance-seo-five-priorities-20261107.test.js
