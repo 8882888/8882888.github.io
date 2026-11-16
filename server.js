@@ -2314,7 +2314,8 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   const priorityMetaDescription=priorityFocus?
     priorityFocus.region+' · '+priorityFocus.topic+'. '+metaFirstSentence+' 상담 '+PHONE:'';
   body=normalizeSeoHead(stripPersonVehicleImages(keywordExpansion.enhance(html,res._smartPath||'')),
-    {xRobotsTag:res.getHeader('x-robots-tag'),preferredDescription:priorityMetaDescription});
+    {xRobotsTag:res.getHeader('x-robots-tag'),preferredDescription:priorityMetaDescription,
+     allowVerifiedRoute:verifiedRoutePagePaths.has(res._smartPath||'')});
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
  if(res._smartPath==='/'){headers['cache-control']='no-store, max-age=0, must-revalidate';headers['surrogate-control']='no-store';headers['x-smart24-primary-nav']='four-services-sticky-20261106';}
@@ -2411,6 +2412,9 @@ const dynamicBlogSections=[
 const blogLatestPage=require('./lib/naver-blog-feed')({esc,layout,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',rideHighlights:blogRideHighlights,dynamicSections:dynamicBlogSections});
 const blogArchive=require('./lib/blog-archive');
 const routeKeywordPages=require('./lib/route-keyword-pages')({regions,esc,layout,servicePath,label:seoRegionLabel,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',historicalRides});
+// The only eligible route-pair pages are those backed by actual completed rides.
+// A Set lookup avoids constructing schemas for unlimited arbitrary origin/destination pairs.
+const verifiedRoutePagePaths=new Set(routeKeywordPages.reviewed.entries.map(routeKeywordPages.reviewed.routePath));
 // Exact locality lookup for responsive, in-page business-card previews.
 // Only public administrative names are indexed. Ambiguous homonyms are never auto-selected.
 const liveCardAliases=new Map();
