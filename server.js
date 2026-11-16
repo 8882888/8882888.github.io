@@ -2254,12 +2254,17 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   const shortMeta=naverPriorityShortMetaByPath.get(res._smartPath||'');
   if(shortMeta){
    const tags=[
-    {pattern:/<meta\b(?=[^>]*\bname=["']description["'])[^>]*>/i,tag:'<meta name="description" content="'+esc(shortMeta)+'">'},
-    {pattern:/<meta\b(?=[^>]*\bproperty=["']og:description["'])[^>]*>/i,tag:'<meta property="og:description" content="'+esc(shortMeta)+'">'}
+    {pattern:/<meta\b(?=[^>]*\bname=["']description["'])[^>]*>/gi,tag:'<meta name="description" content="'+esc(shortMeta)+'">'},
+    {pattern:/<meta\b(?=[^>]*\bproperty=["']og:description["'])[^>]*>/gi,tag:'<meta property="og:description" content="'+esc(shortMeta)+'">'}
    ];
    for(const {pattern,tag} of tags){
-    if(pattern.test(html))html=html.replace(pattern,tag);
-    else if(html.includes('</head>'))html=html.replace('</head>',tag+'</head>');
+    // Legacy guides can carry duplicate OG tags. Keep exactly one per head.
+    let seen=false;
+    html=html.replace(pattern,()=>{
+     if(seen)return '';
+     seen=true;return tag;
+    });
+    if(!seen&&html.includes('</head>'))html=html.replace('</head>',tag+'</head>');
    }
   }
   // A legacy release still advertised the retired dynamic-card headline.
