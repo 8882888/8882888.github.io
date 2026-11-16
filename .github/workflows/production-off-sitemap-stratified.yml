@@ -1,0 +1,66 @@
+name: Production off-sitemap dynamic URL stratified HTTP sample
+on:
+  workflow_run:
+    workflows: ['Deploy to Cloudtype']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: smart24-outside-sitemap-live-sample
+  cancel-in-progress: false
+jobs:
+  verify-release:
+    name: Confirm Cloudtype is running the audited source
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify current Cloudtype release corresponds to source
+        run: node tools/check_cloudtype_freshness.js
+      - name: Check safe read-only auditor
+        run: |
+          node --check scripts/audit-dynamic-off-sitemap.mjs
+          node --check scripts/dynamic-url-inventory.mjs
+  live-stratified:
+    name: Production HTTP sample / shard ${{ matrix.shard }}
+    needs: verify-release
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inspect 600 real production HTML responses spread across families/policies
+        env:
+          DYNAMIC_SHARDS: '4'
+          DYNAMIC_SHARD: ${{ matrix.shard }}
+          DYNAMIC_LIMIT: '600'
+          DYNAMIC_SAMPLE_MODE: balanced
+          DYNAMIC_CONCURRENCY: '1'
+        run: node scripts/audit-dynamic-off-sitemap.mjs
+      - name: Upload every observed URL and findings even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-outside-sitemap-production-sample-${{ matrix.shard }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            dynamic-off-sitemap-*.json
+            dynamic-off-sitemap-*.csv
+            dynamic-off-sitemap-*-summary.md
