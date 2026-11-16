@@ -121,8 +121,9 @@ for(const phrase of [
  "const national=resolveRegionalCardKeyword(query)",
  "if(pathname==='/api/nationwide-locality-card.svg')"
 ])assert(server.includes(phrase),'Missing nationwide server integration: '+phrase);
-assert(server.indexOf('  directQuoteForm+nationwideSubareaChoices+')<
- server.indexOf("'<h3>공개된 실제 완료 운행 '+distinct.length"),'Mobile town chooser must appear above long ride lists');
+const completeRouteHeading=server.indexOf("'<h3>출발·도착지가 모두 공개된 완료 운행기록 '+distinct.length");
+assert(completeRouteHeading>=0 && server.indexOf('  directQuoteForm+nationwideSubareaChoices+')<completeRouteHeading,
+ 'Mobile town chooser must appear above long ride lists');
 assert(server.includes('const childLinks=!nationwideSubareaChoices&&related.length?'),
  'Do not duplicate nearby region links when the full nationwide selector is shown');
 assert(!server.includes('ganghwaTownTarget('),'No special county-only query routing may survive');
