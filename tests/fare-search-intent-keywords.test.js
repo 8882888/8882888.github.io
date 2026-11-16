@@ -28,12 +28,15 @@ for(const [term,service] of rows){
  // Search-intent aliases resolve to the calculator; the approved homepage top does not require five redundant chips.
  assert(fare.includes('<strong>'+term+'</strong>'),term+' must have an honest explanation on the canonical fare page');
  assert(server.includes("'"+term+"':'/fare/?service="+service+"'"),term+' missing from direct keyword routing');
- assert(seo.pages.find(p=>p.path==='/').description.includes(term),term+' missing from canonical homepage metadata');
 }
+const homeDescription=seo.pages.find(p=>p.path==='/').description;
+assert(homeDescription.includes('예상요금'),'Homepage short metadata must retain the quote intent');
+assert(Array.from(homeDescription).length<=80,'Do not force five repeated quote aliases into Naver homepage metadata');
 assert(server.includes("card.displayKeyword=query+' · 예상 참고요금 조회'"),
  'Cost estimates should not be incorrectly labelled mountain or cycling courses');
 for(const route of ['/daeri/','/taksong/']){
- assert(seo.pages.find(p=>p.path===route).description.includes(route==='/daeri/'?'대리비견적':'탁송비견적'),
- 'Main service SEO metadata must mention the appropriate fare intent');
+ const description=seo.pages.find(p=>p.path===route).description;
+ assert(/대리비|탁송비|예상요금/.test(description),'Main service SEO metadata must retain an understandable fare intent');
+ if(route==='/taksong/')assert(Array.from(description).length<=80,'National taksong description must meet the same concise guidance');
 }
 console.log('PASS five quote keywords route to canonical fare page, visible mobile links and correct services');

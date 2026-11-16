@@ -22,8 +22,13 @@ assert(primary,'Homepage must have one canonical SEO metadata definition');
 assert(home.includes('<title>'+primary.title+'</title>'),'Homepage title and central SEO config must match');
 assert(home.includes('<meta name="description" content="'+primary.description+'">'),'Homepage meta description and SEO config must match');
 assert(home.includes('<meta property="og:description" content="'+primary.description+'">'),'Open Graph description must match central SEO config');
-for(const term of ['전국대리운전','전국탁송','24시탁송','대리비','대리비견적','탁송비','탁송견적','탁송비견적']){
+for(const term of ['전국대리운전','자동차탁송','예상요금','예약','실제 완료 운행기록']){
  assert(primary.description.includes(term),'Homepage search intent lost: '+term);
+}
+assert(Array.from(primary.description).length<=80,'Homepage and Open Graph descriptions must meet Naver 80-character guidance');
+const body=home.split('</head>')[1]||'';
+for(const term of ['전국탁송','24시탁송','대리비','대리비견적','탁송비','탁송비견적']){
+ assert(body.includes(term),'Preserve existing visible service and fare guidance: '+term);
 }
 assert(home.includes('<meta property="og:image:type" content="image/png">'),'OG image must be PNG');
 assert(home.includes('"encodingFormat":"image/png"'),'Homepage image JSON-LD must match actual PNG response');

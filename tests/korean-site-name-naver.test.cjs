@@ -49,6 +49,12 @@ test('Yeti fetches unified Korean site name, indexable service canonical and hom
    assert.deepEqual(app,[brand],uri+' application-name');
    assert(head.includes('href="'+canonical.replace(/\/$/,'')+uri+'"'),uri+' canonical');
    assert(!/<meta\b[^>]*content="[^"]*\bnoindex\b/i.test(head),uri+' noindex');
+   if(uri==='/'||uri==='/taksong/'){
+    const description=require('../data/seo-pages.json').pages.find(x=>x.path===uri).description;
+    assert(Array.from(description).length<=80,uri+' Naver short description');
+    assert(head.includes('name="description" content="'+description+'"'),uri+' runtime description');
+    assert(head.includes('property="og:description" content="'+description+'"'),uri+' runtime Open Graph description');
+   }
    if(uri==='/')assert.equal(ld.filter(x=>x['@type']==='WebSite').length,1);
   }
  }finally{child.kill();}
