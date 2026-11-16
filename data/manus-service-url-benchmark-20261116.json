@@ -2,11 +2,13 @@
   "asOf": "2026-11-16",
   "referenceDomain": "smartdaeritaksong.kr",
   "destinationDomain": "jeongukdaeri.kr",
-  "referenceStatus": "user-supplied URL paths; external body and Naver indexation not verified",
+  "referenceStatus": "User-supplied 48 reference paths across two submissions; public HTTP verification is separate from Naver indexing.",
   "notes": [
     "Reference content must not be copied.",
     "The last supplied URL included appended Korean text; '/airport-delivery/incheon' is treated as an intended path pending verification.",
-    "Only existing source-backed Smart24 pages are linked. No fake reviews or fare guarantees."
+    "Only existing source-backed Smart24 pages are linked. No fake reviews or fare guarantees.",
+    "A reference path can map to an existing broader canonical Smart24 guide; do not claim a unique new indexed page for every reference URL.",
+    "Detailed locality and pension examples are navigation-only by default, not promoted into priority sitemap without independent value and verified editorial evidence."
   ],
   "entries": [
     {
@@ -113,6 +115,316 @@
       "targetPath": "/taksong/incheon/",
       "label": "인천 지역·공항 연계 차량탁송",
       "description": "인천 출발·도착 지역 정보와 공항 차량 인계 지점을 구분해 확인합니다."
+    },
+    {
+      "topic": "산행 종주 차량탁송",
+      "referencePath": "/delivery/mountain",
+      "targetPath": "/taksong/",
+      "label": "산행 종주 차량탁송",
+      "description": "설악산·지리산·덕유산 산행의 출발지와 하산지 간 차량 회수 방식 및 주차장 인수 조건을 안내합니다.",
+      "category": "산행",
+      "featured": false,
+      "relatedPath": "/설악산탁송/"
+    },
+    {
+      "topic": "설악산 종주탁송",
+      "referencePath": "/delivery/mountain/seoraksan",
+      "targetPath": "/설악산탁송/",
+      "label": "설악산 종주탁송",
+      "description": "오색·한계령·소공원·백담사 등 출발지와 하산지의 차량 이동을 확인합니다.",
+      "category": "산행",
+      "featured": false
+    },
+    {
+      "topic": "지리산 종주탁송",
+      "referencePath": "/delivery/mountain/jirisan",
+      "targetPath": "/지리산탁송/",
+      "label": "지리산 종주탁송",
+      "description": "성삼재·중산리·대원사 등 종주 코스의 차량 회수와 예약 조건을 확인합니다.",
+      "category": "산행",
+      "featured": false
+    },
+    {
+      "topic": "덕유산·무주 종주탁송",
+      "referencePath": "/delivery/mountain/deogyusan",
+      "targetPath": "/taksong/jeonbuk/muju-gun/",
+      "label": "덕유산·무주 종주탁송",
+      "description": "덕유산 산행 전후 무주 일대 차량 인수·인계 장소와 시간대를 상담합니다.",
+      "category": "산행",
+      "featured": false
+    },
+    {
+      "topic": "자전거 종주 인증센터 탁송",
+      "referencePath": "/delivery/bicycle-certification",
+      "targetPath": "/route-taksong/centers/",
+      "label": "자전거 종주 인증센터 탁송",
+      "description": "인증센터 출발·도착 장소를 지정해 차량 회수와 라이딩 종료 시각을 상담합니다.",
+      "category": "자전거",
+      "featured": false
+    },
+    {
+      "topic": "국토종주 자전거길 탁송",
+      "referencePath": "/delivery/bicycle-certification/national-cycling-roads",
+      "targetPath": "/route-taksong/",
+      "label": "국토종주 자전거길 탁송",
+      "description": "국토종주 및 동해안 등 자전거길의 구간별 차량 이동 안내를 확인합니다.",
+      "category": "자전거",
+      "featured": false
+    },
+    {
+      "topic": "섬진강 자전거길 종주탁송",
+      "referencePath": "/delivery/bicycle-certification/seomjingang-bike-road",
+      "targetPath": "/route-taksong/courses/seomjin/",
+      "label": "섬진강 자전거길 종주탁송",
+      "description": "섬진강 구간의 출발·도착 인증센터와 차량 인계 시각을 확인합니다.",
+      "category": "자전거",
+      "featured": false
+    },
+    {
+      "topic": "인천공항·인천 지역 차량탁송",
+      "referencePath": "/airports/incheon-airport",
+      "targetPath": "/taksong/incheon/",
+      "label": "인천공항·인천 지역 차량탁송",
+      "description": "공항 터미널·주차장 위치와 인천 지역 인수·인계 동선을 구분합니다.",
+      "category": "공항",
+      "featured": false,
+      "relatedPath": "/blog/guides/airport-terminal-parking/"
+    },
+    {
+      "topic": "김해공항·부산 강서구 차량탁송",
+      "referencePath": "/airports/gimhae-airport",
+      "targetPath": "/taksong/busan/gangseo-gu/",
+      "label": "김해공항·부산 강서구 차량탁송",
+      "description": "김해공항 터미널·주차장 인계와 부산 강서구 출발·도착 차량을 구분합니다.",
+      "category": "공항",
+      "featured": false,
+      "relatedPath": "/blog/guides/airport-terminal-parking/"
+    },
+    {
+      "topic": "제주공항·제주시 차량탁송",
+      "referencePath": "/airports/jeju-airport",
+      "targetPath": "/taksong/jeju/jeju-si/",
+      "label": "제주공항·제주시 차량탁송",
+      "description": "제주시 내 차량 이동과 제주공항 인수·인계 및 선적 필요 여부를 구분합니다.",
+      "category": "공항",
+      "featured": false,
+      "relatedPath": "/blog/guides/airport-terminal-parking/"
+    },
+    {
+      "topic": "양양공항·양양군 차량탁송",
+      "referencePath": "/airports/yangyang-airport",
+      "targetPath": "/taksong/gangwon/yangyang-gun/",
+      "label": "양양공항·양양군 차량탁송",
+      "description": "양양공항·양양군 차량 인수 장소와 외곽 접근 및 복귀 조건을 확인합니다.",
+      "category": "공항",
+      "featured": false,
+      "relatedPath": "/blog/guides/airport-terminal-parking/"
+    },
+    {
+      "topic": "법인·기업 대리운전",
+      "referencePath": "/business/corporate-driver",
+      "targetPath": "/service/corporate/",
+      "label": "법인·기업 대리운전",
+      "description": "법인카드·후불 정산 가능 조건과 담당자 예약·기사 수급을 확인합니다.",
+      "category": "기업",
+      "featured": false
+    },
+    {
+      "topic": "일일기사·왕복기사",
+      "referencePath": "/business/daily-chauffeur",
+      "targetPath": "/service/daily-driver/",
+      "label": "일일기사·왕복기사",
+      "description": "왕복 운행시간과 대기시간·식대 등 비용 항목을 구분합니다.",
+      "category": "기업",
+      "featured": false
+    },
+    {
+      "topic": "골프장 대리운전·일일기사",
+      "referencePath": "/business/golf-hospitality",
+      "targetPath": "/service/golf/",
+      "label": "골프장 대리운전·일일기사",
+      "description": "클럽하우스 픽업 장소와 라운딩 종료 시각, 왕복 대기 조건을 확인합니다.",
+      "category": "기업",
+      "featured": false
+    },
+    {
+      "topic": "렌트카·사고대차 탁송",
+      "referencePath": "/business/rental-car",
+      "targetPath": "/business/rental-car/",
+      "label": "렌트카·사고대차 탁송",
+      "description": "렌트카 반납·출고와 사고대차 차량 인수 절차를 안내합니다.",
+      "category": "기업",
+      "featured": false
+    },
+    {
+      "topic": "강화읍 대리운전",
+      "referencePath": "/regions/강화읍",
+      "targetPath": "/daeri/incheon/ganghwa-gun/ganghwa-eup/",
+      "label": "강화읍 대리운전",
+      "description": "인천 강화군 강화읍의 출발 위치·야간 접근·복귀 여건을 확인합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "속초 교동 대리운전",
+      "referencePath": "/regions/속초시%20교동",
+      "targetPath": "/daeri/gangwon/sokcho-si/gyo-dong/",
+      "label": "속초 교동 대리운전",
+      "description": "속초시 교동 출발 숙소·상가 차량 위치와 목적지별 예약 조건을 확인합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "태백시 대리운전",
+      "referencePath": "/regions/태백시",
+      "targetPath": "/daeri/gangwon/taebaek-si/",
+      "label": "태백시 대리운전",
+      "description": "태백 시내·외곽 출발 위치와 기사 접근·복귀 및 심야 예약 조건을 안내합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "서울 강남구 대리운전",
+      "referencePath": "/regions/강남구",
+      "targetPath": "/daeri/seoul/gangnam-gu/",
+      "label": "서울 강남구 대리운전",
+      "description": "강남구 지역 출발지와 차량 주차 위치를 정확히 지정해 상담합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "강남 역삼동 대리운전",
+      "referencePath": "/regions/역삼동",
+      "targetPath": "/daeri/seoul/gangnam-gu/yeoksam-dong/",
+      "label": "강남 역삼동 대리운전",
+      "description": "서울 강남구 역삼동의 건물·주차장별 차량 인수 위치를 확인합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "부산 대리운전",
+      "referencePath": "/regions/부산",
+      "targetPath": "/daeri/busan/",
+      "label": "부산 대리운전",
+      "description": "부산 각 구·군 출발지의 지역별 대리운전 이용 안내입니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "제주 대리운전",
+      "referencePath": "/regions/제주",
+      "targetPath": "/daeri/jeju/",
+      "label": "제주 대리운전",
+      "description": "제주도 지역별 기사 접근과 목적지·시간대별 배차 조건을 확인합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "인천 대리운전",
+      "referencePath": "/regions/인천",
+      "targetPath": "/daeri/incheon/",
+      "label": "인천 대리운전",
+      "description": "인천 시내·강화·영종도 등 출발지와 목적지별 상담 기준을 확인합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "서울 대리운전",
+      "referencePath": "/regions/서울",
+      "targetPath": "/daeri/seoul/",
+      "label": "서울 대리운전",
+      "description": "서울 각 자치구의 출발 위치와 대리운전 예약 절차를 안내합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "양양군 대리운전",
+      "referencePath": "/regions/양양군",
+      "targetPath": "/daeri/gangwon/yangyang-gun/",
+      "label": "양양군 대리운전",
+      "description": "양양 인구해변·낙산 등 관광지와 숙박시설 출발 조건을 확인합니다.",
+      "category": "지역",
+      "featured": false
+    },
+    {
+      "topic": "속초·설악산 숙박시설 대리운전",
+      "referencePath": "/pension/sokcho-seoraksan",
+      "targetPath": "/daeri/gangwon/sokcho-si/",
+      "label": "속초·설악산 숙박시설 대리운전",
+      "description": "설악동·속초 일대 숙박시설의 야간 차량 위치와 픽업 주소를 확인합니다.",
+      "category": "숙박",
+      "featured": false,
+      "relatedPath": "/daeri/activities/stay/"
+    },
+    {
+      "topic": "양양·낙산 펜션 대리운전",
+      "referencePath": "/pension/yangyang-naksan",
+      "targetPath": "/daeri/gangwon/yangyang-gun/",
+      "label": "양양·낙산 펜션 대리운전",
+      "description": "낙산 숙박시설 진입로와 주차 위치, 강릉·속초 방향의 기사 복귀 조건을 확인합니다.",
+      "category": "숙박",
+      "featured": false,
+      "relatedPath": "/daeri/activities/stay/"
+    },
+    {
+      "topic": "강릉·경포 펜션 대리운전",
+      "referencePath": "/pension/gangneung-gyeongpo",
+      "targetPath": "/daeri/gangwon/gangreung-si/",
+      "label": "강릉·경포 펜션 대리운전",
+      "description": "경포해변 인근 숙소·펜션의 정확한 주차장과 출발 시각을 확인합니다.",
+      "category": "숙박",
+      "featured": false,
+      "relatedPath": "/daeri/activities/stay/"
+    },
+    {
+      "topic": "제주 애월 숙박시설 대리운전",
+      "referencePath": "/pension/jeju-aewol",
+      "targetPath": "/daeri/jeju/jeju-si/",
+      "label": "제주 애월 숙박시설 대리운전",
+      "description": "제주시 애월 권역 숙소 출발지와 야간 배차 여건을 확인합니다.",
+      "category": "숙박",
+      "featured": false,
+      "relatedPath": "/daeri/activities/stay/"
+    },
+    {
+      "topic": "제주 중문·서귀포 숙박시설 대리운전",
+      "referencePath": "/pension/jeju-jungmun",
+      "targetPath": "/daeri/jeju/seogwipo-si/",
+      "label": "제주 중문·서귀포 숙박시설 대리운전",
+      "description": "중문 관광권 숙소와 서귀포시 출발 장소·목적지별 상담을 안내합니다.",
+      "category": "숙박",
+      "featured": false,
+      "relatedPath": "/daeri/activities/stay/"
+    },
+    {
+      "topic": "부산 해운대 숙박시설 대리운전",
+      "referencePath": "/pension/busan-haeundae",
+      "targetPath": "/daeri/busan/haeundae-gu/",
+      "label": "부산 해운대 숙박시설 대리운전",
+      "description": "해운대 호텔·펜션·숙소의 차량 위치와 귀가 목적지를 확인합니다.",
+      "category": "숙박",
+      "featured": false,
+      "relatedPath": "/daeri/activities/stay/"
+    },
+    {
+      "topic": "무주·덕유산 펜션 대리운전",
+      "referencePath": "/pension/muju-deogyusan",
+      "targetPath": "/daeri/jeonbuk/muju-gun/",
+      "label": "무주·덕유산 펜션 대리운전",
+      "description": "덕유산 관광권 숙소·펜션의 외곽 야간 출발과 기사 복귀 조건을 확인합니다.",
+      "category": "숙박",
+      "featured": false,
+      "relatedPath": "/daeri/activities/stay/"
+    },
+    {
+      "topic": "태백·정선 숙박시설 대리운전",
+      "referencePath": "/pension/taebaek-jeongseon",
+      "targetPath": "/daeri/gangwon/jeongseon-gun/",
+      "label": "태백·정선 숙박시설 대리운전",
+      "description": "정선·태백권 산간 펜션의 정확한 출발 시각과 기사 접근·복귀를 확인합니다.",
+      "category": "숙박",
+      "featured": false,
+      "relatedPath": "/daeri/gangwon/taebaek-si/"
     }
   ]
 }

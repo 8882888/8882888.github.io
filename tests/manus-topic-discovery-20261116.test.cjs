@@ -8,11 +8,11 @@ const root=path.join(__dirname,'..');
 const benchmark=require('../data/manus-service-url-benchmark-20261116.json');
 const origin='http://127.0.0.1:39843';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-test('Manus URL examples map to 15 distinct, useful existing Smart24 canonical topics',async()=>{
+test('48 supplied URLs map to existing source-backed Smart24 services without blanket priority indexing',async()=>{
  const entries=benchmark.entries;
- assert.equal(entries.length,15);
- assert.equal(new Set(entries.map(e=>e.referencePath)).size,15);
- assert.equal(new Set(entries.map(e=>e.targetPath)).size,15);
+ assert.equal(entries.length,48);
+ assert.equal(new Set(entries.map(e=>e.referencePath)).size,48);
+ assert(new Set(entries.map(e=>e.targetPath)).size>=30,'distinct canonical targets should remain useful');
  assert(entries.every(e=>e.targetPath.startsWith('/')&&e.targetPath.endsWith('/')));
  const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
  assert(server.includes('serviceTopicDiscoveryLinks()'));
@@ -32,14 +32,19 @@ test('Manus URL examples map to 15 distinct, useful existing Smart24 canonical t
   };
   const [homepage,coverage,xml]=await Promise.all([get('/'),get('/coverage/'),get('/sitemap-priority.xml')]);
   for(const page of [homepage,coverage])assert(page.includes('id="service-topic-discovery-20261116"'),'discovery section must be server-rendered');
+  assert(coverage.includes('id="service-topic-deep-links"'),'long-tail links must appear on coverage rather than flooding homepage');
   for(const entry of entries){
-   assert(homepage.includes('href="'+entry.targetPath+'"'),entry.topic+' not linked from homepage');
-   assert(coverage.includes('href="'+entry.targetPath+'"'),entry.topic+' not linked from coverage');
-   assert(xml.includes('<loc>https://jeongukdaeri.kr'+entry.targetPath+'</loc>'),entry.topic+' missing from dynamic priority sitemap');
-   const html=await get(entry.targetPath);
-   assert(html.includes('href="https://jeongukdaeri.kr'+entry.targetPath+'"'),entry.topic+' must self-canonicalize');
-   assert(!/<meta\\s+name="robots"\\s+content="[^"]*noindex/i.test(html),entry.topic+' must not be noindex');
+   if(entry.featured!==false)assert(homepage.includes('href="'+entry.targetPath+'"'),entry.topic+' headline link missing');
+   assert(coverage.includes('href="'+entry.targetPath+'"'),entry.topic+' must link from coverage');
+   if(entry.featured!==false)assert(xml.includes('<loc>https://jeongukdaeri.kr'+entry.targetPath+'</loc>'),entry.topic+' missing priority sitemap');
   }
-  console.log('PASS 15 service-topic canonical routes, homepage and coverage links, and priority sitemap');
+  // Verify every distinct target returns canonical HTML, without 48 redundant fetches.
+  for(const target of new Set(entries.map(e=>e.targetPath))){
+   const html=await get(target);
+   assert(html.includes('href="https://jeongukdaeri.kr'+target+'"'),target+' must self-canonicalize');
+   if(entries.some(e=>e.targetPath===target&&e.featured!==false))assert(!/<meta\\s+name="robots"\\s+content="[^"]*noindex/i.test(html),target+' key hub must be indexable');
+  }
+  for(const entry of entries.filter(e=>e.featured===false))assert(!xml.includes('<loc>https://jeongukdaeri.kr'+entry.targetPath+'</loc>')||entries.some(x=>x.targetPath===entry.targetPath&&x.featured!==false)||['/설악산탁송/','/지리산탁송/','/route-taksong/'].includes(entry.targetPath),'detail pages should not be added simply for supplied keyword examples');
+  console.log('PASS 48 supplied reference paths, deduplicated real canonical targets, full coverage navigation and curated priority sitemap');
  }finally{child.kill()}
 });
