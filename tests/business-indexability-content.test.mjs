@@ -46,3 +46,26 @@ test('source audit checks all final business URLs and reports live X-Robots-Tag 
  assert.match(audit,/robotsContentType/);
  assert.match(audit,/xRobotsTag/);
 });
+
+test('all six business pages use unique concise descriptions, OG parity and factual schema',()=>{
+ const slugs=['business',...categories.map(x=>x[0])], descriptions=new Set();
+ for(const slug of slugs){
+  const html=read(slug==='business'?'business/index.html':'business/'+slug+'/index.html');
+  const route=slug==='business'?'/business/':'/business/'+slug+'/';
+  const desc=html.match(/<meta name="description" content="([^"]+)"/)?.[1]||'';
+  const og=html.match(/<meta property="og:description" content="([^"]+)"/)?.[1]||'';
+  assert.ok([...desc].length>45&&[...desc].length<=80,route+' 80 characters');
+  assert.equal(og,desc,route+' OG description parity');
+  assert.ok(!descriptions.has(desc),route+' unique description');
+  descriptions.add(desc);
+  const docs=[...html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map(x=>JSON.parse(x[1]));
+  assert.ok(docs.length>0,route+' JSON-LD exists');
+  if(slug==='business')continue;
+  const graph=docs.flatMap(x=>Array.isArray(x['@graph'])?x['@graph']:Array.isArray(x)?x:[x]);
+  const webpage=graph.find(x=>x['@type']==='WebPage');
+  const breadcrumb=graph.find(x=>x['@type']==='BreadcrumbList');
+  assert.equal(webpage?.url,'https://jeongukdaeri.kr'+route,route+' WebPage canonical');
+  assert.equal(webpage?.description,desc,route+' WebPage description');
+  assert.equal(breadcrumb?.itemListElement?.at(-1)?.item,webpage.url,route+' BreadcrumbList canonical');
+ }
+});
