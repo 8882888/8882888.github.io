@@ -17,6 +17,7 @@ const routes=[
  {path:'/daeri/',must:['WebPage']},
  {path:'/coverage/',must:['WebPage']},
  {path:'/taksong/busan/gijang-gun/',must:['WebPage','BreadcrumbList']},
+ ...['used-car','rental-car','export-port','scrapyard','auction'].map(slug=>({path:'/business/'+slug+'/',must:['WebPage','BreadcrumbList']})),
  ...provinceSlugs.flatMap(slug=>['taksong','daeri'].map(kind=>({
   path:'/'+kind+'/'+slug+'/',must:['WebPage','BreadcrumbList']
  })))
