@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'server.js'
+      - 'data/priority-search-questions-20261116.json'
+      - 'tests/priority-search-questions-20261116.test.cjs'
       - 'data/seo-reviewed-local-originals-20261116.json'
       - 'tests/priority-originals-unique-seo-20261116.test.cjs'
       - '.github/workflows/priority-originals-unique-seo.yml'
@@ -26,6 +28,8 @@ jobs:
           node-version: '22'
       - name: Install production dependencies
         run: npm install --omit=dev --no-fund --no-audit
+      - name: Validate seven unique search question guides on canonical service pages
+        run: node --test tests/priority-search-questions-20261116.test.cjs
       - name: Validate seven target pages and citywide source disclaimers
         run: |
           node --check server.js
