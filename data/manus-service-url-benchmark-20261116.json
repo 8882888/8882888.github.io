@@ -1,0 +1,118 @@
+{
+  "asOf": "2026-11-16",
+  "referenceDomain": "smartdaeritaksong.kr",
+  "destinationDomain": "jeongukdaeri.kr",
+  "referenceStatus": "user-supplied URL paths; external body and Naver indexation not verified",
+  "notes": [
+    "Reference content must not be copied.",
+    "The last supplied URL included appended Korean text; '/airport-delivery/incheon' is treated as an intended path pending verification.",
+    "Only existing source-backed Smart24 pages are linked. No fake reviews or fare guarantees."
+  ],
+  "entries": [
+    {
+      "topic": "홈페이지",
+      "referencePath": "/",
+      "targetPath": "/",
+      "label": "스마트24 대리운전·24시탁송",
+      "description": "전국 상담, 예상요금 조회와 주요 운전 서비스를 함께 안내합니다."
+    },
+    {
+      "topic": "자동차탁송",
+      "referencePath": "/delivery",
+      "targetPath": "/taksong/",
+      "label": "전국 자동차탁송",
+      "description": "차량 인수지·인계지와 차종에 따라 탁송 절차 및 예약조건을 확인합니다."
+    },
+    {
+      "topic": "전국 지역",
+      "referencePath": "/regions",
+      "targetPath": "/coverage/",
+      "label": "17개 시·도 지역 안내",
+      "description": "지역별 대리운전·차량탁송 안내로 이동하며 실제 운행기록과 구별합니다."
+    },
+    {
+      "topic": "운행 증빙",
+      "referencePath": "/trust",
+      "targetPath": "/reviews/verified/",
+      "label": "검증된 완료 운행기록",
+      "description": "보존된 완료 기록과 당시 조건을 확인합니다. 현재 요금이나 기사 상주를 뜻하지 않습니다."
+    },
+    {
+      "topic": "기업 차량 이동",
+      "referencePath": "/business",
+      "targetPath": "/business/",
+      "label": "기업·렌트카·경매장 탁송",
+      "description": "법인 반복 운행과 차량 인수·인계 담당자, 승인 조건을 살펴봅니다."
+    },
+    {
+      "topic": "골프장",
+      "referencePath": "/golf",
+      "targetPath": "/service/golf/",
+      "label": "골프장 대리운전",
+      "description": "라운딩 종료 시각, 클럽하우스 차량 위치, 기사 복귀 조건을 확인합니다."
+    },
+    {
+      "topic": "펜션·숙박시설",
+      "referencePath": "/pension",
+      "targetPath": "/daeri/activities/stay/",
+      "label": "펜션·숙박시설 대리운전",
+      "description": "숙박시설 진입로와 주차 위치, 심야·외곽 예약 조건을 안내합니다."
+    },
+    {
+      "topic": "블로그",
+      "referencePath": "/blog",
+      "targetPath": "/blog/",
+      "label": "실제 공개 블로그 자료",
+      "description": "게시된 원문 링크와 기록 구분을 확인하며 허위 완료후기를 만들지 않습니다."
+    },
+    {
+      "topic": "장거리 자동차탁송",
+      "referencePath": "/delivery/long-distance",
+      "targetPath": "/service/long-distance-taksong/",
+      "label": "장거리 자동차탁송",
+      "description": "장거리 차량 이동 시 인수 시간, 도로거리, 기사의 복귀 여건을 확인합니다."
+    },
+    {
+      "topic": "공항 차량 인계",
+      "referencePath": "/delivery/airport",
+      "targetPath": "/blog/guides/airport-terminal-parking/",
+      "label": "공항 터미널·주차장 차량 인계",
+      "description": "공항 출발·도착 차량의 터미널·주차장과 키 전달 방법을 안내합니다."
+    },
+    {
+      "topic": "일반·근거리 자동차탁송",
+      "referencePath": "/delivery/local",
+      "targetPath": "/service/taksong/",
+      "label": "일반·근거리 자동차탁송",
+      "description": "도심 및 가까운 지역 차량 이동의 인수·인계 절차를 확인합니다."
+    },
+    {
+      "topic": "속초 차량탁송",
+      "referencePath": "/delivery/sokcho",
+      "targetPath": "/taksong/gangwon/sokcho-si/",
+      "label": "속초 자동차탁송",
+      "description": "속초 시내와 산행·관광지 출발 차량의 지역·시간별 상담 안내입니다."
+    },
+    {
+      "topic": "태백 차량탁송",
+      "referencePath": "/delivery/taebaek",
+      "targetPath": "/taksong/gangwon/taebaek-si/",
+      "label": "태백 자동차탁송",
+      "description": "산간·외곽 탁송의 차량 인계 장소와 기사 접근·복귀 여건을 안내합니다."
+    },
+    {
+      "topic": "제주항 연계 차량탁송",
+      "referencePath": "/delivery/jeju-port",
+      "targetPath": "/taksong/jeju/",
+      "label": "제주도·항만 차량탁송",
+      "description": "제주도 내 로드탁송과 선박 선적이 필요한 운송을 분리해 상담합니다."
+    },
+    {
+      "topic": "인천공항 연계 차량탁송",
+      "referencePath": "/airport-delivery/incheon",
+      "targetPath": "/taksong/incheon/",
+      "label": "인천 지역·공항 연계 차량탁송",
+      "description": "인천 출발·도착 지역 정보와 공항 차량 인계 지점을 구분해 확인합니다."
+    }
+  ]
+}

@@ -2,14 +2,9 @@
 // Read-only, public response comparison. Not a search index count or ranking tool.
 const fs=require('node:fs');
 const path=require('node:path');
-const HOSTS={manus:'https://daeriapp-yjhdsujh.manus.space',smart24:'https://jeongukdaeri.kr'};
-const pairs=[
- {topic:'홈페이지',manus:'/',smart24:'/'},
- {topic:'설악산탁송',manus:'/delivery/mountain/seoraksan',smart24:'/%EC%84%A4%EC%95%85%EC%82%B0%ED%83%81%EC%86%A1/'},
- {topic:'대전대리운전',manus:'/regions/%EB%8C%80%EC%A0%84',smart24:'/daeri/daejeon/'},
- {topic:'원주대리운전',manus:'/regions/%EC%9B%90%EC%A3%BC',smart24:'/daeri/gangwon/wonju-si/'},
- {topic:'수원대리운전',manus:'/regions/%EC%88%98%EC%9B%90',smart24:'/daeri/gyeonggi/suwon-si/'}
-];
+const benchmark=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/manus-service-url-benchmark-20261116.json'),'utf8'));
+const HOSTS={manus:'https://'+benchmark.referenceDomain,smart24:'https://'+benchmark.destinationDomain};
+const pairs=benchmark.entries.map(({topic,referencePath,targetPath})=>({topic,manus:referencePath,smart24:targetPath}));
 const attr=(tag,key)=>{
  const m=String(tag||'').match(new RegExp('(?:\\s|<)'+key+'\\s*=\\s*(?:"([^"]*)"|\\x27([^\\x27]*)\\x27|([^\\s>]+))','i'));
  return m?(m[1]??m[2]??m[3]??''):'';
@@ -28,7 +23,7 @@ function xRobotsExcludesYeti(header){
 async function inspect(site,route){
  const url=HOSTS[site]+route;
  try{
-  const response=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(17000),
+  const response=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(site==='manus'?7000:17000),
    headers:{'user-agent':'Mozilla/5.0 (compatible; Yeti/1.1; +https://naver.me/spd)',
     accept:'text/html,application/xhtml+xml,application/xml,text/plain'}});
   const html=await response.text(),mtags=tags(html,'meta'),links=tags(html,'link');
@@ -56,7 +51,7 @@ async function run(){
   const [manus,smart24]=await Promise.all([inspect('manus',pair.manus),inspect('smart24',pair.smart24)]);
   rows.push({topic:pair.topic,manus,smart24});
  }
- const comparison={generatedAt:new Date().toISOString(),scope:'Public pages only; no Search Advisor authentication; no claim about actual Naver indexing',rows};
+ const comparison={generatedAt:new Date().toISOString(),scope:'15 owner-supplied Manus URLs versus canonical Smart24 topic routes; public pages only; no Search Advisor authentication; no actual indexed count',rows};
  fs.mkdirSync('audit',{recursive:true});
  fs.writeFileSync('audit/manus-smart24-comparison.json',JSON.stringify(comparison,null,2)+'\n');
  const table=[
