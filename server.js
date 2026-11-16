@@ -2202,7 +2202,7 @@ function applySeo(html,route){
    '@context':'https://schema.org','@type':'WebPage',
    name, url:host+route,
    description:rule.description||'스마트24 대리운전·자동차탁송 안내',
-   isPartOf:{'@id':host+'/#website'}
+   isPartOf:{'@type':'WebSite',name:SITE_NAME,url:host+'/','@id':host+'/#website'}
   };
   const safe=JSON.stringify(schema).replace(/</g,'\u005c\u0075'+'003c');
   html=html.replace('</head>','<script type="application/ld+json">'+safe+'</script></head>');
