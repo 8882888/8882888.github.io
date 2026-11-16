@@ -20,9 +20,18 @@ for(const marker of [
  'if(!actualPublic&&!actualHistory){',
  'r.level===\'리\'',
  '<meta name="robots" content="noindex,follow">',
- "const compactLocalTemplate=['읍','면','동','리'].includes(r.level)",
- "(compactLocalTemplate?'':companySection+blogKeywordGuide)"
+ "const compactLocalTemplate=['읍','면','동','리'].includes(r.level)"
 ])assert(server.includes(marker),'Sparse locality duplicate suppression missing: '+marker);
+// Reviewed priority pages intentionally omit a repetitive provider-keyword
+// advertisement, but still retain the required regional blog keyword guide.
+// Both legacy and scope-reviewed shapes keep source-empty locality suppression.
+assert(
+ server.includes("(compactLocalTemplate?'':companySection+blogKeywordGuide)")||
+ server.includes("(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)?blogKeywordGuide:companySection+blogKeywordGuide))"),
+ 'Sparse locality guard or reviewed-source keyword selection missing'
+);
+assert(server.includes("priorityOriginalSourceMarkup(r.full_name,kind)"),
+ 'Priority originals must be linked from existing service pages');
 assert(server.includes("regionAncestors(r)")&&server.includes('regionHistoryAllLink'),
  'Preserve actual region navigation and evidence links');
 // 2: Defer expensive offscreen mobile painting and nonpriority brand artwork.
