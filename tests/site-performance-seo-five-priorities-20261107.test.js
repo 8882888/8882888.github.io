@@ -27,7 +27,8 @@ for(const marker of [
 // Both legacy and scope-reviewed shapes keep source-empty locality suppression.
 assert(
  server.includes("(compactLocalTemplate?'':companySection+blogKeywordGuide)")||
- server.includes("(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)?blogKeywordGuide:companySection+blogKeywordGuide))"),
+ server.includes("(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)?blogKeywordGuide:companySection+blogKeywordGuide))")
+ ||server.includes("(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)&&r.full_name!=='부산광역시 기장군'?blogKeywordGuide:companySection+blogKeywordGuide))"),
  'Sparse locality guard or reviewed-source keyword selection missing'
 );
 assert(server.includes("priorityOriginalSourceMarkup(r.full_name,kind)"),
