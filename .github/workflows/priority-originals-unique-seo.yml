@@ -1,0 +1,33 @@
+name: Priority originals and concise Naver regional SEO
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'data/seo-reviewed-local-originals-20261116.json'
+      - 'tests/priority-originals-unique-seo-20261116.test.cjs'
+      - '.github/workflows/priority-originals-unique-seo.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'data/seo-reviewed-local-originals-20261116.json'
+      - 'tests/priority-originals-unique-seo-20261116.test.cjs'
+      - '.github/workflows/priority-originals-unique-seo.yml'
+permissions:
+  contents: read
+jobs:
+  unique-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install production dependencies
+        run: npm install --omit=dev --no-fund --no-audit
+      - name: Validate seven target pages and citywide source disclaimers
+        run: |
+          node --check server.js
+          node --check tests/priority-originals-unique-seo-20261116.test.cjs
+          node --test tests/priority-originals-unique-seo-20261116.test.cjs
