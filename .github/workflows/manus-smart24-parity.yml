@@ -7,6 +7,9 @@ on:
       - 'scripts/compare-manus-smart24-live.cjs'
       - 'data/manus-service-url-benchmark-20261116.json'
       - 'server.js'
+      - 'index.html'
+      - 'data/seo-pages.json'
+      - 'tests/korean-site-name-naver.test.cjs'
       - 'sitemap-priority.xml'
       - 'tests/manus-topic-discovery-20261116.test.cjs'
       - '.github/workflows/manus-smart24-parity.yml'
@@ -30,6 +33,8 @@ jobs:
         run: node --test tests/manus-topic-discovery-20261116.test.cjs
       - name: Check comparison script syntax
         run: node --check scripts/compare-manus-smart24-live.cjs
+      - name: Validate Korean site-name crawlability and schema
+        run: node --test tests/korean-site-name-naver.test.cjs
       - name: Compare original publicly reachable pages
         run: node scripts/compare-manus-smart24-live.cjs
       - name: Upload crawler-facing report without claiming indexed counts

@@ -2202,7 +2202,7 @@ function applySeo(html,route){
    '@context':'https://schema.org','@type':'WebPage',
    name, url:host+route,
    description:rule.description||'스마트24 대리운전·자동차탁송 안내',
-   isPartOf:{'@type':'WebSite',name:SITE_NAME,url:host+'/'}
+   isPartOf:{'@id':host+'/#website'}
   };
   const safe=JSON.stringify(schema).replace(/</g,'\u005c\u0075'+'003c');
   html=html.replace('</head>','<script type="application/ld+json">'+safe+'</script></head>');
@@ -2216,6 +2216,15 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
  const isHtml=status===200&&type.startsWith('text/html;');
  if(isHtml){
   let html=Buffer.isBuffer(body)?body.toString('utf8'):String(body);
+  // Keep an explicit, single Korean site name on every crawler-facing HTML page.
+  // WebSite structured data remains root-only: no new duplicate WebSite nodes.
+  const koreanSiteTag='<meta property="og:site_name" content="'+SITE_NAME+'">';
+  if(/<meta\b(?=[^>]*\bproperty=["']og:site_name["'])[^>]*>/i.test(html))
+   html=html.replace(/<meta\b(?=[^>]*\bproperty=["']og:site_name["'])[^>]*>/gi,koreanSiteTag);
+  else if(html.includes('</head>'))html=html.replace('</head>',koreanSiteTag+'</head>');
+  if(!/<meta\b(?=[^>]*\bname=["']application-name["'])[^>]*>/i.test(html)&&html.includes('</head>'))
+   html=html.replace('</head>','<meta name="application-name" content="'+SITE_NAME+'"></head>');
+
   // These three audited information pages are rendered without central SEO
   // overrides by their legacy handlers; synchronize their head and WebPage data.
   if(['/service/long-distance-daeri/','/recruit/daeri/','/recruit/taksong/'].includes(res._smartPath||''))
