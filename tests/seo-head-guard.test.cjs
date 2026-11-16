@@ -51,3 +51,9 @@ test('source-reviewed priority topic and 16-char locality context survive shorte
  assert.match(tag,/1811-4294/);
  assert.equal(tag.match(/content="([^"]*)"/)?.[1],og.match(/content="([^"]*)"/)?.[1]);
 });
+
+test('845-million possible route pairs are never bulk-promoted with generic schema',()=>{
+ const value=normalizeSeoHead(html('index,follow','',long,'/routes/taksong/area-1/area-2/'));
+ assert.doesNotMatch(value,/"@type":"WebPage"/);
+ assert.match(value,/index,follow/);
+});
