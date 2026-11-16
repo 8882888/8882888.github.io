@@ -1,0 +1,79 @@
+name: All sitemap pages meta 80 and JSON-LD census (read only)
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-all-meta-jsonld.mjs'
+      - '.github/workflows/full-meta-jsonld-census.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: smart24-meta-jsonld-readonly-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  full-local-inventory:
+    name: Full local source audit - issues are NOT a green SEO result
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check of read-only auditor and server
+        run: |
+          node --check scripts/audit-all-meta-jsonld.mjs
+          node --check server.js
+      - name: Install production dependencies (audit runner only)
+        run: npm install --omit=dev --no-audit --no-fund
+      - name: Check ALL sitemap URLs via local source-rendered server
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=39877 PUBLIC_HOST=jeongukdaeri.kr node server.js >/tmp/smart24-meta-audit-server.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 60); do
+            if curl -fsS --max-time 2 http://127.0.0.1:39877/health >/dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS --max-time 10 http://127.0.0.1:39877/health >/dev/null
+          AUDIT_TRANSPORT_ORIGIN=http://127.0.0.1:39877 node scripts/audit-all-meta-jsonld.mjs
+      - name: Upload every URL plus problem reports even if audit fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-full-meta-jsonld-source-census
+          retention-days: 30
+          path: |
+            full-meta-jsonld-audit.json
+            full-meta-jsonld-audit.csv
+            full-meta-jsonld-summary.md
+            /tmp/smart24-meta-audit-server.log
+          if-no-files-found: warn
+  production-sample:
+    name: Live 120 URL cross-check - NOT a full production audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: node --check scripts/audit-all-meta-jsonld.mjs
+      - name: Rate-limited public HTML sample from ALL sitemap inventory
+        env:
+          AUDIT_MAX_URLS: '120'
+        run: node scripts/audit-all-meta-jsonld.mjs
+      - name: Upload live URL inspection details even if audit fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart24-meta-jsonld-live-120-sample
+          retention-days: 30
+          path: |
+            full-meta-jsonld-audit.json
+            full-meta-jsonld-audit.csv
+            full-meta-jsonld-summary.md
+          if-no-files-found: warn
