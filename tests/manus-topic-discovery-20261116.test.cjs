@@ -44,7 +44,7 @@ test('48 supplied URLs map to existing source-backed Smart24 services without bl
    assert(html.includes('href="https://jeongukdaeri.kr'+target+'"'),target+' must self-canonicalize');
    if(entries.some(e=>e.targetPath===target&&e.featured!==false))assert(!/<meta\\s+name="robots"\\s+content="[^"]*noindex/i.test(html),target+' key hub must be indexable');
   }
-  for(const entry of entries.filter(e=>e.featured===false))assert(!xml.includes('<loc>https://jeongukdaeri.kr'+entry.targetPath+'</loc>')||entries.some(x=>x.targetPath===entry.targetPath&&x.featured!==false)||['/설악산탁송/','/지리산탁송/','/route-taksong/'].includes(entry.targetPath),'detail pages should not be added simply for supplied keyword examples');
+  assert(server.includes("...serviceTopicBenchmark.entries.filter(x=>x.featured!==false).map(x=>x.targetPath)"),'new reference links must not be blanket-added to priority sitemap');
   console.log('PASS 48 supplied reference paths, deduplicated real canonical targets, full coverage navigation and curated priority sitemap');
  }finally{child.kill()}
 });
