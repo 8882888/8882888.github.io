@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "notes": "Only manually confirmed existing blog/posts.json entries; these links are sources, not automatically verified completed rides or proof of innovation-district work.",
+  "items": [
+    {
+      "region": "세종특별자치시",
+      "kind": "daeri",
+      "post_id": "224446554098",
+      "scope": "related_service",
+      "note": "세종시 일일기사 공개 글입니다. 세종대리운전 완료 운행기록으로 표시하지 않습니다."
+    },
+    {
+      "region": "세종특별자치시",
+      "kind": "taksong",
+      "post_id": "224363608182",
+      "scope": "city_or_origin",
+      "note": "세종경매장 출발 탁송 공개 원문입니다. 다른 세종 지역의 실적을 뜻하지 않습니다."
+    },
+    {
+      "region": "세종특별자치시",
+      "kind": "taksong",
+      "post_id": "224428208457",
+      "scope": "city_or_origin",
+      "note": "세종 K카 경매장 차량탁송 관련 공개 글이며, 상세 운행 조건은 원문을 확인합니다."
+    },
+    {
+      "region": "부산광역시 기장군",
+      "kind": "taksong",
+      "post_id": "224452085535",
+      "scope": "city_or_origin",
+      "note": "부산 기장군에서 경북 경산시로 연결된 탁송 공개 원문입니다."
+    },
+    {
+      "region": "부산광역시 기장군",
+      "kind": "taksong",
+      "post_id": "224433909733",
+      "scope": "regional_guide",
+      "note": "기장군 경동오토필드와 차량 인수 안내 글이며, 개별 운행 완료 근거는 아닙니다."
+    },
+    {
+      "region": "강원특별자치도 원주시",
+      "kind": "taksong",
+      "post_id": "224378247057",
+      "scope": "city_guide",
+      "note": "원주시 전체의 탁송 안내 글입니다. 원주혁신도시에서 완료한 운행이라고 주장하지 않습니다."
+    },
+    {
+      "region": "경상남도 진주시",
+      "kind": "taksong",
+      "post_id": "224426796008",
+      "scope": "regional_guide",
+      "note": "진주혁신도시가 포함된 차량탁송 지역 안내 원문이며 완료 운행 증빙과 구분합니다."
+    },
+    {
+      "region": "전라남도 나주시",
+      "kind": "taksong",
+      "post_id": "224448767093",
+      "scope": "city_guide",
+      "note": "나주시를 포함한 전남 지역 안내입니다. 빛가람혁신도시 개별 운행 기록이 아닙니다."
+    },
+    {
+      "region": "경상북도 김천시",
+      "kind": "taksong",
+      "post_id": "224438735766",
+      "scope": "city_guide",
+      "note": "김천시 관련 차량탁송 지역 안내이며 율곡동의 완료 운행 실적을 뜻하지 않습니다."
+    }
+  ]
+}
