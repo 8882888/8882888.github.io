@@ -94,6 +94,32 @@ const seoulEditorialGroups=load('data/seoul-taksong-editorial.json').groups;
 const publishedBlogPosts=load('blog/posts.json').filter(p=>p&&typeof p.title==='string'&&/^https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+$/.test(p.url));
 
 const publishedBlogById=new Map(publishedBlogPosts.map(p=>[String(p.id),p]));
+
+const priorityOriginals=load('data/seo-reviewed-local-originals-20261116.json').items;
+const priorityOriginalsByKey=new Map();
+for(const x of priorityOriginals){
+ const post=publishedBlogById.get(String(x.post_id));
+ if(!post)throw Error('Curated source article missing: '+x.post_id);
+ const key=x.kind+'|'+x.region;
+ const row=priorityOriginalsByKey.get(key)||[];
+ row.push({post,note:x.note,scope:x.scope});
+ priorityOriginalsByKey.set(key,row);
+}
+// Source articles and completed ride records have separate evidence standards.
+// The reviewed city guide must never be presented as a verified district ride.
+function priorityOriginalSourceMarkup(region,kind,inHub=false){
+ const entries=priorityOriginalsByKey.get(kind+'|'+region)||[];
+ if(!entries.length)return '';
+ const items=entries.map(({post,note})=>'<li><a href="'+esc(post.url)+'" rel="noopener noreferrer" target="_blank">'+
+  esc(post.title)+'</a><p>'+esc(note)+'</p></li>').join('');
+ return inHub
+  ?'<div class="innovation-originals"><h3>지역 관련 공개 원문</h3><ul>'+items+'</ul>'+
+   '<p>도시 전체 안내는 혁신도시 특정 장소의 완료 운행 증빙과 구분합니다.</p></div>'
+  :'<section id="priority-original-sources"><h2>'+esc(region)+' '+(kind==='daeri'?'대리운전':'자동차탁송')+
+   ' 확인 가능한 블로그 원문</h2><p>공개 원문을 확인할 수 있도록 연결했습니다. 다른 서비스·인접 지역 자료는 이 지역의 완료 운행후기로 계산하지 않습니다. 실제 완료 운행기록은 별도 기록에서 확인합니다.</p><ul>'+
+   items+'</ul><p><a href="/reviews/verified/">검증된 완료 운행기록 보기</a> · <a href="/region/innovation-cities/">혁신도시 지역 안내</a></p></section>';
+}
+
 const priorityBlogLinksByKey=new Map(load('data/priority-blog-links.json').pages.map(p=>[p.kind+'|'+p.region,p]));
 const daeriBlogEditorial=require('./lib/daeri-blog-editorial');
 const daeriTravelGuides=require('./lib/daeri-travel-guides');
@@ -1437,7 +1463,7 @@ async function servicePage(r,kind){
    '<p>'+esc(name)+'에서 '+(kind==='taksong'?'자동차탁송을 이용하려면 차량 인수 장소와 목적지, 차종, 주행 가능 상태 및 희망 인계 시각을':'대리운전을 이용하려면 출발지와 목적지, 희망 출발 시각 및 경유·대기 여부를')+' 알려주세요. '+esc(regionalAnswerContext)+' 도로거리와 시간대, 기사 접근·복귀 여건에 따라 예상요금과 배차 가능 여부가 달라집니다. 최종 금액과 실제 기사 배정은 상담으로 확인합니다.</p>'+
    '<p>'+(historicalMatches.length||matches.length?'이 지역과 연관된 기존 완료 운행기록은 아래에서 날짜·구간·당시 요금을 확인할 수 있습니다. 과거 요금은 현재 고정 요금이 아닙니다.':'현재 이 지역의 확인된 완료 운행기록을 이 페이지에 연결하지 않았습니다. 확인되지 않은 후기를 작성하지 않습니다.')+'</p>'+
    '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역 예상요금 조회</a> · <a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">실제 운행기록 검색</a> · <a href="/'+kind+'/">전국 '+(kind==='taksong'?'자동차탁송':'대리운전')+' 안내</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>':'';
- const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+innovationCityPanel(r,kind)+innovationCity100Panel(r,kind)+regionalDecisionPanel(r,kind,matches,historicalMatches)+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+(compactLocalTemplate?'':companySection+blogKeywordGuide)+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'&&!compactLocalTemplate?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+(compactLocalTemplate?'':keywordEngine.regionSection(r,kind))+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
+ const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+priorityOriginalSourceMarkup(r.full_name,kind)+'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+innovationCityPanel(r,kind)+innovationCity100Panel(r,kind)+regionalDecisionPanel(r,kind,matches,historicalMatches)+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+(compactLocalTemplate||priorityOriginalsByKey.has(kind+'|'+r.full_name)?'':companySection+blogKeywordGuide)+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'&&!compactLocalTemplate?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+(compactLocalTemplate?'':keywordEngine.regionSection(r,kind))+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Show useful local service information and a phone CTA before a generic promotional card.
@@ -2965,7 +2991,12 @@ if(pathname==='/region/innovation-cities'){
 if(pathname==='/region/innovation-cities/'){
  const cards=innovationFocusAreas.map(area=>{
   const r=regionByFullName.get(area.region),guide=innovationAreas[area.region];
-  return '<section><h2>'+esc(area.pickup)+'</h2><p>'+esc(guide[1])+'</p><p>'+['daeri','taksong'].map(kind=>'<a href="'+servicePath(r,kind)+'">'+esc(innovationSearchFocus(area.region,kind).keyword)+'</a>').join(' · ')+'</p></section>';
+  const hints=[...new Set(['daeri','taksong'].flatMap(kind=>
+   (innovationCity100ByRegionKind.get(area.region+'|'+kind)||[]).slice(0,3).map(x=>x.locality)))].slice(0,3);
+  const sources=priorityOriginalSourceMarkup(area.region,'taksong',true)+priorityOriginalSourceMarkup(area.region,'daeri',true);
+  return '<section><h2>'+esc(area.pickup)+'</h2><p>'+esc(guide[1])+'</p>'+
+   (hints.length?'<p><strong>출발 장소별 확인:</strong> '+hints.map(esc).join(' · ')+'</p>':'')+
+   '<p>'+['daeri','taksong'].map(kind=>'<a href="'+servicePath(r,kind)+'">'+esc(innovationSearchFocus(area.region,kind).keyword)+'</a>').join(' · ')+'</p>'+sources+'</section>';
  }).join('');
  const body='<section><h1>세종·지방 혁신도시 대리운전·탁송</h1><p>전주·완주, 진천·음성처럼 여러 시·군에 걸친 혁신도시는 실제 차량이 있는 행정구역을 선택해 주세요. 아래는 세종과 혁신도시·혁신지구가 있는 12개 행정구역의 안내입니다.</p><p>대리운전은 고객 동승·출발 시각·목적지·경유 여부를, 탁송은 차종·차량 상태·열쇠 인수인·도착지 수령인을 확인합니다. 요금은 거리·시간대·기사 접근과 복귀 여건에 따라 상담 후 확정합니다.</p><p><a href="/coverage/">전국 17개 시·도 지역별 서비스 비교</a> · <a href="/region/">일반 행정구역으로 찾기</a></p><p><a class="cta" href="tel:18114294">예약 상담 1811-4294</a></p></section>'+cards+'<section><h2>운행정보 확인 기준</h2><p>혁신도시·혁신지구의 출발 또는 도착이 확인되는 실제 운행정보만 해당 구역의 후기로 연결합니다. 시·군·구 전체 기록은 구역별 실적과 구분합니다. 과거 요금은 현재 예약 견적이 아닙니다.</p></section>';
  return respond(res,200,layout('세종·지방 혁신도시 대리운전·탁송 지역 안내','세종·원주·진주·나주·김천·전주·완주·진천·음성·대구 신서·울산 우정·부산 동삼 혁신도시에서 출발하는 대리운전·자동차탁송 이용 안내입니다. 차량 주차 위치, 기사 접근·복귀, 장거리 예약과 요금조회 방법을 지역별로 구분합니다.',body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/innovation-cities/'));
