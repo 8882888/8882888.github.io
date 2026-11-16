@@ -8,6 +8,8 @@ test('bounded low-concurrency probe includes homepage, robots and key regional U
 test('intermittent timeouts, non-200 and missing canonical are real access risks',()=>{
  const sample={status:200,route:'/',elapsedMs:234,contentType:'text/html; charset=utf-8',xRobotsTag:'',body:'<head><link rel="canonical" href="https://jeongukdaeri.kr/"></head>'};
  assert.deepEqual(assess(sample),[]);
+ assert.deepEqual(assess({...sample,route:'/설악산탁송/',body:'<head><link rel="canonical" href="https://jeongukdaeri.kr/설악산탁송/"></head>'}),[]);
+ assert.deepEqual(assess({...sample,route:'/지리산탁송/',body:'<head><link rel="canonical" href="https://jeongukdaeri.kr/%EC%A7%80%EB%A6%AC%EC%82%B0%ED%83%81%EC%86%A1/"></head>'}),[]);
  assert(assess({...sample,status:503}).includes('http_503'));
  assert(assess({...sample,elapsedMs:10000}).includes('slow_over_10_seconds'));
  assert(assess({...sample,error:'TimeoutError: timeout'}).includes('connection_or_timeout'));

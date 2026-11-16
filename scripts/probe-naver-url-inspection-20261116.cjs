@@ -46,7 +46,7 @@ function assess(data){
     .some(x=>/\bnoindex\b/i.test(x));
    if(noindex)issues.push('html_noindex');
    const can=canonical(data.body),expected=new URL(data.route,base).href;
-   if(can.length!==1||can[0]!==expected)issues.push('canonical_mismatch_or_duplicate');
+   if(can.length!==1||new URL(can[0],base).href!==expected)issues.push('canonical_mismatch_or_duplicate');
   }
  }
  return issues;
