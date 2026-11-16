@@ -37,9 +37,11 @@ test((live?'production':'local')+' Naver can discover source-backed RSS and craw
    assert(ready,'local server ready');
   }
   const [home,gijang,feed]=await Promise.all([get('/'),get('/taksong/busan/gijang-gun/'),get('/rss.xml')]);
-  const rssLink='<link rel="alternate" type="application/rss+xml" title="스마트24 실제 완료 운행기록 RSS" href="'+hostname+'/rss.xml">';
+  // Static index.html already advertises RSS with a different title from the
+  // dynamic layout. Match the real semantic link, not a decorative title.
   for(const [name,html] of [['home',home.body],['gijang',gijang.body]]){
-   const matches=html.split(rssLink).length-1;
+   const matches=[...html.matchAll(/<link\\b[^>]*rel=["']alternate["'][^>]*type=["']application\\/rss\\+xml["'][^>]*href=["']([^"']+)["'][^>]*>/gi)]
+    .filter(m=>m[1]===hostname+'/rss.xml').length;
    assert.equal(matches,1,name+' must provide exactly one public RSS discovery link');
    assert(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html),name+' must stay indexable');
   }
