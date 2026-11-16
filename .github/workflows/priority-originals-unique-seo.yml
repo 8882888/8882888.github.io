@@ -38,6 +38,11 @@ jobs:
         run: node --test tests/priority-search-questions-20261116.test.cjs
       - name: Validate 23 priority Naver short meta and Open Graph descriptions
         run: node --test tests/naver-priority-meta-80-20261116.test.cjs
+      - name: Validate business metadata and previously exposed Jegi-dong discovery
+        run: |
+          node --test tests/business-indexability-content.test.mjs
+          node --test tests/seo-sitemap-regression.test.js
+          node --test tests/business-sitemap-runtime-20261117.test.cjs
       - name: Validate seven target pages and citywide source disclaimers
         run: |
           node --check server.js
