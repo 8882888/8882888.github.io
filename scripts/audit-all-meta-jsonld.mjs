@@ -87,13 +87,13 @@ async function worker(){
     const html=await r.text();
     // Inspect the FINAL HTML, including JSON-LD embedded in body as well as head.
     // Count Unicode code points after decoding HTML entities, not HTML source bytes.
-    const head=html.split(/<\\/head>/i)[0];
-    const attr=(tag,key)=>(tag.match(new RegExp('(?:\\\\s|<)'+key+'\\\\s*=\\\\s*(?:"([^\"]*)"|\\\\x27([^\\\\x27]*)\\\\x27|([^\\\\s>]+))','i'))?.slice(1).find(x=>x!==undefined)||'');
-    const entity=value=>String(value||'').replace(/&(#(?:x[\\da-f]+|\\d+)|amp|lt|gt|quot|apos|nbsp);/gi,(whole,k)=>{
+    const head=html.split(/<\/head>/i)[0];
+    const attr=(tag,key)=>(tag.match(new RegExp('(?:\\s|<)'+key+'\\s*=\\s*(?:"([^\"]*)"|\\x27([^\\x27]*)\\x27|([^\\s>]+))','i'))?.slice(1).find(x=>x!==undefined)||'');
+    const entity=value=>String(value||'').replace(/&(#(?:x[\da-f]+|\d+)|amp|lt|gt|quot|apos|nbsp);/gi,(whole,k)=>{
       if(k[0]==='#'){const n=/^#x/i.test(k)?parseInt(k.slice(2),16):parseInt(k.slice(1),10);return n>0&&n<=0x10ffff?String.fromCodePoint(n):whole}
       return ({amp:'&',lt:'<',gt:'>',quot:'"',apos:"'",nbsp:' '})[k.toLowerCase()]||whole;
     });
-    const metaTags=[...head.matchAll(/<meta\\b[^>]*>/gi)].map(m=>m[0]);
+    const metaTags=[...head.matchAll(/<meta\b[^>]*>/gi)].map(m=>m[0]);
     const metaValues=(key,value)=>metaTags.filter(t=>attr(t,key).toLowerCase()===value).map(t=>entity(attr(t,'content')).trim());
     const descriptions=metaValues('name','description'),ogDescriptions=metaValues('property','og:description');
     metaDescription=descriptions[0]||'';metaCount=descriptions.length;metaLength=Array.from(metaDescription).length;
@@ -104,7 +104,7 @@ async function worker(){
     if(ogDescriptions.length>1)metadataWarnings.push('og_multiple_description');
     if(ogDescriptionLength>80)metadataWarnings.push('og_description_over_80');
     if(ogDescriptions.length&&metaDescription&&ogDescriptions[0]!==metaDescription)metadataWarnings.push('og_meta_description_different');
-    const ld=[...html.matchAll(/<script\\b(?=[^>]*\\btype\\s*=\\s*["']application\\/ld\\+json["'])[^>]*>([\\s\\S]*?)<\\/script>/gi)];
+    const ld=[...html.matchAll(/<script\b(?=[^>]*\btype\s*=\s*["']application\/ld\+json["'])[^>]*>([\s\S]*?)<\/script>/gi)];
     jsonldBlocks=ld.length;
     if(!jsonldBlocks)metadataWarnings.push('jsonld_missing');
     const schemas=[];
