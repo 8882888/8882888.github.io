@@ -24,11 +24,11 @@ const timeoutMs=10000;
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function attribute(tag,key){return tag.match(new RegExp('(?:\\s|<)'+key+'\\s*=\\s*["\\x27]([^"\\x27]*)["\\x27]','i'))?.[1]||''}
 function meta(html,key,value){
- return (html.match(/<meta\\b[^>]*>/gi)||[])
+ return (html.match(/<meta\b[^>]*>/gi)||[])
   .filter(x=>attribute(x,key).toLowerCase()===value.toLowerCase())
   .map(x=>attribute(x,'content'));
 }
-function canonical(html){return (html.match(/<link\\b[^>]*>/gi)||[])
+function canonical(html){return (html.match(/<link\b[^>]*>/gi)||[])
   .filter(x=>attribute(x,'rel').toLowerCase()==='canonical').map(x=>attribute(x,'href'))}
 function assess(data){
  const issues=[];
@@ -37,13 +37,13 @@ function assess(data){
   if(data.status!==200)issues.push(data.status>=300&&data.status<400?'redirect':'http_'+data.status);
   if(data.elapsedMs>=10000)issues.push('slow_over_10_seconds');
   if(data.status===200&&data.route.endsWith('.xml')&&!/xml/i.test(data.contentType))issues.push('wrong_sitemap_type');
-  if(data.status===200&&data.route==='/robots.txt'&&!/User-agent:\\s*\\*/i.test(data.body))issues.push('missing_robot_group');
-  if(data.status===200&&data.route==='/robots.txt'&&/^\\s*Disallow:\\s*\\/\\s*$/m.test(data.body))issues.push('robots_disallow_root');
+  if(data.status===200&&data.route==='/robots.txt'&&!/User-agent:\s*\*/i.test(data.body))issues.push('missing_robot_group');
+  if(data.status===200&&data.route==='/robots.txt'&&/^\s*Disallow:\s*\/\s*$/m.test(data.body))issues.push('robots_disallow_root');
   if(data.status===200&&data.route!=='/robots.txt'&&!data.route.endsWith('.xml')){
-   if(!/text\\/html/i.test(data.contentType))issues.push('wrong_html_type');
-   if(/\\bnoindex\\b/i.test(data.xRobotsTag))issues.push('http_noindex');
+   if(!/text\/html/i.test(data.contentType))issues.push('wrong_html_type');
+   if(/\bnoindex\b/i.test(data.xRobotsTag))issues.push('http_noindex');
    const noindex=meta(data.body,'name','robots').concat(meta(data.body,'name','yeti'))
-    .some(x=>/\\bnoindex\\b/i.test(x));
+    .some(x=>/\bnoindex\b/i.test(x));
    if(noindex)issues.push('html_noindex');
    const can=canonical(data.body),expected=new URL(data.route,base).href;
    if(can.length!==1||can[0]!==expected)issues.push('canonical_mismatch_or_duplicate');
