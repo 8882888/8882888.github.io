@@ -52,6 +52,7 @@ jobs:
           DYNAMIC_LIMIT: '600'
           DYNAMIC_SAMPLE_MODE: balanced
           DYNAMIC_CONCURRENCY: '1'
+          DYNAMIC_LIVE_DELAY_MS: '900' # at most ~1.1 req/s per shard; 4 shards max
         run: node scripts/audit-dynamic-off-sitemap.mjs
       - name: Upload every observed URL and findings even on failure
         if: always()
