@@ -1,0 +1,58 @@
+name: Priority originals and concise Naver regional SEO
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'data/seo-reviewed-local-originals-20261116.json'
+      - 'tests/priority-originals-unique-seo-20261116.test.cjs'
+      - '.github/workflows/priority-originals-unique-seo.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'data/seo-reviewed-local-originals-20261116.json'
+      - 'tests/priority-originals-unique-seo-20261116.test.cjs'
+      - '.github/workflows/priority-originals-unique-seo.yml'
+permissions:
+  contents: read
+jobs:
+  unique-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install production dependencies
+        run: npm install --omit=dev --no-fund --no-audit
+      - name: Validate seven target pages and citywide source disclaimers
+        run: |
+          node --check server.js
+          node --check tests/priority-originals-unique-seo-20261116.test.cjs
+          node --test tests/priority-originals-unique-seo-20261116.test.cjs
+
+  production-proof:
+    if: github.event_name == 'push'
+    needs: unique-evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check seven live originals and hub scope after Cloudtype release
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            echo "Official URL original-source verification $attempt/24"
+            if SMART24_AUDIT_LIVE=1 node --test tests/priority-originals-unique-seo-20261116.test.cjs; then
+              echo "### PASS source-linked priority pages match production" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$attempt" -lt 24 ]; then sleep 10; fi
+          done
+          echo "::error::Live Naver original-source pages were not verified on Cloudtype"
+          exit 1
