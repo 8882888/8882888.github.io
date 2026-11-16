@@ -2254,8 +2254,8 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   const shortMeta=naverPriorityShortMetaByPath.get(res._smartPath||'');
   if(shortMeta){
    const tags=[
-    {pattern:/<meta\\b(?=[^>]*\\bname=["']description["'])[^>]*>/i,tag:'<meta name="description" content="'+esc(shortMeta)+'">'},
-    {pattern:/<meta\\b(?=[^>]*\\bproperty=["']og:description["'])[^>]*>/i,tag:'<meta property="og:description" content="'+esc(shortMeta)+'">'}
+    {pattern:/<meta\b(?=[^>]*\bname=["']description["'])[^>]*>/i,tag:'<meta name="description" content="'+esc(shortMeta)+'">'},
+    {pattern:/<meta\b(?=[^>]*\bproperty=["']og:description["'])[^>]*>/i,tag:'<meta property="og:description" content="'+esc(shortMeta)+'">'}
    ];
    for(const {pattern,tag} of tags){
     if(pattern.test(html))html=html.replace(pattern,tag);
