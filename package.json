@@ -6,7 +6,7 @@
     "start": "node server.js",
     "check": "node --check server.js",
     "check:seo": "node --test tests/seo-sitemap-regression.test.js",
-    "check:naver:official": "node --test tests/naver-web-real-ctr-scorecard-20261117.test.mjs && node scripts/compare-naver-web-performance-20261117.mjs"
+    "check:naver:official": "node --test tests/naver-web-real-ctr-scorecard-20261117.test.mjs tests/naver-four-official-kpi-deltas-20261118.test.mjs && node scripts/compare-naver-web-performance-20261117.mjs && node scripts/measure-naver-four-official-kpis-20261118.mjs"
   },
   "engines": {
     "node": ">=20"
