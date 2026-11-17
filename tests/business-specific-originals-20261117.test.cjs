@@ -27,7 +27,8 @@ test('five existing canonical business guides have distinguishable source-scoped
   assert(section.includes('href="https://blog.naver.com/wjdtnr4757/'+row.source+'"'),row.slug+' existing original link');
   assert(!/확정 요금은|100% 배차|기사 상주 보장|공식 계약 확정/.test(section),row.slug+' no unsupported marketing claim');
   assert(html.indexOf('id="'+row.id+'"')>html.indexOf('<main'),'live visible SSR main '+row.slug);
-  assert(html.indexOf('id="'+row.id+'"')<html.indexOf('id="'+row.slug.split('-')[0]),'new steps precede the preexisting original section');
+  const older={ 'used-car':'usedcar-original-archive','rental-car':'rental-original-archive','export-port':'export-original-blog-guide','scrapyard':'scrapyard-original-blog-guide','auction':'auction-original-blog-guide' }[row.slug];
+  assert(html.indexOf('id="'+row.id+'"')<html.indexOf('id="'+older+'"'),'new steps precede existing original section');
   assert(html.includes('href="tel:18114294"'),row.slug+' original phone intact');
   assert(html.includes('href="/fare/?service=taksong"'),row.slug+' quote path intact');
   assert(!/name="robots" content="noindex/.test(html),row.slug+' no forced noindex');
