@@ -1342,8 +1342,8 @@ async function servicePage(r,kind){
  const rawSearchDesc=priorityMeta&&innovationFocus?focusedDesc:innovationFocus?innovationFocus.keyword+'. '+innovationFocus.pickup+' 출발 위치와 목적지, 희망 시각을 확인해 요금·배차를 상담합니다. 확인된 실제 운행정보만 후기에 연결합니다. 상담 '+PHONE+'.':ganghwaReviewPage?'강화대리운전 완료 운행후기 2건: 강화읍→검단아라동 45,000원, 갑곳리→선원면 20,000원. 강화읍·길상면·화도면·양도면·내가면·교동도 원문과 예약상담 1811-4294.':jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':busanReviewPage?'부산탁송 예약과 예상요금, 구·군별 차량 인수·인계 안내. 부산항·감만동·해운대·기장 자동차탁송·입출고 상담과 실제 운행기록을 확인합니다.':gijangTaksongPage?'부산 기장군탁송·기장탁송 차량 인수·인계 안내. 기장읍·정관읍·일광읍 차량 인수 위치, 장안읍·철마면 출고 탁송과 예상요금·예약상담 1811-4294.':priorityMeta?focusedDesc:kind==='taksong'?(verifiedTitleTrip?keyword+' 기존 완료구간 '+verifiedTitleTrip.departure+'→'+verifiedTitleTrip.destination+'. ':'확인된 해당 지역 운행완료 후기는 아직 연결되지 않았습니다. ')+focusedDesc:(verifiedDaeriTitleTrip?keyword+' 기존 완료구간 '+verifiedDaeriTitleTrip.departure+'→'+verifiedDaeriTitleTrip.destination+'. ':'해당 지역에 확인된 완료 대리운전 후기가 없다면 일반 안내와 구분합니다. ')+focusedDesc;
  const gangneungSearchDesc=r.full_name==='강원특별자치도 강릉시'
   ?(kind==='daeri'
-   ?'강릉대리운전 경포·안목·교동·주문진 출발, 차량 주차 위치와 장거리 경유지 확인. 공개된 과거 운행기록·요금조회·예약상담 1811-4294.'
-   :'강릉탁송 경포·주문진 차량 인수, 동해안 종주와 정비차량 출고 절차 구분. 공개된 과거 운행기록·요금조회·상담 1811-4294.')
+   ?'강릉대리운전 · 경포·안목·교동·주문진 대리운전·법인·장거리 상담. 경포해변·안목해변의 음식점과 카페 이용 후 주차장 위치 확인. 과거 운행기록·요금조회·상담 1811-4294.'
+   :'강릉탁송 · 강릉항·주문진·동해안 종주 차량회수 자동차탁송·입출고 상담. 강릉 경포대와 주문진·강릉항 일대 차량 인수 위치 확인. 과거 운행기록·요금조회·상담 1811-4294.')
   :null;
  const searchDesc=gangneungSearchDesc||naverPriorityShortMetaByPath.get(servicePath(r,kind))||
   (priorityMeta?rawSearchDesc:boundedRegionalSearchDescription(rawSearchDesc));
