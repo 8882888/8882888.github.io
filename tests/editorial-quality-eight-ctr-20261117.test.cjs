@@ -63,6 +63,12 @@ test('eight reviewed service pages expose exact source information to crawlers, 
    assert.equal(response.status,200,row.keyword+' real HTTP 200');
    assert(!/noindex/i.test(response.headers.get('x-robots-tag')||''),row.keyword+' is not noindex');
    const html=await response.text();
+   const curated=html.indexOf('id="priority-region-guide"');
+   const focused=html.indexOf('id="naver-focus50-local-guide"');
+   const checklist=html.indexOf('id="priority-locality-customer-checklist-20261105"');
+   assert(curated>0&&focused>curated&&checklist>focused,row.keyword+' reviewed evidence must lead generic checklists');
+   assert.equal(html.split('id="priority-region-guide"').length-1,1,row.keyword+' one curated local section');
+   assert.equal(html.split('id="naver-focus50-local-guide"').length-1,1,row.keyword+' one original focus section');
    assert(html.includes(row.topic),row.keyword+' unique topic in SSR HTML');
    assert(html.includes(row.pickup),row.keyword+' source-specific pickup in SSR HTML');
    assert(html.includes(row.handover),row.keyword+' source-specific handover in SSR HTML');
