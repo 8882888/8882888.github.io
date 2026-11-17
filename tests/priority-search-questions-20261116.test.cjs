@@ -16,10 +16,16 @@ const mapping=[
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 test('seven priority search intent guides are evidence-scoped and uniquely worded',()=>{
  assert.equal(data.items.length,7);
- const qs=new Set(),as=new Set(),scenarioNames=new Set(),scenarioCells=new Set();
+ const qs=new Set(),as=new Set(),scenarioNames=new Set(),scenarioCells=new Set(),intros=new Set(),scopeNotes=new Set();
  for(const [region,kind] of mapping){
   const doc=data.items.find(x=>x.region===region&&x.kind===kind);
   assert(doc);assert.equal(doc.questions.length,2);
+  assert(doc.tableIntro.length>=85,'specific local table introduction required');
+  assert(doc.scopeNote.length>=40,'original evidence scope must be disclosed');
+  assert(doc.relatedLabel.length>=10,'contextual internal service link text required');
+  assert(!intros.has(doc.tableIntro),'no repeated generic intro copy');
+  assert(!scopeNotes.has(doc.scopeNote),'each original must have exact geographic evidence scope');
+  intros.add(doc.tableIntro);scopeNotes.add(doc.scopeNote);
   assert.equal(doc.scenarios.length,3,'exactly three distinct location-specific intake scenarios');
   for(const row of doc.scenarios){
    assert(row.scenario.length>=10&&row.location.length>=30&&row.prepare.length>=25,
@@ -59,6 +65,9 @@ test('seven priority canonical pages show distinct question section and preserve
    const doc=data.items.find(x=>x.region===region&&x.kind===kind);
    for(const {q,a} of doc.questions){assert(section.includes(q),q);assert(section.includes(a),a)}
    assert(section.includes('id="priority-scenario-guide-20261117"'),route+' scenario table required');
+   assert(section.includes(doc.tableIntro),route+' source-specific introduction visible in HTML');
+   assert(section.includes(doc.scopeNote),route+' original evidence caveat visible in HTML');
+   assert(section.includes('>'+doc.relatedLabel+'</a>'),route+' localized internal link label visible');
    assert(section.includes('<caption>')&&section.includes('scope="col"'),route+' semantic table required');
    const scenarioBlock=section.split('id="priority-scenario-guide-20261117"')[1]||'';
    const body=scenarioBlock.split('<tbody>')[1]?.split('</tbody>')[0]||'';
