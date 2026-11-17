@@ -37,7 +37,10 @@ test('regional search, homepage search and keyword-search map equivalent vehicle
   for(const [q,canonical] of [
    ['3.5톤사다리차탁송','/service/ladder-truck-taksong/'],
    ['1톤고소차탁송','/service/aerial-work-truck-taksong/'],
-   ['집게차탁송','/service/heavy-truck-taksong/']
+   ['집게차탁송','/service/heavy-truck-taksong/'],
+   ['설악산탁송','/설악산탁송/'],
+   ['섬진강자전거길종주탁송','/route-taksong/courses/seomjin/'],
+   ['장거리대리운전','/service/long-distance-daeri/']
   ]){
    for(const start of ['/','/keyword-search/','/region/']){
     const req=await fetch(origin+start+'?q='+encodeURIComponent(q),{redirect:'manual'});
