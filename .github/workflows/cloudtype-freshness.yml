@@ -93,6 +93,17 @@ jobs:
             echo "::notice::Second six audit not part of deployed SHA; NOT VERIFIED."
             echo "Second six original guides: NOT VERIFIED (auditor absent in deployed revision)." >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Verify deployed B2B business-specific work stages and source links
+        shell: bash
+        env:
+          PRODUCTION_URL: https://jeongukdaeri.kr
+        run: |
+          if [ -f scripts/audit-live-business-evidence-workflows-20261117.cjs ]; then
+            node scripts/audit-live-business-evidence-workflows-20261117.cjs
+          else
+            echo "::notice::Business evidence auditor not in deployed SHA: NOT VERIFIED."
+            echo "Business evidence live audit: NOT VERIFIED (auditor not in deployed SHA)." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true
