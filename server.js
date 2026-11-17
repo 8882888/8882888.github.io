@@ -2856,9 +2856,7 @@ if(pathname==='/api/nationwide-locality-card.svg'){
 }
 const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search';
 const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
-const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):null;
-const regionalSpecialIntent=pathname==='/region/'&&explicitKeyword?specialVehicleKeywords.resolve(explicitKeyword):null;
-if(regionalSpecialIntent){res.writeHead(302,{location:regionalSpecialIntent,'cache-control':'no-store'});return res.end();}
+const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):(pathname==='/region/'?explicitKeyword:null);
 const directionalKeyword=searchIntent||(pathname==='/region/'?explicitKeyword:null);
 const directionalTarget=directionalKeyword&&directionalServiceTarget(directionalKeyword,resolvedLiveCardAliases,u.searchParams.get('service')==='daeri'?'daeri':'taksong');
 if(directionalTarget){
