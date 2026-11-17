@@ -7,7 +7,7 @@ const destinations={
  '인천연수구탁송':'/taksong/incheon/yeonsu-gu/',
  '오산탁송':'/taksong/gyeonggi/osan-si/',
  '양주탁송':'/taksong/gyeonggi/yangju-si/',
- '밀양탁송':'/taksong/gyeongnam/miryang-si/',
+ '밀양탁송':'/taksong/gyeongnam/milyang-si/',
  '시흥탁송':'/taksong/gyeonggi/siheung-si/',
  '충주탁송':'/taksong/chungbuk/chungju-si/'
 };
