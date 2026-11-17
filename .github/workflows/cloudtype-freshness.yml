@@ -81,6 +81,18 @@ jobs:
             echo "::notice::Six-source live auditor absent from deployed SHA; NOT VERIFIED."
             echo "Six-source live HTML audit: NOT VERIFIED (auditor not in checked-out deploy SHA)." >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Verify second six original-backed regional pages on the real release
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+        shell: bash
+        run: |
+          # The exact deployed SHA must contain the auditor; older releases do not.
+          if [ -f scripts/audit-live-second-six-source-guides.cjs ]; then
+            node scripts/audit-live-second-six-source-guides.cjs
+          else
+            echo "::notice::Second six audit not part of deployed SHA; NOT VERIFIED."
+            echo "Second six original guides: NOT VERIFIED (auditor absent in deployed revision)." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true
