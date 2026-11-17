@@ -105,7 +105,7 @@ test('opted-in bulk WebPage JSON-LD annotates intentional noindex without removi
  const once=normalizeSeoHead(original,{includeExcludedWebPage:true,includeUnverifiedRouteWebPage:true});
  assert.match(once,/name="robots" content="noindex,follow"/);
  assert.equal((once.match(/"@type":"WebPage"/g)||[]).length,1);
- const schema=JSON.parse(once.match(/<script type="application\\/ld\\+json">([\\s\\S]*?)<\\/script>/)[1]);
+ const schema=JSON.parse(once.split('<script type="application/ld+json">')[1].split('</script>')[0]);
  assert.equal(schema.url,'https://jeongukdaeri.kr/routes/daeri/area-1/');
  assert.ok([...schema.description].length<=80);
  assert.equal(normalizeSeoHead(once,{includeExcludedWebPage:true,includeUnverifiedRouteWebPage:true}),once);
@@ -113,7 +113,7 @@ test('opted-in bulk WebPage JSON-LD annotates intentional noindex without removi
 test('opted-in bulk schema describes unverified route WITHOUT fabricating a Service or Review',()=>{
  const pathname='/routes/taksong/area-1/area-2/';
  const once=normalizeSeoHead(html('index,follow','',long,pathname),{includeExcludedWebPage:true,includeUnverifiedRouteWebPage:true});
- const schema=JSON.parse(once.match(/<script type="application\\/ld\\+json">([\\s\\S]*?)<\\/script>/)[1]);
+ const schema=JSON.parse(once.split('<script type="application/ld+json">')[1].split('</script>')[0]);
  assert.equal(schema['@type'],'WebPage');
  assert.equal(schema.url,'https://jeongukdaeri.kr'+pathname);
  assert.equal(schema['@id'],schema.url+'#webpage');
@@ -124,7 +124,7 @@ test('existing Article or CollectionPage is not duplicated in bulk schema mode',
  for(const type of ['Article','CollectionPage']){
   const existing='<script type="application/ld+json">'+JSON.stringify({'@context':'https://schema.org','@type':type,name:'Original'})+'</script>';
   const result=normalizeSeoHead(html('noindex,follow',existing,long),{includeExcludedWebPage:true,includeUnverifiedRouteWebPage:true});
-  assert.equal((result.match(/application\\/ld\\+json/g)||[]).length,1);
+  assert.equal(result.split('<script type="application/ld+json">').length-1,1);
   assert.doesNotMatch(result,/"@type":"WebPage"/);
  }
 });
