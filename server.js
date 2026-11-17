@@ -2562,6 +2562,7 @@ const millionServiceFinder=require('./lib/service-finder-million').create(region
  // Build their crawler-facing HTML once to avoid re-rendering all nationwide
  // region links on every Yeti/user request to a 512MB Cloudtype instance.
 const regionalPageCache=require('./lib/regional-html-cache.cjs').createRegionalHtmlCache({maxEntries:96,ttlMs:120000});
+const exactCardPreviewKeywords=new Set(require('./data/exact-image-priority-20.json'));
 const cachedNationalServiceHubHtml=new Map([
  ['taksong',applySeo(serviceHub('taksong'),'/taksong/')],
  ['daeri',applySeo(serviceHub('daeri'),'/daeri/')]
@@ -2860,7 +2861,7 @@ const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u
 // an on-page SVG preview with the *typed* label. Preserve that customer
 // workflow instead of redirecting these card previews to a generic hub.
 const exactCardPreviewIntent=pathname==='/region/'&&explicitKeyword&&
- new Set(require('./data/exact-image-priority-20.json')).has(explicitKeyword.trim());
+ exactCardPreviewKeywords.has(explicitKeyword.trim());
 const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword)
  :(pathname==='/region/'&&!exactCardPreviewIntent?explicitKeyword:null);
 const directionalKeyword=searchIntent||(pathname==='/region/'?explicitKeyword:null);
