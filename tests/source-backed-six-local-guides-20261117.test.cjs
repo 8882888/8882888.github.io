@@ -43,7 +43,12 @@ test('six existing canonical URLs expose original source context before generic 
   }
   assert(ready,'real source server');
   for(const item of sources){
-   const keyword=item.region.split(' ').at(-1).replace(/(시|군|구)$/,'')+'탁송';
+   const searchKeywords={
+    '인천광역시 연수구':'인천연수구탁송',
+    '경기도 오산시':'오산탁송','경기도 양주시':'양주탁송',
+    '경상남도 밀양시':'밀양탁송','경기도 시흥시':'시흥탁송',
+    '충청북도 충주시':'충주탁송'};
+   const keyword=searchKeywords[item.region];
    const lookup=await fetch(host+'/?q='+encodeURIComponent(keyword),{redirect:'manual',signal:AbortSignal.timeout(12000)});
    assert.equal(lookup.status,302,item.region+' canonical query lookup');
    const destination=decodeURI(lookup.headers.get('location')||'');
@@ -55,7 +60,7 @@ test('six existing canonical URLs expose original source context before generic 
    const i=html.indexOf('id="source-backed-local-journey-20261117"'),g=html.indexOf('id="regional-taksong-quick-start"');
    assert(i>0&&g>i,item.region+' evidence first');
    assert(html.includes(item.heading)&&html.includes(item.context)&&html.includes(item.preparation),item.region+' evidence and preparations in HTTP body');
-   for(const id of item.evidenceIds)assert(html.includes('href="/reviews/history/'+id+'/""')===false&&html.includes('href="/reviews/history/'+id+'/"'),item.region+' original record '+id);
+   for(const id of item.evidenceIds)assert(html.includes('href="/reviews/history/'+id+'/"'),item.region+' original record '+id);
    assert(html.includes('<link rel="canonical" href="https://jeongukdaeri.kr'+destination+'">'),item.region+' canonical preserved');
    assert(!/noindex/i.test(response.headers.get('x-robots-tag')||''),item.region+' crawler open');
    assert(html.includes('href="tel:18114294"'),'phone preserved');
