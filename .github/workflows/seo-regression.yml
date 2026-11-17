@@ -37,6 +37,11 @@ jobs:
           node --check lib/route-keyword-pages.js
           node --check tests/route-indexability-boundary.test.cjs
           node --test tests/route-indexability-boundary.test.cjs
+      - name: Verify aerial work truck keyword coverage and single canonical guide
+        run: |
+          node --check lib/special-vehicle-keywords.cjs
+          node --check tests/special-vehicle-keywords.test.cjs
+          node --test tests/special-vehicle-keywords.test.cjs
       - name: Check JavaScript syntax
         run: |
           node --check server.js
