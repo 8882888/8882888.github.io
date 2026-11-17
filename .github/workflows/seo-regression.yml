@@ -141,6 +141,15 @@ jobs:
           node --check tests/taksong-ctr-intent-cohort-20261117.test.cjs
           node --check scripts/audit-live-taksong-ctr-intent-20261117.cjs
           node --test tests/taksong-ctr-intent-cohort-20261117.test.cjs
+      - name: Verify owner-sourced Naver web search CTR measurement without invented gains
+        run: |
+          node --check scripts/compare-naver-web-performance-20261117.mjs
+          node --test tests/naver-web-real-ctr-scorecard-20261117.test.mjs
+          node scripts/compare-naver-web-performance-20261117.mjs
+      - name: Protect existing cycling course navigability and canonical evidence
+        run: |
+          node --check scripts/audit-live-cycling-user-shortcuts-20261117.mjs
+          node --test tests/cycling-verified-shortcuts-and-ctr-20261117.test.mjs
       - name: Preserve business page canonical identity and industry-specific guidance
         run: node --test tests/business-indexability-content.test.mjs
       - name: Protect distinct original-supported business workflow steps
