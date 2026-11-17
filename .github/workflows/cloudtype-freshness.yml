@@ -21,7 +21,7 @@ jobs:
   verify-cloudtype:
     name: Compare deployed server, homepage and SEO guide count
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 8
     steps:
       - name: Report automatic deploy status and independently verify manual releases
         if: github.event_name == 'workflow_run'
@@ -47,6 +47,10 @@ jobs:
           LIVE_SITE_URL: https://jeongukdaeri.kr
           DEPLOY_CHECK_ATTEMPTS: '4'
         run: node tools/check_cloudtype_freshness.js
+      - name: Verify live service-center robots, canonical, sitemap and structured data
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+        run: node scripts/audit-live-service-center-schema.mjs
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true
