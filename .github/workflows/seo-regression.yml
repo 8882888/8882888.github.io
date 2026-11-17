@@ -65,6 +65,26 @@ jobs:
           node --test tests/editorial-quality-eight-ctr-20261117.test.cjs
           node scripts/ai-index-quality-triage.mjs
           node -e "const r=require('./ai-index-quality-review.json'); const assert=require('node:assert/strict'); assert.equal(r.totals.reviewed,2900); assert.equal(r.totals.fullyPassing,365); assert.equal(r.totals.needsReview,2535); console.log('Rubric: 365 passed, 2535 for review. These are NOT Naver indexed counts.');"
+      - name: Triage 2183 unresolved ride sources and 2535 editorial candidates without fabrication
+        run: |
+          node --check scripts/triage-unresolved-rides-and-content.mjs
+          node --check tests/source-evidence-2183-2535-20261117.test.cjs
+          node --test tests/source-evidence-2183-2535-20261117.test.cjs
+          node --test tests/naver-official-scorecard.test.mjs
+          node scripts/report-naver-official-scorecard.mjs
+      - name: Save reviewable source-evidence queues and official metrics unknown-state
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-evidence-review-2183-2535
+          path: |
+            ride-2183-original-evidence-triage.json
+            ride-2183-original-evidence-triage.csv
+            content-2535-evidence-first-review.json
+            content-2535-evidence-first-review.csv
+            naver-official-scorecard.json
+            naver-official-scorecard.md
+          if-no-files-found: warn
       - name: Syntax-check deployed priority evidence-first and real HTTP parity audit
         run: node --check scripts/audit-live-priority-ctr-evidence.cjs
       - name: Verify 2591 archival ride records and exact evidence-region hub discovery

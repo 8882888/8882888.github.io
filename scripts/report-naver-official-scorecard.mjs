@@ -22,11 +22,17 @@ export function compareOfficial(baseline,snapshot){
  for(const key of ['indexed','collectionLimited','excluded']){
   if(!count(snapshot[key]))throw Error('Invalid official count: '+key);
  }
- const indexDelta=delta(snapshot.indexed,base.indexed);
+ // An undated historical index count cannot establish a temporal increase.
+ // Still report the authenticated current count if one is supplied.
+ const baselineDated=/^\d{4}-\d{2}-\d{2}$/.test(base.observedAt||'')
+  &&base.observedAt<snapshot.observedAt;
+ const indexDelta=baselineDated?delta(snapshot.indexed,base.indexed):null;
  return {baseline:base,current:snapshot,indexDelta,
-  collectionLimitedDelta:delta(snapshot.collectionLimited,base.collectionLimited),
-  excludedDelta:delta(snapshot.excluded,base.excluded),
-  status:indexDelta>0?'OFFICIAL_INCREASE':indexDelta===0?'OFFICIAL_UNCHANGED':'OFFICIAL_DECREASE'};
+  collectionLimitedDelta:baselineDated?delta(snapshot.collectionLimited,base.collectionLimited):null,
+  excludedDelta:baselineDated?delta(snapshot.excluded,base.excluded):null,
+  baselineDateVerified:baselineDated,
+  status:!baselineDated?'UNVERIFIED_HISTORICAL_BASELINE_DATE':
+   indexDelta>0?'OFFICIAL_INCREASE':indexDelta===0?'OFFICIAL_UNCHANGED':'OFFICIAL_DECREASE'};
 }
 export function searchComparison(baseline,snapshot){
  const prior={date:baseline.last_updated,period:baseline.period,
@@ -39,8 +45,15 @@ export function searchComparison(baseline,snapshot){
     status:'UNVERIFIED_OR_INCOMPARABLE_WINDOW'};
  const now=snapshot.search;
  if(!count(now.clicks)||!count(now.impressions))throw Error('Invalid current Naver search counts');
- return {baseline:prior,current:now,clickDelta:delta(now.clicks,prior.clicks),
+ const currentCtrPercent=now.impressions>0
+  ?Math.round(10000*now.clicks/now.impressions)/100:null;
+ const ctrDeltaPercentagePoints=currentCtrPercent!==null
+  ?Math.round((currentCtrPercent-(prior.ctrPercent||0))*100)/100:null;
+ return {baseline:prior,current:{...now,ctrPercent:currentCtrPercent},
+  clickDelta:delta(now.clicks,prior.clicks),
   impressionsDeltaApprox:delta(now.impressions,prior.impressionsApprox),
+  ctrDeltaPercentagePoints,
+  dataWindowCaution:'Owner-reported rolling recent-30-day windows can overlap; click change does not prove extra customers, calls or causal SEO growth',
   status:'OWNER_REPORTED_COMPARISON__NOT_LIVE_API'};
 }
 const baseline=read('data/naver-searchadvisor-official-baseline.json');
@@ -77,6 +90,7 @@ const md=[
  '| 색인제외 | '+safe(official.baseline.excluded)+' | '+safe(official.current?.excluded)+' | '+safe(official.excludedDelta)+' |',
  '| 검색 클릭 (30일) | '+safe(search.baseline.clicks)+' | '+safe(search.current?.clicks)+' | '+safe(search.clickDelta)+' |',
  '| 노출 (30일·기준 근사치) | 약 '+safe(search.baseline.impressionsApprox)+' | '+safe(search.current?.impressions)+' | '+safe(search.impressionsDeltaApprox)+' |',
+ '| CTR (30일) | '+safe(search.baseline.ctrPercent)+'% | '+safe(search.current?.ctrPercent)+'% | '+(search.ctrDeltaPercentagePoints===undefined?'미확인':safe(search.ctrDeltaPercentagePoints))+'%p |',
  '',
  '**출처 제한:** 정상 색인 14개는 이전 사이트 소유자 제공 수치이며 관측 날짜 불명. 클릭·노출 기준은 '+search.baseline.date+'의 사용자 제공 자료. 검색 클릭은 전화 상담 수가 아닙니다.',
  '',

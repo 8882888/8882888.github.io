@@ -58,7 +58,17 @@ jobs:
       - name: Verify live archive-backed regional discovery on current Cloudtype release
         env:
           LIVE_SITE_URL: https://jeongukdaeri.kr
-        run: node scripts/audit-live-archive-discovery.cjs
+        shell: bash
+        run: |
+          # workflow_run tests the EXACT deploy commit, which can be older than
+          # the current workflow definition in main. Do not execute a future
+          # auditor that does not exist at the deployed source revision.
+          if [ -f scripts/audit-live-archive-discovery.cjs ]; then
+            node scripts/audit-live-archive-discovery.cjs
+          else
+            echo "::notice::Archive link audit is not part of deployed revision $(git rev-parse --short HEAD); NOT VERIFIED, no pass claimed."
+            echo "Archived regional link audit: NOT VERIFIED (auditor absent in deployed source revision $(git rev-parse --short HEAD))." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true
