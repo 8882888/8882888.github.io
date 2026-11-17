@@ -2315,7 +2315,10 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
     priorityFocus.region+' · '+priorityFocus.topic+'. '+metaFirstSentence+' 상담 '+PHONE:'';
   body=normalizeSeoHead(stripPersonVehicleImages(keywordExpansion.enhance(html,res._smartPath||'')),
     {xRobotsTag:res.getHeader('x-robots-tag'),preferredDescription:priorityMetaDescription,
-     allowVerifiedRoute:verifiedRoutePagePaths.has(res._smartPath||'')});
+     allowVerifiedRoute:verifiedRoutePagePaths.has(res._smartPath||''),
+     // Factual page-level JSON-LD on all valid canonical HTML, including noindex.
+     // This does NOT change noindex, sitemaps, or claim verified completed trips.
+     includeExcludedWebPage:true,includeUnverifiedRouteWebPage:true});
  }
  const headers={'content-type':type,'x-content-type-options':'nosniff'};
  if(res._smartPath==='/'){headers['cache-control']='no-store, max-age=0, must-revalidate';headers['surrogate-control']='no-store';headers['x-smart24-primary-nav']='four-services-sticky-20261106';}
