@@ -58,7 +58,7 @@ let alreadyClassified=0,unresolved=0,invalidClassification=0;
 const review=[],seenIds=new Set();
 for(let i=0;i<archives.length;i++){
  const entry=archives[i];
- const match=/^excel-(\\d{4})$/.exec(String(entry.id||''));
+ const match=/^excel-(\d{4})$/.exec(String(entry.id||''));
  if(!match)throw Error('Invalid archive identifier');
  const position=Number(match[1])-1;
  if(position<0||position>=raw.length||seenIds.has(entry.id))
