@@ -1742,9 +1742,11 @@ const vehicleTopics=[
 ];
 const vehicleTopicMap=new Map(vehicleTopics.map(([name,category])=>[name,{name,category,slug:Buffer.from(name,'utf8').toString('hex')}]));
 function vehicleTopicPath(name){return '/taksong/type/'+vehicleTopicMap.get(name).slug+'/'}
+const serviceCenterKeywordData=load('data/service-center-keywords-20261117.json');
 const serviceCenterTaksong=require('./lib/service-center-taksong.cjs').createServiceCenterTaksong({
- data:load('data/service-center-keywords-20261117.json'),vehicleTopicMap,vehicleTopicPath,esc,compact
+ data:serviceCenterKeywordData,vehicleTopicMap,vehicleTopicPath,esc,compact
 });
+const {FEATURED_BRANDS,injectServiceCenterSchema}=require('./lib/service-center-schema.cjs');
 function vehicleTopicPage(topic){
  const name=topic.name,heavy=/톤|카고|화물차|메가트럭|윙바디|추레라|렉카|견인차|암롤|탑차|덤프|믹서|집게차|크레인|특장차/.test(name),center=/서비스센터|블루핸즈|오토큐/.test(name);
  const detail=heavy?'차량의 정확한 톤급, 전장·전고, 적재함·윙바디 형태, 공차·적재 상태, 운행 가능 여부와 운전자 자격 요건을 확인합니다.':'차종과 차량 상태, 출발지·도착지, 보험 적용 범위 및 차량 인수·인계 방법을 확인합니다.';
@@ -1752,13 +1754,22 @@ function vehicleTopicPage(topic){
  const desc=name+' 예약 상담. '+topic.category+' 관련 차량 조건과 출발지·도착지, 기사 배차 및 보험 적용 여부를 확인합니다. '+PHONE;
  const passengerCenterContext=serviceCenterTaksong.passengerContext[name]||'';
  const body='<section><h2>'+esc(name)+' 안내</h2><p>'+esc(detail)+'</p><p>'+esc(extra)+'</p>'+(passengerCenterContext?'<p>'+esc(passengerCenterContext)+'</p><p><a href="/taksong/types/#commercial-truck-service-centers">상용차·대형트럭 서비스센터와 구분</a></p>':'')+'<p>모든 차량에 대한 배차를 보장하지 않습니다. 실제 운행 가능 여부와 요금은 차량 및 운행 조건을 확인한 후 안내합니다.</p></section><section><h2>예약·요금 상담</h2><p>출발지, 도착지, 희망 날짜·시간, 정확한 차종과 차량 상태를 알려주세요.</p><p><a href="tel:18114294">대표 상담 '+PHONE+'</a> · <a href="/fare/">참고요금 확인</a></p></section><section><h2>관련 탁송 서비스</h2><p><a href="/taksong/">전국 자동차탁송</a> · <a href="/taksong/types/">차종·서비스센터 탁송 전체 보기</a></p></section>';
- return layout(name+' | '+topic.category+' 예약 상담',desc,body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+vehicleTopicPath(name),null);
+ const canonicalUrl='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+vehicleTopicPath(name);
+ const html=layout(name+' | '+topic.category+' 예약 상담',desc,body,canonicalUrl,null);
+ return FEATURED_BRANDS.has(name)
+  ?injectServiceCenterSchema(html,{canonicalUrl,name:name+' 안내',description:desc,kind:'brand'})
+  :html;
 }
 function vehicleTopicsHub(){
  const groups=[...new Set(vehicleTopics.map(x=>x[1]))];
  const editorial='<section id="vehicle-types-original-archive"><h2>승용차·화물차·서비스센터 차량탁송, 무엇이 다를까요?</h2><h3>승용차와 수입차·전기차</h3><p>차량 주행 가능 여부와 키 인수 담당자, 서비스센터 입고·출고 시간 등을 확인합니다. 전기차는 인계 당시 충전 상태와 출발지·도착지 충전 여건을 확인해 주세요. 특정 정비 업체 제휴나 제조사 공식 서비스라는 의미는 아닙니다.</p><h3>화물차와 특장차</h3><p>1톤·3.5톤·5톤 이상 화물차, 윙바디·덤프 등은 차량 크기와 운전 자격, 기사 수급 및 보험 적용 조건을 별도 상담해야 합니다. 운행할 수 없는 차량은 일반 로드탁송이 어려울 수 있습니다.</p><h3>서비스센터·차종별 공개 원문</h3><p><a href="https://blog.naver.com/wjdtnr4757/224431721391" target="_blank" rel="noopener noreferrer">국산차·수입차·화물·특수차량 탁송 공개 글</a> · <a href="https://blog.naver.com/wjdtnr4757/224419673150" target="_blank" rel="noopener noreferrer">기아 오토큐 정비 입고·출고 탁송 안내</a></p><p><a href="/blog/archive/vehicle-taksong/">차종·서비스센터·중고차탁송 블로그 자료실</a> · <a href="/business/used-car/">중고차 매매단지탁송</a> · <a href="/service/long-distance-taksong/">장거리 자동차탁송</a> · <a href="tel:18114294">전국탁송 상담 1811-4294</a></p></section>';
  const body='<section id="aerial-work-truck-discovery"><h2>고소차·고소작업차 톤급별 탁송</h2><p>고소차탁송·고소차량탁송·1톤고소차탁송·3.5톤고소차탁송·스카이차탁송은 <a href="/service/aerial-work-truck-taksong/">고소작업차량 전문 안내</a>에서 제원·면허·작업대 운송상태를 확인하세요. 차종별 배차 가능 여부는 상담 후 결정됩니다.</p><p><a href="/service/ladder-truck-taksong/">사다리차탁송·1톤·3.5톤 이사용 사다리차 차량 이동 안내</a> · <a href="/service/heavy-truck-taksong/">집게차·카고크레인·청소차 등 화물·특장 작업차량 안내</a></p></section><section><h2>차종·톤급·서비스센터별 탁송 안내</h2><p>차량 유형별 조건과 기사 배차 가능 여부를 확인하는 상담 안내입니다. 실제 완료 운행이나 공식 서비스센터 제휴를 뜻하지 않습니다.</p></section>'+serviceCenterTaksong.markup()+editorial+groups.map(g=>'<section><h2>'+esc(g)+'</h2><ul>'+vehicleTopics.filter(x=>x[1]===g).map(([name])=>'<li><a href="'+vehicleTopicPath(name)+'">'+esc(name)+'</a></li>').join('')+'</ul></section>').join('');
- return layout('전국 차종별 탁송 · 서비스센터탁송','전기차, 화물차, 윙바디, 수입차·국산차 서비스센터 탁송 안내. '+PHONE,body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/taksong/types/',null);
+ const canonicalUrl='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/taksong/types/';
+ const desc='전기차, 화물차, 윙바디, 수입차·국산차 서비스센터 탁송 안내. '+PHONE;
+ return injectServiceCenterSchema(layout('전국 차종별 탁송 · 서비스센터탁송',desc,body,canonicalUrl,null),{
+  canonicalUrl,name:'국산차·수입차·대형트럭 서비스센터 탁송 안내',description:desc,
+  kind:'hub',groups:serviceCenterKeywordData.groups
+ });
 }
 const publishedCaseEntries=loadPublishedCases(ROOT);
 const sitemapCache=new Map();
@@ -3545,7 +3556,10 @@ if(pathname==='/sitemap.xml'){
   '/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/',
   // Core automobile delivery services take priority in crawl discovery.
   '/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/','/service/aerial-work-truck-taksong/','/service/ladder-truck-taksong/',
-  '/taksong/types/','/taksong/jeju/','/reviews/taksong/','/fare/',
+  '/taksong/types/',
+  // Three existing, now individually explained passenger-center pages; no 44 near-identical new URLs.
+  ...['현대서비스센터탁송','벤츠서비스센터탁송','볼보서비스센터탁송'].map(vehicleTopicPath),
+  '/taksong/jeju/','/reviews/taksong/','/fare/',
   '/business/','/business/used-car/','/business/rental-car/','/business/export-port/','/business/scrapyard/','/business/auction/',
   // Curated high-intent automobile delivery localities, only where official legal-region records exist.
   ...[
