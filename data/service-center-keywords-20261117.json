@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "editorial_policy": "Existing canonical landing pages only; service-center access information is customer preparation guidance, not proof of manufacturer affiliation, a completed ride, or guaranteed heavy-truck dispatch. Road delivery only when roadworthy, suitably licensed and insured.",
+  "groups": [
+    {
+      "id": "domestic-service-centers",
+      "title": "국산차 서비스센터 입고·출고탁송",
+      "description": "현대·제네시스·기아 등 국산 승용차와 SUV는 정비 예약 지점, 입고 가능 시각, 수리 완료 여부와 키 인수인을 먼저 확인합니다. 현대 블루핸즈를 포함해 실제 정비 가능한 차종·지점은 제조사 서비스 네트워크에서 확인해야 합니다.",
+      "action": "차량 인수 주차구역·접수 담당자·정비 접수시간을 구분하고, 입고와 출고를 별도로 예약 상담합니다.",
+      "keywords": [
+        "국산차서비스센터탁송",
+        "국산차정비입고탁송",
+        "국산차정비출고탁송",
+        "현대서비스센터탁송",
+        "현대블루핸즈탁송",
+        "기아서비스센터탁송",
+        "기아오토큐탁송",
+        "제네시스서비스센터탁송",
+        "르노코리아서비스센터탁송",
+        "KG모빌리티서비스센터탁송",
+        "쉐보레서비스센터탁송"
+      ],
+      "landing": "/service/taksong-purpose/"
+    },
+    {
+      "id": "imported-service-centers",
+      "title": "수입차 서비스센터 입고·출고탁송",
+      "description": "벤츠·BMW·볼보 승용차 등은 서비스센터 정비 예약과 차량 인계 절차를 먼저 확인합니다. 특히 볼보자동차 승용차 서비스센터와 볼보트럭 서비스 거점, 벤츠 승용차 센터와 벤츠트럭 서비스 거점은 별도입니다.",
+      "action": "차량 상태, 센터 지점 주소, 경비실·지하주차장 출입, 출고 승인과 차량 수령인의 인계 가능 시각을 확인합니다.",
+      "keywords": [
+        "수입차서비스센터탁송",
+        "수입차정비입고탁송",
+        "수입차정비출고탁송",
+        "벤츠서비스센터탁송",
+        "BMW서비스센터탁송",
+        "볼보서비스센터탁송",
+        "아우디서비스센터탁송",
+        "포르쉐서비스센터탁송",
+        "폭스바겐서비스센터탁송",
+        "렉서스서비스센터탁송",
+        "토요타서비스센터탁송",
+        "테슬라서비스센터탁송",
+        "랜드로버서비스센터탁송",
+        "롤스로이스서비스센터탁송"
+      ],
+      "landing": "/service/taksong-purpose/"
+    },
+    {
+      "id": "commercial-truck-service-centers",
+      "title": "대형트럭·상용차 서비스센터탁송",
+      "description": "현대 상용차 전담 블루핸즈, 타타대우모빌리티 정비 네트워크, 볼보트럭·메르세데스-벤츠 트럭 서비스 거점 등은 승용차 정비와 출입 조건이 다릅니다. 차종별 정비 가능 시설과 출고 담당자를 먼저 확인해야 합니다.",
+      "action": "차량의 총중량·제원·적재 상태·주행 가능 여부·요구 운전면허와 보험 조건을 확인합니다. 안전하게 주행할 수 없는 트럭은 일반 로드탁송이 아닌 별도 견인·운송 방법을 검토해야 합니다.",
+      "keywords": [
+        "대형트럭서비스센터탁송",
+        "대형트럭정비입고탁송",
+        "대형트럭정비출고탁송",
+        "상용차서비스센터탁송",
+        "화물차서비스센터탁송",
+        "대형화물차서비스센터탁송",
+        "현대상용차서비스센터탁송",
+        "현대트럭서비스센터탁송",
+        "현대엑시언트서비스센터탁송",
+        "현대파비스서비스센터탁송",
+        "타타대우서비스센터탁송",
+        "타타대우모빌리티서비스센터탁송",
+        "대우트럭서비스센터탁송",
+        "볼보트럭서비스센터탁송",
+        "벤츠트럭서비스센터탁송",
+        "스카니아서비스센터탁송",
+        "만트럭서비스센터탁송",
+        "이베코서비스센터탁송",
+        "대형버스서비스센터탁송"
+      ],
+      "landing": "/service/heavy-truck-taksong/"
+    }
+  ],
+  "aliases": [
+    {
+      "input": "대우타타서비스센터탁송",
+      "to": "타타대우서비스센터탁송"
+    },
+    {
+      "input": "대우타타트럭서비스센터탁송",
+      "to": "타타대우서비스센터탁송"
+    },
+    {
+      "input": "타타대우트럭서비스센터탁송",
+      "to": "타타대우서비스센터탁송"
+    },
+    {
+      "input": "메르세데스벤츠트럭서비스센터탁송",
+      "to": "벤츠트럭서비스센터탁송"
+    },
+    {
+      "input": "볼보대형트럭서비스센터탁송",
+      "to": "볼보트럭서비스센터탁송"
+    },
+    {
+      "input": "현대블루핸즈대형트럭탁송",
+      "to": "현대상용차서비스센터탁송"
+    },
+    {
+      "input": "벤츠트럭정비소탁송",
+      "to": "벤츠트럭서비스센터탁송"
+    }
+  ],
+  "references": [
+    {
+      "label": "현대자동차 상용 전담 블루핸즈",
+      "url": "https://www.hyundai.com/kr/ko/service-membership/service-network/service-reservation-search"
+    },
+    {
+      "label": "타타대우모빌리티 공식 정비망",
+      "url": "https://www.tata-daewoo.com/service_surport/network"
+    },
+    {
+      "label": "볼보트럭코리아 공식 서비스 네트워크",
+      "url": "https://www.volvotrucks.kr/ko-kr/tools/dealer-locator.html"
+    },
+    {
+      "label": "메르세데스-벤츠 트럭 한국 서비스 안내",
+      "url": "https://www.mercedes-benz-trucks.com/kr/ko/business-and-services/maintenance-and-repairs/365-center.html"
+    }
+  ]
+}
