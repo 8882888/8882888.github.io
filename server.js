@@ -250,7 +250,8 @@ function naverFocus50Hub(kind){
    return '<a href="'+servicePath(r,kind)+'">'+esc(entry.keyword)+'</a>';
   }).join(' · ')+'</p></div>'
  ).join('');
- return '<section id="naver-focused-regional-discovery" aria-label="기존 검토 지역 '+selected.length+'개 '+label+' 안내 연결">'+
+ return renderEvidenceDirectory(kind,archiveEvidenceDirectory,{servicePath,esc})+
+  '<section id="naver-focused-regional-discovery" aria-label="기존 검토 지역 '+selected.length+'개 '+label+' 안내 연결">'+
   '<h2>'+label+' 주요 지역 서비스 직접 찾기</h2>'+
   '<p>시·군·구별 차량 인수 장소와 예약 조건을 확인할 수 있는 기존 상세 페이지입니다. 지역별 별도 지점 설치나 기사 상주를 의미하지 않습니다.</p>'+
   directory+'</section>';
@@ -307,6 +308,13 @@ const regionalReviewBatch300=[
  ...load('data/regional-review-links-batch-009-191.json').items
 ];
 if(regionalReviewBatch300.length!==2591||new Set(regionalReviewBatch300.map(x=>x.id)).size!==2591)throw Error('All 2,591 archived ride references must be complete and distinct');
+const {archiveEvidenceIndex,renderEvidenceDirectory}=require('./lib/archived-ride-evidence-directory.cjs');
+const archiveEvidenceDirectory=archiveEvidenceIndex(regionalReviewBatch300,regionByFullName);
+if(archiveEvidenceDirectory.overview.total!==2591||
+   archiveEvidenceDirectory.overview.regionUnresolved!==2183||
+   archiveEvidenceDirectory.overview.classified+archiveEvidenceDirectory.overview.invalidReference+
+   archiveEvidenceDirectory.overview.unmappedRegion+archiveEvidenceDirectory.overview.regionUnresolved!==2591)
+ throw Error('Unexpected regional ride evidence coverage or unsafe classification');
 const excelReviewFiles=['data/daeri-review-drafts-202610.json','data/taksong-review-drafts-202610.json'];
 const excelCompleted=excelReviewFiles.flatMap(file=>{try{const doc=load(file);const service=({'대리운전':'daeri','탁송':'taksong','daeri':'daeri','taksong':'taksong'})[String(doc.service||'').trim()];if(!service)return [];return (doc.items||[]).filter(x=>x.publication_status==='사용자 확인 운행완료').map(x=>({...x,service,status:'completed',verified:true,verification_source:'user-confirmed Excel'}))}catch{return []}});
 const reviewedRides=load('data/public-reviewed-rides-202610.json');
