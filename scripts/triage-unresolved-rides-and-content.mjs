@@ -162,7 +162,7 @@ const qualityRows=entries.map(e=>{
   action:originals.length?'Verify each original post claim and scope before specific locality copy'
    :archiveIds.length?'Review exact departure and destination in archival record before writing a completed trip'
    :priority.has(key)?'Use independently reviewed local preparation; do not pretend a completed ride'
-   :'Collect an independently verified locality source; do not generate location-specific facts'});
+   :'Collect an independently verified locality source; do not generate location-specific facts'};
 });
 if(entries.length!==2900)throw Error('Expected all 2900 original content items');
 const passed=qualityRows.filter(x=>!x.issues.length).length,needsReview=qualityRows.length-passed;
