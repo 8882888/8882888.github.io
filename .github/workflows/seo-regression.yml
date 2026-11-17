@@ -94,6 +94,7 @@ jobs:
           node --test tests/source-backed-six-local-guides-20261117.test.cjs
       - name: Cross-verify second six dated locality guides with 17 archived records and real Node HTTP
         run: |
+          node --check scripts/audit-live-second-six-source-guides.cjs
           node --check tests/source-backed-second-six-guides-20261117.test.cjs
           node --test tests/source-backed-second-six-guides-20261117.test.cjs
       - name: Syntax-check deployed priority evidence-first and real HTTP parity audit
