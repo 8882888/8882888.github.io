@@ -123,6 +123,30 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const second=await (await get('/route-search/?from='+encodeURIComponent('대구')+'&page=2&service='+kind)).text();
    assert.notEqual(html,second);
   }
+  // Seven first-screen answer sections are grounded in reviewed region content,
+  // not generic local-city substitutions or invented verified dispatches.
+  for(const [url,question,answerTopic] of [
+   ['/daeri/sejong/','세종 정부청사와 나성동에서 대리운전을 부를 때 출발지는 어떻게 적나요?','정부'],
+   ['/taksong/sejong/','세종경매장 차량탁송과 정부청사 업무차량 탁송은 무엇이 다른가요?','경매장'],
+   ['/taksong/busan/gijang-gun/','기장읍·정관읍·일광읍 탁송은 출발지 확인 방법이 같은가요?','기장'],
+   ['/taksong/gangwon/wonju-si/','원주혁신도시와 원주기업도시 탁송 출발지는 동일한가요?','원주'],
+   ['/taksong/gyeongnam/jinju-si/','진주혁신도시 충무공동에서 차량을 맡길 때 무엇을 알려야 하나요?','진주'],
+   ['/taksong/jeonnam/naju-si/','나주 빛가람혁신도시와 나주역 출발 차량은 어떻게 구분하나요?','나주'],
+   ['/taksong/gyeongbuk/gimcheon-si/','김천혁신도시 율곡동 차량과 김천구미역 주차장 차량은 같은 출발지인가요?','김천']
+  ]){
+   const page=await get(url),html=await page.text();
+   assert.equal(page.status,200,'priority AEO landing '+url);
+   assert.ok(html.includes('id="regional-direct-answer"'),'first-screen answer missing '+url);
+   assert.ok(html.includes('id="priority-search-questions-20261116"'),'verified editorial Q&A missing '+url);
+   assert.ok(html.includes(question),'unique review-backed user question missing '+url);
+   const answerStart=html.indexOf('id="regional-direct-answer"');
+   const answerEnd=html.indexOf('id="priority-search-questions-20261116"');
+   assert.ok(answerStart>=0&&answerStart<answerEnd,'answer precedes detailed evidence '+url);
+   assert.ok(html.slice(answerStart,answerEnd).includes(answerTopic),'priority section is too generic '+url);
+   assert.ok(!html.includes('content="noindex'),'priority indexed landing must stay indexable '+url);
+   assert.ok(html.includes('rel="canonical" href="https://example.com'+url+'"'),'priority canonical stable '+url);
+   assert.ok(html.includes('"@type":"WebPage"'),'WebPage structured data must reflect this HTML '+url);
+  }
   const routeArea=n=>regions.find(r=>r.full_name===n).slug;
   const busanId=routeArea('부산광역시'),incheonId=routeArea('인천광역시'),daeguId=routeArea('대구광역시');
   const qualityRoutes=[
