@@ -1,7 +1,18 @@
 name: All finite dynamic URLs outside sitemap - read only
 on:
+  push:
+    branches: [main]
+    paths:
+      - "server.js"
+      - "lib/seo-head-guard.cjs"
+      - "scripts/dynamic-url-inventory.mjs"
+      - "scripts/audit-dynamic-off-sitemap.mjs"
+      - ".github/workflows/dynamic-off-sitemap-census.yml"
   pull_request:
     paths:
+      - "server.js"
+      - "lib/seo-head-guard.cjs"
+      - "tests/seo-head-guard.test.cjs"
       - "scripts/dynamic-url-inventory.mjs"
       - "scripts/audit-dynamic-off-sitemap.mjs"
       - ".github/workflows/dynamic-off-sitemap-census.yml"
@@ -25,6 +36,8 @@ jobs:
         run: |
           node --check scripts/dynamic-url-inventory.mjs
           node --check scripts/audit-dynamic-off-sitemap.mjs
+          node --check lib/seo-head-guard.cjs
+          node --test tests/seo-head-guard.test.cjs
           node scripts/dynamic-url-inventory.mjs
           node --input-type=module -e "import {regionsFromLegal,buildInventory} from './scripts/dynamic-url-inventory.mjs'; const r=regionsFromLegal(),a=buildInventory(r); for(const p of ['/taksong/busan/gijang-gun/','/daeri/sejong/','/region/area-1/'])if(!a.items.some(x=>x.url===p))throw Error('Missing derived '+p);if(r.filter(x=>x.level==='시도').length!==17||a.items.length<50000)throw Error('Incomplete route registry');console.log('DYNAMIC_REGISTRY_OK '+JSON.stringify(a.stats))"
       - name: Build inventory and compare with current local sitemap
@@ -68,6 +81,7 @@ jobs:
           DYNAMIC_SHARD: ${{ matrix.shard }}
           DYNAMIC_SHARDS: "4"
           DYNAMIC_CONCURRENCY: "2"
+          DYNAMIC_REQUIRE_JSONLD: "1"
           AUDIT_TRANSPORT_ORIGIN: http://127.0.0.1:39879
         shell: bash
         run: |
