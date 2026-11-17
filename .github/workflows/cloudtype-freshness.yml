@@ -55,6 +55,10 @@ jobs:
         env:
           LIVE_SITE_URL: https://jeongukdaeri.kr
         run: node scripts/audit-live-priority-ctr-evidence.cjs
+      - name: Verify live archive-backed regional discovery on current Cloudtype release
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+        run: node scripts/audit-live-archive-discovery.cjs
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true

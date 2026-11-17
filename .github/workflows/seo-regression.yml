@@ -72,6 +72,8 @@ jobs:
           node --check lib/archived-ride-evidence-directory.cjs
           node --check tests/archived-ride-evidence-discovery-20261117.test.cjs
           node --test tests/archived-ride-evidence-discovery-20261117.test.cjs
+      - name: Syntax-check live evidence directory audit without invoking production
+        run: node --check scripts/audit-live-archive-discovery.cjs
       - name: Verify canonical keyword parity and bounded crawler HTML cache
         run: |
           node --check lib/regional-html-cache.cjs
