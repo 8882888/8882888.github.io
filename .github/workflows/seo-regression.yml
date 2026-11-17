@@ -88,6 +88,7 @@ jobs:
       - name: Verify six dated original local customer guides in HTTP and source records
         run: |
           node --check lib/source-backed-local-context.cjs
+          node --check scripts/audit-live-six-local-source-guides.cjs
           node --check tests/source-backed-six-local-guides-20261117.test.cjs
           node --test tests/source-backed-six-local-guides-20261117.test.cjs
       - name: Syntax-check deployed priority evidence-first and real HTTP parity audit
