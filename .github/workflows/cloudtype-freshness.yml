@@ -115,6 +115,17 @@ jobs:
             echo "::notice::This release predates transport-intent auditor; NOT VERIFIED."
             echo "Transport-intent HTTP audit: NOT VERIFIED (no auditor in deployed SHA)." >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Verify real deployed cycling course choices without making Naver traffic claims
+        shell: bash
+        env:
+          PRODUCTION_URL: https://jeongukdaeri.kr
+        run: |
+          if [ -f scripts/audit-live-cycling-user-shortcuts-20261117.mjs ]; then
+            node scripts/audit-live-cycling-user-shortcuts-20261117.mjs
+          else
+            echo "::notice::Cycling evidence auditor absent from deployed SHA: NOT VERIFIED."
+            echo "Cycling intent live audit: NOT VERIFIED (deployed SHA predates auditor)." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true
