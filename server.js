@@ -3532,7 +3532,7 @@ if(pathname==='/sitemap.xml'){
   // Preserve core cycling handover guides before large regional lists and the 499-URL cutoff.
   '/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/',
   // Core automobile delivery services take priority in crawl discovery.
-  '/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
+  '/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/','/service/aerial-work-truck-taksong/',
   '/taksong/types/','/taksong/jeju/','/reviews/taksong/','/fare/',
   '/business/','/business/used-car/','/business/rental-car/','/business/export-port/','/business/scrapyard/','/business/auction/',
   // Curated high-intent automobile delivery localities, only where official legal-region records exist.
