@@ -56,7 +56,7 @@ export function compareOfficialWeb(baseline,latest){
   if(!obs)return {...row,status:'NOT_IN_REPORTED_URL_TOP_LIST'};
   const reference=row.reference;
   if(reference.reportDate!==baselineScope.updatedAt||reference.period!==baselineScope.window||reference.device!==baselineScope.device)
-   return {...row,status:'INCOMPARABLE_URL_BASELINE',latest:{clicks:obs.clicks,impressions:obs.impressions,ctrPercent:pct(100*obs.clicks/obs.impressions)||0}};
+   return {...row,status:'INCOMPARABLE_URL_BASELINE',latest:{clicks:obs.clicks,impressions:obs.impressions,ctrPercent:obs.impressions?pct(100*obs.clicks/obs.impressions):null}};
   const latestCtr=obs.impressions? pct(100*obs.clicks/obs.impressions):null;
   return {...row,latest:{clicks:obs.clicks,impressions:obs.impressions,ctrPercent:latestCtr},
    impressionsDelta:isCount(reference.impressions)?obs.impressions-reference.impressions:null,
@@ -88,7 +88,7 @@ export function formatMarkdown(result){
 }
 const main=async()=>{
  const args=process.argv.slice(2),idx=args.indexOf('--latest');
- if(args.some(a=>a!=='--latest'&&(!idx||a!==args[idx+1]))||idx>=0&&!args[idx+1])throw Error('Usage: node scripts/compare-naver-web-performance-20261117.mjs [--latest ./path-to-owner-official-report.json]');
+ if((idx<0&&args.length!==0)||(idx>=0&&(idx!==0||args.length!==2||!args[1])))throw Error('Usage: node scripts/compare-naver-web-performance-20261117.mjs [--latest ./path-to-owner-official-report.json]');
  const latest=idx<0?null:JSON.parse(fs.readFileSync(path.resolve(process.cwd(),args[idx+1]),'utf8'));
  const result=compareOfficialWeb(JSON.parse(fs.readFileSync(baselineFile,'utf8')),latest);
  const report=formatMarkdown(result);
