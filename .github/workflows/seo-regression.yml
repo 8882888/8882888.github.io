@@ -67,6 +67,11 @@ jobs:
           node -e "const r=require('./ai-index-quality-review.json'); const assert=require('node:assert/strict'); assert.equal(r.totals.reviewed,2900); assert.equal(r.totals.fullyPassing,365); assert.equal(r.totals.needsReview,2535); console.log('Rubric: 365 passed, 2535 for review. These are NOT Naver indexed counts.');"
       - name: Syntax-check deployed priority evidence-first and real HTTP parity audit
         run: node --check scripts/audit-live-priority-ctr-evidence.cjs
+      - name: Verify 2591 archival ride records and exact evidence-region hub discovery
+        run: |
+          node --check lib/archived-ride-evidence-directory.cjs
+          node --check tests/archived-ride-evidence-discovery-20261117.test.cjs
+          node --test tests/archived-ride-evidence-discovery-20261117.test.cjs
       - name: Verify canonical keyword parity and bounded crawler HTML cache
         run: |
           node --check lib/regional-html-cache.cjs
