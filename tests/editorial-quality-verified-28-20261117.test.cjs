@@ -50,7 +50,7 @@ test('all source records preserved and 28 human-reviewed region guides meet exis
  for(const row of chosen){
   assert(curated.has(row.kind+'|'+row.region),'existing reviewed editorial source: '+row.keyword);
   assert.deepEqual(issues(row),[],row.keyword+' should have real locality details, enough depth and a relevant canonical service path');
-  assert.match(row.related,/^\/(?:service|business)\/[a-z0-9-/]+\/$/,'existing service guide');
+  assert.match(row.related,/^\/(?:service|business)\/[a-z0-9/-]+\/$/,'existing service guide');
   assert(!/운행(?:완료|확정)|배차완료|정비센터\s*공식\s*제휴|실제\s*완료\s*후기/.test([row.topic,row.pickup,row.handover].join(' ')),row.keyword+' cannot invent completion or partnership');
   assert(row.pickup.includes(row.region.split(/\s+/).at(-1)),row.keyword+' must identify a real region in pickup');
   // The same city may be described by an existing guide or related post, but
