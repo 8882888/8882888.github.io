@@ -69,6 +69,18 @@ jobs:
             echo "::notice::Archive link audit is not part of deployed revision $(git rev-parse --short HEAD); NOT VERIFIED, no pass claimed."
             echo "Archived regional link audit: NOT VERIFIED (auditor absent in deployed source revision $(git rev-parse --short HEAD))." >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Verify live six archive-backed guides and exact thirteen source links
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+        shell: bash
+        run: |
+          # workflow_run checks the exact deployed revision, not the future main.
+          if [ -f scripts/audit-live-six-local-source-guides.cjs ]; then
+            node scripts/audit-live-six-local-source-guides.cjs
+          else
+            echo "::notice::Six-source live auditor absent from deployed SHA; NOT VERIFIED."
+            echo "Six-source live HTML audit: NOT VERIFIED (auditor not in checked-out deploy SHA)." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true
