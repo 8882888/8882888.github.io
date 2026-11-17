@@ -92,6 +92,10 @@ jobs:
           node --test tests/live-six-local-source-audit-20261117.test.cjs
           node --check tests/source-backed-six-local-guides-20261117.test.cjs
           node --test tests/source-backed-six-local-guides-20261117.test.cjs
+      - name: Cross-verify second six dated locality guides with 17 archived records and real Node HTTP
+        run: |
+          node --check tests/source-backed-second-six-guides-20261117.test.cjs
+          node --test tests/source-backed-second-six-guides-20261117.test.cjs
       - name: Syntax-check deployed priority evidence-first and real HTTP parity audit
         run: node --check scripts/audit-live-priority-ctr-evidence.cjs
       - name: Verify 2591 archival ride records and exact evidence-region hub discovery
