@@ -53,6 +53,12 @@ jobs:
           node --check scripts/audit-live-service-center-schema.mjs
           node --check tests/service-center-schema-indexability-20261117.test.cjs
           node --test tests/service-center-schema-indexability-20261117.test.cjs
+      - name: Validate 28 reviewed originals and full 2900-document editorial quality delta
+        run: |
+          node --check tests/editorial-quality-verified-28-20261117.test.cjs
+          node --test tests/editorial-quality-verified-28-20261117.test.cjs
+          node scripts/ai-index-quality-triage.mjs
+          node -e "const r=require('./ai-index-quality-review.json'); console.log('Editorial source quality: '+r.totals.fullyPassing+'/'+r.totals.reviewed+' passing; '+r.totals.needsReview+' for review. No Naver index measurement.');"
       - name: Verify canonical keyword parity and bounded crawler HTML cache
         run: |
           node --check lib/regional-html-cache.cjs
