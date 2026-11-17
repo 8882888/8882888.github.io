@@ -45,7 +45,7 @@ test('regional search, homepage search and keyword-search map equivalent vehicle
    for(const start of ['/','/keyword-search/','/region/']){
     const req=await fetch(origin+start+'?q='+encodeURIComponent(q),{redirect:'manual'});
     assert.equal(req.status,302,start+' '+q+' should canonicalize without query landing');
-    assert.equal(req.headers.get('location'),canonical);
+    assert.equal(decodeURI(req.headers.get('location')),canonical,'canonical path allows percent-encoded Korean');
     assert.match(req.headers.get('cache-control')||'',/no-store/);
    }
   }
