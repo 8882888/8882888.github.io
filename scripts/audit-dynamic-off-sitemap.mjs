@@ -68,7 +68,7 @@ function classify(item,response){
  if(desc.length>1)problems.push('duplicate_description');
  if(length>80)problems.push('description_over_80');
  if(og.length&&[...decode(og[0])].length>80)warnings.push('og_description_over_80');
- if(og.length&&og[0]!==description)warnings.push('og_description_differs');
+ if(og.length&&decode(og[0])!==description)warnings.push('og_description_differs');
  if(og.length>1)warnings.push('duplicate_og');
  const canonicals=tags(head,'link').filter(t=>attr(t,'rel').toLowerCase().split(/\s+/).includes('canonical'));
  const canonical=canonicals.length===1?attr(canonicals[0],'href'):'';
