@@ -106,7 +106,7 @@ const publishedBlogById=new Map(publishedBlogPosts.map(p=>[String(p.id),p]));
 const priorityOriginals=load('data/seo-reviewed-local-originals-20261116.json').items;
 const prioritySearchQuestions=load('data/priority-search-questions-20261116.json').items;
 const prioritySearchQuestionsByKey=new Map(prioritySearchQuestions.map(entry=>[entry.kind+'|'+entry.region,entry]));
-if(prioritySearchQuestions.length!==7||prioritySearchQuestionsByKey.size!==7||prioritySearchQuestions.some(x=>x.questions.length!==2||!x.relatedPath||x.scenarios?.length!==3||x.scenarios.some(s=>!s.scenario||!s.location||!s.prepare)))
+if(prioritySearchQuestions.length!==7||prioritySearchQuestionsByKey.size!==7||prioritySearchQuestions.some(x=>x.questions.length!==2||!x.relatedPath||!x.tableIntro||!x.scopeNote||!x.relatedLabel||x.scenarios?.length!==3||x.scenarios.some(s=>!s.scenario||!s.location||!s.prepare)))
  throw Error('Invalid seven priority search question guides');
 function prioritySearchQuestionMarkup(region,kind){
  const record=prioritySearchQuestionsByKey.get(kind+'|'+region);
@@ -119,13 +119,13 @@ function prioritySearchQuestionMarkup(region,kind){
   '<tr><th scope="row">'+esc(scenario)+'</th><td>'+esc(location)+'</td><td>'+esc(prepare)+'</td></tr>').join('');
  const scenarioTable='<div id="priority-scenario-guide-20261117" class="priority-scenario-guide">'+
   '<h3>'+esc(region)+' 출발 상황별 차량 위치·예약 확인표</h3>'+
-  '<p>같은 시·군 안에서도 인수 장소와 차량 관리 조건이 달라집니다. 실제 차량 위치부터 확인하면 잘못된 출발지 접수를 줄일 수 있습니다.</p>'+
+  '<p>'+esc(record.tableIntro)+'</p>'+
   '<div style="overflow-x:auto"><table><caption>'+esc(region)+' '+(kind==='taksong'?'자동차탁송':'대리운전')+
   ' 상담 전 구분할 사항</caption><thead><tr><th scope="col">출발 상황</th><th scope="col">현장 위치·권한 확인</th><th scope="col">상담 시 전달할 정보</th></tr></thead><tbody>'+
   scenarioRows+'</tbody></table></div></div>';
  return '<section id="priority-search-questions-20261116" aria-label="'+esc(region)+' 예약 전 질문과 답변"><h2>'+esc(region)+' '+(kind==='taksong'?'자동차탁송':'대리운전')+' 예약 전 자주 확인하는 사항</h2>'+items+scenarioTable+
-  '<p><a href="'+esc(record.relatedPath)+'">관련 서비스 상세 안내</a> · <a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">상담 1811-4294</a></p>'+
-  '<p>지역별 준비사항이며 기사 상주·즉시 배차·실제 운행완료를 주장하지 않습니다.</p></section>';
+  '<p><a href="'+esc(record.relatedPath)+'">'+esc(record.relatedLabel)+'</a> · <a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">상담 1811-4294</a></p>'+
+  '<p>'+esc(record.scopeNote)+'</p></section>';
 }
 
 const priorityOriginalsByKey=new Map();
