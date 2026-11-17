@@ -1,5 +1,6 @@
 // Read-only live HTML smoke test: actual internal links, not Naver index/CTR evidence.
 import fs from 'node:fs';
+import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const origin=process.env.PRODUCTION_URL||'https://jeongukdaeri.kr';
 async function main(){
@@ -18,4 +19,4 @@ async function main(){
  console.log('PASS live existing cycling hub links to 3 course guides, real records, centers and fare; not a Naver ranking claim');
  if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'- Cycling live HTML: 200, 6 useful links and self canonical; **not** Naver traffic or indexing data.\n');
 }
-if(process.argv[1]&&fileURLToPath(import.meta.url)===new URL('file://'+process.argv[1]).pathname)main().catch(e=>{console.error(e);process.exitCode=1});
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().catch(e=>{console.error(e);process.exitCode=1});
