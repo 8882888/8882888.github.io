@@ -146,13 +146,17 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const response=await get(url),html=await response.text();
    assert.equal(response.status,200);assert.ok(!/noindex/.test(response.headers.get('x-robots-tag')||''));
    assert.ok(html.includes('부산에서 인천'));assert.ok(html.includes('https://example.com'+url));
-   assert.ok(!html.includes('content="noindex'));assert.ok(html.includes('auto=1'));
+   if(kind==='taksong')assert.ok(!html.includes('content="noindex'),'authored Busan to Incheon taksong corridor stays indexable');
+   else assert.ok(html.includes('content="noindex,nofollow"'),'unevidenced reverse or driver corridor is customer-only');
+   assert.ok(html.includes('auto=1'));
    assert.ok(html.includes('부산인천'+(kind==='daeri'?'대리운전':'탁송')),'joined route keywords must be rendered');
    assert.equal((await get('/routes/'+kind+'/'+busanId+'/'+busanId+'/')).status,404);
    const map=await (await get('/sitemap-route-'+kind+'.xml')).text();
    const urls=[...map.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
-   assert.ok(urls.length<50000&&urls.length>41000);assert.equal(new Set(urls).size,urls.length);
-   assert.ok(urls.includes('https://example.com'+url));
+   assert.ok(urls.length<50000&&urls.length>=1,'route XML only includes reviewed or authored corridors');
+   assert.equal(new Set(urls).size,urls.length);
+   if(kind==='taksong')assert.ok(urls.includes('https://example.com'+url),'authored corridor stays discoverable');
+   else assert.ok(!urls.includes('https://example.com'+url),'generic corridor is not in route sitemap');
    const list=await (await get('/routes/'+kind+'/'+daeguId+'/?page=2')).text();assert.ok(list.includes('2 /'));assert.ok(list.includes('?page=2'));
    assert.ok(list.includes('content="noindex,nofollow"'),'massive route directories must not consume crawler budget');
   }
@@ -168,11 +172,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     const xml=await response.text();
     assert.equal(response.status,200,'national sitemap shard '+code);
     const urls=[...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
-    assert.ok(urls.length>1000 && urls.length<50000,'Naver 50,000 URL limit '+code);
+    assert.ok(urls.length<50000,'approved-route-only XML stays under Naver 50,000 URL limit '+code);
     assert.ok(Buffer.byteLength(xml)<10000000,'Naver 10 MB limit '+code);
     assert.equal(new Set(urls).size,urls.length,'no duplicate routes in shard');
-    assert.ok(urls.some(x=>x.includes('/routes/'+kind+'/area-') && x.includes('/area-')),'two-way routes in shard');
-    if(code==='02')assert.ok(urls.some(x=>x.includes('/airport-gimhae/')),'Gimhae airport routes');
+    assert.ok(urls.every(x=>x.includes('/routes/'+kind+'/')),'nationwide shards only list route URLs');
+    if(code==='02'&&kind==='taksong')assert.ok(urls.some(x=>x.includes('/airport-gimhae/')),'approved Gimhae-to-Incheon route');
    }
    const airportSearch=await (await get('/route-search/?from='+encodeURIComponent('김해공항')+'&to='+encodeURIComponent('서울')+'&service='+kind)).text();
    assert.ok(airportSearch.includes('/routes/'+kind+'/airport-gimhae/'+routeArea('서울특별시')+'/'),'airport searches use SEO route page');
@@ -182,7 +186,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(airportHtml.includes('김해공항에서 서울'));
    assert.ok(airportHtml.includes('부산광역시 강서구 공항진입로 108'));
    assert.ok(airportHtml.includes('auto=1'));
-   assert.ok(airportHtml.includes('index,follow'));
+   assert.ok(airportHtml.includes('noindex,nofollow'),'unevidenced airport-to-Seoul calculator URL stays accessible without index promotion');
    const airportHub=await get('/routes/gimhae-airport/');
    assert.equal(airportHub.status,200);
    const airportDirectory=await (await get('/routes/'+kind+'/airport-gimhae/')).text();
