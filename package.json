@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.js",
     "check": "node --check server.js",
-    "check:seo": "node --test tests/seo-sitemap-regression.test.js"
+    "check:seo": "node --test tests/seo-sitemap-regression.test.js",
+    "check:naver:official": "node --test tests/naver-web-real-ctr-scorecard-20261117.test.mjs && node scripts/compare-naver-web-performance-20261117.mjs"
   },
   "engines": {
     "node": ">=20"

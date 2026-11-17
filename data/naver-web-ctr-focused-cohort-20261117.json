@@ -4,19 +4,19 @@
   "purpose": "Fixed baseline cohort for honest Naver Web Search URL-by-query checks after edits. NOT proof of improvement, ranking, or index growth.",
   "dataScope": "Owner-supplied Naver Web Search exposures/CTR; excludes NAVER VIEW/blog/ad results",
   "reportedAt": "2026-11-17",
-  "source": "User-provided figures during 2026-11-17 conversation; do not label as live API data",
-  "warning": "Naver report period, PC/mobile breakdown, actual click counts, query-to-URL relation and average positions were NOT supplied; do not infer or invent them. Older Gangneung baseline is a different report date.",
+  "source": "User-provided report summary of Manus owner-authenticated Naver Search Advisor inspection, data updated 2026-11-16, recent 30 days PC+Mobile. ChatGPT has not directly accessed authenticated Naver.",
+  "warning": "Nov 16 recent-30d PC+Mobile official report; 14 shown URL rows NOT indexed count; top 30 queries and top URL table NOT pairwise match. Numeric clicks, matched queries/URLs, average position and exact exposure window not supplied. Never infer rounded CTR to exact clicks; older Gangneung baseline is a different report date.",
   "pages": [
     {
       "url": "/taksong/",
       "role": "national_vehicle_transport",
       "reference": {
-        "reportDate": "2026-11-17",
-        "period": null,
+        "reportDate": "2026-11-16",
+        "period": "최근 30일",
         "impressions": 308,
         "ctrPercent": 1.6,
         "clicks": null,
-        "device": null
+        "device": "PC+모바일"
       },
       "latestOfficial": null,
       "queryUrlPairs": [],
@@ -29,12 +29,12 @@
       "url": "/service/taksong/",
       "role": "vehicle_handover_and_booking",
       "reference": {
-        "reportDate": "2026-11-17",
-        "period": null,
+        "reportDate": "2026-11-16",
+        "period": "최근 30일",
         "impressions": 253,
         "ctrPercent": 1.6,
         "clicks": null,
-        "device": null
+        "device": "PC+모바일"
       },
       "latestOfficial": null,
       "queryUrlPairs": [],
@@ -63,8 +63,8 @@
     }
   ],
   "measurementProtocol": {
-    "officialSource": "Naver Search Advisor authenticated site report + URL inspection; not Github, Naver Search API, synthetic Yeti or sitemap counts",
-    "compare": "Only identical Naver Web Search region, device filters, date-window duration and completed nonoverlapping windows when possible. Report actual current clicks/impressions and CTR; preserve user-originated historic baseline independently.",
+    "officialSource": "Owner-authenticated Naver Search Advisor contents impressions/clicks (Web Search only) and separately URL inspection. The owner report was updated 2026-11-16; not a live ChatGPT reading.",
+    "compare": "Compare equal periods/devices and underlying non-overlapping date windows where knowable. Naver reports with a roughly one-week publication lag; recent rolling 30-day windows overlap and cannot prove causal effects. Refuse to imply a CTR gain from code-only audit.",
     "requestedFields": [
       "reportedAt",
       "periodStart",
@@ -81,7 +81,18 @@
       "indexable",
       "indexed"
     ],
-    "priority": "Inspect top queries for the two taksong URLs and Gangneung daeri, if UI supports URL-query pair export. Naver publicly documents separate TOP30 query and URL lists; pairwise query×URL and average rank may not be available.",
+    "priority": "Obtain owner official report on the new updated date with overall + URL top table + query top table; separately inspect Gangneung daeri. URL-by-query/average ranking may be unavailable. Exports/screenshots from authenticated owner where possible; no unauthorized access.",
     "cannotConclude": "1.6% CTR is not a ranking or conversion diagnosis; impressions without clicks can reflect position, snippet intent, audience, or limited traffic; no claim about causality."
+  },
+  "report": {
+    "name": "네이버 서치어드바이저 콘텐츠 노출 및 클릭",
+    "dataUpdatedAt": "2026-11-16",
+    "window": "최근 30일",
+    "device": "PC+모바일",
+    "urlTableDisplayedRows": 14,
+    "keywordTableTopLimit": 30,
+    "access": "원본 로그인 화면 Manus 직접 확인, 사용자가 결과 전달; ChatGPT 직접 로그인하지 않음",
+    "reportedByUserAt": "2026-11-17",
+    "note": "14 URLs displayed is not number of URLs indexed. Query table and URL table are separate top lists; NOT URL-by-query mapping."
   }
 }
