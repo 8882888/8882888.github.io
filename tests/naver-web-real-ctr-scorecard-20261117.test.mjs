@@ -40,7 +40,7 @@ test('no new authenticated Naver report means no claimed gains or made-up clicks
  assert.equal(result.indexedPages,null);
  const md=formatMarkdown(result);
  assert.match(md,/미확인/);
- assert.match(md,/NOT/mi);
+ assert.match(md,/NO_NEW_OFFICIAL_DATA/);
 });
 test('with a later compatible owner report, show observed impressions and CTR but not invented baseline clicks',()=>{
  const result=compareOfficialWeb(base,report());
