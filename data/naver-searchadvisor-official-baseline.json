@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "site": "https://jeongukdaeri.kr",
   "sourceType": "owner_reported_naver_searchadvisor",
-  "sourceNote": "Owner previously reported official Naver Search Advisor Site Diagnosis. Date of the 14-document snapshot not confirmed. This is not a live API reading.",
+  "sourceNote": "Owner-provided Nov 16 report displayed 14 URL rows in the URL TOP table; this is NOT proof of 14 indexed URLs. A separate historical '14 indexed' assertion has no verifiable diagnosis date/evidence here and cannot be a quantitative indexed baseline.",
   "officialIndexBaseline": {
-    "indexed": 14,
-    "collectionLimited": 1,
-    "excluded": 0,
+    "indexed": null,
+    "collectionLimited": null,
+    "excluded": null,
     "observedAt": null
   },
   "latestOfficialSnapshot": null,
   "searchClicksBaselineFile": "data/naver-search-baseline-20261105.json",
-  "important": "Do not treat indexed as sitemap URLs, source keyword counts, synthetic Yeti sample size, Search API results, or Google indexing. Until authenticated newer owner data is supplied, official delta is unknown (null).",
+  "important": "No authenticated current site diagnosis screenshot/export confirming actual indexed count; 14 URL TOP rows are NOT indexed count. Never infer from URL report, sitemap, crawler tests, site search or stale historic notes. All official indexing figures remain unknown until dated owner Site Diagnosis is provided.",
   "searchClicksBaselineOwnerReported": {
     "source": "Naver Search Advisor recent-30-day report reported by site owner on 2026-11-06; approximate impressions; includes possible owner verification clicks",
     "period": "최근 30일",
@@ -21,5 +21,12 @@
       "impressions_approx": 2000,
       "ctr_percent": 3.8
     }
+  },
+  "historicalUnverifiedClaim": {
+    "indexed": 14,
+    "origin": "earlier ambiguous UI observation",
+    "observedAt": null,
+    "sourceOfTruth": "NOT_CURRENT_INDEX_DIAGNOSIS",
+    "countAsOfficialIndexBaseline": false
   }
 }

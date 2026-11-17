@@ -2005,10 +2005,19 @@ function nationwideServiceIntentHub(kind){
   const r=regionByFullName.get(full);
   return r?'<li><a href="'+esc(servicePath(r,kind))+'">'+esc(short+service)+'</a></li>':'';
  }).filter(Boolean).join('');
+ // National service hubs previously linked every city/county/district regardless
+ // of evidence. This large templated directory diluted the user's path to the
+ // existing source-reviewed local guides. Keep all legal URLs accessible in
+ // /coverage/ and /region/, but promote only individually reviewed local guides.
+ const reviewedLocalGuideNames=new Set(priorityRegionalPages
+  .filter(entry=>entry.kind===kind&&entry.region)
+  .map(entry=>entry.region));
  const focusLinks=provinces.map(([full,short])=>{
-  const links=regions.filter(r=>['시','군','구'].includes(r.level)&&r.full_name.startsWith(full+' '))
+  const links=regions.filter(r=>['시','군','구'].includes(r.level)
+    &&r.full_name.startsWith(full+' ')
+    &&reviewedLocalGuideNames.has(r.full_name))
    .map(r=>'<li><a href="'+esc(servicePath(r,kind))+'">'+esc(r.full_name+' '+service)+'</a></li>');
-  return links.length?'<li><details><summary>'+esc(short)+' 시·군·구</summary><ul>'+links.join('')+'</ul></details></li>':'';
+  return links.length?'<li><details><summary>'+esc(short)+' 검토된 주요 도시·군·구 ('+links.length+'곳)</summary><ul>'+links.join('')+'</ul></details></li>':'';
  }).join('');
  const heading=isT?'전국자동차탁송 예약 · 차량탁송·로드탁송·장거리탁송':'전국대리운전 예약 · 심야대리운전·장거리대리운전';
  const lead=isT
@@ -2021,8 +2030,9 @@ function nationwideServiceIntentHub(kind){
  '<h2>'+heading+'</h2><p>'+lead+'</p>'+practice+
  '<h3>전국 17개 시·도 '+service+' 지역별 안내</h3><p>지역명은 상담 정보를 찾는 기준입니다. 각 링크는 기존 정식 행정구역 주소로 연결되며, 모든 지역에 기사가 상주하거나 즉시 배차된다는 뜻은 아닙니다.</p>'+
  '<ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:7px;padding-left:20px">'+provinceLinks+'</ul>'+
- '<h3>지방 주요 도시 '+service+' 상세 안내</h3><p>원주·진주·나주·김천의 혁신도시 이용은 현재 해당 시의 정식 지역 안내에서 출발 동·주소를 확인합니다.</p>'+
+ '<h3>개별 정보가 검토된 주요 지역 '+service+' 상세 안내</h3><p>지역명만 바꾼 주소 목록 대신 개별 출발 환경과 인수·인계 조건을 정리한 기존 안내를 우선 연결합니다. 이 안내는 완료 운행이나 상주 기사 보증이 아닙니다. 원주·진주·나주·김천 혁신도시는 정확한 출발 동과 도착지를 확인해 주세요.</p>'+
  '<ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;padding-left:20px">'+focusLinks+'</ul>'+
+ '<p><a href="/coverage/">17개 시·도 및 전체 지역 안내</a> · <a href="/region/">시·군·구·읍·면·동·리 주소 찾기</a></p>'+
  '<p><a href="/fare/?service='+kind+'">출발지·도착지 '+service+' 예상요금</a> · <a href="/reviews/history/?kind='+kind+'">확인된 실제 운행기록</a> · <a href="/region/">읍·면·동 지역 검색</a> · <a href="tel:18114294">대표전화 1811-4294</a></p>'+
  '<p><small>예상요금과 기존 운행내역은 현재 배차 확정이나 동일 요금 보장이 아닙니다. 기사 배정 가능 여부와 보험 적용 범위는 예약 조건에 따라 확인합니다.</small></p></section>';
 }

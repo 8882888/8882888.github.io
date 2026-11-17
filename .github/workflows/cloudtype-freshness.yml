@@ -126,6 +126,17 @@ jobs:
             echo "::notice::Cycling evidence auditor absent from deployed SHA: NOT VERIFIED."
             echo "Cycling intent live audit: NOT VERIFIED (deployed SHA predates auditor)." >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Verify live national hubs promote only reviewed regional content
+        shell: bash
+        env:
+          PRODUCTION_URL: https://jeongukdaeri.kr
+        run: |
+          if [ -f scripts/audit-live-reviewed-national-hubs-20261118.cjs ]; then
+            node scripts/audit-live-reviewed-national-hubs-20261118.cjs
+          else
+            echo "::notice::Reviewed national discovery auditor absent in older deployment: NOT VERIFIED."
+            echo "Reviewed national links live audit: NOT VERIFIED (auditor unavailable)." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true

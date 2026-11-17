@@ -150,6 +150,11 @@ jobs:
         run: |
           node --check scripts/audit-live-cycling-user-shortcuts-20261117.mjs
           node --test tests/cycling-verified-shortcuts-and-ctr-20261117.test.mjs
+      - name: Prevent unreviewed link farms and misleading official index baseline
+        run: |
+          node --check scripts/audit-live-reviewed-national-hubs-20261118.cjs
+          node --check scripts/audit-live-taksong-ctr-intent-20261117.cjs
+          node --test tests/national-review-first-discovery-20261118.test.cjs
       - name: Preserve business page canonical identity and industry-specific guidance
         run: node --test tests/business-indexability-content.test.mjs
       - name: Protect distinct original-supported business workflow steps

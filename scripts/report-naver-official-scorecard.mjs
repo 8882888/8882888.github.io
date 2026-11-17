@@ -92,7 +92,7 @@ const md=[
  '| 노출 (30일·기준 근사치) | 약 '+safe(search.baseline.impressionsApprox)+' | '+safe(search.current?.impressions)+' | '+safe(search.impressionsDeltaApprox)+' |',
  '| CTR (30일) | '+safe(search.baseline.ctrPercent)+'% | '+safe(search.current?.ctrPercent)+'% | '+(search.ctrDeltaPercentagePoints===undefined?'미확인':safe(search.ctrDeltaPercentagePoints))+'%p |',
  '',
- '**출처 제한:** 정상 색인 14개는 이전 사이트 소유자 제공 수치이며 관측 날짜 불명. 클릭·노출 기준은 '+search.baseline.date+'의 사용자 제공 자료. 검색 클릭은 전화 상담 수가 아닙니다.',
+ '**출처 제한:** URL TOP 표의 14개 표시 행은 공식 색인 14개라는 뜻이 아닙니다. 날짜가 확인되지 않은 과거 색인 주장도 공식 비교값에서 제외합니다. 클릭·노출 기준은 '+search.baseline.date+'의 사용자 제공 자료. 검색 클릭은 전화 상담 수가 아닙니다.',
  '',
  '## 실제 서버 자동 검사 (공식 색인 통계 아님)',
  '',
