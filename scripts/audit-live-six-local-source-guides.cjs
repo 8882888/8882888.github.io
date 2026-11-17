@@ -8,7 +8,7 @@ const targets={
  '인천광역시 연수구':['인천연수구탁송','/taksong/incheon/yeonsu-gu/'],
  '경기도 오산시':['오산탁송','/taksong/gyeonggi/osan-si/'],
  '경기도 양주시':['양주탁송','/taksong/gyeonggi/yangju-si/'],
- '경상남도 밀양시':['밀양탁송','/taksong/gyeongnam/miryang-si/'],
+ '경상남도 밀양시':['밀양탁송','/taksong/gyeongnam/milyang-si/'],
  '경기도 시흥시':['시흥탁송','/taksong/gyeonggi/siheung-si/'],
  '충청북도 충주시':['충주탁송','/taksong/chungbuk/chungju-si/']
 };
