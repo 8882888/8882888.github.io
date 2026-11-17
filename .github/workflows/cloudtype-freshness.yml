@@ -51,6 +51,10 @@ jobs:
         env:
           LIVE_SITE_URL: https://jeongukdaeri.kr
         run: node scripts/audit-live-service-center-schema.mjs
+      - name: Verify live Naver-priority title, H1, descriptions and source-first content
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+        run: node scripts/audit-live-priority-ctr-evidence.cjs
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true
