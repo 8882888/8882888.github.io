@@ -55,10 +55,16 @@ const legalNameHint=s=>{
   a.region.localeCompare(b.region,'ko')).slice(0,12);
 };
 let alreadyClassified=0,unresolved=0,invalidClassification=0;
-const review=[];
+const review=[],seenIds=new Set();
 for(let i=0;i<archives.length;i++){
- const entry=archives[i],ride=raw[i],expected='excel-'+String(i+1).padStart(4,'0');
- if(entry.id!==expected)throw Error('Archive order mismatch '+entry.id+' vs '+expected);
+ const entry=archives[i];
+ const match=/^excel-(\\d{4})$/.exec(String(entry.id||''));
+ if(!match)throw Error('Invalid archive identifier');
+ const position=Number(match[1])-1;
+ if(position<0||position>=raw.length||seenIds.has(entry.id))
+  throw Error('Out-of-range or duplicate archive identifier: '+entry.id);
+ seenIds.add(entry.id);
+ const ride=raw[position];
  if(entry.region){
   if(!legalSet.has(entry.region))invalidClassification++;
   alreadyClassified++;
@@ -77,6 +83,7 @@ for(let i=0;i<archives.length;i++){
   stage,originHints:from.map(x=>x.region),destinationHints:to.map(x=>x.region),
   source:'ride-history.json',requiresHumanConfirmation:true,confirmedRegion:null});
 }
+if(seenIds.size!==2591)throw Error('Missing archive references');
 if(unresolved!==2183||alreadyClassified!==408||invalidClassification!==0)
  throw Error('Historical 2,183 unresolved / 408 classified inventory must not silently change');
 const stageCounts={};
