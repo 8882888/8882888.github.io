@@ -76,7 +76,7 @@ test('eight reviewed service pages expose exact source information to crawlers, 
     assert(html.includes('<title>'+headline+' | 스마트24 전국대리운전</title>'),row.keyword+' accurate search title');
     assert(html.includes('<h1>'+headline+'</h1>'),row.keyword+' visible H1/title parity');
     const desc=html.match(/<meta name="description" content="([^"]*)">/);
-    assert(desc&&desc[1].includes(isDaeri?'경포·안목·교동·주문진':'경포·주문진 차량 인수'),row.keyword+' unique description');
+    assert(desc&&desc[1].includes(isDaeri?'경포해변·안목해변의 음식점과':'강릉 경포대와 주문진·강릉항'),row.keyword+' unique description');
     assert(desc[1].includes('1811-4294'),row.keyword+' phone');
     assert(desc[1].length<160,row.keyword+' concise meta');
    }
