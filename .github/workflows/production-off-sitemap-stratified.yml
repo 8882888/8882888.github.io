@@ -1,5 +1,11 @@
 name: Production off-sitemap dynamic URL stratified HTTP sample
 on:
+  # Bootstrap the initial live audit when this workflow file is committed.
+  # Ordinary site/data edits do not trigger this expensive HTTP sample.
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/production-off-sitemap-stratified.yml'
   workflow_run:
     workflows: ['Deploy to Cloudtype']
     types: [completed]
@@ -13,7 +19,7 @@ concurrency:
 jobs:
   verify-release:
     name: Confirm Cloudtype is running the audited source
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
