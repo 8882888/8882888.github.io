@@ -146,6 +146,9 @@ jobs:
           node --check scripts/compare-naver-web-performance-20261117.mjs
           node --test tests/naver-web-real-ctr-scorecard-20261117.test.mjs
           node scripts/compare-naver-web-performance-20261117.mjs
+          node --check scripts/measure-naver-four-official-kpis-20261118.mjs
+          node --test tests/naver-four-official-kpi-deltas-20261118.test.mjs
+          node scripts/measure-naver-four-official-kpis-20261118.mjs
       - name: Protect existing cycling course navigability and canonical evidence
         run: |
           node --check scripts/audit-live-cycling-user-shortcuts-20261117.mjs
