@@ -73,3 +73,35 @@ test('new paragraphs are not interchangeable boilerplate across the 28 reviewed 
   assert(row.pickup!==row.handover);
  }
 });
+
+test('reviewed locality guidance is visible in crawler-facing HTML rather than source files alone',async()=>{
+ const {spawn}=require('node:child_process');
+ const port=39876,host='http://127.0.0.1:'+port;
+ const child=spawn(process.execPath,['server.js'],{cwd:ROOT,env:{...process.env,PORT:String(port),PUBLIC_HOST:'jeongukdaeri.kr'},stdio:'ignore'});
+ try{
+  let started=false;
+  for(let i=0;i<90;i++){
+   if(child.exitCode!==null)throw Error('local source server exited '+child.exitCode);
+   try{const r=await fetch(host+'/health',{signal:AbortSignal.timeout(1200)});if(r.ok){started=true;break;}}catch{}
+   await new Promise(resolve=>setTimeout(resolve,225));
+  }
+  assert(started,'local source server started');
+  for(const id of [17,26,60,86,148,196]){
+   const source=rows.find(x=>x.id===id);
+   assert(source,'selected source '+id);
+   const lookup=await fetch(host+'/?q='+encodeURIComponent(source.keyword),{redirect:'manual',signal:AbortSignal.timeout(12000)});
+   assert.equal(lookup.status,302,source.keyword+' canonical keyword resolution');
+   const location=decodeURI(lookup.headers.get('location')||'');
+   assert(location.startsWith('/'),source.keyword+' must resolve to a same-site canonical');
+   const response=await fetch(host+location,{signal:AbortSignal.timeout(20000)});
+   assert.equal(response.status,200,source.keyword+' live HTML');
+   assert(!/noindex/i.test(response.headers.get('x-robots-tag')||''),source.keyword+' is not hidden by X-Robots-Tag');
+   const html=await response.text();
+   assert(html.includes(source.topic),source.keyword+' source-specific title must be rendered');
+   assert(html.includes(source.pickup),source.keyword+' pickup instructions must be rendered');
+   assert(html.includes(source.handover),source.keyword+' destination handover instructions must be rendered');
+   assert(html.includes('href="'+source.related+'"'),source.keyword+' related canonical service link');
+   assert(html.includes('tel:18114294'),source.keyword+' preserves customer contact');
+  }
+ }finally{child.kill();}
+});
