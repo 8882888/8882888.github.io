@@ -138,6 +138,11 @@ jobs:
         run: node --test tests/keyword-canonical-bridge.test.js
       - name: Preserve business page canonical identity and industry-specific guidance
         run: node --test tests/business-indexability-content.test.mjs
+      - name: Protect distinct original-supported business workflow steps
+        run: |
+          node --check scripts/audit-live-business-evidence-workflows-20261117.cjs
+          node --check tests/business-specific-originals-20261117.test.cjs
+          node --test tests/business-specific-originals-20261117.test.cjs
       - name: Require ten different innovation city service guides and priority source deployment fingerprint
         run: node --test tests/innovation-five-city-editorial.test.mjs
       - name: Verify ten additional innovation-area driver and delivery guides are distinct
