@@ -50,6 +50,7 @@ jobs:
       - name: Validate indexable service-center sitemap and schema.org JSON-LD
         run: |
           node --check lib/service-center-schema.cjs
+          node --check scripts/audit-live-service-center-schema.mjs
           node --check tests/service-center-schema-indexability-20261117.test.cjs
           node --test tests/service-center-schema-indexability-20261117.test.cjs
       - name: Verify canonical keyword parity and bounded crawler HTML cache
