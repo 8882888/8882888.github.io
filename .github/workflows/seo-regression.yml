@@ -42,6 +42,11 @@ jobs:
           node --check lib/special-vehicle-keywords.cjs
           node --check tests/special-vehicle-keywords.test.cjs
           node --test tests/special-vehicle-keywords.test.cjs
+      - name: Verify canonical keyword parity and bounded crawler HTML cache
+        run: |
+          node --check lib/regional-html-cache.cjs
+          node --check tests/keyword-entrypoint-cache.test.cjs
+          node --test tests/keyword-entrypoint-cache.test.cjs
       - name: Check JavaScript syntax
         run: |
           node --check server.js
