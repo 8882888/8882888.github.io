@@ -136,6 +136,11 @@ jobs:
         run: node tests/site-name.test.js
       - name: Verify 823k keyword intents resolve to regional canonical URLs
         run: node --test tests/keyword-canonical-bridge.test.js
+      - name: Verify unchanged three-page CTR cohort and customer-first transport HTML
+        run: |
+          node --check tests/taksong-ctr-intent-cohort-20261117.test.cjs
+          node --check scripts/audit-live-taksong-ctr-intent-20261117.cjs
+          node --test tests/taksong-ctr-intent-cohort-20261117.test.cjs
       - name: Preserve business page canonical identity and industry-specific guidance
         run: node --test tests/business-indexability-content.test.mjs
       - name: Protect distinct original-supported business workflow steps

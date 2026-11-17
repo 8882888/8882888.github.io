@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "site": "https://jeongukdaeri.kr",
+  "purpose": "Fixed baseline cohort for honest Naver Web Search URL-by-query checks after edits. NOT proof of improvement, ranking, or index growth.",
+  "dataScope": "Owner-supplied Naver Web Search exposures/CTR; excludes NAVER VIEW/blog/ad results",
+  "reportedAt": "2026-11-17",
+  "source": "User-provided figures during 2026-11-17 conversation; do not label as live API data",
+  "warning": "Naver report period, PC/mobile breakdown, actual click counts, query-to-URL relation and average positions were NOT supplied; do not infer or invent them. Older Gangneung baseline is a different report date.",
+  "pages": [
+    {
+      "url": "/taksong/",
+      "role": "national_vehicle_transport",
+      "reference": {
+        "reportDate": "2026-11-17",
+        "period": null,
+        "impressions": 308,
+        "ctrPercent": 1.6,
+        "clicks": null,
+        "device": null
+      },
+      "latestOfficial": null,
+      "queryUrlPairs": [],
+      "averagePosition": null,
+      "indexStatus": null,
+      "lastCrawledAt": null,
+      "change": "2026-11-17 focus real handover and fare intent; link mountain/cycling"
+    },
+    {
+      "url": "/service/taksong/",
+      "role": "vehicle_handover_and_booking",
+      "reference": {
+        "reportDate": "2026-11-17",
+        "period": null,
+        "impressions": 253,
+        "ctrPercent": 1.6,
+        "clicks": null,
+        "device": null
+      },
+      "latestOfficial": null,
+      "queryUrlPairs": [],
+      "averagePosition": null,
+      "indexStatus": null,
+      "lastCrawledAt": null,
+      "change": "2026-11-17 focus practical three-step vehicle handover, fare and mountain/cycling links"
+    },
+    {
+      "url": "/daeri/gangwon/gangreung-si/",
+      "role": "gangneung_daeri_no_click_diagnostic",
+      "reference": {
+        "reportDate": "2026-11-05",
+        "period": "최근 30일",
+        "impressions": 615,
+        "ctrPercent": 0,
+        "clicks": 0,
+        "device": null
+      },
+      "latestOfficial": null,
+      "queryUrlPairs": [],
+      "averagePosition": null,
+      "indexStatus": null,
+      "lastCrawledAt": null,
+      "change": "NO edit; query and position investigation before further title changes"
+    }
+  ],
+  "measurementProtocol": {
+    "officialSource": "Naver Search Advisor authenticated site report + URL inspection; not Github, Naver Search API, synthetic Yeti or sitemap counts",
+    "compare": "Only identical Naver Web Search region, device filters, date-window duration and completed nonoverlapping windows when possible. Report actual current clicks/impressions and CTR; preserve user-originated historic baseline independently.",
+    "requestedFields": [
+      "reportedAt",
+      "periodStart",
+      "periodEnd",
+      "device",
+      "url",
+      "query",
+      "clicks",
+      "impressions",
+      "ctrPercent",
+      "averagePositionOrObservedExposureLocationIfAvailable",
+      "lastCrawledAt",
+      "crawlStatus",
+      "indexable",
+      "indexed"
+    ],
+    "priority": "Inspect top queries for the two taksong URLs and Gangneung daeri, if UI supports URL-query pair export. Naver publicly documents separate TOP30 query and URL lists; pairwise query×URL and average rank may not be available.",
+    "cannotConclude": "1.6% CTR is not a ranking or conversion diagnosis; impressions without clicks can reflect position, snippet intent, audience, or limited traffic; no claim about causality."
+  }
+}

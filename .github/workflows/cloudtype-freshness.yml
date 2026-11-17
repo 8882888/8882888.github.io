@@ -104,6 +104,17 @@ jobs:
             echo "::notice::Business evidence auditor not in deployed SHA: NOT VERIFIED."
             echo "Business evidence live audit: NOT VERIFIED (auditor not in deployed SHA)." >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Verify two transport-intent pages in live Cloudtype HTML after release match
+        shell: bash
+        env:
+          PRODUCTION_URL: https://jeongukdaeri.kr
+        run: |
+          if [ -f scripts/audit-live-taksong-ctr-intent-20261117.cjs ]; then
+            node scripts/audit-live-taksong-ctr-intent-20261117.cjs
+          else
+            echo "::notice::This release predates transport-intent auditor; NOT VERIFIED."
+            echo "Transport-intent HTTP audit: NOT VERIFIED (no auditor in deployed SHA)." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Identify the previous Cloudtype release when freshness fails
         if: failure()
         continue-on-error: true
