@@ -15,7 +15,7 @@ test('arbitrary unverified regional pair stays usable but is not a search landin
  const out=app().handle(r,uri(r));
  assert.equal(out.status,200);
  assert.equal(isNoindex(out.body),true);
- assert.match(out.body,new RegExp('rel="canonical" href="https://jeongukdaeri\\.kr'+r.replace(/\\//g,'\\/')+'"'));
+ assert.ok(out.body.includes('rel="canonical" href="https://jeongukdaeri.kr'+r+'"'));
  assert.match(out.body,/요금·예약/);
  assert.doesNotMatch(out.body,/실제 운행완료 후기/);
 });
@@ -34,7 +34,7 @@ test('a genuinely verified directional route stays indexable with actual source 
  assert.equal(out.status,200);
  assert.match(out.body,/name="robots" content="index,follow,max-image-preview:large"/);
  assert.match(out.body,/실제 운행완료 후기/);
- assert.match(out.body,/reviews\\/history\\/excel-1/);
+ assert.ok(out.body.includes('/reviews/history/excel-1/'));
 });
 test('route sitemaps list only approved and verified corridors, not arbitrary combinations',()=>{
  const r=route('대전광역시','인천광역시'),keep=route('서울특별시','부산광역시');
