@@ -42,6 +42,11 @@ jobs:
           node --check lib/special-vehicle-keywords.cjs
           node --check tests/special-vehicle-keywords.test.cjs
           node --test tests/special-vehicle-keywords.test.cjs
+      - name: Verify 44 source-backed domestic, imported and truck service-center intents
+        run: |
+          node --check lib/service-center-taksong.cjs
+          node --check tests/service-center-taksong-keywords-20261117.test.cjs
+          node --test tests/service-center-taksong-keywords-20261117.test.cjs
       - name: Verify canonical keyword parity and bounded crawler HTML cache
         run: |
           node --check lib/regional-html-cache.cjs
