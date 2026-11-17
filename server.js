@@ -2856,7 +2856,13 @@ if(pathname==='/api/nationwide-locality-card.svg'){
 }
 const keywordEntryPath=pathname==='/'||pathname==='/index.html'||pathname==='/keyword-search/'||pathname==='/keyword-search';
 const explicitKeyword=['q','query','keyword','search','term','wd','kw'].map(k=>u.searchParams.get(k)).find(Boolean);
-const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword):(pathname==='/region/'?explicitKeyword:null);
+// Twenty existing hand-picked exact-card phrases use /region/?q= to render
+// an on-page SVG preview with the *typed* label. Preserve that customer
+// workflow instead of redirecting these card previews to a generic hub.
+const exactCardPreviewIntent=pathname==='/region/'&&explicitKeyword&&
+ new Set(require('./data/exact-image-priority-20.json')).has(explicitKeyword.trim());
+const searchIntent=keywordEntryPath?(explicitKeyword||searchReferrerKeyword)
+ :(pathname==='/region/'&&!exactCardPreviewIntent?explicitKeyword:null);
 const directionalKeyword=searchIntent||(pathname==='/region/'?explicitKeyword:null);
 const directionalTarget=directionalKeyword&&directionalServiceTarget(directionalKeyword,resolvedLiveCardAliases,u.searchParams.get('service')==='daeri'?'daeri':'taksong');
 if(directionalTarget){
