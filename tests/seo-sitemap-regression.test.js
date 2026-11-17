@@ -351,7 +351,8 @@ test('national answer-first content is visible, useful and tied to real consulta
 
 test('regional AEO direct answers cover all nationwide administrative levels without artificial indexability',()=>{
  assert.ok(server.includes("['시도','시','군','구','읍','면','동','리'].includes(r.level)"),'all existing administrative levels need visible region answers');
- assert.ok(server.includes("const regionalAnswerContext=r.level==='시도'"),'answer text must distinguish province city and neighborhood conditions');
+ assert.ok(server.includes("const regionalAnswerEditorial=priorityByKey.get(kind+'|'+r.full_name)")&&server.includes("const regionalAnswerFocus=focus50ByKey.get(kind+'|'+r.full_name)"),'first-screen local answers must use reviewed regional content before fallbacks');
+ assert.ok(server.includes("r.level==='시도'?'시·군·구별 출발 위치")&&server.includes("['시','군','구'].includes(r.level)"),'fallback answer text must still distinguish province city and neighborhood conditions');
  assert.ok(server.includes('외곽이나 심야에는 배차가 제한될 수 있습니다'),'sparse rural locality guidance must not promise instant dispatch');
  assert.ok(server.includes('id="regional-direct-answer"'),'indexable region answers should be visible in HTML');
  assert.ok(server.includes("const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+"),'direct answer should lead the regional content');

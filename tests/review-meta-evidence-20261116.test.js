@@ -35,6 +35,6 @@ test('dynamic reviewed route hub also has meaningful, evidence-safe metadata',()
 
 test('reviewed route title should only receive the shared Smart24 brand once',()=>{
  const code=fs.readFileSync(path.join(root,'lib/route-keyword-pages.js'),'utf8');
- assert(code.includes("return layout(t+' 요금·예약',desc,body,"),'route title must use the common layout suffix');
+ assert(code.includes("const html=layout(t+' 요금·예약',desc,body,") || code.includes("return layout(t+' 요금·예약',desc,body,"),'route title must use the common layout suffix');
  assert(!code.includes("t+' 요금·예약 | 스마트24'"),'no duplicate Smart24 suffix in generated titles');
 });

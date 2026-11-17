@@ -1481,9 +1481,17 @@ async function servicePage(r,kind){
  // GEO/AEO: nationwide answer-first guidance for every valid administrative region.
  // Keep sparse neighborhood pages' existing noindex rules and avoid fabricated rides, mileage or dispatch promises.
  const regionalAnswerEligible=['시도','시','군','구','읍','면','동','리'].includes(r.level);
- const regionalAnswerContext=r.level==='시도'?'시·군·구별 출발 위치가 다르므로 목적지와 인수 장소를 먼저 확인합니다.':(['시','군','구'].includes(r.level)?'지역 내 정확한 주차 위치와 진입·출입 조건을 확인한 뒤 기사 접근 및 복귀 동선을 상담합니다.':'읍·면·동·리 출발은 주소·주차장·주변 기준점을 정확히 알려주세요. 외곽이나 심야에는 배차가 제한될 수 있습니다.');
+ // Ground the answer-first section in 59 source-reviewed editorials or 150
+ // separately curated locality guides. Do not generate claims about live
+ // staffing, completed rides, fixed prices or AI platform endorsement.
+ const regionalAnswerEditorial=priorityByKey.get(kind+'|'+r.full_name);
+ const regionalAnswerFocus=focus50ByKey.get(kind+'|'+r.full_name);
+ const regionalAnswerContext=regionalAnswerEditorial?.detail||regionalAnswerFocus?.pickup||
+  (r.level==='시도'?'시·군·구별 출발 위치가 다르므로 목적지와 인수 장소를 먼저 확인합니다.':(['시','군','구'].includes(r.level)?'지역 내 정확한 주차 위치와 진입·출입 조건을 확인한 뒤 기사 접근 및 복귀 동선을 상담합니다.':'읍·면·동·리 출발은 주소·주차장·주변 기준점을 정확히 알려주세요. 외곽이나 심야에는 배차가 제한될 수 있습니다.'));
+ const regionalAnswerTopic=regionalAnswerEditorial?.topic||regionalAnswerFocus?.topic||'';
  const regionalAnswerFirst=regionalAnswerEligible
   ?'<section id="regional-direct-answer" aria-labelledby="regional-direct-question"><h2 id="regional-direct-question">'+esc(keyword)+' 요금과 예약은 어떻게 확인하나요?</h2>'+
+   (regionalAnswerTopic?'<h3>'+esc(regionalAnswerTopic)+'</h3>':'')+
    '<p>'+esc(name)+'에서 '+(kind==='taksong'?'자동차탁송을 이용하려면 차량 인수 장소와 목적지, 차종, 주행 가능 상태 및 희망 인계 시각을':'대리운전을 이용하려면 출발지와 목적지, 희망 출발 시각 및 경유·대기 여부를')+' 알려주세요. '+esc(regionalAnswerContext)+' 도로거리와 시간대, 기사 접근·복귀 여건에 따라 예상요금과 배차 가능 여부가 달라집니다. 최종 금액과 실제 기사 배정은 상담으로 확인합니다.</p>'+
    '<p>'+(historicalMatches.length||matches.length?'이 지역과 연관된 기존 완료 운행기록은 아래에서 날짜·구간·당시 요금을 확인할 수 있습니다. 과거 요금은 현재 고정 요금이 아닙니다.':'현재 이 지역의 확인된 완료 운행기록을 이 페이지에 연결하지 않았습니다. 확인되지 않은 후기를 작성하지 않습니다.')+'</p>'+
    '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역 예상요금 조회</a> · <a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">실제 운행기록 검색</a> · <a href="/'+kind+'/">전국 '+(kind==='taksong'?'자동차탁송':'대리운전')+' 안내</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>':'';

@@ -32,6 +32,11 @@ jobs:
         run: |
           node --check lib/seo-head-guard.cjs
           node --test tests/seo-head-guard.test.cjs
+      - name: Protect verified route SEO boundaries and customer route search
+        run: |
+          node --check lib/route-keyword-pages.js
+          node --check tests/route-indexability-boundary.test.cjs
+          node --test tests/route-indexability-boundary.test.cjs
       - name: Check JavaScript syntax
         run: |
           node --check server.js
