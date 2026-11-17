@@ -10,15 +10,23 @@ test('2,900 regional pages are triaged without pretending to have Naver index da
  const report=JSON.parse(fs.readFileSync(path.join(root,'ai-index-quality-review.json'),'utf8'));
  const e=JSON.parse(fs.readFileSync(path.join(root,'ai-index-evidence-priority.json'),'utf8'));
  assert.equal(report.totals.reviewed,2900);
- assert.equal(report.totals.needsReview,2571,'baseline 2,571 must not be silently redefined by a source-evidence crosswalk');
- assert.equal(report.totals.fullyPassing,329);
+ // Preserve the published historical baseline, while allowing actual editorial
+ // improvements to reduce the current queue. Source-evidence crosswalks alone
+ // must never change the measured pass/fail totals.
+ const historicalBaseline={reviewed:2900,needsReview:2571,fullyPassing:329};
+ const evidencedEdits=28;
+ assert.equal(report.totals.needsReview+report.totals.fullyPassing,historicalBaseline.reviewed);
+ assert.ok(report.totals.needsReview<=historicalBaseline.needsReview-evidencedEdits,
+  '28 revised, source-reviewed guides must reduce rather than silently rename the 2571 baseline');
+ assert.ok(report.totals.fullyPassing>=historicalBaseline.fullyPassing+evidencedEdits,
+  '28 revised guides must meet the existing quality rubric');
  assert.deepEqual(e.totals,report.totals);
  assert.equal(e.naverIndexed,null);
  assert.equal(e.googleIndexed,null);
  assert.equal(e.queue.length,100);
  const c=e.evidenceCounts;
  assert.equal(Object.values(c).reduce((n,x)=>n+x.total,0),2900);
- assert.equal(Object.values(c).reduce((n,x)=>n+x.needsReview,0),2571);
+ assert.equal(Object.values(c).reduce((n,x)=>n+x.needsReview,0),report.totals.needsReview);
  assert.ok(c['published-reference-linked'].total>=5);
  assert.ok(c['reviewed-editorial-guidance'].total>=30);
  assert.ok(c['additional-local-evidence-needed'].total>=2000);
