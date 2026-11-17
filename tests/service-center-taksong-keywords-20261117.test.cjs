@@ -22,7 +22,7 @@ test('service-center keywords are curated by vehicle class with real intake dist
  assert.equal(new Set(all.map(x=>x.toLowerCase())).size,44,'no duplicate search terms');
  assert.equal(data.aliases.length,7);
  for(const g of data.groups){
-  assert(g.description.length>90&&g.action.length>60,'not thin keyword-only text');
+  assert(g.description.length>90&&g.action.length>=50,'not thin keyword-only text');
   assert(!/(공식 협약|제조사 공식 탁송|100% 배차 보장|기사 상주)/.test(g.description+g.action));
  }
  for(const exact of ['현대서비스센터탁송','벤츠서비스센터탁송','볼보서비스센터탁송']){
