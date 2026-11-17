@@ -63,7 +63,7 @@ const judged=rows.map(row=>{
 const priorityEditorial=JSON.parse(fs.readFileSync(path.join(dir,'priority-regions.json'),'utf8')).pages;
 const originalReferences=JSON.parse(fs.readFileSync(path.join(dir,'seo-reviewed-local-originals-20261116.json'),'utf8')).items;
 const published=JSON.parse(fs.readFileSync(path.join(root,'blog/posts.json'),'utf8'));
-const publishedById=new Map(published.filter(p=>/^https:\\/\\/blog\\.naver\\.com\\/wjdtnr4757\\/\\d+$/.test(String(p.url||''))).map(p=>[String(p.id),p]));
+const publishedById=new Map(published.filter(p=>/^https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+$/.test(String(p.url||''))).map(p=>[String(p.id),p]));
 const reviewedEditorialKeys=new Set(priorityEditorial.map(p=>p.kind+'|'+p.region));
 const originalsByKey=new Map();
 for(const ref of originalReferences){
@@ -134,7 +134,7 @@ const output={
   note:'A page can be technically indexable without being indexed. Actual ride completion and dispatch availability require separate verified records.',
   candidates
 };
-fs.writeFileSync('ai-index-quality-review.json',JSON.stringify(output,null,2)+'\\n');
+fs.writeFileSync('ai-index-quality-review.json',JSON.stringify(output,null,2)+'\n');
 const evidenceReport={
  generatedAt:output.generatedAt,scope:output.scope,naverIndexed:null,googleIndexed:null,
  totals:output.totals,evidenceCounts,issueCounts:groups,
@@ -146,18 +146,18 @@ const evidenceReport={
  queue:evidenceQueue,
  warning:'No automatic publication, no bulk noindex changes, and no official Naver crawl/index measurement. Historical ride details require a separate exact source match.'
 };
-fs.writeFileSync('ai-index-evidence-priority.json',JSON.stringify(evidenceReport,null,2)+'\\n');
-const evidenceCols=['evidenceTier','reviewPriority','score','kind','region','keyword','source','issues','originalPostUrls','nextAction'];
-fs.writeFileSync('ai-index-evidence-priority.csv',evidenceCols.join(',')+'\\n'+evidenceQueue.map(row=>
- evidenceCols.map(key=>csvCell(key==='issues'?row.issues.join('; '):key==='originalPostUrls'?row.originalSources.map(p=>p.url).join('; '):row[key])).join(',')).join('\\n')+'\\n');
+fs.writeFileSync('ai-index-evidence-priority.json',JSON.stringify(evidenceReport,null,2)+'\n');
 const csvCell=value=>'"'+String(value??'').replace(/"/g,'""').replace(/\r?\n/g,' ')+'"';
+const evidenceCols=['evidenceTier','reviewPriority','score','kind','region','keyword','source','issues','originalPostUrls','nextAction'];
+fs.writeFileSync('ai-index-evidence-priority.csv',evidenceCols.join(',')+'\n'+evidenceQueue.map(row=>
+ evidenceCols.map(key=>csvCell(key==='issues'?row.issues.join('; '):key==='originalPostUrls'?row.originalSources.map(p=>p.url).join('; '):row[key])).join(',')).join('\n')+'\n');
 const columns=['reviewPriority','score','kind','region','keyword','focus','source','issues','evidence','action'];
 fs.writeFileSync('ai-index-quality-review.csv',columns.join(',')+'\n'+candidates.map(row=>columns.map(k=>csvCell(k==='issues'?row.issues.join('; '):row[k])).join(',')).join('\n')+'\n');
 let md='# AI-assisted index quality review — source evidence triage\n\n';
 md+='- Source entries checked: **'+judged.length+'**; distinct region/service pairs: **'+uniqueSourceRows+'**\n';
 md+='- Needs human editorial review: **'+output.totals.needsReview+'**; clean by this limited rubric: **'+output.totals.fullyPassing+'**\n';
 md+='- **Naver indexed count: not connected / not measured.** Never use candidate or sitemap totals as indexed counts.\n';
-md+='- Evidence tiers (not Search Advisor verdicts): '+Object.entries(evidenceCounts).map(([name,count])=>name+': '+count.total+' total / '+count.needsReview+' needs review').join('; ')+'\\n';
+md+='- Evidence tiers (not Search Advisor verdicts): '+Object.entries(evidenceCounts).map(([name,count])=>name+': '+count.total+' total / '+count.needsReview+' needs review').join('; ')+'\n';
 md+='- Read-only ranking by missing local value, duplicate text, and high-priority service areas; no AI-generated pages, no fabricated rides, no automatic submissions.\n\n';
 md+='## Top 30 editorial review candidates\n\n| Priority | Location / keyword | Service | Issues | Source |\n|---:|---|---|---|---|\n';
 for(const row of candidates.slice(0,30)){
