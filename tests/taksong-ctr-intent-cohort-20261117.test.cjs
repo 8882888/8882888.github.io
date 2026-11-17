@@ -44,7 +44,7 @@ test('nationwide transport metadata and distinct service guide explain users act
  assert(section?.length>480,'visible handover explanation');
  assert(detail.indexOf('service-taksong-handover-intent-20261117')<detail.indexOf('service-center-brand-routes-20261102'),'service user intent before brand lists');
  for(const url of ['/taksong/','/fare/?service=taksong','/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/'])assert(section.includes('href="'+url+'"'), 'service guide link '+url);
- for(const phrase of ['주차 위치','인계 가능 시각','요금','견인','별도'])assert(section.includes(phrase));
+ for(const phrase of ['주차 위치','인계 가능 시각','요금','견인','따로'])assert(section.includes(phrase));
  const source=read('server.js');
  assert(source.includes("answerFirst+taksongIntentChoice+nationwidePlaceIntentLinks(kind)"),'national intent above directory');
  assert(source.includes('id="national-taksong-intent-choice-20261117"'),'national intent visible');
