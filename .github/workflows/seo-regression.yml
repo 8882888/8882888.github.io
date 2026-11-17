@@ -59,6 +59,12 @@ jobs:
           node --test tests/editorial-quality-verified-28-20261117.test.cjs
           node scripts/ai-index-quality-triage.mjs
           node -e "const r=require('./ai-index-quality-review.json'); console.log('Editorial source quality: '+r.totals.fullyPassing+'/'+r.totals.reviewed+' passing; '+r.totals.needsReview+' for review. No Naver index measurement.');"
+      - name: Require 8 reviewed guides and factual Gangneung click-through snippets
+        run: |
+          node --check tests/editorial-quality-eight-ctr-20261117.test.cjs
+          node --test tests/editorial-quality-eight-ctr-20261117.test.cjs
+          node scripts/ai-index-quality-triage.mjs
+          node -e "const r=require('./ai-index-quality-review.json'); const assert=require('node:assert/strict'); assert.equal(r.totals.reviewed,2900); assert.equal(r.totals.fullyPassing,365); assert.equal(r.totals.needsReview,2535); console.log('Rubric: 365 passed, 2535 for review. These are NOT Naver indexed counts.');"
       - name: Verify canonical keyword parity and bounded crawler HTML cache
         run: |
           node --check lib/regional-html-cache.cjs
