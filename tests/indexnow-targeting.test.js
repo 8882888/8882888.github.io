@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const {changedPaths,priorityPaths,blogHashtagPaths,sitemapWindow}=require('../scripts/indexnow-notify');
+const {changedPaths,priorityPaths,blogHashtagPaths,sitemapWindow,batchUrls}=require('../scripts/indexnow-notify');
 assert(sitemapWindow.focusCount>=2900,'All curated locality SEO guides must be included in priority sitemap size guard');
 assert.equal(sitemapWindow.maximumCount,sitemapWindow.focusCount+500,'IndexNow ceiling must scale with the guide count');
 assert(sitemapWindow.minimumCount<=sitemapWindow.focusCount,'Curated priority entries must fit within the overall regional focus');
@@ -64,8 +64,15 @@ assert.deepEqual(changedPaths(['reviews/verified/'+saved+'/index.html','data/pub
  ['/reviews/verified/'+saved+'/'],'new confirmed case gets exactly one canonical notification');
 assert.deepEqual(changedPaths(['data/published-ride-case-ids.json']),[],
  'manifest without a saved document must not trigger a false publication');
-assert.throws(()=>changedPaths(Array.from({length:11},(_,i)=>'reviews/verified/'+String(i).padStart(16,'0')+'/index.html')),
- /More than ten/,'never silently lose bulk notifications');
+const twentyNineCaseFiles=Array.from({length:29},(_,i)=>'reviews/verified/'+String(i+1).padStart(16,'0')+'/index.html');
+const twentyNineCasePaths=changedPaths(twentyNineCaseFiles);
+assert.equal(twentyNineCasePaths.length,29,'all 29 updated published case pages remain selected');
+const caseBatches=batchUrls(twentyNineCasePaths);
+assert.deepEqual(caseBatches.map(batch=>batch.length),[10,10,9],'29 verified pages are split into three requests of at most ten');
+assert.deepEqual(caseBatches.flat(),twentyNineCasePaths,'batching never truncates or reorders a changed canonical URL');
+assert.throws(()=>batchUrls(twentyNineCasePaths,11),/between one and ten/,'each IndexNow POST is limited to ten URLs');
+assert.throws(()=>changedPaths(Array.from({length:31},(_,i)=>'reviews/verified/'+String(i+1).padStart(16,'0')+'/index.html')),
+ /More than thirty/,'larger publication sets must be deliberately split into separate revisions');
 
 const blogFile='data/blog-hashtags-priority.json';
 assert.deepEqual(changedPaths([blogFile,'server.js'],'',{

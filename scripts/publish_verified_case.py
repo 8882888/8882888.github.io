@@ -74,8 +74,8 @@ def related_cases(x, records, published):
         if common:
             candidates.append((other, sorted(common)[0]))
     candidates.sort(key=lambda pair: (
-        pair[0].get("departure", ""), pair[0].get("destination", "")))
-    candidates.sort(key=lambda pair: pair[0].get("date", ""), reverse=True)
+        pair[0].get("date", ""), pair[0].get("departure", ""),
+        pair[0].get("destination", "")), reverse=True)
     return candidates[:4]
 
 def render_case(x, records=None, published=None):
@@ -110,7 +110,8 @@ def render_case(x, records=None, published=None):
             "<li>목적지의 정확한 주소, 주차 위치와 도착 후 인계 방식</li>"
             "<li>희망 출발 시각과 경유·대기 여부</li></ul>")
         handover_intro = "대리운전은 고객 차량의 실제 주차 위치와 운행을 시작할 장소, 도착 후 차량을 세울 위치를 정확히 전달하는 것이 중요합니다."
-    visual = ('<figure style="margin:12px 0"><img src="' + image_source +
+    illustration_id = "verified-taksong-illustration" if x["service"] == "taksong" else "verified-daeri-illustration"
+    visual = ('<figure id="' + illustration_id + '" style="margin:12px 0"><img src="' + image_source +
         '" alt="' + esc(image_alt) +
         '" loading="lazy" width="960" height="504" style="width:100%;max-width:630px;height:auto">' +
         '<figcaption style="font-size:13px">서비스별 참고 이미지 · 실제 운행 증빙사진 아님</figcaption></figure>')

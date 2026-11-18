@@ -40,6 +40,13 @@ const requiredPaths=[...new Set([...fixedPriorityPaths,...priorityPaths,...blogH
 const minimumCount=requiredPaths.length;
 const maximumCount=focusCount+500;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+function batchUrls(urls,size=10){
+ if(!Array.isArray(urls))throw Error('URL batches require an array');
+ if(!Number.isInteger(size)||size<1||size>10)throw Error('IndexNow batch size must be between one and ten');
+ const batches=[];
+ for(let i=0;i<urls.length;i+=size)batches.push(urls.slice(i,i+size));
+ return batches;
+}
 async function get(rel){
  return fetch(new URL(rel,base),{
   headers:{'user-agent':'Smart24-IndexNow-Notifier/2.0','cache-control':'no-cache'},
@@ -63,7 +70,7 @@ function changedPaths(files,manual='',options={}){
  // state row. Notify only the saved page URL, never the whole archive/region.
  const caseFiles=files.filter(file=>/^reviews\/verified\/[a-f0-9]{16}\/index\.html$/.test(file));
  if(caseFiles.length){
-  if(caseFiles.length>10)throw Error('More than ten saved cases changed; batch explicitly after deployment');
+  if(caseFiles.length>30)throw Error('More than thirty saved cases changed; split the publication update rather than truncating');
   return [...new Set(caseFiles.map(file=>'/'+file.slice(0,-'index.html'.length)))];
  }
  // The manifest alone is not evidence that a new canonical page was saved.
@@ -278,15 +285,20 @@ async function main(){
     /<meta\b[^>]*\bname=["']robots["'][^>]*\bcontent=["'][^"']*\bnoindex\b/i.test(html))
    throw Error('Published page canonical or robots mismatch: '+url);
  }
- const response=await fetch('https://searchadvisor.naver.com/indexnow',{
-  method:'POST',headers:{'content-type':'application/json; charset=utf-8','user-agent':'Smart24-IndexNow-Notifier/2.0'},
-  body:JSON.stringify({host:'jeongukdaeri.kr',key,keyLocation:'https://jeongukdaeri.kr/'+key+'.txt',urlList:urls}),
-  signal:AbortSignal.timeout(20000)
- });
- const message=(await response.text()).slice(0,300);
- console.log('Naver IndexNow response HTTP '+response.status+'; selectively submitted '+urls.length+' changed URLs: '+urls.join(' ')+(message?' ; '+message:''));
- if(![200,202].includes(response.status))throw Error('Naver IndexNow refused submitted URLs');
- console.log('Submission acknowledgement only; real crawler requests, URL indexing and ranking are unconfirmed.');
+ const batches=batchUrls(urls,10);
+ for(let i=0;i<batches.length;i++){
+  const batch=batches[i];
+  const response=await fetch('https://searchadvisor.naver.com/indexnow',{
+   method:'POST',headers:{'content-type':'application/json; charset=utf-8','user-agent':'Smart24-IndexNow-Notifier/2.0'},
+   body:JSON.stringify({host:'jeongukdaeri.kr',key,keyLocation:'https://jeongukdaeri.kr/'+key+'.txt',urlList:batch}),
+   signal:AbortSignal.timeout(20000)
+  });
+  const message=(await response.text()).slice(0,300);
+  console.log('Naver IndexNow response HTTP '+response.status+'; batch '+(i+1)+'/'+batches.length+' submitted '+batch.length+' changed URLs: '+batch.join(' ')+(message?' ; '+message:''));
+  if(![200,202].includes(response.status))throw Error('Naver IndexNow refused batch '+(i+1)+' of '+batches.length);
+  if(i+1<batches.length)await pause(1500);
+ }
+ console.log('Submission acknowledgement only; '+urls.length+' URLs sent in '+batches.length+' batches. Real crawler requests, URL indexing and ranking are unconfirmed.');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
-module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,sitemapWindow:{focusCount,sparseVillageAllowance,minimumCount,maximumCount,requiredPaths}};
+module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,batchUrls,sitemapWindow:{focusCount,sparseVillageAllowance,minimumCount,maximumCount,requiredPaths}};
