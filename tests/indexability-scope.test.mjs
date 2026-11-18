@@ -52,6 +52,7 @@ test('ride evidence means a specific history document, not a search archive',()=
 
 test('verified public ride documents and anchored completed-call items count as direct evidence',()=>{
  assert.equal(hasDirectRideRecordLink('<a href="/reviews/0123456789abcdef/">공개 운행기록</a>'),true);
+ assert.equal(hasDirectRideRecordLink('<a href="/reviews/verified/0123456789abcdef/">검증 운행기록</a>'),true);
  assert.equal(hasDirectRideRecordLink('<a href="https://jeongukdaeri.kr/reviews/0123456789abcdef/">공개 운행기록</a>'),true);
  assert.equal(hasDirectRideRecordLink('<a href="/reviews/completed-calls-20261114/#record-12">개별 종료 기록</a>'),true);
  assert.equal(hasDirectRideRecordLink('<a href="/reviews/completed-calls-20261114/">전체 모음</a>'),false);
