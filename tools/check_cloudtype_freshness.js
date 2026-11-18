@@ -8,7 +8,10 @@ const {fingerprintCuratedRegionSources}=require('../lib/curated-region-sources-f
 const curatedFingerprint=fingerprintCuratedRegionSources(path.join(__dirname,'..'));
 const base=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const sha=name=>crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'..',name))).digest('hex');
-const serverHash=sha('server.js'),homeHash=sha('index.html'),businessHash=sha('business/index.html'),regionalGuidePath='data/naver-regional-focus-twelfth-taksong-100.json',regionalGuideHash=sha(regionalGuidePath),priorityGuidesPath='data/priority-regions.json',priorityGuidesHash=sha(priorityGuidesPath),serviceKeywordPath='lib/service-keyword-entry.js',serviceKeywordHash=sha(serviceKeywordPath);
+const serverHash=sha('server.js'),homeHash=sha('index.html'),businessHash=sha('business/index.html'),seoPagesPath='data/seo-pages.json',seoPagesHash=sha(seoPagesPath),regionalGuidePath='data/naver-regional-focus-twelfth-taksong-100.json',regionalGuideHash=sha(regionalGuidePath),priorityGuidesPath='data/priority-regions.json',priorityGuidesHash=sha(priorityGuidesPath),serviceKeywordPath='lib/service-keyword-entry.js',serviceKeywordHash=sha(serviceKeywordPath);
+const seoPages=JSON.parse(fs.readFileSync(path.join(__dirname,'..',seoPagesPath),'utf8'));
+const taksongSeo=seoPages.pages.find(page=>page.path==='/taksong/');
+if(!taksongSeo?.title||!taksongSeo?.description)throw Error('Cannot determine the expected /taksong/ title and description from data/seo-pages.json');
 const serverSource=fs.readFileSync(path.join(__dirname,'..','server.js'),'utf8');
 const guardCounts=[...serverSource.matchAll(/naverFocus(\d+)\.length!==(\d+)/g)]
  .filter(match=>match[1]===match[2])
@@ -25,6 +28,9 @@ async function check(){
  const hashes=data.deployment_hashes||{};
  const actualCount=Number(data.naver_focus_region_count);
  const mismatches=[];
+ if(hashes[seoPagesPath]!==seoPagesHash)mismatches.push('data/seo-pages.json fingerprint does not match GitHub; core page title/description metadata not verified live');
+ if(data.seo_meta?.taksong?.title!==taksongSeo.title)mismatches.push('/taksong/ SEO title in live health metadata does not match data/seo-pages.json');
+ if(data.seo_meta?.taksong?.description!==taksongSeo.description)mismatches.push('/taksong/ SEO description in live health metadata does not match data/seo-pages.json');
  if(hashes['server.js']!==serverHash)mismatches.push('server.js fingerprint does not match GitHub');
  if(hashes['index.html']!==homeHash)mismatches.push('index.html fingerprint does not match GitHub');
  if(hashes['business/index.html']!==businessHash)mismatches.push('business/index.html source fingerprint does not match GitHub');
@@ -36,6 +42,18 @@ async function check(){
  if(actualCount!==expectedCount)mismatches.push('curated guide count: live '+actualCount+' / source '+expectedCount);
  if(!String(resp.headers.get('cache-control')||'').includes('no-store'))mismatches.push('health endpoint not marked no-store');
  if(mismatches.length)throw Error(mismatches.join('; '));
+
+ // Verify the live rendered title and description, not only the health JSON.
+ const taksongRes=await fetch(base+'/taksong/',{
+  signal:AbortSignal.timeout(15000),
+  headers:{Accept:'text/html','Cache-Control':'no-cache'},redirect:'error'
+ });
+ if(!taksongRes.ok)throw Error('Live /taksong/ HTML HTTP '+taksongRes.status);
+ const taksongHtml=await taksongRes.text();
+ const liveTaksongTitle=taksongHtml.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim()||'';
+ const liveTaksongDescription=taksongHtml.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i)?.[1]||'';
+ if(liveTaksongTitle!==taksongSeo.title)throw Error('Live /taksong/ title differs from data/seo-pages.json');
+ if(liveTaksongDescription!==taksongSeo.description)throw Error('Live /taksong/ description differs from data/seo-pages.json');
 
  // A matching release hash alone does not prove the newly published tourism
  // landing page or its crawl entry is present on the real Cloudtype server.
@@ -109,7 +127,7 @@ async function check(){
   const loc='<loc>'+base+tradePath+'</loc>';
   if(priorityXml.split(loc).length!==2)throw Error('Live priority sitemap trade URL missing or duplicated: '+tradePath);
  }
- return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),regionalGuideSha:regionalGuideHash.slice(0,16),curatedRegionalSourcesSha:curatedFingerprint.sha256.slice(0,16),curatedRegionalFiles:curatedFingerprint.count,priorityGuidesSha:priorityGuidesHash.slice(0,16),serviceKeywordSha:serviceKeywordHash.slice(0,16),tourismGuide:'verified',businessPortal:'source-hash+priority-sitemap verified'};
+ return {release:serverHash.slice(0,16),guideCount:expectedCount,homepageSha:homeHash.slice(0,16),seoPagesSha:seoPagesHash.slice(0,16),taksongTitle:liveTaksongTitle,regionalGuideSha:regionalGuideHash.slice(0,16),curatedRegionalSourcesSha:curatedFingerprint.sha256.slice(0,16),curatedRegionalFiles:curatedFingerprint.count,priorityGuidesSha:priorityGuidesHash.slice(0,16),serviceKeywordSha:serviceKeywordHash.slice(0,16),tourismGuide:'verified',businessPortal:'source-hash+priority-sitemap verified'};
 }
 async function main(){
  const attempts=Math.min(6,Math.max(1,Number(process.env.DEPLOY_CHECK_ATTEMPTS)||4));

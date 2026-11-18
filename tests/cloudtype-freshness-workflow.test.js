@@ -10,4 +10,9 @@ test('Cloudtype release verification checks real live app even after failed auto
  assert(!workflow.includes('No production redeploy was requested'));
  assert(workflow.includes('run: node tools/check_cloudtype_freshness.js'));
  assert(workflow.includes("if: github.event_name == 'workflow_run'"));
+ const checker=fs.readFileSync(path.join(__dirname,'../tools/check_cloudtype_freshness.js'),'utf8');
+ assert(checker.includes("seoPagesPath='data/seo-pages.json'"));
+ assert(checker.includes("hashes[seoPagesPath]!==seoPagesHash"));
+ assert(checker.includes("data.seo_meta?.taksong?.title!==taksongSeo.title"));
+ assert(checker.includes("Live /taksong/ title differs from data/seo-pages.json"));
 });
