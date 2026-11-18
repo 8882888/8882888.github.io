@@ -74,10 +74,15 @@ assert.deepEqual(changedPaths([blogFile,'server.js'],'',{
 }),['/blog/daeri-regions/busan/'],'changed hashtag source only notifies its changed original article URL');
 for(const url of blogHashtagPaths)assert.deepEqual(changedPaths([url.slice(1)+'index.html']),[url],'one updated article maps to one submitted URL');
 assert.deepEqual(changedPaths(['index.html']),['/']);
-assert.deepEqual(changedPaths(['data/seo-pages.json']),['/','/taksong/','/daeri/','/region/']);
+const seoFile='data/seo-pages.json';
+const oldSeo={pages:[{path:'/',title:'home'},{path:'/taksong/',title:'old taksong'},{path:'/daeri/',title:'daeri'},{path:'/region/',title:'region'}]};
+const newSeo={pages:[{path:'/',title:'home'},{path:'/taksong/',title:'new taksong'},{path:'/daeri/',title:'daeri'},{path:'/region/',title:'region'}]};
+const seoOptions={previousDocuments:{[seoFile]:oldSeo},currentDocuments:{[seoFile]:newSeo}};
+assert.deepEqual(changedPaths([seoFile],'',seoOptions),['/taksong/'],'only the SEO landing page whose metadata changed may be submitted');
+assert.deepEqual(changedPaths([seoFile],'',{previousDocuments:{[seoFile]:newSeo},currentDocuments:{[seoFile]:newSeo}}),[],'unchanged SEO pages must not be resubmitted');
 assert.deepEqual(changedPaths(['blog/posts.json']),['/blog/','/blog/archive/']);
 assert.deepEqual(changedPaths(['data/ride-history.json']),['/reviews/history/','/reviews/taksong/']);
-assert.equal(changedPaths(['server.js','index.html','data/seo-pages.json']).length,4,'only genuinely changed homepage and service metadata are announced');
+assert.deepEqual(changedPaths(['server.js','index.html',seoFile],'',seoOptions),['/','/taksong/'],'an HTML change and one SEO rule change notify only their two canonical pages');
 assert.deepEqual(changedPaths([], '/taksong/busan/,/taksong/daegu/'),['/taksong/busan/','/taksong/daegu/']);
 assert.throws(()=>changedPaths([], 'https://other.example/taksong/busan/'),/Foreign host/);
 assert.throws(()=>changedPaths([], '/taksong/busan/?campaign=1'),/Noncanonical manual URL/);
@@ -143,3 +148,8 @@ assert.throws(()=>changedPaths([twelveSource],'',{
  'Never silently truncate a genuine 11+ page change or send an unchecked batch');
 
 console.log('PASS: verified saved-case IndexNow selection is one URL per changed document; code-only commits skip');
+
+const notifyWorkflow=fs.readFileSync(path.join(__dirname,'../.github/workflows/indexnow-notify.yml'),'utf8');
+assert.match(notifyWorkflow,/fetch-depth: 0/);
+assert(notifyWorkflow.includes('INDEXNOW_DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}'));
+assert.doesNotMatch(notifyWorkflow,/ref: ${{ github.event.workflow_run.head_sha/);

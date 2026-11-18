@@ -18,8 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-          fetch-depth: 2
+          # Use the current notifier, but calculate changes from the exact deployed revision.
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -28,4 +28,6 @@ jobs:
           node --check scripts/indexnow-notify.js
           node tests/indexnow-targeting.test.js
       - name: Wait for Cloudtype live key and notify Naver once
+        env:
+          INDEXNOW_DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
         run: node scripts/indexnow-notify.js

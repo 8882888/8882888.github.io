@@ -77,10 +77,15 @@ function changedPaths(files,manual='',options={}){
  const getSnapshot=(filename,side)=>{
   const provided=side==='before'?options.previousDocuments?.[filename]:options.currentDocuments?.[filename];
   if(provided)return provided;
-  if(side==='after')return JSON.parse(fs.readFileSync(path.join(root,filename),'utf8'));
-  try{return JSON.parse(execFileSync('git',['show','HEAD^:'+filename],
+  const deploySha=process.env.INDEXNOW_DEPLOY_SHA;
+  if(deploySha&&!/^[0-9a-f]{40}$/i.test(deploySha))throw Error('Invalid INDEXNOW_DEPLOY_SHA; refusing notification');
+  if(side==='after'&&!deploySha)return JSON.parse(fs.readFileSync(path.join(root,filename),'utf8'));
+  const ref=deploySha
+   ? (side==='before'?deploySha+'^:'+filename:deploySha+':'+filename)
+   : 'HEAD^:'+filename;
+  try{return JSON.parse(execFileSync('git',['show',ref],
    {cwd:root,encoding:'utf8',timeout:10000}))}
-  catch(e){throw Error('Cannot inspect previous source records for '+filename+'; refusing unrelated IndexNow notification')}
+  catch(e){throw Error('Cannot inspect '+side+' deployed source records for '+filename+'; refusing unrelated IndexNow notification')}
  };
  const modifiedRows=(filename,keyFn)=>{
   const old=getSnapshot(filename,'before'),now=getSnapshot(filename,'after');
@@ -140,7 +145,15 @@ function changedPaths(files,manual='',options={}){
  const changedBlogs=blogHashtagPaths.filter(url=>input.has(url.slice(1)+'index.html'));
  include(changedBlogs);
  if(input.has('index.html'))include(['/']);
- if(input.has('data/seo-pages.json'))include(['/','/taksong/','/daeri/','/region/']);
+ if(input.has('data/seo-pages.json')){
+  const changedSeoPages=modifiedRows('data/seo-pages.json',row=>row.path);
+  include(changedSeoPages.map(row=>{
+   const route=String(row.path||'');
+   if(!route.startsWith('/')||!route.endsWith('/')||route.includes('?')||route.includes('#'))
+    throw Error('Changed SEO page is not a canonical path: '+route);
+   return route;
+  }));
+ }
  if(input.has('blog/posts.json'))include(['/blog/','/blog/archive/']);
  if([...input].some(p=>/^(data\/ride-history\.json|data\/public-reviewed-rides-202610\.json)$/.test(p)))include(['/reviews/history/','/reviews/taksong/']);
  if(selected.size>10)throw Error('More than ten genuine changed URLs; batch explicitly after deployment, never truncate');
@@ -149,8 +162,11 @@ function changedPaths(files,manual='',options={}){
 function filesInRevision(){
  const override=process.env.INDEXNOW_CHANGED_FILES;
  if(typeof override==='string')return override.split(/[\s,]+/).filter(Boolean);
- try{return execFileSync('git',['diff','--name-only','HEAD^','HEAD'],{cwd:root,encoding:'utf8',timeout:10000}).split(/\r?\n/).filter(Boolean)}
- catch(e){throw Error('Cannot identify changed commit files, refusing a blanket URL resubmission: '+e.message)}
+ const deploySha=process.env.INDEXNOW_DEPLOY_SHA;
+ if(deploySha&&!/^[0-9a-f]{40}$/i.test(deploySha))throw Error('Invalid INDEXNOW_DEPLOY_SHA; refusing notification');
+ const range=deploySha?[deploySha+'^',deploySha]:['HEAD^','HEAD'];
+ try{return execFileSync('git',['diff','--name-only',...range],{cwd:root,encoding:'utf8',timeout:10000}).split(/\r?\n/).filter(Boolean)}
+ catch(e){throw Error('Cannot identify changed files in the deployed revision, refusing a blanket URL resubmission: '+e.message)}
 }
 async function livePriorityHrefMap(){
  const map=new Map();
