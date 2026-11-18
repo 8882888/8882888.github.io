@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildInventory,regionsFromLegal} from './dynamic-url-inventory.mjs';
+import {fetchHttpWithRetry} from '../lib/http-audit-retry.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const BASE='https://jeongukdaeri.kr', ORIGIN=(process.env.AUDIT_TRANSPORT_ORIGIN||BASE).replace(/\/$/,'');
 const SHARDS=Number(process.env.DYNAMIC_SHARDS||1),SHARD=Number(process.env.DYNAMIC_SHARD||0);
@@ -27,9 +28,13 @@ const tags=(head,kind)=>[...head.matchAll(new RegExp('<'+kind+'\\b[^>]*>','gi'))
 const getValues=(head,attribute,value)=>tags(head,'meta').filter(tag=>attr(tag,attribute).toLowerCase()===value).map(tag=>attr(tag,'content'));
 async function get(resource,timeout=22000){
  const url=new URL(resource,BASE);
- const res=await fetch(ORIGIN+url.pathname+url.search,{signal:AbortSignal.timeout(timeout),redirect:'manual',headers:{'User-Agent':'Smart24-Dynamic-Source-Census/1.0','Accept':'text/html,application/xml,text/xml;q=0.9,*/*;q=0.5'}});
- const body=await res.text();
- return {status:res.status,body,headers:res.headers};
+ // A few transient request failures must not erase 2,395+ verified responses.
+ // Only temporary HTTP/network errors get at most two additional attempts.
+ // A persistent failure is preserved as a real audit issue.
+ return fetchHttpWithRetry(ORIGIN+url.pathname+url.search,{
+  timeoutMs:timeout,maxAttempts:3,retryDelayMs:750,
+  headers:{'User-Agent':'Smart24-Dynamic-Source-Census/1.0','Accept':'text/html,application/xml,text/xml;q=0.9,*/*;q=0.5'}
+ });
 }
 const locs=x=>[...x.matchAll(/<loc\b[^>]*>([^<]+)<\/loc>/gi)].map(m=>decode(m[1].trim()));
 async function sitemapUrls(){
@@ -59,6 +64,7 @@ async function sitemapUrls(){
 }
 function classify(item,response){
  const {status,body,headers}=response, problems=[],warnings=[];
+ if(response.attempts>1&&status===200)warnings.push('recovered_transient_request');
  const head=(body.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)||[])[1]||'';
  const desc=getValues(head,'name','description'),og=getValues(head,'property','og:description');
  const description=decode(desc[0]||''),length=[...description].length;
@@ -96,7 +102,7 @@ function classify(item,response){
  if(malformed)problems.push('invalid_jsonld');
  if(jsonld.length&&!['WebPage','CollectionPage','Article','BlogPosting','FAQPage','ItemPage','ProfilePage'].some(x=>types.has(x)))(REQUIRE_JSONLD?problems:warnings).push('jsonld_no_page_type');
  if(item.family==='route-pair-representative')warnings.push('representative_only_not_exhaustive_route_family');
- return {...item,status,descriptionLength:length,description,descriptionTagCount:desc.length,
+ return {...item,status,requestAttempts:response.attempts||1,descriptionLength:length,description,descriptionTagCount:desc.length,
   jsonldBlocks:jsonld.length,jsonldTypes:[...types],noindex,canonical,problems:[...new Set(problems)],warnings:[...new Set(warnings)]};
 }
 // Stable, reproducible family+index-policy stratification; every shard draws
@@ -149,14 +155,16 @@ async function main(){
    jsonLdMissing:rows.filter(x=>[...x.problems,...x.warnings].includes('missing_jsonld')).length,
    jsonLdInvalid:rows.filter(x=>x.problems.includes('invalid_jsonld')).length,
    jsonLdPageTypeMissing:rows.filter(x=>[...x.problems,...x.warnings].includes('jsonld_no_page_type')).length,
+   recoveredTransientRequests:rows.filter(x=>x.warnings.includes('recovered_transient_request')).length,
+   unrecoveredRequestFailures:rows.filter(x=>x.problems.includes('request_failure')).length,
    noindexWithIntentionalPolicy:rows.filter(x=>x.policy==='intentional-noindex'&&x.noindex).length,
    noindexOnSparseLocality:rows.filter(x=>x.policy==='possibly-intentional-noindex'&&x.noindex).length,
    noindexOther:rows.filter(x=>x.policy!=='intentional-noindex'&&x.policy!=='possibly-intentional-noindex'&&x.noindex).length,
    errors:rows.filter(x=>x.problems.length>0).length
   };
   fs.writeFileSync(path.join(outDir,name+'.json'),JSON.stringify({summary,results:rows},null,2)+'\n');
-  const columns=['url','family','policy','status','descriptionLength','description','jsonldBlocks','jsonldTypes','noindex','canonical','problems','warnings'];
-  const records=[columns.join(','),...rows.map(row=>[row.url,row.family,row.policy,row.status,row.descriptionLength,row.description,row.jsonldBlocks,(row.jsonldTypes||[]).join(';'),row.noindex,row.canonical,(row.problems||[]).join(';'),(row.warnings||[]).join(';')].map(csv).join(','))];
+  const columns=['url','family','policy','status','requestAttempts','descriptionLength','description','jsonldBlocks','jsonldTypes','noindex','canonical','problems','warnings'];
+  const records=[columns.join(','),...rows.map(row=>[row.url,row.family,row.policy,row.status,row.requestAttempts||1,row.descriptionLength,row.description,row.jsonldBlocks,(row.jsonldTypes||[]).join(';'),row.noindex,row.canonical,(row.problems||[]).join(';'),(row.warnings||[]).join(';')].map(csv).join(','))];
   fs.writeFileSync(path.join(outDir,name+'.csv'),records.join('\n')+'\n');
   fs.writeFileSync(path.join(outDir,name+'-summary.md'),[
    '# 사이트맵 밖 동적 URL 점검 ('+SHARD+'/'+SHARDS+')','',
@@ -166,6 +174,7 @@ async function main(){
    '- 사이트맵 밖: '+summary.outsideSitemap,
    '- 본 샤드 점검: '+summary.checked+' / '+summary.assigned,
    '- JSON-LD 필수 검사: '+(REQUIRE_JSONLD?'적용':'권고')+', description 80자 초과: '+summary.explicitAudit.descriptionOver80+', canonical 전체 URL 불일치: '+summary.explicitAudit.canonicalMismatch+', JSON-LD 없음: '+summary.explicitAudit.jsonLdMissing+', JSON-LD 구문 오류: '+summary.explicitAudit.jsonLdInvalid,
+   '- 일시적 연결 오류 재시도 후 회복: '+summary.explicitAudit.recoveredTransientRequests+', 재시도 후에도 실패: '+summary.explicitAudit.unrecoveredRequestFailures,
    '- 완료 여부(전체 모집단 대상): '+summary.complete,
    '- 추출 방식: '+(summary.sampleMode==='balanced'?'유형·비색인 정책별 분산 표본(운영 서버 일부만 검사)':'원본 전수/앞부분 제한')+', 표본 수: '+summary.toCheck,
    '- **출발지×도착지 전체 조합 '+summary.potentialRoutePairURLs+'개는 HTTP 전수 검사 아님.** 대표 경로만 확인.',
@@ -191,7 +200,7 @@ async function main(){
   while(next<queue.length){
    const i=next++,item=queue[i];
    let row;try{row=classify(item,await get(item.url,20000))}
-   catch(e){row={...item,status:0,descriptionLength:0,description:'',jsonldBlocks:0,jsonldTypes:[],noindex:false,canonical:'',problems:['request_failure'],warnings:[],error:String(e).slice(0,130)}}
+   catch(e){row={...item,status:0,requestAttempts:3,descriptionLength:0,description:'',jsonldBlocks:0,jsonldTypes:[],noindex:false,canonical:'',problems:['request_failure'],warnings:[],error:String(e).slice(0,130)}}
    rows.push(row);
    if(rows.length%500===0){report(rows);console.log('CHECKED '+rows.length+'/'+queue.length+' shard '+SHARD)}
    if(ORIGIN===BASE)await delay(LIVE_DELAY_MS);

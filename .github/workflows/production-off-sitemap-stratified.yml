@@ -35,6 +35,8 @@ jobs:
         run: |
           node --check scripts/audit-dynamic-off-sitemap.mjs
           node --check scripts/dynamic-url-inventory.mjs
+          node --check lib/http-audit-retry.mjs
+          node --test tests/dynamic-http-audit-retry-20261118.test.mjs
   live-stratified:
     name: Production HTTP sample / shard ${{ matrix.shard }}
     needs: verify-release
