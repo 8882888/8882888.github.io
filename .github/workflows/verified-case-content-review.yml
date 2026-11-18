@@ -1,0 +1,48 @@
+name: Verified case content and source audit
+on:
+  pull_request:
+    paths:
+      - 'data/public-reviewed-rides-202610.json'
+      - 'data/published-ride-case-ids.json'
+      - 'reviews/verified/**'
+      - 'scripts/publish_verified_case.py'
+      - 'server.js'
+      - 'lib/published-case-feed.js'
+      - 'tests/published-case-canonical-bridge.test.cjs'
+      - 'scripts/enrich_published_verified_cases.py'
+      - 'tests/verified-case-enrichment.test.cjs'
+      - '.github/workflows/verified-case-content-review.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'data/public-reviewed-rides-202610.json'
+      - 'data/published-ride-case-ids.json'
+      - 'reviews/verified/**'
+      - 'scripts/publish_verified_case.py'
+      - 'scripts/enrich_published_verified_cases.py'
+      - 'tests/verified-case-enrichment.test.cjs'
+      - '.github/workflows/verified-case-content-review.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate Python syntax
+        run: python -m py_compile scripts/publish_verified_case.py scripts/enrich_published_verified_cases.py
+      - name: Regenerate existing pages from unchanged source facts
+        run: python scripts/enrich_published_verified_cases.py
+      - name: Verify all published pages and evidence-safe related links
+        run: node --test tests/verified-case-enrichment.test.cjs
+      - name: Verify regional links and sitemap prefer enriched canonical case URLs
+        run: node --test tests/published-case-canonical-bridge.test.cjs
+      - name: Confirm deterministic generation and unchanged publication ledger
+        run: git diff --exit-code -- reviews/verified data/published-ride-case-ids.json

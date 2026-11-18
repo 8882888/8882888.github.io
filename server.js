@@ -503,7 +503,7 @@ function historyIndexPage(page=1,kind='all',query='',regionSlug='',filters={}){
  const regionHeading=matchedRegion?matchedRegion.full_name+' '+(kind==='taksong'?'자동차탁송':kind==='daeri'?'대리운전':'대리운전·탁송')+' 실제 운행완료 후기':'전국 실제 운행완료 후기';
  return layout(regionHeading+' '+list.length+'건'+(kind==='taksong'?' | 자동차탁송':kind==='daeri'?' | 대리운전':kind==='mixed'?' | 혼합':''),'실제 완료 운행후기 '+list.length+'건. 운행 날짜, 출발지, 도착지, 당시 요금과 참고요금 연결.','<section id="history-filtered-completed-reviews-202611"><h1>'+esc(regionHeading)+' '+list.length+'건</h1><p><a href="/fare/?'+(kind==='daeri'||kind==='taksong'?'service='+kind+(matchedRegion?'&amp;':''):'')+(matchedRegion?'from='+encodeURIComponent(matchedRegion.full_name):'')+'" style="display:inline-block;min-height:48px;padding:12px;background:#0755a3;color:white;border-radius:9px;text-decoration:none;font-weight:800">예상요금 조회</a> <a href="tel:18114294" style="display:inline-block;min-height:48px;padding:12px;background:#ffe16b;color:#13243f;border-radius:9px;font-weight:800;text-decoration:none">전화 예약상담</a></p>'+mobileReviewBookingBar(kind,matchedRegion?matchedRegion.full_name:'')+(matchedRegion?'<p>이 목록은 해당 행정구역에 출발·도착이 확인된 완료 운행자료만 연결합니다. 같은 지명의 다른 지역은 구분합니다.</p><p><a href="'+servicePath(matchedRegion,kind==='daeri'?'daeri':'taksong')+'">'+esc(matchedRegion.full_name)+' 지역별 서비스 안내</a></p>':'')+nav+form+advanced+note+specials+sourceDistinction+'<h2>운행일·구간·당시 요금 확인</h2><ol>'+items+'</ol>'+pagination+'<p>전화상담 <a href="tel:18114294">1811-4294</a> · <a href="https://open.kakao.com/o/sGV88r7h" rel="noopener noreferrer" target="_blank">카카오상담</a></p></section>',canonical);
 }
-const rideUrl=x=>'/reviews/'+x.publicId+'/';
+const rideUrl=x=>{const key=[x.date,x.service,x.departure,x.destination,x.fare||''].map(v=>String(v??'')).join('|');const match=publishedCaseByRideKey.get(key);return match?.path||'/reviews/'+x.publicId+'/';};
 function ridePage(x){
  const service=x.service==='taksong'?'탁송':'대리운전',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const safePlace=v=>String(v||'').replace(/\d{1,5}(?:-\d{1,5})?/g,'(상세주소 비공개)').slice(0,100);
@@ -1817,6 +1817,7 @@ function vehicleTopicsHub(){
  });
 }
 const publishedCaseEntries=loadPublishedCases(ROOT);
+const publishedCaseByRideKey=new Map(publishedCaseEntries.map(x=>[[x.rideDate,x.service,x.departure,x.destination,x.fare].map(v=>String(v??'')).join('|'),x]));
 const sitemapCache=new Map();
 let villageServiceKeys;
 function localitySitemapUrls(key){

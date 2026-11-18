@@ -555,8 +555,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const crypto=require('node:crypto');
   const firstRide=require('../data/public-reviewed-rides-202610.json')[0];
   const firstId=crypto.createHash('sha256').update([firstRide.date,firstRide.service,firstRide.departure,firstRide.destination].join('|')).digest('hex').slice(0,16);
-  assert.ok(seoulMainMap.includes('https://example.com/reviews/'+firstId+'/'),
-    'main sitemap must retain verified completed trip, not only templated location pages');
+  const publishedId=crypto.createHash('sha256').update([firstRide.date,firstRide.service,firstRide.departure,firstRide.destination,firstRide.fare].join('|')).digest('hex').slice(0,16);
+  assert.ok(seoulMainMap.includes('https://example.com/reviews/verified/'+publishedId+'/'),
+    'main sitemap must retain the enriched canonical URL for a published verified completed trip');
+  assert.ok(!seoulMainMap.includes('https://example.com/reviews/'+firstId+'/'),
+    'main sitemap must not duplicate a published verified trip at its legacy URL');
   assert.ok(seoulMainMap.includes('https://example.com/find/'), 'discoverable canonical region finder');
   assert.ok(seoulMainMap.includes('https://example.com/daeri/'), 'national designated driver canonical');
   assert.ok(seoulMainMap.includes('https://example.com/taksong/'), 'national vehicle transfer canonical');
@@ -715,7 +718,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const phrase of ['해운대중동 → 평택신장동','고흥군 → 종로숭인동','창원시 월영동 → 부산 부산진구','과거 금액','기사 복귀 교통편'])assert.ok(koreanDaeri.includes(phrase),'long-distance guidance contains verified source and booking advice: '+phrase);
   assert.ok(koreanDaeri.includes('170,000원')&&koreanDaeri.includes('190,000원')&&koreanDaeri.includes('60,000원'),'only confirmed historical fares are displayed for selected rides');
   const longDistanceSection=koreanDaeri.split('id="long-distance-daeri-verified"')[1]?.split('</section>')[0]||'';
-  assert.equal((longDistanceSection.match(/href="\/reviews\/[a-f0-9]{16}\//g)||[]).length,3,'three verified completed ride details are linked');
+  assert.equal((longDistanceSection.match(/href="\/reviews\/(?:verified\/)?[a-f0-9]{16}\//g)||[]).length,3,'three verified completed ride details link to their canonical published pages');
   assert.ok(!koreanTaksong.includes('id="long-distance-daeri-verified"'),'taksong page never gets driver-specific completed rides');
 
   assert.ok(seoHome.includes('id="home-priority-regions"'),'homepage links to priority regional service pages');
@@ -983,7 +986,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   for(const route of ['/daeri/incheon/','/daeri/busan/','/daeri/seoul/','/taksong/busan/']){
    const regionalHtml=await (await get(route)).text();
    assert.ok(!regionalHtml.includes('/reviews/undefined/'),route+' must not link to undefined');
-   const reviewLinks=[...new Set([...regionalHtml.matchAll(new RegExp('href="(/reviews/[a-f0-9]{16}/)"','g'))].map(m=>m[1]))];
+   const reviewLinks=[...new Set([...regionalHtml.matchAll(new RegExp('href="(/reviews/(?:verified/)?[a-f0-9]{16}/)"','g'))].map(m=>m[1]))];
    regionalReviewCount+=reviewLinks.length;
    for(const target of reviewLinks.slice(0,2))assert.equal((await get(target)).status,200,route+' -> '+target);
   }
