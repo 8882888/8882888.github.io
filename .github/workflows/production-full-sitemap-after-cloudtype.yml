@@ -1,10 +1,10 @@
-name: Read-only complete production HTTP sitemap audit after Cloudtype deployment
+name: Daily read-only complete production HTTP sitemap audit
 on:
-  workflow_run:
-    workflows: [Deploy to Cloudtype]
-    types: [completed]
-    branches: [main]
   workflow_dispatch:
+  schedule:
+    # Daily 11:30 KST; do not fan out a 5,919-URL crawl on every deployment.
+    - cron: '30 2 * * *'
+
 permissions:
   contents: read
 concurrency:
@@ -13,7 +13,6 @@ concurrency:
 jobs:
   live-all-sitemap-html:
     name: Verify release then audit ALL 5919 production HTML URLs
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:

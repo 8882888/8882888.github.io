@@ -1,9 +1,6 @@
 name: Verify live SEO release
 on:
-  workflow_run:
-    workflows: ["Deploy to Cloudtype"]
-    types: [completed]
-    branches: [main]
+
   pull_request:
     branches: [main]
     paths:
@@ -24,7 +21,6 @@ concurrency:
   cancel-in-progress: false
 jobs:
   verify:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:

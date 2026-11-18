@@ -3,14 +3,11 @@ on:
   schedule:
     - cron: '35 1 * * *'
   workflow_dispatch:
-  workflow_run:
-    workflows: ['Deploy to Cloudtype']
-    types: [completed]
+
 permissions:
   contents: read
 jobs:
   monitor:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

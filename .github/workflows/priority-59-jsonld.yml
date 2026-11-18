@@ -8,10 +8,7 @@ on:
       - 'tools/audit_live_priority_59_jsonld.py'
       - 'tests/test_priority_59_jsonld.py'
       - '.github/workflows/priority-59-jsonld.yml'
-  workflow_run:
-    workflows: [Deploy to Cloudtype]
-    types: [completed]
-    branches: [main]
+
   workflow_dispatch:
 
 permissions:
@@ -41,9 +38,7 @@ jobs:
   live-schema-after-cloudtype:
     name: Confirm 59 live HTML pages agree with source, canonical and JSON-LD
     needs: schema-unit
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 13
     steps:

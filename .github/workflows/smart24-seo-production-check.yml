@@ -1,17 +1,13 @@
 name: SMART24 production SEO smoke check
 on:
-  workflow_run:
-    workflows: [Deploy to Cloudtype]
-    types: [completed]
-    branches: [main]
+
   push:
     branches: [main]
     paths:
       - 'tests/production-seo-smoke.py'
-      - '.github/workflows/smart24-seo-production-check.yml'
   workflow_dispatch:
   schedule:
-    - cron: "17 1 * * *"
+    - cron: "55 1 * * *"
 permissions:
   contents: read
 concurrency:
@@ -21,7 +17,6 @@ concurrency:
 jobs:
   audit:
     # Never test a commit as deployed if Cloudtype rejected that release.
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:

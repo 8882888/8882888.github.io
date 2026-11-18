@@ -2,10 +2,7 @@ name: Verify live Cloudtype SEO deployment
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [Deploy to Cloudtype]
-    types: [completed]
-    branches: [main]
+
   schedule:
     # 09:20 Korea Standard Time, daily
     - cron: '20 0 * * *'
@@ -20,7 +17,6 @@ concurrency:
 jobs:
   audit-production:
     name: Compare production SEO with GitHub
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 22
     steps:

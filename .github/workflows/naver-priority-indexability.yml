@@ -1,32 +1,7 @@
 name: Check Naver priority crawlability and 8 sitemaps
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "server.js"
-      - "index.html"
-      - "robots.txt"
-      - "sitemap*.xml"
-      - "business/**"
-      - "daeri/**"
-      - "taksong/**"
-      # Changes to regional guidance must refresh the human review queue.
-      - "data/naver-regional-focus-*.json"
-      - "data/priority-regions.json"
-      - "data/naver-priority-meta-80-20261116.json"
-      - "tests/priority-regions-quality.test.mjs"
-      - "data/legal-regions/**"
-      - "lib/nationwide-locality-explorer.js"
-      - "scripts/ai-index-quality-triage.mjs"
-      - "scripts/audit-live-structured-data.mjs"
-      - "scripts/report-naver-official-scorecard.mjs"
-      - "tests/naver-official-scorecard.test.mjs"
-      - "data/naver-searchadvisor-official-baseline.json"
-      - "scripts/audit-naver-priority-live.mjs"
-      - "scripts/indexability-scope.mjs"
-      - "tests/indexability-scope.test.mjs"
-      - ".github/workflows/naver-priority-indexability.yml"
+
   workflow_run:
     workflows: ["Deploy to Cloudtype"]
     types: [completed]

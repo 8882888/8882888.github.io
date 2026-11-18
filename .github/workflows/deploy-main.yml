@@ -9,6 +9,8 @@ on:
       - 'tests/**'
       - 'scripts/**'
       - 'tools/**'
+      # Audit-only retry helper is not imported by the production Node server.
+      - 'lib/http-audit-retry.mjs'
       - '.github/workflows/**'
       - '*.md'
   workflow_dispatch:
