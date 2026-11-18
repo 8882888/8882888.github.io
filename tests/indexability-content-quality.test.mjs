@@ -4,7 +4,7 @@ import {contentQualitySignals} from '../scripts/indexability-content-quality.mjs
 
 test('substantial unique HTML with one H1 and a 70+ character description has no review flags',()=>{
  const text=Array.from({length:120},(_,i)=>'운행정보'+i).join(' ');
- const description='전국 자동차탁송 예약과 차량 인수인계 절차 및 실제 완료 운행기록 안내를 확인하고 상담하세요.';
+ const description='전국 자동차탁송 예약과 차량 인수인계 절차 및 실제 완료 운행기록을 확인하고 출발지와 도착지별 예상요금, 예약 전 준비사항, 상담 방법까지 확인하세요.';
  const html='<html><head><meta name="description" content="'+description+'"></head><body><main><h1>전국 자동차탁송 안내</h1><p>'+text+'</p></main></body></html>';
  const r=contentQualitySignals(html);
  assert.equal(r.wordCount,123);
