@@ -26,7 +26,7 @@ function visibleWords(html){
   .replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/\s+/g,' ').trim().split(/\s+/).filter(Boolean).length;
 }
 test('every published verified case is source-backed, indexable and substantively enriched',()=>{
- assert.equal(published.length,29,'the current audited cohort is exactly 29 published cases');
+ assert.equal(published.length,30,'the current audited cohort is exactly 30 published cases');
  const descriptions=new Set();
  for(const entry of published){
   const ride=byId.get(entry.id);

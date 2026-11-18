@@ -8,6 +8,13 @@ const {matchingHistoryRegion,publicPlace,PROVINCE_ALIASES}=require('./lib/region
 const {verifiedBroadRegionServiceKeys}=require('./lib/verified-broad-region-evidence');
 const {buildVillagePrefixIndex,villageCandidatesForFields}=require('./lib/verified-village-candidates');
 const {loadPublishedCases}=require('./lib/published-case-feed');
+const {createDispatchReviewArchive}=require('./lib/dispatch-review-archive');
+let dispatchReviewArchiveCache=null;
+function getDispatchReviewArchive(){
+ if(dispatchReviewArchiveCache)return dispatchReviewArchiveCache;
+ try{dispatchReviewArchiveCache=createDispatchReviewArchive(ROOT);return dispatchReviewArchiveCache}
+ catch(error){console.error('Dispatch review archive unavailable:',error.message);return null}
+}
 const {canonicalForKeywordRecord,resolveRegionalKeywordVariant}=require('./lib/keyword-canonical-bridge');
 const {createEngine:createLocalServiceEngine}=require('./data/smart24-region-automation/lib/engine');
 const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/smart24-region-automation/data/regions.json'),path.join(ROOT,'data/smart24-region-automation/data/trips.json'));
@@ -2673,6 +2680,16 @@ if(/^\/fare(?:\/index\.html|\/)?$/.test(pathname)&&
  res.setHeader('X-Robots-Tag','noindex, follow');
 }
 res._smartPath=pathname;
+if(pathname==='/sitemap-dispatch-records.xml'){
+ const archive=getDispatchReviewArchive();
+ if(!archive)return respond(res,503,'운행기록 사이트맵을 불러오지 못했습니다.','text/plain; charset=utf-8');
+ return respond(res,200,archive.sitemap,'application/xml; charset=utf-8');
+}
+if(pathname==='/reviews/dispatch-records'||pathname.startsWith('/reviews/dispatch-records/')){
+ const route=pathname.endsWith('/')?pathname:pathname+'/';
+ const page=getDispatchReviewArchive()?.get(route);
+ return page?respond(res,200,page,'text/html; charset=utf-8'):respond(res,404,'요청한 운행기록 자료를 찾을 수 없습니다.','text/plain; charset=utf-8');
+}
 // Isolated, explicitly noindex regional drafts; preserve existing /daeri/ and /taksong/ pages.
 if(pathname==='/local-service'||pathname.startsWith('/local-service/')){
  return localServiceRegionHandler(req,res);
@@ -3350,7 +3367,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  const rss='<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>'+esc(BRAND+' 실제 완료 운행기록')+'</title><link>'+base+'/reviews/verified/</link><description>'+esc('실제 완료 운행사례 공개 게시일 기준 최신 '+published.length+'건과 기존 운행기록 안내. 실제 운행일과 게시일은 서로 다릅니다.')+'</description><language>ko</language>'+[...publishedItems,...archiveItems].join('')+'</channel></rss>';
  return respond(res,200,rss,'application/rss+xml; charset=utf-8');
 }
-if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-published.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-all.xml','Sitemap: '+base+'/sitemap-history.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
+if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-published.xml','Sitemap: '+base+'/sitemap-dispatch-records.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-all.xml','Sitemap: '+base+'/sitemap-history.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 // Full discoverability inventory for genuine historical completed rides.
 // Six bounded shards; preserve all original 2,591 records and never fabricate rides.
 // Source-reviewed regional service pages only; no fabricated trip URLs.
@@ -3455,7 +3472,7 @@ if(pathname==='/sitemap-coast.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-published.xml','/sitemap-dispatch-records.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',
    // Do not promote thousands of formulaic 읍/면/동/리 locality pages in
    // the public sitemap index. Keep routes and old shard URLs functional;
    // retain province/city/county/district for broad navigation.
