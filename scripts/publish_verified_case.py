@@ -74,8 +74,8 @@ def related_cases(x, records, published):
         if common:
             candidates.append((other, sorted(common)[0]))
     candidates.sort(key=lambda pair: (
-        pair[0].get("departure", ""), pair[0].get("destination", "")))
-    candidates.sort(key=lambda pair: pair[0].get("date", ""), reverse=True)
+        pair[0].get("date", ""), pair[0].get("departure", ""),
+        pair[0].get("destination", "")), reverse=True)
     return candidates[:4]
 
 def render_case(x, records=None, published=None):
