@@ -1479,7 +1479,7 @@ async function servicePage(r,kind){
   '</section>':'';
  const ganghwaArchiveEntries=ganghwaReviewPage?historicalRides.filter(x=>x.service==='daeri'&&matchingHistoryRegion(x,r,regions)&&x.departure&&x.destination&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개'):[];
  const ganghwaArchiveTable=ganghwaArchiveEntries.length?'<section id="ganghwa-source-ride-table"><h2>강화 출발·도착 실제 대리운전 기록 '+ganghwaArchiveEntries.length+'건</h2><p>기존 운행자료에서 강화군과 일치하는 기록입니다. 아래는 그중 '+Math.min(12,ganghwaArchiveEntries.length)+'건이며 금액은 운행 당시 요금입니다.</p><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><caption>운행일·출발지·도착지·당시 요금과 상세 기록</caption><thead><tr><th scope="col">운행일</th><th scope="col">출발 → 도착</th><th scope="col">당시 요금</th></tr></thead><tbody>'+ganghwaArchiveEntries.slice(0,12).map(x=>'<tr><td>'+esc(x.date)+'</td><td><a href="/reviews/history/'+x.id+'/">'+esc(x.departure)+' → '+esc(x.destination)+'</a></td><td>'+esc(x.fare)+'</td></tr>').join('')+'</tbody></table></div><p><a href="/reviews/history/?kind=daeri&amp;q=%EA%B0%95%ED%99%94">강화 관련 기록 전체 검색</a> · <a href="/fare/?service=daeri&amp;from=%EA%B0%95%ED%99%94%EA%B5%B0">내 출발지·도착지 예상요금 확인</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>':'';
- const ganghwaFeaturedRides=ganghwaReviewPage?publicRides.filter(x=>x.service==='daeri'&&(
+ const ganghwaFeaturedRides=ganghwaReviewPage?[...publicRideById.values()].filter(x=>x.service==='daeri'&&(
   (x.date==='2026-10-21'&&x.departure==='강화읍'&&x.destination==='검단아라동')||
   (x.date==='2026-10-20'&&x.departure==='강화갑곳리'&&x.destination==='선원면')||
   (x.date==='2026-10-20'&&x.departure==='강화읍 남문주차장'&&x.destination==='강화군 불은면')
