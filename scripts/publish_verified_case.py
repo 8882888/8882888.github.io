@@ -43,35 +43,112 @@ def shell(title, description, body, canonical):
             ' · <a href="/reviews/verified/">운행완료 기록 사례</a></header><main>'
             + body + '</main><footer>스마트24 상담 <a href="tel:18114294">1811-4294</a></footer></body></html>')
 
-def render_case(x):
+PLACE_GROUPS = (
+    ("부산", "부산"), ("해운대", "부산"), ("인천", "인천"),
+    ("연수구", "인천"), ("검단", "인천"), ("강화", "인천"),
+    ("김포", "김포"), ("세종시", "세종"), ("부강면", "세종"),
+    ("광산구", "광주"), ("고흥군", "고흥"), ("평택", "평택"),
+    ("오산시", "오산"), ("의정부", "의정부"), ("종로", "서울"),
+    ("동해시", "동해"), ("원주시", "원주"), ("고양시", "고양"),
+    ("안동시", "안동"), ("시흥시", "시흥"), ("구미시", "구미"),
+    ("김천시", "김천"), ("용인시", "용인"), ("강릉시", "강릉"),
+    ("화성시", "화성"), ("유성구", "대전"), ("마산합포구", "창원"),
+    ("지리산", "지리산"), ("설악산", "설악산"),
+)
+
+def locality_groups(x):
+    route = str(x.get("departure", "")) + " " + str(x.get("destination", ""))
+    return {group for token, group in PLACE_GROUPS if token in route}
+
+def related_cases(x, records, published):
+    current = identifier(x)
+    published_ids = {p.get("id") for p in published}
+    current_groups = locality_groups(x)
+    candidates = []
+    for other in records:
+        other_id = identifier(other)
+        if (other_id == current or other_id not in published_ids or
+                not complete(other) or other.get("service") != x.get("service")):
+            continue
+        common = current_groups & locality_groups(other)
+        if common:
+            candidates.append((other, sorted(common)[0]))
+    candidates.sort(key=lambda pair: (
+        pair[0].get("date", ""), pair[0].get("departure", ""),
+        pair[0].get("destination", "")), reverse=True)
+    return candidates[:4]
+
+def render_case(x, records=None, published=None):
+    if records is None:
+        records = json.loads(SOURCE.read_text(encoding="utf-8"))
+    if published is None:
+        published = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else []
     label = "자동차탁송" if x["service"] == "taksong" else "대리운전"
     title = f'{x["departure"]} → {x["destination"]} {label} 운행기록'
     slug = identifier(x)
-    vehicle = x.get("vehicle")
-    facts = [("출발지", x["departure"]),("도착지",x["destination"]),("실제 운행일",x["date"]),
-             ("당시 기록요금",x["fare"])]
-    if vehicle: facts.append(("확인된 차량",vehicle))
-    detail = "".join("<dt>"+esc(k)+"</dt><dd>"+esc(v)+"</dd>" for k,v in facts)
-    # Service-aligned illustration; never imply it is the actual vehicle or driver.
+    facts = [("서비스 유형", label), ("출발지", x["departure"]),
+             ("도착지", x["destination"]), ("실제 운행일", x["date"]),
+             ("당시 기록요금", x["fare"])]
+    if x.get("vehicle"):
+        facts.append(("확인된 차량", x["vehicle"]))
+    detail = "".join("<dt>"+esc(k)+"</dt><dd>"+esc(v)+"</dd>" for k, v in facts)
     if x["service"] == "taksong":
         image_source = "/assets/service-taksong-visual.svg"
         image_alt = "자동차탁송 안내용 그림, 번호판 홍보번호 1811-4294, 실제 고객 운행차량 사진 아님"
+        service_path, service_text = "/taksong/", "자동차탁송"
+        checklist = ("<ul><li>차량이 주차된 정확한 위치와 출차 승인 가능 여부</li>"
+            "<li>시동·주행 가능 상태, 차종·변속기 및 운행 전 확인할 특이사항</li>"
+            "<li>차량 키를 전달할 담당자와 목적지 수령 담당자</li>"
+            "<li>출발·도착지에서 차량을 인수·인계할 수 있는 날짜와 시간</li></ul>")
+        handover_intro = "차량을 다른 장소로 이동하는 탁송은 출발지에서 차량을 인수할 수 있는지와 도착지에서 받을 수 있는지를 각각 확인하는 것이 중요합니다."
     else:
         image_source = "/assets/service-daeri-visual.svg"
         image_alt = "대리운전 서비스 안내용 그림, 실제 운행기사나 운행차량 사진 아님"
+        service_path, service_text = "/daeri/", "대리운전"
+        checklist = ("<ul><li>차량이 있는 건물명, 주차장 층과 실제 출입구</li>"
+            "<li>차량 키 전달 방법과 운행 전 차량 상태</li>"
+            "<li>목적지의 정확한 주소, 주차 위치와 도착 후 인계 방식</li>"
+            "<li>희망 출발 시각과 경유·대기 여부</li></ul>")
+        handover_intro = "대리운전은 고객 차량의 실제 주차 위치와 운행을 시작할 장소, 도착 후 차량을 세울 위치를 정확히 전달하는 것이 중요합니다."
     visual = ('<figure style="margin:12px 0"><img src="' + image_source +
-              '" alt="' + esc(image_alt) +
-              '" loading="lazy" width="960" height="504" style="width:100%;max-width:630px;height:auto">' +
-              '<figcaption style="font-size:13px">서비스별 참고 이미지 · 실제 운행 증빙사진 아님</figcaption></figure>')
+        '" alt="' + esc(image_alt) +
+        '" loading="lazy" width="960" height="504" style="width:100%;max-width:630px;height:auto">' +
+        '<figcaption style="font-size:13px">서비스별 참고 이미지 · 실제 운행 증빙사진 아님</figcaption></figure>')
+    related = related_cases(x, records, published)
+    if related:
+        related_html = "<ul>" + "".join(
+            '<li><a href="/reviews/verified/'+identifier(other)+'/">'+
+            esc(other["departure"]+" → "+other["destination"]+" "+label)+'</a> · '+
+            esc(other["date"])+" · 당시 "+esc(other["fare"])+" · 공통 지역 표기 "+
+            esc(group)+"</li>" for other, group in related) + "</ul>" + \
+            "<p>아래 기록은 같은 지역 표기가 포함된 별도 운행 사례입니다. 같은 기사·동일 경로·연속 운행을 의미하지 않습니다.</p>"
+    else:
+        related_html = "<p>같은 서비스의 공개 기록 중 공통 지역 표기가 명확히 확인되는 사례가 없어 임의로 연결하지 않았습니다.</p>"
     body = ('<article><h1>'+esc(title)+'</h1><p><strong>기존 운행완료 자료 기반 사례</strong></p>'
-            +visual+'<dl>'+detail+'</dl><h2>차량 이동 구간</h2><p>'+esc(x["departure"])+'에서 '
-            +esc(x["destination"])+'까지 '+label+'으로 기록된 운행입니다. '
-            '운행기록에 없는 차량 종류·경유지·상황은 추정하여 작성하지 않습니다.</p>'
-            '<h2>차량 인계 및 요금 상담</h2><p>당시 기록요금은 현재 요금표가 아닙니다. '
-            '출발지·도착지, 정확한 차량 인계 위치, 차종과 희망 날짜를 확인한 뒤 상담합니다.</p>'
-            '<p><a href="tel:18114294">이 구간 상담 1811-4294</a> · <a href="/fare/">예상요금 확인</a> · <a href="/reviews/ride-record-stories/">다른 실제 운행기록 보기</a></p></article>')
-    return shell(title, title+' · 실제 운행일 '+x["date"]+' · 당시 요금 '+x["fare"],body,
-                 'https://jeongukdaeri.kr/reviews/verified/'+slug+'/')
+        + visual +
+        '<section id="record-facts"><h2>기록으로 확인되는 운행 정보</h2><dl>'+detail+'</dl>'
+        '<p>위 항목은 공개 가능한 운행기록에서 확인되는 정보입니다. 실제 운행일과 게시일은 다를 수 있습니다.</p></section>'
+        '<section id="route-scope"><h2>출발지와 도착지 확인</h2><p>기록상 출발지는 '+esc(x["departure"])+'이며 도착지는 '
+        +esc(x["destination"])+'입니다. 출발지·도착지 표기는 원자료에 기록된 범위를 유지했습니다. '
+        '동·읍·면 또는 지역명만 기재된 경우 정확한 도로명주소나 실제 주행 경로를 뜻하지 않습니다.</p>'
+        '<p>이 페이지는 운행일, 서비스 유형, 출발지, 도착지와 당시 기록요금을 안내합니다. '
+        '원자료에 없는 경유지, 이동거리, 소요시간, 차량 세부정보와 현장 상황은 추정해 추가하지 않았습니다.</p></section>'
+        '<section id="handover-checklist"><h2>'+esc(service_text)+' 접수 전 확인할 사항</h2><p>'+handover_intro+'</p>'
+        + checklist + '</section>'
+        '<section id="fare-context"><h2>당시 기록요금과 현재 견적은 구분합니다</h2><p>'+esc(x["date"])+' 운행에 기록된 '
+        +esc(x["fare"])+'은 과거 해당 건의 기록요금입니다. 현재 요금표나 다른 구간의 고정요금으로 사용할 수 없습니다. '
+        '현재 비용은 출발지와 도착지의 정확한 위치, 차량 조건, 희망 시간과 인수·인계 조건을 확인한 뒤 별도로 상담합니다.</p></section>'
+        '<section id="related-cases"><h2>같은 지역 표기가 포함된 다른 공개 운행기록</h2>'+related_html+'</section>'
+        '<section id="related-service"><h2>'+esc(service_text)+' 및 지역별 안내</h2><p><a href="'+service_path+'">'
+        +esc(service_text)+' 전국 안내</a> · <a href="/region/">행정구역별 지역 안내</a> · '
+        '<a href="/coverage/">전국 서비스 지역 찾기</a> · <a href="/fare/">현재 예상요금 조회</a></p>'
+        '<p><a href="tel:18114294">상담 1811-4294</a> · '
+        '<a href="/reviews/ride-record-stories/">다른 운행기록 보기</a></p></section></article>')
+    description = (x["date"]+" "+label+" 완료 운행기록 · "+x["departure"]+" → "+
+        x["destination"]+" · 당시 기록요금 "+x["fare"]+
+        ". 현재 견적은 차량과 인수·인계 조건을 확인한 뒤 별도로 안내합니다.")
+    return shell(title, description, body,
+        "https://jeongukdaeri.kr/reviews/verified/"+slug+"/")
 
 def write_index(published, records):
     by_id={identifier(r):r for r in records if complete(r)}
@@ -110,9 +187,9 @@ def main():
         key=identifier(selected)
         page=OUT / key / "index.html"
         page.parent.mkdir(parents=True,exist_ok=True)
-        page.write_text(render_case(selected),encoding="utf-8")
         published.append({"id":key,"service":selected["service"],
                           "published_at":datetime.now(timezone.utc).isoformat()})
+        page.write_text(render_case(selected, records, published),encoding="utf-8")
         STATE.write_text(json.dumps(published,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
         print("Published one verified case",key)
     else:
