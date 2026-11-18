@@ -383,9 +383,11 @@ for(const x of historicalRides){const t=historyBaseTitle(x);historyTitleCounts.s
 const historyCounts=Object.freeze({taksong:historicalRides.filter(x=>x.service==='taksong').length,daeri:historicalRides.filter(x=>x.service==='daeri').length,mixed:historicalRides.filter(x=>x.service==='mixed').length});
 if(historicalRides.length!==2591||historyCounts.taksong!==804||historyCounts.daeri!==1786||historyCounts.mixed!==1)throw Error('Completed ride classification changed unexpectedly');
 const buildHistoryMetaDescription=require('./lib/history-meta-description.cjs');
+// recordedTime is the source record timestamp, not a claimed vehicle pickup time.
+const historyMetaDescriptionKey=x=>[x.date,x.recordedTime,x.service,x.fare].join('|');
 const historyMetaDescriptionCounts=new Map();
-for(const x of historicalRides){const key=[x.date,x.recordedTime,x.service,x.fare].join('|');historyMetaDescriptionCounts.set(key,(historyMetaDescriptionCounts.get(key)||0)+1);}
-function historyMetaDescription(x){const key=[x.date,x.recordedTime,x.service,x.fare].join('|');return buildHistoryMetaDescription(x,historyMetaDescriptionCounts.get(key)||1);}
+for(const x of historicalRides){const key=historyMetaDescriptionKey(x);historyMetaDescriptionCounts.set(key,(historyMetaDescriptionCounts.get(key)||0)+1);}
+function historyMetaDescription(x){return buildHistoryMetaDescription(x,historyMetaDescriptionCounts.get(historyMetaDescriptionKey(x))||1);}
 const historyMetaDescriptionValues=historicalRides.map(historyMetaDescription);
 if(new Set(historyMetaDescriptionValues).size!==historicalRides.length||historyMetaDescriptionValues.some(value=>Array.from(value).length>80))throw Error('Historical review meta descriptions must be unique and at most 80 characters');
 function vehicleGuideLink(kind){
