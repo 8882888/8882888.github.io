@@ -15,8 +15,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  # Verify once after Cloudtype completed, not on every content/test push.
-  # Preserve scheduled audits and prevent competing deployments from hiding drift.
+  # Full sitemap audits run manually or daily, not after every deployment.
+  # Prevent overlapping full-site crawls from hiding drift or adding load.
   group: live-seo-verification-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: false
 jobs:

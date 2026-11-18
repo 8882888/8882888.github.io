@@ -13,7 +13,7 @@ test('historical publication manifest keeps exactly the saved, canonical and ver
  assert(entries.every(x=>x.path.match(/^\/reviews\/verified\/[0-9a-f]{16}\/$/)));
  assert(entries.every(x=>x.publishedAt&&Date.parse(x.publishedAt)>0));
 });
-test('archive publication explicitly dispatches Cloudtype; live proof follows release',()=>{
+test('archive publication dispatches Cloudtype; full sitemap audit is manual and daily',()=>{
  const archive=fs.readFileSync(path.join(root,'.github/workflows/update-naver-blog.yml'),'utf8');
  const deploy=fs.readFileSync(path.join(root,'.github/workflows/deploy-main.yml'),'utf8');
  const verify=fs.readFileSync(path.join(root,'.github/workflows/verify-live-seo.yml'),'utf8');
@@ -21,8 +21,11 @@ test('archive publication explicitly dispatches Cloudtype; live proof follows re
  assert.match(archive,/if: steps\.publication\.outputs\.changed == 'true'/);
  assert.match(archive,/actions\/workflows\/deploy-main\.yml\/dispatches/);
  assert.match(deploy,/workflow_dispatch:/);
- assert.match(verify,/workflows: \["Deploy to Cloudtype"\]/);
- assert.match(verify,/github\.event\.workflow_run\.conclusion == 'success'/);
+ assert.doesNotMatch(verify,/workflow_run:/,'The full sitemap audit must not fan out after every deploy');
+ assert.match(verify,/workflow_dispatch:/);
+ assert.match(verify,/schedule:/);
+ assert(verify.includes("if: \${{ success() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}"));
+ assert.match(verify,/run: node scripts\/verify-live-seo-release\.cjs/);
 });
 test('Node health, published sitemap, RSS and latest actual case agree on the same boot snapshot',async()=>{
  const child=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:'39869',PUBLIC_HOST:'jeongukdaeri.kr'},stdio:'ignore'});
