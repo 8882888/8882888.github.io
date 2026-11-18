@@ -3432,7 +3432,9 @@ if(pathname==='/sitemap-verified-regions.xml'){
  const verifiedVillageHubs=regions.filter(r=>r.level==='리'&&
   ['daeri','taksong'].some(kind=>eligibleVillageKeys.has(kind+'|'+r.full_name)))
   .map(r=>canonical(r.slug));
- const urls=[...new Set([...supported,...verifiedVillageHubs])].slice(0,2000);
+ const publishedRoutes=regions.filter(r=>['시도','시','군','구'].includes(r.level)).flatMap(r=>
+  ['taksong','daeri'].filter(kind=>publishedKeys.has(kind+'|'+r.full_name)).map(kind=>servicePath(r,kind)));
+ const urls=[...new Set([...publishedRoutes,...supported,...verifiedVillageHubs])].slice(0,2000);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(route=>'<url><loc>'+esc(new URL(base+route).href)+'</loc></url>').join('')+'</urlset>';
  sitemapCache.set(pathname,xml);
  return respond(res,200,xml,'application/xml; charset=utf-8');
