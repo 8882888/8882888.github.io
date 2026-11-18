@@ -1169,7 +1169,29 @@ function innovationCityPanel(r,kind){
 }
 // Reuse one deduplicated regional chooser for all 17 provinces.
 function regionalNationwideSubareaChooser(r,kind){return nationwideExplorer.chooser(r,kind)}
-function regionalDecisionPanel(r,kind,verified,history){
+function regionalPublicEvidence(region,verified,history){
+ const published=[],otherVerified=[];
+ for(const ride of verified){
+  const url=rideUrl(ride);
+  const entry={ride,url,archive:false};
+  (url.startsWith('/reviews/verified/')?published:otherVerified).push(entry);
+ }
+ const archive=history.map(ride=>({ride,url:'/reviews/history/'+ride.id+'/',archive:true}));
+ const seen=new Set();
+ return [...published,...otherVerified,...archive].filter(({ride})=>{
+  const {date,departure,destination,fare}=ride;
+  if(!date||!departure||!destination||[departure,destination].includes('지역 비공개'))return false;
+  const key=[date,departure,destination,String(fare||'').replace(/[^0-9]/g,'')].join('|');
+  if(seen.has(key))return false;
+  seen.add(key);
+  return true;
+ }).slice(0,6).map(({ride,url,archive})=>({
+  url,date:ride.date,departure:ride.departure,destination:ride.destination,fare:ride.fare,
+  source:archive?'기존 완료 운행기록':'사용자 확인 공개 운행',
+  origin:archive?matchingHistoryRegion({...ride,rawDestination:''},region,regions):tripMatchesRegion({...ride,destination:''},region)
+ }));
+}
+function regionalDecisionPanel(r,kind,evidence){
  const label=seoRegionLabel(r),service=kind==='daeri'?'대리운전':'자동차탁송';
  const from=encodeURIComponent(r.full_name),fare='/fare/?service='+kind+'&amp;from='+from;
  const local=childrenByParent.get(r.slug)||[];
@@ -1178,12 +1200,9 @@ function regionalDecisionPanel(r,kind,verified,history){
  const related=[...new Map((local.length?local:siblings)
   .filter(x=>x&&x.name&&x.name!=='(직할)'&&x.name!=='직할'&&x.level!=='리')
   .map(x=>[x.full_name||x.name,x])).values()].slice(0,8);
- const source=[...verified.map(x=>({date:x.date,departure:x.departure,destination:x.destination,fare:x.fare,url:rideUrl(x)})),
-  ...history.map(x=>({date:x.date,departure:x.departure,destination:x.destination,fare:x.fare,url:'/reviews/history/'+x.id+'/'}))]
-  .filter(x=>x.departure&&x.destination&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개');
- const distinct=[...new Map(source.map(x=>[x.date+'|'+x.departure+'|'+x.destination,x])).values()].slice(0,3);
- const tripItems=distinct.length?'<ol>'+distinct.map(x=>'<li><a href="'+esc(x.url)+'">'+esc(x.departure+' → '+x.destination)+'</a> · '+esc(x.date||'운행일 미기록')+' · 당시 요금 '+esc(x.fare||'미기록')+'</li>').join('')+'</ol>':
-  '<p>이 지역과 출발·도착지가 모두 확인된 공개 운행기록은 현재 표시할 수 없습니다. 임의의 완료 후기를 만들지 않습니다.</p>';
+ const distinct=evidence.slice(0,3);
+ const tripItems=distinct.length?'<div style="overflow-x:auto"><table><caption>실제 운행 구간·운행일·당시 요금</caption><thead><tr><th scope="col">구간</th><th scope="col">운행일</th><th scope="col">당시 요금</th></tr></thead><tbody>'+distinct.map(x=>'<tr><td><a href="'+esc(x.url)+'">'+esc(x.departure+' → '+x.destination)+'</a></td><td><time datetime="'+esc(x.date)+'">'+esc(x.date)+'</time></td><td>'+esc(x.fare||'미기록')+'</td></tr>').join('')+'</tbody></table></div>':
+  '<p>이 지역에 연결된 공개 운행기록을 찾지 못했습니다.</p>';
  const nationwideSubareaChoices=regionalNationwideSubareaChooser(r,kind);
  // The full, unique mobile selector replaces the old first-eight repeated text links.
  const childLinks=!nationwideSubareaChoices&&related.length?'<nav aria-label="'+esc(label)+' 인근 세부 지역"><strong>가까운 지역 상세 안내</strong><p>'+related.map(x=>'<a href="'+servicePath(x,kind)+'">'+esc(seoRegionLabel(x)+service)+'</a>').join(' · ')+'</p></nav>':'';
@@ -1204,7 +1223,7 @@ function regionalDecisionPanel(r,kind,verified,history){
   '<a href="/reviews/history/?kind='+kind+'&amp;q='+from+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">지역 실제 후기 검색</a>'+
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
   directQuoteForm+nationwideSubareaChoices+
-  '<h3>공개된 실제 완료 운행 '+distinct.length+'건</h3><p>이 건수는 출발지·도착지가 모두 확인된 공개 기록만 셉니다. 일부 구간이 비공개인 다른 완료 운행기록은 포함하지 않습니다.</p>'+tripItems+
+  '<h3>지역 대표 완료 운행</h3>'+tripItems+
   (distinct.length?'<p style="font-size:.93em">표시된 요금은 당시 운행금액이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>':'')+
   childLinks+'</section>';
 }
@@ -1399,19 +1418,11 @@ async function servicePage(r,kind){
  const uniqueMatches=[...new Map(matches.map(x=>[String(x.date||'')+'|'+String(x.departure||'')+'|'+String(x.destination||'')+'|'+String(x.service||x.service_type||x.kind||''),x])).values()].slice(0,8);
  const reviewCards=uniqueMatches.length?'<section><h2>'+esc(keyword)+' 실제 운행완료 후기 · 출발지·도착지·요금</h2><p>확인된 완료 운행 자료만 사용합니다. 예약 시각·배차 과정 등 미제공 정보는 임의로 작성하지 않습니다. 현재 요금은 이용 조건에 따라 달라집니다.</p>'+uniqueMatches.slice(0,5).map(x=>'<article style="border-top:1px solid #d6e0ee;padding:14px 0"><h3>'+esc(x.departure+' → '+x.destination+' '+service+' 운행완료')+'</h3><p><strong>운행일:</strong> '+esc(x.date)+' · <strong>출발:</strong> '+esc(x.departure)+' · <strong>도착:</strong> '+esc(x.destination)+' · <strong>운행요금:</strong> '+esc(x.fare||'미기록')+'</p><p><strong>예약·배차:</strong> 운행완료 확인. 예약 접수 및 배차 세부 과정은 미기록입니다.</p><p><a href="'+rideUrl(x)+'">운행 기록 보기</a> · <a href="tel:18114294">예약·배차 상담 '+PHONE+'</a></p></article>').join('')+'</section>':historicalMatches.length?historicalCards:priorityMeta?'<section><h2>'+esc(keyword)+' 운행기록 확인 현황</h2><p>현재 공개 가능한 완료 운행기록에서 이 지역의 출발 또는 도착이 명확하게 확인된 사례는 찾지 못했습니다. 다른 지역의 운행을 이 지역의 실적으로 표시하지 않습니다.</p><p><a href="/reviews/history/?kind='+kind+'">전국 실제 운행기록 확인</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 예상요금 상담</a></p></section>':'<section><h2>'+esc(name)+' 실제 운행기록 확인 안내</h2><p>현재 공개 가능한 기록에서 이 행정구역의 출발 또는 도착이 확인된 운행은 없습니다. 이름이 비슷한 다른 지역의 운행사례를 이곳의 실적으로 표시하지 않습니다.</p><p><a href="/reviews/history/?kind='+kind+'">전국 전체 운행기록 보기</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 예상요금·예약 안내</a></p></section>';
 
- const verifiedFeatured=priorityMeta?[
-  ...matches.slice(0,3).map(x=>({
-   url:rideUrl(x),date:x.date,from:x.departure,to:x.destination,fare:x.fare,
-   origin:tripMatchesRegion({...x,destination:''},r),source:'사용자 확인 공개 운행'
-  })),
-  ...historicalMatches.slice(0,3).map(x=>({
-   url:'/reviews/history/'+x.id+'/',date:x.date,from:x.departure,to:x.destination,fare:x.fare,
-   origin:matchingHistoryRegion({...x,rawDestination:''},r,regions),source:'기존 완료 운행기록'
-  }))
- ]:[];
+ const publicEvidence=regionalPublicEvidence(r,matches,historicalMatches);
+ const verifiedFeatured=priorityMeta?publicEvidence.slice(0,6):[];
  const priorityEvidence=priorityMeta?'<section id="priority-verified-rides"><h2>'+esc(keyword)+' 실제 확인된 운행 사례</h2>'+
   (verifiedFeatured.length?'<p>다음은 실제 완료 운행 자료에서 이 지역이 출발지 또는 도착지로 확인된 사례입니다. 기록 당시 요금은 현재 예약 견적이 아니며, 고객 상세주소와 연락처는 공개하지 않습니다.</p><ul>'+
-   verifiedFeatured.map(x=>'<li><a href="'+esc(x.url)+'">'+esc(x.from+' → '+x.to+' '+service+' 완료 운행')+'</a> · '+esc(x.date)+' · 당시 요금 '+esc(x.fare||'미기록')+' · '+esc(x.origin?'이 지역 출발':'이 지역 도착')+' · '+esc(x.source)+'</li>').join('')+
+   verifiedFeatured.map(x=>'<li><a href="'+esc(x.url)+'">'+esc(x.departure+' → '+x.destination+' '+service+' 완료 운행')+'</a> · '+esc(x.date)+' · 당시 요금 '+esc(x.fare||'미기록')+' · '+esc(x.origin?'이 지역 출발':'이 지역 도착')+' · '+esc(x.source)+'</li>').join('')+
    '</ul>':'<p>현재 공개 가능한 운행기록에서 이 지역의 출발·도착이 명확하게 확인된 사례는 찾지 못했습니다. 다른 지역의 운행을 이 지역의 실적처럼 표시하지 않습니다.</p>')+
   '<p><a href="/reviews/history/?kind='+kind+'">전체 확인 운행기록</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 요금·배차 상담</a></p></section>':'';
  const history=regionalUsage(r,kind)+(matches.length?'<p>아래는 확인된 실제 완료 운행 기록입니다. 기록 요금은 당시 운행 조건에 따른 금액이며 현재 예상요금과 다를 수 있습니다.</p><ul>'+matches.map(x=>'<li><a href="'+rideUrl(x)+'">'+esc([x.departure+' → '+x.destination,service+' 운행완료',x.fare?'요금 '+x.fare:'',x.date].filter(Boolean).join(' · '))+'</a></li>').join('')+'</ul><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 출발·도착지 입력해 현재 예상요금 조회</a></p>' :'');
@@ -1553,9 +1564,9 @@ async function servicePage(r,kind){
   ?'<section id="regional-direct-answer" aria-labelledby="regional-direct-question"><h2 id="regional-direct-question">'+esc(keyword)+' 요금과 예약은 어떻게 확인하나요?</h2>'+
    (regionalAnswerTopic?'<h3>'+esc(regionalAnswerTopic)+'</h3>':'')+
    '<p>'+esc(name)+'에서 '+(kind==='taksong'?'자동차탁송을 이용하려면 차량 인수 장소와 목적지, 차종, 주행 가능 상태 및 희망 인계 시각을':'대리운전을 이용하려면 출발지와 목적지, 희망 출발 시각 및 경유·대기 여부를')+' 알려주세요. '+esc(regionalAnswerContext)+' 도로거리와 시간대, 기사 접근·복귀 여건에 따라 예상요금과 배차 가능 여부가 달라집니다. 최종 금액과 실제 기사 배정은 상담으로 확인합니다.</p>'+
-   '<p>'+(historicalMatches.length||matches.length?'이 지역과 연관된 기존 완료 운행기록은 아래에서 날짜·구간·당시 요금을 확인할 수 있습니다. 과거 요금은 현재 고정 요금이 아닙니다.':'현재 이 지역의 확인된 완료 운행기록을 이 페이지에 연결하지 않았습니다. 확인되지 않은 후기를 작성하지 않습니다.')+'</p>'+
+   '<p>'+(publicEvidence.length?'지역 완료 운행 예시 <a href="'+esc(publicEvidence[0].url)+'">'+esc(publicEvidence[0].departure+' → '+publicEvidence[0].destination)+'</a> · '+esc(publicEvidence[0].date)+(publicEvidence[0].fare?' · 당시 '+esc(publicEvidence[0].fare)+'. 현재 견적은 아래에서 확인하세요.':'.'):'이 지역의 공개 완료 운행기록은 아래 검색에서 확인할 수 있습니다.')+'</p>'+
    '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역 예상요금 조회</a> · <a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">실제 운행기록 검색</a> · <a href="/'+kind+'/">전국 '+(kind==='taksong'?'자동차탁송':'대리운전')+' 안내</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>':'';
- const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+priorityOriginalSourceMarkup(r.full_name,kind)+prioritySearchQuestionMarkup(r.full_name,kind)+'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+innovationCityPanel(r,kind)+innovationCity100Panel(r,kind)+regionalDecisionPanel(r,kind,matches,historicalMatches)+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)&&r.full_name!=='부산광역시 기장군'?blogKeywordGuide:companySection+blogKeywordGuide))+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'&&!compactLocalTemplate?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+(compactLocalTemplate?'':keywordEngine.regionSection(r,kind))+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
+ const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+priorityOriginalSourceMarkup(r.full_name,kind)+prioritySearchQuestionMarkup(r.full_name,kind)+'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+innovationCityPanel(r,kind)+innovationCity100Panel(r,kind)+regionalDecisionPanel(r,kind,publicEvidence)+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)&&r.full_name!=='부산광역시 기장군'?blogKeywordGuide:companySection+blogKeywordGuide))+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'&&!compactLocalTemplate?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+(compactLocalTemplate?'':keywordEngine.regionSection(r,kind))+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Show useful local service information and a phone CTA before a generic promotional card.
