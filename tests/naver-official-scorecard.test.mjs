@@ -51,4 +51,7 @@ test('full sitemap audit separates the 10k first milestone from technical URL co
  assert.match(source,/naverIndexed:null/);
  assert.match(source,/First Naver confirmed-index milestone target: 10,000/);
  assert.doesNotMatch(source,/targetNaverIndexed|technicalGapTo50000|Technical pool gap/);
+ assert.match(source,/duplicate_meta_description_across_urls/);
+ assert.match(source,/descriptionDuplicateGroups/);
+ assert.match(source,/descriptionMultipleTags/);
 });

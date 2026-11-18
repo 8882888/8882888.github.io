@@ -38,3 +38,17 @@ test('reviewed route title should only receive the shared Smart24 brand once',()
  assert(code.includes("const html=layout(t+' 요금·예약',desc,body,") || code.includes("return layout(t+' 요금·예약',desc,body,"),'route title must use the common layout suffix');
  assert(!code.includes("t+' 요금·예약 | 스마트24'"),'no duplicate Smart24 suffix in generated titles');
 });
+
+test('verified public ride detail descriptions distinguish route and recorded fare',()=>{
+ const rides=JSON.parse(fs.readFileSync(path.join(root,'data/public-reviewed-rides-202610.json'),'utf8'));
+ const safe=v=>String(v||'').replace(/\d{1,5}(?:-\d{1,5})?/g,'(상세주소 비공개)').slice(0,100);
+ const descriptions=rides.map(x=>{
+  const service=x.service==='taksong'?'탁송':'대리운전';
+  return x.date+' '+service+' 완료 기록 · '+safe(x.departure)+'→'+safe(x.destination)+' · 당시 '+(x.fare||'요금 미기재')+'.';
+ });
+ assert.equal(new Set(descriptions).size,rides.length,'Every verified public case needs distinct metadata');
+ assert(descriptions.every(d=>Array.from(d).length<=80),'Public case descriptions must be at most 80 characters');
+ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ assert(server.includes("safePlace(x.departure)+'→'+safePlace(x.destination)"),'Server meta description must include the privacy-filtered route');
+ assert(server.includes("(x.fare||'요금 미기재')"),'Server meta description must include the recorded fare');
+});

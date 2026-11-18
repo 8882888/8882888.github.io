@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import coastalFactory from '../lib/coastal-keywords.js';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const pages=JSON.parse(fs.readFileSync(path.join(root,'data/priority-regions.json'),'utf8')).pages;
@@ -57,4 +58,29 @@ test('all 59 priority pages avoid the two copied innovation-city bulk templates'
  assert.ok(ulsan.detail.includes('우정혁신도시')&&ulsan.detail.includes('성남동')&&ulsan.detail.includes('태화강'));
  assert.match(ulsan.detail,/(차량|주차장)/);
  assert.match(ulsan.detail,/(대리운전|귀가)/);
+});
+
+test('coastal directory and all place/service pages have unique region-specific descriptions',()=>{
+ const source=JSON.parse(fs.readFileSync(path.join(root,'data/coastal/places.json'),'utf8'));
+ const regionMap=new Map();
+ for(const item of source.items){
+  const slug=item.regions[0];
+  if(!regionMap.has(slug))regionMap.set(slug,{slug,full_name:item.regionFull,name:item.regionFull.split(' ').at(-1)});
+ }
+ const coastal=coastalFactory({
+  root,
+  regions:[...regionMap.values()],
+  esc:value=>String(value??''),
+  layout:(title,description,body,canonical)=>({title,description,body,canonical}),
+  servicePath:(region,kind)=>'/'+kind+'/'+region.slug+'/'
+ });
+ const directoryPages=[coastal.directory(),...coastal.provinces.map(p=>coastal.directory(p))];
+ const directoryDescriptions=directoryPages.map(page=>page.description);
+ assert.equal(new Set(directoryDescriptions).size,directoryDescriptions.length,'Each province directory needs its own meta description');
+ assert(directoryDescriptions.every(d=>Array.from(d).length<=80),'Directory descriptions must be at most 80 characters');
+ const placePages=coastal.items.flatMap(item=>['daeri','taksong'].map(kind=>coastal.page(item,kind)));
+ const placeDescriptions=placePages.map(page=>page.description);
+ assert.equal(placePages.length,1270);
+ assert.equal(new Set(placeDescriptions).size,placeDescriptions.length,'Same-named coastal places in different regions must not share descriptions');
+ assert(placeDescriptions.every(d=>Array.from(d).length<=80),'Coastal place descriptions must be at most 80 characters');
 });

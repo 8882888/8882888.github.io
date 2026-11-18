@@ -167,6 +167,12 @@ for(const r of results){if(r.title&&titles.get(r.title).length>1)r.problems.push
 const bodies=new Map();
 for(const r of results){if(!r.bodyHash)continue;const group=bodies.get(r.bodyHash)||[];group.push(r.url);bodies.set(r.bodyHash,group)}
 for(const r of results){if(r.bodyHash&&bodies.get(r.bodyHash).length>1)r.problems.push('duplicate_exact_body')}
+const descriptions=new Map();
+for(const r of results){const value=String(r.description||'').replace(/\s+/g,' ').trim();if(!value)continue;const group=descriptions.get(value)||[];group.push(r);descriptions.set(value,group)}
+const duplicateDescriptionGroups=[...descriptions.entries()].filter(([,group])=>group.length>1);
+for(const [,group] of duplicateDescriptionGroups)for(const r of group)if(!r.metadataWarnings.includes('duplicate_meta_description_across_urls'))r.metadataWarnings.push('duplicate_meta_description_across_urls');
+const duplicateDescriptionUrls=duplicateDescriptionGroups.reduce((sum,[,group])=>sum+group.length,0);
+const duplicateDescriptionExtraUrls=duplicateDescriptionGroups.reduce((sum,[,group])=>sum+group.length-1,0);
 const regionalCoverage=reviewLinkCoverage(results);
 const guideCoverage=regionalGuideCoverage(results);
 const technicallyClean=results.filter(r=>r.status===200&&r.problems.length===0).length;
@@ -174,7 +180,10 @@ const counts={discovered:inventory.length,checked:results.length,scope:transport
  sitemapOnly: true,
  descriptionOver80:results.filter(r=>r.descriptionLength>80).length,
  descriptionMissing:results.filter(r=>r.problems.includes('seo_missing_meta_description')).length,
- descriptionDuplicates:results.filter(r=>r.descriptionTags>1).length,
+ descriptionDuplicates:duplicateDescriptionUrls,
+  descriptionDuplicateGroups:duplicateDescriptionGroups.length,
+  descriptionDuplicateExtraUrls,
+  descriptionMultipleTags:results.filter(r=>r.descriptionTags>1).length,
  jsonldMissing:results.filter(r=>r.metadataWarnings.includes('jsonld_missing')).length,
  jsonldPageTypeMissing:results.filter(r=>r.metadataWarnings.includes('jsonld_page_type_missing')).length,
  jsonldInvalid:results.filter(r=>r.problems.includes('jsonld_invalid_json')).length,
@@ -192,12 +201,12 @@ const counts={discovered:inventory.length,checked:results.length,scope:transport
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,crawlerDiagnostics,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
-writeFileSync('full-meta-jsonld-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,transportOrigin,complete:true,duplicateAnalysisComplete:true,scope:transportOrigin===origin?'production HTTP':'local source responses; not production verification',counts,results},null,2));
+writeFileSync('full-meta-jsonld-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,transportOrigin,complete:true,duplicateAnalysisComplete:true,scope:transportOrigin===origin?'production HTTP':'local source responses; not production verification',counts,duplicateDescriptions:duplicateDescriptionGroups.map(([description,group])=>({description,count:group.length,urls:group.map(r=>r.url)})),results},null,2));
 writeFileSync('full-meta-jsonld-audit.csv',['url,status,final_url,canonical,title,description,description_length,og_description_length,description_tag_count,jsonld_blocks,jsonld_types,metadata_warnings,body_hash,has_ride_link,other_bot_noindex,problems,listed_in',
  ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.description,r.descriptionLength,r.ogDescriptionLength,r.descriptionTags,r.jsonldBlocks,r.jsonldTypes.join(';'),r.metadataWarnings.join(';'),r.bodyHash,r.hasRideLink,r.otherBotNoindex.join(';'),r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
 const criticalTypes=new Set(['http_error','x_robots_noindex','meta_noindex','meta_yeti_noindex','x_robots_yeti_noindex','missing_canonical','canonical_mismatch','timeout','not_html']);
 const critical=results.filter(r=>r.problems.some(p=>criticalTypes.has(p)||p.startsWith('fetch_error')));
-const review=results.filter(r=>r.problems.length&&!critical.includes(r));
+const review=results.filter(r=>(r.problems.length&&!critical.includes(r))||r.metadataWarnings.includes('duplicate_meta_description_across_urls'));
 const lines=[
  '# 스마트24 전체 사이트맵 URL: 메타 설명 80자 + JSON-LD 점검',
  '',
@@ -209,7 +218,9 @@ const lines=[
  '| 전체 발견 URL | '+counts.discovered+' |',
  '| description 80자 초과 | '+counts.descriptionOver80+' |',
  '| description 누락 | '+counts.descriptionMissing+' |',
- '| description 중복 | '+counts.descriptionDuplicates+' |',
+ '| 페이지 간 description 중복 그룹 | '+counts.descriptionDuplicateGroups+' |',
+  '| 페이지 간 description 중복 URL | '+counts.descriptionDuplicates+' |',
+  '| 한 페이지 내 description 태그 다중 등록 | '+counts.descriptionMultipleTags+' |',
  '| JSON-LD 없음 | '+counts.jsonldMissing+' |',
  '| JSON-LD 문법 오류 | '+counts.jsonldInvalid+' |',
  '| JSON-LD 페이지 유형 없음(검토) | '+counts.jsonldPageTypeMissing+' |',
@@ -252,9 +263,10 @@ console.log(JSON.stringify(counts,null,2));
 console.log('NOTE: 100% technical URL checks cannot establish Naver indexing. Check Naver Search Advisor URL inspection and site diagnosis separately.');
 // An Actions green check must never be interpreted as SEO compliance if
 // the 80-character house rule is still violated. JSON-LD presence remains an advisory.
-if(counts.descriptionOver80||counts.descriptionMissing||counts.descriptionDuplicates||counts.jsonldInvalid){
+if(counts.descriptionOver80||counts.descriptionMissing||counts.descriptionDuplicates||counts.descriptionMultipleTags||counts.jsonldInvalid){
  console.error('::error::META/JSON-LD REVIEW REQUIRED — descriptions >80='+counts.descriptionOver80+
-  ', missing description='+counts.descriptionMissing+', duplicated='+counts.descriptionDuplicates+
+  ', missing description='+counts.descriptionMissing+', duplicate-description URLs='+counts.descriptionDuplicates+
+  ', duplicate-description groups='+counts.descriptionDuplicateGroups+', multiple description tags='+counts.descriptionMultipleTags+
   ', invalid JSON-LD='+counts.jsonldInvalid+'. JSON-LD absent='+counts.jsonldMissing+' (advisory).');
  process.exitCode=1;
 }

@@ -5,10 +5,22 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const buildHistoryMetaDescription=require('../lib/history-meta-description.cjs');
 const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const original=JSON.parse(read('data/ride-history.json'));
 assert.equal(original.length,2591,'Never silently change the historical 2,591 records');
+const metaRows=original.map((x,i)=>{
+ const dep=String(x.departure||''),dest=String(x.destination||'');
+ const mixed=/탁송\\s*\\+\\s*대리|대리\\s*\\+\\s*탁송/.test(dep);
+ const service=mixed?'mixed':/(?:^|\\/)\\s*탁(?:\\/|송|$)/.test(dep)||/톨포/.test(dest)?'taksong':'daeri';
+ return {id:'excel-'+String(i+1).padStart(4,'0'),date:x.date,recordedTime:x.time,service,departure:'지역 비공개',destination:'지역 비공개',fare:x.fare};
+});
+const metaKey=x=>[x.date,x.recordedTime,x.service,x.fare].join('|');
+const metaCounts=new Map();for(const x of metaRows)metaCounts.set(metaKey(x),(metaCounts.get(metaKey(x))||0)+1);
+const metaDescriptions=metaRows.map(x=>buildHistoryMetaDescription(x,metaCounts.get(metaKey(x))));
+assert.equal(new Set(metaDescriptions).size,2591,'Every archived record needs a distinct, source-backed meta description');
+assert(metaDescriptions.every(x=>Array.from(x).length<=80),'All archive descriptions must respect the 80-character rule');
 const all=[];
 for(let batch=1;batch<=9;batch++){
  const tail=batch===9?'191':'300';
@@ -37,6 +49,8 @@ assert.equal(catalog.counts.separatelyVerified,39);
 assert.equal(catalog.counts.totalReferenced,2630);
 assert(catalog.counts.targetGapAtLeast>=270,'Do not publish an unsupported 2,900-rides claim');
 const server=read('server.js');
+assert(server.includes("require('./lib/history-meta-description.cjs')"),'Server must use the tested history description helper');
+assert(server.includes('layout(title,historyMetaDescription(x),'),'History detail pages must render the unique description');
 for(const token of [
  'matchingHistoryRegion(x,r,regions)',
  '/reviews/history/',
