@@ -22,9 +22,20 @@ export function isRegionalIntentGuideUrl(value){
  const topic=parts.at(-1);
  return parts[0]==='daeri'?['fare','long-distance'].includes(topic):['fare','handover'].includes(topic);
 }
-// An archive/search link is NOT a deep link to an actual preserved ride document.
+// Count both legacy archive documents and verified public ride pages.
+// Search/listing links alone are not evidence. Only a specific ride document
+// or an anchored item inside the privacy-reviewed completed-calls collection counts.
 export function hasDirectRideRecordLink(html){
- return /href\s*=\s*["'][^"']*\/reviews\/history\/[a-z0-9_-]+\/(?:[?#][^"']*)?["']/i.test(String(html||''));
+ const value=String(html||'');
+ for(const match of value.matchAll(/\bhref\s*=\s*(["'])(.*?)\1/gi)){
+  let link;
+  try{link=new URL(match[2],'https://jeongukdaeri.kr')}catch{continue}
+  if(!['jeongukdaeri.kr','www.jeongukdaeri.kr'].includes(link.hostname.toLowerCase()))continue;
+  if(/^\/reviews\/history\/[a-z0-9_-]+\/$/i.test(link.pathname))return true;
+  if(/^\/reviews\/[a-f0-9]{16}\/$/i.test(link.pathname))return true;
+  if(/^\/reviews\/completed-calls-\d{8}\/$/i.test(link.pathname)&&/^#record-\d+$/i.test(link.hash))return true;
+ }
+ return false;
 }
 export function regionalGuideCoverage(results){
  const guides=results.filter(r=>r?.status===200&&isRegionalIntentGuideUrl(r.url));

@@ -1,6 +1,13 @@
 name: Full sitemap URL indexability audit
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-indexability.mjs'
+      - 'scripts/indexability-scope.mjs'
+      - 'tests/indexability-scope.test.mjs'
+      - '.github/workflows/audit-indexability.yml'
   # Full HTTP scans are expensive. Do not enqueue a 120-minute scan on every
   # frequent deployment-parity check (including failed releases): those runs
   # create a backlog and prevent one complete diagnostic from finishing.
@@ -29,6 +36,9 @@ jobs:
       - name: Test bounded transient HTTP retries
         run: node --test tests/indexability-retry.test.mjs
       - name: Read-only full sitemap audit
+        env:
+          AUDIT_WORKERS: '2'
+          AUDIT_LIVE_DELAY_MS: '350'
         run: node scripts/audit-indexability.mjs
       - name: Upload full audit results
         if: always()

@@ -49,6 +49,15 @@ test('ride evidence means a specific history document, not a search archive',()=
  assert.deepEqual(reviewLinkCoverage(reports),{regionalServicePages:1,regionalPagesWithoutReviewLink:1});
 });
 
+
+test('verified public ride documents and anchored completed-call items count as direct evidence',()=>{
+ assert.equal(hasDirectRideRecordLink('<a href="/reviews/0123456789abcdef/">공개 운행기록</a>'),true);
+ assert.equal(hasDirectRideRecordLink('<a href="https://jeongukdaeri.kr/reviews/0123456789abcdef/">공개 운행기록</a>'),true);
+ assert.equal(hasDirectRideRecordLink('<a href="/reviews/completed-calls-20261114/#record-12">개별 종료 기록</a>'),true);
+ assert.equal(hasDirectRideRecordLink('<a href="/reviews/completed-calls-20261114/">전체 모음</a>'),false);
+ assert.equal(hasDirectRideRecordLink('<a href="https://example.com/reviews/0123456789abcdef/">외부 링크</a>'),false);
+});
+
 test('Yeti/Googlebot-specific noindex cannot silently pass the full sitemap audit',()=>{
  assert.deepEqual(blockedMetaIndexAgents('<meta name="Yeti" content="NOINDEX, FOLLOW">'),['yeti']);
  assert.deepEqual(blockedMetaIndexAgents('<meta content="none" NAME="googlebot">'),['googlebot']);
