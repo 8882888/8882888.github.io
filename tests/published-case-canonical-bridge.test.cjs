@@ -13,8 +13,8 @@ const id=x=>crypto.createHash('sha256').update(['date','service','departure','de
 test('published case feed exports the exact fields needed for canonical matching',()=>{
  assert.match(feed,/rideDate:ride\.date,service:ride\.service,\s*departure:ride\.departure,destination:ride\.destination,fare:ride\.fare,/);
 });
-test('all 29 published cases resolve to one enriched canonical route using the full source identity',()=>{
- assert.equal(published.length,29);
+test('all 30 published cases resolve to one enriched canonical route using the full source identity',()=>{
+ assert.equal(published.length,30);
  const byId=new Map(rides.map(x=>[id(x),x]));
  const mapAt=server.indexOf('const publishedCaseByRideKey=new Map(publishedCaseEntries.map');
  const feedAt=server.indexOf('const publishedCaseEntries=loadPublishedCases(ROOT);');
