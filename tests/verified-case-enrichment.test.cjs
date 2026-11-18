@@ -42,6 +42,8 @@ test('every published verified case is source-backed, indexable and substantivel
   for(const section of ['record-facts','route-scope','handover-checklist','fare-context','related-cases','related-service'])
    assert.ok(html.includes('id="'+section+'"'),'missing section '+section+' on '+entry.id);
   assert.ok(html.includes('href="'+servicePath+'"'));
+  const illustrationId=ride.service==='taksong'?'verified-taksong-illustration':'verified-daeri-illustration';
+  assert.ok(html.includes('id="'+illustrationId+'"'),'legacy required service illustration ID is preserved: '+entry.id);
   assert.ok(html.includes('href="/region/"')&&html.includes('href="/coverage/"')&&html.includes('href="/fare/"'));
   assert.ok(html.includes('href="tel:18114294"'));
   assert.ok(html.includes('현재 요금표나 다른 구간의 고정요금으로 사용할 수 없습니다.'));
