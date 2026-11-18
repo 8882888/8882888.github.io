@@ -857,10 +857,10 @@ function regionalServiceEvidence(region,kind){
  return regionalEvidenceCache.get(key);
 }
 function regionalGuideReviewLinks(region,kind){
- const matches=regionalServiceEvidence(region,kind).slice(0,4);
+ const matches=regionalPublicEvidence(region,kind,[],regionalServiceEvidence(region,kind)).slice(0,4);
  if(!matches.length)return '';
  return '<section><h2>'+esc(region.full_name)+' 실제 운행후기</h2><ul>'+
-  matches.map(ride=>'<li><a href="/reviews/history/'+esc(ride.id)+'/">'+
+  matches.map(ride=>'<li><a href="'+esc(ride.url)+'">'+
    esc(ride.departure+' → '+ride.destination)+'</a> · '+esc(ride.date)+
    ' · 당시 운행요금 '+esc(ride.fare)+'</li>').join('')+'</ul></section>';
 }
@@ -1169,13 +1169,10 @@ function innovationCityPanel(r,kind){
 }
 // Reuse one deduplicated regional chooser for all 17 provinces.
 function regionalNationwideSubareaChooser(r,kind){return nationwideExplorer.chooser(r,kind)}
-function regionalPublicEvidence(region,verified,history){
- const published=[],otherVerified=[];
- for(const ride of verified){
-  const url=rideUrl(ride);
-  const entry={ride,url,archive:false};
-  (url.startsWith('/reviews/verified/')?published:otherVerified).push(entry);
- }
+function regionalPublicEvidence(region,kind,verified,history){
+ const published=publishedCaseEntries.filter(ride=>ride.service===kind&&tripMatchesRegion(ride,region))
+  .map(ride=>({ride:{...ride,date:ride.rideDate},url:ride.path,archive:false}));
+ const otherVerified=verified.map(ride=>({ride,url:rideUrl(ride),archive:false}));
  const archive=history.map(ride=>({ride,url:'/reviews/history/'+ride.id+'/',archive:true}));
  const seen=new Set();
  return [...published,...otherVerified,...archive].filter(({ride})=>{
@@ -1418,7 +1415,7 @@ async function servicePage(r,kind){
  const uniqueMatches=[...new Map(matches.map(x=>[String(x.date||'')+'|'+String(x.departure||'')+'|'+String(x.destination||'')+'|'+String(x.service||x.service_type||x.kind||''),x])).values()].slice(0,8);
  const reviewCards=uniqueMatches.length?'<section><h2>'+esc(keyword)+' 실제 운행완료 후기 · 출발지·도착지·요금</h2><p>확인된 완료 운행 자료만 사용합니다. 예약 시각·배차 과정 등 미제공 정보는 임의로 작성하지 않습니다. 현재 요금은 이용 조건에 따라 달라집니다.</p>'+uniqueMatches.slice(0,5).map(x=>'<article style="border-top:1px solid #d6e0ee;padding:14px 0"><h3>'+esc(x.departure+' → '+x.destination+' '+service+' 운행완료')+'</h3><p><strong>운행일:</strong> '+esc(x.date)+' · <strong>출발:</strong> '+esc(x.departure)+' · <strong>도착:</strong> '+esc(x.destination)+' · <strong>운행요금:</strong> '+esc(x.fare||'미기록')+'</p><p><strong>예약·배차:</strong> 운행완료 확인. 예약 접수 및 배차 세부 과정은 미기록입니다.</p><p><a href="'+rideUrl(x)+'">운행 기록 보기</a> · <a href="tel:18114294">예약·배차 상담 '+PHONE+'</a></p></article>').join('')+'</section>':historicalMatches.length?historicalCards:priorityMeta?'<section><h2>'+esc(keyword)+' 운행기록 확인 현황</h2><p>현재 공개 가능한 완료 운행기록에서 이 지역의 출발 또는 도착이 명확하게 확인된 사례는 찾지 못했습니다. 다른 지역의 운행을 이 지역의 실적으로 표시하지 않습니다.</p><p><a href="/reviews/history/?kind='+kind+'">전국 실제 운행기록 확인</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 예상요금 상담</a></p></section>':'<section><h2>'+esc(name)+' 실제 운행기록 확인 안내</h2><p>현재 공개 가능한 기록에서 이 행정구역의 출발 또는 도착이 확인된 운행은 없습니다. 이름이 비슷한 다른 지역의 운행사례를 이곳의 실적으로 표시하지 않습니다.</p><p><a href="/reviews/history/?kind='+kind+'">전국 전체 운행기록 보기</a> · <a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name)+' 예상요금·예약 안내</a></p></section>';
 
- const publicEvidence=regionalPublicEvidence(r,matches,historicalMatches);
+ const publicEvidence=regionalPublicEvidence(r,kind,matches,historicalMatches);
  const verifiedFeatured=priorityMeta?publicEvidence.slice(0,6):[];
  const priorityEvidence=priorityMeta?'<section id="priority-verified-rides"><h2>'+esc(keyword)+' 실제 확인된 운행 사례</h2>'+
   (verifiedFeatured.length?'<p>다음은 실제 완료 운행 자료에서 이 지역이 출발지 또는 도착지로 확인된 사례입니다. 기록 당시 요금은 현재 예약 견적이 아니며, 고객 상세주소와 연락처는 공개하지 않습니다.</p><ul>'+

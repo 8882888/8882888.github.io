@@ -32,7 +32,7 @@ export function hasDirectRideRecordLink(html){
   try{link=new URL(match[2],'https://jeongukdaeri.kr')}catch{continue}
   if(!['jeongukdaeri.kr','www.jeongukdaeri.kr'].includes(link.hostname.toLowerCase()))continue;
   if(/^\/reviews\/history\/[a-z0-9_-]+\/$/i.test(link.pathname))return true;
-  if(/^\/reviews\/[a-f0-9]{16}\/$/i.test(link.pathname))return true;
+  if(/^\/reviews\/(?:verified\/)?[a-f0-9]{16}\/$/i.test(link.pathname))return true;
   if(/^\/reviews\/completed-calls-\d{8}\/$/i.test(link.pathname)&&/^#record-\d+$/i.test(link.hash))return true;
  }
  return false;
