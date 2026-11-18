@@ -320,7 +320,8 @@ test('verified regional discovery uses completed source records, canonical pages
  const start=server.indexOf("if(pathname==='/sitemap-verified-regions.xml')");
  assert.ok(start>=0,'verified-region sitemap route is missing');
  const code=server.slice(start,server.indexOf("if(pathname==='/sitemap-history.xml'",start));
- assert.ok(code.includes("verifiedBroadRegionServiceKeys(regions,indexableHistoricalRides,matchingHistoryRegion,PROVINCE_ALIASES)"),'only original canonical finished records can support discovery');
+ assert.ok(code.includes("verifiedBroadRegionServiceKeys(regions,indexableHistoricalRides,matchingHistoryRegion,PROVINCE_ALIASES)"),'canonical archived records must support discovery');
+ assert.ok(code.includes('publishedCaseEntries.map')&&code.includes('verifiedBroadRegionServiceKeys(regions,publishedEvidence,matchingHistoryRegion,PROVINCE_ALIASES)'),'published completed records use the same geographic discovery rules');
  const evidenceHelper=fs.readFileSync(path.join(root,'lib/verified-broad-region-evidence.js'),'utf8');
  assert.ok(evidenceHelper.includes("match(ride,region,regions)"),'geographic evidence must use the same original matcher');
  assert.ok(evidenceHelper.includes("ride.departure==='지역 비공개'"),'privacy exclusions must remain enforced');

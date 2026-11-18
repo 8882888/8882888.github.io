@@ -3414,6 +3414,12 @@ if(pathname==='/sitemap-verified-regions.xml'){
  // then use the unchanged exact evidence matcher. This preserves the
  // sitemap set and its original locality order with much less cold CPU.
  const verifiedKeys=verifiedBroadRegionServiceKeys(regions,indexableHistoricalRides,matchingHistoryRegion,PROVINCE_ALIASES);
+ const publishedEvidence=publishedCaseEntries.map(ride=>({
+  service:ride.service,departure:ride.departure,destination:ride.destination,
+  rawDeparture:ride.departure,rawDestination:ride.destination
+ }));
+ const publishedKeys=verifiedBroadRegionServiceKeys(regions,publishedEvidence,matchingHistoryRegion,PROVINCE_ALIASES);
+ for(const key of publishedKeys)verifiedKeys.add(key);
  const supported=regions.filter(r=>['시도','시','군','구'].includes(r.level)).flatMap(r=>
   ['taksong','daeri'].filter(kind=>verifiedKeys.has(kind+'|'+r.full_name))
    .map(kind=>servicePath(r,kind)));
