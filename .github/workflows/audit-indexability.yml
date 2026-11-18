@@ -5,8 +5,10 @@ on:
     branches: [main]
     paths:
       - 'scripts/audit-indexability.mjs'
+      - 'scripts/indexability-content-quality.mjs'
       - 'scripts/indexability-scope.mjs'
       - 'tests/indexability-scope.test.mjs'
+      - 'tests/indexability-content-quality.test.mjs'
       - '.github/workflows/audit-indexability.yml'
   # Full HTTP scans are expensive. Do not enqueue a 120-minute scan on every
   # frequent deployment-parity check (including failed releases): those runs
@@ -35,6 +37,8 @@ jobs:
         run: node --test tests/indexability-scope.test.mjs
       - name: Test bounded transient HTTP retries
         run: node --test tests/indexability-retry.test.mjs
+      - name: Test full-sitemap editorial quality review signals
+        run: node --test tests/indexability-content-quality.test.mjs
       - name: Read-only full sitemap audit
         env:
           AUDIT_WORKERS: '2'
