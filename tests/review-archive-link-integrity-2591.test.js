@@ -12,8 +12,8 @@ const original=JSON.parse(read('data/ride-history.json'));
 assert.equal(original.length,2591,'Never silently change the historical 2,591 records');
 const metaRows=original.map((x,i)=>{
  const dep=String(x.departure||''),dest=String(x.destination||'');
- const mixed=/탁송\\s*\\+\\s*대리|대리\\s*\\+\\s*탁송/.test(dep);
- const service=mixed?'mixed':/(?:^|\\/)\\s*탁(?:\\/|송|$)/.test(dep)||/톨포/.test(dest)?'taksong':'daeri';
+ const mixed=/탁송\s*\+\s*대리|대리\s*\+\s*탁송/.test(dep);
+ const service=mixed?'mixed':/(?:^|\/)\s*탁(?:\/|송|$)/.test(dep)||/톨포/.test(dest)?'taksong':'daeri';
  return {id:'excel-'+String(i+1).padStart(4,'0'),date:x.date,recordedTime:x.time,service,departure:'지역 비공개',destination:'지역 비공개',fare:x.fare};
 });
 const metaKey=x=>[x.date,x.recordedTime,x.service,x.fare].join('|');
