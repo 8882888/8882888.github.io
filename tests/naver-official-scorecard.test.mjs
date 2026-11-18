@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {compareOfficial,searchComparison,delta} from '../scripts/report-naver-official-scorecard.mjs';
 const baseline={officialIndexBaseline:{indexed:14,collectionLimited:1,excluded:0,observedAt:'2026-11-05'}};
 const searchBase={source:'owner',period:'최근 30일',last_updated:'2026-11-05',totals:{clicks:69,impressions_approx:1800,ctr_percent:3.8}};
@@ -41,4 +42,13 @@ test('CTR is computed only from authenticated later period totals, not presumed 
  assert.equal(compared.current.ctrPercent,4.15);
  assert.equal(compared.ctrDeltaPercentagePoints,0.35);
  assert.match(compared.dataWindowCaution,/rolling recent-30-day windows can overlap/);
+});
+
+test('full sitemap audit separates the 10k first milestone from technical URL counts',()=>{
+ const source=readFileSync(new URL('../scripts/audit-all-meta-jsonld.mjs',import.meta.url),'utf8');
+ assert.match(source,/firstNaverIndexMilestoneTarget:10000/);
+ assert.match(source,/longTermNaverIndexTargetRange:\[50000,100000\]/);
+ assert.match(source,/naverIndexed:null/);
+ assert.match(source,/First Naver confirmed-index milestone target: 10,000/);
+ assert.doesNotMatch(source,/targetNaverIndexed|technicalGapTo50000|Technical pool gap/);
 });
