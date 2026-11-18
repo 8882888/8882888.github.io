@@ -555,8 +555,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const crypto=require('node:crypto');
   const firstRide=require('../data/public-reviewed-rides-202610.json')[0];
   const firstId=crypto.createHash('sha256').update([firstRide.date,firstRide.service,firstRide.departure,firstRide.destination].join('|')).digest('hex').slice(0,16);
-  assert.ok(seoulMainMap.includes('https://example.com/reviews/'+firstId+'/'),
-    'main sitemap must retain verified completed trip, not only templated location pages');
+  const publishedId=crypto.createHash('sha256').update([firstRide.date,firstRide.service,firstRide.departure,firstRide.destination,firstRide.fare].join('|')).digest('hex').slice(0,16);
+  assert.ok(seoulMainMap.includes('https://example.com/reviews/verified/'+publishedId+'/'),
+    'main sitemap must retain the enriched canonical URL for a published verified completed trip');
+  assert.ok(!seoulMainMap.includes('https://example.com/reviews/'+firstId+'/'),
+    'main sitemap must not duplicate a published verified trip at its legacy URL');
   assert.ok(seoulMainMap.includes('https://example.com/find/'), 'discoverable canonical region finder');
   assert.ok(seoulMainMap.includes('https://example.com/daeri/'), 'national designated driver canonical');
   assert.ok(seoulMainMap.includes('https://example.com/taksong/'), 'national vehicle transfer canonical');
