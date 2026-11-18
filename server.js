@@ -1363,14 +1363,14 @@ async function servicePage(r,kind){
   ?(kind==='daeri'?'강릉대리운전 | 경포·안목·교동·주문진 예약·실제 운행기록'
    :'강릉탁송 | 경포·주문진 차량회수·동해안 종주 예약 안내')
   :null;
- const searchTitle=regionalRequestedTitle||gangneungSearchTitle||(innovationFocus?innovationFocus.keyword+'｜요금·예약·'+(kind==='taksong'?'차량 인수·인계':'출발 위치 안내'):ganghwaReviewPage?'강화대리운전 실제 후기｜강화읍·선원면 운행완료·길상면·화도면 예약 안내':jejuSearchPage?'제주도탁송 후기｜차량선적·기존 운행정보 확인':busanReviewPage?busanServiceTitle:gijangTaksongPage?'기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내':kind==='taksong'?taksongReviewTitle:daeriReviewTitle);
- const rawSearchDesc=priorityMeta&&innovationFocus?focusedDesc:innovationFocus?innovationFocus.keyword+'. '+innovationFocus.pickup+' 출발 위치와 목적지, 희망 시각을 확인해 요금·배차를 상담합니다. 확인된 실제 운행정보만 후기에 연결합니다. 상담 '+PHONE+'.':ganghwaReviewPage?'강화대리운전 완료 운행후기 2건: 강화읍→검단아라동 45,000원, 갑곳리→선원면 20,000원. 강화읍·길상면·화도면·양도면·내가면·교동도 원문과 예약상담 1811-4294.':jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':busanReviewPage?'부산탁송 예약과 예상요금, 구·군별 차량 인수·인계 안내. 부산항·감만동·해운대·기장 자동차탁송·입출고 상담과 실제 운행기록을 확인합니다.':gijangTaksongPage?'부산 기장군탁송·기장탁송 차량 인수·인계 안내. 기장읍·정관읍·일광읍 차량 인수 위치, 장안읍·철마면 출고 탁송과 예상요금·예약상담 1811-4294.':priorityMeta?focusedDesc:kind==='taksong'?(verifiedTitleTrip?keyword+' 기존 완료구간 '+verifiedTitleTrip.departure+'→'+verifiedTitleTrip.destination+'. ':'확인된 해당 지역 운행완료 후기는 아직 연결되지 않았습니다. ')+focusedDesc:(verifiedDaeriTitleTrip?keyword+' 기존 완료구간 '+verifiedDaeriTitleTrip.departure+'→'+verifiedDaeriTitleTrip.destination+'. ':'해당 지역에 확인된 완료 대리운전 후기가 없다면 일반 안내와 구분합니다. ')+focusedDesc;
+ const searchTitle=regionalRequestedTitle||gangneungSearchTitle||(innovationFocus?innovationFocus.keyword+'｜요금·예약·'+(kind==='taksong'?'차량 인수·인계':'출발 위치 안내'):ganghwaReviewPage?'강화군 대리운전 | 실제 운행요금·강화읍·화도면 예약':jejuSearchPage?'제주도탁송 후기｜차량선적·기존 운행정보 확인':busanReviewPage?busanServiceTitle:gijangTaksongPage?'기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내':kind==='taksong'?taksongReviewTitle:daeriReviewTitle);
+ const rawSearchDesc=priorityMeta&&innovationFocus?focusedDesc:innovationFocus?innovationFocus.keyword+'. '+innovationFocus.pickup+' 출발 위치와 목적지, 희망 시각을 확인해 요금·배차를 상담합니다. 확인된 실제 운행정보만 후기에 연결합니다. 상담 '+PHONE+'.':ganghwaReviewPage?'강화군 대리운전 실제 요금: 남문주차장→불은면 25,000원. 강화읍·길상면·화도면 출발 예상요금과 예약 상담 1811-4294.':jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':busanReviewPage?'부산탁송 예약과 예상요금, 구·군별 차량 인수·인계 안내. 부산항·감만동·해운대·기장 자동차탁송·입출고 상담과 실제 운행기록을 확인합니다.':gijangTaksongPage?'부산 기장군탁송·기장탁송 차량 인수·인계 안내. 기장읍·정관읍·일광읍 차량 인수 위치, 장안읍·철마면 출고 탁송과 예상요금·예약상담 1811-4294.':priorityMeta?focusedDesc:kind==='taksong'?(verifiedTitleTrip?keyword+' 기존 완료구간 '+verifiedTitleTrip.departure+'→'+verifiedTitleTrip.destination+'. ':'확인된 해당 지역 운행완료 후기는 아직 연결되지 않았습니다. ')+focusedDesc:(verifiedDaeriTitleTrip?keyword+' 기존 완료구간 '+verifiedDaeriTitleTrip.departure+'→'+verifiedDaeriTitleTrip.destination+'. ':'해당 지역에 확인된 완료 대리운전 후기가 없다면 일반 안내와 구분합니다. ')+focusedDesc;
  const gangneungSearchDesc=r.full_name==='강원특별자치도 강릉시'
   ?(kind==='daeri'
    ?'강릉대리운전 · 경포·안목·교동·주문진 대리운전·법인·장거리 상담. 경포해변·안목해변의 음식점과 카페 이용 후 주차장 위치 확인. 과거 운행기록·요금조회·상담 1811-4294.'
    :'강릉탁송 · 강릉항·주문진·동해안 종주 차량회수 자동차탁송·입출고 상담. 강릉 경포대와 주문진·강릉항 일대 차량 인수 위치 확인. 과거 운행기록·요금조회·상담 1811-4294.')
   :null;
- const searchDesc=gangneungSearchDesc||naverPriorityShortMetaByPath.get(servicePath(r,kind))||
+ const searchDesc=ganghwaReviewPage?rawSearchDesc:gangneungSearchDesc||naverPriorityShortMetaByPath.get(servicePath(r,kind))||
   (priorityMeta?rawSearchDesc:boundedRegionalSearchDescription(rawSearchDesc));
  const hierarchyNote='행정구역 경로: '+regionAncestors(r).map(a=>a.name).join(' → ')+'. '+(r.level==='리'?'마을 단위 상세 위치와 차량 인수 지점을 확인합니다.':r.level==='동'?'건물 출입구와 주차 위치를 확인합니다.':r.level==='면'?'면 소재지와 외곽의 기사 이동 여건을 확인합니다.':'지역별 출발지와 목적지의 이동 조건을 확인합니다.');
  const aliasTerms=[...new Set(regionAliases(r).map(x=>x+service))].filter(x=>x!==name+' '+service&&x!==keyword);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
@@ -1479,11 +1479,15 @@ async function servicePage(r,kind){
   '</section>':'';
  const ganghwaArchiveEntries=ganghwaReviewPage?historicalRides.filter(x=>x.service==='daeri'&&matchingHistoryRegion(x,r,regions)&&x.departure&&x.destination&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개'):[];
  const ganghwaArchiveTable=ganghwaArchiveEntries.length?'<section id="ganghwa-source-ride-table"><h2>강화 출발·도착 실제 대리운전 기록 '+ganghwaArchiveEntries.length+'건</h2><p>기존 운행자료에서 강화군과 일치하는 기록입니다. 아래는 그중 '+Math.min(12,ganghwaArchiveEntries.length)+'건이며 금액은 운행 당시 요금입니다.</p><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><caption>운행일·출발지·도착지·당시 요금과 상세 기록</caption><thead><tr><th scope="col">운행일</th><th scope="col">출발 → 도착</th><th scope="col">당시 요금</th></tr></thead><tbody>'+ganghwaArchiveEntries.slice(0,12).map(x=>'<tr><td>'+esc(x.date)+'</td><td><a href="/reviews/history/'+x.id+'/">'+esc(x.departure)+' → '+esc(x.destination)+'</a></td><td>'+esc(x.fare)+'</td></tr>').join('')+'</tbody></table></div><p><a href="/reviews/history/?kind=daeri&amp;q=%EA%B0%95%ED%99%94">강화 관련 기록 전체 검색</a> · <a href="/fare/?service=daeri&amp;from=%EA%B0%95%ED%99%94%EA%B5%B0">내 출발지·도착지 예상요금 확인</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>':'';
+ const ganghwaFeaturedRides=ganghwaReviewPage?[...publicRideById.values()].filter(x=>x.service==='daeri'&&(
+  (x.date==='2026-10-21'&&x.departure==='강화읍'&&x.destination==='검단아라동')||
+  (x.date==='2026-10-20'&&x.departure==='강화갑곳리'&&x.destination==='선원면')||
+  (x.date==='2026-10-20'&&x.departure==='강화읍 남문주차장'&&x.destination==='강화군 불은면')
+ )):[];
  const ganghwaReviewLead=ganghwaReviewPage?'<section id="ganghwa-daeri-verified-editorial-20261104" style="padding:18px;margin:12px 0;border:2px solid #b4d3e8;border-radius:14px;background:#f6fbff">'+
   '<h2>강화대리운전 실제 운행후기｜강화읍·선원면·불은면 등 강화군 이동</h2>'+
-  '<p>강화군 대리운전을 찾으시는 분께 확인된 실제 운행 기록을 먼저 보여드립니다. 기록에는 운행 완료, 출발지·도착지, 당시 요금만 표시하며 기사 대기시간과 고객 발언은 임의로 만들지 않습니다.</p>'+
-  '<ol><li><strong>2026년 10월 21일</strong> 강화읍 → 검단아라동 대리운전 완료 기록 · 당시 <strong>45,000원</strong></li>'+
-  '<li><strong>2026년 10월 20일</strong> 강화 갑곳리 → 선원면 대리운전 완료 기록 · 당시 <strong>20,000원</strong></li></ol>'+
+  '<p>강화군 대리운전 예약은 <a href="tel:18114294">1811-4294</a>로 출발 주차장, 도착지, 희망 시각을 알려주세요. <a href="/fare/?service=daeri&amp;from=%EA%B0%95%ED%99%94%EA%B5%B0">현재 예상요금 조회</a></p>'+
+  '<h3>실제 운행기록과 당시 요금</h3><ul>'+ganghwaFeaturedRides.map(x=>'<li><a href="'+rideUrl(x)+'">'+esc(x.departure+' → '+x.destination)+'</a> · '+esc(x.date)+' · 당시 <strong>'+esc(x.fare)+'</strong></li>').join('')+'</ul>'+
   '<h3>강화군 읍·면별 원본 안내｜강화읍·길상면·화도면·양도면·하점면</h3>'+
   '<p>강화읍 시장·남문주차장, 길상면 온수리·초지리, 화도면 동막해수욕장·후포항, 선원면 더리미 장어마을, 내가면 외포리, 양사면·하점면·교동도·석모도 등은 정확한 차량 주차 위치와 기사 접근·복귀 조건을 확인해야 합니다. 지역마다 기사 상주나 즉시 배차가 보장되는 것은 아닙니다.</p>'+
   '<ul>'+
@@ -1494,7 +1498,7 @@ async function servicePage(r,kind){
   '<li><a href="https://blog.naver.com/wjdtnr4757/224379337352" rel="noopener noreferrer">하점면대리운전｜기존 원문</a></li>'+
   '<li><a href="https://blog.naver.com/wjdtnr4757/224408166759" rel="noopener noreferrer">석모도 삼산면대리운전｜민머루해수욕장 원문</a></li>'+
   '</ul>'+
-  '<p>위 네이버 링크는 이미 게시된 원문입니다. 안내형 원문을 모두 운행완료 후기로 주장하지 않습니다. 과거 배차 금액은 현재 고정 요금이 아닙니다.</p>'+
+  '<p>표시된 요금은 운행 당시 금액입니다. 현재 요금과 배차 가능 시각은 출발지·도착지·예약 시간에 따라 확인해 주세요.</p>'+
   '<p><a href="/reviews/history/?kind=daeri&amp;q=%EA%B0%95%ED%99%94">강화 대리운전 실제 기록 더 찾기</a> · <a href="/fare/?service=daeri&amp;from=%EA%B0%95%ED%99%94%EA%B5%B0">강화군 출발 예상요금</a> · <a href="tel:18114294">전국 상담 1811-4294</a></p></section>':'';
  const nationwideVerifiedFirst=busanReviewPage?'':(reviewCards||historicalCards||'<section id="nationwide-review-first"><h2>'+esc(keyword)+' 공개 운행후기 확인</h2><p>이 지역에 해당하는 완료 운행기록이 현재 확인되지 않았습니다. 확인되지 않은 지역을 실제 후기처럼 표시하지 않습니다.</p><p><a href="/reviews/history/?kind='+kind+'">전체 완료 운행기록</a> · <a href="/fare/?service='+kind+'">예상요금 조회</a> · <a href="tel:18114294">1811-4294 상담</a></p></section>');
  const featureRide=kind==='taksong'?(verifiedTitleTrip||historicalTitleTrip):null;

@@ -11,8 +11,8 @@ assert(/const priorityLocalities=\[[\s\S]{0,120}'인천광역시 강화군'/.tes
  'Priority sitemap must include the canonical Ganghwa region through the legal-region route builder');
 assert(src.includes("r.full_name==='인천광역시 강화군'"),'use canonical region not ambiguous Ganghwa name');
 assert(src.includes('ganghwa-daeri-verified-editorial-20261104'),'unique editorial review above generic region template');
-assert(src.includes('강화대리운전 실제 후기｜강화읍·선원면'),'unique Ganghwa title');
-assert(src.includes('강화대리운전 완료 운행후기 2건'),'unique Ganghwa meta summary');
+assert(src.includes('강화군 대리운전 | 실제 운행요금'),'unique Ganghwa title');
+assert(src.includes('강화군 대리운전 실제 요금'),'unique Ganghwa meta summary');
 assert(src.includes('ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'),'put original evidence at top without redundant generic review section');
 assert(home.includes('href="'+page+'"'),'homepage must link canonical Ganghwa region');
 const verified=rides.filter(x=>x.service==='daeri'&&x.verified===true&&x.status==='completed'&&/강화|갑곳|선원|검단아라/.test([x.departure,x.destination].join(' ')));
