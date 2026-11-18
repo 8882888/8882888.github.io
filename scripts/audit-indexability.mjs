@@ -5,6 +5,7 @@ import {writeFileSync,renameSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink,blockedMetaIndexAgents,blockedXRobotsIndexAgents} from './indexability-scope.mjs';
 import {fetchWithRetry} from './indexability-retry.mjs';
+import {contentQualitySignals} from './indexability-content-quality.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const transportOrigin=process.env.AUDIT_TRANSPORT_ORIGIN||origin;
 const sitemapPaths=['/sitemap-all.xml','/sitemap-history.xml','/sitemap.xml','/sitemap-priority.xml','/sitemap-reviewed-routes.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'];
@@ -71,6 +72,7 @@ async function worker(){
  while(true){
   const i=current++;if(i>=list.length)return;
   const item=list[i];let status=0,finalUrl='',canonical='',robots='',title='',bodyHash='',hasRideLink=false,fetchAttempts=0,problem=[],otherBotNoindex=[];
+  let contentQuality={wordCount:0,descriptionLength:0,h1Count:0,contentReviewFlags:[]};
   try{
    const fetched=await fetchWithRetry(item.url,get);fetchAttempts=fetched.attempts;
    const r=fetched.response;status=r.status;finalUrl=transportOrigin===origin?r.url:origin+new URL(r.url).pathname+new URL(r.url).search;
@@ -86,6 +88,7 @@ async function worker(){
    }
    if(/text\/html/i.test(type)){
     const html=await r.text();
+    contentQuality=contentQualitySignals(html);
     hasRideLink=hasDirectRideRecordLink(html);
     const visible=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
     if(visible.length>150)bodyHash=createHash('sha256').update(visible).digest('hex').slice(0,20);
@@ -107,7 +110,7 @@ async function worker(){
    }
   }catch(e){fetchAttempts=e?.retryAttempts||fetchAttempts||1;
    problem.push((e?.name==='AbortError'||e?.name==='TimeoutError')?'timeout':'fetch_error:'+String(e).slice(0,100))}
-  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,fetchAttempts,otherBotNoindex:[...new Set(otherBotNoindex)],problems:problem};
+  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,fetchAttempts,...contentQuality,otherBotNoindex:[...new Set(otherBotNoindex)],problems:problem};
   done++;
   if(done%500===0){saveCheckpoint();console.log('Checked',done,'/',list.length);}
   await delay(transportOrigin===origin?auditLiveDelayMs:0);
@@ -124,10 +127,14 @@ for(const r of results){if(r.bodyHash&&bodies.get(r.bodyHash).length>1)r.problem
 const regionalCoverage=reviewLinkCoverage(results);
 const guideCoverage=regionalGuideCoverage(results);
 const technicallyClean=results.filter(r=>r.status===200&&r.problems.length===0).length;
+const contentReviewCounts={thinContentUnder100Words:results.filter(r=>r.contentReviewFlags?.includes('thin_content_under_100_words')).length,
+ shortMetaDescriptionsUnder70Chars:results.filter(r=>r.contentReviewFlags?.includes('short_meta_description_under_70_chars')).length,
+ missingH1:results.filter(r=>r.contentReviewFlags?.includes('missing_h1')).length,
+ multipleH1:results.filter(r=>r.contentReviewFlags?.includes('multiple_h1')).length};
+const contentReviewCandidates=results.filter(r=>r.contentReviewFlags?.length);
 const counts={discovered:list.length,checked:results.length,targetNaverIndexed:10000,
  firstNaverIndexMilestoneTarget:10000,longTermNaverIndexTargetRange:[50000,100000],
- naverIndexed:null,technicallyClean,technicalGapTo10000:Math.max(0,10000-technicallyClean),
- technicalGapTo50000:Math.max(0,50000-technicallyClean),
+ naverIndexed:null,technicallyClean,contentReviewPages:contentReviewCandidates.length,contentReviewCounts,
  listedMultipleTimes:list.filter(r=>r.listedIn.length>1).length,
  transientRecoveredAfterRetry:results.filter(r=>r.fetchAttempts>1&&r.status===200).length,
  otherSearchBotsExcluded:results.filter(r=>r.otherBotNoindex.length).length,
@@ -137,8 +144,8 @@ const counts={discovered:list.length,checked:results.length,targetNaverIndexed:1
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
 writeFileSync('indexability-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),origin,transportOrigin,complete:true,duplicateAnalysisComplete:true,scope:transportOrigin===origin?'production HTTP':'local source responses; not production verification',counts,results},null,2));
-writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,body_hash,has_ride_link,other_bot_noindex,problems,listed_in',
- ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.bodyHash,r.hasRideLink,r.otherBotNoindex.join(';'),r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
+writeFileSync('indexability-audit.csv',['url,status,final_url,canonical,title,word_count,description_length,h1_count,content_review_flags,body_hash,has_ride_link,other_bot_noindex,problems,listed_in',
+ ...results.map(r=>[r.url,r.status,r.finalUrl,r.canonical,r.title,r.wordCount,r.descriptionLength,r.h1Count,r.contentReviewFlags.join(';'),r.bodyHash,r.hasRideLink,r.otherBotNoindex.join(';'),r.problems.join(';'),r.listedIn.join(';')].map(csv).join(','))].join('\n'));
 const criticalTypes=new Set(['http_error','x_robots_noindex','meta_noindex','meta_yeti_noindex','x_robots_yeti_noindex','missing_canonical','canonical_mismatch','timeout','not_html']);
 const critical=results.filter(r=>r.problems.some(p=>criticalTypes.has(p)||p.startsWith('fetch_error')));
 const review=results.filter(r=>r.problems.length&&!critical.includes(r));
@@ -151,6 +158,10 @@ const lines=[
  'Pages with other search bot-specific exclusions (not Yeti blockers): '+counts.otherSearchBotsExcluded,
  'Recovered transient HTTP failures after bounded retries: '+counts.transientRecoveredAfterRetry+
  ' | Still failing after retry: '+counts.persistentRequestErrors,
+ 'Content review (internal heuristics, NOT Naver index decisions): '+counts.contentReviewPages+
+ ' pages flagged; under 100 words='+contentReviewCounts.thinContentUnder100Words+
+ ', description under 70 characters='+contentReviewCounts.shortMetaDescriptionsUnder70Chars+
+ ', missing H1='+contentReviewCounts.missingH1+', multiple H1='+contentReviewCounts.multipleH1,
  'Canonical region-service landings: '+counts.regionalServicePages+' | Without a DIRECT ride-history document link: '+counts.regionalPagesWithoutReviewLink,
  'Regional intent guides: '+counts.regionalIntentGuidePages+' | Without a direct ride-history document link: '+counts.regionalGuidesWithoutDirectRideLink,
  'First Naver confirmed-index milestone: 10,000 | Real Naver indexed URLs: not accessible from this HTTP audit.',
@@ -168,6 +179,9 @@ const lines=[
  '',
  '## Review candidates (first 100)',
  ...review.slice(0,100).map(r=>'- '+r.url+' — '+r.problems.join(', ')),
+ '',
+ '## Content-quality review candidates (first 100; not automatic noindex)',
+ ...contentReviewCandidates.slice(0,100).map(r=>'- '+r.url+' — '+r.contentReviewFlags.join(', ')+'; words='+r.wordCount+'; description='+r.descriptionLength+' chars; H1='+r.h1Count),
  '',
  '## Sitemap and robots findings',
  ...[...sitemapErrors,...crawlerDiagnostics].map(x=>'- '+x),
