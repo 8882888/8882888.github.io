@@ -50,11 +50,14 @@ test('HTTP 404 or a non-transport programming error never triggers a retry',asyn
  assert.equal(isTransientTransportError(new Error('canonical mismatch')),false);
 });
 
-test('release-triggered Naver monitor compares the exact Cloudtype commit',()=>{
+test('scheduled Naver monitor audits the latest main snapshot without deploy-triggered fan-out',()=>{
  const workflow=fs.readFileSync(path.join(root,'.github/workflows/naver-web-monitor.yml'),'utf8');
  const audit=fs.readFileSync(path.join(root,'scripts/seo-audit.js'),'utf8');
- assert.ok(workflow.includes('ref: ${{ github.event.workflow_run.head_sha || github.sha }}'));
- assert.match(workflow,/github\.event\.workflow_run\.conclusion == 'success'/);
+ assert.doesNotMatch(workflow,/workflow_run:/,'Do not launch another production crawler after every deployment');
+ assert.doesNotMatch(workflow,/github\.event\.workflow_run/,'This scheduled/manual workflow must not depend on a deploy event');
+ assert.match(workflow,/schedule:/);
+ assert.match(workflow,/workflow_dispatch:/);
+ assert.match(workflow,/node scripts\/seo-audit\.js/);
  assert.ok(audit.includes("require('./seo-audit-retry')"));
  assert.match(audit,/await fetchSeoWithRetry\(url/);
 });
