@@ -121,7 +121,7 @@ for(const phrase of [
  "const national=resolveRegionalCardKeyword(query)",
  "if(pathname==='/api/nationwide-locality-card.svg')"
 ])assert(server.includes(phrase),'Missing nationwide server integration: '+phrase);
-const completeRouteHeading=server.indexOf("'<h3>공개된 실제 완료 운행 '+distinct.length");
+const completeRouteHeading=server.indexOf("'<h3>지역 대표 완료 운행</h3>");
 assert(completeRouteHeading>=0 && server.indexOf('  directQuoteForm+nationwideSubareaChoices+')<completeRouteHeading,
  'Mobile town chooser must appear above long ride lists');
 assert(server.includes('const childLinks=!nationwideSubareaChoices&&related.length?'),

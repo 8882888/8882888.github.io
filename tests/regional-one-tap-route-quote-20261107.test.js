@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=x=>fs.readFileSync(path.join(__dirname,'..',x),'utf8');
 const server=read('server.js'),fare=read('fare/index.html');
-const begin=server.indexOf('function regionalDecisionPanel(r,kind,verified,history){');
+const begin=server.indexOf('function regionalDecisionPanel(r,kind,evidence){');
 const end=server.indexOf('async function servicePage(r,kind){',begin);
 assert(begin>0&&end>begin,'Source of shared nationwide booking panel must be present');
 const ctx={
@@ -23,7 +23,7 @@ const samples=[
  {name:'서귀포시',full_name:'제주특별자치도 서귀포시',slug:'seogwipo'}
 ];
 for(const r of samples)for(const kind of ['daeri','taksong']){
- const html=panel(r,kind,[],[]);
+ const html=panel(r,kind,[]);
  assert.equal(html.split('id="regional-direct-route-quote-20261107"').length-1,1,
   'One customer-facing quote form per locality: '+r.full_name);
  assert(html.includes('action="/fare/" method="get"'),'Only the real fare calculator may receive route input');
@@ -36,7 +36,7 @@ for(const r of samples)for(const kind of ['daeri','taksong']){
  assert(html.includes('sessionStorage.setItem("smart24_explicit_quote_submit",String(Date.now()))'),
   'Explicit user submit marker must be sent for safe automatic quote');
  assert(html.includes('href="tel:18114294"'),'Call action must remain above long region text');
- const f=html.indexOf('id="regional-direct-route-quote-20261107"'),sub=html.indexOf('id="test-national-subarea"'),review=html.indexOf('공개된 실제 완료 운행');
+ const f=html.indexOf('id="regional-direct-route-quote-20261107"'),sub=html.indexOf('id="test-national-subarea"'),review=html.indexOf('<h3>지역 대표 완료 운행</h3>');
  assert(f>0&&f<sub&&sub<review,'One-step regional route entry must precede lists and ride history');
 }
 assert(server.includes("'+esc(displayBrand)+' · 출발지·도착지 확인 후"),

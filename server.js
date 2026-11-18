@@ -3414,6 +3414,7 @@ if(pathname==='/sitemap-verified-regions.xml'){
  // then use the unchanged exact evidence matcher. This preserves the
  // sitemap set and its original locality order with much less cold CPU.
  const verifiedKeys=verifiedBroadRegionServiceKeys(regions,indexableHistoricalRides,matchingHistoryRegion,PROVINCE_ALIASES);
+ // Published case URLs and archived rides can support different regional routes.
  const publishedEvidence=publishedCaseEntries.map(ride=>({
   service:ride.service,departure:ride.departure,destination:ride.destination,
   rawDeparture:ride.departure,rawDestination:ride.destination
