@@ -22,7 +22,7 @@ test('all 29 published cases resolve to one enriched canonical route using the f
  assert.ok(feedAt>=0&&mapAt>feedAt,'canonical lookup must be built after the published-case feed loads');
  assert.ok(urlAt>=0&&urlAt<mapAt,'rideUrl closes over the published lookup but is not invoked during module initialization');
  assert.match(server,/const key=\[x\.date,x\.service,x\.departure,x\.destination,x\.fare\|\|''\]\.map\(v=>String\(v\?\?''\)\)\.join\('\|'\)/);
- assert.match(server,/return match\?\.path\|\|\/reviews\//);
+ assert.match(server,/return match\?\.path\|\|['"]\/reviews\//);
  for(const entry of published){
   const ride=byId.get(entry.id);
   assert.ok(ride,'published id resolves to a complete source record');
