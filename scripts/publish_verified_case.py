@@ -153,26 +153,35 @@ def render_case(x, records=None, published=None):
 
 def write_index(published, records):
     by_id={identifier(r):r for r in records if complete(r)}
-    rows=[]
+    rows={"taksong": [], "daeri": []}
     for v in reversed(published):
         key=v["id"]
         if key not in by_id: continue
         x=by_id[key]
         label="자동차탁송" if x["service"]=="taksong" else "대리운전"
-        rows.append('<li><a href="/reviews/verified/'+key+'/">'+esc(x["departure"])+' → '
+        rows[x["service"]].append('<li><a href="/reviews/verified/'+key+'/">'+esc(x["departure"])+' → '
                     +esc(x["destination"])+' '+label+'</a> · 실제 운행일 '+esc(x["date"])
                     +' · 당시 '+esc(x["fare"])+'</li>')
-    summary = ('<p><strong>현재 공개된 개별 후기 ' + str(len(rows)) + '건</strong> · ' +
+    summary = ('<p><strong>현재 공개된 개별 후기 ' + str(sum(map(len, rows.values()))) + '건</strong> · ' +
                '각 후기에는 실제 운행일과 당시 기록요금을 표시합니다.</p>')
+    sections = "".join(
+        '<section><h2>'+label+' 실제 운행 후기 '+str(len(rows[service]))+
+        '건</h2><ul>'+"".join(rows[service])+'</ul></section>'
+        for service, label in (("taksong", "자동차탁송"), ("daeri", "대리운전"))
+        if rows[service]
+    )
     body=('<article><h1>실제 운행기록 기반 탁송·대리운전 사례</h1>' +
           '<p>운행완료로 분류된 원자료에 근거합니다. 게시일과 실제 운행일은 다르며, 이전 기록을 새로운 운행으로 표시하지 않습니다.</p>' +
           summary +
+          '<p><a href="/routes/reviewed/">출발지·도착지별 실제 운행 후기</a> · ' +
+          '<a href="/taksong/">전국 자동차탁송 지역 안내</a> · ' +
+          '<a href="/daeri/">전국 대리운전 지역 안내</a></p>' +
           '<p><a href="/reviews/ride-record-stories/">전체 운행기록 보기</a> · ' +
           '<a href="/fare/">구간별 예상요금 조회</a> · <a href="/service/card-daeri/">카드대리운전 상담</a> · ' +
-          '<a href="tel:18114294">전화 상담 1811-4294</a></p><ul>' +
-          "".join(rows) + '</ul></article>')
+          '<a href="tel:18114294">전화 상담 1811-4294</a></p>' +
+          sections + '</article>')
     DIRECTORY.parent.mkdir(parents=True,exist_ok=True)
-    DIRECTORY.write_text(shell("실제 운행기록 후기 모음","자동차탁송·대리운전 출발지 도착지별 운행기록",body,
+    DIRECTORY.write_text(shell("자동차탁송·대리운전 실제 후기 | 운행구간과 당시 요금","실제 완료된 자동차탁송·대리운전의 출발지, 도착지, 운행일과 당시 요금을 확인하세요. 구간별 후기와 현재 예상요금 조회도 제공합니다.",body,
                  "https://jeongukdaeri.kr/reviews/verified/"),encoding="utf-8")
 
 def main():
