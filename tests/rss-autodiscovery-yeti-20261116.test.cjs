@@ -45,6 +45,22 @@ test((live?'production':'local')+' Naver can discover source-backed RSS and craw
    assert.equal(matches,1,name+' must provide exactly one public RSS discovery link');
    assert(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html),name+' must stay indexable');
   }
+  if(!live){
+   for(const route of ['/rss.xml','/feed.xml','/sitemap-published.xml']){
+    const initial=await fetch(base+route,{headers:{'Accept-Encoding':'identity'}});
+    assert.equal(initial.status,200);
+    const tag=initial.headers.get('etag');
+    assert.match(tag||'',/^W\/"[a-f0-9]{64}"$/);
+    const body=await initial.text();
+    const unchanged=await fetch(base+route,{headers:{'If-None-Match':tag}});
+    assert.equal(unchanged.status,304);
+    assert.equal(await unchanged.text(),'');
+    const changed=await fetch(base+route,{headers:{'If-None-Match':'"stale"','Accept-Encoding':'gzip'}});
+    assert.equal(changed.status,200);
+    if(Buffer.byteLength(body)>=4096)assert.equal(changed.headers.get('content-encoding'),'gzip');
+    assert.equal(await changed.text(),body);
+   }
+  }
   assert.match(feed.type||'',/application\/rss\+xml/i,'RSS HTTP content-type');
   assert.match(feed.body,/<rss\s+version="2\.0">/,'valid RSS root');
   assert.match(feed.body,/<channel>[\s\S]*<language>ko<\/language>/,'language and channel metadata');

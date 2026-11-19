@@ -2470,8 +2470,22 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   headers['surrogate-control']='no-store';
   headers['x-smart24-sitemap-format']='focused-html-only-202611';
  }
- // Negotiate compression for large HTML only; preserve JSON and image responses.
- if(isHtml){
+ const isDiscoveryFeed=status===200&&['/rss.xml','/feed.xml','/sitemap-published.xml'].includes(res._smartPath);
+ if(isDiscoveryFeed){
+  // An unchanged discovery feed can be revalidated without downloading it again.
+  const hash=require('node:crypto').createHash('sha256').update(body).digest('hex');
+  const tag='"'+hash+'"';
+  headers.etag='W/'+tag;
+  headers['cache-control']='no-cache, max-age=0, must-revalidate';
+  delete headers['surrogate-control'];
+  const validators=String(res.req?.headers['if-none-match']||'').split(',').map(value=>value.trim().replace(/^W\//,''));
+  if(['GET','HEAD'].includes(res.req?.method)&&validators.some(value=>value==='*'||value===tag)){
+   res.writeHead(304,{etag:headers.etag,'cache-control':headers['cache-control'],vary:'Accept-Encoding'});
+   return res.end();
+  }
+ }
+ // Negotiate compression for HTML and the frequently revalidated discovery feeds.
+ if(isHtml||isDiscoveryFeed){
   const vary=res.getHeader('vary');
   headers['vary']=vary?String(vary)+', Accept-Encoding':'Accept-Encoding';
   const encoding=String(res.req?.headers['accept-encoding']||'');
