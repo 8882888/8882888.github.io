@@ -11,6 +11,18 @@
 <meta property="og:url" content="https://jeongukdaeri.kr/business/">
 <script type="application/ld+json">[{"@context":"https://schema.org","@type":"CollectionPage","name":"전국 사업자 차량탁송 · 중고차 매매상사·렌터카·수출업체·폐차장","url":"https://jeongukdaeri.kr/business/","inLanguage":"ko-KR","mainEntity":{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"name":"전국 자동차매매상사·중고차딜러","url":"https://jeongukdaeri.kr/business/used-car/"},{"@type":"ListItem","position":2,"name":"전국 렌터카·렌트카·사고대차 업체","url":"https://jeongukdaeri.kr/business/rental-car/"},{"@type":"ListItem","position":3,"name":"전국 중고차 수출업체·수출단지","url":"https://jeongukdaeri.kr/business/export-port/"},{"@type":"ListItem","position":4,"name":"전국 폐차장·폐차업체","url":"https://jeongukdaeri.kr/business/scrapyard/"},{"@type":"ListItem","position":5,"name":"전국 중고차·자동차 경매장","url":"https://jeongukdaeri.kr/business/auction/"}]}},{"@context":"https://schema.org","@type":"Service","name":"전국 사업자 차량탁송 상담","serviceType":"자동차 로드탁송·차량 회송 상담","areaServed":{"@type":"Country","name":"대한민국"},"provider":{"@type":"Organization","name":"스마트24 전국대리운전·탁송","telephone":"+82-1811-4294","url":"https://jeongukdaeri.kr/"},"url":"https://jeongukdaeri.kr/business/","description":"차량의 실제 운행 가능 상태, 출발·도착지, 기사 수급을 확인한 후 사업자별 로드탁송을 상담합니다. 모든 지역 즉시 배차는 보장되지 않습니다."}]</script>
 <style>:root{color-scheme:light}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:#17314f;background:#f3f7fc;font:16px/1.7 system-ui,'Malgun Gothic',sans-serif}a{color:#0758a6}a:focus-visible,button:focus-visible{outline:3px solid #ffcf52;outline-offset:3px}header{background:linear-gradient(130deg,#0a3769,#125c9d);color:#fff;padding:32px max(18px,calc((100% - 1100px)/2));}header a{color:#fff}header h1{line-height:1.35;font-size:clamp(27px,4vw,40px);margin:18px 0 12px}header p{max-width:850px}main{max-width:1100px;margin:auto;padding:25px 18px 54px}h2{font-size:clamp(22px,3vw,27px);line-height:1.4;margin:0 0 12px}h3{font-size:20px;margin:0 0 8px}p{margin:8px 0 14px}.pillnav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.pillnav a{display:inline-block;padding:8px 13px;background:#fff;color:#164772;border:1px solid #b9d4eb;border-radius:30px;text-decoration:none;font-weight:700}.box{background:#fff;border:1px solid #cfdfed;border-radius:13px;padding:22px;margin:20px 0;box-shadow:0 2px 8px #102e4d0b}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px}.grid article{background:#fff;border:1px solid #bdd2e6;border-radius:12px;padding:21px}.small{font-size:14px;color:#49637d}.cta{display:inline-block;background:#ffdf5d;color:#172e48;text-decoration:none;font-weight:800;border-radius:10px;padding:12px 18px;margin:5px 7px 5px 0}.secondary{background:#e9f3ff;color:#11528f;border:1px solid #a7c8e8}.info{background:#ecf5ff;border-left:4px solid #1663aa;padding:14px 18px;border-radius:8px}dl{display:grid;grid-template-columns:140px 1fr;gap:10px}dt{font-weight:800}dd{margin:0}ol,ul{padding-left:22px}li{margin:7px 0}textarea{width:100%;min-height:115px;border:1px solid #9bbbd6;border-radius:8px;padding:13px;font:inherit;color:#1a3654;background:#fbfdff}button{padding:12px 18px;background:#155b9a;color:#fff;border:0;border-radius:9px;font-weight:800;cursor:pointer}footer{background:#102f51;color:#e8f2ff;padding:28px 18px;text-align:center}footer a{color:#fff}@media(max-width:580px){header{padding:26px 18px}dl{grid-template-columns:1fr}dl dd{margin-top:-8px}}</style>
+<style>
+#industry-filters{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+#industry-filters button{font:inherit;min-height:44px;padding:.5rem .8rem;border:1px solid #b8cadb;border-radius:8px;background:#fff;color:#143653;cursor:pointer}
+#industry-filters button[aria-pressed="true"]{background:#123d62;color:#fff;border-color:#123d62}
+#industry-filters[hidden],#b2b-inquiry[hidden],#b2b-inquiry-result[hidden]{display:none}
+#b2b-inquiry form{display:grid;gap:1rem}
+#b2b-inquiry label{display:grid;gap:.35rem;font-weight:600;min-width:0}
+#b2b-inquiry input,#b2b-inquiry select,#b2b-inquiry textarea{box-sizing:border-box;width:100%;min-height:44px;font:inherit;padding:.5rem;border:1px solid #a7bbcd;border-radius:6px}
+#b2b-inquiry fieldset{min-width:0;margin:0;border:1px solid #c9d7e4;border-radius:8px;padding:.8rem}
+.b2b-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr));gap:.8rem}
+#b2b-inquiry-result textarea{min-height:12rem}
+</style>
 </head>
 <body>
 <header>
@@ -29,6 +41,8 @@
 <a href="/business/rental-car/#capital-returns">캐피탈 반납차량</a>
 <a href="#corporate-trucks">법인 트럭</a>
 <a href="/business/export-port/#container-shoring">컨테이너 쇼링 협력</a></nav>
+<div id="industry-filters" role="group" aria-label="업종별 정보 필터" hidden></div>
+<p id="industry-filter-status" class="small" role="status"></p>
 <section class="box" aria-labelledby="business-targets"><h2 id="business-targets">전국 사업자별 차량탁송 안내</h2><p>각 업종의 출고·인수·인계 흐름과 제한 사항에 맞는 안내를 선택하세요. 아래 서비스는 접수 및 상담 대상이며, 특정 업체와의 제휴·전담기사 상주를 뜻하지 않습니다.</p><div class="grid"><article id="dealers"><h3>전국 자동차매매상사·중고차딜러</h3><p>매입 차량 인수, 성능점검장 이동, 매매상사 간 출고, 구매고객 인도까지 차량별 출발지·도착지와 출고 승인 상태를 나누어 상담합니다.</p><p class="small"><strong>관련 검색어</strong> 중고차매매상사탁송 · 중고차딜러탁송 · 중고차매입탁송 · 중고차매매단지탁송</p><p><strong>접수 전 확인:</strong> 매매단지·주차구역, 차량 키 담당자, 차량 상태, 출고 가능 시간</p><p><a href="/business/used-car/">중고차딜러·매매상사 상세 안내</a> · <a href="/fare/?service=taksong">출발·도착지 요금조회</a></p></article>
 <article id="rental"><h3>전국 렌터카·렌트카·사고대차 업체</h3><p>영업소 간 회송, 장기렌트 반납, 사고대차 고객 인도·회수, 다수 차량의 지점 간 운행을 건별로 구분해 상담합니다.</p><p class="small"><strong>관련 검색어</strong> 렌터카업체탁송 · 렌트카업체탁송 · 렌트카회송 · 사고대차탁송</p><p><strong>접수 전 확인:</strong> 차량 인도·반납 지점, 계약상 운행 권한, 보험 적용 범위, 고객 인도 시각</p><p><a href="/business/rental-car/">렌터카·회송 상세 안내</a> · <a href="/fare/?service=taksong">출발·도착지 요금조회</a></p></article>
 <article id="export"><h3>전국 중고차 수출업체·수출단지</h3><p>매입차 보관지에서 수출단지나 지정 인계 장소까지의 로드탁송을 상담하며, 항만 출입 제한과 선적·통관 업무는 구분합니다.</p><p class="small"><strong>관련 검색어</strong> 중고차수출업체탁송 · 수출단지탁송 · 수출차량탁송 · 항만인계탁송</p><p><strong>접수 전 확인:</strong> 단지명·반입지, 반입 마감 시간, 차량 키·서류 인계자, 출입 요건</p><p><a href="/business/export-port/">중고차 수출단지 상세 안내</a> · <a href="/fare/?service=taksong">출발·도착지 요금조회</a></p></article>
@@ -36,6 +50,26 @@
 <article id="auction"><h3>전국 중고차·자동차 경매장</h3><p>낙찰 후 차량 출고, 경매장 입고·반출과 매매상사·수출단지로의 연계 이동을 출고 승인 및 인계 조건에 맞추어 상담합니다.</p><p class="small"><strong>관련 검색어</strong> 자동차경매장탁송 · 경매장출고탁송 · 낙찰차량탁송</p><p><strong>접수 전 확인:</strong> 낙찰차량 출고 승인, 반출 마감, 차량 위치, 키·서류 인계 절차</p><p><a href="/business/auction/">경매장 입출고 상세 안내</a> · <a href="/fare/?service=taksong">출발·도착지 요금조회</a></p></article></div></section>
 <section class="box" aria-labelledby="b2b-flow"><h2 id="b2b-flow">사업자탁송 신청 절차</h2><ol><li><strong>업종과 운행 형태:</strong> 매입차, 매매상사 출고, 렌터카 회송, 수출단지 인계, 폐차장 입고, 경매장 출고</li><li><strong>운행 구간:</strong> 정확한 차량 보관 장소·출발지, 도착지, 경유지, 차량 대수</li><li><strong>차량 정보:</strong> 차종, 주행 가능 여부, 필요한 인수·인계 서류와 열쇠 담당자</li><li><strong>일정:</strong> 출고 승인·반입 마감·희망 시각·출입 제한·담당자 연락체계</li><li><strong>협의:</strong> 보험 적용 범위, 통행료·대기·기사 복귀 비용, 정기 거래 시 정산 방식</li></ol><p class="info">일반 로드탁송은 운전 가능한 차량 이동을 전제로 합니다. 무보험 운행을 약속하지 않으며, 사고·고장차의 견인·적재 운송과 폐차·통관·선적 대행은 별도 확인이 필요합니다.</p></section>
 <section class="box" id="corporate-trucks"><h2>법인 트럭·화물차 탁송 정기거래</h2><p>법인 보유 트럭의 지점 간 이동, 신규 출고, 정비 입출고, 매각·수출 전 차량 인계를 상담합니다. 1~25톤 화물차, 윙바디·탱크로리 등은 차량 제원과 공차 여부, 운행 가능 상태를 알려주세요.</p><p>반복 거래는 월 예상 대수와 주요 구간, 현장 인계 담당자, 희망 정산 주기를 기준으로 협의합니다. 실제 배차와 보험 적용 범위는 차량 및 작업 조건을 확인한 뒤 안내합니다.</p><p><a href="/service/heavy-truck-taksong/">대형 트럭·화물차 탁송 상담 조건</a> · <a href="tel:18114294">법인 차량 거래 문의 1811-4294</a></p></section>
+<section class="box" id="b2b-inquiry" aria-labelledby="b2b-inquiry-title" hidden>
+<h2 id="b2b-inquiry-title">사업자 탁송 문의</h2>
+<p>입력한 내용으로 문의문을 만들고 복사할 수 있습니다. 내용은 이 화면에서만 처리되며, 상담하시려면 1811-4294로 전화해 주세요.</p>
+<form id="b2b-inquiry-form">
+<label>업종 또는 문의 유형<select id="b2b-industry" required></select></label>
+<div class="b2b-fields">
+<label>업체명<input name="company" maxlength="80" autocomplete="organization" required></label>
+<label>담당자 연락처<input name="phone" type="tel" maxlength="40" autocomplete="tel" required></label>
+<label>차량 출발지 또는 작업장 위치<input name="origin" maxlength="120"></label>
+<label>차량 인계 장소<input name="destination" maxlength="120"></label>
+</div>
+<fieldset><legend id="b2b-industry-legend">업종별 문의 항목</legend><div class="b2b-fields" id="b2b-industry-fields"></div></fieldset>
+<label>추가 요청사항<textarea name="notes" rows="3" maxlength="500"></textarea></label>
+<div><button type="submit">문의문 만들기</button> <a href="tel:18114294">전화 상담 1811-4294</a></div>
+</form>
+<div id="b2b-inquiry-result" hidden>
+<label>상담에 사용할 문의문<textarea id="b2b-inquiry-text" rows="9" readonly></textarea></label>
+<p><button type="button" id="b2b-copy-inquiry">문의문 복사</button> <span id="b2b-copy-status" role="status"></span></p>
+</div>
+</section>
 <section class="box" id="repeat-orders"><h2>중고차 딜러·매매상사·렌터카 업체 정기거래 상담</h2><p>같은 매매단지에서 반복 출고하거나 여러 영업소의 차량을 회송하는 경우, 월 예상 건수와 자주 이용하는 구간, 차량별 인계 규칙, 긴급 운행 여부를 정리해 알려주세요. 다대수 배차·장거리탁송·정산 주기는 실제 운행 조건과 계약 범위를 확인한 후 협의합니다.</p><dl><dt>매매상사·딜러</dt><dd>매입차 인수, 성능점검장·매매단지 입고, 구매고객 인도</dd><dt>렌터카 업체</dt><dd>영업소 간 차량 회송, 사고대차 인도·반납, 계약 만료 차량 이동</dd><dt>수출업체</dt><dd>매입차 입고, 수출단지 보관장 인계, 항만 지정 장소 이동</dd><dt>폐차장</dt><dd>도로주행 가능 차량의 지정 폐차장 입고; 견인 필요 여부 사전 구분</dd></dl><p><a class="cta" href="tel:18114294">정기거래 상담 1811-4294</a> <a class="cta secondary" href="/service/long-distance-taksong/">장거리탁송 안내</a></p></section>
 <section class="box" id="nationwide"><h2>전국 시·도·시군구 출발·도착 차량탁송 상담</h2><p>서울·경기·인천과 부산·대구·대전·광주·울산·세종, 강원·충청·전라·경상·제주 등에서 출발하거나 도착하는 차량 이동을 문의할 수 있습니다. 지역마다 기사 접근·복귀 조건이 달라 확인된 요금이나 즉시 배차를 미리 보장하지 않습니다.</p><p><a href="/coverage/">전국 17개 시·도 안내</a> · <a href="/region/?service=taksong">시군구·읍면동 지역 검색</a> · <a href="/route-search/?service=taksong">출발지·도착지 구간 검색</a> · <a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a></p></section>
 <section class="box" id="business-forward"><h2>매매상사·딜러·렌터카 담당자에게 안내 자료 전달하기</h2><p>실제 업체 담당자에게 필요할 때 전달할 수 있도록 사업자탁송 소개문을 준비했습니다. 업체의 사전 동의 없는 대량 메시지 발송·스팸 자동 전송 기능은 제공하지 않습니다.</p><label for="business-share-text"><strong>업체 전달용 안내문</strong></label><textarea id="business-share-text" readonly>[스마트24 전국 사업자 차량탁송 안내]
@@ -67,6 +101,151 @@
       status.textContent='안내문이 복사되었습니다.';
     }catch(error){box.focus();box.select();status.textContent='안내문을 선택했습니다. 직접 복사해 주세요.';}
   });
+})();
+</script>
+<script>
+(() => {
+  const profiles = {
+    scrapyard: {
+      label: '폐차장',
+      fields: [['차량 상태', ['주행 가능', '주행 불가', '현장 확인 필요']], ['입고 희망일·마감 시각'], ['인수 담당자·키 인계 방법'], ['예상 월 입고 대수']]
+    },
+    rental: {
+      label: '렌터카·사고대차',
+      fields: [['운행 목적', ['대차 차량 고객 인도', '대차 차량 회수', '지점 간 회송', '사고 차량 이동']], ['희망 인도·회수 시각'], ['차량 대수'], ['사고 차량 주행 가능 여부']]
+    },
+    capital: {
+      label: '캐피탈·리스 반납', panel: 'rental',
+      fields: [['반납 유형', ['캐피탈 반납', '리스 만기 반납', '장기렌트 반납']], ['지정 반납장·검수장'], ['반납 예약번호 또는 승인 여부'], ['검수 마감·키 및 부속품 인계']]
+    },
+    'corporate-trucks': {
+      label: '법인 트럭·화물차',
+      fields: [['차종·톤급 (예: 5톤 윙바디)'], ['공차 여부', ['공차', '적재 상태', '확인 필요']], ['차량 대수·예상 월 물량'], ['출고·정비 입고·인계 일정']]
+    },
+    export: {
+      label: '중고차 수출·쇼링',
+      fields: [['협력 범위', ['수출차량 탁송', '컨테이너 적입·쇼링 협력', '탁송과 쇼링 모두 상담']], ['수출단지·작업장 주소'], ['차량 대수·차종'], ['입고 마감·예상 월 물량']]
+    },
+    dealers: {
+      label: '중고차 매매상사·딜러',
+      fields: [['운행 목적', ['매입차 이동', '상품화·정비 이동', '고객 인도']], ['차종·차량 대수'], ['인도 희망 시각'], ['출고 승인·키 인계 방법']]
+    },
+    auction: {
+      label: '자동차 경매장',
+      fields: [['진행 구분', ['경매장 입고', '낙찰차량 출고']], ['경매장·야드명'], ['반출 승인 여부'], ['입고·반출 마감 시각']]
+    }
+  };
+
+  const filters = document.getElementById('industry-filters');
+  const filterStatus = document.getElementById('industry-filter-status');
+  const form = document.getElementById('b2b-inquiry-form');
+  const industry = document.getElementById('b2b-industry');
+  const fields = document.getElementById('b2b-industry-fields');
+  const result = document.getElementById('b2b-inquiry-result');
+  const summary = document.getElementById('b2b-inquiry-text');
+  const status = document.getElementById('b2b-copy-status');
+  const panels = new Set(Object.entries(profiles).map(([key, profile]) => profile.panel || key));
+  const drafts = new Map();
+  const buttons = new Map();
+  let activeIndustry = '';
+
+  function clearSummary() {
+    result.hidden = true;
+    summary.value = '';
+    status.textContent = '';
+  }
+
+  function showFields(key) {
+    if (activeIndustry) {
+      drafts.set(activeIndustry, [...fields.querySelectorAll('input, select')].map(field => field.value));
+    }
+    activeIndustry = key;
+    const profile = profiles[key];
+    industry.value = key;
+    document.getElementById('b2b-industry-legend').textContent = profile ? profile.label + ' 문의 항목' : '업종별 문의 항목';
+    fields.replaceChildren();
+    (profile?.fields || []).forEach(([caption, options], index) => {
+      const label = document.createElement('label');
+      label.textContent = caption;
+      const control = document.createElement(options ? 'select' : 'input');
+      control.name = 'industry-' + index;
+      if (options) {
+        control.add(new Option('선택해 주세요', ''));
+        for (const value of options) control.add(new Option(value, value));
+      } else {
+        control.maxLength = 120;
+      }
+      control.value = drafts.get(key)?.[index] || '';
+      label.append(control);
+      fields.append(label);
+    });
+    clearSummary();
+  }
+
+  function filterBy(key) {
+    const target = profiles[key]?.panel || key;
+    for (const panel of panels) document.getElementById(panel).hidden = Boolean(key) && panel !== target;
+    for (const [id, button] of buttons) button.setAttribute('aria-pressed', String(id === key));
+    filterStatus.textContent = key ? profiles[key].label + ' 안내를 표시합니다.' : '모든 업종 안내를 표시합니다.';
+    showFields(key);
+  }
+
+  industry.add(new Option('문의할 업종 선택', ''));
+  for (const [key, label] of [['', '전체'], ...Object.entries(profiles).map(([id, profile]) => [id, profile.label])]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    button.addEventListener('click', () => filterBy(key));
+    filters.append(button);
+    buttons.set(key, button);
+    if (key) industry.add(new Option(label, key));
+  }
+
+  function syncAnchor() {
+    const key = location.hash.slice(1);
+    if (Object.hasOwn(profiles, key)) filterBy(key);
+    else if (!key) filterBy('');
+  }
+  filterBy('');
+  syncAnchor();
+  window.addEventListener('hashchange', syncAnchor);
+  for (const link of document.querySelectorAll('.pillnav a[href^="#"]')) {
+    link.addEventListener('click', () => {
+      const key = link.hash.slice(1);
+      if (Object.hasOwn(profiles, key)) filterBy(key);
+    });
+  }
+  industry.addEventListener('change', () => filterBy(industry.value));
+  form.addEventListener('input', clearSummary);
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const profile = profiles[industry.value];
+    const values = [
+      ['업체명', data.get('company')], ['담당자 연락처', data.get('phone')],
+      ['출발지·작업장', data.get('origin')], ['차량 인계 장소', data.get('destination')],
+      ...profile.fields.map(([caption], index) => [caption, data.get('industry-' + index)]),
+      ['추가 요청사항', data.get('notes')]
+    ];
+    summary.value = '[' + profile.label + ' 탁송 문의]\n' + values
+      .filter(([, value]) => value && value.trim())
+      .map(([label, value]) => label + ': ' + value.trim()).join('\n');
+    result.hidden = false;
+    status.textContent = '문의문이 생성되었습니다.';
+    summary.focus();
+  });
+  document.getElementById('b2b-copy-inquiry').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(summary.value);
+      status.textContent = '문의문을 복사했습니다.';
+    } catch {
+      summary.focus();
+      summary.select();
+      status.textContent = '문의문을 선택했습니다. 직접 복사해 주세요.';
+    }
+  });
+  filters.hidden = false;
+  document.getElementById('b2b-inquiry').hidden = false;
 })();
 </script>
 </body></html>
