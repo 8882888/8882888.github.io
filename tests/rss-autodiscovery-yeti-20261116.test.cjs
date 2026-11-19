@@ -83,6 +83,14 @@ test((live?'production':'local')+' Naver can discover source-backed RSS and craw
    const {body}=await get(route);
    assert(body.includes('<link rel="canonical" href="'+hostname+route+'">'),route+' canonical URL');
    assert(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(body),'RSS case must remain indexable');
+   if(!live&&route.startsWith('/reviews/verified/')){
+    const schemas=[...body.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match=>JSON.parse(match[1]));
+    const article=schemas.find(x=>x['@type']==='Article');
+    const source=require('../lib/published-case-feed').loadPublishedCases(path.join(__dirname,'..')).find(x=>x.path===route);
+    assert.equal(article?.mainEntityOfPage?.['@id'],hostname+route);
+    assert.equal(article?.headline,source.title);
+    assert.equal(article?.datePublished,source.publishedAt);
+   }
   }
   console.log('PASS Naver RSS discovery; '+items.length+' actual cases, '+longText+' substantial article descriptions, 3 source HTTP200 canonicals');
  }finally{child?.kill()}
