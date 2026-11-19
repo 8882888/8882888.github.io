@@ -38,6 +38,12 @@ test('local server verifies six business meta, schema and Jegi-dong discovery',a
    assert.ok(nodes.some(x=>x['@type']==='WebPage'&&x.url===origin+route),route+' WebPage');
    assert.ok(nodes.some(x=>x['@type']==='BreadcrumbList'),route+' BreadcrumbList');
   }
+  const taksongSitemap=await fetch(base+'/sitemap-taksong.xml',{signal:AbortSignal.timeout(20000)});
+  assert.equal(taksongSitemap.status,200);
+  const taksongXml=await taksongSitemap.text();
+  for(const route of ['/business/',...slugs.map(slug=>'/business/'+slug+'/')]){
+   assert.ok(taksongXml.includes('<loc>'+origin+route+'</loc>'),route+' is listed in the transport sitemap');
+  }
   const jegi=origin+'/taksong/seoul/dongdaemun-gu/jegi-dong/';
   for(const route of ['/sitemap.xml','/sitemap-priority.xml']){
    const r=await fetch(base+route,{signal:AbortSignal.timeout(20000)});
