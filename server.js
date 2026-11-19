@@ -2374,8 +2374,19 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   if(res._smartPath==='/service/taksong/')
    html=html.replace(/<\/h1>/i,heading=>heading+nationalTaksongReviewLead());
   const publishedRide=publishedCaseByPath.get(res._smartPath);
-  if(publishedRide)
+  if(publishedRide){
    html=html.replace('<a href="/fare/">현재 예상요금 조회','<a href="'+esc(rideFareUrl(publishedRide))+'">현재 예상요금 조회');
+   const origin='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+   const url=origin+publishedRide.path;
+   const article={
+    '@context':'https://schema.org','@type':'Article','@id':url+'#article',
+    url,mainEntityOfPage:{'@type':'WebPage','@id':url},
+    headline:publishedRide.title,datePublished:publishedRide.publishedAt,inLanguage:'ko-KR',
+    publisher:{'@type':'Organization',name:SITE_NAME,url:origin+'/'}
+   };
+   const json=JSON.stringify(article).replace(/</g,'\\u003c');
+   html=html.replace('</head>',()=>'<script type="application/ld+json">'+json+'</script></head>');
+  }
   const shortMeta=naverPriorityShortMetaByPath.get(res._smartPath||'');
   if(shortMeta){
    const tags=[
