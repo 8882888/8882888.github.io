@@ -2470,7 +2470,7 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   headers['surrogate-control']='no-store';
   headers['x-smart24-sitemap-format']='focused-html-only-202611';
  }
- const isDiscoveryFeed=status===200&&['/rss.xml','/feed.xml','/sitemap-published.xml'].includes(res._smartPath);
+ const isDiscoveryFeed=status===200&&['/rss.xml','/feed.xml','/sitemap-published.xml','/sitemap-priority.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'].includes(res._smartPath);
  if(isDiscoveryFeed){
   // An unchanged discovery feed can be revalidated without downloading it again.
   const hash=require('node:crypto').createHash('sha256').update(body).digest('hex');

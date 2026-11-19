@@ -46,7 +46,7 @@ test((live?'production':'local')+' Naver can discover source-backed RSS and craw
    assert(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html),name+' must stay indexable');
   }
   if(!live){
-   for(const route of ['/rss.xml','/feed.xml','/sitemap-published.xml']){
+   for(const route of ['/rss.xml','/feed.xml','/sitemap-published.xml','/sitemap-priority.xml','/sitemap-taksong.xml','/sitemap-daeri.xml']){
     const initial=await fetch(base+route,{headers:{'Accept-Encoding':'identity'}});
     assert.equal(initial.status,200);
     const tag=initial.headers.get('etag');
