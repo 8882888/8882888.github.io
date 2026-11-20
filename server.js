@@ -1187,6 +1187,7 @@ function regionalPublicEvidence(region,kind,verified,history){
   return true;
  }).slice(0,6).map(({ride,url,archive})=>({
   url,date:ride.date,departure:ride.departure,destination:ride.destination,fare:ride.fare,
+  tollIncluded:ride.tollIncluded===true,
   source:archive?'기존 완료 운행기록':'사용자 확인 공개 운행',
   origin:archive?matchingHistoryRegion({...ride,rawDestination:''},region,regions):tripMatchesRegion({...ride,destination:''},region)
  }));
@@ -1564,7 +1565,7 @@ async function servicePage(r,kind){
  const regionalRideLead=leadRide?
   '<p class="regional-ride-lead">실제 완료 기록 · 이 지역 '+(leadRide.origin?'출발':'도착')+' <a href="'+esc(leadRide.url)+'">'+
   esc(leadRide.departure+' → '+leadRide.destination)+'</a> · '+esc(leadRide.date)+
-  (leadRide.fare?' · 당시 '+esc(leadRide.fare):'')+
+  (leadRide.fare?' · 당시 '+esc(leadRide.fare)+(leadRide.tollIncluded?' (통행료 포함)':''):'')+
   ' · <a href="'+esc(rideFareUrl({...leadRide,service:kind}))+'">이 구간 현재 예상요금 조회</a></p>':
   '<p>이 지역의 공개 완료 운행기록은 아래 검색에서 확인할 수 있습니다.</p>';
  const regionalAnswerFirst=regionalAnswerEligible
