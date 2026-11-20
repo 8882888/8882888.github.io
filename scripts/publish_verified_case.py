@@ -149,7 +149,7 @@ def render_case(x, records=None, published=None):
         +esc(service_text)+' 전국 안내</a> · <a href="/region/">행정구역별 지역 안내</a> · '
         '<a href="/coverage/">전국 서비스 지역 찾기</a> · <a href="/fare/">현재 예상요금 조회</a></p>'
         '<p><a href="tel:18114294">상담 1811-4294</a> · '
-        '<a href="/reviews/ride-record-stories/">다른 운행기록 보기</a></p></section></article>')
+        '<a href="/reviews/verified/#'+x["service"]+'">'+label+' 실제 후기 목록</a></p></section></article>')
     description = (x["date"]+" "+label+" 완료 운행기록 · "+x["departure"]+" → "+
         x["destination"]+" · 당시 기록요금 "+x["fare"]+
         ". 현재 견적은 차량과 인수·인계 조건을 확인한 뒤 별도로 안내합니다.")
@@ -169,15 +169,23 @@ def write_index(published, records):
                     +' · 당시 '+esc(x["fare"])+'</li>')
     summary = ('<p><strong>현재 공개된 개별 후기 ' + str(sum(map(len, rows.values()))) + '건</strong> · ' +
                '각 후기에는 실제 운행일과 당시 기록요금을 표시합니다.</p>')
+    service_labels = (("taksong", "자동차탁송"), ("daeri", "대리운전"))
+    navigation = "".join(
+        '<li><a href="#'+service+'">'+label+' 후기 '+str(len(rows[service]))+'건</a> · '+
+        '<a href="/fare/?service='+service+'">'+label+' 예상요금 조회</a></li>'
+        for service, label in service_labels if rows[service]
+    )
+    if navigation:
+        navigation = '<nav aria-label="서비스별 후기와 예상요금"><ul>'+navigation+'</ul></nav>'
     sections = "".join(
-        '<section><h2>'+label+' 실제 운행 후기 '+str(len(rows[service]))+
+        '<section id="'+service+'"><h2>'+label+' 실제 운행 후기 '+str(len(rows[service]))+
         '건</h2><ul>'+"".join(rows[service])+'</ul></section>'
-        for service, label in (("taksong", "자동차탁송"), ("daeri", "대리운전"))
+        for service, label in service_labels
         if rows[service]
     )
     body=('<article><h1>실제 운행기록 기반 탁송·대리운전 사례</h1>' +
           '<p>운행완료로 분류된 원자료에 근거합니다. 게시일과 실제 운행일은 다르며, 이전 기록을 새로운 운행으로 표시하지 않습니다.</p>' +
-          summary +
+          summary + navigation +
           '<p><a href="/routes/reviewed/">출발지·도착지별 실제 운행 후기</a> · ' +
           '<a href="/taksong/">전국 자동차탁송 지역 안내</a> · ' +
           '<a href="/daeri/">전국 대리운전 지역 안내</a></p>' +
