@@ -1628,7 +1628,9 @@ function serviceTopicDiscoveryLinks(showDetail=false){
  const detail=showDetail?'<div id="service-topic-deep-links"><h3>산행·자전거·공항·지역·숙박시설 상세 안내</h3><p>아래 링크는 각 이용 상황과 가장 가까운 기존 대표 페이지를 연결합니다. 해당 장소의 배차 실적을 의미하지 않으며 미검증 지역의 색인 확대를 주장하지 않습니다.</p>'+categories.map(c=>'<section aria-label="'+esc(c)+' 상세 서비스"><h3>'+esc(c)+' 관련 안내</h3><ul>'+detailTopics.filter(x=>x.category===c).map(x=>'<li><a href="'+esc(x.targetPath)+'">'+esc(x.label)+'</a> — '+esc(x.description)+(x.relatedPath?' · <a href="'+esc(x.relatedPath)+'">관련 서비스 상세 안내</a>':'')+'</li>').join('')+'</ul></section>').join('')+'</div>':'<p><a href="/coverage/#service-topic-deep-links">산행·자전거·공항·지역·펜션 상세 검색 안내 전체 보기</a></p>';
  return '<section id="service-topic-discovery-20261116" aria-label="전국대리운전 서비스 주제별 안내"><h2>자동차탁송·대리운전 주제별 이용 안내</h2><p>차량탁송·장거리·공항·기업·골프·펜션과 주요 지역 서비스를 구분했습니다. 아래 주소는 서비스 안내이며 기사 상주나 해당 지역의 완료 운행을 의미하지 않습니다. 현재 요금과 실제 배차는 상담 후 확인합니다.</p>'+featured+detail+'<p><a href="/fare/">예상요금 조회</a> · <a href="/region/">전국 읍·면·동 검색</a> · <a href="tel:18114294">전화 상담 1811-4294</a></p></section>';
 }
+let cachedNationwideCoverage;
 function nationwideCoveragePage(){
+ if(cachedNationwideCoverage)return cachedNationwideCoverage;
  const host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const provinces=regions.filter(r=>r.level==='시도');
  const unique=new Set(provinces.map(x=>x.full_name));
@@ -1651,8 +1653,27 @@ function nationwideCoveragePage(){
   const ride=indexableHistoricalRides.find(x=>x.service===p.kind&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개'&&matchingHistoryRegion(x,r,regions));
   if(!ride)return [];
   coverageSeen.add(url);
-  return [{url,label:seoRegionLabel(r)+(p.kind==='taksong'?'자동차탁송':'대리운전'),ride}];
+  return [{url,province:r.full_name.split(' ')[0],label:seoRegionLabel(r)+(p.kind==='taksong'?'자동차탁송':'대리운전'),ride}];
  }).slice(0,36);
+ // Fill geographic gaps with an existing provincial service and its original trip.
+ // Preserve the curated locality links and prefer transport where both services have evidence.
+ const coveredProvinces=new Set(verifiedCoverage.map(entry=>entry.province));
+ for(const province of provinces){
+  if(verifiedCoverage.length>=36)break;
+  if(coveredProvinces.has(province.full_name))continue;
+  const candidates=[province,...(childrenByParent.get(province.slug)||[]).filter(r=>['시','군','구'].includes(r.level))];
+  for(const kind of ['taksong','daeri']){
+   let locality;
+   const ride=indexableHistoricalRides.find(row=>{
+    if(row.service!==kind||!row.departure||!row.destination||[row.departure,row.destination].includes('지역 비공개'))return false;
+    locality=candidates.find(r=>matchingHistoryRegion(row,r,regions));
+    return Boolean(locality);
+   });
+   if(!ride)continue;
+   verifiedCoverage.push({url:servicePath(locality,kind),label:locality.full_name+' '+(kind==='taksong'?'자동차탁송':'대리운전'),ride});
+   break;
+  }
+ }
  const verifiedCoverageHtml=verifiedCoverage.length
   ?'<section id="verified-coverage-crawl-links"><h2>실제 완료 운행기록이 있는 주요 지역 서비스</h2><p>아래 지역은 보존된 완료 운행기록과 지역명을 대조해 선별했습니다. 운행기록은 과거 사실이며 현재 배차·요금을 보장하지 않습니다.</p><ul>'+verifiedCoverage.map(x=>'<li><a href="'+esc(x.url)+'">'+esc(x.label)+' 예약·지역 안내</a> · <a href="/reviews/history/'+encodeURIComponent(x.ride.id)+'/">'+esc(x.ride.date+' '+x.ride.departure+' → '+x.ride.destination+' 당시 완료기록')+'</a></li>').join('')+'</ul></section>'
   :'';
@@ -1660,7 +1681,7 @@ function nationwideCoveragePage(){
  const coverageUrl='https://'+host+'/coverage/';
  const coverageDescription='전국 17개 시·도 자동차탁송·대리운전 서비스를 지역별로 찾아보세요. 서울·경기·인천·강원·충청·호남·영남·제주 출발지와 도착지별 안내, 실제 완료 운행기록과 당시 요금, 예상요금 조회 및 예약 시 차량 인수·인계 확인사항을 제공합니다.';
  const coverageJsonLd=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:'전국 17개 시·도 탁송·대리운전 지역 안내',url:coverageUrl,description:coverageDescription,inLanguage:'ko-KR',isPartOf:{'@type':'WebSite',name:SITE_NAME,url:'https://'+host+'/'}}).replace(/</g,'\\u003c');
- return layout('전국 17개 시·도 탁송·대리운전 지역 안내',coverageDescription,'<script type="application/ld+json">'+coverageJsonLd+'</script>'+body,coverageUrl);
+ return cachedNationwideCoverage=layout('전국 17개 시·도 탁송·대리운전 지역 안내',coverageDescription,'<script type="application/ld+json">'+coverageJsonLd+'</script>'+body,coverageUrl);
 }
 function regionPage(r){
  const fullName=r.full_name||[r.parent_name==='대한민국'?'':r.parent_name,r.name].filter(Boolean).join(' ');

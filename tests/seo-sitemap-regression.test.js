@@ -357,8 +357,8 @@ test('regional AEO direct answers cover all nationwide administrative levels wit
  assert.ok(server.includes('외곽이나 심야에는 배차가 제한될 수 있습니다'),'sparse rural locality guidance must not promise instant dispatch');
  assert.ok(server.includes('id="regional-direct-answer"'),'indexable region answers should be visible in HTML');
  assert.ok(server.includes("const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+"),'direct answer should lead the regional content');
- assert.ok(server.includes('현재 견적은 아래에서 확인하세요.'),'past completed ride fares cannot be presented as current quotes');
- assert.ok(server.includes('publicEvidence.length?')&&server.includes('지역 비공개'),'show regional evidence only when a public ride exists');
+ assert.ok(server.includes("' · 당시 '+esc(leadRide.fare)")&&server.includes('이 구간 현재 예상요금 조회'),'past completed ride fares cannot be presented as current quotes');
+ assert.ok(server.includes('const regionalRideLead=leadRide?')&&server.includes('지역 비공개'),'show regional evidence only when a public ride exists');
 });
 
 test('favicon is retained and served as a valid crawlable icon instead of deleting its URL',()=>{
