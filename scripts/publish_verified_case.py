@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "data" / "public-reviewed-rides-202610.json"
+QUEUE = ROOT / "data" / "verified-ride-publication-queue.json"
 STATE = ROOT / "data" / "published-ride-case-ids.json"
 OUT = ROOT / "reviews" / "verified"
 DIRECTORY = OUT / "index.html"
@@ -189,6 +190,8 @@ def write_index(published, records):
 
 def main():
     records=json.loads(SOURCE.read_text(encoding="utf-8"))
+    if QUEUE.exists():
+        records.extend(json.loads(QUEUE.read_text(encoding="utf-8")))
     published=json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else []
     used={p["id"] for p in published}
     candidates=[r for r in records if complete(r) and identifier(r) not in used]
