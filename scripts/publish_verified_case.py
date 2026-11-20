@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish at most one not-yet-published verified ride case per scheduled run.
+"""Publish up to three not-yet-published verified ride cases per scheduled run.
 
 This publishes on the Smart24 website only, not to Naver Blog.
 """
@@ -15,6 +15,7 @@ QUEUE = ROOT / "data" / "verified-ride-publication-queue.json"
 STATE = ROOT / "data" / "published-ride-case-ids.json"
 OUT = ROOT / "reviews" / "verified"
 DIRECTORY = OUT / "index.html"
+BATCH_SIZE = 3
 
 def esc(s):
     return html.escape(str(s), quote=True)
@@ -196,18 +197,26 @@ def main():
     used={p["id"] for p in published}
     candidates=[r for r in records if complete(r) and identifier(r) not in used]
     candidates.sort(key=lambda x:x["date"],reverse=True)
-    if candidates:
-        # Alternate services when both are available, without inventing records.
-        previous=published[-1].get("service") if published else None
-        selected=next((x for x in candidates if x["service"]!=previous), candidates[0])
-        key=identifier(selected)
-        page=OUT / key / "index.html"
-        page.parent.mkdir(parents=True,exist_ok=True)
-        published.append({"id":key,"service":selected["service"],
-                          "published_at":datetime.now(timezone.utc).isoformat()})
-        page.write_text(render_case(selected, records, published),encoding="utf-8")
-        STATE.write_text(json.dumps(published,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-        print("Published one verified case",key)
+    batch = []
+    for _ in range(BATCH_SIZE):
+        if not candidates:
+            break
+        # Alternate services when both queues have eligible cases.
+        previous = published[-1]["service"] if published else None
+        selected = next((ride for ride in candidates if ride["service"] != previous), candidates[0])
+        key = identifier(selected)
+        candidates = [ride for ride in candidates if identifier(ride) != key]
+        published.append({"id": key, "service": selected["service"],
+                          "published_at": datetime.now(timezone.utc).isoformat()})
+        batch.append((key, selected))
+
+    for key, selected in batch:
+        page = OUT / key / "index.html"
+        page.parent.mkdir(parents=True, exist_ok=True)
+        page.write_text(render_case(selected, records, published), encoding="utf-8")
+    if batch:
+        STATE.write_text(json.dumps(published, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+        print("Published verified cases:", len(batch), *(key for key, _ in batch))
     else:
         print("No new eligible verified cases; no fabricated publication")
     write_index(published,records)
