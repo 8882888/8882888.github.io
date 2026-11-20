@@ -89,6 +89,9 @@ def render_case(x, records=None, published=None):
     facts = [("서비스 유형", label), ("출발지", x["departure"]),
              ("도착지", x["destination"]), ("실제 운행일", x["date"]),
              ("당시 기록요금", x["fare"])]
+    for condition in x.get("conditions", []):
+        if condition in ("통행료 포함", "대기 표기"):
+            facts.append(("운행 조건", condition))
     if x.get("vehicle"):
         facts.append(("확인된 차량", x["vehicle"]))
     detail = "".join("<dt>"+esc(k)+"</dt><dd>"+esc(v)+"</dd>" for k, v in facts)
