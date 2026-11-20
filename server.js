@@ -1560,11 +1560,18 @@ async function servicePage(r,kind){
  const regionalAnswerContext=regionalAnswerEditorial?.detail||regionalAnswerFocus?.pickup||
   (r.level==='시도'?'시·군·구별 출발 위치가 다르므로 목적지와 인수 장소를 먼저 확인합니다.':(['시','군','구'].includes(r.level)?'지역 내 정확한 주차 위치와 진입·출입 조건을 확인한 뒤 기사 접근 및 복귀 동선을 상담합니다.':'읍·면·동·리 출발은 주소·주차장·주변 기준점을 정확히 알려주세요. 외곽이나 심야에는 배차가 제한될 수 있습니다.'));
  const regionalAnswerTopic=regionalAnswerEditorial?.topic||regionalAnswerFocus?.topic||'';
+ const leadRide=publicEvidence[0];
+ const regionalRideLead=leadRide?
+  '<p class="regional-ride-lead">실제 완료 기록 <a href="'+esc(leadRide.url)+'">'+
+  esc(leadRide.departure+' → '+leadRide.destination)+'</a> · '+esc(leadRide.date)+
+  (leadRide.fare?' · 당시 '+esc(leadRide.fare):'')+
+  ' · <a href="'+esc(rideFareUrl({...leadRide,service:kind}))+'">이 구간 현재 예상요금 조회</a></p>':
+  '<p>이 지역의 공개 완료 운행기록은 아래 검색에서 확인할 수 있습니다.</p>';
  const regionalAnswerFirst=regionalAnswerEligible
   ?'<section id="regional-direct-answer" aria-labelledby="regional-direct-question"><h2 id="regional-direct-question">'+esc(keyword)+' 요금과 예약은 어떻게 확인하나요?</h2>'+
+   regionalRideLead+
    (regionalAnswerTopic?'<h3>'+esc(regionalAnswerTopic)+'</h3>':'')+
    '<p>'+esc(name)+'에서 '+(kind==='taksong'?'자동차탁송을 이용하려면 차량 인수 장소와 목적지, 차종, 주행 가능 상태 및 희망 인계 시각을':'대리운전을 이용하려면 출발지와 목적지, 희망 출발 시각 및 경유·대기 여부를')+' 알려주세요. '+esc(regionalAnswerContext)+' 도로거리와 시간대, 기사 접근·복귀 여건에 따라 예상요금과 배차 가능 여부가 달라집니다. 최종 금액과 실제 기사 배정은 상담으로 확인합니다.</p>'+
-   '<p>'+(publicEvidence.length?'지역 완료 운행 예시 <a href="'+esc(publicEvidence[0].url)+'">'+esc(publicEvidence[0].departure+' → '+publicEvidence[0].destination)+'</a> · '+esc(publicEvidence[0].date)+(publicEvidence[0].fare?' · 당시 '+esc(publicEvidence[0].fare)+'. 현재 견적은 아래에서 확인하세요.':'.'):'이 지역의 공개 완료 운행기록은 아래 검색에서 확인할 수 있습니다.')+'</p>'+
    '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역 예상요금 조회</a> · <a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">실제 운행기록 검색</a> · <a href="/'+kind+'/">전국 '+(kind==='taksong'?'자동차탁송':'대리운전')+' 안내</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>':'';
  const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+reviewFirstSummary+priorityOriginalSourceMarkup(r.full_name,kind)+prioritySearchQuestionMarkup(r.full_name,kind)+'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+innovationCityPanel(r,kind)+innovationCity100Panel(r,kind)+regionalDecisionPanel(r,kind,publicEvidence)+busanReviewLead+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)&&r.full_name!=='부산광역시 기장군'?blogKeywordGuide:companySection+blogKeywordGuide))+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'&&!compactLocalTemplate?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+(compactLocalTemplate?'':keywordEngine.regionSection(r,kind))+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
