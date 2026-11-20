@@ -1560,9 +1560,9 @@ async function servicePage(r,kind){
  const regionalAnswerContext=regionalAnswerEditorial?.detail||regionalAnswerFocus?.pickup||
   (r.level==='시도'?'시·군·구별 출발 위치가 다르므로 목적지와 인수 장소를 먼저 확인합니다.':(['시','군','구'].includes(r.level)?'지역 내 정확한 주차 위치와 진입·출입 조건을 확인한 뒤 기사 접근 및 복귀 동선을 상담합니다.':'읍·면·동·리 출발은 주소·주차장·주변 기준점을 정확히 알려주세요. 외곽이나 심야에는 배차가 제한될 수 있습니다.'));
  const regionalAnswerTopic=regionalAnswerEditorial?.topic||regionalAnswerFocus?.topic||'';
- const leadRide=publicEvidence[0];
+ const leadRide=publicEvidence.find(ride=>ride.origin)||publicEvidence[0];
  const regionalRideLead=leadRide?
-  '<p class="regional-ride-lead">실제 완료 기록 <a href="'+esc(leadRide.url)+'">'+
+  '<p class="regional-ride-lead">실제 완료 기록 · 이 지역 '+(leadRide.origin?'출발':'도착')+' <a href="'+esc(leadRide.url)+'">'+
   esc(leadRide.departure+' → '+leadRide.destination)+'</a> · '+esc(leadRide.date)+
   (leadRide.fare?' · 당시 '+esc(leadRide.fare):'')+
   ' · <a href="'+esc(rideFareUrl({...leadRide,service:kind}))+'">이 구간 현재 예상요금 조회</a></p>':
