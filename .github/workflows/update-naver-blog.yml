@@ -29,7 +29,7 @@ jobs:
         run: python scripts/update_homepage_reviews.py
       - name: Build factual route-first ride record case page
         run: python scripts/build_ride_record_stories.py
-      - name: Publish up to three verified cases on Smart24 website
+      - name: Publish up to five verified cases on Smart24 website
         run: python scripts/publish_verified_case.py
       - name: Verify core pages and preserved ride history
         run: python scripts/check_core_content.py

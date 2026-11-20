@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish up to three not-yet-published verified ride cases per scheduled run.
+"""Publish up to five not-yet-published verified ride cases per scheduled run.
 
 This publishes on the Smart24 website only, not to Naver Blog.
 """
@@ -15,7 +15,7 @@ QUEUE = ROOT / "data" / "verified-ride-publication-queue.json"
 STATE = ROOT / "data" / "published-ride-case-ids.json"
 OUT = ROOT / "reviews" / "verified"
 DIRECTORY = OUT / "index.html"
-BATCH_SIZE = 3
+BATCH_SIZE = 5
 
 def esc(s):
     return html.escape(str(s), quote=True)
