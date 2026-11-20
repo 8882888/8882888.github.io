@@ -2382,7 +2382,10 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    html=html.replace(/<\/h1>/i,heading=>heading+nationalTaksongReviewLead());
   const publishedRide=publishedCaseByPath.get(res._smartPath);
   if(publishedRide){
-   html=html.replace('<a href="/fare/">현재 예상요금 조회','<a href="'+esc(rideFareUrl(publishedRide))+'">현재 예상요금 조회');
+   const quoteUrl=esc(rideFareUrl(publishedRide));
+   html=html.replace('<a href="/fare/">현재 예상요금 조회','<a href="'+quoteUrl+'">현재 예상요금 조회');
+   html=html.replace(/<section id="record-facts">[\s\S]*?<\/dl>/,facts=>facts+
+    '<p><a href="'+quoteUrl+'">이 구간 현재 예상요금 조회</a> · 위 금액은 운행 당시 기록입니다.</p>');
    const origin='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
    const url=origin+publishedRide.path;
    const article={
