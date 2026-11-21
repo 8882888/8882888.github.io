@@ -57,5 +57,5 @@ test('editing metrics and locality-masked repeated text improve without touching
  assert.equal(reuse.naverImpressions,null);
  assert.equal(reuse.naverClicks,null);
  assert.equal(reuse.naverCtr,null);
- assert.ok(quality.needsReview<=2390,'Editorial review backlog should fall by >=32 from 2422');
+ assert.ok(quality.totals?.needsReview<=2390,'Editorial review backlog should fall by >=32 from 2422');
 });
