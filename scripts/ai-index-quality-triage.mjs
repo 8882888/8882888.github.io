@@ -180,10 +180,13 @@ const nationalGroups=legalProvinces.flatMap(province=>['daeri','taksong']
  .map(kind=>({
   province,kind,
   pending:nationalEntries.filter(x=>x.province===province&&x.kind===kind&&x.issues.length)
-   .sort((a,b)=>(
-    ({'published-reference-linked':0,'reviewed-editorial-guidance':1,'additional-local-evidence-needed':2}[a.evidenceTier]-
-     {'published-reference-linked':0,'reviewed-editorial-guidance':1,'additional-local-evidence-needed':2}[b.evidenceTier])||
-    b.reviewPriority-a.reviewPriority||String(a.keyword).localeCompare(String(b.keyword),'ko'))
+   .sort((a,b)=>{
+    const tierRank={'published-reference-linked':0,'reviewed-editorial-guidance':1,
+     'additional-local-evidence-needed':2};
+    return tierRank[a.evidenceTier]-tierRank[b.evidenceTier]||
+     b.reviewPriority-a.reviewPriority||
+     String(a.keyword).localeCompare(String(b.keyword),'ko');
+   })
  })));
 const nationwideQueue=[];
 while(nationalGroups.some(group=>group.pending.length)){
