@@ -3292,9 +3292,23 @@ if(pathname==='/region/innovation-cities/'){
   const hints=[...new Set(['daeri','taksong'].flatMap(kind=>
    (innovationCity100ByRegionKind.get(area.region+'|'+kind)||[]).slice(0,3).map(x=>x.locality)))].slice(0,3);
   const sources=priorityOriginalSourceMarkup(area.region,'taksong',true)+priorityOriginalSourceMarkup(area.region,'daeri',true);
+  // Show only cases that already have source-controlled, public, canonical
+  // verified pages. Region matching uses the same geographically guarded
+  // resolver as regional SEO pages: a city match is not proof of a trip inside
+  // a specific innovation district.
+  const cityRides=publishedCaseEntries.filter(ride=>
+   ride&&['taksong','daeri'].includes(ride.service)&&tripMatchesRegion(ride,r)).slice(0,3);
+  const completedCityRides=cityRides.length
+   ?'<div class="innovation-city-confirmed-scope"><h3>'+esc(area.region)+' 출발·도착 확인 운행기록</h3>'+
+    '<p>아래는 실제 공개된 완료 기록 중 이 시·군 또는 세종시가 출발지·도착지에 포함된 사례입니다. 해당 혁신도시 건물·구역에서 완료된 운행으로 확인된 것은 아니며, 과거 요금은 현재 견적이 아닙니다.</p>'+
+    '<ul>'+cityRides.map(ride=>'<li><a href="'+esc(ride.path)+'">'+
+      esc(ride.departure+' → '+ride.destination)+'</a> · '+esc(ride.rideDate)+
+      ' · 당시 기록요금 '+esc(ride.fare)+'</li>').join('')+'</ul></div>'
+   :'';
   return '<section><h2>'+esc(area.pickup)+'</h2><p>'+esc(guide[1])+'</p>'+
    (hints.length?'<p><strong>출발 장소별 확인:</strong> '+hints.map(esc).join(' · ')+'</p>':'')+
-   '<p>'+['daeri','taksong'].map(kind=>'<a href="'+servicePath(r,kind)+'">'+esc(innovationSearchFocus(area.region,kind).keyword)+'</a>').join(' · ')+'</p>'+sources+'</section>';
+   '<p>'+['daeri','taksong'].map(kind=>'<a href="'+servicePath(r,kind)+'">'+esc(innovationSearchFocus(area.region,kind).keyword)+'</a>').join(' · ')+'</p>'+
+   completedCityRides+sources+'</section>';
  }).join('');
  const body='<section><h1>세종·지방 혁신도시 대리운전·탁송</h1><p>전주·완주, 진천·음성처럼 여러 시·군에 걸친 혁신도시는 실제 차량이 있는 행정구역을 선택해 주세요. 아래는 세종과 혁신도시·혁신지구가 있는 12개 행정구역의 안내입니다.</p><p>대리운전은 고객 동승·출발 시각·목적지·경유 여부를, 탁송은 차종·차량 상태·열쇠 인수인·도착지 수령인을 확인합니다. 요금은 거리·시간대·기사 접근과 복귀 여건에 따라 상담 후 확정합니다.</p><p><a href="/coverage/">전국 17개 시·도 지역별 서비스 비교</a> · <a href="/region/">일반 행정구역으로 찾기</a></p><p><a class="cta" href="tel:18114294">예약 상담 1811-4294</a></p></section>'+cards+'<section><h2>운행정보 확인 기준</h2><p>혁신도시·혁신지구의 출발 또는 도착이 확인되는 실제 운행정보만 해당 구역의 후기로 연결합니다. 시·군·구 전체 기록은 구역별 실적과 구분합니다. 과거 요금은 현재 예약 견적이 아닙니다.</p></section>';
  return respond(res,200,layout('세종·지방 혁신도시 대리운전·탁송 지역 안내','세종·원주·진주·나주·김천·전주·완주·진천·음성·대구 신서·울산 우정·부산 동삼 혁신도시에서 출발하는 대리운전·자동차탁송 이용 안내입니다. 차량 주차 위치, 기사 접근·복귀, 장거리 예약과 요금조회 방법을 지역별로 구분합니다.',body,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/innovation-cities/'));
