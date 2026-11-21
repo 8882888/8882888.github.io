@@ -17,6 +17,11 @@ const routes=[
 ];
 const ensure=(condition,reason)=>{if(!condition)throw Error(reason)};
 const getMeta=(head,tag)=>head.match(tag)?.[1]||'';
+function titleMatchesIntent(title,kind){
+ if(kind==='national')return title.includes('자동차탁송')&&title.includes('요금');
+ if(kind==='service')return /(?:자동차|차량)탁송/.test(title)&&/(?:예약|인수.?인계|정비센터)/.test(title);
+ return false;
+}
 async function check({path,marker,kind,expectedTitle,expectedDescription}){
  const url=new URL(path,origin);
  const response=await fetch(url,{redirect:'manual',headers:{'Cache-Control':'no-cache','User-Agent':'Smart24-CTR-intent-live-audit/1.0'},signal:AbortSignal.timeout(25000)});
@@ -25,7 +30,7 @@ async function check({path,marker,kind,expectedTitle,expectedDescription}){
  ensure(!/noindex/i.test(response.headers.get('x-robots-tag')||''),path+' X-Robots-Tag noindex');
  const html=await response.text(),head=html.split('</head>')[0],title=getMeta(head,/<title>([^<]+)<\/title>/),description=getMeta(head,/<meta name="description" content="([^"]+)"/);
  ensure(expectedTitle&&title===expectedTitle,path+' exact approved title differs from deployed production: '+JSON.stringify({expected:expectedTitle,actual:title}));
- ensure(title.includes('자동차탁송')&&title.includes('요금'),path+' search title not relevant');
+ ensure(titleMatchesIntent(title,kind),path+' search title not relevant');
  ensure(description.length>30&&[...description].length<=80,path+' description missing or too long');
  ensure((head.match(/<link rel="canonical"/g)||[]).length===1,path+' repeated canonical');
  ensure(head.includes('<link rel="canonical" href="'+origin.origin+path+'">'),path+' wrong canonical');
@@ -57,4 +62,4 @@ async function main(){
  else console.log('PASS two existing national transport pages, no Naver CTR claim');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
-module.exports={check,main};
+module.exports={check,main,titleMatchesIntent};
