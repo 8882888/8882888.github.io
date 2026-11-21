@@ -364,7 +364,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
         'article links recorded published original '+postId);
     assert.ok(seoIndexText.includes(route),'index links all 7 editorial pages');
   }
-  // All 2,591 original rides are now discoverable in six bounded XML sitemap shards.
+  // Keep every original record accessible, but only locatable history records
+  // belong to the six stable search-discovery sitemap shards.
   const sitemapIndexRes=await get('/sitemap-all.xml');
   assert.equal(sitemapIndexRes.status,200,'complete sitemap index is accessible');
   const sitemapIndex=await sitemapIndexRes.text();
@@ -372,20 +373,27 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert(!sitemapIndex.includes('<loc>https://example.com/sitemap-history.xml</loc>'),'root sitemap must not nest another sitemap index');
   const historyIndex=await (await get('/sitemap-history.xml')).text();
   const shards=[...historyIndex.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
-  assert.equal(shards.length,6,'representative rides require six bounded sitemap shards');
-  for(const shard of shards)assert(sitemapIndex.includes('<loc>'+shard+'</loc>'),'root index directly exposes every history shard');
+  assert.equal(shards.length,6,'keep six bounded sitemap shards for historical URLs');
+  for(const shard of shards)assert(sitemapIndex.includes('<loc>'+shard+'</loc>'),'root sitemap links every shard');
   const duplicateCanonical=require('../data/seo-history-duplicates.json').canonicalById;
-  const expected=new Set(Array.from({length:2591},(_,i)=>'https://example.com/reviews/history/excel-'+String(i+1).padStart(4,'0')+'/').filter(url=>!duplicateCanonical[url.split('/').at(-2)]));
-  const expectedTotal=expected.size;
+  const originalCanonical=new Set(Array.from({length:2591},(_,i)=>'https://example.com/reviews/history/excel-'+String(i+1).padStart(4,'0')+'/').filter(url=>!duplicateCanonical[url.split('/').at(-2)]));
+  const seen=new Set();
   for(let index=1;index<=6;index++){
    const response=await get('/sitemap-history-'+index+'.xml');
    assert.equal(response.status,200,'history sitemap shard '+index+' exists');
    const xml=await response.text();
    const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
-   assert.equal(urls.length,Math.min(500,expectedTotal-(index-1)*500),'canonical rides are packed into bounded shards after deduplication');
-   for(const url of urls)assert(expected.delete(url),'sitemap contains each source ride exactly once: '+url);
+   assert(urls.length>0&&urls.length<=500,'shard contains 1–500 original public-place URLs');
+   for(const url of urls){
+    assert(originalCanonical.has(url),'original canonical record required: '+url);
+    assert(!seen.has(url),'no duplicate history URL across shards: '+url);
+    seen.add(url);
+   }
   }
-  assert.equal(expected.size,0,'all representative ride URLs are discoverable; original records remain accessible');
+  assert(seen.size<originalCanonical.size,'location-private records not exposed for indexing');
+  assert(seen.size>500,'grounded public-region ride evidence remains discoverable');
+  assert(!seen.has('https://example.com/reviews/history/excel-0002/'),'both-private-region record not in sitemap');
+  assert(seen.has('https://example.com/reviews/history/excel-0013/'),'public-place mountain ride remains in sitemap');
   for(const [id,representative] of Object.entries(duplicateCanonical)){const r=await get('/reviews/history/'+id+'/');assert.equal(r.status,200);const html=await r.text();assert(html.includes('href="https://example.com/reviews/history/'+representative+'/"'));assert(html.includes('원본 운행기록 번호: '+id));}
   assert.equal((await get('/sitemap-history-7.xml')).status,404,'out of-range sitemap shards do not exist');
   const indexedRobots=await (await get('/robots.txt')).text();
