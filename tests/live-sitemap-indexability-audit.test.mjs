@@ -43,6 +43,7 @@ test('sitemap crawler distinguishes blockers, quality warnings and shared sitema
     const report = JSON.parse(await readFile(path.join(reportDir, 'live-sitemap-indexability.json'), 'utf8'));
     assert.equal(report.summary.completeness, 'complete');
     assert.equal(report.summary.uniqueUrls, 4);
+    assert.equal(report.summary.pageFetchFailures, 0);
     const healthy = report.pages.find(p => p.url.endsWith('/healthy/'));
     const blocked = report.pages.find(p => p.url.endsWith('/blocked/'));
     const warning = report.pages.find(p => p.url.endsWith('/warning/'));
