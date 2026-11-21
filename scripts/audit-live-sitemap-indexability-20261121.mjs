@@ -20,7 +20,6 @@ const roots = [
 ];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const decode = s => s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
-const xmlUrls = (xml, tag) => [...xml.matchAll(new RegExp('<' + tag + '\\b[^>]*>([\\s\\S]*?)<\\/' + tag + '>', 'gi'))].map(m => decode(m[1]));
 const blocks = (xml, tag) => [...xml.matchAll(new RegExp('<' + tag + '\\b[^>]*>([\\s\\S]*?)<\\/' + tag + '>', 'gi'))].map(m => m[1]);
 const loc = xml => xml.match(/<loc\b[^>]*>([\s\S]*?)<\/loc>/i)?.[1]?.trim();
 const normal = raw => {
@@ -83,19 +82,20 @@ async function audit(url, appearances) {
     const h1 = match(html, /<h1\b[^>]*>([\s\S]*?)<\/h1>/i).replace(/<[^>]+>/g, '').trim();
     const description = attr(tag(html, 'description'), 'content');
     const reasons = [];
+    const warnings = [];
     if (res.status !== 200) reasons.push('non_200');
     if (res.url !== url) reasons.push('redirect');
     if (!html) reasons.push('not_html');
     if (/\bnoindex\b/i.test(metaRobots + ',' + xRobots)) reasons.push('noindex');
-    if (/\bnofollow\b/i.test(metaRobots + ',' + xRobots)) reasons.push('nofollow');
+    if (/\bnofollow\b/i.test(metaRobots + ',' + xRobots)) warnings.push('nofollow');
     if (!canonical) reasons.push('missing_canonical');
     else if (canonical !== url) reasons.push('canonical_mismatch');
-    if (!title) reasons.push('missing_title');
-    if (!h1) reasons.push('missing_h1');
-    if (!description) reasons.push('missing_description');
-    if (appearances > 1) reasons.push('multiple_sitemap_entries');
-    return { url, status: res.status, finalUrl: res.url, appearances, title, h1, description, canonical, metaRobots, xRobots, reasons, technicalCandidate: reasons.length === 0 };
-  } catch (e) { return { url, appearances, technicalCandidate: false, reasons: ['fetch_failed'], error: String(e) }; }
+    if (!title) warnings.push('missing_title');
+    if (!h1) warnings.push('missing_h1');
+    if (!description) warnings.push('missing_description');
+    if (appearances > 1) warnings.push('multiple_sitemap_entries');
+    return { url, status: res.status, finalUrl: res.url, appearances, title, h1, description, canonical, metaRobots, xRobots, reasons, warnings, technicalCandidate: reasons.length === 0 };
+  } catch (e) { return { url, appearances, technicalCandidate: false, reasons: ['fetch_failed'], warnings: [], error: String(e) }; }
 }
 for (const root of roots) await collectSitemap(new URL(root, origin).href);
 const work = [...urls];
@@ -110,17 +110,27 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: concurrency }, worker));
 const counts = {};
-for (const p of report.pages) for (const r of p.reasons) counts[r] = (counts[r] || 0) + 1;
+const warnings = {};
+for (const p of report.pages) {
+  for (const r of p.reasons) counts[r] = (counts[r] || 0) + 1;
+  for (const w of p.warnings) warnings[w] = (warnings[w] || 0) + 1;
+}
 report.summary = {
   sitemapCount: seenMaps.size, uniqueUrls: urls.size,
   technicallyEligible: report.pages.filter(p => p.technicalCandidate).length,
   needsReview: report.pages.filter(p => !p.technicalCandidate).length,
-  reasonCounts: counts, errors: report.errors.length
+  warningPages: report.pages.filter(p => p.warnings.length > 0).length,
+  reasonCounts: counts, warningCounts: warnings, errors: report.errors.length,
+  completeness: report.errors.length === 0 && urls.size > 0 ? 'complete' : 'incomplete'
 };
 await fs.mkdir(reportDir, { recursive: true });
 await fs.writeFile(path.join(reportDir, 'live-sitemap-indexability.json'), JSON.stringify(report, null, 2));
-const columns = ['url','status','finalUrl','appearances','canonical','title','h1','description','reasons','technicalCandidate','error'];
-const csv = [columns.join(','), ...report.pages.map(p => columns.map(k => '"' + String(k === 'reasons' ? p.reasons.join(';') : (p[k] ?? '')).replace(/"/g, '""') + '"').join(','))].join('\n');
+const columns = ['url','status','finalUrl','appearances','canonical','title','h1','description','reasons','warnings','technicalCandidate','error'];
+const csv = [columns.join(','), ...report.pages.map(p => columns.map(k => '"' + String(k === 'reasons' ? p.reasons.join(';') : k === 'warnings' ? p.warnings.join(';') : (p[k] ?? '')).replace(/"/g, '""') + '"').join(','))].join('\n');
 await fs.writeFile(path.join(reportDir, 'live-sitemap-indexability.csv'), csv + '\n');
 console.log(JSON.stringify(report.summary, null, 2));
 if (report.errors.length) console.error('Sitemap errors:', report.errors.slice(0, 10));
+if (report.summary.completeness !== 'complete') {
+  console.error('INCOMPLETE AUDIT: sitemap roots failed or no URLs were discovered. Do not interpret a zero count as a clean indexability result.');
+  process.exitCode = 1;
+}
