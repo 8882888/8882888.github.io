@@ -41,6 +41,7 @@ async function get(url, method = 'GET') {
 }
 const seenMaps = new Set();
 const urls = new Map();
+const priorityUrls = new Set();
 async function collectSitemap(input) {
   const url = normal(input);
   if (!url || !sameHost(url) || seenMaps.has(url)) return;
@@ -62,6 +63,7 @@ async function collectSitemap(input) {
       const item = normal(decode(raw));
       if (!item || !sameHost(item)) { report.errors.push({ url, reason: 'external_or_invalid_url', value: raw }); continue; }
       urls.set(item, (urls.get(item) || 0) + 1);
+      if (url === new URL('/sitemap-priority.xml', origin).href) priorityUrls.add(item);
     }
   } catch (e) { report.errors.push({ url, reason: 'sitemap_fetch_failed', detail: String(e) }); }
 }
@@ -127,6 +129,7 @@ async function worker() {
     const index = cursor++;
     const [url, count] = work[index];
     report.pages[index] = await audit(url, count);
+    report.pages[index].prioritySitemap = priorityUrls.has(url);
     completed++;
     if (completed % 250 === 0 || completed === work.length) {
       console.log('AUDIT_PROGRESS ' + completed + '/' + work.length);
@@ -139,6 +142,8 @@ await Promise.all(Array.from({ length: concurrency }, worker));
 const counts = {};
 const warnings = {};
 const pageFetchFailures = report.pages.filter(p => p.reasons.includes('fetch_failed')).length;
+const priorityPages = report.pages.filter(p => p.prioritySitemap);
+const priorityBlockers = priorityPages.filter(p => !p.technicalCandidate);
 for (const p of report.pages) {
   for (const r of p.reasons) counts[r] = (counts[r] || 0) + 1;
   for (const w of p.warnings) warnings[w] = (warnings[w] || 0) + 1;
@@ -150,11 +155,14 @@ report.summary = {
   warningPages: report.pages.filter(p => p.warnings.length > 0).length,
   reasonCounts: counts, warningCounts: warnings, errors: report.errors.length,
   pageFetchFailures,
+  prioritySitemapUrls: priorityPages.length,
+  prioritySitemapBlockers: priorityBlockers.length,
+  prioritySitemapBlockingUrls: priorityBlockers.slice(0, 50).map(p => ({ url: p.url, reasons: p.reasons })),
   completeness: report.errors.length === 0 && pageFetchFailures === 0 && urls.size > 0 ? 'complete' : 'incomplete'
 };
 await fs.mkdir(reportDir, { recursive: true });
 await fs.writeFile(path.join(reportDir, 'live-sitemap-indexability.json'), JSON.stringify(report, null, 2));
-const columns = ['url','status','finalUrl','appearances','canonical','title','h1','description','reasons','warnings','technicalCandidate','error'];
+const columns = ['url','prioritySitemap','status','finalUrl','appearances','canonical','title','h1','description','reasons','warnings','technicalCandidate','error'];
 const csv = [columns.join(','), ...report.pages.map(p => columns.map(k => '"' + String(k === 'reasons' ? p.reasons.join(';') : k === 'warnings' ? p.warnings.join(';') : (p[k] ?? '')).replace(/"/g, '""') + '"').join(','))].join('\n');
 await fs.writeFile(path.join(reportDir, 'live-sitemap-indexability.csv'), csv + '\n');
 console.log(JSON.stringify(report.summary, null, 2));
