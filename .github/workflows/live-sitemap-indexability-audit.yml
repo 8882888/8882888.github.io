@@ -30,6 +30,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Test sitemap audit classification against local fixtures
+        run: node --test tests/live-sitemap-indexability-audit.test.mjs
       - name: Verify Cloudtype running source against exact checkout
         id: release
         continue-on-error: true
