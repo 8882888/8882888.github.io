@@ -5,6 +5,8 @@ on:
     paths:
       - 'scripts/ai-index-quality-triage.mjs'
       - 'tests/evidence-first-2571-triage.test.cjs'
+      - 'tests/nationwide-evidence-coverage-20261121.test.cjs'
+      - 'data/legal-regions/**'
       - '.github/workflows/ai-editorial-evidence-triage.yml'
       - 'data/seo-reviewed-local-originals-20261116.json'
       - 'data/priority-regions.json'
@@ -15,6 +17,8 @@ on:
     paths:
       - 'scripts/ai-index-quality-triage.mjs'
       - 'tests/evidence-first-2571-triage.test.cjs'
+      - 'tests/nationwide-evidence-coverage-20261121.test.cjs'
+      - 'data/legal-regions/**'
       - '.github/workflows/ai-editorial-evidence-triage.yml'
       - 'data/seo-reviewed-local-originals-20261116.json'
       - 'data/priority-regions.json'
@@ -40,6 +44,8 @@ jobs:
           node scripts/ai-index-quality-triage.mjs
       - name: Prove 2571 baseline, grounded source tiers and absence of fabricated indexing
         run: node --test tests/evidence-first-2571-triage.test.cjs
+      - name: Prove full 17-province, both-service, no-truncation nationwide review
+        run: node --test tests/nationwide-evidence-coverage-20261121.test.cjs
       - name: Publish editorial review queue, NOT Naver index statistics
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,5 +57,8 @@ jobs:
             ai-index-quality-review.md
             ai-index-evidence-priority.json
             ai-index-evidence-priority.csv
+            ai-index-nationwide-coverage.json
+            ai-index-nationwide-coverage.md
+            ai-index-nationwide-queue.csv
           if-no-files-found: warn
           retention-days: 30
