@@ -165,9 +165,11 @@ const qualityRows=entries.map(e=>{
    :'Collect an independently verified locality source; do not generate location-specific facts'};
 });
 if(entries.length!==2900)throw Error('Expected all 2900 original content items');
+// Keep the legacy content-2535 artifact filename for consumer compatibility: 2535 is the initial review cohort, not a permanently fixed pending count.
 const passed=qualityRows.filter(x=>!x.issues.length).length,needsReview=qualityRows.length-passed;
-if(passed!==365||needsReview!==2535)
- throw Error('Source-quality baseline changed unexpectedly: '+passed+'/'+needsReview);
+const qualityBaseline={passed:365,needsReview:2535};
+if(passed<qualityBaseline.passed||needsReview>qualityBaseline.needsReview||passed+needsReview!==2900)
+ throw Error('Source-quality regressed below reviewed baseline: '+passed+'/'+needsReview);
 const tierOrder={reviewed_published_post_scope:0,classified_archival_region_only:1,
  reviewed_local_preparation:2,additional_evidence_needed:3};
 const pending=qualityRows.filter(x=>x.issues.length).sort((a,b)=>
@@ -183,6 +185,7 @@ for(const x of qualityRows){
 writeJson('content-2535-evidence-first-review.json',{
  generatedAt:new Date().toISOString(),
  scope:'Read-only original-content editorial triage; no automatic content or Naver index claim',
+ baseline:qualityBaseline,
  totals:{all:2900,passed,needsReview},
  evidenceCounts:tierCounts,
  archivedSourceCoverage:{classified:alreadyClassified,unresolved,uniqueClassifiedRegionServices:classifiedByKey.size},

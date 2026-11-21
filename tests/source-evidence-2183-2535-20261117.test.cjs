@@ -6,7 +6,7 @@ const path=require('node:path');
 const {execFileSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
 const read=name=>JSON.parse(fs.readFileSync(path.join(root,name),'utf8'));
-test('generate separate human-only review queues for all 2183 unresolved archives and 2535 weak regional guides',()=>{
+test('generate separate human-only review queues for 2183 archives and a non-regressing editorial cohort',()=>{
  const result=execFileSync(process.execPath,['scripts/triage-unresolved-rides-and-content.mjs'],{
   cwd:root,encoding:'utf8',timeout:120000,maxBuffer:1024*1024*3});
  const output=JSON.parse(result);
@@ -15,8 +15,9 @@ test('generate separate human-only review queues for all 2183 unresolved archive
  assert.equal(output.archive.unresolved,2183);
  assert.equal(Object.values(output.archive.reviewStages).reduce((a,b)=>a+b,0),2183);
  assert.equal(output.content.all,2900);
- assert.equal(output.content.passed,365);
- assert.equal(output.content.needsReview,2535);
+ assert(output.content.passed>=365,'editorial pass count must not fall below prior reviewed baseline');
+ assert(output.content.needsReview<=2535,'remaining review queue must not grow above prior baseline');
+ assert.equal(output.content.passed+output.content.needsReview,2900);
  const first=read('ride-2183-original-evidence-triage.json');
  const second=read('content-2535-evidence-first-review.json');
  assert.equal(first.records.length,2183);
@@ -32,11 +33,12 @@ test('generate separate human-only review queues for all 2183 unresolved archive
   assert(record.originHints.every(x=>typeof x==='string'&&x.length>2));
   assert(record.destinationHints.every(x=>typeof x==='string'&&x.length>2));
  }
- assert.equal(second.prioritizedPending.length,2535);
- assert.equal(second.totals.passed,365);
- assert.equal(second.totals.needsReview,2535);
- assert.equal(new Set(second.prioritizedPending.map(x=>x.kind+'|'+x.region)).size,2535);
- assert.equal(Object.values(second.evidenceCounts).reduce((n,x)=>n+x.needsReview,0),2535);
+ assert.deepEqual(second.baseline,{passed:365,needsReview:2535});
+ assert.equal(second.prioritizedPending.length,output.content.needsReview);
+ assert.equal(second.totals.passed,output.content.passed);
+ assert.equal(second.totals.needsReview,output.content.needsReview);
+ assert.equal(new Set(second.prioritizedPending.map(x=>x.kind+'|'+x.region)).size,output.content.needsReview);
+ assert.equal(Object.values(second.evidenceCounts).reduce((n,x)=>n+x.needsReview,0),output.content.needsReview);
  assert.equal(Object.values(second.evidenceCounts).reduce((n,x)=>n+x.all,0),2900);
  for(const x of second.prioritizedPending){
   assert(x.issueCount>0);
@@ -47,7 +49,7 @@ test('generate separate human-only review queues for all 2183 unresolved archive
  const csv=fs.readFileSync(path.join(root,'ride-2183-original-evidence-triage.csv'),'utf8').trimEnd().split('\n');
  const csvQuality=fs.readFileSync(path.join(root,'content-2535-evidence-first-review.csv'),'utf8').trimEnd().split('\n');
  assert.equal(csv.length,2184);
- assert.equal(csvQuality.length,2536);
+ assert.equal(csvQuality.length,output.content.needsReview+1);
  const baseline=read('data/naver-searchadvisor-official-baseline.json');
  assert.equal(baseline.latestOfficialSnapshot,null,'no fake current owner-authenticated Search Advisor data');
  console.log(JSON.stringify({sourceReviewOnly:true,

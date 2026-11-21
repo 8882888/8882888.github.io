@@ -64,8 +64,8 @@ jobs:
           node --check tests/editorial-quality-eight-ctr-20261117.test.cjs
           node --test tests/editorial-quality-eight-ctr-20261117.test.cjs
           node scripts/ai-index-quality-triage.mjs
-          node -e "const r=require('./ai-index-quality-review.json'); const assert=require('node:assert/strict'); assert.equal(r.totals.reviewed,2900); assert.equal(r.totals.fullyPassing,365); assert.equal(r.totals.needsReview,2535); console.log('Rubric: 365 passed, 2535 for review. These are NOT Naver indexed counts.');"
-      - name: Triage 2183 unresolved ride sources and 2535 editorial candidates without fabrication
+          node -e "const r=require('./ai-index-quality-review.json'); const assert=require('node:assert/strict'); assert.equal(r.totals.reviewed,2900); assert(r.totals.fullyPassing>=365,'Editorial passing count regressed below the last reviewed baseline'); assert(r.totals.needsReview<=2535,'Editorial review queue grew above the prior baseline'); assert.equal(r.totals.fullyPassing+r.totals.needsReview,2900); console.log('Rubric: '+r.totals.fullyPassing+' passed, '+r.totals.needsReview+' for review. These are NOT Naver indexed counts.');"
+      - name: Triage 2183 unresolved ride sources and dynamic editorial candidates without fabrication
         run: |
           node --check scripts/triage-unresolved-rides-and-content.mjs
           node --check tests/source-evidence-2183-2535-20261117.test.cjs
