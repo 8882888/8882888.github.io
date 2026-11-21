@@ -84,6 +84,14 @@ test('Sejong, Gijang, four innovation cities have distinct real sources without 
    assert(hub.includes('href="'+byId.get(source.post_id).url+'"'),region+' source missing from innovation hub');
    assert(hub.includes(source.note),region+' scope caveat missing from innovation hub');
   }
+  // These four links originate in existing published, source-checked case
+  // pages. They are city-level evidence, never proof of an innovation district trip.
+  for(const id of ['0723b51e5b7bd701','a877c08671b96b0f','c370654ee04fcc4d','9246eaa647645084']){
+   assert(hub.includes('href="/reviews/verified/'+id+'/"'),
+     'innovation hub must link existing city-level verified ride '+id);
+  }
+  assert(hub.includes('해당 혁신도시 건물·구역에서 완료된 운행으로 확인된 것은 아니며'),
+    'city-wide completed rides must not be misrepresented as innovation-district activity');
   assert(!hub.includes('이 혁신도시에서 운행을 완료했습니다.'),'no invented district completion');
   console.log('PASS seven priority service pages, original published links, concise SEO and innovation city hub');
  }finally{child?.kill()}
