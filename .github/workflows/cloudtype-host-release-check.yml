@@ -1,0 +1,57 @@
+name: Cloudtype direct URL and release freshness check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cloudtype-host-release-check.yml'
+      - 'tools/check_cloudtype_hosts.mjs'
+  pull_request:
+    paths:
+      - '.github/workflows/cloudtype-host-release-check.yml'
+      - 'tools/check_cloudtype_hosts.mjs'
+      - 'tests/cloudtype-host-release-check.test.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  fixture:
+    name: Test Cloudtype host verification locally
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check script syntax
+        run: node --check tools/check_cloudtype_hosts.mjs
+      - name: Run local HTTP source-matching tests
+        run: node --test tests/cloudtype-host-release-check.test.mjs
+  live:
+    name: Verify official and Cloudtype direct URL
+    needs: fixture
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check both Cloudtype host source fingerprints
+        id: verify
+        continue-on-error: true
+        run: node tools/check_cloudtype_hosts.mjs
+      - name: Save independent host status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudtype-host-release-check
+          path: reports/cloudtype-host-release-check.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Mark any stale or inaccessible Cloudtype host
+        if: steps.verify.outcome == 'failure'
+        run: exit 1
