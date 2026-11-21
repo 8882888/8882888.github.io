@@ -44,6 +44,9 @@ test('sitemap crawler distinguishes blockers, quality warnings and shared sitema
     assert.equal(report.summary.completeness, 'complete');
     assert.equal(report.summary.uniqueUrls, 4);
     assert.equal(report.summary.pageFetchFailures, 0);
+    assert.equal(report.summary.prioritySitemapUrls, 4);
+    assert.equal(report.summary.prioritySitemapBlockers, 1);
+    assert.deepEqual(report.summary.prioritySitemapBlockingUrls[0].reasons, ['noindex']);
     const progress = JSON.parse(await readFile(path.join(reportDir, 'live-sitemap-indexability-progress.json'), 'utf8'));
     assert.equal(progress.state, 'finished');
     assert.equal(progress.urlsChecked, 4);
@@ -54,6 +57,7 @@ test('sitemap crawler distinguishes blockers, quality warnings and shared sitema
     const warning = report.pages.find(p => p.url.endsWith('/warning/'));
     const missingCanonical = report.pages.find(p => p.url.endsWith('/no-canonical/'));
     assert.equal(healthy.technicalCandidate, true);
+    assert.equal(healthy.prioritySitemap, true);
     assert(healthy.warnings.includes('multiple_sitemap_entries'));
     assert.equal(blocked.technicalCandidate, false);
     assert(blocked.reasons.includes('noindex'));
