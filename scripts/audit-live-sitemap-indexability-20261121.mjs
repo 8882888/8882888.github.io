@@ -100,17 +100,21 @@ async function audit(url, appearances) {
 for (const root of roots) await collectSitemap(new URL(root, origin).href);
 const work = [...urls];
 let cursor = 0;
+let completed = 0;
 async function worker() {
   while (cursor < work.length) {
     const index = cursor++;
     const [url, count] = work[index];
     report.pages[index] = await audit(url, count);
+    completed++;
+    if (completed % 250 === 0 || completed === work.length) console.log('AUDIT_PROGRESS ' + completed + '/' + work.length);
     await sleep(pauseMs);
   }
 }
 await Promise.all(Array.from({ length: concurrency }, worker));
 const counts = {};
 const warnings = {};
+const pageFetchFailures = report.pages.filter(p => p.reasons.includes('fetch_failed')).length;
 for (const p of report.pages) {
   for (const r of p.reasons) counts[r] = (counts[r] || 0) + 1;
   for (const w of p.warnings) warnings[w] = (warnings[w] || 0) + 1;
@@ -121,7 +125,8 @@ report.summary = {
   needsReview: report.pages.filter(p => !p.technicalCandidate).length,
   warningPages: report.pages.filter(p => p.warnings.length > 0).length,
   reasonCounts: counts, warningCounts: warnings, errors: report.errors.length,
-  completeness: report.errors.length === 0 && urls.size > 0 ? 'complete' : 'incomplete'
+  pageFetchFailures,
+  completeness: report.errors.length === 0 && pageFetchFailures === 0 && urls.size > 0 ? 'complete' : 'incomplete'
 };
 await fs.mkdir(reportDir, { recursive: true });
 await fs.writeFile(path.join(reportDir, 'live-sitemap-indexability.json'), JSON.stringify(report, null, 2));
@@ -131,6 +136,6 @@ await fs.writeFile(path.join(reportDir, 'live-sitemap-indexability.csv'), csv + 
 console.log(JSON.stringify(report.summary, null, 2));
 if (report.errors.length) console.error('Sitemap errors:', report.errors.slice(0, 10));
 if (report.summary.completeness !== 'complete') {
-  console.error('INCOMPLETE AUDIT: sitemap roots failed or no URLs were discovered. Do not interpret a zero count as a clean indexability result.');
+  console.error('INCOMPLETE AUDIT: sitemap roots failed, page requests failed, or no URLs were discovered. Do not interpret a zero count as a clean indexability result.');
   process.exitCode = 1;
 }
