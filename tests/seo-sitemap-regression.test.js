@@ -424,3 +424,11 @@ test('previously exposed Jegi-dong taksong remains discoverable without all-loca
  assert.ok(main.includes("'/taksong/seoul/dongdaemun-gu/jegi-dong/'"),'dynamic primary sitemap');
  assert.ok(server.includes("...['province','city','county','district'].map"),'existing four-level sitemap policy unchanged');
 });
+
+test('CTR read-only guard recognizes separate national fare and service-center handover intent',()=>{
+ const {titleMatchesIntent}=require('../scripts/audit-live-taksong-ctr-intent-20261117.cjs');
+ assert.equal(titleMatchesIntent('전국 자동차탁송 요금·실제 운행후기 | 스마트24','national'),true);
+ assert.equal(titleMatchesIntent('차량탁송 예약·인수인계 | 정비센터 입고·출고 안내','service'),true);
+ assert.equal(titleMatchesIntent('정비센터 홈페이지','service'),false);
+ assert.equal(titleMatchesIntent('전국 자동차탁송 후기','national'),false,'national page still needs price intent');
+});
