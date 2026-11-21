@@ -99,15 +99,39 @@ async function audit(url, appearances) {
 }
 for (const root of roots) await collectSitemap(new URL(root, origin).href);
 const work = [...urls];
+await fs.mkdir(reportDir, { recursive: true });
+const progressPath = path.join(reportDir, 'live-sitemap-indexability-progress.json');
+const writeProgress = async () => {
+  const visited = report.pages.filter(Boolean);
+  const reasons = {};
+  const warnings = {};
+  for (const page of visited) {
+    for (const reason of page.reasons) reasons[reason] = (reasons[reason] || 0) + 1;
+    for (const warning of page.warnings) warnings[warning] = (warnings[warning] || 0) + 1;
+  }
+  const snapshot = {
+    updatedAt: new Date().toISOString(), state: completed === work.length ? 'finished' : 'partial',
+    origin: origin.origin, sitemapsDiscovered: seenMaps.size, sitemapErrors: report.errors.length,
+    urlsDiscovered: work.length, urlsChecked: visited.length,
+    technicallyEligibleSoFar: visited.filter(page => page.technicalCandidate).length,
+    reasons, warnings,
+    note: 'Intermediate technical audit counts only; not Naver indexed URLs and not a full crawl until finished.'
+  };
+  await fs.writeFile(progressPath, JSON.stringify(snapshot, null, 2) + '\n');
+};
 let cursor = 0;
 let completed = 0;
+await writeProgress();
 async function worker() {
   while (cursor < work.length) {
     const index = cursor++;
     const [url, count] = work[index];
     report.pages[index] = await audit(url, count);
     completed++;
-    if (completed % 250 === 0 || completed === work.length) console.log('AUDIT_PROGRESS ' + completed + '/' + work.length);
+    if (completed % 250 === 0 || completed === work.length) {
+      console.log('AUDIT_PROGRESS ' + completed + '/' + work.length);
+      await writeProgress();
+    }
     await sleep(pauseMs);
   }
 }
