@@ -130,6 +130,8 @@ jobs:
           node --check tests/homepage-copy.test.js
       - name: Verify nationwide taksong handover trust and metadata spelling
         run: node tests/taksong-trust-first.test.js
+      - name: Validate the exact 100 source-release checks used by Pages backup
+        run: node tools/check_cloudtype_100_point_release.js
       - name: Protect current nationwide and 24-hour dedicated keyword entry titles
         run: node tests/nationwide-daeri-24h-taksong-keywords.test.js
       - name: Syntax-check current production SEO auditors
