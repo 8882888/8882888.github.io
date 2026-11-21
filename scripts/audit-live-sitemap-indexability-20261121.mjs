@@ -32,12 +32,26 @@ const normal = raw => {
 const sameHost = url => { try { return new URL(url).host === origin.host; } catch { return false; } };
 const report = { generatedAt: new Date().toISOString(), origin: origin.origin, source: 'public technical crawl; not Naver Search Advisor', roots, sitemaps: [], errors: [], pages: [], summary: {} };
 
+// AbortSignal.timeout also covers slow response bodies read by callers.
 async function get(url, method = 'GET') {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 16000);
-  try {
-    return await fetch(url, { method, redirect: 'follow', signal: controller.signal, headers: { 'user-agent': 'Smart24-SEO-Technical-Audit/1.0' } });
-  } finally { clearTimeout(timeout); }
+  let lastError;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method, redirect: 'follow', signal: AbortSignal.timeout(16000),
+        headers: { 'user-agent': 'Smart24-SEO-Technical-Audit/1.0' }
+      });
+      if (![429, 502, 503, 504].includes(response.status) || attempt === 2) return response;
+      await response.body?.cancel();
+      console.warn('RETRY_TRANSIENT_HTTP', response.status, url);
+    } catch (error) {
+      lastError = error;
+      if (attempt === 2) throw error;
+      console.warn('RETRY_TRANSIENT_FETCH', url, String(error));
+    }
+    await sleep(800);
+  }
+  throw lastError || new Error('Unexpected audit fetch retry state');
 }
 const seenMaps = new Set();
 const urls = new Map();
