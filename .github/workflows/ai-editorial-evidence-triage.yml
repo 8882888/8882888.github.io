@@ -7,6 +7,7 @@ on:
       - 'tests/evidence-first-2571-triage.test.cjs'
       - 'tests/nationwide-evidence-coverage-20261121.test.cjs'
       - 'tests/national-32-existing-local-guide-details-20261121.test.cjs'
+      - 'tests/nationwide-batch2-32-unique-local-guides-20261121.test.cjs'
       - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
       - 'server.js'
       - 'data/legal-regions/**'
@@ -22,6 +23,7 @@ on:
       - 'tests/evidence-first-2571-triage.test.cjs'
       - 'tests/nationwide-evidence-coverage-20261121.test.cjs'
       - 'tests/national-32-existing-local-guide-details-20261121.test.cjs'
+      - 'tests/nationwide-batch2-32-unique-local-guides-20261121.test.cjs'
       - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
       - 'server.js'
       - 'data/legal-regions/**'
@@ -54,6 +56,8 @@ jobs:
         run: node --test tests/nationwide-runtime-source-parity-20261121.test.cjs
       - name: Preserve and validate 32 locality-specific edits across 17 province registry
         run: node --test tests/national-32-existing-local-guide-details-20261121.test.cjs
+      - name: Verify second nationwide round removes generic text without changing source identity
+        run: node --test tests/nationwide-batch2-32-unique-local-guides-20261121.test.cjs
       - name: Prove full 17-province, both-service, no-truncation nationwide review
         run: node --test tests/nationwide-evidence-coverage-20261121.test.cjs
       - name: Publish editorial review queue, NOT Naver index statistics
