@@ -73,6 +73,41 @@ for (const g of duplicateGroups) {
     if (m.province) provinceAffected[m.province].add(key);
   }
 }
+// Full national queue: every affected existing guide, not just the top 100
+// clusters. Balance by 17 provinces x two services, and favor larger repeats
+// within each group without claiming a Naver penalty or rewriting anything.
+const queueMap = new Map();
+for (const g of duplicateGroups) {
+  for (const member of g.members) {
+    const key = member.source+'|'+member.position+'|'+member.kind;
+    if (!queueMap.has(key)) queueMap.set(key,{
+      ...member,maxGroupSize:0,groupCount:0,fields:new Set(),groupHashes:new Set()
+    });
+    const item = queueMap.get(key);
+    item.maxGroupSize=Math.max(item.maxGroupSize,g.count);
+    item.groupCount++;
+    item.fields.add(g.field);
+    item.groupHashes.add(g.field+':'+g.hash);
+  }
+}
+const buckets = provinces.flatMap(province=>['daeri','taksong'].map(kind=>({
+  province,kind,
+  pending:[...queueMap.values()].filter(x=>x.province===province&&x.kind===kind)
+    .sort((a,b)=>b.maxGroupSize-a.maxGroupSize||b.groupCount-a.groupCount||
+      a.source.localeCompare(b.source)||a.position-b.position)
+})));
+const balancedReviewQueue=[];
+while (buckets.some(b=>b.pending.length)) {
+  for (const bucket of buckets) {
+    const item=bucket.pending.shift();
+    if (item) balancedReviewQueue.push(item);
+  }
+}
+if (balancedReviewQueue.length!==affected.size || new Set(balancedReviewQueue.map(
+  x=>x.source+'|'+x.position+'|'+x.kind)).size!==affected.size) {
+  throw Error('National locality-template queue has missing or repeated source entries');
+}
+
 const serial = g=>({kind:g.kind,field:g.field,hash:g.hash,count:g.count,
   distinctRegions:g.regionSet.size,provinceCount:g.provinceSet.size,
   provinceNames:[...g.provinceSet].sort(),maskedPreview:g.maskedPreview,
@@ -87,6 +122,7 @@ const report={
   repeatedTemplateGroups:duplicateGroups.length,
   repeatedParagraphInstances:duplicateGroups.reduce((n,g)=>n+g.count,0),
   affectedDistinctGuideCount:affected.size,
+  nationalRepeatReviewQueueCount:balancedReviewQueue.length,
   affectedByField:{pickup:affectedFields.pickup.size,handover:affectedFields.handover.size},
   provinceBreakdown:provinces.map(p=>({province:p,total:provinceTotals[p],
     affected:provinceAffected[p].size})),
@@ -98,6 +134,14 @@ if (files.length!==33 || missingProvince.length || provinces.reduce((n,p)=>n+pro
   throw Error('Nationwide source/province reconciliation failed');
 }
 fs.writeFileSync('ai-index-template-reuse.json',JSON.stringify(report,null,2)+'\n');
+const queueFields=['province','kind','region','id','source','position','maxGroupSize','groupCount','fields','groupHashes'];
+const cell=value=>'"'+String(value??'').replace(/"/g,'""').replace(/[\r\n]/g,' ')+'"';
+fs.writeFileSync('ai-index-template-reuse-queue.csv',
+  queueFields.join(',')+'\n'+balancedReviewQueue.map(item=>queueFields.map(field=>
+    cell(field==='fields'?[...item.fields].sort().join('; '):
+      field==='groupHashes'?[...item.groupHashes].sort().join('; '):item[field])).join(',')
+  ).join('\n')+'\n');
+
 const markdown=[
  '# 전국 지역명 치환형 반복 문장 점검',
  '',
@@ -105,6 +149,7 @@ const markdown=[
  '- 지명 토큰만 가린 동일 본문 군집: **'+report.repeatedTemplateGroups+'개**',
  '- 같은 문장 군집에 포함된 본문 출현: **'+report.repeatedParagraphInstances+'개** (인수/인계 본문 별도 집계)',
  '- 영향을 받은 고유 지역·서비스 안내: **'+report.affectedDistinctGuideCount+'건** / '+records.length+'건',
+ '- 전체 대상 '+report.nationalRepeatReviewQueueCount+'건을 상위 100건으로 자르지 않고 시·도×서비스 균형 CSV로 제공합니다.',
  '- 실제 네이버 색인·노출·클릭·CTR 확인 자료가 아니며 **자동 게시/수집 요청/URL 증설을 하지 않습니다**.',
  '',
  '| 시·도 | 전체 안내 | 지명 치환형 반복 문구 영향 |',
