@@ -16,6 +16,7 @@ on:
       - 'data/legal-regions/**'
       - 'data/verified-trips.json'
       - '.github/workflows/cloudtype-health.yml'
+      - 'tests/cloudtype-health-separation.test.cjs'
   workflow_dispatch:
   schedule:
     - cron: '17 0,6,12,18 * * *'
@@ -33,6 +34,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Ensure website and upstream API failures are reported separately
+        run: node --test tests/cloudtype-health-separation.test.cjs
       - name: Install production dependencies
         run: npm install --omit=dev --no-audit --no-fund
       - name: Verify server syntax and local startup
@@ -181,6 +184,11 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  road-distance-provider:
+    name: External driving-distance provider (separate from website health)
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
       - name: Verify real driving-distance API response
         shell: bash
         run: |
