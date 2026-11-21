@@ -1,11 +1,13 @@
-name: Evidence-first review of 2,571 regional content candidates
+name: Evidence-first national review of all 2,900 regional guides
 
 on:
   pull_request:
     paths:
       - 'scripts/ai-index-quality-triage.mjs'
+      - 'scripts/audit-national-template-reuse-20261121.mjs'
       - 'tests/evidence-first-2571-triage.test.cjs'
       - 'tests/nationwide-evidence-coverage-20261121.test.cjs'
+      - 'tests/nationwide-locality-template-audit-20261121.test.cjs'
       - 'tests/national-32-existing-local-guide-details-20261121.test.cjs'
       - 'tests/nationwide-batch2-32-unique-local-guides-20261121.test.cjs'
       - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
@@ -20,8 +22,10 @@ on:
     branches: [main]
     paths:
       - 'scripts/ai-index-quality-triage.mjs'
+      - 'scripts/audit-national-template-reuse-20261121.mjs'
       - 'tests/evidence-first-2571-triage.test.cjs'
       - 'tests/nationwide-evidence-coverage-20261121.test.cjs'
+      - 'tests/nationwide-locality-template-audit-20261121.test.cjs'
       - 'tests/national-32-existing-local-guide-details-20261121.test.cjs'
       - 'tests/nationwide-batch2-32-unique-local-guides-20261121.test.cjs'
       - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
@@ -50,7 +54,12 @@ jobs:
         run: |
           node --check scripts/ai-index-quality-triage.mjs
           node scripts/ai-index-quality-triage.mjs
-      - name: Prove 2571 baseline, grounded source tiers and absence of fabricated indexing
+      - name: Audit locality-name-substitution templates across 2900 original guides
+        run: |
+          node --check scripts/audit-national-template-reuse-20261121.mjs
+          node scripts/audit-national-template-reuse-20261121.mjs
+          node --test tests/nationwide-locality-template-audit-20261121.test.cjs
+      - name: Check grounded source tiers and absence of fabricated indexing
         run: node --test tests/evidence-first-2571-triage.test.cjs
       - name: Verify all 33 original source batches reach the live nationwide SSR
         run: node --test tests/nationwide-runtime-source-parity-20261121.test.cjs
@@ -74,5 +83,7 @@ jobs:
             ai-index-nationwide-coverage.json
             ai-index-nationwide-coverage.md
             ai-index-nationwide-queue.csv
+            ai-index-template-reuse.json
+            ai-index-template-reuse.md
           if-no-files-found: warn
           retention-days: 30
