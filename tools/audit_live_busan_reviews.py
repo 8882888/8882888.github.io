@@ -42,15 +42,15 @@ def is_review_first(text):
     return re.match(r"^부산탁송\s*(?:실제\s*)?(?:운행)?후기",html.unescape(str(text)).strip()) is not None
 
 def has_review_near_top(sections):
-    # Direct answer and booking can precede the evidence section; unrelated
+    # Direct answer, source-linked ride summary and booking may precede the evidence section; unrelated
     # SEO blocks, or a review pushed down the page, are still rejected.
     review_section="busan-taksong-real-review-first-20261104"
-    permitted_prefix=("regional-direct-answer","regional-booking-first")
+    permitted_prefix=("regional-direct-answer","regional-taksong-review-first-20261113","regional-booking-first")
     try:
         position=sections.index(review_section)
     except ValueError:
         return False
-    return position<=2 and all(section in permitted_prefix for section in sections[:position])
+    return position<=3 and all(section in permitted_prefix for section in sections[:position])
 
 def audit(route):
     url=BASE+route+"?audit_busan_review_first=20261104"
