@@ -1,0 +1,33 @@
+name: Sitemap indexability audit fixture regression
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-live-sitemap-indexability-20261121.mjs'
+      - 'tests/live-sitemap-indexability-audit.test.mjs'
+      - '.github/workflows/sitemap-indexability-audit-fixture.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-live-sitemap-indexability-20261121.mjs'
+      - 'tests/live-sitemap-indexability-audit.test.mjs'
+      - '.github/workflows/sitemap-indexability-audit-fixture.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fixture-tests:
+    name: Validate technical indexability classifications
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify crawler syntax
+        run: node --check scripts/audit-live-sitemap-indexability-20261121.mjs
+      - name: Run real local HTTP fixture tests
+        run: node --test tests/live-sitemap-indexability-audit.test.mjs
