@@ -182,7 +182,7 @@ const counts={discovered:inventory.length,checked:results.length,scope:transport
  descriptionMissing:results.filter(r=>r.problems.includes('seo_missing_meta_description')).length,
  descriptionDuplicates:duplicateDescriptionUrls,
   descriptionDuplicateGroups:duplicateDescriptionGroups.length,
-  descriptionDuplicateExtraUrls,
+  descriptionDuplicateExtraUrls:duplicateDescriptionExtraUrls,
   descriptionMultipleTags:results.filter(r=>r.descriptionTags>1).length,
  jsonldMissing:results.filter(r=>r.metadataWarnings.includes('jsonld_missing')).length,
  jsonldPageTypeMissing:results.filter(r=>r.metadataWarnings.includes('jsonld_page_type_missing')).length,
