@@ -46,7 +46,7 @@ test('nationwide transport metadata and distinct service guide explain users act
  for(const url of ['/taksong/','/fare/?service=taksong','/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/'])assert(section.includes('href="'+url+'"'), 'service guide link '+url);
  for(const phrase of ['주차 위치','인계 가능 시각','요금','견인','따로'])assert(section.includes(phrase));
  const source=read('server.js');
- assert(source.includes("answerFirst+=taksongIntentChoice")&&source.includes("answerFirst+nationwidePlaceIntentLinks(kind)"),'national intent above directory without breaking evidence and regional discovery');
+ assert(source.includes("answerFirst=nationalRideReviewLead(isT?'taksong':'daeri')+answerFirst+taksongIntentChoice;")&&source.includes("answerFirst+nationwidePlaceIntentLinks(kind)+nationwideEvidenceSection(kind)"),'verified ride evidence and national service intent must appear ahead of regional discovery');
  assert(source.includes('id="national-taksong-intent-choice-20261117"'),'national intent visible');
  assert(source.includes('taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice'),'preserve source-first navigation');
 });
