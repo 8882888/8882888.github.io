@@ -31,9 +31,9 @@ test('four priority local guides state real booking checkpoints, not fabricated 
     row.keyword+' needs meaningful and distinct customer guidance');
    const joined=[row.topic,row.pickup,row.handover].join(' ');
    for(const term of rule.terms)assert(joined.includes(term),row.keyword+' missing service-specific checkpoint: '+term);
-   assert(!/\\d{1,3}(?:,\\d{3})*원|\\d{1,4}만원|배차\\s*완료|운행\\s*완료|100%\\s*보장/u.test(joined),
+   assert(!/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*보장/u.test(joined),
     row.keyword+' must not invent archived prices, completed trips or guaranteed dispatch');
-   assert(!/혁신도시\\s*안에서\\s*운행\\s*완료/u.test(joined),
+   assert(!/혁신도시\s*안에서\s*운행\s*완료/u.test(joined),
     'citywide or locality guidance is not proof of a specific-district trip');
   }
  }
