@@ -59,6 +59,15 @@ jobs:
           node --test tests/editorial-quality-verified-28-20261117.test.cjs
           node scripts/ai-index-quality-triage.mjs
           node -e "const r=require('./ai-index-quality-review.json'); console.log('Editorial source quality: '+r.totals.fullyPassing+'/'+r.totals.reviewed+' passing; '+r.totals.needsReview+' for review. No Naver index measurement.');"
+      - name: Prove live server loads all 33 nationwide source files without omissions
+        run: |
+          node --check tests/nationwide-runtime-source-parity-20261121.test.cjs
+          node --test tests/nationwide-runtime-source-parity-20261121.test.cjs
+      - name: Audit ALL 2900 local guides with 17-province and two-service balanced review coverage
+        run: |
+          node --check scripts/ai-index-quality-triage.mjs
+          node --check tests/nationwide-evidence-coverage-20261121.test.cjs
+          node --test tests/nationwide-evidence-coverage-20261121.test.cjs
       - name: Require 8 reviewed guides and factual Gangneung click-through snippets
         run: |
           node --check tests/editorial-quality-eight-ctr-20261117.test.cjs
@@ -111,6 +120,17 @@ jobs:
           node --check lib/regional-html-cache.cjs
           node --check tests/keyword-entrypoint-cache.test.cjs
           node --test tests/keyword-entrypoint-cache.test.cjs
+      - name: Validate safe 17-province Pages mirror before nationwide production rollout
+        run: |
+          python3 -m py_compile tools/build_compact_pages_backup.py tests/test_compact_pages_backup.py
+          python3 tests/test_compact_pages_backup.py
+          python3 - <<'PY'
+          from pathlib import Path
+          yml=Path('.github/workflows/pages.yml').read_text(encoding='utf-8')
+          assert 'path: _pages_mirror' in yml, 'Pages must only upload bounded static artifact'
+          assert 'path: .' not in yml, 'Never expose entire ride/source repository via Pages'
+          print('PASS bounded Pages artifact contract')
+          PY
       - name: Check JavaScript syntax
         run: |
           node --check server.js
