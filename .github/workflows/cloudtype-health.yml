@@ -34,6 +34,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Ensure website and upstream API failures are reported separately
+        run: node --test tests/cloudtype-health-separation.test.cjs
       - name: Install production dependencies
         run: npm install --omit=dev --no-audit --no-fund
       - name: Verify server syntax and local startup
