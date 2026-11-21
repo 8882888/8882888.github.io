@@ -30,14 +30,14 @@ test('nationwide transport metadata and distinct service guide explain users act
  const national=seo.find(x=>x.path==='/taksong/');
  const detail=read('service/taksong/index.html');
  assert(national);
- assert(national.title.includes('전국자동차탁송')&&national.title.includes('인수인계')&&national.title.includes('요금 확인'));
- assert(national.title.includes('실제 운행기록'), 'keep verified archive intent');
+ assert(/전국\s*자동차탁송/.test(national.title)&&national.title.includes('요금'),'national title preserves nationwide fare intent');
+ assert(/실제 운행(?:후기|기록)/.test(national.title), 'keep verified archive intent');
  assert([...national.description].length<=80,'short Naver descriptive metadata');
- assert(national.description.includes('산행')&&national.description.includes('종주')&&national.description.includes('운행기록'));
+ assert(national.description.includes('출발지')&&national.description.includes('도착지')&&/실제 운행(?:후기|기록)/.test(national.description),'description ties real rides to route and current quote');
  const staticTitle=parsedTag(detail,/<title>([^<]+)<\/title>/);
  const staticDesc=parsedTag(detail,/<meta name="description" content="([^"]+)"/);
  const staticOg=parsedTag(detail,/<meta property="og:description" content="([^"]+)"/);
- assert(staticTitle.includes('자동차탁송 인수인계')&&staticTitle.includes('요금 확인'));
+ assert(/(?:자동차|차량)탁송/.test(staticTitle)&&staticTitle.includes('인수인계')&&/정비센터|입고/.test(staticTitle),'service title should describe handover and repair-center intent');
  assert(staticDesc.length<=80 && staticDesc!==national.description, 'distinct two search snippets');
  assert.equal(staticOg,staticDesc,'static meta and OG parity');
  const section=detail.match(/<section id="service-taksong-handover-intent-20261117"[^>]*>([\s\S]*?)<\/section>/)?.[1];
@@ -68,7 +68,7 @@ test('both canonical pages render short distinct meta titles and practical links
    const html=await response.text(),head=html.split('</head>')[0];
    const title=parsedTag(head,/<title>([^<]+)<\/title>/);
    const desc=parsedTag(head,/<meta name="description" content="([^"]+)"/);
-   assert(title?.includes('자동차탁송'),route+' title');
+   assert(title&&/(?:자동차|차량)탁송/.test(title),route+' title');
    assert(desc&&[...desc].length<=80,route+' short metadata');
    assert(!titles.has(title)&&!descs.has(desc),'two distinct user intents');
    titles.add(title);descs.add(desc);
