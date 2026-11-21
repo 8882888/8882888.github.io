@@ -60,7 +60,7 @@ jobs:
             'This audit does not represent actual Naver indexing or ranking.',
             '',
             '- Generated: ' + generatedAt,
-            '- Release verification: ${{ '${{ steps.release.outcome }}' }}',
+            '- Release verification: ${{ steps.release.outcome }}',
             '- Unique sitemap URLs: ' + summary.uniqueUrls,
             '- Technically eligible: ' + summary.technicallyEligible,
             '- Technical blockers (review): ' + summary.needsReview,
