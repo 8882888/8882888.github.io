@@ -134,6 +134,114 @@ const output={
   note:'A page can be technically indexable without being indexed. Actual ride completion and dispatch availability require separate verified records.',
   candidates
 };
+
+// Nationwide cohort evidence audit: inspect ALL 2,900 records across ALL 17
+// legal provinces and both services. The existing top-100 preview is retained
+// for familiar dashboards, but must not hide the national backlog.
+const legalProvinceFiles=fs.readdirSync(path.join(dir,'legal-regions'))
+ .filter(filename=>/^\d{2}\.json$/.test(filename)).sort();
+const legalProvinces=legalProvinceFiles.map(filename=>{
+ const registry=JSON.parse(fs.readFileSync(path.join(dir,'legal-regions',filename),'utf8'));
+ return String(registry.full_names?.[0]||registry.province||'').trim();
+});
+if(legalProvinces.length!==17||new Set(legalProvinces).size!==17||
+ legalProvinces.some(x=>!x))throw Error('Expected 17 distinct official province references');
+const regionProvince=region=>
+ legalProvinces.find(province=>region===province||region.startsWith(province+' '))||null;
+const nationalEntries=judged.map(row=>({
+ id:row.id,province:regionProvince(row.region),region:row.region,keyword:row.keyword,
+ kind:row.kind,source:row.source,position:row.position,score:row.score,
+ reviewPriority:row.reviewPriority,issues:row.issues,
+ evidenceTier:row.evidenceTier,originalSourceScopes:row.originalSources.map(x=>x.scope),
+ nextAction:row.nextAction,naverIndexed:null
+}));
+const missingProvince=nationalEntries.filter(row=>!row.province);
+const provinceBreakdown=legalProvinces.map(province=>{
+ const items=nationalEntries.filter(row=>row.province===province);
+ const services=Object.fromEntries(['daeri','taksong'].map(kind=>{
+  const byKind=items.filter(x=>x.kind===kind);
+  return [kind,{total:byKind.length,passing:byKind.filter(x=>!x.issues.length).length,
+   review:byKind.filter(x=>x.issues.length).length}];
+ }));
+ const issueCounts={};
+ const evidenceTiers={};
+ for(const item of items){
+  evidenceTiers[item.evidenceTier]=(evidenceTiers[item.evidenceTier]||0)+1;
+  for(const issue of item.issues)issueCounts[issue]=(issueCounts[issue]||0)+1;
+ }
+ return {province,total:items.length,passing:items.filter(x=>!x.issues.length).length,
+  review:items.filter(x=>x.issues.length).length,services,evidenceTiers,issueCounts,
+  warning:items.length===0?'No source-backed curated guide inventory for this province':null};
+});
+// A national queue must not be dominated by one early city or province.
+// Round-robin across all 17 official provinces and both services, while
+// retaining evidence-first severity order *within* each province/service.
+const nationalGroups=legalProvinces.flatMap(province=>['daeri','taksong']
+ .map(kind=>({
+  province,kind,
+  pending:nationalEntries.filter(x=>x.province===province&&x.kind===kind&&x.issues.length)
+   .sort((a,b)=>(
+    ({'published-reference-linked':0,'reviewed-editorial-guidance':1,'additional-local-evidence-needed':2}[a.evidenceTier]-
+     {'published-reference-linked':0,'reviewed-editorial-guidance':1,'additional-local-evidence-needed':2}[b.evidenceTier])||
+    b.reviewPriority-a.reviewPriority||String(a.keyword).localeCompare(String(b.keyword),'ko'))
+ })));
+const nationwideQueue=[];
+while(nationalGroups.some(group=>group.pending.length)){
+ for(const group of nationalGroups){
+  const next=group.pending.shift();
+  if(next)nationwideQueue.push(next);
+ }
+}
+const nationalAudit={
+ generatedAt:output.generatedAt,
+ scope:'all 17 legal provinces, all source-defined region/service guides and both services; editorial only',
+ sourceFiles:files.length,officialProvinceCount:legalProvinces.length,
+ totals:output.totals,evidenceCounts,issueCounts:groups,
+ provinceBreakdown,
+ coverageWarnings:provinceBreakdown.filter(x=>x.warning).map(x=>x.province),
+ missingProvinceCount:missingProvince.length,
+ missingProvinceRecords:missingProvince.slice(0,20),
+ nationalReviewQueueCount:nationwideQueue.length,
+ balancedQueue:nationwideQueue,
+ records:nationalEntries,
+ naverRealIndexed:null,naverRealImpressions:null,naverRealClicks:null,naverRealCtr:null,
+ warning:'An entire-country source audit is NOT proof of completion in every place or Naver indexing. Do not automatically rewrite or index thin village pages, fabricate fares, dispatches or backlinks.'
+};
+if(nationalEntries.length!==output.totals.reviewed||
+ nationwideQueue.length!==output.totals.needsReview||
+ provinceBreakdown.reduce((sum,x)=>sum+x.total,0)+missingProvince.length!==output.totals.reviewed)
+ throw Error('Nationwide source review does not reconcile with the 2,900-record original audit');
+fs.writeFileSync('ai-index-nationwide-coverage.json',JSON.stringify(nationalAudit,null,2)+'\n');
+const nationalCsvHeaders=['province','kind','region','keyword','score','reviewPriority','issues','evidenceTier','source','position','nextAction'];
+fs.writeFileSync('ai-index-nationwide-queue.csv',
+ nationalCsvHeaders.join(',')+'\n'+nationwideQueue.map(item=>
+  nationalCsvHeaders.map(key=>csvSafeNational(key==='issues'?item.issues.join('; '):item[key])).join(',')
+ ).join('\n')+'\n');
+function csvSafeNational(value){return '"'+String(value??'').replace(/"/g,'""').replace(/[\r\n]/g,' ')+'"'}
+const nationalMd=[
+ '# 17개 시·도 전국 SEO 고유 콘텐츠 전수 점검',
+ '',
+ '- 총 '+output.totals.reviewed+'건 / 품질 기준 통과 '+output.totals.fullyPassing+
+  '건 / 전수 재검토 '+output.totals.needsReview+'건',
+ '- 원본 파일 '+files.length+'개 / 공식 시·도 '+legalProvinces.length+'개 / 출처 없음·지역 표시 불명확 건 별도 추적',
+ '- 전수 검토 대기열은 상위 100건으로 자르지 않습니다. 매 차례 17개 시·도 × 대리·탁송 두 서비스에서 순환 선택합니다.',
+ '- 실제 네이버 공식 색인·노출·클릭·CTR는 모두 미확인입니다. 보고서 수치를 색인 증가로 표시하지 않습니다.',
+ '',
+ '| 시·도 | 대리운전 | 자동차탁송 | 품질 통과 | 재검토 |',
+ '|---|---:|---:|---:|---:|',
+ ...provinceBreakdown.map(x=>'| '+x.province+' | '+x.services.daeri.total+' | '+
+ x.services.taksong.total+' | '+x.passing+' | '+x.review+' |'),
+ '',
+ '## 근거 중심 전국 개선 순서',
+ '',
+ '1. 공식 행정구역과 서비스 유형을 확인하고 실제 공개 운행기록을 지역에 오귀속하지 않습니다.',
+ '2. 각 시·도의 재검토 행을 번갈아 처리하며 중복 본문, 인수·인계 정보, 상담 동선부터 개선합니다.',
+ '3. 출처가 충분하지 않은 페이지의 색인을 대량으로 열거나 임의 거리·요금·완료 후기를 만들지 않습니다.',
+ '4. 운영 HTTP·8개 사이트맵 검사 결과와 네이버 소유자 공식 통계를 분리해 추적합니다.',
+ ''
+].join('\n');
+fs.writeFileSync('ai-index-nationwide-coverage.md',nationalMd);
+
 fs.writeFileSync('ai-index-quality-review.json',JSON.stringify(output,null,2)+'\n');
 const evidenceReport={
  generatedAt:output.generatedAt,scope:output.scope,naverIndexed:null,googleIndexed:null,
