@@ -58,6 +58,14 @@ test('Sejong, Gijang, four innovation cities have distinct real sources without 
     assert(section[1].includes('href="'+p.url+'"'),route+' missing original '+x.post_id);
     assert(section[1].includes(x.note),'scope disclosure must remain explicit');
    }
+   if(route==='/taksong/busan/gijang-gun/'||route==='/taksong/gangwon/wonju-si/'){
+    const additional=html.match(/<section id="local-naver-originals"[^>]*>([\s\S]*?)<\/section>/);
+    assert(additional,route+' extra regional blog guide list missing');
+    for(const x of expected){
+     const p=byId.get(x.post_id);
+     assert(!additional[1].includes('href="'+p.url+'"'),route+' duplicates reviewed source '+x.post_id+' in a general guide list');
+    }
+   }
    if(route==='/taksong/busan/gijang-gun/'){
     assert(section[1].includes('href="/taksong/busan/"'),'Gijang originals should link to Busan instead of an unrelated innovation hub');
     assert(!section[1].includes('href="/region/innovation-cities/"'),'Gijang originals should not suggest an innovation-city location');

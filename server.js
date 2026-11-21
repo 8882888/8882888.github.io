@@ -1099,7 +1099,13 @@ function seoulEditorialLinks(r,kind){
 function priorityBlogEvidence(r,kind){
  const entry=priorityBlogLinksByKey.get(kind+'|'+r.full_name);
  if(!entry)return '';
- const originals=entry.ids.map(id=>publishedBlogById.get(String(id))).filter(Boolean);
+ // The reviewed source section above already cites its exact originals with
+ // route/guide scope notes. Avoid repeating those same URLs in the auxiliary
+ // blog guide list (not a second independently verified completed journey).
+ const reviewedIds=new Set((priorityOriginalsByKey.get(kind+'|'+r.full_name)||[])
+  .map(x=>String(x.post.id)));
+ const originals=entry.ids.filter(id=>!reviewedIds.has(String(id)))
+  .map(id=>publishedBlogById.get(String(id))).filter(Boolean);
  if(!originals.length)return '';
  const label=kind==='daeri'?'대리운전':'자동차탁송';
  const items=originals.map(post=>'<li><a href="'+esc(post.url)+'" target="_blank" rel="noopener noreferrer">'+esc(post.title)+'</a> <small>기존 네이버 블로그 원문 · '+esc(post.category)+'</small></li>').join('');
