@@ -2,7 +2,7 @@ name: Daily read-only complete production HTTP sitemap audit
 on:
   workflow_dispatch:
   schedule:
-    # Daily 11:30 KST; do not fan out a 5,919-URL crawl on every deployment.
+    # Daily 11:30 KST; audit the CURRENT sitemap set without per-deploy fan-out.
     - cron: '30 2 * * *'
 
 permissions:
@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   live-all-sitemap-html:
-    name: Verify release then audit ALL 5919 production HTML URLs
+    name: Verify release then audit every CURRENT production sitemap HTML URL
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
@@ -31,6 +31,8 @@ jobs:
         run: node tools/check_cloudtype_freshness.js
       - name: Check complete audit syntax
         run: node --check scripts/audit-all-meta-jsonld.mjs
+      - name: Validate full report completion and duplicate-description summary on local HTTP fixture
+        run: node --test tests/full-sitemap-report-summary-fixture-20261121.test.mjs
       - name: Rate-limited real HTTP census of every production sitemap URL
         env:
           AUDIT_MAX_URLS: '0'
