@@ -88,7 +88,7 @@ async function audit(url, appearances) {
     if (!html) reasons.push('not_html');
     if (/\bnoindex\b/i.test(metaRobots + ',' + xRobots)) reasons.push('noindex');
     if (/\bnofollow\b/i.test(metaRobots + ',' + xRobots)) warnings.push('nofollow');
-    if (!canonical) reasons.push('missing_canonical');
+    if (!canonical) warnings.push('missing_canonical');
     else if (canonical !== url) reasons.push('canonical_mismatch');
     if (!title) warnings.push('missing_title');
     if (!h1) warnings.push('missing_h1');

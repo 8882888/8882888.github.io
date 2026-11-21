@@ -18,11 +18,12 @@ test('sitemap crawler distinguishes blockers, quality warnings and shared sitema
       '</head><body><h1>실제 탁송 예약</h1></body></html>';
     res.setHeader('content-type', req.url.endsWith('.xml') ? 'application/xml' : 'text/html; charset=utf-8');
     if (req.url.endsWith('.xml')) {
-      res.end(sitemap(req.url === '/sitemap-priority.xml' ? ['/healthy/', '/blocked/', '/warning/'] :
+      res.end(sitemap(req.url === '/sitemap-priority.xml' ? ['/healthy/', '/blocked/', '/warning/', '/no-canonical/'] :
         req.url === '/sitemap.xml' ? ['/healthy/'] : []));
     } else if (req.url === '/healthy/') res.end(page('/healthy/', '', '완료 운행기록 및 상담 안내'));
     else if (req.url === '/blocked/') res.end(page('/blocked/', 'noindex', '검색 제외 테스트'));
     else if (req.url === '/warning/') res.end(page('/warning/', '', ''));
+    else if (req.url === '/no-canonical/') res.end('<!doctype html><html><head><title>지역 대리운전 이용 안내</title><meta name="description" content="기록 기반 안내"></head><body><h1>대리운전 안내</h1></body></html>');
     else { res.statusCode = 404; res.end('missing'); }
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -41,16 +42,19 @@ test('sitemap crawler distinguishes blockers, quality warnings and shared sitema
     assert.equal(exit, 0, 'all local sitemap roots responded');
     const report = JSON.parse(await readFile(path.join(reportDir, 'live-sitemap-indexability.json'), 'utf8'));
     assert.equal(report.summary.completeness, 'complete');
-    assert.equal(report.summary.uniqueUrls, 3);
+    assert.equal(report.summary.uniqueUrls, 4);
     const healthy = report.pages.find(p => p.url.endsWith('/healthy/'));
     const blocked = report.pages.find(p => p.url.endsWith('/blocked/'));
     const warning = report.pages.find(p => p.url.endsWith('/warning/'));
+    const missingCanonical = report.pages.find(p => p.url.endsWith('/no-canonical/'));
     assert.equal(healthy.technicalCandidate, true);
     assert(healthy.warnings.includes('multiple_sitemap_entries'));
     assert.equal(blocked.technicalCandidate, false);
     assert(blocked.reasons.includes('noindex'));
     assert.equal(warning.technicalCandidate, true);
     assert(warning.warnings.includes('missing_description'));
+    assert.equal(missingCanonical.technicalCandidate, true, 'missing canonical does not independently prevent indexing');
+    assert(missingCanonical.warnings.includes('missing_canonical'));
     assert.equal(report.summary.needsReview, 1);
     const csv = await readFile(path.join(reportDir, 'live-sitemap-indexability.csv'), 'utf8');
     assert(csv.split('\n', 1)[0].split(',').includes('warnings'), 'CSV header exports warning column');
