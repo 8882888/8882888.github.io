@@ -1862,15 +1862,20 @@ function vehicleTopicsHub(){
 }
 const publishedCaseEntries=loadPublishedCases(ROOT);
 const publishedCaseByPath=new Map(publishedCaseEntries.map(ride=>[ride.path,ride]));
-function nationalTaksongReviewLead(){
- const rides=publishedCaseEntries.filter(ride=>ride.service==='taksong').slice(0,4);
+function nationalRideReviewLead(kind){
+ const rides=publishedCaseEntries.filter(ride=>ride.service===kind).slice(0,4);
  if(!rides.length)return '';
- return '<section id="national-taksong-completed-cases"><h2>전국 자동차탁송 실제 운행후기 · 구간과 당시 요금</h2>'+
-  '<p>완료 운행의 날짜·출발지·도착지와 당시 요금을 확인하세요. 현재 견적은 차량 인수·인계 주소, 차종, 희망 시간에 따라 조회할 수 있습니다.</p>'+
+ const label=kind==='taksong'?'자동차탁송':'대리운전';
+ const list={'@context':'https://schema.org','@type':'ItemList',name:'전국 '+label+' 실제 운행후기',
+  itemListElement:rides.map((ride,i)=>({'@type':'ListItem',position:i+1,
+   name:ride.departure+' → '+ride.destination,url:'https://jeongukdaeri.kr'+ride.path}))};
+ return '<section id="national-'+kind+'-completed-cases"><h2>'+esc(list.name)+' · 구간과 당시 요금</h2>'+
+  '<p>공개된 완료 기록에서 출발지·도착지와 당시 요금을 확인하고, 같은 구간의 현재 예상요금을 조회할 수 있습니다.</p>'+
   rides.map(ride=>'<article><h3><a href="'+esc(ride.path)+'">'+esc(ride.departure+' → '+ride.destination)+'</a></h3>'+
-   '<p><time datetime="'+esc(ride.rideDate)+'">'+esc(ride.rideDate)+'</time> 완료 · 당시 요금 <strong>'+esc(ride.fare)+'</strong> · '+
-   '<a href="'+esc(rideFareUrl(ride))+'">이 구간 현재 예상요금</a></p></article>').join('')+
-  '<p><a href="/reviews/history/?kind=taksong">탁송 완료기록 더 보기</a> · <a href="tel:18114294">차량 인수·인계 상담 1811-4294</a></p></section>';
+   '<p><time datetime="'+esc(ride.rideDate)+'">'+esc(ride.rideDate)+'</time> 완료 · 당시 요금 <strong>'+esc(ride.fare)+'</strong>'+
+   (ride.tollIncluded?' (통행료 포함)':'')+' · <a href="'+esc(rideFareUrl(ride))+'">이 구간 현재 예상요금</a></p></article>').join('')+
+  '<p><a href="/reviews/history/?kind='+kind+'">'+label+' 완료기록 더 보기</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p>'+
+  '<script type="application/ld+json">'+JSON.stringify(list).replace(/</g,'\\u003c')+'</script></section>';
 }
 const publishedCaseByRideKey=new Map(publishedCaseEntries.map(x=>[[x.rideDate,x.service,x.departure,x.destination,x.fare].map(v=>String(v??'')).join('|'),x]));
 const sitemapCache=new Map();
@@ -2265,7 +2270,7 @@ function serviceHub(kind){
   ?'<section id="national-taksong-direct-answer" aria-labelledby="national-taksong-question"><h2 id="national-taksong-question">전국자동차탁송은 어떻게 예약하고 요금을 확인하나요?</h2><p>스마트24 전국자동차탁송은 출발지에서 차량을 인수해 지정된 도착지로 이동하는 서비스를 상담합니다. 출발·도착 주소, 차종, 운행 가능 상태, 인수·인계 희망 시각을 알려주면 예상요금을 조회하고 기사 배정 가능 여부와 최종 금액을 확인할 수 있습니다. 24시 상담 안내는 전국 모든 지역의 즉시 배차 보장을 의미하지 않습니다.</p><p><a href="/fare/?service=taksong">전국탁송 예상요금 조회</a> · <a href="/reviews/history/?kind=taksong">실제 완료 탁송기록</a> · <a href="/service/long-distance-taksong/">장거리탁송 안내</a> · <a href="tel:18114294">예약상담 1811-4294</a></p></section>'
   :'<section id="national-daeri-direct-answer" aria-labelledby="national-daeri-question"><h2 id="national-daeri-question">전국대리운전은 어떻게 예약하고 요금을 확인하나요?</h2><p>스마트24 전국대리운전은 고객 차량을 기사가 운전하는 일반·심야·장거리·골프장 이용을 상담합니다. 출발지와 목적지, 희망 출발 시각, 경유지와 대기 여부에 따라 예상요금을 조회할 수 있으며, 최종 요금과 기사 배정 가능 여부는 상담으로 확인합니다. 지역과 시간대에 따라 즉시 배차가 어려울 수 있습니다.</p><p><a href="/fare/?service=daeri">전국대리운전 예상요금 조회</a> · <a href="/reviews/history/?kind=daeri">실제 완료 운행기록</a> · <a href="/service/long-distance-daeri/">장거리대리운전 안내</a> · <a href="tel:18114294">예약상담 1811-4294</a></p></section>';
  const taksongIntentChoice=isT?'<section id="national-taksong-intent-choice-20261117" aria-label="자동차탁송 이용 목적별 안내"><h2>자동차탁송 인수인계·요금 확인: 일반 차량과 종주 차량을 구분하세요</h2><p>일반 자동차탁송은 주행 가능한 차량의 출발 주차 위치, 키 전달자와 도착지 수령인을 확인합니다. 출발·도착 주소와 차종·시간을 입력해 예상요금을 조회한 뒤 보험 적용 범위와 최종 배차 조건을 상담해 주세요. <a href="/service/taksong/">차량 인수인계 절차 자세히</a> · <a href="/fare/?service=taksong">출발·도착 예상요금 확인</a></p><p>산행·자전거 종주는 출발지에 남겨둔 자동차를 다른 하산지·인증센터로 옮기는 목적이므로 일반 차량 인계와 구분합니다. <a href="/설악산탁송/">설악산 오색·한계령·소공원 차량 회수</a> · <a href="/지리산탁송/">지리산 종주탁송</a> · <a href="/route-taksong/">자전거 종주 탁송 코스</a> · <a href="/route-taksong/centers/">인증센터 안내</a></p><p>이 안내는 각 지역의 배차를 보장하지 않으며, 기존 <a href="/reviews/history/?kind=taksong">실제 운행기록</a>의 요금과 현재 견적은 다릅니다.</p></section>':'';
- answerFirst=(isT?nationalTaksongReviewLead():'')+answerFirst+taksongIntentChoice;
+ answerFirst=nationalRideReviewLead(isT?'taksong':'daeri')+answerFirst+taksongIntentChoice;
  const body=answerFirst+nationwidePlaceIntentLinks(kind)+nationwideEvidenceSection(kind)+taksongTrustFirst+nationwideServiceIntentHub(kind)+operationalNotice+taksongOutdoorRoutes+taksongCenterHandover+(isT?serviceCenterTaksong.markup(true):'')+(isT?'<section id="specialized-business-taksong-hub"><h2>렌터카·중고차 딜러·수출차·경매장 기업탁송 상담</h2><p>고정거래처는 반복 이동 구간, 월 예상 대수, 출고·반납 마감시각과 인수·인계 담당자를 기준으로 운행 조건을 협의합니다. 확정 단가·전담 기사·법인 제휴 여부는 상담으로 확인합니다.</p><p><a href="/business/rental-car/">렌트카·보험사 사고대차탁송</a> · <a href="/business/used-car/">중고차 딜러·매매단지탁송</a> · <a href="/business/export-port/">송도수출단지·항만탁송</a> · <a href="/business/auction/">경매장 차량탁송</a> · <a href="/blog/archive/vehicle-taksong/">기존 블로그 원문</a> · <a href="tel:18114294">고정거래처 상담 1811-4294</a></p></section>':'')+(isT?'<section id="seoul-taksong-seven-articles"><h2>서울 25개 구 · 7권역 자동차탁송 블로그형 안내</h2><p>3~4개 구씩 묶어 차량 인수 환경과 실제 발행된 네이버 원문을 연결했습니다.</p><p><a href="/blog/seoul-taksong/">서울 7개 권역 전체보기</a> · <a href="/taksong/seoul/">서울탁송 요금·예약</a></p></section>':'')+curatedArchiveHub+staticOriginalSourceSection(isT?'service/taksong/index.html':'service/daeri/index.html',isT?'real-original-taksong-links-20261102':'real-original-daeri-links-20261102')+(isT?'':daeriBlogEditorial.national(majorRegions,servicePath,esc))+nationalDriverGuide+regionalStories+priorityRegionLinks(kind)+naverFocus50Hub(kind)+'<section><h2>출발지·도착지별 '+label+' 찾기</h2><p><a href="/route-search/?service='+kind+'">전국 시·군·구·읍·면·동·리 구간 검색</a> · <a href="/route-search/?from=%EB%8C%80%EA%B5%AC&amp;service='+kind+'">대구에서 전국 지역 '+label+'</a></p></section>'+serviceJourneyLinks(kind)+customerJourney+nightTaksongPriority+taksongSearchSignals+casinoPriority+'<section><h2>전국 '+label+' 예약·요금·지역별 안내</h2><p>'+esc(intro)+'</p><p>전국 지역별 기사 상주나 즉시 배차를 보장하지 않으며, 실제 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'">'+label+' 예상요금 계산하기</a> · <a href="tel:18114294">대표 상담 '+PHONE+'</a></p></section>'+
  '<section id="reservation-guide"><h2>'+label+' 예약할 때 필요한 정보</h2>'+(isT?'<ol><li>차량이 있는 출발지의 정확한 주소와 주차 위치</li><li>도착지 주소와 희망 인수·인계 날짜 및 시각</li><li>차종·주행 가능 상태와 차량 키 전달 방법</li><li>현장 담당자, 경유지, 통행료 및 기타 요청사항</li></ol>':'<ol><li>기사와 만날 출발지 주소 및 주차 위치</li><li>목적지 주소, 경유지와 희망 출발 시각</li><li>차종·동승 인원과 차량 특이사항</li><li>야간·장거리 이동 및 기타 요청사항</li></ol>')+'<p>거리만으로 최종 요금을 확정하지 않으며, 기사 접근·복귀 여건을 확인합니다.</p></section>'+
  bookingGuide(kind)+faqHtml+longDistanceDaeriExamples+earlierDaeriPosts+featuredLinks+
@@ -2401,7 +2406,7 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   // Human-reviewed descriptions are concise and unique for 16 priority canonicals.
   // Naver's 80-character guidance is advisory, not evidence of actual indexing.
   if(res._smartPath==='/service/taksong/')
-   html=html.replace(/<\/h1>/i,heading=>heading+nationalTaksongReviewLead());
+   html=html.replace(/<\/h1>/i,heading=>heading+nationalRideReviewLead('taksong'));
   const publishedRide=publishedCaseByPath.get(res._smartPath);
   if(publishedRide){
    const quoteUrl=esc(rideFareUrl(publishedRide));
