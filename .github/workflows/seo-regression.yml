@@ -130,6 +130,8 @@ jobs:
           node --check tests/homepage-copy.test.js
       - name: Verify nationwide taksong handover trust and metadata spelling
         run: node tests/taksong-trust-first.test.js
+      - name: Protect current nationwide and 24-hour dedicated keyword entry titles
+        run: node tests/nationwide-daeri-24h-taksong-keywords.test.js
       - name: Syntax-check current production SEO auditors
         run: python3 -m py_compile tools/check_live_taksong_deploy.py tools/audit_live_seo.py
       - name: Confirm all curated region data edits affect the production deployment fingerprint
