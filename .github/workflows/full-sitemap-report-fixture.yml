@@ -1,0 +1,34 @@
+name: Full production sitemap report aggregation fixture
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit-all-meta-jsonld.mjs'
+      - 'tests/full-sitemap-report-summary-fixture-20261121.test.mjs'
+      - '.github/workflows/production-full-sitemap-after-cloudtype.yml'
+      - '.github/workflows/full-sitemap-report-fixture.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-all-meta-jsonld.mjs'
+      - 'tests/full-sitemap-report-summary-fixture-20261121.test.mjs'
+      - '.github/workflows/production-full-sitemap-after-cloudtype.yml'
+      - '.github/workflows/full-sitemap-report-fixture.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  fixture:
+    name: Complete two-page HTTP fixture without live-crawl traffic
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check full-site auditor JavaScript syntax
+        run: node --check scripts/audit-all-meta-jsonld.mjs
+      - name: Validate full report and duplicate-description counters
+        run: node --test tests/full-sitemap-report-summary-fixture-20261121.test.mjs
