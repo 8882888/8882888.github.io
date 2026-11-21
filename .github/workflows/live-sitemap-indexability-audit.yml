@@ -2,6 +2,10 @@ name: Live sitemap technical indexability audit
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/live-sitemap-indexability-audit.yml'
   workflow_run:
     workflows: ['Deploy to Cloudtype']
     types: [completed]
