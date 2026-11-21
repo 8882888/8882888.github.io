@@ -46,4 +46,16 @@ with tempfile.TemporaryDirectory(prefix='smart24-pages-') as tmp:
     assert len(list(mirror.rglob('*.html'))) == 19
     assert all(p.read_text(encoding='utf-8').count(NOINDEX) == 1
                for p in mirror.rglob('*.html'))
+    # National static CSV snapshots can have 16 source groups and use
+    # level='시·도' plus full legal-code slugs. Never mistake that for a broken
+    # 17-province canonical source registry or leak other province pages.
+    csv_rows = [{'name': p['name'], 'slug': p['slug'] + '/1111111111', 'level': '시·도'}
+                for p in provinces[:16]]
+    (root / 'data/regions.json').write_text(
+        json.dumps({'regions': csv_rows}, ensure_ascii=False), encoding='utf-8')
+    second = stage(root, mirror)
+    assert second['provinceCount'] == 16
+    assert (mirror / 'region/province-15/index.html').exists()
+    assert not (mirror / 'region/province-16/index.html').exists()
+    assert not (mirror / 'data').exists()
 print('PASS public-only 17-province noindex Pages mirror; no data or source leakage')
