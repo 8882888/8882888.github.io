@@ -6,6 +6,11 @@ on:
       - 'data/naver-regional-focus-nineteenth-daeri-100.json'
       - 'data/naver-regional-focus-nineteenth-taksong-100.json'
       - 'tests/sejong-handover-evidence-guidance-20261121.test.cjs'
+      - 'data/naver-regional-focus-sixteenth-daeri-100.json'
+      - 'data/naver-regional-focus-sixteenth-taksong-100.json'
+      - 'data/naver-regional-focus-twentieth-daeri-100.json'
+      - 'data/naver-regional-focus-twentieth-taksong-100.json'
+      - 'tests/sejong-wonju-local-guidance-20261121.test.cjs'
       - 'data/priority-search-questions-20261116.json'
       - 'tests/priority-search-questions-20261116.test.cjs'
       - 'data/seo-reviewed-local-originals-20261116.json'
@@ -21,6 +26,11 @@ on:
       - 'data/naver-regional-focus-nineteenth-daeri-100.json'
       - 'data/naver-regional-focus-nineteenth-taksong-100.json'
       - 'tests/sejong-handover-evidence-guidance-20261121.test.cjs'
+      - 'data/naver-regional-focus-sixteenth-daeri-100.json'
+      - 'data/naver-regional-focus-sixteenth-taksong-100.json'
+      - 'data/naver-regional-focus-twentieth-daeri-100.json'
+      - 'data/naver-regional-focus-twentieth-taksong-100.json'
+      - 'tests/sejong-wonju-local-guidance-20261121.test.cjs'
       - 'data/seo-reviewed-local-originals-20261116.json'
       - 'data/seo-pages.json'
       - 'data/naver-priority-meta-80-20261116.json'
@@ -51,6 +61,8 @@ jobs:
           node --test tests/business-sitemap-runtime-20261117.test.cjs
       - name: Validate four evidence-safe Sejong pickup and handover guides
         run: node --test tests/sejong-handover-evidence-guidance-20261121.test.cjs
+      - name: Validate six source-safe Sejong and Wonju practical local guides
+        run: node --test tests/sejong-wonju-local-guidance-20261121.test.cjs
       - name: Validate seven target pages and citywide source disclaimers
         run: |
           node --check server.js
