@@ -12,6 +12,7 @@ on:
       - 'tests/nationwide-batch2-32-unique-local-guides-20261121.test.cjs'
       - 'tests/nationwide-batch3-high-repetition-32-20261121.test.cjs'
       - 'tests/nationwide-batch4-32-high-repeat-20261121.test.cjs'
+      - 'tests/nationwide-batch5-twelfth-source-32-20261121.test.cjs'
       - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
       - 'server.js'
       - 'data/legal-regions/**'
@@ -32,6 +33,7 @@ on:
       - 'tests/nationwide-batch2-32-unique-local-guides-20261121.test.cjs'
       - 'tests/nationwide-batch3-high-repetition-32-20261121.test.cjs'
       - 'tests/nationwide-batch4-32-high-repeat-20261121.test.cjs'
+      - 'tests/nationwide-batch5-twelfth-source-32-20261121.test.cjs'
       - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
       - 'server.js'
       - 'data/legal-regions/**'
@@ -75,6 +77,8 @@ jobs:
         run: node --test tests/nationwide-batch3-high-repetition-32-20261121.test.cjs
       - name: Ensure batch four reduces both repeat impact and 2900-guide editorial backlog
         run: node --test tests/nationwide-batch4-32-high-repeat-20261121.test.cjs
+      - name: Verify 32 detailed source-native guides across 16 provinces and two services
+        run: node --test tests/nationwide-batch5-twelfth-source-32-20261121.test.cjs
       - name: Prove full 17-province, both-service, no-truncation nationwide review
         run: node --test tests/nationwide-evidence-coverage-20261121.test.cjs
       - name: Publish editorial review queue, NOT Naver index statistics
