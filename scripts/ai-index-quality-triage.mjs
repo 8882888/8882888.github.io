@@ -244,6 +244,13 @@ const nationalMd=[
  ''
 ].join('\n');
 fs.writeFileSync('ai-index-nationwide-coverage.md',nationalMd);
+console.log('NATIONWIDE_PROVINCE_SOURCE_COVERAGE '+JSON.stringify({
+ officialProvinces:legalProvinces.length,sourceGuides:nationalEntries.length,
+ pendingForReview:nationwideQueue.length,missingProvinceCount:missingProvince.length,
+ provinces:provinceBreakdown.map(x=>({province:x.province,total:x.total,
+  daeri:x.services.daeri.total,taksong:x.services.taksong.total,
+  passing:x.passing,review:x.review}))
+}));
 
 fs.writeFileSync('ai-index-quality-review.json',JSON.stringify(output,null,2)+'\n');
 const evidenceReport={
