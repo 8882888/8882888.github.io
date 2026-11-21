@@ -1,0 +1,25 @@
+name: Test road-distance provider outage handling
+on:
+  pull_request:
+    paths:
+      - 'fare/index.html'
+      - 'tests/road-provider-outage-20261121.test.cjs'
+      - '.github/workflows/road-distance-provider-outage.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test provider quota failure, 503 recovery, 404 and invalid distance
+        run: node --test tests/road-provider-outage-20261121.test.cjs
+      - name: Preserve original price rule tests
+        run: node tests/fare-rules.test.js
