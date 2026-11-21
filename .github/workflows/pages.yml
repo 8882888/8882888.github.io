@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -15,10 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     env:
       SITE_URL: https://jeongukdaeri.kr
@@ -271,10 +269,41 @@ jobs:
       - name: Upload only bounded public-only nationwide Pages backup
         uses: actions/upload-pages-artifact@v3
         with:
+          name: github-pages-${{ github.run_attempt }}
           path: _pages_mirror
+
+  # A separate deploy job lets the Actions artifact become visible before
+  # deploy-pages resolves its metadata. A per-attempt name prevents reruns
+  # from accumulating duplicate artifacts named "github-pages".
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Confirm current attempt Pages artifact is visible
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_NAME: github-pages-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 12); do
+            if gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" --jq '.artifacts[].name' | grep -Fqx "$ARTIFACT_NAME"; then
+              echo "PASS: Pages artifact $ARTIFACT_NAME is visible (attempt $attempt)"
+              exit 0
+            fi
+            echo "Waiting for Pages artifact metadata (attempt $attempt)"
+            sleep 5
+          done
+          echo "::error::Pages artifact $ARTIFACT_NAME is not visible; refusing a false successful deploy"
+          exit 1
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
       - name: Verify GitHub Pages deployment result (not Cloudtype)
         shell: bash
         env:
