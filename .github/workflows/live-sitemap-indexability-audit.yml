@@ -1,0 +1,74 @@
+name: Live sitemap technical indexability audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 1 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-sitemap-indexability
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Crawl sitemap URLs and save per-URL technical findings
+        id: audit
+        continue-on-error: true
+        env:
+          SEO_AUDIT_ORIGIN: https://jeongukdaeri.kr
+          SEO_AUDIT_CONCURRENCY: '2'
+          SEO_AUDIT_PAUSE_MS: '450'
+          SEO_AUDIT_REPORT_DIR: reports
+        run: node scripts/audit-live-sitemap-indexability-20261121.mjs
+      - name: Write summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f reports/live-sitemap-indexability.json ]; then
+            node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const {summary, errors, generatedAt} = JSON.parse(fs.readFileSync('reports/live-sitemap-indexability.json', 'utf8'));
+          const lines = [
+            '# Live sitemap technical indexability',
+            '',
+            'This audit does not represent actual Naver indexing or ranking.',
+            '',
+            '- Generated: ' + generatedAt,
+            '- Unique sitemap URLs: ' + summary.uniqueUrls,
+            '- Technically eligible: ' + summary.technicallyEligible,
+            '- Need review: ' + summary.needsReview,
+            '- Sitemap fetch/XML errors: ' + errors.length,
+            '',
+            '## Finding counts',
+            ...Object.entries(summary.reasonCounts).sort((a,b) => b[1]-a[1]).map(([reason,count]) => '- ' + reason + ': ' + count),
+          ];
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
+          NODE
+          else
+            echo 'Audit report missing: inspect crawler job logs.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload technical audit JSON and CSV
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-sitemap-indexability
+          path: |
+            reports/live-sitemap-indexability.json
+            reports/live-sitemap-indexability.csv
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Mark crawler failures
+        if: steps.audit.outcome == 'failure'
+        run: exit 1
