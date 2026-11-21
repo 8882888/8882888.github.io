@@ -372,7 +372,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert(sitemapIndex.includes('<sitemapindex'),'complete sitemap is a proper sitemap index');
   assert(!sitemapIndex.includes('<loc>https://example.com/sitemap-history.xml</loc>'),'root sitemap must not nest another sitemap index');
   const historyIndex=await (await get('/sitemap-history.xml')).text();
-  const shards=[...historyIndex.matchAll(/<loc>([^<]+)<\\/loc>/g)].map(m=>m[1]);
+  const shards=[...historyIndex.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
   assert.equal(shards.length,6,'keep six bounded sitemap shards for historical URLs');
   for(const shard of shards)assert(sitemapIndex.includes('<loc>'+shard+'</loc>'),'root sitemap links every shard');
   const duplicateCanonical=require('../data/seo-history-duplicates.json').canonicalById;
@@ -382,7 +382,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const response=await get('/sitemap-history-'+index+'.xml');
    assert.equal(response.status,200,'history sitemap shard '+index+' exists');
    const xml=await response.text();
-   const urls=[...xml.matchAll(/<loc>([^<]+)<\\/loc>/g)].map(m=>m[1]);
+   const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
    assert(urls.length>0&&urls.length<=500,'shard contains 1–500 original public-place URLs');
    for(const url of urls){
     assert(originalCanonical.has(url),'original canonical record required: '+url);
