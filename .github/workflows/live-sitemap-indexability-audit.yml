@@ -93,6 +93,7 @@ jobs:
           path: |
             reports/live-sitemap-indexability.json
             reports/live-sitemap-indexability.csv
+            reports/live-sitemap-indexability-progress.json
           if-no-files-found: warn
           retention-days: 30
       - name: Mark release mismatch or crawler failures
