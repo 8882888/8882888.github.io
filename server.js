@@ -908,7 +908,8 @@ function regionalIntentPage(r,kind,topic){
  const children=(childrenByParent.get(r.slug)||[]).slice(0,12);
  const local='<section><h2>'+full+' 내 출발 지역 확인</h2><p>'+esc(regionContext(r))+'에서 차량을 인수할 정확한 도로명주소와 건물명·주차 위치를 알려주세요. 아래 지역 안내에서 실제 출발지를 더 구체적으로 찾을 수 있습니다.</p><ul>'+children.map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.full_name)+' '+service+'</a></li>').join('')+'</ul></section>';
  const data=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',url:base+pathname,name:title,description:desc,primaryImageOfPage:{'@type':'ImageObject',contentUrl:base+image,width:1200,height:800}}).replace(/</g,'\\u003c');
- const page=layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+reviewedLocal+content+remoteRegionGuidance(r)+local+regionalGuideReviewLinks(r,kind)+regionalIntentNav(r,pathname),base+pathname,base+image);
+ const rideEvidenceLinks=regionalGuideReviewLinks(r,kind);
+ const page=layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+reviewedLocal+content+remoteRegionGuidance(r)+local+rideEvidenceLinks+regionalIntentNav(r,pathname),base+pathname,base+image);
  // Naver's published indexing guidance warns against large sets of near-identical
  // template pages. These auxiliary 읍/면/동/리 topic permutations offer only
  // a general fare/checklist when neither original editorial nor a preserved
@@ -917,7 +918,7 @@ function regionalIntentPage(r,kind,topic){
  // The main service pages, all cities/counties and any evidence-backed topic
  // page retain their previous indexability. This matches the curated sitemaps.
  const sparseTopic=['읍','면','동','리'].includes(r.level)&&!reviewedGuide&&
-   regionalServiceEvidence(r,kind).length===0;
+   regionalServiceEvidence(r,kind).length===0&&!rideEvidenceLinks;
  const indexAwarePage=sparseTopic
   ?page.replace('<meta name="robots" content="index,follow,max-image-preview:large">',
     '<meta name="robots" content="noindex,follow">')
