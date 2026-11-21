@@ -6,6 +6,8 @@ on:
       - 'scripts/ai-index-quality-triage.mjs'
       - 'tests/evidence-first-2571-triage.test.cjs'
       - 'tests/nationwide-evidence-coverage-20261121.test.cjs'
+      - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
+      - 'server.js'
       - 'data/legal-regions/**'
       - '.github/workflows/ai-editorial-evidence-triage.yml'
       - 'data/seo-reviewed-local-originals-20261116.json'
@@ -18,6 +20,8 @@ on:
       - 'scripts/ai-index-quality-triage.mjs'
       - 'tests/evidence-first-2571-triage.test.cjs'
       - 'tests/nationwide-evidence-coverage-20261121.test.cjs'
+      - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
+      - 'server.js'
       - 'data/legal-regions/**'
       - '.github/workflows/ai-editorial-evidence-triage.yml'
       - 'data/seo-reviewed-local-originals-20261116.json'
@@ -44,6 +48,8 @@ jobs:
           node scripts/ai-index-quality-triage.mjs
       - name: Prove 2571 baseline, grounded source tiers and absence of fabricated indexing
         run: node --test tests/evidence-first-2571-triage.test.cjs
+      - name: Verify all 33 original source batches reach the live nationwide SSR
+        run: node --test tests/nationwide-runtime-source-parity-20261121.test.cjs
       - name: Prove full 17-province, both-service, no-truncation nationwide review
         run: node --test tests/nationwide-evidence-coverage-20261121.test.cjs
       - name: Publish editorial review queue, NOT Naver index statistics
