@@ -375,6 +375,11 @@ const historicalRides=(Array.isArray(rides)?rides:[]).map((x,i)=>{
 });
 const historicalRideById=new Map(historicalRides.map(x=>[x.id,x]));
 const historyCanonicalById=load('data/seo-history-duplicates.json').canonicalById;
+// A record with neither public origin nor public destination remains available
+// under its immutable history URL, but must not be treated as a distinct
+// geographic search landing page. Do not infer either place from private notes.
+const historySearchEligible=x=>x&&
+ (x.departure!=='지역 비공개'||x.destination!=='지역 비공개');
 // Only canonical completed-record URLs belong in sitemaps; retain all originals as accessible records.
 const indexableHistoricalRides=historicalRides.filter(x=>!historyCanonicalById[x.id]||historyCanonicalById[x.id]===x.id);
 const historyTitleCounts=new Map();
@@ -465,7 +470,10 @@ function historyDetailPage(x){
  const firstContact='<nav id="ride-review-direct-booking-20261105" aria-label="이 운행후기에서 요금조회 또는 예약 상담" style="display:flex;gap:9px;flex-wrap:wrap;padding:14px 0"><a href="/fare/?service='+(x.service==='daeri'?'daeri':'taksong')+((x.departure==='지역 비공개'||x.destination==='지역 비공개')?'':'&amp;from='+encodeURIComponent(x.departure)+'&amp;to='+encodeURIComponent(x.destination))+'" style="display:inline-block;padding:12px 16px;background:#0755a3;color:white;border-radius:9px;font-weight:800">이 구간 예상요금 조회</a><a href="tel:18114294" style="display:inline-block;padding:12px 16px;background:#ffe16b;color:#13243f;border-radius:9px;font-weight:800">전화 예약상담 1811-4294</a><a href="/service/corporate/#corporate-postpaid-guide-20261105" style="padding:12px 4px">법인 후불 정산 조건 확인</a></nav>';
  const relatedRecords=Object.entries(historyCanonicalById).filter(([,id])=>id===x.id).map(([id])=>'<li><a href="/reviews/history/'+id+'/">원본 운행기록 '+esc(id)+'</a></li>').join('');
  const body='<article>'+ (relatedRecords?'<section><h2>공개 내용이 같은 별도 운행기록</h2><p>아래 원본 기록도 보존합니다. 공개 내용이 동일하여 검색 대표 URL을 이 문서로 모았습니다.</p><ul>'+relatedRecords+'</ul></section>':'')+'<h1>'+esc(title)+'</h1><p>원본 운행기록 번호: '+esc(x.id)+'</p>'+firstContact+'<p><strong>'+esc(x.date)+'</strong> 운행내역에 '+esc(x.departure)+' 출발, '+esc(x.destination)+' 도착, <strong>'+esc(x.fare)+'</strong> 요금의 '+kind+' 건이 기록되어 있습니다. 운행완료 내역을 바탕으로 내용을 정리한 후기이며 고객정보와 상세 주소는 공개하지 않습니다.</p><h2>실제 기록에서 확인되는 내용</h2><dl><dt>운행일</dt><dd>'+esc(x.date)+'</dd><dt>서비스</dt><dd>'+kind+'</dd><dt>출발 지역</dt><dd>'+esc(x.departure)+'</dd><dt>도착 지역</dt><dd>'+esc(x.destination)+'</dd><dt>당시 운행요금</dt><dd>'+esc(x.fare)+'</dd></dl>'+verifiedRideSituation(x)+'<p>실제 요금은 당시 배차 조건에서 기록된 금액입니다. 자료에 예약 여부, 차종, 기사 이동 수단이나 정확한 배차 시각이 없으면 임의로 추가하지 않습니다.</p><h2>출발에서 도착까지 배차 시 확인할 사항</h2>'+movement+'<p>기사 접근거리와 도착 후 복귀, 운행 시각, 통행료·주차·대기 여부 등에 따라 같은 구간도 배차 가능 여부와 현재 요금이 달라질 수 있습니다. 운행 당시 요금으로 지금도 배차된다는 뜻은 아닙니다.</p>'+handoverGuide+peakDispatchNotice()+(relatedRoute?'<p>이 운행은 출발지·도착지의 방향이 확인된 기록입니다. <a href="'+routeKeywordPages.reviewed.routePath(relatedRoute)+'">'+esc(relatedRoute.from.name+'에서 '+relatedRoute.to.name+'까지 '+kind+' 실제 구간 후기 모음')+'</a>에서도 해당 기록을 볼 수 있습니다.</p>':'')+completedReviewRegionLinks(x)+'<h2>당시 요금과 현재 예상요금은 왜 다를까요?</h2><p>이 후기의 '+esc(x.fare)+'은 '+esc(x.date)+' 당시 운행자료에 남은 금액입니다. 지금 예약할 때는 '+esc(x.departure)+'에서 '+esc(x.destination)+'까지의 실제 인수·인계 주소, 차량 종류, 희망 시각, 기사 접근거리와 복귀 여건을 함께 확인해야 합니다. 톨게이트비·주차비·대기비의 포함 여부도 확정 전 구분해 안내받으세요.</p><h2>자동차탁송·대리운전 예약 접수 방법</h2><ol><li>서비스 종류와 출발·도착 주소를 정확하게 알려주세요.</li><li>차종과 희망 출발 날짜·시간, 경유지 및 현장 담당자 연락 가능 여부를 알려주세요.</li><li>탁송은 차량 열쇠와 인수·인계 장소, 대리운전은 차량 주차 위치와 동승·경유 여부를 확인해 주세요.</li><li>기사 배정 가능 여부, 현재 요금, 포함 비용을 확인한 뒤 예약을 진행하세요.</li></ol><h2>빠른 배차에 도움이 되는 준비사항</h2><p>정확한 주차 위치와 건물 출입 방법, 차량 준비 상태, 열쇠 전달 방법을 미리 정리하면 기사와의 현장 확인이 수월해집니다. 새벽·심야·지방 외곽이나 산행·자전거 종주 구간은 기사 접근과 복귀 시간이 달라 사전 예약이 유리합니다. 빠른 배차는 보장되는 시간이 아니라 해당 시각의 기사 수급에 따라 달라집니다.</p><h2>같은 구간 예약·배차 상담</h2><p>정확한 출발지와 목적지, 희망 날짜·시간, 차량 종류를 알려주시면 기사 수급과 요금 조건을 확인합니다. 지방·오지 출발이나 피크타임에는 일정을 미리 전달하는 것이 중요합니다.</p><p><a href="tel:18114294">☎ 배차 상담 1811-4294</a> · <a href="https://open.kakao.com/o/sGV88r7h" rel="noopener noreferrer" target="_blank">카카오상담</a> · <a href="/fare/?service='+(x.service==='daeri'?'daeri':'taksong')+((x.departure==='지역 비공개'||x.destination==='지역 비공개')?'':'&amp;from='+encodeURIComponent(x.departure)+'&amp;to='+encodeURIComponent(x.destination))+'">이 구간 예상요금 조회</a> · <a href="/reviews/history/?kind='+x.service+'">같은 서비스 실제 후기</a> · <a href="/설악산탁송/">설악산탁송 후기</a> · <a href="/special/cycling-trail-transport/">자전거길 후기</a> · <a href="/service/long-distance-taksong/">장거리탁송 안내</a></p></article>';
- return layout(title,historyMetaDescription(x),mobileReviewBookingBar(x.service,x.departure==='지역 비공개'?'':x.departure,x.destination==='지역 비공개'?'':x.destination)+body+serviceJourneyLinks(x.service==='mixed'?'taksong':x.service),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/reviews/history/'+(historyCanonicalById[x.id]||x.id)+'/');
+ const page=layout(title,historyMetaDescription(x),mobileReviewBookingBar(x.service,x.departure==='지역 비공개'?'':x.departure,x.destination==='지역 비공개'?'':x.destination)+body+serviceJourneyLinks(x.service==='mixed'?'taksong':x.service),'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/reviews/history/'+(historyCanonicalById[x.id]||x.id)+'/');
+ // Keep the full original ride document available for lookup, without
+ // advertising two-private-location entries as independent indexed pages.
+ return historySearchEligible(x)?page:page.replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">');
 }
 function matchingHistoricalRides(origin,destination){
  const aliases=[origin,origin.replace(/(특별자치시|특별시|광역시|특별자치도|시|군|구)$/,'')].filter(x=>x.length>1);
@@ -2501,7 +2509,7 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   body=String(body).replace(/<url>\s*<loc>([^<]+)<\/loc>[\s\S]*?<\/url>/g,(entry,loc)=>{
    const route=decodeURIComponent(new URL(loc.replace(/&amp;/g,'&')).pathname);
    const history=route.match(/^\/reviews\/history\/(excel-\d+)\/$/);
-   if(history&&historyCanonicalById[history[1]])return '';
+   if(history&&(historyCanonicalById[history[1]]||!historySearchEligible(historicalRideById.get(history[1]))))return '';
    const service=route.match(/^\/(taksong|daeri)\/(.+)\/$/);
    const r=service&&byPath.get(service[2]);
    // Match the region servicePage indexable focus-page gate. Otherwise the XML
@@ -3572,7 +3580,7 @@ if(historySitemapMatch){
  const segment=Number(historySitemapMatch[1]),total=Math.ceil(indexableHistoricalRides.length/500);
  if(segment>total)return respond(res,404,'존재하지 않는 운행후기 사이트맵입니다.');
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
- const selected=indexableHistoricalRides.slice((segment-1)*500,segment*500);
+ const selected=indexableHistoricalRides.slice((segment-1)*500,segment*500).filter(historySearchEligible);
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+selected.map(x=>'<url><loc>'+esc(new URL(base+'/reviews/history/'+x.id+'/').href)+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
