@@ -7,6 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 test('sitemap crawler distinguishes blockers, quality warnings and shared sitemap entries', { timeout: 30000 }, async () => {
+  let transientRequests = 0;
   const server = http.createServer((req, res) => {
     const base = 'http://' + req.headers.host;
     const sitemap = (items) => '<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
@@ -18,9 +19,14 @@ test('sitemap crawler distinguishes blockers, quality warnings and shared sitema
       '</head><body><h1>실제 탁송 예약</h1></body></html>';
     res.setHeader('content-type', req.url.endsWith('.xml') ? 'application/xml' : 'text/html; charset=utf-8');
     if (req.url.endsWith('.xml')) {
-      res.end(sitemap(req.url === '/sitemap-priority.xml' ? ['/healthy/', '/blocked/', '/warning/', '/no-canonical/'] :
+      res.end(sitemap(req.url === '/sitemap-priority.xml' ? ['/healthy/', '/blocked/', '/warning/', '/no-canonical/', '/transient/'] :
         req.url === '/sitemap.xml' ? ['/healthy/'] : []));
     } else if (req.url === '/healthy/') res.end(page('/healthy/', '', '완료 운행기록 및 상담 안내'));
+    else if (req.url === '/transient/') {
+      transientRequests++;
+      if (transientRequests === 1) { res.statusCode = 503; res.end('retry later'); }
+      else res.end(page('/transient/', '', '재시도 성공'));
+    }
     else if (req.url === '/blocked/') res.end(page('/blocked/', 'noindex', '검색 제외 테스트'));
     else if (req.url === '/warning/') res.end(page('/warning/', '', ''));
     else if (req.url === '/no-canonical/') res.end('<!doctype html><html><head><title>지역 대리운전 이용 안내</title><meta name="description" content="기록 기반 안내"></head><body><h1>대리운전 안내</h1></body></html>');
@@ -42,15 +48,16 @@ test('sitemap crawler distinguishes blockers, quality warnings and shared sitema
     assert.equal(exit, 0, 'all local sitemap roots responded');
     const report = JSON.parse(await readFile(path.join(reportDir, 'live-sitemap-indexability.json'), 'utf8'));
     assert.equal(report.summary.completeness, 'complete');
-    assert.equal(report.summary.uniqueUrls, 4);
+    assert.equal(report.summary.uniqueUrls, 5);
+    assert.equal(transientRequests, 2, 'transient 503 is retried once');
     assert.equal(report.summary.pageFetchFailures, 0);
-    assert.equal(report.summary.prioritySitemapUrls, 4);
+    assert.equal(report.summary.prioritySitemapUrls, 5);
     assert.equal(report.summary.prioritySitemapBlockers, 1);
     assert.deepEqual(report.summary.prioritySitemapBlockingUrls[0].reasons, ['noindex']);
     const progress = JSON.parse(await readFile(path.join(reportDir, 'live-sitemap-indexability-progress.json'), 'utf8'));
     assert.equal(progress.state, 'finished');
-    assert.equal(progress.urlsChecked, 4);
-    assert.equal(progress.urlsDiscovered, 4);
+    assert.equal(progress.urlsChecked, 5);
+    assert.equal(progress.urlsDiscovered, 5);
     assert.equal(progress.reasons.noindex, 1);
     const healthy = report.pages.find(p => p.url.endsWith('/healthy/'));
     const blocked = report.pages.find(p => p.url.endsWith('/blocked/'));
