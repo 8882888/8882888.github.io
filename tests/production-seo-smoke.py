@@ -14,7 +14,7 @@ from html.parser import HTMLParser
 
 ROOT = "https://jeongukdaeri.kr"
 PAGES = {
-    "/taksong/": "전국자동차탁송",
+    "/taksong/": "전국 자동차탁송",
     "/daeri/": "전국대리운전",
     "/taksong/busan/": "부산탁송",
     "/taksong/daegu/": "대구탁송",
