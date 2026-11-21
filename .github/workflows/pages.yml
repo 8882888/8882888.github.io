@@ -258,7 +258,7 @@ jobs:
           assert 'rel="canonical" href="https://jeongukdaeri.kr/"' in page
           print('PASS: mirror has noindex and points at official homepage')
           PY
-      - name: Stage bounded public-only Pages mirror for all 17 provinces
+      - name: Stage bounded public-only Pages mirror for current official province groups
         run: |
           python tests/test_compact_pages_backup.py
           python tools/build_compact_pages_backup.py
