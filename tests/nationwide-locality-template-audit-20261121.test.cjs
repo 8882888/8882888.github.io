@@ -33,6 +33,11 @@ test('all 2900 source guides and all 17 legal provinces enter masked template au
   assert.equal(d.naverImpressions,null);
   assert.equal(d.naverClicks,null);
   assert.equal(d.naverCtr,null);
+  assert.equal(d.nationalRepeatReviewQueueCount,d.affectedDistinctGuideCount);
+  const queue=fs.readFileSync(path.join(root,'ai-index-template-reuse-queue.csv'),'utf8').trimEnd().split('\n');
+  assert.equal(queue.length,d.affectedDistinctGuideCount+1,'Complete queue must not be truncated to top 100');
+  assert.equal(queue[0],'province,kind,region,id,source,position,maxGroupSize,groupCount,fields,groupHashes');
+
 });
 test('groups identify distinct localities while preserving diagnostic-only source scope',()=>{
   const d=JSON.parse(fs.readFileSync(reportPath,'utf8'));
