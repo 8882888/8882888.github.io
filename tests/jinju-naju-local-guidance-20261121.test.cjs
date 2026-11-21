@@ -5,7 +5,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const root=path.join(__dirname,'..');
 const cases=[
- {kind:'daeri',keyword:'전남나주시남평읍골프장대리운전',region:'전라남도 나주시 남평읍',terms:['골프','주차','일일기사','목적지','견적']},
+ {kind:'daeri',keyword:'전남나주시남평읍골프장대리운전',region:'전라남도 나주시 남평읍',terms:['골프','주차','일일기사','목적지','요금']},
  {kind:'daeri',keyword:'경남진주시정촌면호텔대리운전',region:'경상남도 진주시 정촌면',terms:['숙박시설','주차장','출발','복귀','제휴']},
  {kind:'taksong',keyword:'전남나주시남평읍중고차탁송',region:'전라남도 나주시 남평읍',terms:['중고차','반출','키','명의이전','수령인']},
  {kind:'taksong',keyword:'경남진주시정촌면중고차매매탁송',region:'경상남도 진주시 정촌면',terms:['중고차','출고','매매단지','인수','계약']}
