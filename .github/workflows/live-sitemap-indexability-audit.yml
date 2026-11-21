@@ -2,6 +2,10 @@ name: Live sitemap technical indexability audit
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ['Deploy to Cloudtype']
+    types: [completed]
+    branches: [main]
   schedule:
     - cron: '17 1 * * 1'
 
@@ -14,15 +18,25 @@ concurrency:
 
 jobs:
   audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 100
     steps:
-      - name: Check out repository
+      - name: Check out repository at release SHA
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify Cloudtype running source against exact checkout
+        id: release
+        continue-on-error: true
+        env:
+          LIVE_SITE_URL: https://jeongukdaeri.kr
+          DEPLOY_CHECK_ATTEMPTS: '3'
+        run: node tools/check_cloudtype_freshness.js
       - name: Crawl sitemap URLs and save per-URL technical findings
         id: audit
         continue-on-error: true
@@ -46,6 +60,7 @@ jobs:
             'This audit does not represent actual Naver indexing or ranking.',
             '',
             '- Generated: ' + generatedAt,
+            '- Release verification: ${{ '${{ steps.release.outcome }}' }}',
             '- Unique sitemap URLs: ' + summary.uniqueUrls,
             '- Technically eligible: ' + summary.technicallyEligible,
             '- Technical blockers (review): ' + summary.needsReview,
@@ -74,6 +89,6 @@ jobs:
             reports/live-sitemap-indexability.csv
           if-no-files-found: warn
           retention-days: 30
-      - name: Mark crawler failures
-        if: steps.audit.outcome == 'failure'
+      - name: Mark release mismatch or crawler failures
+        if: steps.release.outcome == 'failure' || steps.audit.outcome == 'failure'
         run: exit 1
