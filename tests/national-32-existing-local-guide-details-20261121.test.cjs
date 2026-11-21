@@ -23,7 +23,7 @@ test('existing 100 daeri and 100 taksong guides retain source identity and 17-pr
     const rows = JSON.parse(fs.readFileSync(file, 'utf8')).priority;
     assert.equal(rows.length, 100);
     assert.equal(new Set(rows.map(x => x.id)).size, 100);
-    assert.deepEqual([...new Set(rows.map(x => x.region.split(/\\s+/)[0]))].sort(), [...provinces].sort());
+    assert.deepEqual([...new Set(rows.map(x => x.region.split(/\s+/)[0]))].sort(), [...provinces].sort());
     assert.ok(rows.every(x => x.kind === kind));
     assert.ok(rows.every(x => x.related && x.related.startsWith('/')));
   }
@@ -38,16 +38,16 @@ test('32 locality-specific existing guides have sufficient useful context, witho
       assert.ok(row.topic.length >= 13, id + ' short topic');
       assert.ok(row.pickup.length >= 105, id + ' short pickup');
       assert.ok(row.handover.length >= 110, id + ' short handover');
-      const locality = row.region.split(/\\s+/).at(-1);
+      const locality = row.region.split(/\s+/).at(-1);
       assert.ok(row.pickup.includes(locality), id + ' pickup omits local area');
       assert.ok(row.handover.includes(locality), id + ' handover omits local area');
       assert.doesNotMatch(row.topic + row.pickup + row.handover,
-        /(?:배차\\s*100%\\s*보장|운행\\s*완료했습니다|실제\\s*운행\\s*후기|상시\\s*상주\\s*기사)/);
+        /(?:배차\s*100%\s*보장|운행\s*완료했습니다|실제\s*운행\s*후기|상시\s*상주\s*기사)/);
       modified.push(row);
     }
   }
   assert.equal(modified.length, 32);
-  assert.equal(new Set(modified.map(x => x.region.split(/\\s+/)[0])).size, 16);
+  assert.equal(new Set(modified.map(x => x.region.split(/\s+/)[0])).size, 16);
   const texts = modified.map(x => x.pickup + ' ' + x.handover);
   assert.equal(new Set(texts).size, 32, 'identical guidance must not be duplicated');
   // 세종 집현동의 구체적인 기존 2개 안내는 인위적으로 늘리지 않는다.
