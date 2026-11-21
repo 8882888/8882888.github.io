@@ -59,6 +59,10 @@ jobs:
           node --test tests/editorial-quality-verified-28-20261117.test.cjs
           node scripts/ai-index-quality-triage.mjs
           node -e "const r=require('./ai-index-quality-review.json'); console.log('Editorial source quality: '+r.totals.fullyPassing+'/'+r.totals.reviewed+' passing; '+r.totals.needsReview+' for review. No Naver index measurement.');"
+      - name: Prove live server loads all 33 nationwide source files without omissions
+        run: |
+          node --check tests/nationwide-runtime-source-parity-20261121.test.cjs
+          node --test tests/nationwide-runtime-source-parity-20261121.test.cjs
       - name: Audit ALL 2900 local guides with 17-province and two-service balanced review coverage
         run: |
           node --check scripts/ai-index-quality-triage.mjs
