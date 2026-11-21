@@ -53,7 +53,7 @@ test('sitemap crawler distinguishes blockers, quality warnings and shared sitema
     assert(warning.warnings.includes('missing_description'));
     assert.equal(report.summary.needsReview, 1);
     const csv = await readFile(path.join(reportDir, 'live-sitemap-indexability.csv'), 'utf8');
-    assert(csv.includes('"warnings"'));
+    assert(csv.split('\n', 1)[0].split(',').includes('warnings'), 'CSV header exports warning column');
   } finally {
     await new Promise(resolve => server.close(resolve));
     await rm(reportDir, { recursive: true, force: true });
