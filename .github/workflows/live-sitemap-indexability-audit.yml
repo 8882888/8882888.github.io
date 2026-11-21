@@ -48,11 +48,16 @@ jobs:
             '- Generated: ' + generatedAt,
             '- Unique sitemap URLs: ' + summary.uniqueUrls,
             '- Technically eligible: ' + summary.technicallyEligible,
-            '- Need review: ' + summary.needsReview,
+            '- Technical blockers (review): ' + summary.needsReview,
+            '- Quality warnings (pages): ' + summary.warningPages,
             '- Sitemap fetch/XML errors: ' + errors.length,
+            '- Crawl completeness: ' + summary.completeness,
             '',
-            '## Finding counts',
+            '## Technical blocker counts',
             ...Object.entries(summary.reasonCounts).sort((a,b) => b[1]-a[1]).map(([reason,count]) => '- ' + reason + ': ' + count),
+            '',
+            '## Quality warning counts',
+            ...Object.entries(summary.warningCounts || {}).sort((a,b) => b[1]-a[1]).map(([reason,count]) => '- ' + reason + ': ' + count),
           ];
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
           NODE
