@@ -1,0 +1,53 @@
+name: Recheck two sitemap fetch failures
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/recheck-two-sitemap-failures-20261121.mjs'
+      - '.github/workflows/recheck-two-sitemap-failures.yml'
+  pull_request:
+    paths:
+      - 'scripts/recheck-two-sitemap-failures-20261121.mjs'
+      - 'tests/recheck-two-sitemap-failures.test.mjs'
+      - '.github/workflows/recheck-two-sitemap-failures.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  fixture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check scripts/recheck-two-sitemap-failures-20261121.mjs
+      - run: node --test tests/recheck-two-sitemap-failures.test.mjs
+  live:
+    needs: fixture
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check two prior failed URLs
+        id: probe
+        continue-on-error: true
+        run: node scripts/recheck-two-sitemap-failures-20261121.mjs
+      - name: Upload actual HTTP evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitemap-two-failed-urls-recheck
+          path: reports/sitemap-two-failed-urls-recheck.json
+          retention-days: 14
+      - name: Fail if either endpoint has a technical problem
+        if: steps.probe.outcome == 'failure'
+        run: exit 1
