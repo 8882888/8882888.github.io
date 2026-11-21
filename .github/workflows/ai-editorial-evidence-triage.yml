@@ -85,5 +85,6 @@ jobs:
             ai-index-nationwide-queue.csv
             ai-index-template-reuse.json
             ai-index-template-reuse.md
+            ai-index-template-reuse-queue.csv
           if-no-files-found: warn
           retention-days: 30
