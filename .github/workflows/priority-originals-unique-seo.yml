@@ -11,6 +11,7 @@ on:
       - 'data/naver-regional-focus-twentieth-daeri-100.json'
       - 'data/naver-regional-focus-twentieth-taksong-100.json'
       - 'tests/sejong-wonju-local-guidance-20261121.test.cjs'
+      - 'tests/jinju-naju-local-guidance-20261121.test.cjs'
       - 'data/priority-search-questions-20261116.json'
       - 'tests/priority-search-questions-20261116.test.cjs'
       - 'data/seo-reviewed-local-originals-20261116.json'
@@ -31,6 +32,7 @@ on:
       - 'data/naver-regional-focus-twentieth-daeri-100.json'
       - 'data/naver-regional-focus-twentieth-taksong-100.json'
       - 'tests/sejong-wonju-local-guidance-20261121.test.cjs'
+      - 'tests/jinju-naju-local-guidance-20261121.test.cjs'
       - 'data/seo-reviewed-local-originals-20261116.json'
       - 'data/seo-pages.json'
       - 'data/naver-priority-meta-80-20261116.json'
@@ -63,6 +65,8 @@ jobs:
         run: node --test tests/sejong-handover-evidence-guidance-20261121.test.cjs
       - name: Validate six source-safe Sejong and Wonju practical local guides
         run: node --test tests/sejong-wonju-local-guidance-20261121.test.cjs
+      - name: Verify Jinju and Naju four additional original-locality service guides
+        run: node --test tests/jinju-naju-local-guidance-20261121.test.cjs
       - name: Validate seven target pages and citywide source disclaimers
         run: |
           node --check server.js
