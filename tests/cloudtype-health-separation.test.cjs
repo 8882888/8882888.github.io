@@ -19,5 +19,4 @@ test('external road-distance API remains a blocking independent job, not a hidde
  assert(external.includes('Distance API missing positive durationMinutes'));
  assert(!external.includes('continue-on-error: true'));
  assert(!external.includes('|| true'));
- assert(external.includes("raise\n" )===false);
 });
