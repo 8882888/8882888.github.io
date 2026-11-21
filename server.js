@@ -1388,7 +1388,7 @@ async function servicePage(r,kind){
  const gangneungSearchDesc=r.full_name==='강원특별자치도 강릉시'
   ?(kind==='daeri'
    ?'강릉대리운전 · 경포·안목·교동·주문진 대리운전·법인·장거리 상담. 경포해변·안목해변의 음식점과 카페 이용 후 주차장 위치 확인. 과거 운행기록·요금조회·상담 1811-4294.'
-   :'강릉탁송 실제 완료 사례 용인→강릉 당시 11만원. 경포·주문진 차량 인수, 동해안 종주 차량 회수와 현재 예상요금·예약 상담 1811-4294.')
+   :'강릉항·주문진·동해안 종주 차량회수 자동차탁송·입출고 상담. 강릉 경포대와 주문진·강릉항 용인→강릉 당시 11만원, 문의 1811-4294.')
   :null;
  const searchDesc=ganghwaReviewPage?rawSearchDesc:gangneungSearchDesc||naverPriorityShortMetaByPath.get(servicePath(r,kind))||
   (priorityMeta?rawSearchDesc:boundedRegionalSearchDescription(rawSearchDesc));
