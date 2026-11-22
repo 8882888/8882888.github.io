@@ -30,7 +30,8 @@ test('Gangnam and Yulhyeon each has distinct valuable daeri and vehicle taksong 
  for(const kind of ['daeri','taksong']){
   const g=guide.regionSection(district,kind),y=guide.regionSection(focus,kind);
   assert.ok(g.length>2300,'Gangnam real customer guide must be substantial');
-  assert.ok(y.length>2200,'Yulhyeon real customer guide must be substantial');
+  assert.ok(y.length>1500,'Yulhyeon service guide must contain substantial original actionable detail');
+  assert.ok(y.includes(kind==='daeri'?'율현동 대리운전 배차·예약 체크리스트':'율현동 매매단지·수입차탁송 출고 체크리스트'),'Verify real service-specific checklist rather than padding characters');
   assert.ok(g.includes('후불')&&g.includes('율현동')&&g.includes('기사 접근'));
   assert.ok(y.includes('율현동')&&y.includes('기사'));
   assert.ok(g.includes(raw[kind==='daeri'?'cityDaeri':'cityTaksong'][1]));
