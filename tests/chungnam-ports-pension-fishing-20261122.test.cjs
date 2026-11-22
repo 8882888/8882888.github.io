@@ -74,7 +74,9 @@ test('harbor and pension/fishing exact queries reuse original region canonicals 
  }
 });
 test('province navigation links all 15 legal municipalities, 18 port names, and only existing town-level sitemap targets',()=>{
- assert.equal(guide.canonicalPaths.length,58);
+ const expected=2*(15+1+new Set(data.ports.map(p=>p.parent)).size);
+ assert.equal(expected,56,'This curated coast uses 12 unique 읍면동 parents');
+ assert.equal(guide.canonicalPaths.length,expected);
  assert.equal(new Set(guide.canonicalPaths).size,58);
  for(const kind of ['taksong','daeri']){
   const html=guide.regionSection(byFull.get('충청남도'),kind);
