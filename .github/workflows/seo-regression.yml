@@ -158,6 +158,8 @@ jobs:
         run: node tools/check_cloudtype_100_point_release.js
       - name: Protect current nationwide and 24-hour dedicated keyword entry titles
         run: node tests/nationwide-daeri-24h-taksong-keywords.test.js
+      - name: Validate all 18 Gangwon tourism food hotel pension golf and long-distance daeri guides
+        run: node --test tests/gangwon-18-tourism-daeri-seo-20261122.test.cjs
       - name: Syntax-check current production SEO auditors
         run: python3 -m py_compile tools/check_live_taksong_deploy.py tools/audit_live_seo.py
       - name: Confirm all curated region data edits affect the production deployment fingerprint

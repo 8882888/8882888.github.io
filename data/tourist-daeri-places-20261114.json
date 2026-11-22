@@ -417,6 +417,302 @@
       "region": "제주특별자치도 서귀포시",
       "category": "관광명소",
       "aliases": []
+    },
+    {
+      "name": "소양강스카이워크",
+      "region": "강원특별자치도 춘천시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "삼악산호수케이블카",
+      "region": "강원특별자치도 춘천시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "강촌레일파크",
+      "region": "강원특별자치도 춘천시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "소금산그랜드밸리",
+      "region": "강원특별자치도 원주시",
+      "category": "관광명소",
+      "aliases": [
+        "원주소금산"
+      ]
+    },
+    {
+      "name": "뮤지엄산",
+      "region": "강원특별자치도 원주시",
+      "category": "관광명소",
+      "aliases": [
+        "원주뮤지엄산"
+      ]
+    },
+    {
+      "name": "경포해변",
+      "region": "강원특별자치도 강릉시",
+      "category": "해변·항구",
+      "aliases": [
+        "경포해수욕장"
+      ]
+    },
+    {
+      "name": "안목해변",
+      "region": "강원특별자치도 강릉시",
+      "category": "해변·항구",
+      "aliases": [
+        "안목커피거리"
+      ]
+    },
+    {
+      "name": "주문진항",
+      "region": "강원특별자치도 강릉시",
+      "category": "해변·항구",
+      "aliases": []
+    },
+    {
+      "name": "묵호항",
+      "region": "강원특별자치도 동해시",
+      "category": "해변·항구",
+      "aliases": [
+        "동해묵호항"
+      ]
+    },
+    {
+      "name": "망상해수욕장",
+      "region": "강원특별자치도 동해시",
+      "category": "해변·항구",
+      "aliases": [
+        "망상해변"
+      ]
+    },
+    {
+      "name": "무릉계곡",
+      "region": "강원특별자치도 동해시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "황지연못",
+      "region": "강원특별자치도 태백시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "태백산국립공원",
+      "region": "강원특별자치도 태백시",
+      "category": "산행·호수",
+      "aliases": [
+        "태백산"
+      ]
+    },
+    {
+      "name": "속초해수욕장",
+      "region": "강원특별자치도 속초시",
+      "category": "해변·항구",
+      "aliases": [
+        "속초해변"
+      ]
+    },
+    {
+      "name": "대포항",
+      "region": "강원특별자치도 속초시",
+      "category": "해변·항구",
+      "aliases": []
+    },
+    {
+      "name": "장호항",
+      "region": "강원특별자치도 삼척시",
+      "category": "해변·항구",
+      "aliases": []
+    },
+    {
+      "name": "삼척해상케이블카",
+      "region": "강원특별자치도 삼척시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "죽서루",
+      "region": "강원특별자치도 삼척시",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "비발디파크",
+      "region": "강원특별자치도 홍천군",
+      "category": "숙박·리조트",
+      "aliases": [
+        "홍천비발디파크"
+      ]
+    },
+    {
+      "name": "수타사",
+      "region": "강원특별자치도 홍천군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "웰리힐리파크",
+      "region": "강원특별자치도 횡성군",
+      "category": "숙박·리조트",
+      "aliases": [
+        "둔내웰리힐리파크"
+      ]
+    },
+    {
+      "name": "횡성호수길",
+      "region": "강원특별자치도 횡성군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "청령포",
+      "region": "강원특별자치도 영월군",
+      "category": "관광명소",
+      "aliases": [
+        "영월청령포"
+      ]
+    },
+    {
+      "name": "별마로천문대",
+      "region": "강원특별자치도 영월군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "대관령양떼목장",
+      "region": "강원특별자치도 평창군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "월정사",
+      "region": "강원특별자치도 평창군",
+      "category": "관광명소",
+      "aliases": [
+        "평창월정사"
+      ]
+    },
+    {
+      "name": "하이원리조트",
+      "region": "강원특별자치도 정선군",
+      "category": "숙박·리조트",
+      "aliases": [
+        "정선하이원"
+      ]
+    },
+    {
+      "name": "화암동굴",
+      "region": "강원특별자치도 정선군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "고석정",
+      "region": "강원특별자치도 철원군",
+      "category": "관광명소",
+      "aliases": [
+        "철원고석정"
+      ]
+    },
+    {
+      "name": "한탄강주상절리길",
+      "region": "강원특별자치도 철원군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "평화의댐",
+      "region": "강원특별자치도 화천군",
+      "category": "관광명소",
+      "aliases": [
+        "화천평화의댐"
+      ]
+    },
+    {
+      "name": "화천산천어파크골프장",
+      "region": "강원특별자치도 화천군",
+      "category": "골프·파크골프",
+      "aliases": []
+    },
+    {
+      "name": "두타연",
+      "region": "강원특별자치도 양구군",
+      "category": "관광명소",
+      "aliases": [
+        "양구두타연"
+      ]
+    },
+    {
+      "name": "박수근미술관",
+      "region": "강원특별자치도 양구군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "백담사",
+      "region": "강원특별자치도 인제군",
+      "category": "관광명소",
+      "aliases": [
+        "인제백담사"
+      ]
+    },
+    {
+      "name": "원대리자작나무숲",
+      "region": "강원특별자치도 인제군",
+      "category": "관광명소",
+      "aliases": [
+        "인제자작나무숲"
+      ]
+    },
+    {
+      "name": "화진포",
+      "region": "강원특별자치도 고성군",
+      "category": "관광명소",
+      "aliases": [
+        "강원고성화진포"
+      ]
+    },
+    {
+      "name": "송지호해수욕장",
+      "region": "강원특별자치도 고성군",
+      "category": "해변·항구",
+      "aliases": [
+        "송지호해변"
+      ]
+    },
+    {
+      "name": "고성통일전망대",
+      "region": "강원특별자치도 고성군",
+      "category": "관광명소",
+      "aliases": [
+        "통일전망대"
+      ]
+    },
+    {
+      "name": "낙산사",
+      "region": "강원특별자치도 양양군",
+      "category": "관광명소",
+      "aliases": []
+    },
+    {
+      "name": "하조대",
+      "region": "강원특별자치도 양양군",
+      "category": "관광명소",
+      "aliases": [
+        "양양하조대"
+      ]
+    },
+    {
+      "name": "오색약수",
+      "region": "강원특별자치도 양양군",
+      "category": "산행·호수",
+      "aliases": []
     }
   ]
 }
