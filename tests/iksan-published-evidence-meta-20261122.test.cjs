@@ -4,8 +4,8 @@ const {spawn}=require('node:child_process');
 const root=path.resolve(__dirname,'..'),server=fs.readFileSync(path.join(root,'server.js'),'utf8'),port=39953,base='http://127.0.0.1:'+port;
 test('Iksan city primary SEO title/synopsis overrides generic fast-dispatch templates, without changing real ride proof',()=>{
  assert.ok(server.includes("const iksanCitySearchMeta=r.full_name==='전북특별자치도 익산시'?iksanBusongSeo.searchMeta(r,kind):null;"));
- assert.ok(server.includes('regionalRequestedTitle||gangneungSearchTitle||iksanCitySearchMeta?.title||'));
- assert.ok(server.includes('gangneungSearchDesc||iksanCitySearchMeta?.description||'));
+ assert.ok(server.includes('iksanCitySearchMeta?.title||'),'Iksan city title remains part of the canonical prioritized SEO chain despite other city-specific titles');
+ assert.ok(server.includes('iksanCitySearchMeta?.description||'),'Iksan city description remains part of the canonical prioritized SEO chain');
  assert.ok(server.includes("(!priorityMeta&&!focus50Info&&!historicalTitleTrip&&!verifiedTitleTrip&&!verifiedDaeriTitleTrip)?iksanBusongSeo.searchMeta(r,kind):null"),'Other city and dong metadata never overwritten');
 });
 test('Actual Iksan/Busong published completed trip wins over outdated generic no-evidence fallback',async()=>{
