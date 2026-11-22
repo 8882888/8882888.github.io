@@ -75,6 +75,7 @@ test('city/county/district and legally distinct 읍면동리 phrases resolve onl
   assert.equal(guide.resolve(keyword),target(full),keyword);
  }
  assert.equal(guide.resolve('광주시카고탁송'),null,'Do not guess between Gwangju city aliases');
+ assert.equal(guide.resolve('사다리작업차량탁송'),null,'Existing ladder service must not be confused with a village named 사다리');
  assert.equal(guide.resolve('서울에서부산까지25톤윙바디탁송'),null,'Do not invent a directional route');
  assert.equal(guide.resolve('25톤윙바디탁송'),null,'Existing exact body-type route keeps precedence');
  assert.equal(guide.resolve('서울카고화물운송'),null,'Cargo transport is not vehicle taksong');
