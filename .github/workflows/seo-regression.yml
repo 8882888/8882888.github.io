@@ -183,6 +183,11 @@ jobs:
         run: |
           node --check tests/iksan-published-evidence-meta-20261122.test.cjs
           node --test tests/iksan-published-evidence-meta-20261122.test.cjs
+      - name: Verify Gangnam corporate postpaid, Yulhyeon dealer imported car locality and HTTP canonical SEO
+        run: |
+          node --check lib/gangnam-yulhyeon-b2b-seo.cjs
+          node --check tests/gangnam-yulhyeon-b2b-20261122.test.cjs
+          node --test tests/gangnam-yulhyeon-b2b-20261122.test.cjs
       - name: Syntax-check current production SEO auditors
         run: python3 -m py_compile tools/check_live_taksong_deploy.py tools/audit_live_seo.py
       - name: Confirm all curated region data edits affect the production deployment fingerprint
