@@ -283,7 +283,79 @@ for(const entry of regionalJourneyPlans){
   seen.add(link.path);
  }
 }
+const gangwonInlandGuides = {
+  "정선군": [
+    [
+      "정선",
+      "사북",
+      "강원랜드"
+    ],
+    "강원랜드에서 새벽에 출발할 때는 건물 출입구와 차량이 있는 주차층, 횡성·원주 등 도착지를 알려 주세요. 종료 시간이 유동적이면 희망 출발 시각을 먼저 상담하세요.",
+    "사북에서 차량만 보내는 경우 키를 넘길 분과 목적지에서 차를 받을 분의 인계 가능 시간을 맞춰 주세요."
+  ],
+  "태백시": [
+    [
+      "태백"
+    ],
+    "태백산 산행 뒤 식당으로 이동했다면 차량이 탐방 주차장에 있는지 식당에 있는지 먼저 알려 주세요.",
+    "산행 중 차를 옮길 때는 등산을 시작한 주차장과 하산 후 차량을 찾을 주차장을 각각 지정해 주세요."
+  ],
+  "영월군": [
+    [
+      "영월"
+    ],
+    "청령포 관람 후 식사하셨다면 영월읍 식당 이름과 차를 주차한 곳을 함께 알려 주세요.",
+    "영월읍에서 외곽 숙소로 차를 보낼 때는 숙소 진입로와 키를 받아 줄 분을 확인해 주세요."
+  ],
+  "원주시": [
+    [
+      "원주"
+    ],
+    "단계동 식당에서 귀가할 때 차량이 인근 유료주차장에 있다면 주차장 입구를 만남 장소로 정해 주세요.",
+    "문막 출발 차량을 원주 시내 정비센터에 맡길 때는 센터 접수 시간과 인수 담당자를 확인해 주세요."
+  ],
+  "춘천시": [
+    [
+      "춘천"
+    ],
+    "명동 닭갈비거리에서 식사하셨다면 식당에서 기사와 만날지 차를 둔 주차장에서 만날지 정해 주세요.",
+    "강촌 숙소에서 차를 보낼 때는 퇴실 뒤 키 인계가 가능한지, 춘천 시내 수령인이 언제 도착하는지 확인해 주세요."
+  ],
+  "홍천군": [
+    [
+      "홍천"
+    ],
+    "홍천읍 식당과 서면 숙소는 출발 위치가 다릅니다. 서울 방면 장거리 운행은 차가 있는 읍·면과 희망 출발 시각을 함께 알려 주세요.",
+    "홍천 외곽 펜션에 차를 두고 이동했다면 관리자가 차량 키를 보관하고 있는지 인수 전에 확인해 주세요."
+  ],
+  "평창군": [
+    [
+      "평창",
+      "대관령",
+      "진부",
+      "오대산"
+    ],
+    "대관령면 숙소, 진부면 식당, 오대산 탐방 주차장 중 차량이 있는 곳을 알려 주세요. 산행 뒤 식당으로 이동했더라도 기사와 만날 곳은 차를 둔 위치를 기준으로 정합니다.",
+    "오대산 산행 전후 차량을 옮기거나 진부에서 대관령 숙소로 보낼 때는 실제 주차장 이름과 도착지 키 수령 방식을 정해 주세요."
+  ]
+};
+
+function gangwonInlandNavigation(r, kind) {
+ if (r.full_name !== '강원특별자치도 ' + r.name) return '';
+ const guide = gangwonInlandGuides[r.name];
+ if (!guide || !['daeri','taksong'].includes(kind)) return '';
+ const isDaeri = kind === 'daeri';
+ const label = isDaeri ? '대리운전' : '탁송';
+ const other = isDaeri ? 'taksong' : 'daeri';
+ const [places, driverNote, transferNote] = guide;
+ const labels = places.map(place => esc(place + label));
+ return '<section><h2>' + labels.join(' · ') + '</h2><p>' + esc(isDaeri ? driverNote : transferNote) + '</p><p><a href="' + esc(servicePath(r,other)) + '">' + esc(places[0]) + (isDaeri ? '탁송 차량 인계 안내' : '대리운전 귀가 안내') + '</a></p></section>';
+}
+
 function regionalJourneyNavigation(r,kind){
+ return gangwonInlandNavigation(r,kind)+regionalJourneyRecords(r,kind);
+}
+function regionalJourneyRecords(r,kind){
  if(kind!=='taksong')return '';
  const record=regionalJourneyByPath.get(servicePath(r,kind));
  if(!record)return '';
