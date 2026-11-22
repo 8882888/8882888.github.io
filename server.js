@@ -650,12 +650,16 @@ function jeonnamBookingAnswer(r,kind){
  return '<section id="jeonnam-booking-answer"><h2>'+esc(name+service)+' 예약 안내</h2><h3>'+esc(answers[offset])+'</h3><p>'+esc(answers[offset+1])+'</p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">'+esc(name+service)+' 예상요금 조회</a></section>';
 }
 
+const golfPermitNames = require('./data/golf-course-permit-names.json').regions;
+
 function regionalGroupDriverNavigation(r, kind){
  if(kind !== 'daeri' || !['시도','시','군','구'].includes(r.level)) return '';
  const area = esc(r.full_name);
+ const courseNames = golfPermitNames[r.full_name] || [];
+ const courses = courseNames.length ? '<details><summary>'+area+' 골프장 등록명 확인</summary><p>'+courseNames.map(esc).join(' · ')+'</p><p>2026년 11월 10일 인허가 목록 기준. 클럽하우스 위치와 예약 시 사용하는 상호를 함께 확인해 주세요.</p></details>' : '';
  const children = (childrenByParent.get(r.slug) || []).filter(child => ['시','군','구'].includes(child.level));
  const links = children.map(child => '<li><a href="'+esc(servicePath(child,kind))+'#group-driver-booking">'+esc(child.name)+' 출발 안내</a></li>').join('');
- return '<section id="group-driver-booking"><h2>'+area+' 골프장대리운전·법인대리운전 예약</h2>'+
+ return '<section id="group-driver-booking"><h2>'+area+' 골프장대리운전·법인대리운전 예약</h2>'+courses+
   '<p>라운딩 뒤에는 클럽하우스와 식사 장소 중 차량이 있는 곳, 골프백을 실을 시간, 차량별 목적지를 알려 주세요. 다른 지역 골프장으로 출발해 왕복하는 일정은 출발지에서 만날 시각도 필요합니다. <a href="/service/golf/">전국 골프장대리운전·왕복 일일기사 안내</a></p>'+
   '<p>법인 회식이나 외부 행사에서는 예약 담당자가 차량별 출발 시각과 경유지를 정리하고 법인카드 결제 또는 후불 계약 조건을 확인할 수 있습니다. <a href="/service/corporate/">전국 법인대리운전 결제·정산 안내</a></p>'+
   (links ? '<details><summary>'+area+' 시·군·구별 예약 안내</summary><ul>'+links+'</ul></details>' : '')+
