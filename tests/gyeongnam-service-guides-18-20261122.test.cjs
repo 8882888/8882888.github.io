@@ -61,3 +61,24 @@ test('no fabricated completed fares, branch promises or mass new locality pages'
  assert.match(server,/gyeongnamServiceGuides\.canonicalPaths/);
  assert.match(server,/sitemap-gyeongnam-guides\.xml/);
 });
+
+test('distinct search snippets target Gyeongnam services without replacing verified evidence',()=>{
+ const titles=new Set();
+ for(const kind of ['taksong','daeri']){
+  for(const r of cities){
+   const meta=render.searchMeta(r,kind);
+   assert.ok(meta.title.includes(kind==='taksong'?'탁송':'대리운전'));
+   assert.ok(meta.title.includes(' | '));
+   assert.ok(meta.description.includes('1811-4294'));
+   assert.ok(meta.description.length<190,'Snippet too long: '+r.full_name);
+   assert.ok(!titles.has(meta.title),'Duplicate title '+meta.title);
+   titles.add(meta.title);
+  }
+  const province=render.searchMeta(byFull.get('경상남도'),kind);
+  assert.ok(province.title.startsWith(kind==='taksong'?'경남탁송':'경남대리운전'));
+  assert.ok(province.description.includes('18개 시군'));
+ }
+ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ assert.match(server,/gyeongnamServiceGuides\.searchMeta\(r,kind\)/);
+ assert.match(server,/!priorityMeta&&!focus50Info&&!historicalTitleTrip/);
+});
