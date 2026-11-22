@@ -559,8 +559,38 @@ function jeonnamServiceNavigation(r, kind){
  return '<section id="jeonnam-service-localities"><h2>'+esc(title)+' '+(province?'시·군별':'읍·면·동별')+' 출발 안내</h2><p>'+esc(intro)+'</p><ul>'+links+'</ul></section>';
 }
 
+const gwangjuPickupNotes = {
+ '동구': ['충장로 주변 식당에서 출발할 때는 식당 이름과 실제 주차장 입구를 함께 알려 주세요.', '구도심 건물에서 차량을 보낼 때는 진입 가능한 도로와 주차 구역을 지정해 주세요.'],
+ '서구': ['상무지구 회식 후에는 건물명과 지하 주차층, 경유할 곳을 알려 주세요.', '정비센터 입고는 접수 지점과 차량을 맡길 수 있는 시각을 먼저 확인해 주세요.'],
+ '남구': ['봉선동 식당에서 귀가할 때는 차량을 세운 건물과 만날 출구를 지정해 주세요.', '아파트에서 차량을 인계할 때는 방문 차량 등록과 열쇠 전달 방법을 확인해 주세요.'],
+ '북구': ['전남대 주변에서 출발할 때는 대학 안쪽인지 인근 상가 주차장인지 알려 주세요.', '사업장 차량을 보낼 때는 출입구와 반출 담당자가 있는 시간을 확인해 주세요.'],
+ '광산구': ['광주송정역 주변에서 식사하셨다면 역 광장과 차량을 둔 주차장을 구분해 주세요.', '광주공항이나 송정역에서 차량을 인계할 때는 항공편·열차 출발 전 만날 주차 구역을 지정해 주세요.']
+};
+
+function gwangjuServiceNavigation(r, kind){
+ if(!['daeri','taksong'].includes(kind) || r.full_name.split(' ')[0] !== '광주광역시') return '';
+ const city = r.full_name === '광주광역시';
+ const district = r.level === '구';
+ if(!city && !district && r.level !== '동') return '';
+ const driver = kind === 'daeri';
+ const service = driver ? '대리운전' : '탁송';
+ const parent = bySlug.get(r.parent_slug);
+ const locality = city ? '광주광역시' : r.full_name.slice('광주광역시 '.length);
+ const title = city ? '광주광역시'+service : '광주 '+locality+service;
+ const notes = district && gwangjuPickupNotes[r.name];
+ const answer = notes ? notes[driver ? 0 : 1] : city
+  ? '차량이 있는 구를 선택한 뒤 동별 출발 안내와 예상요금을 확인해 주세요.'
+  : driver ? locality+'에서 기사와 만날 건물이나 주차장 입구, 출발 시각과 목적지를 알려 주세요.'
+  : locality+'에서 차량 키를 인계할 분과 도착지에서 차를 받을 분의 가능 시간을 알려 주세요.';
+ const children = (city || district) ? (childrenByParent.get(r.slug)||[]).filter(child=>child.level===(city?'구':'동')) : [];
+ const links = children.map(child=>'<li><a href="'+esc(servicePath(child,kind))+'">'+esc(child.name+service)+'</a></li>').join('');
+ return '<section id="gwangju-local-pickup"><h2>'+esc(title)+' 예약은 어떻게 하나요?</h2><p>'+esc(answer)+'</p>'+
+  (links ? '<ul>'+links+'</ul>' : '')+'<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">'+esc(locality)+' 출발 예상요금</a>'+
+  (!city && parent ? ' · <a href="'+esc(servicePath(parent,kind))+'">'+esc(parent.full_name+' '+service)+' 안내</a>' : '')+'</p></section>';
+}
+
 function regionalJourneyNavigation(r,kind){
- return jeonnamServiceNavigation(r,kind)+gangwonInlandNavigation(r,kind)+regionalJourneyRecords(r,kind);
+ return gwangjuServiceNavigation(r,kind)+jeonnamServiceNavigation(r,kind)+gangwonInlandNavigation(r,kind)+regionalJourneyRecords(r,kind);
 }
 function regionalJourneyRecords(r,kind){
  if(kind!=='taksong')return '';
