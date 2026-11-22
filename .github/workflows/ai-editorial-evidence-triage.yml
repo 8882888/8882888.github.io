@@ -15,6 +15,8 @@ on:
       - 'tests/nationwide-batch5-twelfth-source-32-20261121.test.cjs'
       - 'tests/nationwide-batch6-eighteenth-nineteenth-32-20261122.test.cjs'
       - 'tests/nationwide-batch7-twentieth-source-32-20261122.test.cjs'
+      - 'tests/national-provincial-source-discovery-20261122.test.cjs'
+      - 'lib/original-provincial-guidance-bridge.cjs'
       - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
       - 'server.js'
       - 'data/legal-regions/**'
@@ -38,6 +40,8 @@ on:
       - 'tests/nationwide-batch5-twelfth-source-32-20261121.test.cjs'
       - 'tests/nationwide-batch6-eighteenth-nineteenth-32-20261122.test.cjs'
       - 'tests/nationwide-batch7-twentieth-source-32-20261122.test.cjs'
+      - 'tests/national-provincial-source-discovery-20261122.test.cjs'
+      - 'lib/original-provincial-guidance-bridge.cjs'
       - 'tests/nationwide-runtime-source-parity-20261121.test.cjs'
       - 'server.js'
       - 'data/legal-regions/**'
@@ -87,6 +91,8 @@ jobs:
         run: node --test tests/nationwide-batch6-eighteenth-nineteenth-32-20261122.test.cjs
       - name: Verify seventh nationwide batch of 32 unique service instructions with full evidence audit
         run: node --test tests/nationwide-batch7-twentieth-source-32-20261122.test.cjs
+      - name: Validate 17 province hubs and two national service hubs link to exactly 34 existing original guides
+        run: node --test tests/national-provincial-source-discovery-20261122.test.cjs
       - name: Prove full 17-province, both-service, no-truncation nationwide review
         run: node --test tests/nationwide-evidence-coverage-20261121.test.cjs
       - name: Publish editorial review queue, NOT Naver index statistics
