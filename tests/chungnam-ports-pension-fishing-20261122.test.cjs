@@ -75,7 +75,7 @@ test('harbor and pension/fishing exact queries reuse original region canonicals 
 });
 test('province navigation links all 15 legal municipalities, 18 port names, and only existing town-level sitemap targets',()=>{
  const expected=2*(15+1+new Set(data.ports.map(p=>p.parent)).size);
- assert.equal(expected,56,'This curated coast uses 12 unique 읍면동 parents');
+ assert.equal(expected,58,'15 cities/counties, 1 province and 13 unique harbor 읍면동 parents, times two services');
  assert.equal(guide.canonicalPaths.length,expected);
  assert.equal(new Set(guide.canonicalPaths).size,58);
  for(const kind of ['taksong','daeri']){
@@ -105,7 +105,7 @@ test('preserve actual rides, original province sitemaps and 8 robots declaration
 
 test('harbor 읍면동 SEO titles and parent links use real places, preserving noindex village policy',()=>{
  const towns=[...new Set(data.ports.map(x=>x.parent))].map(p=>byFull.get(p));
- assert.equal(towns.length,12);
+ assert.equal(towns.length,13);
  const titles=new Set();
  for(const town of towns){
   for(const kind of ['taksong','daeri']){
