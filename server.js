@@ -3470,7 +3470,7 @@ if(searchIntent){
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=exactCycle||mountain||touristPlaceTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||truckLocalityTarget||workVehicleTarget||truckTarget||truckOtherTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ const target=exactCycle||mountain||touristPlaceTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
