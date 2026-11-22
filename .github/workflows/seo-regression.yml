@@ -174,6 +174,11 @@ jobs:
           node --check lib/chungcheong-4regions-stay-guide.cjs
           node --check tests/chungcheong-4regions-stay-20261122.test.cjs
           node --test tests/chungcheong-4regions-stay-20261122.test.cjs
+      - name: Verify Iksan Busong central city/dong SEO and real keyword HTTP canonical redirects
+        run: |
+          node --check lib/iksan-busong-seo.cjs
+          node --check tests/iksan-busong-seo-20261122.test.cjs
+          node --test tests/iksan-busong-seo-20261122.test.cjs
       - name: Syntax-check current production SEO auditors
         run: python3 -m py_compile tools/check_live_taksong_deploy.py tools/audit_live_seo.py
       - name: Confirm all curated region data edits affect the production deployment fingerprint
