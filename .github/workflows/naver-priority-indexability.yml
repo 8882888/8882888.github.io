@@ -37,6 +37,8 @@ jobs:
           node --test tests/innovation-more-five-areas-editorial.test.mjs
           node --test tests/priority-coast-and-cities-editorial.test.mjs
           node --check scripts/audit-naver-priority-live.mjs
+          node --check scripts/audit-live-structured-data.mjs
+          node --test tests/indexability-retry.test.mjs
       - name: Check live HTTP, 8 sitemaps, 17 provinces and canonical
         env:
           LIVE_SITE_URL: https://jeongukdaeri.kr
