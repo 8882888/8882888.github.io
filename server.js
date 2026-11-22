@@ -533,6 +533,17 @@ const jeonnamPickup = new Map([
 
 function jeonnamServiceNavigation(r, kind){
  if(!['daeri','taksong'].includes(kind) || r.full_name.split(' ')[0] !== '전라남도') return '';
+ if(['읍','면','동'].includes(r.level)){
+  const parent = bySlug.get(r.parent_slug);
+  if(!parent) return '';
+  const driver = kind === 'daeri';
+  const label = driver ? '대리운전' : '탁송';
+  const locality = esc(parent.name+' '+r.name);
+  const villages = (childrenByParent.get(r.slug)||[]).filter(child=>child.level==='리');
+  const locationHint = villages.length ? ' '+esc(villages.slice(0,3).map(child=>child.name).join('·'))+' 등 법정리 이름과 도로명이나 건물명을 함께 알려 주세요.' : ' 도로명과 건물명, 차량이 있는 주차 구역을 함께 알려 주세요.';
+  const detail = driver ? '기사와 만날 위치, 출발 희망 시각과 귀가할 목적지를 확인해 주세요.' : '차량 열쇠를 넘길 분과 도착지에서 차를 받을 분의 인계 가능 시간을 확인해 주세요.';
+  return '<section id="jeonnam-local-pickup"><h2>'+locality+esc(label)+' 출발 안내</h2><p>'+locality+'에서 출발하시나요?'+locationHint+' '+detail+'</p><p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">'+esc(r.name)+' 출발 예상요금</a> · <a href="'+esc(servicePath(parent,kind))+'">'+esc(parent.name)+' 전체 '+label+' 안내</a></p></section>';
+ }
  const province = r.full_name === '전라남도';
  const note = jeonnamPickup.get(r.name);
  if(!province && (!note || !['시','군'].includes(r.level))) return '';
