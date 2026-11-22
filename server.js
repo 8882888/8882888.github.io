@@ -1928,7 +1928,7 @@ async function servicePage(r,kind){
   ?priorityLocalGuide(r,kind)+naverFocus50Guide(r,kind)
   :'';
  const unreviewedFocusLater=priorityMeta?'':naverFocus50Guide(r,kind);
- const body=mobileReviewBookingBar(kind,name)+daeguTaksongGuide+taebaekTaksongHeader+sourceBackedLocalContext.render(r,kind,{esc})+sourceBackedLocalContextSecond.render(r,kind,{esc})+regionalQuickStart+sourceGuidanceBridge.province(r,kind)+reviewedContentFirst+regionalLocalityChecklist+regionalJourneyNavigation(r,kind)+gangwonTourismDaeri.regionSection(r,kind)+touristDaeri.regionSection(r,kind)+unreviewedFocusLater+seoulEditorialLinks(r,kind)+southeastTaksongFocus+(priorityMeta?priorityEvidence+priorityBlogEvidence(r,kind)+regionalBlogLinks(r,kind)+routeKeywordPages.links(r,kind):routeKeywordPages.links(r,kind)+priorityLocalGuide(r,kind)+regionalBlogLinks(r,kind))+vehicleGuideLink(kind)+(priorityMeta?priorityServiceUseCases(r,kind):compactLocalTemplate?'':localIntentLinks)+'<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(seoRegionLabel(a))+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+provinceServiceGuide(r,kind)+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+routeGuides.regionSection(r)+neighborhoodStorySection(r,kind)+taebaekGuide+bookingGuide(kind,r)+(priorityMeta||compactLocalTemplate?'':aliasSection)+(priorityMeta&&matches.length?regionalUsage(r,kind):'')+'<section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+(priorityMeta&&matches.length?'<p>상단에 표시된 확인 완료 사례에서 실제 출발·도착지와 당시 요금을 확인할 수 있습니다. 현재 견적은 별도 상담으로 안내합니다.</p><p><a href="/reviews/history/?kind='+kind+'">전체 운행기록 더 보기</a></p>':history)+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
+ const body=mobileReviewBookingBar(kind,name)+daeguTaksongGuide+taebaekTaksongHeader+sourceBackedLocalContext.render(r,kind,{esc})+sourceBackedLocalContextSecond.render(r,kind,{esc})+regionalQuickStart+sourceGuidanceBridge.province(r,kind)+reviewedContentFirst+regionalLocalityChecklist+regionalJourneyNavigation(r,kind)+gangwonTourismDaeri.regionSection(r,kind)+gyeongnamServiceGuides.regionSection(r,kind)+touristDaeri.regionSection(r,kind)+unreviewedFocusLater+seoulEditorialLinks(r,kind)+southeastTaksongFocus+(priorityMeta?priorityEvidence+priorityBlogEvidence(r,kind)+regionalBlogLinks(r,kind)+routeKeywordPages.links(r,kind):routeKeywordPages.links(r,kind)+priorityLocalGuide(r,kind)+regionalBlogLinks(r,kind))+vehicleGuideLink(kind)+(priorityMeta?priorityServiceUseCases(r,kind):compactLocalTemplate?'':localIntentLinks)+'<section><nav aria-label="지역별 '+service+' 경로"><a href="/">홈</a> / <a href="/'+kind+'/">전국 '+service+'</a> / '+regionAncestors(r).map(a=>'<a href="'+servicePath(a,kind)+'">'+esc(seoRegionLabel(a))+' '+service+'</a>').join(' / ')+'</nav><h2>'+esc(keyword)+'</h2><h3>'+esc(name)+' '+service+' 전문 안내</h3><p>'+intro+'</p><p>기사 상주를 보장하지 않으며 배차 가능 여부는 상담 시 확인합니다.</p><p><a class="cta" href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+service+' 예상요금 조회</a> <a class="cta" href="tel:18114294">전화 상담 '+PHONE+'</a></p></section>'+provinceServiceGuide(r,kind)+regionalIntentNav(r)+remoteRegionGuidance(r)+(await regionalQuoteLinks(r,kind))+routeGuides.regionSection(r)+neighborhoodStorySection(r,kind)+taebaekGuide+bookingGuide(kind,r)+(priorityMeta||compactLocalTemplate?'':aliasSection)+(priorityMeta&&matches.length?regionalUsage(r,kind):'')+'<section><h2>'+esc(name)+' '+(matches.length?'실제 완료 운행정보':service+' 상황별 이용 안내')+'</h2>'+(priorityMeta&&matches.length?'<p>상단에 표시된 확인 완료 사례에서 실제 출발·도착지와 당시 요금을 확인할 수 있습니다. 현재 견적은 별도 상담으로 안내합니다.</p><p><a href="/reviews/history/?kind='+kind+'">전체 운행기록 더 보기</a></p>':history)+'</section><section><h2>주변 지역 '+service+'</h2><ul>'+near+'</ul></section>'+hierarchyServiceLinks(r,kind)+'<section><h2>관련 서비스</h2><a href="'+servicePath(r,kind==='taksong'?'daeri':'taksong')+'">'+esc(name)+' '+(kind==='taksong'?'대리운전':'탁송')+'</a></section>';
  // Nationwide service-brand cards dynamically imprint the exact locality and service.
  // These are branded templates, not purported photographs of the city or a completed trip.
  const regionImagePath=cardPngPath(r.slug,kind);
@@ -2923,7 +2923,7 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
   headers['surrogate-control']='no-store';
   headers['x-smart24-sitemap-format']='focused-html-only-202611';
  }
- const isDiscoveryFeed=status===200&&['/rss.xml','/feed.xml','/sitemap-published.xml','/sitemap-priority.xml','/sitemap-taksong.xml','/sitemap-daeri.xml'].includes(res._smartPath);
+ const isDiscoveryFeed=status===200&&['/rss.xml','/feed.xml','/sitemap-published.xml','/sitemap-priority.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-gyeongnam-guides.xml'].includes(res._smartPath);
  if(isDiscoveryFeed){
   // An unchanged discovery feed can be revalidated without downloading it again.
   const hash=require('node:crypto').createHash('sha256').update(body).digest('hex');
@@ -2964,6 +2964,7 @@ let mainCardPngPromise, faviconPngPromise;
 const keywordEngine=require('./lib/keyword-engine')({root:ROOT,regions,esc,layout,servicePath,canonical,landmarks});
 const touristDaeri=require('./lib/tourist-daeri-keywords').create({landmarks,regionByFullName,servicePath,esc,layout,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr'});
 const gangwonTourismDaeri=require('./lib/gangwon-tourism-daeri.cjs').create({regions,regionByFullName,servicePath,esc});
+const gyeongnamServiceGuides=require('./lib/gyeongnam-service-guides.cjs').create({regions,regionByFullName,servicePath,esc});
 const routeGuides=require('./lib/route-guides')({regions,byPath,pathBySlug,cachedRoadDistance,roadQuote:RoadFareServer.roadQuote,esc,layout,servicePath,phone:PHONE,host:process.env.PUBLIC_HOST||'jeongukdaeri.kr',matchingHistoricalRides});
 // Reuse existing privacy-safe completed ride summaries; never expose raw dispatch notes.
 const blogRideHighlights=historicalRides.filter(x=>['taksong','daeri'].includes(x.service)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개'&&x.fare&&x.date).slice().reverse().slice(0,12);
@@ -3863,7 +3864,7 @@ if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  const rss='<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>'+esc(BRAND+' 실제 완료 운행기록')+'</title><link>'+base+'/reviews/verified/</link><description>'+esc('실제 완료 운행사례 공개 게시일 기준 최신 '+published.length+'건과 기존 운행기록 안내. 실제 운행일과 게시일은 서로 다릅니다.')+'</description><language>ko</language>'+[...publishedItems,...archiveItems].join('')+'</channel></rss>';
  return respond(res,200,rss,'application/rss+xml; charset=utf-8');
 }
-if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-published.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-all.xml','Sitemap: '+base+'/sitemap-history.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
+if(pathname==='/robots.txt'){const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');const txt=['User-agent: *','Allow: /','Sitemap: '+base+'/sitemap-priority.xml','Sitemap: '+base+'/sitemap.xml','Sitemap: '+base+'/sitemap-reviewed-routes.xml','Sitemap: '+base+'/sitemap-gyeongnam-guides.xml','Sitemap: '+base+'/sitemap-published.xml','Sitemap: '+base+'/sitemap-taksong.xml','Sitemap: '+base+'/sitemap-daeri.xml','Sitemap: '+base+'/sitemap-all.xml','Sitemap: '+base+'/sitemap-history.xml',''].join('\n');return respond(res,200,txt,'text/plain; charset=utf-8')}
 // Full discoverability inventory for genuine historical completed rides.
 // Six bounded shards; preserve all original 2,591 records and never fabricate rides.
 // Source-reviewed regional service pages only; no fabricated trip URLs.
@@ -3875,7 +3876,15 @@ if(pathname==='/sitemap-published.xml'){
   publishedCaseEntries.map(x=>'<url><loc>'+esc(base+x.path)+'</loc><lastmod>'+esc(x.publishedAt.slice(0,10))+'</lastmod></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
-if(pathname==='/sitemap-reviewed-routes.xml'){
+if(pathname==='/sitemap-gyeongnam-guides.xml'){
+  // Only 38 existing canonical URLs: one province + 18 cities/counties per service.
+  // Each municipal page has distinct, human-authored taksong/daeri guidance.
+  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+  const urls=gyeongnamServiceGuides.canonicalPaths;
+  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+urls.map(p=>'<url><loc>'+esc(new URL(base+p).href)+'</loc></url>').join('')+'</urlset>';
+  return respond(res,200,xml,'application/xml; charset=utf-8');
+ }
+ if(pathname==='/sitemap-reviewed-routes.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const routes=[...new Set(priorityRegionalPages.flatMap(entry=>{
   const region=regionByFullName.get(entry.region);
@@ -3977,7 +3986,7 @@ if(pathname==='/sitemap-coast.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-gyeongnam-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',
    // Do not promote thousands of formulaic 읍/면/동/리 locality pages in
    // the public sitemap index. Keep routes and old shard URLs functional;
    // retain province/city/county/district for broad navigation.
