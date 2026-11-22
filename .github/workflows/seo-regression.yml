@@ -162,6 +162,8 @@ jobs:
         run: node --test tests/gangwon-18-tourism-daeri-seo-20261122.test.cjs
       - name: Validate 38 Gyeongnam canonical pages and 18 original city county guides for both services
         run: node --test tests/gyeongnam-service-guides-18-20261122.test.cjs
+      - name: Validate all 15 Chungnam municipalities, 18 actual port localities and SEO canonical aliases
+        run: node --test tests/chungnam-ports-pension-fishing-20261122.test.cjs
       - name: Syntax-check current production SEO auditors
         run: python3 -m py_compile tools/check_live_taksong_deploy.py tools/audit_live_seo.py
       - name: Confirm all curated region data edits affect the production deployment fingerprint
