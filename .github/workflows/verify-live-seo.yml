@@ -8,6 +8,9 @@ on:
       - 'scripts/verify-live-seo-release.cjs'
       - 'tests/live-sitemap-scope.test.mjs'
       - 'tests/published-case-cloudtype-release.test.cjs'
+      - 'scripts/publish_verified_case.py'
+      - 'tests/verified-published-case-title-unique-20261122.py'
+      - 'reviews/verified/**/index.html'
   workflow_dispatch:
   schedule:
     # 03:30 Asia/Seoul: one full sitemap crawl daily, not on every SEO commit
@@ -32,6 +35,8 @@ jobs:
         run: node --test tests/live-sitemap-scope.test.mjs
       - name: Check published-case manifest and Cloudtype dispatch integration
         run: node --test tests/published-case-cloudtype-release.test.cjs
+      - name: Verify all published case titles use actual source dates only when routes repeat
+        run: python3 tests/verified-published-case-title-unique-20261122.py
       - run: node scripts/verify-live-seo-release.cjs
   nationwide-audit:
     needs: verify
