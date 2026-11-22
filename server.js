@@ -589,8 +589,69 @@ function gwangjuServiceNavigation(r, kind){
   (!city && parent ? ' · <a href="'+esc(servicePath(parent,kind))+'">'+esc(parent.full_name+' '+service)+' 안내</a>' : '')+'</p></section>';
 }
 
+const jeonnamBookingAnswers = {
+ "여수시": [
+  "돌산 숙소에서 여수엑스포역으로 차량만 보내려면 누가 역에서 차를 받나요?",
+  "열차 도착 시각과 차량을 받을 분이 기다릴 주차 구역을 지정해 주세요. 숙소에 키를 맡기는 경우 인계 가능 시간도 확인해 주세요.",
+  "돌산에서 식사 후 여수 시내 숙소로 돌아갈 때 어디서 만나나요?",
+  "식당 앞과 차를 세운 주차장이 다르면 주차장 입구를 알려 주세요. 숙소가 여러 곳이면 경유 순서도 함께 말씀해 주세요."
+ ],
+ "광양시": [
+  "광양항 사업장에서 출고할 차량은 어떻게 인계하나요?",
+  "출입 가능한 정문, 반출 승인 시각, 키를 전달할 담당자를 확인해 주세요. 외부 차량 인계 장소가 따로 있다면 그 주소를 알려 주세요.",
+  "광양에서 순천 방면으로 귀가할 때 무엇을 알려야 하나요?",
+  "중마동에서 출발하는지 광양읍에서 출발하는지 먼저 알려 주세요. 일행을 내려주는 곳이 있다면 최종 목적지와 구분해 주세요."
+ ],
+ "순천시": [
+  "순천역 열차를 타기 전 차량을 맡길 수 있나요?",
+  "탑승 열차 시각과 운전자가 직접 키를 전달할 수 있는 마지막 시각을 기준으로 상담합니다. 역 주차장 이름과 차량 위치를 함께 남겨 주세요.",
+  "순천만국가정원 방문 후 식당에서 기사를 부르면 어디로 오나요?",
+  "차를 정원 주차장에 두었는지 식당까지 가져왔는지 알려 주세요. 정원 쪽에 있으면 이용한 출입구와 주차 구역을 기준으로 만납니다."
+ ],
+ "강진군": [
+  "강진읍에서 정비 차량을 보내려면 무엇을 준비하나요?",
+  "정비 접수처와 담당자, 입고 마감 시각을 확인해 주세요. 군내 다른 면에서 차량을 넘길 경우 출발지 면 이름까지 필요합니다.",
+  "마량항에서 강진읍 숙소까지 대리운전을 신청하려면요?",
+  "차량이 있는 항구 주차 구역과 숙소 이름을 알려 주세요. 식당에서 걸어 나온 곳과 주차장 진입로가 다르면 기사와 만날 입구를 지정해 주세요."
+ ],
+ "보성군 벌교읍": [
+  "벌교역에서 차량만 다른 지역으로 보낼 때 어떻게 예약하나요?",
+  "보성군 벌교읍 출발로 접수하고 역 주변 주차 위치와 키 인계 시각을 알려 주세요. 도착지에서 차를 받을 분의 가능 시간도 함께 확인합니다.",
+  "벌교 꼬막 식당에서 식사 후 순천 방면으로 갈 때는요?",
+  "식당 상호와 실제 차량이 있는 골목이나 주차장을 함께 알려 주세요. 벌교읍내에서 일행을 먼저 내려줄 경우 경유지로 말씀해 주세요."
+ ],
+ "해남군": [
+  "땅끝마을에서 차량을 보내고 배를 탈 때 무엇을 확인하나요?",
+  "차를 육지에서 인계할지 배에 실을지 먼저 알려 주세요. 송지면의 실제 주차장과 승선 전 키를 넘길 시간을 기준으로 상담합니다.",
+  "해남읍과 땅끝마을 중 어디를 출발지로 적나요?",
+  "차가 있는 쪽을 출발지로 적어 주세요. 송지면에서 식사하고 해남읍으로 귀가한다면 식당 주변 주차 위치와 읍내 도착지를 나눠 알려 주세요."
+ ],
+ "완도군": [
+  "완도항에서 차량을 선적하려면 무엇이 필요한가요?",
+  "예약한 선사와 차량 접수 마감 시각, 항구에서 인계받을 분을 확인해 주세요. 터미널 주차장에서 차량만 전달하는 일정도 구분해 접수합니다.",
+  "완도항 주변에서 회를 먹고 숙소로 갈 때 어디서 만나나요?",
+  "차를 세운 항구 주차장 입구와 숙소가 있는 읍·면을 알려 주세요. 섬 숙소라면 차량으로 이동할 수 있는 경로를 먼저 확인합니다."
+ ],
+ "진도군": [
+  "진도읍에서 팽목항 방면으로 차를 보낼 때 어떻게 인계하나요?",
+  "차량 수령 장소를 항구 주차장이나 지정한 주소로 정해 주세요. 배편과 연결된다면 승객 출발 시각과 차량 인계 시각을 따로 확인합니다.",
+  "진도에서 목포 방면 장거리 귀가를 예약하려면요?",
+  "진도읍에서 출발하는지 군내 다른 면에서 출발하는지와 차량을 세워 둔 곳을 알려 주세요. 목포 도착지와 중간 경유지를 함께 확인합니다."
+ ]
+};
+
+function jeonnamBookingAnswer(r,kind){
+ if(!r.full_name.startsWith('전라남도 ') || !['daeri','taksong'].includes(kind)) return '';
+ const answers = jeonnamBookingAnswers[r.full_name.slice(5)];
+ if(!answers) return '';
+ const offset = kind==='taksong' ? 0 : 2;
+ const service = offset===0 ? '탁송' : '대리운전';
+ const name = r.name.slice(0,-1);
+ return '<section id="jeonnam-booking-answer"><h2>'+esc(name+service)+' 예약 안내</h2><h3>'+esc(answers[offset])+'</h3><p>'+esc(answers[offset+1])+'</p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(r.full_name)+'">'+esc(name+service)+' 예상요금 조회</a></section>';
+}
+
 function regionalJourneyNavigation(r,kind){
- return gwangjuServiceNavigation(r,kind)+jeonnamServiceNavigation(r,kind)+gangwonInlandNavigation(r,kind)+regionalJourneyRecords(r,kind);
+ return jeonnamBookingAnswer(r,kind)+gwangjuServiceNavigation(r,kind)+jeonnamServiceNavigation(r,kind)+gangwonInlandNavigation(r,kind)+regionalJourneyRecords(r,kind);
 }
 function regionalJourneyRecords(r,kind){
  if(kind!=='taksong')return '';
