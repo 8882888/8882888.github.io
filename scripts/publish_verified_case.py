@@ -246,6 +246,28 @@ def main():
         page.parent.mkdir(parents=True, exist_ok=True)
         page.write_text(render_case(selected, records, published), encoding="utf-8")
     if batch:
+        # When a new verified case repeats an older published route, refresh
+        # the older page too: both titles must carry their real ride dates.
+        new_routes = {
+            (selected["service"], selected["departure"], selected["destination"])
+            for _, selected in batch
+        }
+        new_ids = {key for key, _ in batch}
+        by_id = {identifier(row): row for row in records if complete(row)}
+        for previous in published:
+            old_id = previous["id"]
+            if old_id in new_ids:
+                continue
+            old_ride = by_id.get(old_id)
+            if old_ride is None:
+                continue
+            route = (old_ride["service"], old_ride["departure"], old_ride["destination"])
+            if route not in new_routes:
+                continue
+            old_page = OUT / old_id / "index.html"
+            if not old_page.is_file():
+                raise SystemExit("Published same-route page missing; refusing silent recreation: " + old_id)
+            old_page.write_text(render_case(old_ride, records, published), encoding="utf-8")
         STATE.write_text(json.dumps(published, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
         print("Published verified cases:", len(batch), *(key for key, _ in batch))
     else:
