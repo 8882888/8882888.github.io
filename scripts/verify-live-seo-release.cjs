@@ -1,6 +1,7 @@
 'use strict';
 const {createHash}=require('node:crypto');
 const {readFileSync}=require('node:fs');
+const path=require('node:path');
 const {setTimeout:delay}=require('node:timers/promises');
 
 const base=new URL(process.argv[2]||'https://jeongukdaeri.kr');
@@ -86,6 +87,34 @@ async function main(){
         !feedXml.includes('<pubDate>'+new Date(x.publishedAt).toUTCString()+'</pubDate>'))
       throw Error('New saved case missing publication timestamp or RSS link: '+x.path);
     }
+    // Compare LIVE titles with the exact already-published verified source.
+    // Different real rides using the same route must not share an SEO title.
+    // Check in small waves to avoid adding an uncontrolled crawl at deployment.
+    const liveTitles=new Map();
+    for(let i=0;i<publishedCases.length;i+=4){
+     const wave=publishedCases.slice(i,i+4);
+     const checked=await Promise.all(wave.map(async x=>{
+      const source=readFileSync(path.join(__dirname,'..','reviews','verified',x.id,'index.html'),'utf8');
+      const live=await read(x.path);
+      const part=(html,tag)=>html.match(new RegExp('<'+tag+'\\b[^>]*>([\\s\\S]*?)<\\/'+tag+'>','i'))?.[1]?.trim()||'';
+      const sourceTitle=part(source,'title'),liveTitle=part(live,'title');
+      const sourceH1=part(source,'h1'),liveH1=part(live,'h1');
+      if(!sourceTitle||!sourceH1||sourceTitle!==liveTitle||sourceH1!==liveH1)
+       throw Error('Published source title/H1 does not match LIVE HTML: '+x.path);
+      if(!live.includes('<link rel="canonical" href="'+new URL(x.path,base).href+'">'))
+       throw Error('Published source canonical is missing on LIVE page: '+x.path);
+      if(!live.includes('<dd>'+x.rideDate+'</dd>')||
+         !live.includes('<dd>'+x.fare+'</dd>'))
+       throw Error('Original ride date or fare differs on LIVE page: '+x.path);
+      return {title:liveTitle,url:x.path};
+     }));
+     for(const item of checked){
+      if(liveTitles.has(item.title))
+       throw Error('Duplicate LIVE published ride title: '+item.title+' at '+liveTitles.get(item.title)+' and '+item.url);
+      liveTitles.set(item.title,item.url);
+     }
+    }
+    console.log('PASS LIVE published-case source title/H1/canonical/date/fare parity: '+liveTitles.size+'/'+publishedCases.length+'; duplicate titles 0');
    }
    // Production release must not re-submit low-distinctiveness locality/topic
    // permutations through the priority sitemap after pruning the guide sitemap.
