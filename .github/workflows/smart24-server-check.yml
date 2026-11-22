@@ -110,6 +110,8 @@ jobs:
         run: node --test tests/published-case-cloudtype-release.test.cjs
       - name: Validate cached national hubs retain source SEO, canonical and enquiry links
         run: node --test tests/national-service-hub-response-cache-20261116.test.cjs
+      - name: Prevent new unverified regional doorways and preserve 34 original province discovery links
+        run: node --test tests/national-provincial-source-discovery-20261122.test.cjs
       - name: Verify Ganghwa canonical search recovery with true rides
         run: node tests/ganghwa-daeri-search-recovery.test.js
       - name: Verify nationwide million-choice search and preserved rides
