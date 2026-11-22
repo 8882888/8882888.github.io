@@ -1409,7 +1409,7 @@ async function servicePage(r,kind){
    ?'강릉대리운전 · 경포·안목·교동·주문진 대리운전·법인·장거리 상담. 경포해변·안목해변의 음식점과 카페 이용 후 주차장 위치 확인. 과거 운행기록·요금조회·상담 1811-4294.'
    :'강릉항·주문진·동해안 종주 차량회수 자동차탁송·입출고 상담. 강릉 경포대와 주문진·강릉항 용인→강릉 당시 11만원, 문의 1811-4294.')
   :null;
- const searchDesc=gangwonProvinceDaeri?'강원도대리운전 춘천·원주·강릉·속초·양양 등 18개 시군 관광지·맛집 주변·호텔·펜션·골프장 출발과 장거리대리운전. 주차 위치·기사 복귀·예상요금·예약상담 1811-4294.':ganghwaReviewPage?rawSearchDesc:gangneungSearchDesc||naverPriorityShortMetaByPath.get(servicePath(r,kind))||
+ const searchDesc=gangwonProvinceDaeri?'강원특별자치도 대리운전(강원도대리운전) 춘천·원주·강릉·속초·양양 등 18개 시군 관광지·맛집 주변·호텔·펜션·골프장 출발과 장거리대리운전. 차량 주차 위치·기사 복귀·예상요금·예약 상담 1811-4294.':ganghwaReviewPage?rawSearchDesc:gangneungSearchDesc||naverPriorityShortMetaByPath.get(servicePath(r,kind))||
   (priorityMeta?rawSearchDesc:boundedRegionalSearchDescription(rawSearchDesc));
  const hierarchyNote='행정구역 경로: '+regionAncestors(r).map(a=>a.name).join(' → ')+'. '+(r.level==='리'?'마을 단위 상세 위치와 차량 인수 지점을 확인합니다.':r.level==='동'?'건물 출입구와 주차 위치를 확인합니다.':r.level==='면'?'면 소재지와 외곽의 기사 이동 여건을 확인합니다.':'지역별 출발지와 목적지의 이동 조건을 확인합니다.');
  const aliasTerms=[...new Set(regionAliases(r).map(x=>x+service))].filter(x=>x!==name+' '+service&&x!==keyword);const aliasSection=aliasTerms.length?'<section><h2>지역명별 '+service+' 검색 안내</h2><p>'+esc(aliasTerms.join(' · '))+'은(는) '+esc(name)+' 지역의 동일한 서비스 안내를 가리킵니다. 지역별 별도 업체나 기사 상주를 뜻하지 않습니다.</p></section>':'';
