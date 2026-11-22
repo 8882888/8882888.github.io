@@ -352,8 +352,204 @@ function gangwonInlandNavigation(r, kind) {
  return '<section><h2>' + labels.join(' · ') + '</h2><p>' + esc(isDaeri ? driverNote : transferNote) + '</p><p><a href="' + esc(servicePath(r,other)) + '">' + esc(places[0]) + (isDaeri ? '탁송 차량 인계 안내' : '대리운전 귀가 안내') + '</a></p></section>';
 }
 
+const jeonnamPickup = new Map([
+ [
+  "목포시",
+  [
+   "목포항 여객터미널",
+   "승선 전에 차량을 맡길 수 있는 시각",
+   "항구 식당에서 차량을 세운 주차장 입구"
+  ]
+ ],
+ [
+  "여수시",
+  [
+   "돌산읍",
+   "숙소 퇴실 전 열쇠를 넘길 장소",
+   "돌산 숙소로 돌아갈 때 경유할 식당"
+  ]
+ ],
+ [
+  "순천시",
+  [
+   "순천역",
+   "열차 출발 전 차량을 넘길 주차 구역",
+   "역 주변 식당과 실제 주차 위치"
+  ]
+ ],
+ [
+  "나주시",
+  [
+   "빛가람동",
+   "업무시설 방문 차량의 출입 등록 방법",
+   "회식 장소와 차량이 있는 건물의 주차층"
+  ]
+ ],
+ [
+  "광양시",
+  [
+   "광양항",
+   "사업장 출입 가능 시간과 인수 담당자",
+   "항만 인근 식당에서 기사를 만날 위치"
+  ]
+ ],
+ [
+  "담양군",
+  [
+   "죽녹원",
+   "관람 중 차량을 넘겨줄 주차장",
+   "담양읍 식당과 목적지 숙소"
+  ]
+ ],
+ [
+  "곡성군",
+  [
+   "곡성역",
+   "열차 시간에 맞춰 키를 인계할 곳",
+   "역 주변 식당에서 출발할 시각"
+  ]
+ ],
+ [
+  "구례군",
+  [
+   "구례읍",
+   "읍내 차량 인수자와 도착지 수령자",
+   "읍내 식당에서 외곽 숙소까지의 목적지"
+  ]
+ ],
+ [
+  "고흥군",
+  [
+   "녹동항",
+   "승선 일정과 차량만 남기는 주차 위치",
+   "항구 횟집과 실제 차량 위치"
+  ]
+ ],
+ [
+  "보성군",
+  [
+   "벌교읍",
+   "차량을 보관 중인 주소와 인계 가능 시간",
+   "벌교 식당에서 보성읍 방면으로 출발할 시각"
+  ]
+ ],
+ [
+  "화순군",
+  [
+   "화순읍",
+   "정비 입고 차량의 접수처와 운영 시간",
+   "광주 방면 귀가 시 경유지"
+  ]
+ ],
+ [
+  "장흥군",
+  [
+   "정남진 장흥 토요시장",
+   "시장 방문 중 차를 맡길 주차 구역",
+   "시장 식당에서 기사와 만날 입구"
+  ]
+ ],
+ [
+  "강진군",
+  [
+   "강진읍",
+   "차량을 받을 사업장의 출입구",
+   "읍내 식당과 숙소의 정확한 위치"
+  ]
+ ],
+ [
+  "해남군",
+  [
+   "땅끝마을",
+   "차량 수령자와 여객선 이용 일정",
+   "송지면에서 출발할 식당이나 주차장"
+  ]
+ ],
+ [
+  "영암군",
+  [
+   "삼호읍",
+   "사업장 차량 반출 승인과 키 인계 시간",
+   "삼호읍 식당에서 목포 방면 경유지"
+  ]
+ ],
+ [
+  "무안군",
+  [
+   "삼향읍 남악리",
+   "아파트 방문 차량의 주차장 접근 방법",
+   "남악 식당가에서 기사와 만날 건물 입구"
+  ]
+ ],
+ [
+  "함평군",
+  [
+   "함평읍",
+   "읍내에서 키를 전달할 담당자",
+   "식사 후 외곽 목적지까지의 경유지"
+  ]
+ ],
+ [
+  "영광군",
+  [
+   "법성포",
+   "항구 주변 차량을 인수할 주차 구역",
+   "굴비거리 식당과 차를 세운 곳"
+  ]
+ ],
+ [
+  "장성군",
+  [
+   "백양사",
+   "산행 전 차량을 인계할 주차장",
+   "산행 뒤 식사 장소와 실제 차량 위치"
+  ]
+ ],
+ [
+  "완도군",
+  [
+   "완도항",
+   "차량 선적 여부와 터미널 인계 마감 시각",
+   "여객터미널 주변 식당에서 출발할 위치"
+  ]
+ ],
+ [
+  "진도군",
+  [
+   "진도읍",
+   "읍내 차량 인계 시각과 최종 수령지",
+   "읍내에서 숙소까지 귀가할 시각"
+  ]
+ ],
+ [
+  "신안군",
+  [
+   "압해읍",
+   "목적지 섬의 연륙 여부와 차량 인계 방법",
+   "출발 섬과 도착 섬 사이의 이동 경로"
+  ]
+ ]
+]);
+
+function jeonnamServiceNavigation(r, kind){
+ if(!['daeri','taksong'].includes(kind) || r.full_name.split(' ')[0] !== '전라남도') return '';
+ const province = r.full_name === '전라남도';
+ const note = jeonnamPickup.get(r.name);
+ if(!province && (!note || !['시','군'].includes(r.level))) return '';
+ const label = kind === 'daeri' ? '대리운전' : '탁송';
+ const title = (province ? '전남' : r.name.slice(0,-1)) + label;
+ const levels = province ? ['시','군'] : ['읍','면','동'];
+ const children = (childrenByParent.get(r.slug) || []).filter(child => levels.includes(child.level));
+ const links = children.map(child => {
+  const name = province ? child.name.slice(0,-1) : child.name;
+  return '<li><a href="'+esc(servicePath(child,kind))+'">'+esc(name+label)+'</a></li>';
+ }).join('');
+ const intro = province ? '출발하는 시·군을 선택하면 읍·면·동별 예약 안내를 확인할 수 있습니다.' : note[0]+' 주변에서 '+(kind === 'daeri' ? note[2] : note[1])+' 등을 알려 주세요.';
+ return '<section id="jeonnam-service-localities"><h2>'+esc(title)+' '+(province?'시·군별':'읍·면·동별')+' 출발 안내</h2><p>'+esc(intro)+'</p><ul>'+links+'</ul></section>';
+}
+
 function regionalJourneyNavigation(r,kind){
- return gangwonInlandNavigation(r,kind)+regionalJourneyRecords(r,kind);
+ return jeonnamServiceNavigation(r,kind)+gangwonInlandNavigation(r,kind)+regionalJourneyRecords(r,kind);
 }
 function regionalJourneyRecords(r,kind){
  if(kind!=='taksong')return '';
