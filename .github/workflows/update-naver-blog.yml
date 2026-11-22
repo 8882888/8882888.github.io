@@ -33,6 +33,8 @@ jobs:
         run: python scripts/publish_verified_case.py
       - name: Verify core pages and preserved ride history
         run: python scripts/check_core_content.py
+      - name: Ensure each published original ride has a unique verified source title
+        run: python tests/verified-published-case-title-unique-20261122.py
       - name: Commit archive and regional pages when changed
         id: publication
         run: |
