@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {fetchWithRetry} from './indexability-retry.mjs';
 const origin=(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr').replace(/\/$/,'');
 // All 17 province hubs are public canonical landing pages, not a sample of
 // generated 읍/면/동/리 candidates. Audit both services per province.
@@ -33,14 +34,18 @@ function extractJsonLd(html){
  return {nodes,errors};
 }
 async function fetchSafe(route){
- const r=await fetch(origin+route,{headers:{'user-agent':'Smart24-StructuredData-Live-Audit/1.0','cache-control':'no-cache'},signal:AbortSignal.timeout(25000),redirect:'manual'});
- return r;
+ // Retry only transient network errors/429/5xx; a persistent 404, invalid
+ // schema, wrong canonical or empty response must still fail this audit.
+ return fetchWithRetry(route,resource=>fetch(origin+resource,{
+  headers:{'user-agent':'Smart24-StructuredData-Live-Audit/1.0','cache-control':'no-cache'},
+  signal:AbortSignal.timeout(25000),redirect:'manual'
+ }),{attempts:3,delays:[500,1300]});
 }
 const out={generatedAt:new Date().toISOString(),origin,scope:'actual public HTML JSON-LD, not official Naver report',routes:[],errors:[],warnings:[]};
 for(const route of routes){
  const x={route:route.path,status:0,types:[],errors:[]};
  try{
-  const response=await fetchSafe(route.path);x.status=response.status;
+  const {response,attempts}=await fetchSafe(route.path);x.status=response.status;x.fetchAttempts=attempts;
   if(response.status!==200)x.errors.push('http_'+response.status);
   const html=await response.text();
   const parsed=extractJsonLd(html);x.errors.push(...parsed.errors);
@@ -58,7 +63,8 @@ for(const route of routes){
     const u=new URL(image);
     if(u.origin!==origin)x.errors.push('schema_image_other_origin');
     else {
-     const head=await fetchSafe(u.pathname);
+     const {response:head,attempts:imageAttempts}=await fetchSafe(u.pathname);
+     x.imageFetchAttempts=imageAttempts;
      x.imageStatus=head.status;
      x.imageContentType=head.headers.get('content-type')||'';
      if(head.status!==200||!/^image\//.test(x.imageContentType))x.errors.push('schema_image_invalid_http_or_mime');
@@ -69,7 +75,7 @@ for(const route of routes){
    if(web.length!==1)x.errors.push('site_name_schema_duplicate_or_missing');
    else if(web[0].name!=='스마트24 전국대리운전')x.errors.push('site_name_mismatch');
   }
- }catch(error){x.errors.push('fetch_or_parse_'+String(error).slice(0,180));}
+ }catch(error){x.fetchAttempts=error?.retryAttempts||x.fetchAttempts||1;x.errors.push('fetch_or_parse_'+String(error).slice(0,180));}
  out.routes.push(x);out.errors.push(...x.errors.map(e=>route.path+': '+e));
 }
 const here=path.dirname(fileURLToPath(import.meta.url));
@@ -82,5 +88,5 @@ fs.writeFileSync(path.join(root,'structured-data-live-report.md'),[
  ...out.routes.map(x=>'| '+x.route+' | '+x.status+' | '+x.types.join(', ')+' | '+(x.errors.join('; ')||'정상')+' |'),
  '',...(out.errors.length?out.errors:['수집된 표본에서 JSON-LD 오류 없음']),''
 ].join('\n'));
-console.log(JSON.stringify({checked:out.routes.length,errors:out.errors,rows:out.routes.map(x=>({route:x.route,status:x.status,types:x.types,imageStatus:x.imageStatus}))}));
+console.log(JSON.stringify({checked:out.routes.length,recoveredTransient:out.routes.filter(x=>x.status===200&&(x.fetchAttempts>1||x.imageFetchAttempts>1)).length,errors:out.errors,rows:out.routes.map(x=>({route:x.route,status:x.status,types:x.types,fetchAttempts:x.fetchAttempts,imageStatus:x.imageStatus}))}));
 if(out.errors.length)process.exitCode=1;
