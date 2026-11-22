@@ -46,6 +46,11 @@ jobs:
           node --check lib/special-vehicle-keywords.cjs
           node --check tests/special-vehicle-keywords.test.cjs
           node --test tests/special-vehicle-keywords.test.cjs
+      - name: Verify nationwide 26 truck types, 27 tonnage intents and 17 province region canonicals
+        run: |
+          node --check lib/nationwide-truck-taksong.cjs
+          node --check tests/nationwide-truck-types-20261122.test.cjs
+          node --test tests/nationwide-truck-types-20261122.test.cjs
       - name: Verify 44 source-backed domestic, imported and truck service-center intents
         run: |
           node --check lib/service-center-taksong.cjs
