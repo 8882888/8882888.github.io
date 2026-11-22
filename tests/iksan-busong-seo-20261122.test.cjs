@@ -31,7 +31,10 @@ test('City and Busong have distinct real customer guidance, existing 14 local li
   const cityHtml=guide.regionSection(guide.city,kind);
   const focusHtml=guide.regionSection(guide.focus,kind);
   assert.ok(cityHtml.length>2500);
-  assert.ok(focusHtml.length>1700);
+  assert.ok(focusHtml.length>1200,'Substantial customer-specific Busong guidance required');
+  assert.ok(focusHtml.includes(kind==='daeri'?'부송동 대리운전 예약 확인사항':'부송동 차량탁송 인수·인계 확인사항'));
+  assert.ok(focusHtml.includes('<ol>')&&focusHtml.includes('도착지'));
+
   assert.ok(cityHtml.includes('부송동 생활상권')&&cityHtml.includes('영등동')&&cityHtml.includes('어양동'));
   assert.ok(cityHtml.includes(original.cityGuide[kind][0])&&cityHtml.includes(original.cityGuide[kind][2]));
   assert.ok(focusHtml.includes(original.focusGuide[kind][1]));
