@@ -102,3 +102,26 @@ test('preserve actual rides, original province sitemaps and 8 robots declaration
   assert.doesNotMatch(JSON.stringify(item),/운행완료|배차완료|고정\s*요금|100%\s*즉시배차|상주기사 확보/);
  }
 });
+
+test('harbor 읍면동 SEO titles and parent links use real places, preserving noindex village policy',()=>{
+ const towns=[...new Set(data.ports.map(x=>x.parent))].map(p=>byFull.get(p));
+ assert.equal(towns.length,12);
+ const titles=new Set();
+ for(const town of towns){
+  for(const kind of ['taksong','daeri']){
+   const meta=guide.searchMeta(town,kind),html=guide.regionSection(town,kind);
+   assert.ok(meta&&meta.title.includes(kind==='taksong'?'탁송':'대리운전'));
+   assert.ok(meta.description.includes('1811-4294'));
+   assert.ok(html.includes('지역 전체'));
+   assert.ok(html.includes('충남 항구·낚시터'));
+   assert.ok(!titles.has(meta.title),'Duplicate local harbor meta '+town.full_name);
+   titles.add(meta.title);
+  }
+ }
+ const samgil=guide.searchMeta(byFull.get('충청남도 서산시 대산읍'),'daeri');
+ assert.match(samgil.title,/삼길포항대리운전/);
+ assert.match(samgil.description,/서산/);
+ const dangjin=guide.searchMeta(byFull.get('충청남도 당진시 석문면'),'daeri');
+ assert.ok(dangjin.title.includes('장고항')&&dangjin.title.includes('왜목항'));
+ assert.equal(guide.searchMeta(byFull.get('충청남도 서산시 대산읍 화곡리'),'daeri'),null);
+});
