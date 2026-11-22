@@ -13,6 +13,8 @@ on:
       - 'tests/published-case-canonical-bridge.test.cjs'
       - 'scripts/enrich_published_verified_cases.py'
       - 'tests/verified-case-enrichment.test.cjs'
+      - 'tests/verified-case-regeneration-source-parity-20261122.py'
+      - 'tests/verified-published-case-title-unique-20261122.py'
       - '.github/workflows/verified-case-content-review.yml'
   push:
     branches: [main]
@@ -23,6 +25,8 @@ on:
       - 'scripts/publish_verified_case.py'
       - 'scripts/enrich_published_verified_cases.py'
       - 'tests/verified-case-enrichment.test.cjs'
+      - 'tests/verified-case-regeneration-source-parity-20261122.py'
+      - 'tests/verified-published-case-title-unique-20261122.py'
       - '.github/workflows/verified-case-content-review.yml'
 permissions:
   contents: read
@@ -48,5 +52,8 @@ jobs:
         run: node --test tests/published-case-canonical-bridge.test.cjs
       - name: Verify safe IndexNow batching for changed verified cases
         run: node tests/indexnow-targeting.test.js
-      - name: Confirm deterministic generation and unchanged publication ledger
-        run: git diff --exit-code -- reviews/verified data/published-ride-case-ids.json
+      - name: Compare source-backed ride facts and unique search titles, allowing verified related-link refreshes
+        run: |
+          python tests/verified-case-regeneration-source-parity-20261122.py
+          python tests/verified-published-case-title-unique-20261122.py
+          git diff --exit-code -- data/published-ride-case-ids.json
