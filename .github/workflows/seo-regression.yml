@@ -28,6 +28,10 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Verify bounded retries keep live JSON-LD audit transient-safe
+        run: |
+          node --check scripts/audit-live-structured-data.mjs
+          node --test tests/indexability-retry.test.mjs
       - name: Check 80-character metadata and noindex-safe JSON-LD guard
         run: |
           node --check lib/seo-head-guard.cjs
