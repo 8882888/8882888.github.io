@@ -102,7 +102,7 @@ test('Export-focused webpage SEO and JSON-LD match human readable verified servi
  assert(page.includes('name="description" content="중고차 수출업체·무역업체 대상'));
  assert(page.includes('id="exporter-ceo-b2b-sales-20261123"'));
  assert(page.includes('href="/business/#export"'));
- assert(page.includes('수출업체 대표·매입팀·물류팀'));
+ assert(page.includes('수출업체 대표·CEO, 매입팀·물류팀·차량관리 담당자'));
  assert(page.includes('말소·무번호판·주행불가'));
  assert(page.includes('선박 선적'));
  for(const row of data.routes){
@@ -165,7 +165,7 @@ test('Real HTTP 200 original business and export origin pages, 302 only grounded
   assert(ready,'Original HTTP server missing');
   for(const [url,term] of [
    ['/business/export-port/','중고차수출업체탁송'],
-   ['/business/','중고차 수출업체·무역업체 매입차 입고'],
+   ['/business/','중고차수출업체탁송·무역업체 매입차 입고'],
    ['/business/used-car/','수출업체·무역업체 매입차량'],
    ['/business/auction/','수출업체 낙찰차량 출고'],
    ['/taksong/gyeonggi/osan-si/','오산중고차수출업체탁송'],
