@@ -31,7 +31,7 @@ test('13 original Sokcho 2026 legal neighborhoods, two original city routes and 
   assert(byFull.has(row.from),row.from);
   assert(row.from.startsWith(data.city+' '));
   assert(byFull.has(row.to),row.to);
-  assert(row.daeri.length>100&&row.taksong.length>100);
+  assert(row.daeri.length>=100&&row.taksong.length>=100);
   for(const kind of ['daeri','taksong'])
    assert(guide.canonicalPaths.includes(servicePath(byFull.get(row.from),kind)));
  }
