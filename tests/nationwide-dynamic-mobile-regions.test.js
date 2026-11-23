@@ -48,6 +48,13 @@ for(const region of regions){
   ['daeri','대리운전','대리비견적'],['taksong','탁송','탁송비견적']
  ]){
   const keyword=region.full_name+service;
+  const menu=explorer.localServiceMenu(region,kind);
+  const terms=kind==='daeri'?['법인대리운전','골프대리운전','장거리대리운전','고급CEO대리운전','CEO수행기사']:['화물차탁송','지역탁송'];
+  for(const term of terms){
+   assert.equal(explorer.resolveServiceBooking(region.full_name+term),'/'+kind+'/'+region.slug+'/#local-service-booking');
+  }
+  assert(menu.includes('id="local-service-booking"'));
+  assert(menu.includes(kind==='daeri'?'/service/corporate/#gangnam-ceo-premium-driver-20261123':'/service/heavy-truck-taksong/'));
   const detail=explorer.resolve(keyword);
   assert.equal(detail?.region,region,'Incorrect locality for '+keyword);
   assert.equal(detail.kind,kind,keyword);
