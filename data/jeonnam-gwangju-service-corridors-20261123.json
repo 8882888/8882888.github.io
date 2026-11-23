@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "source": "2026-10-01 nationwide legal-regions/14.json and legal-regions/05.json in source repository",
-  "scope": "Jeollanam-do 22 city/county existing canonical routes and Gwangju Metropolitan City 5 district existing canonical routes; service guidance only, not actual orders or verified rides.",
+  "source": "Current local geographic names were cross-checked against legacy source legal-regions/14.json and legal-regions/05.json. The old province labels are SEO URL aliases, not present-day provincial legal entities.",
+  "scope": "Existing canonical legacy URLs retained for continuity: 22 Jeonnam city/county search names plus five Gwangju district search names. Current overarching jurisdiction is 전남광주통합특별시 (2026-07-01). Service guidance only, not actual orders, verified rides or fare records.",
   "regions": [
     {
       "region": "전라남도 강진군",
@@ -354,5 +354,12 @@
       "daeri": "광주 서구 치평동 상무지구 업무·회식 출발과 금호동 주거지 출발은 주차장 출구와 기사 만나는 장소가 다릅니다. 나주·무안 방면의 장거리 이동은 차량별 도착 주소를 확인합니다.",
       "taksong": "상무지구 업무차량과 금호동 보관 차량의 인수 위치·차량 키 담당자는 다를 수 있습니다. 나주·목포·여수 또는 서울·부산으로 이동하는 자동차탁송은 출고 시각과 최종 인수자를 확인합니다."
     }
+  ],
+  "current_province": "전남광주통합특별시",
+  "current_province_effective": "2026-07-01",
+  "current_province_legal_source": "전남광주통합특별시 설치를 위한 특별법 제7조 (국가법령정보센터)",
+  "legacy_region_namespace": [
+    "전라남도",
+    "광주광역시"
   ]
 }
