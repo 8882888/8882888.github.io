@@ -11,6 +11,12 @@ for(const full of legal){
  const r={full_name:full,name,level,slug:'area-'+(regions.length+1),parent_slug:parent?.slug||null};
  regions.push(r);byFull.set(full,r);
 }
+for(const full of ['부산광역시','대구광역시','울산광역시','전라남도 광양시']){
+ const parts=full.split(' '),name=parts.at(-1);
+ const r={full_name:full,name,level:full==='전라남도 광양시'?'시':'시도',
+  slug:'external-'+name,parent_slug:null};
+ regions.push(r);byFull.set(full,r);
+}
 const esc=s=>String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 const servicePath=(region,kind)=>'/'+kind+'/gyeongnam/mock-'+region.slug+'/';
 const render=create({regions,regionByFullName:byFull,servicePath,esc});
@@ -81,4 +87,51 @@ test('distinct search snippets target Gyeongnam services without replacing verif
  const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
  assert.match(server,/gyeongnamServiceGuides\.searchMeta\(r,kind\)/);
  assert.match(server,/!priorityMeta&&!focus50Info&&!historicalTitleTrip/);
+});
+
+test('short and neighboring corridor links are grounded to existing administrative places',()=>{
+ const linksByKind=new Set();
+ const localPairs=new Set();
+ const metroNames=['부산광역시','대구광역시'];
+ for(const row of guide.items){
+  const c=row.corridors;
+  assert(c&&c.within&&c.nearby.length===2&&c.outer.destinations.length===2,
+   'all Gyeongnam municipalities require three route types: '+row.region);
+  assert(row.areas.includes(c.within.from)&&row.areas.includes(c.within.to));
+  assert.notEqual(c.within.from,c.within.to);
+  assert(c.within.note.length>=55&&c.outer.note.length>=55);
+  assert.deepEqual(c.outer.destinations,metroNames);
+  assert(c.nearby.every(place=>row.directions.includes(place)&&!['부산','대구'].includes(place)));
+  const routeKey=row.region+' '+c.within.from+' → '+c.within.to;
+  assert(!localPairs.has(routeKey));
+  localPairs.add(routeKey);
+  for(const kind of ['daeri','taksong']){
+   const html=render.regionSection(byFull.get(row.region),kind);
+   assert.equal((html.match(/id="gyeongnam-short-nearby-long-corridors-20261123"/g)||[]).length,1);
+   assert(html.includes(c.within.note)&&html.includes(c.outer.note));
+   assert(html.includes(encodeURIComponent(row.region+' '+c.within.from)));
+   assert(html.includes(encodeURIComponent(row.region+' '+c.within.to)));
+   assert(html.includes('/fare/?service='+kind+'&amp;from='));
+   for(const name of metroNames)assert(html.includes(encodeURIComponent(name)));
+   assert(html.includes('부산')&&html.includes('대구'));
+   assert(html.includes('단거리')&&html.includes('인접지역'));
+   assert(html.includes('완료 운행 후기')&&html.includes('요금 확정'));
+   assert(!html.includes('40,000원')&&!html.includes('100,000원'));
+   assert(html.includes('href="tel:18114294"'));
+   linksByKind.add(row.region+'|'+kind);
+  }
+ }
+ assert.equal(localPairs.size,18);
+ assert.equal(linksByKind.size,36);
+});
+
+test('the Gyeongnam hub describes both services and does not generate 18x destination landing pages',()=>{
+ const hub=byFull.get('경상남도');
+ for(const kind of ['daeri','taksong']){
+  const html=render.regionSection(hub,kind);
+  assert(html.includes('단거리·인접지역·부산·대구'));
+  const meta=render.searchMeta(hub,kind);
+  assert(meta.description.includes('부산·대구'));
+ }
+ assert.equal(render.canonicalPaths.length,38,'only existing 18*2+2 regional canonicals');
 });
