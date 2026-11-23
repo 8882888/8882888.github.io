@@ -1638,7 +1638,7 @@ function regionalDecisionPanel(r,kind,evidence){
   '<a href="'+fare+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#0755a3;color:#fff;font-weight:800;text-decoration:none">출발지 예상요금 조회</a>'+
   '<a href="/reviews/history/?kind='+kind+'&amp;q='+from+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">'+(kind==='taksong'?'실제 탁송기록 보기':'완료 운행기록 참고')+'</a>'+
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
-  directQuoteForm+nationwideSubareaChoices+
+  directQuoteForm+nationwideExplorer.localServiceMenu(r,kind)+nationwideSubareaChoices+
   '<h3>지역 대표 완료 운행</h3>'+tripItems+
   (distinct.length?'<p style="font-size:.93em">표시된 요금은 당시 운행금액이며 현재 확정 견적이나 상시 배차를 의미하지 않습니다.</p>':'')+
   childLinks+'</section>';
@@ -3538,7 +3538,7 @@ if(searchIntent){
    '대리운전예약':'/taksongdaeri/','단체대리운전':'/service/corporate/',
    '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
    '일일기사':'/service/daily-driver/'
-  }[normalized])||(named&&named.url);
+  }[normalized])||nationwideExplorer.resolveServiceBooking(searchIntent)||(named&&named.url);
  if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
 }
 if(pathname==='/keyword-search/'||pathname==='/keyword-search'){
