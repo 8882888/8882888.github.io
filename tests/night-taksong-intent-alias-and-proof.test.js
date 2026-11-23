@@ -19,5 +19,6 @@ assert(night.includes('href="/fare/?service=taksong"'),'Night page needs matchin
 assert(night.includes('24시·야간 운행을 완료했다는 증거가 아니며'),'Do not imply every historical taksong case was completed at night');
 assert(night.includes('<link rel="canonical" href="https://jeongukdaeri.kr/special/24-hour-service/"'),'Original canonical must remain');
 assert(home.includes('href="/special/24-hour-service/"'),'Home needs navigable 24-hour link');
-assert(seo.pages.find(x=>x.path==='/daeri/').title.includes('실제 운행후기'),'National driver page remains review-first');
+const driver=seo.pages.find(x=>x.path==='/daeri/');
+assert(driver?.title.startsWith('전국대리운전 예약·예상요금')&&driver.description.includes('대리운전 예약'),'National driver page prioritizes regional fare and booking intent');
 console.log('PASS: nationwide 24-hour taksong, typo alias, evidence-first route and canonical');
