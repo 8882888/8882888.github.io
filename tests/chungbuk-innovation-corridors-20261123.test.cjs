@@ -106,6 +106,8 @@ test('provincial hub links all existing 11 city-county pages and the Deoksan-Mae
   const meta=render.searchMeta(province,kind);
   assert(meta.title.includes('충북혁신도시'));
   assert(meta.description.includes('1811-4294'));
+  assert(meta.description.includes('충청북도'), 'official province name must be in unique search meta');
+  assert(meta.description.length>=70&&meta.description.length<=160, 'search metadata length safe');
  }
 });
 test('server retains approved Innovation City search focus and earlier national service guides',()=>{
