@@ -3,6 +3,7 @@
 const config=require('../data/seo-pages.json');
 const priority=require('../data/priority-regions.json').pages;
 const {approvedDescription:approvedSoutheastDescription}=require('../lib/southeast-five-city-seo.cjs');
+const {approvedDescription:approvedLocalityDescription}=require('../lib/southeast-five-locality-seo.cjs');
 const {fetchSeoWithRetry}=require('./seo-audit-retry');
 const base=new URL(process.argv[2]||'http://localhost:3000/');
 const routes=[...new Set([...config.pages.map(p=>p.path),'/taksongdaeri/','/favicon.ico','/sitemap.xml','/robots.txt'])];
@@ -74,7 +75,7 @@ async function inspect(route){
       :firstSentence.slice(0,16);
     // Bespoke city/county summaries may use equivalent landmarks instead of
     // duplicating the first source-record sentence verbatim.
-    const bespokeFive=approvedSoutheastDescription(focus.region,focus.kind);
+    const bespokeFive=approvedSoutheastDescription(focus.region,focus.kind)||approvedLocalityDescription(focus.region,focus.kind);
     // Verify exact approved source copy for these independently reviewed city
     // snippets instead of forcing the obsolete, repeated priority topic text.
     if(bespokeFive
