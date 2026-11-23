@@ -78,6 +78,7 @@ test('bus query aliases and seating order route to one existing region canonical
   ['버스탁송',BUS_ANCHOR],
   ['전국전세버스탁송',BUS_ANCHOR],
   ['승합차탁송',BUS_ANCHOR],
+  ['공항리무진탁송',BUS_ANCHOR],
   ['수원버스탁송',target('경기도 수원시')],
   ['수원45인승전세버스탁송',target('경기도 수원시')],
   ['45인승전세버스수원탁송',target('경기도 수원시')],
