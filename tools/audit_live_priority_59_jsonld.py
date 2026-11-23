@@ -126,6 +126,8 @@ def assess(path,page,records=RECORDS):
             provider=service.get("provider")
             if not isinstance(provider,dict):
                 provider={}
+            if provider.get("name")!="전국대리운전":
+                errors.append("webpage_provider_name_wrong")
             if provider.get("@type")!="LocalBusiness":
                 errors.append("webpage_provider_type_wrong")
             if provider.get("@id")!=BASE+"/#organization":

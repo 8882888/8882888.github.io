@@ -13,7 +13,7 @@ class Priority59SchemaValidation(unittest.TestCase):
         desc=title+" 출발 위치, 예약 시간과 기사 복귀 동선 등 실제 고객 상담 준비사항을 상세히 안내합니다."
         service={"@type":"Service","serviceType":"자동차탁송" if kind=="taksong" else "대리운전",
                  "areaServed":{"@type":"AdministrativeArea","name":row["region"]},
-                 "provider":{"@type":"LocalBusiness","@id":BASE+"/#organization","telephone":"1877-5245" if row["region"]=="제주특별자치도" and kind=="taksong" else "1811-4294"}}
+                 "provider":{"@type":"LocalBusiness","name":"전국대리운전","@id":BASE+"/#organization","telephone":"1877-5245" if row["region"]=="제주특별자치도" and kind=="taksong" else "1811-4294"}}
         web={"@type":"WebPage","@id":canon,"url":canon,"name":title,"description":desc,
              "inLanguage":"ko-KR","breadcrumb":{"@id":canon+"#breadcrumb"},"about":service}
         bread={"@type":"BreadcrumbList","@id":canon+"#breadcrumb",
@@ -53,6 +53,13 @@ class Priority59SchemaValidation(unittest.TestCase):
                       "webpage_service_type_wrong","webpage_served_area_wrong","webpage_provider_phone_wrong",
                       "webpage_provider_type_wrong","webpage_provider_id_wrong"]:
             self.assertIn(error,result["errors"])
+
+    def test_wrong_business_name_with_valid_id_is_rejected(self):
+        row=RECORDS[0]
+        path,src=self.make_html(row)
+        old_name=json.dumps("전국대리운전",ensure_ascii=False)
+        src=src.replace('"name": '+old_name, '"name": "다른 업체"')
+        self.assertIn("webpage_provider_name_wrong",assess(path,src,[row])["errors"])
 
     def test_noindex_or_nonmatching_editorial_is_rejected(self):
         row=next(r for r in RECORDS if r["kind"]=="daeri" and r["region"]=="서울특별시")
