@@ -21,6 +21,8 @@ moduleMock.exports({esc,layout,phone:'1811-4294',host:'jeongukdaeri.kr',rideHigh
  assert.equal(page.canonical,'https://jeongukdaeri.kr/blog/');
  assert.match(page.title,/공개 원문/);
  assert(page.body.includes('href="tel:18114294"'));
+ assert(!page.body.includes('제주탁송 전용'),'do not advertise a false Jeju-only line');
+ assert(!page.body.includes('1877-5245'),'unrelated local phone must not appear in nationwide blog hub');
  assert(!page.body.includes('23시간 전'),'old relative dates must not be treated as current');
  assert(!page.body.includes('evil.example'),'untrusted blog origin is filtered');
  assert(page.body.includes('네이버 RSS를 확인할 수 없어'),'RSS status must be honest');
