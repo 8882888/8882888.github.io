@@ -1096,7 +1096,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 
   assert.ok(hubHtml.includes('href="/taksong/ulsan/"')&&hubHtml.includes('>울산탁송</a>'),
     'national taksong hub uses a concise Ulsan keyword anchor');
-  const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 실제 운행후기｜부산→대구 8만원·km조회·빠른배차·예약배차 안내'),'Busan title retains the source-backed review and booking intent');
+  const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 실제 운행후기 | 연산동·부산항·장거리 요금'),'Busan title retains reviewed trip provenance and regional fare intent, not purported live dispatch status');
   const reviewLeadPos=busanHtml.indexOf('id="busan-taksong-real-review-first-20261104"');
   assert.ok(reviewLeadPos>0&&reviewLeadPos<busanHtml.indexOf('id="regional-provider-keywords"'),'Busan true reviews precede provider copy');
   assert.ok(busanHtml.includes('https://blog.naver.com/wjdtnr4757/224445300887'),'Busan review contains the existing original post');
