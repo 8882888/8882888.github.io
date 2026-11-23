@@ -1055,7 +1055,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(priorityRegions.some(p=>p.kind==='taksong'&&p.region==='울산광역시'),
     'Ulsan is an actual curated taksong priority, not a generic province directory');
   const ulsanHtml=await (await get('/taksong/ulsan/')).text();
-  assert.ok(ulsanHtml.includes('<title>울산탁송｜자동차탁송·빠른배차·예약배차') && ulsanHtml.includes('남구 삼산동') && ulsanHtml.includes('동구 방어진'),
+  assert.ok(ulsanHtml.includes('<title>울산탁송') && ulsanHtml.includes('온산·방어진') && ulsanHtml.includes('남구 삼산동') && ulsanHtml.includes('동구 방어진'),
     'Ulsan title gives locality-first service intent');
   assert.ok(ulsanHtml.includes('id="southeast-taksong-local-evidence"') &&
     ulsanHtml.includes('href="/taksong/ulsan/ulju-gun/"'),
@@ -1096,7 +1096,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
 
   assert.ok(hubHtml.includes('href="/taksong/ulsan/"')&&hubHtml.includes('>울산탁송</a>'),
     'national taksong hub uses a concise Ulsan keyword anchor');
-  const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 실제 운행후기｜부산→대구 8만원·km조회·빠른배차·예약배차 안내'),'Busan title retains the source-backed review and booking intent');
+  const busanHtml=await (await get('/taksong/busan/')).text();const busanGraph=[...busanHtml.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(x=>JSON.parse(x[1])).flatMap(x=>x['@graph']||[x]);assert.ok(busanHtml.includes('<title>부산탁송 실제 운행후기 | 연산동·부산항·장거리 요금'),'Busan title retains reviewed trip provenance and regional fare intent, not purported live dispatch status');
   const reviewLeadPos=busanHtml.indexOf('id="busan-taksong-real-review-first-20261104"');
   assert.ok(reviewLeadPos>0&&reviewLeadPos<busanHtml.indexOf('id="regional-provider-keywords"'),'Busan true reviews precede provider copy');
   assert.ok(busanHtml.includes('https://blog.naver.com/wjdtnr4757/224445300887'),'Busan review contains the existing original post');
@@ -2122,8 +2122,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const gijang=await get('/taksong/busan/gijang-gun/');
   assert.equal(gijang.status,200,'Gijang county taksong guide must be reachable');
   const gijangHtml=await gijang.text();
-  assert(gijangHtml.includes('<title>기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내'), 'Exact 기장군탁송 keyword must lead the canonical search title');
-  assert(gijangHtml.includes('부산 기장군탁송·기장탁송 차량 인수·인계 안내'), 'Gijang meta description must describe real booking intent');
+  assert(gijangHtml.includes('<title>기장군탁송 | 정관·일광·기장읍 차량 인수·요금'), 'Exact 기장군탁송 keyword must lead the canonical search title');
+  assert(gijangHtml.includes('기장군탁송·부산기장탁송. 정관읍·일광읍·기장읍 차량 인수'), 'Gijang meta description must describe local handover intent');
   assert(gijangHtml.includes('https://example.com/taksong/busan/gijang-gun/')||gijangHtml.includes('https://jeongukdaeri.kr/taksong/busan/gijang-gun/'), 'Gijang canonical must remain on the same dedicated route');
   assert(!gijangHtml.includes('<meta name="robots" content="noindex'), 'Gijang source-backed guide must remain indexable');
   assert(gijangHtml.includes('경동오토필드')&&gijangHtml.includes('정관읍')&&gijangHtml.includes('일광읍'), 'Source-backed Gijang logistics and neighborhood guidance must remain');
