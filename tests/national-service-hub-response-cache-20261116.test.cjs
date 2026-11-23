@@ -27,7 +27,7 @@ test('local pre-rendered national service pages retain distinct title, canonical
     assert.equal(response.status,200);
     const html=await response.text();
     assert(html.includes('rel="canonical" href="https://jeongukdaeri.kr/'+kind+'/"'));
-    assert(html.includes('<meta property="og:site_name" content="스마트24 전국대리운전">'));
+    assert(html.includes('<meta property="og:site_name" content="전국대리운전">'));
     assert(html.includes('tel:18114294'));
     assert(html.includes('href="/region/')||html.includes('href="/fare/'));
     assert(!/<meta[^>]*name="robots"[^>]*noindex/i.test(html));

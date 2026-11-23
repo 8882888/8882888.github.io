@@ -73,7 +73,7 @@ for(const route of routes){
    }
    const web=parsed.nodes.filter(v=>v['@type']==='WebSite');
    if(web.length!==1)x.errors.push('site_name_schema_duplicate_or_missing');
-   else if(web[0].name!=='스마트24 전국대리운전')x.errors.push('site_name_mismatch');
+   else if(web[0].name!=='전국대리운전')x.errors.push('site_name_mismatch');
   }
  }catch(error){x.fetchAttempts=error?.retryAttempts||x.fetchAttempts||1;x.errors.push('fetch_or_parse_'+String(error).slice(0,180));}
  out.routes.push(x);out.errors.push(...x.errors.map(e=>route.path+': '+e));

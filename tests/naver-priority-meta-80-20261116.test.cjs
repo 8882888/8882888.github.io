@@ -40,7 +40,7 @@ test('Yeti and live human-readable HTML agree on short meta/OG, canonical and in
    const normal=tags(head,'name','description'),og=tags(head,'property','og:description');
    assert.deepEqual(normal,[expected],route+' meta description');
    assert.deepEqual(og,[expected],route+' OG description');
-   assert.equal(tags(head,'property','og:site_name')[0],'스마트24 전국대리운전',route+' Korean site name');
+   assert.equal(tags(head,'property','og:site_name')[0],'전국대리운전',route+' Korean site name');
    assert.match(head,/<title>[^<]+<\/title>/,route+' title');
    assert.match(head,/<link\s+rel="canonical"\s+href="https:\/\/jeongukdaeri\.kr\/[^"]*"/,route+' canonical');
    assert(!/<meta\b(?=[^>]*\bname=["']robots["'])[^>]*noindex/i.test(head),route+' robots');

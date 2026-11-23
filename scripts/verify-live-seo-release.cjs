@@ -28,7 +28,7 @@ async function main(){
     try{return [JSON.parse(match[1])];}catch{return [];}
    });
    const homeUrl=new URL('/',base).href;
-   if(!schemas.some(schema=>schema?.['@type']==='WebSite'&&schema.name==='스마트24 전국대리운전'&&schema.url===homeUrl)){
+   if(!schemas.some(schema=>schema?.['@type']==='WebSite'&&schema.name==='전국대리운전'&&schema.url===homeUrl)){
     throw Error('Homepage WebSite name or canonical URL is missing');
    }
    for(const [entry,keyword,destination] of [

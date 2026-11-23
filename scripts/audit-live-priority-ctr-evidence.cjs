@@ -46,7 +46,7 @@ async function main(){
    const html=await res.text();
    const title=uniqueMatch(html,/<title>([^<]*)<\/title>/g,'title')[1];
    const h1=uniqueMatch(html,/<h1(?:\s[^>]*)?>([^<]*)<\/h1>/g,'H1')[1];
-   const expectedTitle=item.headline+' | 스마트24 전국대리운전';
+   const expectedTitle=item.headline+' | 전국대리운전';
    ensure(title===expectedTitle,'stale or incorrect live title: '+title);
    ensure(h1===item.headline,'stale or incorrect live H1: '+h1);
    ensure(html.includes('<link rel="canonical" href="'+publicBase+item.path+'">'),'canonical URL missing or different');
