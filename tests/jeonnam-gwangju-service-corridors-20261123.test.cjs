@@ -25,6 +25,20 @@ const url=(r,kind)=>'/'+kind+'/regression/'+r.slug+'/';
 const render=create({regions,regionByFullName:byFull,servicePath:url,esc});
 const jeonnam=data.regions.filter(x=>x.region.startsWith('전라남도 '));
 const gwangju=data.regions.filter(x=>x.region.startsWith('광주광역시 '));
+test('27 existing municipal search areas preserve legacy URL aliases under the current integrated province',()=>{
+ assert.equal(data.current_province,'전남광주통합특별시');
+ assert.equal(data.current_province_effective,'2026-07-01');
+ assert.deepEqual(data.legacy_region_namespace,['전라남도','광주광역시']);
+ for(const full of ['전라남도','광주광역시']){
+  const html=render.regionSection(byFull.get(full),'taksong');
+  assert(html.includes('전남광주통합특별시'));
+  assert(html.includes('종전 전라남도·광주광역시'));
+ }
+ const sample=render.regionSection(byFull.get('전라남도 목포시'),'daeri');
+ assert(sample.includes('현행 행정구역'));
+ assert(sample.includes('전남광주통합특별시'));
+});
+
 test('22 official Jeonnam municipalities and five Gwangju districts are covered exactly once',()=>{
  assert.equal(jeonnam.length,22);
  assert.equal(gwangju.length,5);
@@ -95,6 +109,8 @@ test('site injects at most one locale guide section in the existing customer-fir
  assert(server.includes("gyeongnamServiceGuides.regionSection(r,kind)"),'protect existing Gyeongnam work');
  assert(server.includes("!priorityMeta&&!focus50Info&&!historicalTitleTrip"),
    'do not overwrite verified source case titles');
+ assert(server.includes('const jeonnamGwangjuSearchMeta=(!priorityMeta&&!focus50Info&&!historicalTitleTrip'),
+   'do not replace priority-researched Gwangju metadata with generic regional keyword text');
  assert.equal(JSON.parse(read('data/ride-history.json')).length,2591,
    'existing original ride history must not be modified to fabricate source support');
 });
