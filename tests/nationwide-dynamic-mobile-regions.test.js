@@ -49,12 +49,13 @@ for(const region of regions){
  ]){
   const keyword=region.full_name+service;
   const menu=explorer.localServiceMenu(region,kind);
-  const terms=kind==='daeri'?['법인대리운전','골프대리운전','장거리대리운전','고급CEO대리운전','CEO수행기사']:['화물차탁송','지역탁송'];
+  const terms=kind==='daeri'?['법인대리운전','법인카드대리운전','기업대리운전','골프대리운전','골프일일기사','장거리대리운전','VIP대리운전','고급대리운전','고급CEO대리운전','CEO수행기사','일일기사']:['화물차탁송','화물자동차탁송','특장차탁송','지역탁송','장거리탁송'];
   for(const term of terms){
    assert.equal(explorer.resolveServiceBooking(region.full_name+term),'/'+kind+'/'+region.slug+'/#local-service-booking');
   }
   assert(menu.includes('id="local-service-booking"'));
-  assert(menu.includes(kind==='daeri'?'/service/corporate/#gangnam-ceo-premium-driver-20261123':'/service/heavy-truck-taksong/'));
+  assert(menu.includes(kind==='daeri'?'/service/corporate/#nationwide-ceo-daeri-booking-20261124':'/service/heavy-truck-taksong/'));
+  if(kind==='daeri')assert(menu.includes('/service/daily-driver/#nationwide-executive-driver-booking-20261124'));
   const detail=explorer.resolve(keyword);
   assert.equal(detail?.region,region,'Incorrect locality for '+keyword);
   assert.equal(detail.kind,kind,keyword);
@@ -118,6 +119,15 @@ for(const [keyword,locality,kind] of cases){
 }
 for(const keyword of ['중구대리운전','고성군대리운전','대구양도면대리운전']){
  assert.equal(explorer.resolve(keyword),null,'Ambiguous or invalid locality must not choose a false address: '+keyword);
+}
+const corporate=read('service/corporate/index.html');
+const daily=read('service/daily-driver/index.html');
+assert(corporate.includes('id="nationwide-ceo-daeri-booking-20261124"'));
+assert(daily.includes('id="nationwide-executive-driver-booking-20261124"'));
+assert(corporate.includes('전국 CEO·대표이사·임원 고급대리운전'));
+assert(daily.includes('전국 CEO·임원 수행기사와 일일기사'));
+for(const q of ['중구VIP대리운전','고성군법인카드대리운전','광주특장차탁송']){
+ assert.equal(explorer.resolveServiceBooking(q),null,'Ambiguous or non-unique specialty locality: '+q);
 }
 const server=read('server.js');
 for(const phrase of [
