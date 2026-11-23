@@ -15,7 +15,7 @@ test('external live intake is a dated snapshot, not Smart24 completed rides',()=
  assert.equal(source.records.length,5,'exactly five observed order intake records');
  assert.match(source.source,/order intake snapshot/i);
  assert.match(source.caution,/not verified dispatch/i);
- assert.match(source.caution,/not Smart24 order/i);
+ assert.match(source.caution,/or Smart24 order/i);
  assert.match(source.publication_policy,/not present source.s recommended prices as Smart24/i);
  const unique=new Set();
  for(const record of source.records){
