@@ -3,6 +3,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const {spawn}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 const data=JSON.parse(read('data/jeonnam-gwangju-service-corridors-20261123.json'));
@@ -162,4 +163,35 @@ test('20261124 focused: Gwangju, Seo-gu and Chipyeong each have distinct service
  assert(server.includes('jeonnamGwangjuSearchMeta?.title'));
  assert(server.includes('jeonnamGwangjuSearchMeta?.description'));
  assert.equal(JSON.parse(read('data/ride-history.json')).length,2591);
+});
+
+
+test('20261124 HTTP: live Node renders new Gwangju and Chipyeong guide into all six existing canonical routes',async()=>{
+ const base='http://127.0.0.1:39756';
+ const cp=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:'39756',PUBLIC_HOST:'jeongukdaeri.kr'},stdio:'ignore'});
+ try{
+  let started=false;
+  for(let attempt=0;attempt<120;attempt++){
+   if(cp.exitCode!==null)throw Error('Gwangju verification server terminated');
+   try{const res=await fetch(base+'/health',{signal:AbortSignal.timeout(1200)});if(res.ok){started=true;break}}catch{}
+   await new Promise(resolve=>setTimeout(resolve,160));
+  }
+  assert(started,'Gwangju HTTP check server failed to start');
+  for(const [suffix,kind] of [
+   ['gwangju/','daeri'],['gwangju/','taksong'],
+   ['gwangju/seo-gu/','daeri'],['gwangju/seo-gu/','taksong'],
+   ['gwangju/seo-gu/chipyeong-dong/','daeri'],['gwangju/seo-gu/chipyeong-dong/','taksong']
+  ]){
+   const url='/'+kind+'/'+suffix;
+   const res=await fetch(base+url,{signal:AbortSignal.timeout(30000)});
+   const html=await res.text();
+   assert.equal(res.status,200,url+' must serve successful HTML');
+   assert(html.includes('id="gwangju-chipyeong-local-seo-20261124"'),url+' omitted new service-specific Gwangju guide');
+   assert(html.includes('https://jeongukdaeri.kr'+url),url+' changed canonical');
+   assert(html.includes('상무지구')&&html.includes('전남광주통합특별시'));
+   assert(html.includes('/fare/?service='+kind+'&amp;from='));
+   assert(html.includes(encodeURIComponent('전라남도 나주시'))&&html.includes(encodeURIComponent('서울특별시')));
+   assert(!/<meta[^>]+name="robots"[^>]+content="noindex/i.test(html),url+' became noindex');
+  }
+ }finally{cp.kill('SIGTERM')}
 });
