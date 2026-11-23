@@ -1,0 +1,75 @@
+{
+  "schema_version": "2026-11-23.user-reported-external-live-daeri-order-v1",
+  "source": "External service live order intake snapshot pasted into conversation by user; user explicitly identifies these as live orders, not search-only examples.",
+  "caution": "External source not independently authenticated. Status is an order-intake entry, not verified dispatch, accepted call, completed ride, or Smart24 order. Distance and recommended fare are displayed by external service, not Smart24 quotes.",
+  "local_timezone": "Asia/Seoul",
+  "date": "2026-11-23",
+  "records": [
+    {
+      "received_at": "2026-11-23 12:02:57",
+      "origin": "충남 예산군 삽교읍 목리",
+      "destination": "충남 서산시 읍내동",
+      "distance_km_external": 32.83,
+      "recommended_fare_krw_external": 40000,
+      "regional_keywords": [
+        "예산대리운전",
+        "삽교대리운전",
+        "서산대리운전",
+        "예산서산대리비"
+      ]
+    },
+    {
+      "received_at": "2026-11-23 11:28:21",
+      "origin": "인천 서해구 청라동",
+      "destination": "경기 시흥시 대야동",
+      "distance_km_external": 23.95,
+      "recommended_fare_krw_external": 35000,
+      "regional_keywords": [
+        "청라대리운전",
+        "서해구대리운전",
+        "시흥대리운전",
+        "청라시흥대리비"
+      ]
+    },
+    {
+      "received_at": "2026-11-23 10:06:50",
+      "origin": "서울 중구 봉래동2가",
+      "destination": "충남 천안시 동남구 병천면 병천리",
+      "distance_km_external": 109.78,
+      "recommended_fare_krw_external": 100000,
+      "regional_keywords": [
+        "서울천안대리운전",
+        "천안병천대리운전",
+        "서울역대리운전",
+        "서울천안대리비"
+      ]
+    },
+    {
+      "received_at": "2026-11-23 10:03:59",
+      "origin": "서울 강남구 역삼동",
+      "destination": "충북 청주시 흥덕구 비하동",
+      "distance_km_external": 124.13,
+      "recommended_fare_krw_external": 100000,
+      "regional_keywords": [
+        "역삼동대리운전",
+        "강남청주대리운전",
+        "청주대리비계산",
+        "강남청주대리비"
+      ]
+    },
+    {
+      "received_at": "2026-11-23 09:58:29",
+      "origin": "강원특별자치도 삼척시 남양동",
+      "destination": "강원특별자치도 삼척시 근덕면 장호리",
+      "distance_km_external": 25.68,
+      "recommended_fare_krw_external": 35000,
+      "regional_keywords": [
+        "삼척대리운전",
+        "삼척근덕대리운전",
+        "장호항대리운전",
+        "삼척대리비"
+      ]
+    }
+  ],
+  "publication_policy": "Use only generalized regional keyword evidence and route-presets in Smart24 customer UI; do not present source's recommended prices as Smart24 quotes or count as own verified completed rides; do not assert external live feed remains current."
+}
