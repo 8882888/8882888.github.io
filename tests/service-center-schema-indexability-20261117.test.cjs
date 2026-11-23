@@ -31,7 +31,7 @@ function inspectGraph(schema,pathName,kind){
  assert.equal(page.breadcrumb['@id'],pathUrl+'#breadcrumb');
  assert.equal(service['@id'],pathUrl+'#service');
  assert.equal(service.url,pathUrl);
- assert.equal(service.provider.name,'스마트24 전국대리운전');
+ assert.equal(service.provider.name,'전국대리운전');
  assert.equal(service.provider.url,BASE+'/');
  assert(!('price' in service));assert(!('aggregateRating' in service));
  assert(!('review' in service));assert(!('offers' in service));

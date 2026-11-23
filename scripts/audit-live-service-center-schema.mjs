@@ -47,7 +47,7 @@ async function main(){
    const breadcrumb=graph.find(x=>x['@type']==='BreadcrumbList');
    assert(page?.url===canonical,'WebPage canonical mismatch');
    assert(service?.url===canonical,'Service URL mismatch');
-   assert(service.provider?.name==='스마트24 전국대리운전','unknown provider brand');
+   assert(service.provider?.name==='전국대리운전','unknown provider brand');
    assert(breadcrumb?.itemListElement?.at(-1)?.item===canonical,'breadcrumb URL mismatch');
    assert(!Object.hasOwn(service,'aggregateRating')&&!Object.hasOwn(service,'offers'),'unsupported rating/price assertion');
    if(p==='/taksong/types/'){

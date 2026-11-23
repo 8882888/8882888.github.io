@@ -79,7 +79,7 @@ test('eight reviewed service pages expose exact source information to crawlers, 
    if(row.id===320||row.id===370){
     const isDaeri=row.id===370;
     const headline=isDaeri?'강릉대리운전 | 경포·안목·교동·주문진 예약·실제 운행기록':'강릉탁송 실제 후기·요금 | 용인→강릉·경포·주문진';
-    assert(html.includes('<title>'+headline+' | 스마트24 전국대리운전</title>'),row.keyword+' accurate search title');
+    assert(html.includes('<title>'+headline+' | 전국대리운전</title>'),row.keyword+' accurate search title');
     assert(html.includes('<h1>'+headline+'</h1>'),row.keyword+' visible H1/title parity');
     const desc=html.match(/<meta name="description" content="([^"]*)">/);
     assert(desc&&desc[1].includes(isDaeri?'경포해변·안목해변의 음식점과':'용인→강릉 당시 11만원'),row.keyword+' unique description');

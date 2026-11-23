@@ -2,7 +2,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:child_process');
 const root=path.join(__dirname,'..'),base='http://127.0.0.1:39849';
-const brand='스마트24 전국대리운전',canonical='https://jeongukdaeri.kr/';
+const brand='전국대리운전',canonical='https://jeongukdaeri.kr/';
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function inspect(html){
  const head=html.split('</head>')[0]||'',tags=[...head.matchAll(/<meta\b[^>]*>/gi)].map(m=>m[0]);
@@ -25,7 +25,7 @@ test('homepage keeps one unified Korean name in canonical metadata and WebSite/O
  assert.equal(web.length,1);assert.equal(web[0].name,brand);
  assert.equal(web[0].url,canonical);assert.equal(web[0]['@id'],canonical+'#website');
  assert.equal(web[0].publisher['@id'],canonical+'#organization');
- assert(web[0].alternateName.includes('스마트24'));
+ assert(!web[0].alternateName?.includes('스마트24'));
  const org=ld.filter(x=>x['@type']==='Organization');
  assert.equal(org.length,1);assert.equal(org[0].name,brand);
  assert.equal(org[0]['@id'],canonical+'#organization');
