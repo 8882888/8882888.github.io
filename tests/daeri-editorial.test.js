@@ -206,7 +206,7 @@ async function get(p){
  assert.ok(archiveHomeFourth.includes('tel:18775245')&&archiveHomeFourth.includes('tel:18114294'), 'archive directory differentiates Jeju and nationwide consultation');
  const latestBlogFourth=await get('/blog/');
  assert.ok(latestBlogFourth.includes('id="blog-reader-guide"')&&latestBlogFourth.includes('/blog/archive/mountain-cycle/'), 'latest blog links to targeted original article categories');
- assert.ok(latestBlogFourth.includes('네이버 RSS')&&latestBlogFourth.includes('tel:18775245'), 'blog feed labels freshness source and separate Jeju phone');
+ assert.ok(latestBlogFourth.includes('네이버 RSS')&&latestBlogFourth.includes('tel:18114294')&&!latestBlogFourth.includes('tel:18775245'), 'blog feed retains nationwide consultation and removes misleading Jeju-only phone');
  const taksongHubFourth=await get('/taksong/');
  assert.ok(taksongHubFourth.includes('id="national-taksong-blog-archive"')&&taksongHubFourth.includes('/blog/archive/vehicle-taksong/'), 'nationwide taksong hub has curated archived originals');
  assert.ok(taksongHubFourth.includes('tel:18775245')&&taksongHubFourth.includes('tel:18114294'), 'nationwide taksong hub separates Jeju and nationwide consultation');
