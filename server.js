@@ -1727,7 +1727,7 @@ async function servicePage(r,kind){
     '<p><small>행정구역명은 실제 주소가 아닐 수 있습니다. 정확한 주차장·도로명주소로 수정해 조회하세요. 현재 요금·배차 가능 여부는 상담 후 확정합니다.</small></p>'+
     '<p>'+parentLink+'<a href="/reviews/history/?kind='+kind+'">실제 운행기록 확인</a> · <a href="tel:18114294">☎ 상담 1811-4294</a></p></div></section>';
    const serviceMarkup=JSON.stringify({'@context':'https://schema.org',...regionalService,url:canonicalUrl}).replace(/</g,'\\u003c');
-   return layout(label+service+' 출발·예약 안내',r.full_name+' '+service+' 출발 위치·요금조회·상위 지역 안내. 공개된 현지 운행기록이 없으므로 완료 후기를 표시하지 않습니다.',quick+'<script type="application/ld+json">'+serviceMarkup+'</script>',canonicalUrl)
+   return layout(label+service+' 출발·예약 안내',r.full_name+' '+service+' 출발 위치·요금조회·상위 지역 안내. 공개된 현지 운행기록이 없으므로 완료 후기를 표시하지 않습니다.',quick+nationwideExplorer.localServiceMenu(r,kind)+'<script type="application/ld+json">'+serviceMarkup+'</script>',canonicalUrl)
     .replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">');
   }
  }
