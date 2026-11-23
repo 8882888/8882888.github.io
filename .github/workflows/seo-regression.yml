@@ -287,6 +287,11 @@ jobs:
         run: node tests/keyword-preview.test.js
       - name: Verify public Naver-blog SEO topic matching and mobile call CTAs
         run: node tests/blog-search-topics.test.js
+      - name: Validate five southeast focus localities with separate driver and taksong intents
+        run: |
+          node --check lib/southeast-five-locality-seo.cjs
+          node --check tests/southeast-five-locality-seo-20261123.test.cjs
+          node --test tests/southeast-five-locality-seo-20261123.test.cjs
       - name: Validate five southeast city and county driver vs taksong Naver SEO
         run: |
           node --check lib/southeast-five-city-seo.cjs
