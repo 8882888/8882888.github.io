@@ -3719,7 +3719,7 @@ if(pathname==='/region/innovation-cities/'){
   // resolver as regional SEO pages: a city match is not proof of a trip inside
   // a specific innovation district.
   const cityRides=publishedCaseEntries.filter(ride=>
-   ride&&['taksong','daeri'].includes(ride.service)&&tripMatchesRegion(ride,r)).slice(0,3);
+   ride&&['taksong','daeri'].includes(ride.service)&&tripMatchesRegion(ride,r)).slice(0,8);
   const completedCityRides=cityRides.length
    ?'<div class="innovation-city-confirmed-scope"><h3>'+esc(area.region)+' 출발·도착 확인 운행기록</h3>'+
     '<p>아래는 실제 공개된 완료 기록 중 이 시·군 또는 세종시가 출발지·도착지에 포함된 사례입니다. 해당 혁신도시 건물·구역에서 완료된 운행으로 확인된 것은 아니며, 과거 요금은 현재 견적이 아닙니다.</p>'+
