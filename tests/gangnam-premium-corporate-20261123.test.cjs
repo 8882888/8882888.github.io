@@ -137,7 +137,7 @@ test('Original national trust-first and Gangnam premium links in customer source
  assert(u.includes('id="gangnam-imported-testdrive-corporate-20261123"'));
  assert(c.includes('/daeri/seoul/gangnam-gu/cheongdam-dong/'));
  assert(u.includes('/taksong/seoul/gangnam-gu/apgujeong-dong/'));
- assert(c.includes('고급대리운전')&&c.includes('후불')&&u.includes('반출 승인'));
+ assert(c.includes('고급대리운전')&&c.includes('후불')&&u.includes('출고 승인'));
  assert(c.includes('gangnam-corporate-postpay-20261122'));
  assert(u.includes('gangnam-yulhyeon-dealer-imported-20261122'));
  const scripts=JSON.parse(read('package.json')).scripts;
