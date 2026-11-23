@@ -143,7 +143,7 @@ test('20261124 focused: Gwangju, Seo-gu and Chipyeong each have distinct service
     assert(html.includes('/service/heavy-truck-taksong/'));
    }
    const focused=html.slice(html.indexOf('id="gwangju-chipyeong-local-seo-20261124"'));
-   assert(!/배차완료|당시\s*[0-9,]+원|고정\s*요금/.test(focused),'No invented performance');
+   assert(!/배차완료\s*[0-9,]+원|당시\s*[0-9,]+원/.test(focused),'No invented dispatch or fare evidence');
    evidence.add(name+'|'+kind);
   }
  }
