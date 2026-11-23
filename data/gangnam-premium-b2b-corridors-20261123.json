@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "created_on": "2026-11-23",
+  "theme": "강남 출발 법인차량·수입차·시승차 로드탁송 / 법인·고급·임원 대리운전의 실제 예약 입력 예시",
+  "source": "data/legal-regions/01.json, 04.json, 09.json; data/gangnam-premium-corporate-intents-20261123.json",
+  "note": "Destinations are illustrative legal-administrative endpoints, not verified customer trips, real road distances, accepted corporate partners, contracted price/settlement, driver presence or guaranteed dispatch. Incheon airport area uses current Incheon Yeongjong-gu, not obsolete Jung-gu.",
+  "rows": [
+    {
+      "from": "서울특별시 강남구 율현동",
+      "fromLabel": "율현동",
+      "to": "경기도 성남시 수정구 창곡동",
+      "destinationLabel": "위례",
+      "taksongIntent": "법인차량탁송",
+      "daeriIntent": "법인대리운전",
+      "taksongContext": "율현동 매매·업무 차량을 위례의 지정 수령지로 보내는 문의는 차량별 출고 승인, 차키·등록서류 전달자, 성능점검 또는 고객 인도 목적을 구분합니다.",
+      "daeriContext": "율현동에서 위례 방면 임직원 귀가 문의는 고객 동승, 매매단지 출차구역과 실제 도착 주차장을 구분하고 기사 복귀 가능 여부를 먼저 확인합니다."
+    },
+    {
+      "from": "서울특별시 강남구 수서동",
+      "fromLabel": "수서동",
+      "to": "인천광역시 영종구 운서동",
+      "destinationLabel": "인천공항",
+      "taksongIntent": "법인탁송",
+      "daeriIntent": "고급대리운전",
+      "taksongContext": "수서 업무시설에서 인천공항 인근 운서동 차량 보관장소로 이동하는 법인차 회송은 공항 터미널 반입을 뜻하지 않으며 실제 수령 주차장과 차량 반출 승인자를 확인합니다.",
+      "daeriContext": "수서역 주변에서 인천공항 인근으로 향하는 고급대리운전은 역 주차장 출차와 공항 주변 최종 목적지를 구분하고 고객 동승 및 기사 귀로를 먼저 확인합니다."
+    },
+    {
+      "from": "서울특별시 강남구 세곡동",
+      "fromLabel": "세곡동",
+      "to": "경기도 성남시 수정구 창곡동",
+      "destinationLabel": "위례",
+      "taksongIntent": "수입차탁송",
+      "daeriIntent": "법인대리운전",
+      "taksongContext": "세곡동 주거·업무시설 수입차를 위례로 인도할 때는 지하주차장 높이·주행 가능 상태와 목적지 수령인을 확인하며 외제차 전문 운행 완료를 가정하지 않습니다.",
+      "daeriContext": "세곡동에서 위례로 출발하는 법인 임직원 차량은 동승자·저녁 출발시간·주차장 출입구를 확인하고 심야 기사 접근과 복귀 조건을 따로 상담합니다."
+    },
+    {
+      "from": "서울특별시 강남구 자곡동",
+      "fromLabel": "자곡동",
+      "to": "경기도 성남시 분당구 삼평동",
+      "destinationLabel": "판교",
+      "taksongIntent": "법인탁송",
+      "daeriIntent": "임원대리운전",
+      "taksongContext": "자곡동 업무차를 판교 삼평동 법인 사업장으로 보내는 경우 매입·리스·출장차량 중 실제 이동 목적을 구분하고 회사별 차키·보험·출입 승인 담당자를 확인합니다.",
+      "daeriContext": "자곡동에서 판교로 이동하는 임원대리운전 문의는 임원 동승과 편도 운행 여부, 수행·대기 필요시간을 구분하여 별도 일일기사 요청과 혼동하지 않습니다."
+    },
+    {
+      "from": "서울특별시 강남구 일원동",
+      "fromLabel": "일원동",
+      "to": "서울특별시 송파구 문정동",
+      "destinationLabel": "문정",
+      "taksongIntent": "법인차량탁송",
+      "daeriIntent": "법인대리운전",
+      "taksongContext": "일원동 업무시설 차량을 문정동 사업장으로 회송할 때는 출발 건물 관리실의 출고 승인과 문정동 수령 담당자의 주차 위치·수령 가능시간을 확인합니다.",
+      "daeriContext": "일원동에서 문정동 업무지로 귀가·이동하는 법인대리운전은 주차장 위치와 동승 인원을 확인하고 월말정산·법인카드는 사전 계약 여부를 구분합니다."
+    },
+    {
+      "from": "서울특별시 강남구 역삼동",
+      "fromLabel": "역삼동",
+      "to": "경기도 성남시 분당구 삼평동",
+      "destinationLabel": "판교",
+      "taksongIntent": "법인탁송",
+      "daeriIntent": "장거리법인대리운전",
+      "taksongContext": "역삼동 테헤란로 법인차량을 판교 삼평동 사업장에 인계하는 요청은 기업 내부 이전·서비스센터 출고·지점 간 회송 목적을 구분해 출입 승인과 수령 담당자를 확인합니다.",
+      "daeriContext": "역삼동 테헤란로 회식 후 판교로 이동하는 법인대리운전은 차량별 출발 주차층·실제 귀가 주소·종료시각을 구분하고 후불 정산 승인 조건을 확인합니다."
+    },
+    {
+      "from": "서울특별시 강남구 삼성동",
+      "fromLabel": "삼성동",
+      "to": "인천광역시 영종구 운서동",
+      "destinationLabel": "인천공항",
+      "taksongIntent": "시승차탁송",
+      "daeriIntent": "VIP대리운전",
+      "taksongContext": "삼성동 전시·업무 차량을 인천공항 인근 운서동으로 회송하는 경우 고객 시승 진행이 아닌 시승차 자체 이동이며 행사 출고 승인과 공항 주변 실제 주차구역을 확인합니다.",
+      "daeriContext": "삼성동 전시회·호텔 종료 후 인천공항 인근으로 향하는 VIP대리운전은 기사 등급을 보장하지 않으며 고객 동승·공항 수령 장소·대기시간을 확인합니다."
+    },
+    {
+      "from": "서울특별시 강남구 대치동",
+      "fromLabel": "대치동",
+      "to": "경기도 수원시 영통구 이의동",
+      "destinationLabel": "광교",
+      "taksongIntent": "수입차탁송",
+      "daeriIntent": "임원대리운전",
+      "taksongContext": "대치동 법인·수입차를 광교 이의동으로 보내는 문의는 지하주차장 출구와 저상차체의 도로 주행 가능 여부, 거래처 인계 시각을 확인합니다.",
+      "daeriContext": "대치동 기업 업무지에서 광교 이의동으로 이동하는 임원대리운전은 일정 종료 시각, 동승 고객, 주차장 출발지와 업무 목적을 확인하고 장시간 대기 요청은 별도 상담합니다."
+    },
+    {
+      "from": "서울특별시 강남구 논현동",
+      "fromLabel": "논현동",
+      "to": "경기도 고양시 일산동구 장항동",
+      "destinationLabel": "일산",
+      "taksongIntent": "고급차탁송",
+      "daeriIntent": "고급대리운전",
+      "taksongContext": "논현동 고급 승용차의 일산 장항동 인수·인계 문의는 차량 상태, 인계자 권한, 보험 한도·면책 및 목적지 수령 시간을 확인하고 공식 제조사 협력을 주장하지 않습니다.",
+      "daeriContext": "논현동 업무시설·식당 출발 고급대리운전의 일산 이동은 실제 주차장·도착 주소, 고객 동승 여부와 기사 복귀를 확인하며 고급차 전담 기사를 확약하지 않습니다."
+    },
+    {
+      "from": "서울특별시 강남구 청담동",
+      "fromLabel": "청담동",
+      "to": "경기도 용인시 수지구 풍덕천동",
+      "destinationLabel": "용인수지",
+      "taksongIntent": "수입차탁송",
+      "daeriIntent": "고급대리운전",
+      "taksongContext": "청담동 수입차 판매·고객 인도용 차량을 용인 수지 풍덕천동으로 전달하려면 브랜드·모델, 전시장 출고 승인, 저상차체 및 고객 수령 장소를 확인합니다.",
+      "daeriContext": "청담동 호텔·식당에서 용인 수지로 향하는 고급대리운전은 차량 실물과 고객 동승, 출차 동선·심야 이동시간 및 수지 도착지의 기사 귀로를 확인합니다."
+    },
+    {
+      "from": "서울특별시 강남구 압구정동",
+      "fromLabel": "압구정동",
+      "to": "경기도 성남시 분당구 백현동",
+      "destinationLabel": "분당",
+      "taksongIntent": "시승차탁송",
+      "daeriIntent": "VIP대리운전",
+      "taksongContext": "압구정동 시승차량을 분당 백현동 지정 장소로 회송하는 경우 시승 체험 운영이 아닌 차량 인계이며 차량 소유사 반출 승인·키·보험 적용을 별도로 확인합니다.",
+      "daeriContext": "압구정동 고객의 분당 백현동 방면 VIP대리운전은 호텔·식당 출발 주차장, 동승자와 대기 필요시간을 구분하고 특정 의전기사·즉시 배차는 보장하지 않습니다."
+    },
+    {
+      "from": "서울특별시 강남구 신사동",
+      "fromLabel": "신사동",
+      "to": "경기도 김포시 고촌읍",
+      "destinationLabel": "김포",
+      "taksongIntent": "법인차량탁송",
+      "daeriIntent": "법인대리운전",
+      "taksongContext": "신사동 가로수길 업무용 법인·리스 차량을 김포 고촌읍으로 회송할 때는 렌트·리스 소유권과 별개로 운행 허가, 출고 담당자 및 목적지 인계 가능한 시간을 확인합니다.",
+      "daeriContext": "신사동 법인행사·회식 후 김포 고촌 방면 대리운전은 차량별 인수 위치와 목적지 주소를 확인하고 단체 후불·월말정산은 회사 사전 계약을 전제로 상담합니다."
+    },
+    {
+      "from": "서울특별시 강남구 개포동",
+      "fromLabel": "개포동",
+      "to": "경기도 하남시 망월동",
+      "destinationLabel": "하남미사",
+      "taksongIntent": "리스차탁송",
+      "daeriIntent": "법인대리운전",
+      "taksongContext": "개포동 법인 리스차를 하남 미사 망월동으로 반납·회송하려면 계약사 지시서, 차량 상태와 목적지 수령 업체의 운영시간 및 인수 승인 조건을 확인합니다.",
+      "daeriContext": "개포동 주거·업무시설 출발 하남 미사 법인대리운전은 고객 동승과 실제 도착 건물·주차구역을 확인하고 외곽 시간대 기사 접근·복귀 여부를 상담합니다."
+    },
+    {
+      "from": "서울특별시 강남구 도곡동",
+      "fromLabel": "도곡동",
+      "to": "서울특별시 서초구 서초동",
+      "destinationLabel": "서초",
+      "taksongIntent": "법인탁송",
+      "daeriIntent": "임원대리운전",
+      "taksongContext": "도곡동 업무용 법인차를 서초동 거래처·정비지점으로 이동시키는 경우 출발 건물 차량출입구, 키 전달자와 도착지 인계 승인자를 확인합니다.",
+      "daeriContext": "도곡동에서 서초동으로 이동하는 임원대리운전은 회사 업무·저녁 모임 목적과 고객 동승, 법인카드·월말정산 승인 여부를 구분해 상담합니다."
+    }
+  ]
+}
