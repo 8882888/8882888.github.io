@@ -1693,6 +1693,14 @@ function cachedRegionalRideLookups(r,kind){
 }
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
+ const jejuSearchPage=kind==='taksong'&&r.name==='제주특별자치도';
+ const siteUrl='https://'+host+'/';
+ const regionalService={
+  '@type':'Service',serviceType:kind==='taksong'?'자동차탁송':'대리운전',
+  areaServed:{'@type':'AdministrativeArea',name},
+  provider:{'@type':'LocalBusiness','@id':siteUrl+'#organization',name:SITE_NAME,
+   url:siteUrl,telephone:jejuSearchPage?'1877-5245':PHONE}
+ };
  // Avoid constructing the repeated, very long provider/keyword editorial for
  // source-empty village pages. Keep the canonical village address, navigation
  // and customer quote/call accessible, but do not index a templated no-evidence page.
@@ -1714,7 +1722,8 @@ async function servicePage(r,kind){
     '<script>(function(){var f=document.getElementById("village-direct-quote-20261107");if(f)f.addEventListener("submit",function(){try{sessionStorage.setItem("smart24_explicit_quote_submit",String(Date.now()))}catch(_){}})})();</script>'+
     '<p><small>행정구역명은 실제 주소가 아닐 수 있습니다. 정확한 주차장·도로명주소로 수정해 조회하세요. 현재 요금·배차 가능 여부는 상담 후 확정합니다.</small></p>'+
     '<p>'+parentLink+'<a href="/reviews/history/?kind='+kind+'">실제 운행기록 확인</a> · <a href="tel:18114294">☎ 상담 1811-4294</a></p></div></section>';
-   return layout(label+service+' 출발·예약 안내',r.full_name+' '+service+' 출발 위치·요금조회·상위 지역 안내. 공개된 현지 운행기록이 없으므로 완료 후기를 표시하지 않습니다.',quick,canonicalUrl)
+   const serviceMarkup=JSON.stringify({'@context':'https://schema.org',...regionalService,url:canonicalUrl}).replace(/</g,'\\u003c');
+   return layout(label+service+' 출발·예약 안내',r.full_name+' '+service+' 출발 위치·요금조회·상위 지역 안내. 공개된 현지 운행기록이 없으므로 완료 후기를 표시하지 않습니다.',quick+'<script type="application/ld+json">'+serviceMarkup+'</script>',canonicalUrl)
     .replace('<meta name="robots" content="index,follow,max-image-preview:large">','<meta name="robots" content="noindex,follow">');
   }
  }
@@ -1768,7 +1777,7 @@ async function servicePage(r,kind){
   ?concisePriorityMetaDescription(keyword,priorityMeta.topic,concisePrioritySentence,PHONE)
   :focus50Info?focus50Info.keyword+' · '+focus50Info.topic+'. '+focus50Info.pickup+' 예상요금·배차는 상담 후 확인합니다. '+PHONE+'.'
   :name+' '+(kind==='taksong'?'자동차탁송':'대리운전')+' 예상요금·예약 안내. '+(provinceSpecificGuide?provinceSpecificGuide+' ':'')+(kind==='taksong'?'차량 인수·인계 장소, 차종, 이동 시간과 기사 접근·복귀 여건을 확인합니다.':'출발·도착지, 동승·경유·대기 여부와 기사 복귀 여건을 확인합니다.')+' 최종요금과 배차 가능 여부는 상담 후 안내합니다. '+PHONE+'.'+riContext;
- const jejuSearchPage=kind==='taksong'&&r.name==='제주특별자치도';
+
  const busanReviewPage=kind==='taksong'&&r.full_name==='부산광역시';
  const gijangTaksongPage=kind==='taksong'&&r.full_name==='부산광역시 기장군';
  const ganghwaReviewPage=kind==='daeri'&&r.full_name==='인천광역시 강화군';
@@ -1950,7 +1959,7 @@ async function servicePage(r,kind){
  const card=regionImagePath?'<figure class="regional-responsive-card" style="width:100%;max-width:700px;margin:16px auto;text-align:center"><a href="'+regionImagePath+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(name)+' '+service+' 지역명 맞춤 명함 이미지 크게 보기"><picture><source type="image/webp" srcset="'+cardPreviewWebpPath(r.slug,kind)+'"><img src="'+regionImagePath+'" alt="'+esc(displayBrand)+' 지역명 맞춤 명함 · 안내용 그래픽 · 상담 1811-4294" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" style="display:block;width:100%;max-width:100%;height:auto;border-radius:12px"></picture></a></figure>':'';
  const pageUrl='https://'+host+servicePath(r,kind);
  const imageId=imageUrl+'#image';
- const imageData=JSON.stringify({'@context':'https://schema.org','@graph':[{'@type':'WebPage','@id':pageUrl,url:pageUrl,name:searchTitle,description:searchDesc,inLanguage:'ko-KR',breadcrumb:{'@id':pageUrl+'#breadcrumb'},about:{'@type':'Service',name:displayBrand+' 이용 안내',serviceType:kind==='taksong'?'자동차탁송':'대리운전',areaServed:{'@type':'AdministrativeArea',name:r.full_name},provider:{'@type':'Organization',name:SITE_NAME,url:'https://'+host+'/',telephone:PHONE}},...(imageUrl?{primaryImageOfPage:{'@id':imageId}}:{})},...(imageUrl?[{'@type':'ImageObject','@id':imageId,contentUrl:imageUrl,url:imageUrl,name:displayBrand+' 지역별 대표 이미지',caption:displayBrand+' 대표전화 '+PHONE,width:1200,height:800,encodingFormat:'image/png'}]:[]),{'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}]}).replace(/</g,'\\u003c');
+ const imageData=JSON.stringify({'@context':'https://schema.org','@graph':[{'@type':'WebPage','@id':pageUrl,url:pageUrl,name:searchTitle,description:searchDesc,inLanguage:'ko-KR',breadcrumb:{'@id':pageUrl+'#breadcrumb'},about:{...regionalService,name:displayBrand+' 이용 안내'},...(imageUrl?{primaryImageOfPage:{'@id':imageId}}:{})},...(imageUrl?[{'@type':'ImageObject','@id':imageId,contentUrl:imageUrl,url:imageUrl,name:displayBrand+' 지역별 대표 이미지',caption:displayBrand+' 대표전화 '+PHONE,width:1200,height:800,encodingFormat:'image/png'}]:[]),{'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}]}).replace(/</g,'\\u003c');
  const caption='<figcaption style="text-align:center">'+esc(displayBrand)+' · 출발지·도착지 확인 후 '+(kind==='taksong'?'자동차탁송':'대리운전')+' 상담 · <a href="tel:18114294">'+PHONE+'</a>'+dispatchNotice(kind)+'</figcaption>';
  const visibleCard=card?card.replace('</figure>',caption+'</figure>'):'';
  const jejuLead=jejuSearchPage?jejuTaksongBlogEditorial():'';
@@ -1962,8 +1971,7 @@ async function servicePage(r,kind){
     breadcrumb:{'@id':pageUrl+'#breadcrumb'},
     primaryImageOfPage:{'@type':'ImageObject',url:imageUrl,contentUrl:imageUrl,
      name:'제주도탁송 지역명 맞춤 명함',width:1200,height:800,encodingFormat:'image/png'},
-    about:{'@type':'Service',name:'제주탁송',serviceType:'자동차탁송',areaServed:{'@type':'AdministrativeArea',name:r.full_name},
-     provider:{'@type':'Organization',name:BRAND,telephone:'1877-5245'}}},
+    about:{...regionalService,name:'제주탁송'}},
    {'@type':'BreadcrumbList','@id':pageUrl+'#breadcrumb',itemListElement:crumbItems}
   ]
  }).replace(/</g,'\\u003c'):'';
