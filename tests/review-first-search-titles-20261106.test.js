@@ -9,12 +9,14 @@ const byPath=new Map(pages.map(x=>[x.path,x]));
 const home=read('index.html');
 const long=read('service/long-distance-daeri/index.html');
 const server=read('server.js');
-for(const route of ['/','/daeri/','/taksong/','/service/long-distance-daeri/']){
+for(const route of ['/','/taksong/','/service/long-distance-daeri/']){
  const page=byPath.get(route);
  assert(page&&/운행(?:기록·)?후기|운행기록·후기/.test(page.title),'Verified ride records or reviews must be visible in service search title: '+route);
  assert(page.description.includes('운행'),'Review title needs context in its search description: '+route);
  assert(page.title.length<=75,'Avoid overly long search title: '+route);
 }
+assert.match(byPath.get('/daeri/').title,/^전국대리운전 예약·예상요금/,'Driver title should prioritize regional booking instead of reviews');
+assert.match(byPath.get('/daeri/').description,/시군구별 대리운전 예약/,'Driver description should prioritize regional booking');
 assert.equal((home.match(/<title>(.*?)<\/title>/)||[])[1],byPath.get('/').title,'Homepage source and runtime titles must match');
 assert(home.includes('id="homepage-verified-reviews-first-20261106"'),'Review-first homepage section missing');
 assert(home.includes('href="/reviews/history/?kind=daeri"')&&home.includes('href="/reviews/history/?kind=taksong"'),'Review-first links must route to actual evidence');
