@@ -51,6 +51,11 @@ jobs:
           node --check lib/nationwide-truck-taksong.cjs
           node --check tests/nationwide-truck-types-20261122.test.cjs
           node --test tests/nationwide-truck-types-20261122.test.cjs
+      - name: Verify 20,562 legal locality specialty search, nationwide CEO anchors and duplicate-place guard
+        run: |
+          node --check lib/nationwide-locality-explorer.js
+          node --check tests/nationwide-dynamic-mobile-regions.test.js
+          node tests/nationwide-dynamic-mobile-regions.test.js
       - name: Verify 44 source-backed domestic, imported and truck service-center intents
         run: |
           node --check lib/service-center-taksong.cjs
