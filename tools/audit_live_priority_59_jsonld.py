@@ -123,7 +123,14 @@ def assess(path,page,records=RECORDS):
             if result["source_row"] and service.get("areaServed",{}).get("name")!=row["region"]:
                 errors.append("webpage_served_area_wrong")
             expected_phone="1877-5245" if result["source_row"]=="taksong|제주특별자치도" else "1811-4294"
-            if service.get("provider",{}).get("telephone")!=expected_phone:
+            provider=service.get("provider")
+            if not isinstance(provider,dict):
+                provider={}
+            if provider.get("@type")!="LocalBusiness":
+                errors.append("webpage_provider_type_wrong")
+            if provider.get("@id")!=BASE+"/#organization":
+                errors.append("webpage_provider_id_wrong")
+            if provider.get("telephone")!=expected_phone:
                 errors.append("webpage_provider_phone_wrong")
         image=node.get("primaryImageOfPage",{})
         if image and "@id" in image and not str(image["@id"]).startswith(BASE+"/card/"):
