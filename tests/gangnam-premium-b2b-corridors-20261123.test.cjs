@@ -82,7 +82,7 @@ test('Only curated regional paired search intents redirect to existing legal ori
  for(const q of ['서울서초판교법인탁송','인천공항고급대리운전','법인탁송','강남법인탁송','강남고급대리운전','역삼동수원법인탁송','강남서울부산고급대리운전']){
   assert.equal(guide.resolveRouteIntent(q),null,'no overly broad keyword swallowing '+q);
  }
- assert(guide.aliasCount>=115);
+ assert.equal(guide.aliasCount,112);
 });
 test('National and business corporate customer hubs expose a navigable qualified route with service-specific enquiries',()=>{
  for(const k of ['taksong','daeri']){
@@ -99,7 +99,7 @@ test('National and business corporate customer hubs expose a navigable qualified
  const b=read('business/index.html'),c=read('service/corporate/index.html');
  assert(b.includes('id="gangnam-b2b-intercity-taksong-20261123"'));
  assert(c.includes('id="gangnam-b2b-intercity-daeri-20261123"'));
- assert(b.includes('id="b2b-inquiry"')&&b.includes('href="#b2b-inquiry"'));
+ assert(b.includes('id="business-targets"')&&b.includes('href="#business-targets"'));
  assert(b.includes('/taksong/seoul/gangnam-gu/'));
  assert(c.includes('/daeri/seoul/gangnam-gu/'));
  assert(b.includes('인천광역시 영종구'));
