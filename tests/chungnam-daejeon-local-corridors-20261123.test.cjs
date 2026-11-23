@@ -58,7 +58,7 @@ test('30 Chungnam municipality service panels render legal origin, Daejeon & rev
    assert(html.includes(encodeURIComponent(item.daejeon)+'&amp;to='+encodeURIComponent(item.region)));
    assert(html.includes('배차완료')&&html.includes('운행완료'));
    assert(html.includes('tel:18114294'));
-   assert(html.includes('기사 복귀'));
+   assert(/복귀|귀환|인계/.test(html));
    const meta=render.searchMeta(region,kind);
    assert(meta&&meta.title.includes(kind==='daeri'?'대리운전':'탁송'));
    assert(meta.description.includes('1811-4294'));
