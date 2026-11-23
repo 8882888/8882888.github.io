@@ -15,7 +15,7 @@ for(const slug of ['/','/daeri/','/taksong/']){
  assert(item.title.length<85,'Search title must remain concise: '+slug);
 }
 assert(pages.get('/').title.startsWith('전국대리운전 실제 운행후기·24시탁송'),'National homepage target missing');
-assert(pages.get('/daeri/').title.startsWith('전국대리운전 실제 운행후기'),'Designated-driver page target missing');
+assert(pages.get('/daeri/').title.startsWith('전국대리운전 예약·예상요금'),'Designated-driver page must prioritize booking and regional fare intent');
 // The approved national title focuses on actual route evidence and fare intent.
 // 24-hour searches have their own dedicated service guide and navigation link.
 const taksongTitle=pages.get('/taksong/').title;

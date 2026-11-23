@@ -417,7 +417,7 @@ const rules=[
     "group": "seo",
     "path": "data/seo-pages.json",
     "name": "driver title",
-    "needle": "전국대리운전 실제 운행후기 | 심야·장거리 요금 조회와 예약"
+    "needle": "전국대리운전 예약·예상요금 | 심야·장거리·골프장"
   },
   {
     "group": "seo",

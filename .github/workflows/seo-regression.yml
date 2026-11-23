@@ -287,6 +287,10 @@ jobs:
         run: node tests/keyword-preview.test.js
       - name: Verify public Naver-blog SEO topic matching and mobile call CTAs
         run: node tests/blog-search-topics.test.js
+      - name: Separate taksong review-led and regional designated-driver booking SEO
+        run: |
+          node --check tests/service-search-intent-split-20261123.test.cjs
+          node --test tests/service-search-intent-split-20261123.test.cjs
       - name: Verify Naver RSS fallback and safe public source rendering
         run: node tests/blog-feed-render.test.js
       - name: Verify ride provenance, historical prices and current booking clarity
