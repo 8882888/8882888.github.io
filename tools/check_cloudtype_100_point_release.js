@@ -411,13 +411,13 @@ const rules=[
     "group": "seo",
     "path": "data/seo-pages.json",
     "name": "taksong title",
-    "needle": "전국 자동차탁송 요금·실제 운행후기 | 스마트24"
+    "needle": "전국 자동차탁송 요금·실제 운행후기 | 전국대리운전"
   },
   {
     "group": "seo",
     "path": "data/seo-pages.json",
     "name": "driver title",
-    "needle": "전국대리운전 실제 운행후기 | 장거리"
+    "needle": "전국대리운전 실제 운행후기 | 심야·장거리 요금 조회와 예약"
   },
   {
     "group": "seo",
