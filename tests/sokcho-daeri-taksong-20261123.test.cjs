@@ -184,7 +184,8 @@ test('Real HTTP indexable original city/locality pages with new guidance, and pr
    const r=await fetch(base+url,{signal:AbortSignal.timeout(29000)}),h=await r.text();
    assert.equal(r.status,200,url);
    assert(h.includes(word),url+' missing intended Sokcho term '+word);
-   assert(h.includes('https://jeongukdaeri.kr'+url),url+' lost canonical');
+   const expectedCanonical=url==='/special/seoraksan-transport/'?'https://jeongukdaeri.kr/설악산탁송/':'https://jeongukdaeri.kr'+url;
+   assert(h.includes('<link rel="canonical" href="'+expectedCanonical+'"'),url+' lost its original canonical');
    assert(h.includes('1811-4294'));
    assert(!/<meta[^>]+name="robots"[^>]+content="noindex/i.test(h));
   }
