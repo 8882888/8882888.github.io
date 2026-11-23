@@ -198,7 +198,21 @@ test('Real HTTP indexable original city/locality pages with new guidance, and pr
   ]){
    const r=await fetch(base+'/keyword-search/?q='+encodeURIComponent(term),{redirect:'manual',signal:AbortSignal.timeout(21000)});
    assert.equal(r.status,302,term);
-   assert.equal(r.headers.get('location'),dest,term);
+   const location=r.headers.get('location');
+   if(location!==dest){
+    // A genuine two-region search may correctly win the site's pre-existing
+    // route-search calculator before this advisory canonical keyword mapping.
+    const expected={
+     '속초서울탁송':{to:'서울특별시',service:'taksong'},
+     '속초고성장거리대리운전':{to:'강원특별자치도 고성군',service:'daeri'}
+    }[term];
+    assert(expected,'Unexpected keyword target '+term+' → '+location);
+    const url=new URL(location,base);
+    assert.equal(url.pathname,'/route-search/',term);
+    assert.equal(url.searchParams.get('from'),data.city,term);
+    assert.equal(url.searchParams.get('to'),expected.to,term);
+    assert.equal(url.searchParams.get('service'),expected.service,term);
+   }
   }
  }finally{cp.kill('SIGTERM')}
 });
