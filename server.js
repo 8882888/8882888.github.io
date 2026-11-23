@@ -1265,8 +1265,17 @@ function regionalGuideReviewLinks(region,kind){
    esc(ride.departure+' → '+ride.destination)+'</a> · '+esc(ride.date)+
    ' · 당시 운행요금 '+esc(ride.fare)+'</li>').join('')+'</ul></section>';
 }
+function regionalServiceSchema(r,kind,host,telephone){
+ const siteUrl='https://'+host+'/';
+ return {
+  '@type':'Service',serviceType:kind==='taksong'?'자동차탁송':'대리운전',
+  areaServed:{'@type':'AdministrativeArea',name:r.full_name||r.name},
+  provider:{'@type':'LocalBusiness','@id':siteUrl+'#organization',name:SITE_NAME,
+   url:siteUrl,telephone}
+ };
+}
 function regionalIntentPage(r,kind,topic){
- const title=regionalIntentTitle(r,kind,topic),full=esc(r.full_name),service=kind==='daeri'?'대리운전':'탁송',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const title=regionalIntentTitle(r,kind,topic),full=esc(r.full_name),service=kind==='daeri'?'대리운전':'탁송',host=process.env.PUBLIC_HOST||'jeongukdaeri.kr',base='https://'+host;
  const pathname=regionalIntentPath(r,kind,topic),image=regionalIntentImage(r,kind,topic);
  const isFare=topic==='fare',isLong=topic==='long-distance';
  const desc=title+' · '+dispatchCopy(kind)+'. '+r.full_name+' '+(isFare?service+'요금 계산 방법과 거리·차종·추가 비용 확인':isLong?'장거리 대리운전 편도·왕복·경유·대기 예약 준비':'자동차탁송 예약과 차량 상태 점검, 키 전달·인수·인계 준비')+'. 예상요금 조회와 상담 '+PHONE+'.';
@@ -1297,7 +1306,7 @@ function regionalIntentPage(r,kind,topic){
  const reviewedLocal=reviewedGuide?'<section id="regional-intent-reviewed-context"><h2>'+esc(reviewedGuide.topic)+'</h2><p>'+esc(reviewedGuide.detail)+'</p></section>':'';
  const children=(childrenByParent.get(r.slug)||[]).slice(0,12);
  const local='<section><h2>'+full+' 내 출발 지역 확인</h2><p>'+esc(regionContext(r))+'에서 차량을 인수할 정확한 도로명주소와 건물명·주차 위치를 알려주세요. 아래 지역 안내에서 실제 출발지를 더 구체적으로 찾을 수 있습니다.</p><ul>'+children.map(x=>'<li><a href="'+servicePath(x,kind)+'">'+esc(x.full_name)+' '+service+'</a></li>').join('')+'</ul></section>';
- const data=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',url:base+pathname,name:title,description:desc,primaryImageOfPage:{'@type':'ImageObject',contentUrl:base+image,width:1200,height:800}}).replace(/</g,'\\u003c');
+ const data=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',url:base+pathname,name:title,description:desc,about:regionalServiceSchema(r,kind,host,PHONE),primaryImageOfPage:{'@type':'ImageObject',contentUrl:base+image,width:1200,height:800}}).replace(/</g,'\\u003c');
  const rideEvidenceLinks=regionalGuideReviewLinks(r,kind);
  const page=layout(title+' | '+(isFare?'예상비용·추가 비용 확인':isLong?'편도·왕복·골프장 예약':'차량 준비·키 전달 안내'),desc,'<script type="application/ld+json">'+data+'</script>'+intro+card+reviewedLocal+content+remoteRegionGuidance(r)+local+rideEvidenceLinks+regionalIntentNav(r,pathname),base+pathname,base+image);
  // Naver's published indexing guidance warns against large sets of near-identical
@@ -1694,13 +1703,7 @@ function cachedRegionalRideLookups(r,kind){
 async function servicePage(r,kind){
  const service=kind==='taksong'?'탁송':'대리운전',name=r.full_name||r.name,host=process.env.PUBLIC_HOST||'jeongukdaeri.kr';
  const jejuSearchPage=kind==='taksong'&&r.name==='제주특별자치도';
- const siteUrl='https://'+host+'/';
- const regionalService={
-  '@type':'Service',serviceType:kind==='taksong'?'자동차탁송':'대리운전',
-  areaServed:{'@type':'AdministrativeArea',name},
-  provider:{'@type':'LocalBusiness','@id':siteUrl+'#organization',name:SITE_NAME,
-   url:siteUrl,telephone:jejuSearchPage?'1877-5245':PHONE}
- };
+ const regionalService=regionalServiceSchema(r,kind,host,jejuSearchPage?'1877-5245':PHONE);
  // Avoid constructing the repeated, very long provider/keyword editorial for
  // source-empty village pages. Keep the canonical village address, navigation
  // and customer quote/call accessible, but do not index a templated no-evidence page.
