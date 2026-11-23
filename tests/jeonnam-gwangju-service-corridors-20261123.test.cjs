@@ -114,3 +114,52 @@ test('site injects at most one locale guide section in the existing customer-fir
  assert.equal(JSON.parse(read('data/ride-history.json')).length,2591,
    'existing original ride history must not be modified to fabricate source support');
 });
+
+
+test('20261124 focused: Gwangju, Seo-gu and Chipyeong each have distinct service copy and six long-distance quote links',()=>{
+ const names=['광주광역시','광주광역시 서구','광주광역시 서구 치평동'];
+ const destinations=['전라남도 나주시','전라남도 목포시','전라남도 여수시','서울특별시','부산광역시','대구광역시'];
+ const evidence=new Set();
+ for(const name of names){
+  const region=byFull.get(name);
+  assert(region,'Real legal or legacy search locality absent '+name);
+  for(const kind of ['daeri','taksong']){
+   const html=render.regionSection(region,kind);
+   assert.equal((html.match(/id="gwangju-chipyeong-local-seo-20261124"/g)||[]).length,1,name+'/'+kind);
+   assert(html.includes('전남광주통합특별시'));
+   assert(html.includes('광주광역시'));
+   assert(html.includes('1811-4294'));
+   assert(html.includes('href="/fare/?service='+kind+'&amp;from='));
+   assert(html.includes('https://')===false,'Do not embed unverified external pages in the focus guide');
+   for(const target of destinations)assert(html.includes(encodeURIComponent(target)),'Missing route '+name+' → '+target);
+   if(name.includes('치평동'))assert(html.includes('상무지구')&&html.includes('광주청사'));
+   if(kind==='daeri'){
+    assert(html.includes('장거리대리운전'));
+    assert(html.includes('/service/long-distance-daeri/'));
+    assert(html.includes('/service/corporate/'));
+   }else{
+    assert(html.includes('장거리탁송'));
+    assert(html.includes('/service/long-distance-taksong/'));
+    assert(html.includes('/service/heavy-truck-taksong/'));
+   }
+   const focused=html.slice(html.indexOf('id="gwangju-chipyeong-local-seo-20261124"'));
+   assert(!/배차완료\s*[0-9,]+원|당시\s*[0-9,]+원/.test(focused),'No invented dispatch or fare evidence');
+   evidence.add(name+'|'+kind);
+  }
+ }
+ assert.equal(evidence.size,6,'Six unique canonical guide/service combinations');
+ for(const kind of ['daeri','taksong']){
+  const meta=render.searchMeta(byFull.get('광주광역시 서구 치평동'),kind);
+  assert(meta.title.startsWith('치평동'+(kind==='daeri'?'대리운전':'탁송')));
+  assert([...meta.title].length<=80);
+  assert(meta.description.includes('상무지구')&&meta.description.includes('1811-4294'));
+  const city=render.searchMeta(byFull.get('광주광역시'),kind);
+  const west=render.searchMeta(byFull.get('광주광역시 서구'),kind);
+  assert(city.title.includes('치평동')&&west.title.includes('치평동'));
+ }
+ const server=read('server.js');
+ assert(server.includes('jeonnamGwangjuServiceGuides.regionSection(r,kind)'));
+ assert(server.includes('jeonnamGwangjuSearchMeta?.title'));
+ assert(server.includes('jeonnamGwangjuSearchMeta?.description'));
+ assert.equal(JSON.parse(read('data/ride-history.json')).length,2591);
+});
