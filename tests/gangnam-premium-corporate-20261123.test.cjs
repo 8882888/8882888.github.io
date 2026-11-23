@@ -127,7 +127,7 @@ test('Existing exact legal Gangnam aliases support combinations of corporate, te
 test('Original national trust-first and Gangnam premium links in customer source hubs remain intact',()=>{
  const server=read('server.js');
  for(const s of ['gangnamYulhyeonSeo.regionSection(r,kind)','gangnamPremiumCorporate.regionSection(r,kind)',
- 'gangnamFocusedSearchMeta?.title||gangnamPremiumSearchMeta?.title',
+ 'gangnamFocusedSearchMeta?.title||gangnamCEOSearchMeta?.title||gangnamPremiumSearchMeta?.title',
  'gangnamPremiumCorporate.nationalSection(kind)','gangnamYulhyeonSeo.resolve(searchIntent)',
  "gangnamPremiumCorporate.searchMeta(r,kind)"])
   assert(server.includes(s),s);
