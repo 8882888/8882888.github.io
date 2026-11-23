@@ -289,6 +289,8 @@ jobs:
         run: node tests/blog-search-topics.test.js
       - name: Verify Naver RSS fallback and safe public source rendering
         run: node tests/blog-feed-render.test.js
+      - name: Verify ride provenance, historical prices and current booking clarity
+        run: node --test tests/blog-source-and-current-fare-20261123.test.cjs
       - name: Generate 18-topic published-title coverage audit
         run: node scripts/blog-search-coverage.js > /tmp/blog-search-coverage.json
       - name: Check retired homepage copy is removed, not keyword search
