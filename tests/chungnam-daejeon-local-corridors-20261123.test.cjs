@@ -123,3 +123,17 @@ test('new SEO content does not replace evidence-backed page descriptions or prev
   assert(server.includes(old+'.regionSection(r,kind)'));
  assert.equal(render.canonicalPaths.length,44);
 });
+
+test('long-distance links use real city names and Daejeon districts retain the 구 suffix',()=>{
+ for(const kind of ['daeri','taksong']){
+  const gongju=render.regionSection(byFull.get('충청남도 공주시'),kind);
+  const label=kind==='daeri'?'장거리대리운전':'장거리탁송';
+  assert(gongju.includes('공주→서울 '+label));
+  assert(gongju.includes('공주→부산 '+label));
+  assert(!gongju.includes('서울특별 '+label));
+  assert(!gongju.includes('부산광역 '+label));
+  const dong=render.regionSection(byFull.get('대전광역시 동구'),kind);
+  assert(dong.includes('대전동구'));
+  assert(!dong.includes('대전동'+(kind==='daeri'?'대리운전':'자동차탁송')));
+ }
+});
