@@ -126,7 +126,7 @@ assert(corporate.includes('id="nationwide-ceo-daeri-booking-20261124"'));
 assert(daily.includes('id="nationwide-executive-driver-booking-20261124"'));
 assert(corporate.includes('전국 CEO·대표이사·임원 고급대리운전'));
 assert(daily.includes('전국 CEO·임원 수행기사와 일일기사'));
-for(const q of ['중구VIP대리운전','고성군법인카드대리운전','광주특장차탁송']){
+for(const q of ['중구VIP대리운전','고성군법인카드대리운전','중구특장차탁송']){
  assert.equal(explorer.resolveServiceBooking(q),null,'Ambiguous or non-unique specialty locality: '+q);
 }
 const server=read('server.js');
