@@ -1805,7 +1805,7 @@ async function servicePage(r,kind){
   :null;
  const gangwonProvinceDaeri=kind==='daeri'&&r.full_name==='강원특별자치도';
   const gyeongnamSearchMeta=(r.full_name==='경상남도'||(!priorityMeta&&!focus50Info&&!historicalTitleTrip&&!verifiedTitleTrip&&!verifiedDaeriTitleTrip))?gyeongnamServiceGuides.searchMeta(r,kind):null;
-  const jeonnamGwangjuSearchMeta=(['전라남도','광주광역시'].includes(r.full_name)||(!priorityMeta&&!focus50Info&&!historicalTitleTrip&&!verifiedTitleTrip&&!verifiedDaeriTitleTrip))?jeonnamGwangjuServiceGuides.searchMeta(r,kind):null;
+  const jeonnamGwangjuSearchMeta=(!priorityMeta&&!focus50Info&&!historicalTitleTrip&&!verifiedTitleTrip&&!verifiedDaeriTitleTrip)?jeonnamGwangjuServiceGuides.searchMeta(r,kind):null;
  const chungnamSearchMeta=(r.full_name==='충청남도'||(!priorityMeta&&!focus50Info&&!historicalTitleTrip&&!verifiedTitleTrip&&!verifiedDaeriTitleTrip))?chungnamPortGuides.searchMeta(r,kind):null;
  const chungcheongSearchMeta=(!priorityMeta&&!focus50Info&&!historicalTitleTrip&&!verifiedTitleTrip&&!verifiedDaeriTitleTrip)?chungcheongGuides.searchMeta(r,kind):null;
  const iksanSearchMeta=(!priorityMeta&&!focus50Info&&!historicalTitleTrip&&!verifiedTitleTrip&&!verifiedDaeriTitleTrip)?iksanBusongSeo.searchMeta(r,kind):null;
