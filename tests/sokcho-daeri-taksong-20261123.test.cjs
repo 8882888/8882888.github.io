@@ -175,7 +175,7 @@ test('Real HTTP indexable original city/locality pages with new guidance, and pr
    ['/daeri/gangwon/sokcho-si/','속초장거리대리운전'],
    ['/taksong/gangwon/sokcho-si/','속초자동차탁송'],
    ['/daeri/gangwon/sokcho-si/daepo-dong/','속초대포동대리운전'],
-   ['/taksong/gangwon/sokcho-si/seorak-dong/','속초설악동탁송'],
+   ['/taksong/gangwon/sokcho-si/seolak-dong/','속초설악동탁송'],
    ['/daeri/gangwon/sokcho-si/joyang-dong/','속초조양동대리운전'],
    ['/service/long-distance-daeri/','속초장거리대리운전'],
    ['/service/long-distance-taksong/','속초장거리탁송'],
@@ -193,7 +193,7 @@ test('Real HTTP indexable original city/locality pages with new guidance, and pr
    ['속초대포동장거리대리운전','/daeri/gangwon/sokcho-si/daepo-dong/'],
    ['속초서울탁송','/taksong/gangwon/sokcho-si/'],
    ['속초고성장거리대리운전','/daeri/gangwon/sokcho-si/'],
-   ['속초설악동탁송','/taksong/gangwon/sokcho-si/seorak-dong/']
+   ['속초설악동탁송','/taksong/gangwon/sokcho-si/seolak-dong/']
   ]){
    const r=await fetch(base+'/keyword-search/?q='+encodeURIComponent(term),{redirect:'manual',signal:AbortSignal.timeout(21000)});
    assert.equal(r.status,302,term);
