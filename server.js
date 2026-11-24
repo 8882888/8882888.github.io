@@ -3555,6 +3555,51 @@ if(searchIntent){
    '순천ic매매단지탁송':'/business/used-car/',
    '순천강변매매단지탁송':'/business/used-car/'
   }[normalized])||null;
+ // Bidirectional course search resolves only exact, human-reviewed rider intent to existing canonical guides.
+ const cyclingBidirectionalTarget=({
+  '전국자전거길종주':'/route-taksong/',
+  '전국자전거길종주코스':'/route-taksong/',
+  '전국자전거길역코스':'/route-taksong/',
+  '전국자전거종주코스':'/route-taksong/',
+  '국토종주역코스':'/special/national-cycling-tour/',
+  '국토종주자전거길역코스':'/special/national-cycling-tour/',
+  '국토종주자전거길종주':'/special/national-cycling-tour/',
+  '국토종주자전거길탁송':'/special/national-cycling-tour/',
+  '인천부산국토종주':'/special/national-cycling-tour/',
+  '부산인천국토종주':'/special/national-cycling-tour/',
+  '아라서해갑문낙동강하굿둑탁송':'/special/national-cycling-tour/',
+  '낙동강하굿둑아라서해갑문탁송':'/special/national-cycling-tour/',
+  '전국자전거길종주탁송':'/special/cycling-trail-transport/',
+  '전국자전거길역코스탁송':'/special/cycling-trail-transport/',
+  '자전거종주차량회수':'/special/cycling-trail-transport/',
+  '자전거길역코스탁송':'/special/cycling-trail-transport/',
+  '동해안자전거길역코스':'/route-taksong/courses/eastcoast/',
+  '동해안자전거길역코스탁송':'/route-taksong/courses/eastcoast/',
+  '경포대통일전망대탁송':'/route-taksong/courses/eastcoast/',
+  '통일전망대경포대탁송':'/route-taksong/courses/eastcoast/',
+  '울진은어다리영덕해맞이공원탁송':'/route-taksong/courses/eastcoast/',
+  '영덕해맞이공원울진은어다리탁송':'/route-taksong/courses/eastcoast/',
+  '섬진강자전거길역코스':'/route-taksong/courses/seomjin/',
+  '섬진강자전거길역코스탁송':'/route-taksong/courses/seomjin/',
+  '섬진강생활체육공원배알도탁송':'/route-taksong/courses/seomjin/',
+  '배알도생활체육공원탁송':'/route-taksong/courses/seomjin/',
+  '영산강자전거길역코스':'/route-taksong/courses/yeongsan/',
+  '영산강자전거길역코스탁송':'/route-taksong/courses/yeongsan/',
+  '담양댐영산강하굿둑탁송':'/route-taksong/courses/yeongsan/',
+  '영산강하굿둑담양댐탁송':'/route-taksong/courses/yeongsan/',
+  '오천자전거길역코스':'/route-taksong/courses/ocheon/',
+  '오천자전거길역코스탁송':'/route-taksong/courses/ocheon/',
+  '행촌교차로합강공원탁송':'/route-taksong/courses/ocheon/',
+  '합강공원행촌교차로탁송':'/route-taksong/courses/ocheon/',
+  '금강자전거길역코스':'/route-taksong/courses/geumgang/',
+  '금강자전거길역코스탁송':'/route-taksong/courses/geumgang/',
+  '대청댐금강하굿둑탁송':'/route-taksong/courses/geumgang/',
+  '금강하굿둑대청댐탁송':'/route-taksong/courses/geumgang/',
+  '낙동강자전거길역코스':'/route-taksong/courses/nakdonggang/',
+  '낙동강자전거길역코스탁송':'/route-taksong/courses/nakdonggang/',
+  '상주상풍교낙동강하굿둑탁송':'/route-taksong/courses/nakdonggang/',
+  '낙동강하굿둑상주상풍교탁송':'/route-taksong/courses/nakdonggang/'
+ }[normalized])||null;
  const exactCycle=[
   [/^섬진강(?:길)?자전거(?:길)?종주(?:탁송)?$/,'/route-taksong/courses/seomjin/'],
   [/^낙동강(?:길)?자전거(?:길)?종주?(?:탁송)?$/,'/route-taksong/courses/nakdonggang/'],
@@ -3566,7 +3611,7 @@ if(searchIntent){
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=exactCycle||mountain||touristPlaceTarget||usedCarBuyerTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||busVehicleTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ const target=cyclingBidirectionalTarget||exactCycle||mountain||touristPlaceTarget||usedCarBuyerTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||busVehicleTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
