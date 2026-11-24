@@ -76,7 +76,7 @@ test('existing canonical wiring preserved and Gangneung priority description now
  assert.ok(server.includes("gangwonLocalMeta?.description||gijangDeepMeta?.description"));
  const priority=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/priority-regions.json'),'utf8')).pages.find(x=>x.kind==='daeri'&&x.region===gw+'강릉시');
  const first=priority.detail.split(/[.!?。]/)[0].trim().slice(0,16);
- const snippet='강릉대리운전｜경포·안목·교동·주문진 대리운전·법인·장거리 상담. 경포해변·안목해변의 음식점과 카페 차량 주차 위치 확인, 예약·요금 1811-4294.';
+ const snippet='강릉대리운전. 경포·안목·교동·주문진 대리운전·법인·장거리 상담. 경포해변·안목해변의 음식점과 카페 출발 예약 1811-4294.';
  assert.ok(server.includes(snippet));
  assert.ok(snippet.includes(priority.topic));
  assert.ok(snippet.includes(first));
