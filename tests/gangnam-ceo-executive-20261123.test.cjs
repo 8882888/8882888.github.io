@@ -110,7 +110,7 @@ test('Static corporate and daily-driver copy preserve original sources and conta
  const c=read('service/corporate/index.html'),d=read('service/daily-driver/index.html');
  assert(c.includes('id="gangnam-ceo-premium-driver-20261123"'));
  assert(d.includes('id="ceo-executive-daily-driver-20261123"'));
- assert(c.includes('CEO·임원 고급 예약 스마트24'));
+ assert(c.includes('법인대리운전 | 법인카드·후불정산·단체·CEO 예약'), 'CTR experiment updates only the nationwide corporate search title');
  assert(c.includes('meta name="description"'));
  assert(c.includes('CEO·대표이사·임원 고급대리운전'));
  assert(d.includes('CEO수행기사·대표이사수행기사·임원일일기사'));
