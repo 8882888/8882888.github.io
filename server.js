@@ -4403,7 +4403,7 @@ if(pathname==='/region-live/'||pathname==='/region-live'){return (async()=>{
  return respond(res,200,body,'text/html; charset=utf-8');
 })().catch(err=>{console.error('region-live handler error',err);return respond(res,500,'지역 검색 오류')})}
 const hierarchicalMatch=pathname.match(/^\/(daeri|taksong)\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\/?$/);
-if(hierarchicalMatch){const r=byPath.get(hierarchicalMatch[2]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');const target=servicePath(r,hierarchicalMatch[1]);if(pathname!==target){res.writeHead(301,{location:target});return res.end()}return regionalPageCache.get(hierarchicalMatch[1]+'|'+r.slug,()=>servicePage(r,hierarchicalMatch[1])).then(html=>{
+if(hierarchicalMatch){const r=byPath.get(hierarchicalMatch[2]);if(!r)return respond(res,404,'지역 정보를 찾을 수 없습니다.');const target=servicePath(r,hierarchicalMatch[1]);if(pathname!==target){res.writeHead(301,{location:target+u.search});return res.end()}return regionalPageCache.get(hierarchicalMatch[1]+'|'+r.slug,()=>servicePage(r,hierarchicalMatch[1])).then(html=>{
  // Add the original-source, direction-labelled v2 evidence on two canonical pages only.
  // Existing article title, canonical, fare engine, reviews and regional navigation stay unchanged.
  if(target==='/daeri/sejong/'||target==='/taksong/busan/'){
