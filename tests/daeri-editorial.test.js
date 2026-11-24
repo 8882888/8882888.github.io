@@ -431,7 +431,7 @@ async function get(p){
   assert.equal(response.status,301,'recruitment canonical redirect');
   assert.equal(response.headers.get('location'),href,'recruitment redirects to canonical URL');
  }
- const sitemapPriority=await get('/sitemap-priority.xml');
+const sitemapPriority=await get('/sitemap-priority.xml');
  for(const p of ['/taksong/jeju/','/recruit/daeri/','/recruit/taksong/'])assert.ok(sitemapPriority.includes('https://jeongukdaeri.kr'+p),'priority sitemap includes '+p);
  const mainSitemap=await get('/sitemap.xml');
  const driverSitemap=await get('/sitemap-daeri.xml');
@@ -451,8 +451,8 @@ async function get(p){
   assert.ok(page.includes('tel:18114294'),'booking retains official site phone');
   assert.ok(page.includes('https://jeongukdaeri.kr'+path),'canonical URL uses official domain');
   for(const section of place.sections)assert.ok(page.includes(section.heading),'all original editorial sections retained');
-  assert.ok(mainSitemap.includes('https://jeongukdaeri.kr'+path),'travel page in global sitemap');
-  assert.ok(driverSitemap.includes('https://jeongukdaeri.kr'+path),'travel page in driver discovery sitemap');
+  assert.equal(mainSitemap.includes('https://jeongukdaeri.kr'+path),sitemapOwners[path]==='/sitemap.xml','travel page follows its single owner in global sitemap');
+  assert.equal(driverSitemap.includes('https://jeongukdaeri.kr'+path),sitemapOwners[path]==='/sitemap-daeri.xml','travel page follows its single owner in driver sitemap');
   assert.ok(homepage.includes(path),'homepage tourism card is visible');
  }
  const west=await get('/daeri/gyeonggi/');
