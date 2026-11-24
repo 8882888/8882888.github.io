@@ -26,6 +26,8 @@ test('release verification keeps private broad-count diagnostics separate from p
  assert.match(source,/Thin or overlapping locality sitemap must not be promoted/);
  assert.match(source,/withheldLocalityCounts/);
  assert.doesNotMatch(source,/hasVillageMap!==\(expectedCounts\.ri>0\)/);
+ const workflow=read('.github/workflows/verify-live-seo.yml');
+ assert.match(workflow,/if: \$\{\{ github\.event_name !==? 'pull_request' \}\}/);
 });
 
 test('robots.txt remains fully permissive and unchanged by sitemap verification',()=>{
