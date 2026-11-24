@@ -40,7 +40,7 @@ test('Gajwa M Park consumer guide is detailed, locality-accurate and makes no of
   assert.ok(s.includes(w),'important consumer detail '+w);
  assert.ok(s.includes('저희 사무실이 있는 것처럼 표기하지 않습니다'));
  assert.ok(s.includes('매매단지 운영사의 공식 지정업체·제휴업체라는 뜻이 아닙니다'));
- assert.ok(s.includes('차량의 출고 승인'));
+ assert.ok(s.includes('차량 출고 승인'));
  assert.equal((s.match(/<li>/g)||[]).length,9,'four different customers + five real pickup requirements');
  for(const u of ['/business/auction/','/business/export-port/','/taksong/incheon/','/fare/?service=taksong','/blog/archive/vehicle-taksong/'])
   assert.ok(s.includes('href="'+u+'"'),u);
