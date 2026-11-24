@@ -3369,6 +3369,11 @@ if(/^\/(?:taksong|daeri)\/gangwon\/gangneung-si\/?$/.test(pathname)){
  res.writeHead(301,{location:pathname.replace('gangneung-si','gangreung-si')+u.search});return res.end();
 }
 // Consolidate default-document URLs without changing query parameters.
+// Redirect these public aliases to the same URLs listed in the sitemaps.
+if(['/coast','/coverage','/service/long-distance-daeri','/service/long-distance-taksong'].includes(pathname)){
+ res.writeHead(301,{location:pathname+'/'+u.search});
+ return res.end();
+}
 if(/\/index\.html$/.test(pathname)){const target=u.pathname.slice(0,-'index.html'.length);res.writeHead(301,{location:target+u.search});return res.end()}
 // Two legacy nationwide driver pages share the /daeri/ canonical. Redirect
 // instead of serving duplicate indexable HTML so search results can consolidate.
@@ -3671,7 +3676,7 @@ const placeCategoryMatch=pathname.match(/^\/places\/([^/]+)\/?$/);
 if(placeCategoryMatch){const category=placeCategories.find(x=>x[0]===placeCategoryMatch[1]);return category?respond(res,200,placeCategoryPage(category)):respond(res,404,'장소 분류를 찾을 수 없습니다.')}
 const featuredRouteMatch=pathname.match(/^\/taksong\/route\/([a-z-]+)\/?$/);if(featuredRouteMatch){const route=featuredTaksongRoutes.find(x=>x.slug===featuredRouteMatch[1]);return route?respond(res,200,featuredTaksongRoutePage(route)):respond(res,404,'해당 구간을 찾을 수 없습니다.')}
 if(pathname==='/taksong'){res.writeHead(301,{location:'/taksong/'+u.search});return res.end()}
-if(pathname==='/coverage/'||pathname==='/coverage')return respond(res,200,nationwideCoveragePage());
+if(pathname==='/coverage/')return respond(res,200,nationwideCoveragePage());
 if(pathname==='/taksong/')return respond(res,200,cachedNationalServiceHubHtml.get('taksong'));
 if(pathname==='/taksong/types/'||pathname==='/taksong/types')return respond(res,200,vehicleTopicsHub());
 const vehicleMatch=pathname.match(/^\/taksong\/type\/([a-f0-9]+)\/?$/);if(vehicleMatch){const topic=[...vehicleTopicMap.values()].find(x=>x.slug===vehicleMatch[1]);return topic?respond(res,200,vehicleTopicPage(topic)):respond(res,404,'차종별 탁송 정보를 찾을 수 없습니다.')}
