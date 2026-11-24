@@ -78,11 +78,11 @@ test('eight reviewed service pages expose exact source information to crawlers, 
    assert(html.includes('tel:18114294'),row.keyword+' contact');
    if(row.id===320||row.id===370){
     const isDaeri=row.id===370;
-    const headline=isDaeri?'강릉대리운전 | 경포·안목·교동·주문진 예약·실제 운행기록':'강릉탁송 실제 후기·요금 | 용인→강릉·경포·주문진';
+    const headline=isDaeri?'강릉대리운전 | 경포·안목·교동·주문진 예약·실제 운행기록':'강릉탁송 | 강릉항·경포·주문진 차량인수·요금';
     assert(html.includes('<title>'+headline+' | 전국대리운전</title>'),row.keyword+' accurate search title');
     assert(html.includes('<h1>'+headline+'</h1>'),row.keyword+' visible H1/title parity');
     const desc=html.match(/<meta name="description" content="([^"]*)">/);
-    assert(desc&&desc[1].includes(isDaeri?'경포해변·안목해변의 음식점과':'용인→강릉 당시 11만원'),row.keyword+' unique description');
+    assert(desc&&desc[1].includes(isDaeri?'경포해변·안목해변의 음식점과':'강릉 경포대와 주문진·강릉항 차량 인수'),row.keyword+' unique description');
     assert(desc[1].includes('1811-4294'),row.keyword+' phone');
     assert(desc[1].length<160,row.keyword+' concise meta');
    }
