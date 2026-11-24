@@ -1805,7 +1805,7 @@ async function servicePage(r,kind){
  // historic route in the primary title. Verified rides remain linked in body.
  const gangneungSearchTitle=r.full_name==='강원특별자치도 강릉시'
   ?(kind==='daeri'?'강릉대리운전 | 경포·안목·교동·주문진 예약·실제 운행기록'
-   :'강릉탁송 실제 후기·요금 | 용인→강릉·경포·주문진')
+   :'강릉탁송 | 강릉항·경포·주문진 차량인수·요금')
   :null;
  const gangwonProvinceDaeri=kind==='daeri'&&r.full_name==='강원특별자치도';
   const gyeongnamSearchMeta=(r.full_name==='경상남도'||(!priorityMeta&&!focus50Info&&!historicalTitleTrip&&!verifiedTitleTrip&&!verifiedDaeriTitleTrip))?gyeongnamServiceGuides.searchMeta(r,kind):null;
@@ -1833,7 +1833,7 @@ async function servicePage(r,kind){
  const gangneungSearchDesc=r.full_name==='강원특별자치도 강릉시'
   ?(kind==='daeri'
    ?'강릉대리운전｜경포·안목·교동·주문진 대리운전·법인·장거리 상담. 경포해변·안목해변의 음식점과 카페 차량 주차 위치 확인, 예약·요금 1811-4294.'
-   :'강릉항·주문진·동해안 종주 차량회수 자동차탁송·입출고 상담. 강릉 경포대와 주문진·강릉항 용인→강릉 당시 11만원, 문의 1811-4294.')
+   :'강릉항·주문진·동해안 종주 차량회수 자동차탁송·입출고 상담. 강릉 경포대와 주문진·강릉항 차량 인수, 용인→강릉 기존 완료기록과 현재 요금조회 1811-4294.')
   :null;
  const searchDescFallback=gangwonProvinceDaeri?'강원특별자치도 대리운전(강원도대리운전) 춘천·원주·강릉·속초·양양 등 18개 시군 관광지·맛집 주변·호텔·펜션·골프장 출발과 장거리대리운전. 차량 주차 위치·기사 복귀·예상요금·예약 상담 1811-4294.':ganghwaReviewPage?rawSearchDesc:gangneungSearchDesc||sokchoSearchMeta?.description||gangnamFocusedSearchMeta?.description||gangnamCEOSearchMeta?.description||gangnamPremiumSearchMeta?.description||iksanCitySearchMeta?.description||gyeongnamSearchMeta?.description||jeonnamGwangjuSearchMeta?.description||jeonbukSearchMeta?.description||gyeongbukDaeguSearchMeta?.description||chungnamDaejeonSearchMeta?.description||chungbukInnovationSearchMeta?.description||gyeonggiSouthHwaseoSearchMeta?.description||gyeonggi27SearchMeta?.description||chungnamSearchMeta?.description||chungcheongSearchMeta?.description||iksanSearchMeta?.description||naverPriorityShortMetaByPath.get(servicePath(r,kind))||
   (priorityMeta?rawSearchDesc:boundedRegionalSearchDescription(rawSearchDesc));
