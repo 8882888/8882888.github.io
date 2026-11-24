@@ -77,7 +77,7 @@ test('Only exact market-taksong service phrases resolve to original canonical, n
  '창원KC월드카프라자탁송','사천경남매매단지탁송','구미금오자동차매매단지탁송',
  '안동중고자동차유통단지탁송','포항대잠중고매매단지탁송','순천IC매매단지탁송','순천강변매매단지탁송'];
  assert.equal(aliases.length,19);
- for(const term of aliases)assert.ok(server.includes("'"+term+"':'/business/used-car/'"),term);
+ for(const term of aliases)assert.ok(server.includes("'"+term.toLowerCase()+"':'/business/used-car/'"),term+' normalized alias');
  assert.ok(server.includes('||usedCarBuyerTarget||'));
  for(const term of ['엠월드','도이치오토월드','장안평중고차시장','KC오토월드']){
   assert.ok(!server.includes("'"+term+"':'/business/used-car/'"),'bare market name hijack '+term);
