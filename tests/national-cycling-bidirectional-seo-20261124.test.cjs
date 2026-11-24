@@ -91,7 +91,7 @@ test('Every detailed cycling course explains distinct reverse itinerary, vehicle
   assert.ok(fareLinks.length>=2&&fareLinks.length%2===0,'both quote directions '+slug);
   for(const href of fareLinks)assert.ok(href.includes('&amp;to='),'fare has destination '+slug);
   assert.ok(sec.includes('/route-taksong/#national-cycling-bidirectional-20261124'));
-  assert.ok(sec.includes('요금을 보장하지 않습니다')||sec.includes('별도 상담'),'no guaranteed reverse fare '+slug);
+  assert.ok(sec.includes('확정 금액이나 배차 가능을 보장하지 않습니다')||sec.includes('별도 상담'),'no guaranteed reverse fare '+slug);
   assert.ok(html.includes('<meta name="robots" content="index,follow,max-image-preview:large">'));
  }
  assert.ok(page('eastcoast').includes('강원 공식 코스'));
