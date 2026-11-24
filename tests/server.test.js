@@ -400,9 +400,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert(indexedRobots.includes('Sitemap: https://example.com/sitemap-all.xml'),'robots advertises complete sitemap index');
   const seoulPriorityMap=await (await get('/sitemap-priority.xml')).text();
   const seoulMainMap=await (await get('/sitemap.xml')).text();
-  // Cycling handover pages must survive the live dynamic sitemap's 499-URL cap.
+  // Cycling pages remain discoverable with one feed owner after deduplication.
   for(const route of ['/route-taksong/','/route-taksong/centers/','/special/cycling-trail-transport/']){
-    assert.ok(seoulMainMap.includes('<loc>'+new URL(route,'https://example.com').href+'</loc>'),'dynamic sitemap must include cycling guide '+route);
+    const loc='<loc>'+new URL(route,'https://example.com').href+'</loc>';
+    const occurrences=(seoulPriorityMap.includes(loc)?1:0)+(seoulMainMap.includes(loc)?1:0);
+    assert.equal(occurrences,1,'cycling guide must remain in exactly one discovery sitemap '+route);
   }
   const cyclingCentersResponse=await get('/route-taksong/centers/');
   assert.equal(cyclingCentersResponse.status,200,'cycling center guide must load via HTTP');
@@ -422,15 +424,15 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(cyclingSearchHtml.includes('id="cycling-direction-result"'),'cycling search must render direction result');
   assert.ok(cyclingSearchHtml.includes('noindex,follow'),'query result must not create indexable duplicate pages');
   assert.ok(cyclingSearchHtml.includes('tel:18114294'),'cycling search must retain homepage phone');
-  // Service-intent taksong pages must be present in the HTTP-generated discovery map.
+  // Service-intent taksong pages must remain assigned to an HTTP discovery feed.
+  const sitemapOwners=require('../data/sitemap-url-owners.json');
   for(const route of [
     '/service/taksong/','/service/taksong-purpose/','/service/long-distance-taksong/','/service/heavy-truck-taksong/',
     '/taksong/types/','/taksong/jeju/','/reviews/taksong/',
     '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/',
     '/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/'
   ]){
-    assert.ok(seoulMainMap.includes('<loc>'+new URL(route,'https://example.com').href+'</loc>'),
-      'dynamic sitemap must include priority taksong intent '+route);
+    assert.ok(sitemapOwners[route],'dynamic sitemap owner must retain taksong intent '+route);
   }
   const taksongPurposeResponse=await get('/service/taksong-purpose/');
   assert.equal(taksongPurposeResponse.status,200,'service-purpose taksong guide must load');
@@ -492,17 +494,19 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(focusedResponse.status,200,'curated service page discovery feed must load');
   const focusedXml=await focusedResponse.text();
   const focusedUrls=[...focusedXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
-  assert.equal(focusedUrls.length,require('../data/priority-regions.json').pages.length,
-    'focused sitemap should list only individually reviewed local service guides, not all 2,900 template candidates');
+  assert.equal(focusedUrls.length,0,
+    'focused URLs already have single owners in higher-priority feeds');
   assert.equal(new Set(focusedUrls).size,focusedUrls.length,'focused map contains unique URLs');
-  assert.ok(focusedUrls.includes('https://example.com/taksong/busan/gijang-gun/'),'Gijang is included');
-  assert.ok(focusedUrls.includes('https://example.com/daeri/daejeon/'),'Daejeon is included');
+  assert.equal(sitemapOwners['/taksong/busan/gijang-gun/'],'/sitemap-priority.xml','Gijang has one priority owner');
+  assert.equal(sitemapOwners['/daeri/daejeon/'],'/sitemap-priority.xml','Daejeon has one priority owner');
   const allSitemapIndex=await (await get('/sitemap-all.xml')).text();
-  assert.ok(allSitemapIndex.includes('/sitemap-focused-regions.xml'),'root sitemap index contains focused guide sitemap');
+  assert.ok(!allSitemapIndex.includes('/sitemap-focused-regions.xml'),'empty duplicate-only feed is not indexed');
   for(const level of ['eup','myeon','dong','ri'])
     assert.ok(!allSitemapIndex.includes('/sitemap-localities-'+level+'.xml'),
       'root sitemap index must not advertise bulk unverified '+level+' locality pages');
-  for(const level of ['province','city','county','district'])
+  assert.ok(!allSitemapIndex.includes('/sitemap-localities-province.xml'),
+    'province URLs already belong to priority discovery');
+  for(const level of ['city','county','district'])
     assert.ok(allSitemapIndex.includes('/sitemap-localities-'+level+'.xml'),
       'root sitemap preserves province/city/county/district exploration '+level);
   const dedicatedTaksongSitemapResponse=await get('/sitemap-taksong.xml');
@@ -513,8 +517,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     '/business/rental-car/','/business/used-car/','/business/auction/','/business/export-port/',
     '/설악산탁송/','/지리산탁송/','/route-taksong/','/route-taksong/centers/'
   ]){
-    assert.ok(dedicatedTaksongSitemap.includes('<loc>'+new URL(route,'https://example.com').href+'</loc>'),
-      'dedicated taksong sitemap must include high-intent guide '+route);
+    const listed=dedicatedTaksongSitemap.includes('<loc>'+new URL(route,'https://example.com').href+'</loc>');
+    assert.ok(sitemapOwners[route],'high-intent taksong guide must retain a discovery owner '+route);
+    assert.equal(listed,sitemapOwners[route]==='/sitemap-taksong.xml',
+      'dedicated taksong feed and ownership registry must agree for '+route);
   }
   const taksongHubResponse=await get('/taksong/');
   assert.equal(taksongHubResponse.status,200,'taksong service hub must load');
@@ -564,17 +570,22 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const firstRide=require('../data/public-reviewed-rides-202610.json')[0];
   const firstId=crypto.createHash('sha256').update([firstRide.date,firstRide.service,firstRide.departure,firstRide.destination].join('|')).digest('hex').slice(0,16);
   const publishedId=crypto.createHash('sha256').update([firstRide.date,firstRide.service,firstRide.departure,firstRide.destination,firstRide.fare].join('|')).digest('hex').slice(0,16);
-  assert.ok(seoulMainMap.includes('https://example.com/reviews/verified/'+publishedId+'/'),
-    'main sitemap must retain the enriched canonical URL for a published verified completed trip');
+  const publishedCaseMap=await (await get('/sitemap-published.xml')).text();
+  assert.ok(publishedCaseMap.includes('https://example.com/reviews/verified/'+publishedId+'/'),
+    'dedicated published-case sitemap must retain the enriched canonical URL for a verified completed trip');
+  assert.ok(!seoulMainMap.includes('https://example.com/reviews/verified/'+publishedId+'/'),
+    'published case has one owner and must not be duplicated in the main sitemap');
   assert.ok(!seoulMainMap.includes('https://example.com/reviews/'+firstId+'/'),
     'main sitemap must not duplicate a published verified trip at its legacy URL');
-  assert.ok(seoulMainMap.includes('https://example.com/find/'), 'discoverable canonical region finder');
+  assert.ok(seoulPriorityMap.includes('https://example.com/find/'), 'discoverable canonical region finder has one priority owner');
   assert.ok(seoulMainMap.includes('https://example.com/daeri/'), 'national designated driver canonical');
   assert.ok(seoulMainMap.includes('https://example.com/taksong/'), 'national vehicle transfer canonical');
 
   for(const path of ['/blog/seoul-taksong/',...seoulEditorial.map(g=>'/blog/seoul-taksong/'+g.slug+'/')]){
-    assert.ok(seoulPriorityMap.includes('https://example.com'+path),'priority sitemap: '+path);
-    assert.ok(seoulMainMap.includes('https://example.com'+path),'main sitemap: '+path);
+    const url='https://example.com'+path,owner=sitemapOwners[path];
+    assert.ok(owner,'curated Seoul page retains a discovery owner '+path);
+    assert.equal(seoulPriorityMap.includes(url),owner==='/sitemap-priority.xml','priority sitemap ownership '+path);
+    assert.equal(seoulMainMap.includes(url),owner==='/sitemap.xml','main sitemap ownership '+path);
   }
   // Preserve all original Naver blog categories, without copying article bodies.
   const ownerBlog=require('../blog/posts.json'),sourceArchive=require('../lib/blog-archive');
@@ -604,9 +615,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((await get('/blog/archive/categories/?category='+encodeURIComponent('없는분류'))).status,404,
     'unknown source category must not create a misleading search page');
   const archivePriority=await (await get('/sitemap-priority.xml')).text(),archiveMain=await (await get('/sitemap.xml')).text();
-  for(const xml of [archivePriority,archiveMain])assert.ok(xml.includes('https://example.com/blog/archive/categories/'),
-    'one canonical rebuilt Naver category portal is discoverable in sitemap');
-  // Ten source-grounded, unique content guides must be visible on both hosts.
+  const categoryPortal='/blog/archive/categories/',categoryPortalUrl='https://example.com'+categoryPortal;
+  assert.ok(sitemapOwners[categoryPortal],'one canonical rebuilt Naver category portal has an owner');
+  assert.equal(archivePriority.includes(categoryPortalUrl),sitemapOwners[categoryPortal]==='/sitemap-priority.xml');
+  assert.equal(archiveMain.includes(categoryPortalUrl),sitemapOwners[categoryPortal]==='/sitemap.xml');
+  // Ten source-grounded, unique content guides remain discoverable under one sitemap owner.
   const blogGuideRoutes=["/blog/guides/seoraksan-handover/","/blog/guides/jirisan-hiking-return/","/blog/guides/bicycle-certification-pickup/","/blog/guides/golf-daily-driver/","/blog/guides/corporate-card-daeri/","/blog/guides/service-center-car-transfer/","/blog/guides/cargo-truck-road-delivery/","/blog/guides/airport-terminal-parking/","/blog/guides/rental-return-accident-car/","/blog/guides/auction-export-car-yard/"];
   assert.equal(blogGuideRoutes.length,10);
   assert.equal(new Set(blogGuideRoutes).size,10);
@@ -621,8 +634,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.equal(r.status,200,'published blog guide '+path);
     assert.ok(body.includes('rel="canonical" href="https://jeongukdaeri.kr'+path+'"'),'canonical '+path);
     assert.ok(body.includes('href="tel:18114294"')&&body.includes('application/ld+json'),'contact and structured data '+path);
-    assert.ok(guideMainSitemap.includes('https://example.com'+path),'main sitemap '+path);
-    assert.ok(guidePrioritySitemap.includes('https://example.com'+path),'priority sitemap '+path);
+    const url='https://example.com'+path,owner=sitemapOwners[path];
+    assert.ok(owner,'published guide retains a sitemap owner '+path);
+    assert.equal(guideMainSitemap.includes(url),owner==='/sitemap.xml','main sitemap ownership '+path);
+    assert.equal(guidePrioritySitemap.includes(url),owner==='/sitemap-priority.xml','priority sitemap ownership '+path);
     if(path!=='/blog/guides/'){
       assert.equal((body.match(/<h1[ >]/g)||[]).length,1,'single guide H1 '+path);
       assert.ok((body.match(/https:\/\/blog\.naver\.com\/wjdtnr4757\/\d+/g)||[]).length>=4,'four existing Naver posts '+path);
@@ -655,11 +670,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok((html.match(/<h1[ >]/g)||[]).length===1,'one H1 per article '+slug);
     assert.ok(html.includes('새로운 완료 후기')||html.includes('완료후기를 만들어내지')||html.includes('운행완료 기록은 추가하지'),'no fabricated reviews '+slug);
     assert.ok(recreationHubHtml.includes('href="'+route+'"'),'regional index links article '+slug);
-    assert.ok(recreationMainXml.includes('https://example.com'+route),'main sitemap '+slug);
-    assert.ok(recreationPriorityXml.includes('https://example.com'+route),'priority sitemap '+slug);
+    const url='https://example.com'+route,owner=sitemapOwners[route];
+    assert.ok(owner,'regional editorial keeps a sitemap owner '+slug);
+    assert.equal(recreationMainXml.includes(url),owner==='/sitemap.xml','main sitemap owner '+slug);
+    assert.equal(recreationPriorityXml.includes(url),owner==='/sitemap-priority.xml','priority sitemap owner '+slug);
   }
-  assert.ok(recreationPriorityXml.includes('https://example.com/blog/daeri-regions/'));
-  assert.ok(recreationMainXml.includes('https://example.com/blog/daeri-regions/'));
+  assert.equal(recreationPriorityXml.includes('https://example.com/blog/daeri-regions/'),sitemapOwners['/blog/daeri-regions/']==='/sitemap-priority.xml');
+  assert.equal(recreationMainXml.includes('https://example.com/blog/daeri-regions/'),sitemapOwners['/blog/daeri-regions/']==='/sitemap.xml');
   // Search-result titles and site identity must present a single Korean brand.
   assert.ok(seoHome.includes('<title>'+require('../data/seo-pages.json').pages.find(x=>x.path==='/').title+'</title>'),'homepage title matches the centrally configured SEO title');
   assert.ok(seoHome.includes('property="og:site_name" content="전국대리운전"'),'homepage Open Graph names the Korean brand');
@@ -1007,7 +1024,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const rootSitemap=await (await get('/sitemap-all.xml')).text();
   assert.ok(rootSitemap.includes('https://example.com/sitemap-published.xml'));
   const primaryXml=await (await get('/sitemap.xml')).text();
-  assert.ok(primaryXml.includes(publishedRoutes[0]),'recent published verified case must also be visible in main sitemap');
+  const firstPublishedPath=decodeURIComponent(new URL(publishedRoutes[0]).pathname);
+  assert.equal(sitemapOwners[firstPublishedPath],'/sitemap-published.xml','verified case has a dedicated owner');
+  assert.ok(!primaryXml.includes(publishedRoutes[0]),'published case must not be duplicated in the main sitemap');
   const rssResponse=await get('/rss.xml'),rssXml=await rssResponse.text();
   assert.equal(rssResponse.status,200);
   const feedItems=[...rssXml.matchAll(new RegExp('<item>([^]*?)</item>','g'))].map(m=>m[1]);
@@ -1417,11 +1436,11 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    // Focused Naver sitemaps contain HTML URLs only. PNG cards remain on the actual pages.
    assert.ok(!/<image:image|<image:loc/.test(imageMap),'focused sitemap must not list generated card images');
    const sitemapUrls=[...imageMap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
-   assert.ok(sitemapUrls.includes('https://example.com/'+service+'/seoul/'),'focused sitemap includes Seoul service HTML');
+   assert.equal(sitemapUrls.includes('https://example.com/'+service+'/seoul/'),sitemapOwners['/'+service+'/seoul/']==='/sitemap-'+service+'.xml','Seoul URL appears only in its assigned owner feed');
    assert.ok(sitemapUrls.length>100&&sitemapUrls.length<=500,
     'focused sitemap must contain useful curated pages without publishing the entire 20k directory; got '+sitemapUrls.length);
    assert.equal(sitemapUrls.length,new Set(sitemapUrls).size,'focused sitemap must not duplicate regional URLs');
-   if(service==='taksong')assert.ok(sitemapUrls.includes('https://example.com/taksong/busan/gijang-gun/'),'Gijang landing page is discoverable');
+   if(service==='taksong')assert.equal(sitemapUrls.includes('https://example.com/taksong/busan/gijang-gun/'),sitemapOwners['/taksong/busan/gijang-gun/']==='/sitemap-taksong.xml','Gijang landing follows its single assigned owner');
    const image=await get(card[1]);assert.equal(image.status,200);
    assert.equal(image.headers.get('content-type'),'image/png');
    const bytes=new Uint8Array(await image.arrayBuffer());
@@ -1509,7 +1528,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.ok(submittedMaps.some(x=>x.includes('/sitemap-priority.xml')));
   assert.ok(submittedMaps.some(x=>x.includes('/sitemap-reviewed-routes.xml')));
   assert.ok(!submittedMaps.some(x=>x.includes('nationwide-route')),'avoid diluting crawl effort across hundreds of thousands of generated combinations');
-  const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();const submitted=(xml.match(/<loc>/g)||[]).length;assert.ok(submitted>=29&&submitted<500,'main sitemap focuses fewer than 500 high-quality URLs');assert.ok(xml.includes('https://example.com/taksong/busan/'),'main sitemap includes curated Busan region');assert.ok(xml.includes('https://example.com/daeri/daegu/'),'main sitemap includes curated Daegu region');assert.ok(xml.includes('/reviews/'),'main sitemap links to verified rides');assert.ok(!xml.includes('https://example.com/service/daeri/')&&!xml.includes('https://example.com/special/nationwide-daeri/'),'main sitemap omits alternate nationwide daeri URLs');assert.ok(!xml.includes('/region/area-20562/'),'main sitemap must not expose all 20,562 low-priority regions');assert.ok(xml.includes('example.com'));assert.ok(xml.includes('/places/'),'place category hub appears in sitemap');assert.ok(xml.includes('/places/'+encodeURIComponent('캠핑장')+'/'),'camping category appears in sitemap');assert.ok(xml.includes('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/'),'tow truck delivery category appears in sitemap');
+  const sm=await get('/sitemap.xml');assert.equal(sm.status,200);const xml=await sm.text();const submitted=(xml.match(/<loc>/g)||[]).length;assert.ok(submitted>=29&&submitted<500,'main sitemap focuses fewer than 500 high-quality URLs');assert.equal(xml.includes('https://example.com/taksong/busan/'),sitemapOwners['/taksong/busan/']==='/sitemap.xml','Busan region appears only in its assigned owner feed');assert.equal(xml.includes('https://example.com/daeri/daegu/'),sitemapOwners['/daeri/daegu/']==='/sitemap.xml','Daegu region appears only in its assigned owner feed');assert.ok(xml.includes('/reviews/'),'main sitemap links to verified rides');assert.ok(!xml.includes('https://example.com/service/daeri/')&&!xml.includes('https://example.com/special/nationwide-daeri/'),'main sitemap omits alternate nationwide daeri URLs');assert.ok(!xml.includes('/region/area-20562/'),'main sitemap must not expose all 20,562 low-priority regions');assert.ok(xml.includes('example.com'));assert.equal(xml.includes('/places/'),sitemapOwners['/places/']==='/sitemap.xml','place category hub follows its assigned owner');assert.equal(xml.includes('/places/'+encodeURIComponent('캠핑장')+'/'),sitemapOwners['/places/캠핑장/']==='/sitemap.xml','camping category follows its assigned owner');assert.equal(xml.includes('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/'),sitemapOwners['/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/']==='/sitemap.xml','tow-truck category follows its assigned owner');
   const guideUrls=[...xml.matchAll(/<loc>([^<]+\/(?:fare|long-distance|handover)\/)<\/loc>/g)].map(x=>x[1]).filter(url=>!url.endsWith('example.com/fare/'));
   assert.equal(guideUrls.length,0,'deep auto-generated intent guides remain usable without being submitted in the main sitemap');
   assert.equal(new Set(guideUrls).size,guideUrls.length,'regional topic canonicals are unique');
@@ -1680,9 +1699,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal((await get('/blog/archive/vehicle-taksong/?page=2')).status,200,'pagination works');
   assert.equal((await get('/blog/archive/vehicle-taksong/?page=999')).status,404,'rejects invalid page');
   const archiveSitemap=await (await get('/sitemap.xml')).text();
-  assert.ok(archiveSitemap.includes('https://example.com/blog/archive/'),'directory in sitemap');
-  for(const group of archiveData.groups)assert.ok(archiveSitemap.includes('/blog/archive/'+group.id+'/'),'category in sitemap');
-  const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.ok(daeriXml.includes('https://example.com/daeri/'));assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);const priorityDaeri=require('../data/priority-regions.json').pages.filter(p=>p.kind==='daeri');
+  assert.equal(archiveSitemap.includes('<loc>https://example.com/blog/archive/</loc>'),sitemapOwners['/blog/archive/']==='/sitemap.xml','archive directory follows its assigned owner');
+  for(const group of archiveData.groups){const route='/blog/archive/'+group.id+'/';assert.ok(sitemapOwners[route],'archive category has a discovery owner '+group.id);assert.equal(archiveSitemap.includes(route),sitemapOwners[route]==='/sitemap.xml','archive category appears only in its assigned owner '+group.id);}
+  const regionIndex=await get('/region/');assert.equal(regionIndex.status,200);const places=await get('/places/');assert.equal(places.status,200);assert.ok((await places.text()).includes('캠핑장'));const camping=await get('/places/'+encodeURIComponent('캠핑장')+'/');assert.equal(camping.status,200);const reka=await get('/taksong/type/'+Buffer.from('렉카탁송','utf8').toString('hex')+'/');assert.equal(reka.status,200);const daeriMap=await get('/sitemap-daeri.xml');const daeriXml=await daeriMap.text();assert.equal(daeriXml.includes('<loc>https://example.com/daeri/</loc>'),sitemapOwners['/daeri/']==='/sitemap-daeri.xml','designated-driver hub follows its declared feed owner');assert.ok(!daeriXml.includes('/special/nationwide-daeri/')&&!daeriXml.includes('/service/daeri/'),'daeri discovery sitemap keeps only canonical national hub');assert.equal(daeriMap.status,200);const priorityDaeri=require('../data/priority-regions.json').pages.filter(p=>p.kind==='daeri');
  const daeriLocs=[...daeriXml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
  assert.ok(daeriLocs.length>=100&&daeriLocs.length<=500,
   'driver sitemap must prioritize 100-500 useful region and travel guide URLs; found '+daeriLocs.length);
@@ -1692,14 +1711,14 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    'driver sitemap retains sourced travel guide');
  for(const region of ['서울특별시','부산광역시','대구광역시','인천광역시']){
   const url={'서울특별시':'seoul','부산광역시':'busan','대구광역시':'daegu','인천광역시':'incheon'}[region];
-  assert.ok(daeriXml.includes('https://example.com/daeri/'+url+'/'),'driver sitemap retains priority '+region);
+  assert.equal(daeriXml.includes('<loc>https://example.com/daeri/'+url+'/</loc>'),sitemapOwners['/daeri/'+url+'/']==='/sitemap-daeri.xml','driver region appears only in its owner feed '+region);
  }
  const taksongMap=await get('/sitemap-taksong.xml');assert.equal(taksongMap.status,200);
  const taksongXml=await taksongMap.text();
  const taksongLocs=[...taksongXml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]);
  assert.ok(taksongLocs.length>=100&&taksongLocs.length<=500,
   'taksong sitemap must contain a focused selection of up to 500 curated regional URLs, not the entire generated directory');
- assert.equal(taksongLocs.length,new Set(taksongLocs).size,'taksong sitemap URLs are unique');for(const priorityPath of ['/taksong/','/taksong/busan/','/taksong/busan/gijang-gun/','/taksong/daegu/','/taksong/gangwon/'])assert.ok(taksongLocs.includes('https://example.com'+priorityPath),'taksong sitemap retains important indexable page '+priorityPath);
+ assert.equal(taksongLocs.length,new Set(taksongLocs).size,'taksong sitemap URLs are unique');for(const priorityPath of ['/taksong/','/taksong/busan/','/taksong/busan/gijang-gun/','/taksong/daegu/','/taksong/gangwon/'])assert.equal(taksongLocs.includes('https://example.com'+priorityPath),sitemapOwners[priorityPath]==='/sitemap-taksong.xml','taksong URL appears only in its assigned owner '+priorityPath);
   const search=await get('/region/?q='+encodeURIComponent('가평읍'));assert.equal(search.status,200);assert.ok((await search.text()).includes('가평읍'));
   // The sixteen user-confirmed Excel review drafts use Korean service labels in their source.
   // They must be normalized before the public verified-ride filter, not silently discarded.
@@ -1953,6 +1972,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    daeri:await (await get('/sitemap-daeri.xml')).text()
   };
   const focusPaths=new Set();
+  const ownerFeedXml=new Map();
   for(const target of focus50){
    const regex=new RegExp('<a href="([^"]+)">'+target.keyword+'</a>');
    const found=siteHubs[target.kind].match(regex);
@@ -1961,8 +1981,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(pagePath.startsWith('/'+target.kind+'/'),'same-service landing '+target.keyword);
    assert.ok(!focusPaths.has(pagePath),'one unique page per focus item '+pagePath);
    focusPaths.add(pagePath);
-   assert.ok(siteMaps[target.kind].includes('https://'+(process.env.TEST_PUBLIC_HOST||'example.com')+pagePath),
-    '50 priority pages should be in service sitemap '+target.keyword);
+   const owner=sitemapOwners[pagePath],canonical='https://'+(process.env.TEST_PUBLIC_HOST||'example.com')+pagePath;
+   assert.ok(owner,'50 priority pages retain a discovery owner '+target.keyword);
+   let ownerXml=ownerFeedXml.get(owner);
+   if(!ownerXml){ownerXml=await (await get(owner)).text();ownerFeedXml.set(owner,ownerXml);}
+   assert.ok(ownerXml.includes('<loc>'+canonical+'</loc>'),'50 priority pages appear in their single owner feed '+target.keyword);
+   assert.equal(siteMaps[target.kind].includes('<loc>'+canonical+'</loc>'),owner==='/sitemap-'+target.kind+'.xml',
+    'dedicated service sitemap follows exact URL ownership '+target.keyword);
    const response=await get(pagePath);
    assert.equal(response.status,200,'priority region HTTP '+target.keyword);
    const html=await response.text();
@@ -2000,7 +2025,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const url=linked[1];
    assert.ok(!allRegionPaths.has(url),'100 focus pages must be distinct '+entry.keyword);
    allRegionPaths.add(url);
-   assert.ok(siteMaps[entry.kind].includes('https://example.com'+url),'50 new regional sitemap URLs '+entry.keyword);
+   const owner=sitemapOwners[url],canonical='https://example.com'+url;
+   assert.ok(owner,'second 50 locality pages retain a sitemap owner '+entry.keyword);
+   let ownerXml=ownerFeedXml.get(owner);
+   if(!ownerXml){ownerXml=await (await get(owner)).text();ownerFeedXml.set(owner,ownerXml);}
+   assert.ok(ownerXml.includes('<loc>'+canonical+'</loc>'),'second 50 pages appear in their owner feed '+entry.keyword);
+   assert.equal(siteMaps[entry.kind].includes('<loc>'+canonical+'</loc>'),owner==='/sitemap-'+entry.kind+'.xml',
+    'service sitemap agrees with assigned owner '+entry.keyword);
    const page=await get(url);
    assert.equal(page.status,200,'second 50 local page HTTP '+entry.keyword);
    const html=await page.text();
@@ -2044,7 +2075,13 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const url=found[1];
    assert.ok(!allRegionPaths.has(url),'canonical unique from earlier 100 '+target.keyword);
    allRegionPaths.add(url);
-   assert.ok(siteMaps[target.kind].includes('https://example.com'+url),'curated sitemap '+target.keyword);
+   const owner=sitemapOwners[url],canonical='https://example.com'+url;
+   assert.ok(owner,'curated regional page retains a sitemap owner '+target.keyword);
+   let ownerXml=ownerFeedXml.get(owner);
+   if(!ownerXml){ownerXml=await (await get(owner)).text();ownerFeedXml.set(owner,ownerXml);}
+   assert.ok(ownerXml.includes('<loc>'+canonical+'</loc>'),'curated page appears in its single owner feed '+target.keyword);
+   assert.equal(siteMaps[target.kind].includes('<loc>'+canonical+'</loc>'),owner==='/sitemap-'+target.kind+'.xml',
+    'curated service sitemap agrees with owner registry '+target.keyword);
    const res=await get(url);
    assert.equal(res.status,200,'regional page '+target.keyword);
    const html=await res.text();
@@ -2137,10 +2174,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const matchingRegion=regions.find(r=>r.full_name===item.region);
    assert(matchingRegion,'missing official region: '+item.region);
   }
-  assert(mainSitemap.includes('/taksong/busan/'),'sitemap includes Busan taksong');
-  assert(mainSitemap.includes('/daeri/daegu/'),'sitemap includes Daegu daeri');
+  assert.equal(mainSitemap.includes('<loc>https://example.com/taksong/busan/</loc>'),sitemapOwners['/taksong/busan/']==='/sitemap.xml','Busan taksong follows its single discovery owner');
+  assert.equal(mainSitemap.includes('<loc>https://example.com/daeri/daegu/</loc>'),sitemapOwners['/daeri/daegu/']==='/sitemap.xml','Daegu daeri follows its single discovery owner');
   for(const mountain of ['/설악산탁송/','/지리산탁송/'])
-   assert(mainSitemap.includes(new URL('https://example.com'+mountain).href),'primary sitemap retains verified mountain hub '+mountain);
+   assert.equal(mainSitemap.includes('<loc>'+new URL('https://example.com'+mountain).href+'</loc>'),sitemapOwners[mountain]==='/sitemap.xml','mountain URL appears only in assigned owner '+mountain);
   console.log('PASS million-query finder HTTP, search, intent, API and noindex guard');
   console.log('PASS: server, '+regions.length+' regions, pages, no-history content, sitemap, 404, homepage');
  }catch(e){console.error(e);console.error(stderr);process.exitCode=1}finally{if(child)child.kill()}
