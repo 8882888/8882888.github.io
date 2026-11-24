@@ -16,7 +16,7 @@ for(let i=1;i<=17;i++){
   assert(!byFull.has(full),'Nationwide duplicate full locality: '+full);
   const parts=full.split(' '),parentName=parts.slice(0,-1).join(' '),parent=byFull.get(parentName);
   if(parts.length>1)assert(parent,'Parent not found for '+full);
-  const r={name:parts.at(-1),full_name:full,slug:'test-'+regions.length,parent_slug:parent?.slug||null};
+  const r={name:parts.at(-1),level:parts.length>1?parts.at(-1).slice(-1):'시도',full_name:full,slug:'test-'+regions.length,parent_slug:parent?.slug||null};
   regions.push(r);byFull.set(full,r);bySlug.set(r.slug,r);
   if(parent){const kids=childrenByParent.get(parent.slug)||[];kids.push(r);childrenByParent.set(parent.slug,kids)}
  }
@@ -60,6 +60,13 @@ for(const region of regions){
   assert.equal(detail?.region,region,'Incorrect locality for '+keyword);
   assert.equal(detail.kind,kind,keyword);
   assert.equal(detail.url,'/'+kind+'/'+region.slug+'/',keyword);
+  if(['읍','면','동','리'].includes(region.level)){
+   const longTerm=kind==='daeri'?'장거리대리운전':'장거리탁송';
+   const longKeyword=region.full_name+' '+longTerm;
+   assert.equal(explorer.resolve(longKeyword+' 예약').url,detail.canonical+'#local-long-distance',longKeyword);
+   assert.equal(explorer.resolve(longKeyword+' 요금').url,explorer.estimateUrl(region,kind),longKeyword);
+   assert(menu.includes('id="local-long-distance"'),longKeyword);
+  }
   const price=explorer.resolve(region.full_name+estimate);
   assert.equal(price?.region,region,keyword);
   assert.equal(price.kind,kind,keyword);
