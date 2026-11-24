@@ -3534,7 +3534,26 @@ if(searchIntent){
    '엠파크허브탁송':'/business/used-car/',
    '엠파크타워탁송':'/business/used-car/',
    '엠파크랜드탁송':'/business/used-car/',
-   '인천중고차매매단지탁송':'/business/used-car/'
+   '인천중고차매매단지탁송':'/business/used-car/',
+   '전국중고차매매단지탁송':'/business/used-car/',
+   '전국매매단지탁송':'/business/used-car/',
+   '서울장안평중고차시장탁송':'/business/used-car/',
+   '장안평중고차시장탁송':'/business/used-car/',
+   '수원도이치오토월드탁송':'/business/used-car/',
+   '도이치오토월드탁송':'/business/used-car/',
+   '대구엠월드탁송':'/business/used-car/',
+   '엠월드탁송':'/business/used-car/',
+   '부산KC오토월드탁송':'/business/used-car/',
+   'KC오토월드탁송':'/business/used-car/',
+   '부산경동오토필드탁송':'/business/used-car/',
+   '경동오토필드탁송':'/business/used-car/',
+   '창원KC월드카프라자탁송':'/business/used-car/',
+   '사천경남매매단지탁송':'/business/used-car/',
+   '구미금오자동차매매단지탁송':'/business/used-car/',
+   '안동중고자동차유통단지탁송':'/business/used-car/',
+   '포항대잠중고매매단지탁송':'/business/used-car/',
+   '순천IC매매단지탁송':'/business/used-car/',
+   '순천강변매매단지탁송':'/business/used-car/'
   }[normalized])||null;
  const exactCycle=[
   [/^섬진강(?:길)?자전거(?:길)?종주(?:탁송)?$/,'/route-taksong/courses/seomjin/'],
