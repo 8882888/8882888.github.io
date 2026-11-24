@@ -1,0 +1,159 @@
+{
+  "source": "사용자가 제공한 NAVER Search Advisor 웹마스터 도구 > 리포트 > 콘텐츠 노출/클릭 화면의 수치",
+  "site": "https://jeongukdaeri.kr",
+  "updatedAt": "2026-11-23",
+  "window": "최근 30일",
+  "devices": "PC + Mobile",
+  "siteMetrics": {
+    "clicksApprox": 140,
+    "impressionsApprox": 5900,
+    "displayedAverageCtrPercent": 2.3,
+    "clicksRawLabel": "1.4백",
+    "impressionsRawLabel": "5.9천",
+    "previousMonthComparisons": {
+      "clicksPercentShown": 100,
+      "impressionsPercentShown": 198100,
+      "averageCtrPointsShown": 2.3
+    }
+  },
+  "note": "표시된 사이트 CTR은 NAVER 안내상 개별 웹문서 CTR의 평균이며, 사이트 총클릭/총노출 산술 비율과 반드시 같지 않다. 모든 수치는 사용자가 전달한 당시의 최근 30일 스냅샷이며 실시간 실적이 아니다. 과도한 지난달 대비 변화율은 직전 기간의 작은 분모 영향을 받을 수 있다.",
+  "topQueries": [
+    {
+      "query": "설악산탁송",
+      "clicks": 44,
+      "impressions": 108,
+      "ctrPercent": 40.7
+    },
+    {
+      "query": "지리산탁송",
+      "clicks": 9,
+      "impressions": 37,
+      "ctrPercent": 24.3
+    },
+    {
+      "query": "소공원탁송",
+      "clicks": 5,
+      "impressions": 16,
+      "ctrPercent": 31.2
+    },
+    {
+      "query": "영산강길종주탁송",
+      "clicks": 4,
+      "impressions": 19,
+      "ctrPercent": 21.1
+    },
+    {
+      "query": "정선카지노대리운전",
+      "clicks": 3,
+      "impressions": 7,
+      "ctrPercent": 42.9
+    },
+    {
+      "query": "백담사탁송",
+      "clicks": 3,
+      "impressions": 5,
+      "ctrPercent": 60
+    },
+    {
+      "query": "한계령탁송",
+      "clicks": 3,
+      "impressions": 5,
+      "ctrPercent": 60
+    },
+    {
+      "query": "오색탁송",
+      "clicks": 2,
+      "impressions": 17,
+      "ctrPercent": 11.8
+    },
+    {
+      "query": "섬진강길종주탁송",
+      "clicks": 2,
+      "impressions": 10,
+      "ctrPercent": 20
+    },
+    {
+      "query": "번개탁송대리운전골프대리",
+      "clicks": 2,
+      "impressions": 6,
+      "ctrPercent": 33.3
+    }
+  ],
+  "topDocuments": [
+    {
+      "path": "/",
+      "clicks": 78,
+      "impressions": 1160,
+      "ctrPercent": 6.7
+    },
+    {
+      "path": "/route-taksong/",
+      "clicks": 17,
+      "impressions": 542,
+      "ctrPercent": 3.1
+    },
+    {
+      "path": "/daeri/",
+      "clicks": 12,
+      "impressions": 585,
+      "ctrPercent": 2.1
+    },
+    {
+      "path": "/taksong/",
+      "clicks": 12,
+      "impressions": 461,
+      "ctrPercent": 2.6
+    },
+    {
+      "path": "/service/taksong/",
+      "clicks": 8,
+      "impressions": 511,
+      "ctrPercent": 1.6
+    },
+    {
+      "path": "/taksong/gangwon/gangreung-si/",
+      "clicks": 3,
+      "impressions": 424,
+      "ctrPercent": 0.7
+    },
+    {
+      "path": "/service/long-distance-taksong/",
+      "clicks": 3,
+      "impressions": 67,
+      "ctrPercent": 4.5
+    },
+    {
+      "path": "/service/long-distance-daeri/",
+      "clicks": 2,
+      "impressions": 59,
+      "ctrPercent": 3.4
+    },
+    {
+      "path": "/service/corporate/",
+      "clicks": 1,
+      "impressions": 207,
+      "ctrPercent": 0.5
+    },
+    {
+      "path": "/taksong/seoul/dongdaemun-gu/jegi-dong/",
+      "clicks": 1,
+      "impressions": 13,
+      "ctrPercent": 7.7
+    }
+  ],
+  "ctrExperiment": {
+    "modifiedPaths": [
+      "/service/corporate/",
+      "/service/taksong/",
+      "/taksong/gangwon/gangreung-si/"
+    ],
+    "controlPaths": [
+      "/",
+      "/route-taksong/",
+      "/daeri/",
+      "/taksong/"
+    ],
+    "hypothesis": "같은 노출 조건에서 검색 의도에 맞는 제목/설명이 클릭률 개선에 도움이 될 수 있으나 결과는 보장되지 않는다.",
+    "evaluation": "운영 배포일과 NAVER 콘텐츠 노출/클릭 후속 수치의 동일한 기간·기기 범위를 비교하고, 자연 노출 및 평균 검색순위 변화/검색어 구성 차이를 고려한다. 수집·색인 갱신 지연을 구분한다."
+  }
+}
