@@ -18,12 +18,16 @@ test('Haeundae focus is limited to 9 existing legal neighborhoods, both services
  const titles=new Set();
  for(const name of legalNames)for(const kind of ['daeri','taksong']){
   const region=map.get(name),m=seo.meta(region,kind);
-  assert.ok(m);
-  assert.match(m.title,new RegExp(region.name+'(대리운전|탁송)'));
-  assert.match(m.description,/1811-4294/);
-  assert.ok([...m.description].length<125);
-  assert.ok(!titles.has(m.title),'duplicate title: '+m.title);
-  titles.add(m.title);
+  if(name==='부산광역시 해운대구'){
+   assert.equal(m,null,'district hub keeps existing reviewed SEO metadata');
+  }else{
+   assert.ok(m);
+   assert.match(m.title,new RegExp(region.name+'(대리운전|탁송)'));
+   assert.match(m.description,/1811-4294/);
+   assert.ok([...m.description].length<125);
+   assert.ok(!titles.has(m.title),'duplicate title: '+m.title);
+   titles.add(m.title);
+  }
   const html=seo.section(region,kind);
   assert.match(html,/id="haeundae-customer-intent-20261124"/);
   assert.match(html,/\/fare\/\?service=(daeri|taksong)/);
@@ -33,7 +37,7 @@ test('Haeundae focus is limited to 9 existing legal neighborhoods, both services
   assert.equal((html.match(/<section\b/g)||[]).length,1);
   assert.equal((html.match(/<\/section>/g)||[]).length,1);
  }
- assert.equal(titles.size,18);
+ assert.equal(titles.size,16);
 });
 test('Unrelated localities are not changed and no new canonical page is generated',()=>{
  const r={full_name:'서울특별시 강남구',name:'강남구'};
