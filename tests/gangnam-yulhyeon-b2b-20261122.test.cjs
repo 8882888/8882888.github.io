@@ -125,7 +125,7 @@ test('Real HTTP renders Gangnam / Yulhyeon unique SEO and returns canonical keyw
   }
   assert.ok(ready,'Gangnam SEO HTTP server must start');
   for(const [url,phrase] of [
-   ['/daeri/seoul/gangnam-gu/','서울강남대리운전 | 법인'],
+   ['/daeri/seoul/gangnam-gu/','강남대리운전 | 강남역·테헤란로 법인·후불·고급·장거리'],
    ['/taksong/seoul/gangnam-gu/','강남탁송·강남수입차탁송'],
    ['/daeri/seoul/gangnam-gu/yulhyeon-dong/','율현동대리운전'],
    ['/taksong/seoul/gangnam-gu/yulhyeon-dong/','율현동매매탁송']
