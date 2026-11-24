@@ -1128,7 +1128,7 @@ quote.addEventListener('submit',()=>{try{sessionStorage.setItem('smart24_explici
 (function(){
   const body = document.getElementById('ride-history-rows');
 
-  const publicHistorySource = location.hostname === '8882888.github.io' ? './data/ride-history-upload-202610.json' : '/api/public-rides';
+  const publicHistorySource = '/api/public-rides';
   let allRecords = [];
   function renderRecords(records) {
     allRecords = records;
@@ -1327,7 +1327,7 @@ async function loadTripTicker(){
  const personal=/\d{6}[- ]?[1-8]\d{6}/;
  function draw(rows){const safe=rows.filter(v=>v.length===4&&v.every(x=>String(x??'').trim())&&!v.some(x=>phone.test(String(x))||personal.test(String(x)))).slice(0,65);if(!safe.length)return false;const cards=safe.map(v=>'<a class="trip-flow-card" href="#ride-history"><span>'+esc(v[0])+'</span><strong>'+esc(v[1])+' → '+esc(v[2])+'</strong><span>'+esc(v[3])+'</span></a>').join('');target.innerHTML=cards+cards;return true;}
  try {
-   const historySource=location.hostname==='8882888.github.io' ? '/data/ride-history-upload-202610.json' : '/api/public-rides';
+   const historySource='/api/public-rides';
    const response=await fetch(historySource,{cache:'no-store'});
    if(!response.ok)throw Error('Public history unavailable');
    const records=await response.json();
