@@ -3,6 +3,7 @@ const assert=require('node:assert/strict');
 const editorial=require('../lib/daeri-blog-editorial');
 const travel=require('../lib/daeri-travel-guides');
 const source=require('../blog/posts.json');
+const sitemapOwners=require('../data/sitemap-url-owners.json');
 assert.equal(editorial.provinces.length,17,'all 17 nationwide provinces are represented');
 assert.deepEqual(travel.destinations.map(x=>x.slug),['samgilpo','gungpyeong','busan-dongnae','sokcho-ports'],'four distinct themed tourism locales');
 for(const place of travel.destinations){
@@ -434,7 +435,7 @@ async function get(p){
  for(const p of ['/taksong/jeju/','/recruit/daeri/','/recruit/taksong/'])assert.ok(sitemapPriority.includes('https://jeongukdaeri.kr'+p),'priority sitemap includes '+p);
  const mainSitemap=await get('/sitemap.xml');
  const driverSitemap=await get('/sitemap-daeri.xml');
- assert.ok(mainSitemap.includes('https://jeongukdaeri.kr/recruit/daeri/')&&mainSitemap.includes('https://jeongukdaeri.kr/recruit/taksong/'),'main discovery sitemap includes both existing recruitment hubs');
+ for(const p of ['/recruit/daeri/','/recruit/taksong/'])assert.equal(mainSitemap.includes('https://jeongukdaeri.kr'+p),sitemapOwners[p]==='/sitemap.xml','recruitment hub follows its single sitemap owner '+p);
  for(const place of travel.destinations){
   const path=travel.pathFor(place);
   const page=await get(path);

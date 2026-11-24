@@ -3,6 +3,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
+const sitemapOwners=require('../data/sitemap-url-owners.json');
 const root=path.resolve(__dirname,'..');
 const port=39876;
 const base='http://127.0.0.1:'+port;
@@ -38,19 +39,20 @@ test('local server verifies six business meta, schema and Jegi-dong discovery',a
    assert.ok(nodes.some(x=>x['@type']==='WebPage'&&x.url===origin+route),route+' WebPage');
    assert.ok(nodes.some(x=>x['@type']==='BreadcrumbList'),route+' BreadcrumbList');
   }
-  const taksongSitemap=await fetch(base+'/sitemap-taksong.xml',{signal:AbortSignal.timeout(20000)});
-  assert.equal(taksongSitemap.status,200);
-  const taksongXml=await taksongSitemap.text();
   for(const route of ['/business/',...slugs.map(slug=>'/business/'+slug+'/')]){
-   assert.ok(taksongXml.includes('<loc>'+origin+route+'</loc>'),route+' is listed in the transport sitemap');
+   const owner=sitemapOwners[route];
+   assert.ok(owner,'business route has one registered sitemap owner '+route);
+   const r=await fetch(base+owner,{signal:AbortSignal.timeout(20000)});
+   assert.equal(r.status,200,owner+' HTTP');
+   const xml=await r.text();
+   assert.ok(xml.includes('<loc>'+origin+route+'</loc>'),route+' is listed in its assigned sitemap '+owner);
   }
   const jegi=origin+'/taksong/seoul/dongdaemun-gu/jegi-dong/';
-  for(const route of ['/sitemap.xml','/sitemap-priority.xml']){
-   const r=await fetch(base+route,{signal:AbortSignal.timeout(20000)});
-   assert.equal(r.status,200,route+' HTTP');
-   const xml=await r.text();
-   assert.ok(xml.includes('<loc>'+jegi+'</loc>'),route+' contains Jegi-dong');
-  }
+  const jegiOwner=sitemapOwners['/taksong/seoul/dongdaemun-gu/jegi-dong/'];
+  assert.ok(jegiOwner,'Jegi-dong has one registered sitemap owner');
+  const jegiSitemap=await fetch(base+jegiOwner,{signal:AbortSignal.timeout(20000)});
+  assert.equal(jegiSitemap.status,200,jegiOwner+' HTTP');
+  assert.ok((await jegiSitemap.text()).includes('<loc>'+jegi+'</loc>'),jegiOwner+' contains Jegi-dong');
   const detail=await fetch(base+'/taksong/seoul/dongdaemun-gu/jegi-dong/',{signal:AbortSignal.timeout(15000)});
   assert.equal(detail.status,200,'Jegi-dong detail HTTP');
   const html=await detail.text();

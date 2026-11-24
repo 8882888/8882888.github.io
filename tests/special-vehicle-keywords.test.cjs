@@ -3,6 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
 const {resolve,AERIAL,LADDER,HEAVY}=require('../lib/special-vehicle-keywords.cjs');
+const sitemapOwners=require('../data/sitemap-url-owners.json');
 const root=path.resolve(__dirname,'..'),PORT=39862,base='http://127.0.0.1:'+PORT;
 const keywords=[
  ['고소차탁송',AERIAL],['고소차량탁송',AERIAL],['고소작업차탁송',AERIAL],['고소작업차량탁송',AERIAL],
@@ -70,9 +71,9 @@ test('aerial lift is one indexable, grounded canonical page; aliases never spawn
    const response=await fetch(base+map,{signal:AbortSignal.timeout(16000)});
    assert.equal(response.status,200,map);
    const xml=await response.text();
-   assert.ok(xml.includes('https://jeongukdaeri.kr'+AERIAL),'sitemap includes aerial hub '+map);
-   assert.ok(xml.includes('https://jeongukdaeri.kr'+LADDER),'sitemap includes exactly one ladder hub '+map);
-   assert.equal(xml.split('https://jeongukdaeri.kr'+LADDER).length-1,1,'single canonical ladder URL in '+map);
+   assert.equal(xml.includes('https://jeongukdaeri.kr'+AERIAL),sitemapOwners[AERIAL]===map,'aerial hub appears only in its assigned sitemap '+map);
+   assert.equal(xml.includes('https://jeongukdaeri.kr'+LADDER),sitemapOwners[LADDER]===map,'ladder hub appears only in its assigned sitemap '+map);
+   assert.equal(xml.split('https://jeongukdaeri.kr'+LADDER).length-1,sitemapOwners[LADDER]===map?1:0,'ladder URL appears once only in its assigned sitemap '+map);
    assert.ok(!xml.includes('/taksong/type/'+Buffer.from('1톤고소차탁송').toString('hex')+'/'),'avoid duplicate alias URL in '+map);
   }
   const ladderResp=await fetch(base+LADDER),ladderHtml=await ladderResp.text();
