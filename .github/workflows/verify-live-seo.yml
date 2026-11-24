@@ -37,7 +37,9 @@ jobs:
         run: node --test tests/published-case-cloudtype-release.test.cjs
       - name: Verify all published case titles use actual source dates only when routes repeat
         run: python3 tests/verified-published-case-title-unique-20261122.py
-      - run: node scripts/verify-live-seo-release.cjs
+      - name: Verify deployed SEO release fingerprint and live sitemap
+        if: ${{ github.event_name != 'pull_request' }}
+        run: node scripts/verify-live-seo-release.cjs
   nationwide-audit:
     needs: verify
     # A full URL walk can take much longer than a quick release check. Let
