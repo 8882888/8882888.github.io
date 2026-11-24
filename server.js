@@ -3521,6 +3521,21 @@ if(searchIntent){
  const busVehicleTarget=regionalCommercialVehicles.resolve(searchIntent);
  const mountain=mountainTarget(searchIntent);
   const touristPlaceTarget=chungnamPortGuides.resolve(searchIntent)||chungcheongGuides.resolve(searchIntent)||iksanBusongSeo.resolve(searchIntent)||gangnamYulhyeonSeo.resolve(searchIntent)||gangnamPremiumIntercity.resolveRouteIntent(searchIntent)||gangnamCEO.resolve(searchIntent)||exporterB2BSales.resolve(searchIntent)||sokchoRoutes.resolve(searchIntent)||touristDaeri.resolve(searchIntent);
+  // Exact used-car taksong buyer-intent phrases share an established canonical, not a pretend on-site office.
+  // No redirects for bare M Park/used-car shopping terms or for unrelated regions and services.
+  const usedCarBuyerTarget=({
+   '중고차매매단지탁송':'/business/used-car/',
+   '가좌엠파크탁송':'/business/used-car/',
+   '인천가좌엠파크탁송':'/business/used-car/',
+   '가좌동엠파크탁송':'/business/used-car/',
+   '인천엠파크탁송':'/business/used-car/',
+   '엠파크탁송':'/business/used-car/',
+   '엠파크차량탁송':'/business/used-car/',
+   '엠파크허브탁송':'/business/used-car/',
+   '엠파크타워탁송':'/business/used-car/',
+   '엠파크랜드탁송':'/business/used-car/',
+   '인천중고차매매단지탁송':'/business/used-car/'
+  }[normalized])||null;
  const exactCycle=[
   [/^섬진강(?:길)?자전거(?:길)?종주(?:탁송)?$/,'/route-taksong/courses/seomjin/'],
   [/^낙동강(?:길)?자전거(?:길)?종주?(?:탁송)?$/,'/route-taksong/courses/nakdonggang/'],
@@ -3532,7 +3547,7 @@ if(searchIntent){
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=exactCycle||mountain||touristPlaceTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||busVehicleTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ const target=exactCycle||mountain||touristPlaceTarget||usedCarBuyerTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||busVehicleTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
