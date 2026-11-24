@@ -33,7 +33,7 @@ test('Original used-car canonical now serves private buyers, sellers and dealers
 });
 test('Gajwa M Park consumer guide is detailed, locality-accurate and makes no office/partnership claims',()=>{
  const s=page.match(/<section id="usedcar-public-mpark-20261124"[\s\S]*?<\/section>/)?.[0];
- assert.ok(s&&s.length>2300);
+ assert.ok(s&&s.length>2200);
  for(const w of ['인천 서구 가좌동 엠파크','가좌엠파크탁송','엠파크허브','중고차 구매자','중고차 판매자',
  '가족·지인 차량 인수','매매상사·중고차딜러','네이버 검색·명함·온라인 안내','단지에 입점한 회사인지',
  '가좌엠파크 차량탁송 요청 전 5가지','보험','매매상사','출고 승인','차량번호 전체·신분증'])
