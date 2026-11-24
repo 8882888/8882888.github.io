@@ -16,7 +16,7 @@ test('One national intercity driving canonical has exactly the same static/runti
  assert.equal(title,'전국 장거리대리운전 | 시외·심야 편도예약·요금조회');
  assert.equal(seo.title,title);
  assert.equal(seo.description,desc);
- assert.ok([...desc].length>55&&[...desc].length<=110);
+ assert.ok([...desc].length>55&&[...desc].length<=80,'shared Naver SEO head guard');
  assert.equal(html.match(/<meta property="og:title" content="([^"]+)"/)?.[1],title);
  assert.equal(html.match(/<meta property="og:description" content="([^"]+)"/)?.[1],desc);
  const url='https://jeongukdaeri.kr/service/long-distance-daeri/';
