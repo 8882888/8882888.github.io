@@ -39,8 +39,8 @@ test('Export client expertise has concrete four-stage road-delivery boundaries, 
 });
 test('Existing exporter canonical, source-backed SEO, evidence and structured data survive change',()=>{
  assert.equal(title,'중고차수출단지탁송 | 송도·경매장 출고·수출업체 반입');
- assert.ok(description.includes('카카오 오픈채팅·전화 1811-4294 상담'));
- assert.ok([...description].length<=160);
+ assert.ok(description.includes('카카오 오픈채팅·1811-4294 상담'));
+ assert.ok([...description].length<=80,'business page concise Naver metadata');
  assert.ok(page.includes('<link rel="canonical" href="https://jeongukdaeri.kr/business/export-port/"'));
  assert.equal(page.match(/<h1\b/g)?.length,1);
  assert.equal((page.match(/<meta property="og:description" content="([^"]+)"/)||[])[1],description);
