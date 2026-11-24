@@ -5,6 +5,7 @@ const path=require('node:path');
 const {spawn}=require('node:child_process');
 const {pageGraph}=require('../lib/service-center-schema.cjs');
 const data=require('../data/service-center-keywords-20261117.json');
+const sitemapOwners=require('../data/sitemap-url-owners.json');
 
 const BASE='https://jeongukdaeri.kr';
 const PORT=39872;
@@ -69,12 +70,20 @@ test('service-center pages remain indexable, are linked from sitemap, and expose
    await new Promise(resolve=>setTimeout(resolve,200));
   }
   assert(ready,'local server started');
-  const mainSitemap=await fetch(LOCAL+'/sitemap.xml',{signal:AbortSignal.timeout(30000)});
-  assert.equal(mainSitemap.status,200);
-  const sitemapBody=await mainSitemap.text();
+  const sitemapFeeds=['/sitemap.xml','/sitemap-priority.xml'];
+  const sitemapBodies=new Map();
+  for(const feed of sitemapFeeds){
+   const response=await fetch(LOCAL+feed,{signal:AbortSignal.timeout(30000)});
+   assert.equal(response.status,200,feed);
+   sitemapBodies.set(feed,await response.text());
+  }
   const paths=['/taksong/types/',...brands.map(brandPath)];
   for(const p of paths){
-   assert(sitemapBody.includes('<loc>'+BASE+p+'</loc>'),p+' is discoverable in primary sitemap');
+   const owner=sitemapOwners[p];
+   assert(sitemapFeeds.includes(owner),p+' has an audited sitemap owner');
+   for(const feed of sitemapFeeds){
+    assert.equal(sitemapBodies.get(feed).includes('<loc>'+BASE+p+'</loc>'),owner===feed,p+' appears only in its assigned sitemap '+feed);
+   }
   }
   const national=await fetch(LOCAL+'/taksong/',{signal:AbortSignal.timeout(30000)});
   assert.equal(national.status,200);

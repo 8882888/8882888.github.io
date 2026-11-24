@@ -25,6 +25,17 @@ const exactKeywordCard=require('./lib/exact-keyword-card');
 const {createNationwideLocalityExplorer}=require('./lib/nationwide-locality-explorer');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const load=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
+// Each canonical URL has exactly one discovery-feed owner. New sitemap URLs
+// must be assigned in this registry before they can be advertised.
+const sitemapOwnerByPath=load('data/sitemap-url-owners.json');
+const sitemapOwnershipFeeds=new Set([
+ '/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml',
+ '/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-gyeongnam-guides.xml',
+ '/sitemap-chungnam-port-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',
+ '/sitemap-coast.xml','/sitemap-localities-province.xml','/sitemap-localities-city.xml',
+ '/sitemap-localities-county.xml','/sitemap-localities-district.xml',
+ ...Array.from({length:6},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')
+]);
 const {fingerprintCuratedRegionSources}=require('./lib/curated-region-sources-fingerprint');
 const CURATED_REGION_FINGERPRINT=fingerprintCuratedRegionSources(ROOT);
 const baseRegions=load('data/regions.json').regions||[];
@@ -2949,6 +2960,10 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
  if(type.startsWith('application/xml;')){
   body=String(body).replace(/<url>\s*<loc>([^<]+)<\/loc>[\s\S]*?<\/url>/g,(entry,loc)=>{
    const route=decodeURIComponent(new URL(loc.replace(/&amp;/g,'&')).pathname);
+   if(sitemapOwnershipFeeds.has(res._smartPath||'')){
+    const owner=sitemapOwnerByPath[route];
+    if(!owner||owner!==res._smartPath)return '';
+   }
    const history=route.match(/^\/reviews\/history\/(excel-\d+)\/$/);
    if(history&&(historyCanonicalById[history[1]]||!historySearchEligible(historicalRideById.get(history[1]))))return '';
    const service=route.match(/^\/(taksong|daeri)\/(.+)\/$/);
@@ -4149,11 +4164,11 @@ if(pathname==='/sitemap-coast.xml'){
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
-  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-gyeongnam-guides.xml','/sitemap-chungnam-port-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',
+  ?['/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-gyeongnam-guides.xml','/sitemap-chungnam-port-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-coast.xml',
    // Do not promote thousands of formulaic 읍/면/동/리 locality pages in
    // the public sitemap index. Keep routes and old shard URLs functional;
    // retain province/city/county/district for broad navigation.
-   ...['province','city','county','district'].map(key=>'/sitemap-localities-'+key+'.xml'),
+   ...['city','county','district'].map(key=>'/sitemap-localities-'+key+'.xml'),
    ...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');
  const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rootSitemaps.map(p=>'<sitemap><loc>'+esc(new URL(base+p).href)+'</loc></sitemap>').join('')+'</sitemapindex>';

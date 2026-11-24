@@ -422,7 +422,8 @@ test('previously exposed Jegi-dong taksong remains discoverable without all-loca
  const main=server.slice(server.indexOf("if(pathname==='/sitemap.xml')"),server.indexOf("const intentMatch=",server.indexOf("if(pathname==='/sitemap.xml')")));
  assert.ok(priority.includes("'/taksong/seoul/dongdaemun-gu/jegi-dong/'"),'dynamic priority sitemap');
  assert.ok(main.includes("'/taksong/seoul/dongdaemun-gu/jegi-dong/'"),'dynamic primary sitemap');
- assert.ok(server.includes("...['province','city','county','district'].map"),'existing four-level sitemap policy unchanged');
+ assert.ok(server.includes("...['city','county','district'].map"),'city/county/district URL-set feeds remain listed once');
+ assert.ok(!server.slice(server.indexOf("const rootSitemaps="),server.indexOf("const historySitemapMatch=")).includes("'/sitemap-localities-province.xml'"),'province routes already have priority-feed ownership');
 });
 
 test('CTR read-only guard recognizes separate national fare and service-center handover intent',()=>{

@@ -2,6 +2,7 @@
 'use strict';
 const config=require('../data/seo-pages.json');
 const priority=require('../data/priority-regions.json').pages;
+const sitemapOwners=require('../data/sitemap-url-owners.json');
 const {approvedDescription:approvedSoutheastDescription}=require('../lib/southeast-five-city-seo.cjs');
 const {approvedDescription:approvedLocalityDescription}=require('../lib/southeast-five-locality-seo.cjs');
 const {fetchSeoWithRetry}=require('./seo-audit-retry');
@@ -138,8 +139,14 @@ async function inspect(route){
  if(daeriDiscovery.status!==200)daeriIssues.push('Driver sitemap HTTP '+daeriDiscovery.status);
  if(daeriUrls.length<expectedDaeriCount||daeriUrls.length>500)daeriIssues.push('Driver discovery sitemap count '+daeriUrls.length+' / minimum '+expectedDaeriCount+', maximum 500');
  if(new Set(daeriUrls).size!==daeriUrls.length)daeriIssues.push('Duplicate driver discovery URL');
- for(const p of found) if(p.startsWith('/daeri/')&&!daeriUrls.includes(new URL(p,new URL(config.site)).href)) daeriIssues.push('Missing priority driver URL '+p);
- for(const url of expectedTravelUrls)if(!daeriUrls.includes(url))daeriIssues.push('Missing tourism-driver guide URL '+url);
+ for(const p of found)if(p.startsWith('/daeri/')){
+  const url=new URL(p,new URL(config.site)).href;
+  if(daeriUrls.includes(url)!==(sitemapOwners[p]==='/sitemap-daeri.xml'))daeriIssues.push('Driver URL does not match assigned sitemap owner '+p);
+ }
+ for(const place of travelGuides.destinations){
+  const route=travelGuides.pathFor(place),url=new URL(route,new URL(config.site)).href;
+  if(daeriUrls.includes(url)!==(sitemapOwners[route]==='/sitemap-daeri.xml'))daeriIssues.push('Tourism-driver URL does not match assigned sitemap owner '+route);
+ }
  pages.push({route:'/sitemap-daeri.xml',status:daeriDiscovery.status,urlCount:daeriUrls.length,issues:daeriIssues,passed:daeriIssues.length===0});
  const priorityRoute='/sitemap-priority.xml';
  const priorityResponse=await fetch(new URL(priorityRoute,base),{signal:AbortSignal.timeout(15000)});
@@ -167,7 +174,9 @@ async function inspect(route){
   if(!response.ok)reviewedIssues.push('HTTP '+response.status);
   if(!/<urlset\b/.test(xml))reviewedIssues.push('Invalid reviewed sitemap XML');
   for(const route of ['/reviews/taksong/','/reviews/verified/','/reviews/ride-record-stories/','/routes/reviewed/']){
-   if(!urls.includes(config.site+route))reviewedIssues.push('Missing verified review hub '+route);
+   const owner=sitemapOwners[route],url=new URL(route,new URL(config.site)).href;
+   if(!owner)reviewedIssues.push('Missing sitemap owner registry entry '+route);
+   else if(urls.includes(url)!==(owner===reviewedRoute))reviewedIssues.push('Review hub does not match assigned sitemap owner '+route);
   }
   if(new Set(urls).size!==urls.length)reviewedIssues.push('Duplicate reviewed sitemap URLs');
   if(!robotsText.includes('Sitemap: '+config.site+reviewedRoute))reviewedIssues.push('Reviewed sitemap missing from robots.txt');
@@ -202,7 +211,7 @@ async function inspect(route){
   const route='/sitemap-'+kind+'.xml';
   const response=await fetch(new URL(route,base),{signal:AbortSignal.timeout(30000)});
   const xml=await response.text();
-  sitemapCache.set(kind,xml);
+  sitemapCache.set(route,xml);
   const listedUrls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);
   const regionalIssues=[];
   if(!response.ok)regionalIssues.push('HTTP '+response.status);
@@ -216,7 +225,17 @@ async function inspect(route){
  for(const [route,info] of priorityByPath){
   const checked=await inspect(route);
   const expectedUrl=new URL(route,new URL(config.site));
-  if(!sitemapCache.get(info.kind)?.includes('<loc>'+expectedUrl.href+'</loc>'))checked.issues.push('Missing regional service sitemap entry');
+  const owner=sitemapOwners[route];
+  if(!owner)checked.issues.push('Missing sitemap owner registry entry');
+  else{
+   if(!sitemapCache.has(owner)){
+    try{
+     const response=await fetch(new URL(owner,base),{signal:AbortSignal.timeout(30000)});
+     sitemapCache.set(owner,response.ok?await response.text():'');
+    }catch{sitemapCache.set(owner,'')}
+   }
+   if(!sitemapCache.get(owner)?.includes('<loc>'+expectedUrl.href+'</loc>'))checked.issues.push('Missing URL from assigned sitemap '+owner);
+  }
   checked.passed=checked.issues.length===0;
   pages.push(checked);
  }
@@ -230,4 +249,3 @@ async function inspect(route){
  console.log(JSON.stringify(report,null,2));
  process.exitCode=report.passed?0:1;
 })().catch(e=>{console.error(e);process.exitCode=1});
-
