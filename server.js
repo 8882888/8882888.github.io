@@ -4209,6 +4209,12 @@ if(pathname==='/sitemap-priority.xml'){
   '/route-taksong/courses/ocheon/',
   '/route-taksong/courses/seomjin/',
   '/route-taksong/courses/yeongsan/',
+  '/daeri/incheon/ganghwa-gun/yangdo-myeon/',
+  '/daeri/gyeonggi/gapyeong-gun/gapyeong-eup/',
+  '/daeri/seoul/gangnam-gu/yeoksam-dong/',
+  '/taksong/incheon/ganghwa-gun/yangdo-myeon/',
+  '/taksong/gyeonggi/gapyeong-gun/gapyeong-eup/',
+  '/taksong/seoul/gangnam-gu/yeoksam-dong/',
   ...blogRideHighlights.map(x=>'/reviews/history/'+(historyCanonicalById[x.id]||x.id)+'/')];
  // Keep priority discovery bounded to nationwide hubs, services and editorial guides; curated regions remain in service sitemaps.
  const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+[...new Set(urls)].map(p=>'<url><loc>'+esc(new URL(base+p).href)+'</loc></url>').join('')+'</urlset>';
