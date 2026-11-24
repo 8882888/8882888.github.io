@@ -17,6 +17,8 @@ concurrency:
 
 jobs:
   build:
+    # Production is hosted exclusively on Cloudtype.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       SITE_URL: https://jeongukdaeri.kr
