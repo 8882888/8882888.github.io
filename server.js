@@ -3576,7 +3576,7 @@ if(searchIntent){
    '골프대리운전':'/service/golf/','골프장대리운전':'/service/golf/',
    '법인대리운전':'/service/corporate/','법인카드대리운전':'/service/corporate/',
    '대리운전예약':'/taksongdaeri/','단체대리운전':'/service/corporate/',
-   '장거리대리운전':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
+   '장거리대리운전':'/service/long-distance-daeri/','전국장거리대리운전':'/service/long-distance-daeri/','시외대리운전':'/service/long-distance-daeri/','전국시외대리운전':'/service/long-distance-daeri/','장거리대리운전예약':'/service/long-distance-daeri/','장거리대리운전요금':'/service/long-distance-daeri/','심야장거리대리운전':'/service/long-distance-daeri/','지방장거리대리운전':'/service/long-distance-daeri/','장거리대리요금':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
    '일일기사':'/service/daily-driver/'
   }[normalized])||nationwideExplorer.resolveServiceBooking(searchIntent)||(named&&named.url);
  if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
