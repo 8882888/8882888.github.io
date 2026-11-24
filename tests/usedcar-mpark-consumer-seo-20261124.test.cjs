@@ -12,12 +12,12 @@ const business=read('business/index.html');
 const title=page.match(/<title>([^<]+)<\/title>/)?.[1];
 const desc=page.match(/<meta name="description" content="([^"]+)"/)?.[1];
 test('Original used-car canonical now serves private buyers, sellers and dealers without confusing its location',()=>{
- assert.equal(title,'중고차매매단지탁송 | 가좌엠파크·일반고객·딜러 차량인수');
- assert.ok(desc.startsWith('중고차매매단지탁송.'));
- for(const text of ['가좌엠파크','일반 구매자','판매자','딜러','1811-4294'])assert.ok(desc.includes(text),text);
+ assert.equal(title,'전국 중고차매매단지탁송 | 단지 현장 인수·일반고객·딜러');
+ assert.ok(desc.startsWith('전국 중고차매매단지탁송.'));
+ for(const text of ['엠파크','도이치오토월드','엠월드','일반고객','딜러','1811-4294'])assert.ok(desc.includes(text),text);
  assert.ok([...desc].length>55&&[...desc].length<=80);
  assert.ok(page.includes('href="https://open.kakao.com/o/sGV88r7h"'));
- assert.equal(page.split('href="https://open.kakao.com/o/sGV88r7h"').length-1,3);
+ assert.equal(page.split('href="https://open.kakao.com/o/sGV88r7h"').length-1,4);
  assert.ok(page.includes('<link rel="canonical" href="https://jeongukdaeri.kr/business/used-car/"'));
  assert.equal(page.match(/<h1>/g)?.length,1);
  assert.equal(page.match(/<meta property="og:title" content="([^"]+)"/)?.[1],title);
@@ -28,7 +28,7 @@ test('Original used-car canonical now serves private buyers, sellers and dealers
  assert.equal(graph.find(x=>x['@type']==='BreadcrumbList').itemListElement[2].name,title);
  const service=graph.find(x=>x['@type']==='Service');
  assert.equal(service.provider.telephone,'1811-4294');
- assert.ok(service.description.includes('공식 입점 업체나 제휴사라는 뜻이 아니며'));
+ assert.ok(service.description.includes('매매단지 내 탁송 사무실 상주나 공식 제휴를 뜻하지 않습니다'));
  assert.equal('offers' in service,false);
 });
 test('Gajwa M Park consumer guide is detailed, locality-accurate and makes no office/partnership claims',()=>{
@@ -56,7 +56,7 @@ test('Core dealer, Gangnam and exporter source-backed content preserved and new 
  assert.ok(page.includes('https://blog.naver.com/wjdtnr4757/224421653506'));
  assert.ok(business.includes('id="mpark-consumer-usedcar-20261124"'));
  assert.ok(business.includes('href="/business/used-car/#usedcar-public-mpark-20261124"'));
- assert.ok(business.includes('일반 고객 중고차매매단지탁송'));
+ assert.ok(business.includes('전국 중고차매매단지탁송｜일반 구매자도'));
  assert.ok(business.includes('스마트24가 엠파크에 입점하거나 공식 제휴한 업체라는 뜻은 아닙니다'));
  assert.ok(page.indexOf('id="usedcar-public-mpark-20261124"')<page.indexOf('id="gangnam-imported-testdrive-corporate-20261123"'));
  assert.ok(page.includes('min-height:52px')&&page.includes(':focus-visible')&&page.includes('@media(max-width:560px)'));
