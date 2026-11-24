@@ -40,7 +40,10 @@ let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>out
   for(let n=0;n<100&&!output.includes('listening');n++)await new Promise(r=>setTimeout(r,100));
   assert(output.includes('listening'),output);
   const home=await (await fetch('http://127.0.0.1:3136/')).text();
-  const sitemap=await (await fetch('http://127.0.0.1:3136/sitemap.xml')).text();
+  // The public primary sitemap is only one feed; reviewed priority routes may
+  // be owned by sitemap-priority.xml. Check both feeds without assuming that
+  // the URL must be duplicated in sitemap.xml.
+  const sitemap=(await Promise.all(['/sitemap.xml','/sitemap-priority.xml'].map(async path=>(await fetch('http://127.0.0.1:3136'+path)).text()))).join('');
   const hubResponse=await fetch('http://127.0.0.1:3136/region/innovation-cities/');
   assert.equal(hubResponse.status,200);
   const hub=await hubResponse.text();
