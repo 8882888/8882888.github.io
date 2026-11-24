@@ -93,13 +93,14 @@ test('Naver-focused exact export and auction/yard keyword queries reuse existing
 });
 test('Export-focused webpage SEO and JSON-LD match human readable verified service content without changing canonical',()=>{
  const page=read('business/export-port/index.html');
- const headline='중고차수출업체탁송 | 경매장 출고·송도수출단지 입고 스마트24';
+ const headline='중고차수출단지탁송 | 송도·경매장 출고·수출업체 반입';
  assert(page.includes('<title>'+headline+'</title>'));
  assert(page.includes('property="og:title" content="'+headline+'"'));
  assert(page.includes('<link rel="canonical" href="https://jeongukdaeri.kr/business/export-port/"'));
  assert(page.includes('name="robots" content="index,follow"'));
- assert(page.includes('<h1>중고차수출업체탁송'));
- assert(page.includes('name="description" content="중고차 수출업체·무역업체 대상'));
+ assert(page.includes('<h1>중고차수출단지탁송'));
+ assert(page.includes('중고차수출업체탁송 | 수출·무역업체 대표'));// Existing B2B commercial audience stays visible.
+ assert(page.includes('name="description" content="중고차수출단지탁송·수출업체탁송'));
  assert(page.includes('id="exporter-ceo-b2b-sales-20261123"'));
  assert(page.includes('href="/business/#export"'));
  assert(page.includes('수출업체 대표·CEO, 매입팀·물류팀·차량관리 담당자'));
