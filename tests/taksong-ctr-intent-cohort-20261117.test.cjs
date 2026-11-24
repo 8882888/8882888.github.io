@@ -37,7 +37,8 @@ test('nationwide transport metadata and distinct service guide explain users act
  const staticTitle=parsedTag(detail,/<title>([^<]+)<\/title>/);
  const staticDesc=parsedTag(detail,/<meta name="description" content="([^"]+)"/);
  const staticOg=parsedTag(detail,/<meta property="og:description" content="([^"]+)"/);
- assert(/(?:자동차|차량)탁송/.test(staticTitle)&&staticTitle.includes('인수인계')&&/정비센터|입고/.test(staticTitle),'service title should describe handover and repair-center intent');
+ assert(/서비스센터탁송/.test(staticTitle)&&/(?:자동차|차량)탁송/.test(staticTitle)&&/정비센터|입고/.test(staticTitle),'service title should identify service-center delivery intent');
+ assert(detail.includes('<h1>서비스센터탁송 · 자동차탁송 예약과 차량 인수·인계</h1>'),'handover remains visible in the service H1');
  assert(staticDesc.length<=80 && staticDesc!==national.description, 'distinct two search snippets');
  assert.equal(staticOg,staticDesc,'static meta and OG parity');
  const section=detail.match(/<section id="service-taksong-handover-intent-20261117"[^>]*>([\s\S]*?)<\/section>/)?.[1];
