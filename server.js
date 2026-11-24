@@ -3543,16 +3543,16 @@ if(searchIntent){
    '도이치오토월드탁송':'/business/used-car/',
    '대구엠월드탁송':'/business/used-car/',
    '엠월드탁송':'/business/used-car/',
-   '부산KC오토월드탁송':'/business/used-car/',
-   'KC오토월드탁송':'/business/used-car/',
+   '부산kc오토월드탁송':'/business/used-car/',
+   'kc오토월드탁송':'/business/used-car/',
    '부산경동오토필드탁송':'/business/used-car/',
    '경동오토필드탁송':'/business/used-car/',
-   '창원KC월드카프라자탁송':'/business/used-car/',
+   '창원kc월드카프라자탁송':'/business/used-car/',
    '사천경남매매단지탁송':'/business/used-car/',
    '구미금오자동차매매단지탁송':'/business/used-car/',
    '안동중고자동차유통단지탁송':'/business/used-car/',
    '포항대잠중고매매단지탁송':'/business/used-car/',
-   '순천IC매매단지탁송':'/business/used-car/',
+   '순천ic매매단지탁송':'/business/used-car/',
    '순천강변매매단지탁송':'/business/used-car/'
   }[normalized])||null;
  const exactCycle=[
