@@ -1,4 +1,6 @@
 'use strict';
+import fs from 'node:fs';
+const owners=JSON.parse(fs.readFileSync(new URL('../data/sitemap-url-owners.json',import.meta.url),'utf8'));
 // Real HTTP evidence only. This verifies discoverability/indexability,
 // NOT whether Naver or Google has actually indexed any URL.
 const base=new URL(process.env.LIVE_SITE_URL||'https://jeongukdaeri.kr');
@@ -14,13 +16,16 @@ async function retrieve(path){
 function assert(condition,message){if(!condition)throw Error(message)}
 async function main(){
  const report={site:base.origin,checkedAt:new Date().toISOString(),source:'Public HTTP; NOT a Naver/Search Console index report',checks:[],errors:[]};
- let sitemap='';
- try{
-  const {response,text}=await retrieve('/sitemap.xml');
-  assert(response.status===200,'sitemap HTTP '+response.status);
-  sitemap=text;
-  report.checks.push({url:'/sitemap.xml',status:200});
- }catch(e){report.errors.push('/sitemap.xml '+e.message)}
+ const sitemaps=new Map();
+ for(const feed of new Set(paths.map(p=>owners[p]))){
+  try{
+   assert(typeof feed==='string','missing sitemap owner in source');
+   const {response,text}=await retrieve(feed);
+   assert(response.status===200,'sitemap HTTP '+response.status);
+   sitemaps.set(feed,text);
+   report.checks.push({url:feed,status:200});
+  }catch(e){report.errors.push(String(feed)+' '+e.message)}
+ }
  try{
   const {response,text}=await retrieve('/robots.txt');
   assert(response.status===200,'robots HTTP '+response.status);
@@ -37,7 +42,10 @@ async function main(){
    assert((text.match(/<link rel="canonical"/g)||[]).length===1,'duplicate canonical');
    assert(!/noindex/i.test(response.headers.get('x-robots-tag')||''),'noindex HTTP header');
    assert(text.includes('<meta name="robots" content="index,follow,max-image-preview:large">'),'non-indexable robots meta');
-   assert(sitemap.includes('<loc>'+canonical+'</loc>'),'canonical URL missing from primary sitemap');
+   const owner=owners[p],loc='<loc>'+canonical+'</loc>';
+   assert(sitemaps.has(owner),'assigned sitemap unavailable');
+   for(const [feed,xml] of sitemaps)
+    assert(xml.split(loc).length-1===(feed===owner?1:0),'canonical URL missing or duplicated in '+feed);
    const match=text.match(/<script id="service-center-schema-v1" type="application\/ld\+json">([\s\S]*?)<\/script>/);
    assert(match,'structured data not in visible HTML');
    const obj=JSON.parse(match[1]),graph=obj['@graph'];
@@ -60,6 +68,6 @@ async function main(){
  }
  console.log(JSON.stringify(report,null,2));
  if(report.errors.length){console.error('FAIL service-center live SEO audit: '+report.errors.join('; '));process.exitCode=1}
- else console.log('PASS live service-center HTTP + canonical + robots + primary sitemap + JSON-LD (not confirmed indexed)');
+ else console.log('PASS live service-center HTTP + canonical + robots + assigned sitemap + JSON-LD (not confirmed indexed)');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});

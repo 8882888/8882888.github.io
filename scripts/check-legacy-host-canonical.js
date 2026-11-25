@@ -53,7 +53,9 @@ async function get(url){
    const status=[301,308].includes(r.status)&&location===target?'PERMANENT_REDIRECT':
     r.status===404?'NOT_FOUND':r.status===200?'SERVES_200':
     [302,307].includes(r.status)?'TEMPORARY_REDIRECT':'OTHER_RESPONSE';
-   return {alias:alias.name,url,http:r.status,location,canonical:c,status};
+   const robots=p==='/robots.txt'&&r.status===200?
+    r.html.split(/\r?\n/).map(line=>line.trim()).filter(line=>/^(User-agent|Allow|Disallow|Sitemap):/i.test(line)).slice(0,30):undefined;
+   return {alias:alias.name,url,http:r.status,location,canonical:c,status,robots};
   }catch(e){return {alias:alias.name,url,status:'UNREACHABLE',error:String(e.message)}}
  })));
  for(const result of results)console.log('ALIAS_PROBE '+JSON.stringify(result));
