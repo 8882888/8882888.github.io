@@ -27,6 +27,8 @@ on:
       - 'service/long-distance-taksong/index.html'
       - 'tests/national-long-taksong-directed-quotes.test.cjs'
       - 'lib/regional-evidence-journeys.cjs'
+      - 'lib/nationwide-locality-explorer.js'
+      - 'tests/nationwide-dynamic-mobile-regions.test.js'
       - 'tests/regional-evidence-journeys-20261125.test.cjs'
       - 'scripts/verify-cloudtype-regional-release.js'
       - 'scripts/audit-live-priority-ctr-evidence.cjs'
