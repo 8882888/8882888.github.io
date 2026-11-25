@@ -190,7 +190,13 @@ jobs:
                           and preview.get('service')==kind
                           and preview.get('locality')==place
                           and any('/api/nationwide-locality-card.svg?' in c.get('image','') for c in preview.get('cards',[]))
-                          and all(c.get('url','').startswith('/fare/?service='+kind) for c in preview.get('cards',[]) if word.endswith(('대리비견적','탁송비견적','탁송견적')))):
+                          and len(preview.get('cards',[]))==1
+                          and all(c.get('url','').startswith('/'+kind+'/') and '#' not in c.get('url','') and '?' not in c.get('url','') for c in preview.get('cards',[]))
+                          and all(urllib.parse.urlsplit(c.get('quote_url','')).path=='/fare/'
+                            and urllib.parse.parse_qs(urllib.parse.urlsplit(c.get('quote_url','')).query).get('service')==[kind]
+                            and urllib.parse.parse_qs(urllib.parse.urlsplit(c.get('quote_url','')).query).get('from')==[place]
+                            for c in preview.get('cards',[]))):
+                          print('Administrative region preview mismatch:',word,flush=True)
                           nationwide_dynamic_ok=False
                           break
                   with urllib.request.urlopen(urllib.request.Request(
