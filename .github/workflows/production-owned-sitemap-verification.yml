@@ -1,0 +1,27 @@
+name: Read-only production sitemap ownership and domain verification
+on:
+  pull_request:
+    paths:
+      - 'scripts/verify-live-owned-sitemaps.py'
+      - 'scripts/audit-live-service-center-schema.mjs'
+      - 'scripts/check-legacy-host-canonical.js'
+      - '.github/workflows/deploy-main.yml'
+      - '.github/workflows/production-owned-sitemap-verification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify live official sitemap ownership
+        run: python3 scripts/verify-live-owned-sitemaps.py
+      - name: Verify service-center assigned sitemap and schema
+        run: node scripts/audit-live-service-center-schema.mjs
+      - name: Verify official and legacy domain behavior
+        run: node scripts/check-legacy-host-canonical.js

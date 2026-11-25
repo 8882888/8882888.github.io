@@ -5,14 +5,16 @@ on:
       - main
     # Code/data that can affect the official Node site still trigger deploy.
     # Tests, audits and workflows alone must not create Cloudtype releases.
-    paths-ignore:
-      - 'tests/**'
-      - 'scripts/**'
-      - 'tools/**'
-      # Audit-only retry helper is not imported by the production Node server.
-      - 'lib/http-audit-retry.mjs'
-      - '.github/workflows/**'
-      - '*.md'
+    paths:
+      - '**'
+      - '!tests/**'
+      - '!scripts/**'
+      - '!tools/**'
+      - '!lib/http-audit-retry.mjs'
+      - '!.github/workflows/**'
+      - '!*.md'
+      # A change to the deployment procedure itself warrants one verified release.
+      - '.github/workflows/deploy-main.yml'
   workflow_dispatch:
 # Keyword automation commits to main already trigger the push event.
 # A second workflow_run trigger duplicated each successful automation release.
@@ -375,48 +377,23 @@ jobs:
           if not all(x.get('hasPhone') for x in data.get('pages',{}).values()):
             raise SystemExit('SEO freshness probe missing phone on at least one page')
           print('PASS live source file freshness probe')
-          for path in ['/robots.txt','/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml']:
-            req=urllib.request.Request(base+path+'?release-check='+os.environ['DEPLOYED_COMMIT'],
-              headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
-            with urllib.request.urlopen(req,timeout=15) as response:
-              payload=response.read().decode('utf-8')
-              if response.status!=200: raise SystemExit(path+' HTTP '+str(response.status))
-            if path.endswith('.xml'):
-              ET.fromstring(payload)
-              if '/reviews/taksong/' not in payload: raise SystemExit(path+' missing taksong evidence URL')
-            elif 'Sitemap: '+base+'/sitemap-priority.xml' not in payload:
-              raise SystemExit('robots.txt missing priority sitemap')
-            print('PASS',path)
-          for path in ['/sitemap-taksong.xml','/sitemap-daeri.xml']:
-            last_error=''
-            for attempt in range(6):
-              req=urllib.request.Request(base+path+'?release-check='+os.environ['DEPLOYED_COMMIT']+'&attempt='+str(attempt),
-                headers={'Cache-Control':'no-cache, no-store','Pragma':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
-              with urllib.request.urlopen(req,timeout=20) as response:
-                xml=response.read().decode('utf-8')
-                if response.status!=200: raise SystemExit(path+' HTTP '+str(response.status))
-                sitemap_version=response.headers.get('X-Smart24-Sitemap-Format','missing')
-                cache_control=response.headers.get('Cache-Control','missing')
-                cache_age=response.headers.get('Age','missing')
-                cache_status=response.headers.get('CF-Cache-Status',response.headers.get('X-Cache','unknown'))
-              root=ET.fromstring(xml)
-              urls=[node.text for node in root.iter() if node.tag.endswith('loc') and node.text]
-              image_entries='<image:image' in xml or '<image:loc' in xml
-              if len(urls)<=500 and len(urls)==len(set(urls)) and not image_entries and (not path.endswith('taksong.xml') or any('/taksong/busan/' in u for u in urls)):
-                print('PASS focused discovery',path,len(urls),'URL entries; version',sitemap_version)
-                break
-              last_error=path+' served older or invalid sitemap: locs='+str(len(urls))+' image_entries='+str(image_entries)+' signature='+sitemap_version+' cache_control='+cache_control+' age='+cache_age+' cache_status='+cache_status
-              print('RETRY',last_error)
-              if attempt<5: time.sleep(5)
-            else:
-              raise SystemExit(last_error+'; compare site CDN cache and Cloudtype release')
+          req=urllib.request.Request(base+'/robots.txt?release-check='+os.environ['DEPLOYED_COMMIT'],
+            headers={'Cache-Control':'no-cache','User-Agent':'Smart24-SEO-Deployment-Verify/1.0'})
+          with urllib.request.urlopen(req,timeout=15) as response:
+            payload=response.read().decode('utf-8')
+            if response.status!=200: raise SystemExit('robots.txt HTTP '+str(response.status))
+          if 'Sitemap: '+base+'/sitemap-priority.xml' not in payload:
+            raise SystemExit('robots.txt missing priority sitemap')
+          print('PASS /robots.txt')
           PYNAVER
+      - name: Verify every owned live sitemap exactly once
+        run: python3 scripts/verify-live-owned-sitemaps.py
       - name: Verify live taksong reviews and search sitemaps
         run: |
           python3 - <<'PYSEO'
           import time, urllib.request, xml.etree.ElementTree as ET
           base='https://jeongukdaeri.kr'
-          paths=['/taksong/','/service/taksong/','/reviews/taksong/','/blog/','/sitemap-priority.xml','/sitemap-reviewed-routes.xml']
+          paths=['/taksong/','/service/taksong/','/reviews/taksong/','/blog/']
           failed=[]
           for path in paths:
               ok=False
@@ -426,12 +403,7 @@ jobs:
                       with urllib.request.urlopen(request,timeout=15) as response:
                           body=response.read()
                           if response.status!=200: raise ValueError('HTTP '+str(response.status))
-                      if path.endswith('.xml'):
-                          root=ET.fromstring(body)
-                          urls=[e.text or '' for e in root.iter() if e.tag.endswith('loc')]
-                          if not any('/reviews/taksong/' in u for u in urls):
-                              raise ValueError('Missing verified taksong URL')
-                      elif path=='/reviews/taksong/' and b'taksong-baekdamsa-sogongwon' not in body:
+                      if path=='/reviews/taksong/' and b'taksong-baekdamsa-sogongwon' not in body:
                           raise ValueError('Verified taksong anchors missing')
                       elif path=='/service/taksong/' and 'taksong-evidence-202611' not in body.decode('utf-8'):
                           raise ValueError('New taksong evidence section not deployed')
