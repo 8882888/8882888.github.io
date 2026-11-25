@@ -62,3 +62,30 @@ test('Existing exporter canonical, source-backed SEO, evidence and structured da
  assert.equal((read('robots.txt').match(/^Sitemap:/gm)||[]).length,8);
  assert.ok(read('package.json').includes('tests/export-yard-expertise-kakao-20261124.test.cjs'));
 });
+
+test('All existing ten export example corridors lead to owned regional guides without changing either estimate direction',()=>{
+ const nav=page.match(/<nav id="export-booking-jumps-20261125"[\s\S]*?<\/nav>/)?.[0]||'';
+ for(const id of ['export-yard-expert-process-20261124','exporter-ceo-b2b-sales-20261123','export-port-step-by-step-20261117']){
+  assert.ok(nav.includes('href="#'+id+'"'));assert.equal(page.split('id="'+id+'"').length,2);
+ }
+ assert.ok(nav.includes('href="/business/#export"'));
+ const owners=JSON.parse(read('data/sitemap-url-owners.json'));
+ const routes=JSON.parse(read('data/exporter-b2b-sales-20261123.json')).routes;
+ const origins=["/taksong/gyeonggi/osan-si/","/taksong/gyeonggi/anseong-si/","/taksong/gyeonggi/suwon-si/","/taksong/gyeonggi/yongin-si/","/taksong/gyeonggi/goyang-si/","/taksong/chungnam/cheonan-si/","/taksong/chungbuk/cheongju-si/","/taksong/gyeonggi/pyeongtaek-si/","/taksong/seoul/gangnam-gu/","/taksong/chungnam/asan-si/"];
+ const names=["경기도 오산시","경기도 안성시","경기도 수원시","경기도 용인시","경기도 고양시","충청남도 천안시","충청북도 청주시","경기도 평택시","서울특별시 강남구","충청남도 아산시"];
+ const section=page.match(/<section id="exporter-ceo-b2b-sales-20261123"[\s\S]*?<\/section>/)?.[0]||'';
+ const q=(a,b)=>'/fare/?service=taksong&amp;from='+encodeURIComponent(a)+'&amp;to='+encodeURIComponent(b);
+ assert.equal(routes.length,10);
+ for(const [i,row] of routes.entries()){
+  assert.equal(row.from,names[i]);
+  const dest=row.to==='인천광역시 연수구 옥련동'?'/taksong/incheon/yeonsu-gu/okryeon-dong/':'/taksong/gyeonggi/pyeongtaek-si/';
+  assert.ok(owners[origins[i]]&&owners[dest]);
+  const end=section.indexOf('href="'+q(row.to,row.from)+'"');
+  assert.ok(end>=0);
+  const block=section.slice(end,section.indexOf('</li>',end));
+  assert.ok(block.includes('href="'+origins[i]+'"'));
+  assert.ok(block.includes('href="'+dest+'"'));
+  assert.ok(section.includes('href="'+q(row.from,row.to)+'"'));
+ }
+ assert.ok(section.includes('실제 완료 운행이나 수출업체 제휴 실적이 아닙니다'));
+});
