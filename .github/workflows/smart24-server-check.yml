@@ -18,6 +18,14 @@ on:
       - 'index.html'
       - 'data/**'
       - '.github/workflows/smart24-server-check.yml'
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'lib/canonical-host.cjs'
+      - 'tests/canonical-host.test.cjs'
+      - 'tests/business-company-keywords.test.js'
+      - 'data/sitemap-url-owners.json'
+      - '.github/workflows/smart24-server-check.yml'
   workflow_dispatch:
   workflow_call:
 jobs:
@@ -33,6 +41,7 @@ jobs:
       - name: Syntax check
         run: |
           node --check server.js
+          node --test tests/canonical-host.test.cjs
           node tests/cycling-centers.test.js
       - name: Validate Naver Yeti noindex interpretation and sitemap audit classifications
         run: node --test tests/indexability-scope.test.mjs tests/yeti-priority-indexability.test.cjs
@@ -137,6 +146,23 @@ jobs:
             sleep 2
           done
           curl --fail --show-error http://127.0.0.1:3000/health
+          # Verify real HTTP host decisions with the known alias and official host.
+          node - <<'PYHOST'
+          const http=require('node:http'),assert=require('node:assert/strict');
+          const {OFFICIAL,DIRECT}=require('./lib/canonical-host.cjs');
+          const get=(route,host,xfh)=>new Promise((resolve,reject)=>{
+           const headers={Host:host};if(xfh)headers['X-Forwarded-Host']=xfh;
+           http.get({hostname:'127.0.0.1',port:3000,path:route,headers},r=>{r.resume();r.on('end',()=>resolve(r))}).on('error',reject);
+          });
+          (async()=>{
+           const redirected=await get('/taksong/?a=1',DIRECT,DIRECT);
+           assert.equal(redirected.statusCode,301);assert.equal(redirected.headers.location,'https://'+OFFICIAL+'/taksong/?a=1');
+           for(const [host,xfh] of [[OFFICIAL,DIRECT],[DIRECT,OFFICIAL],[DIRECT,undefined]])assert.equal((await get('/',host,xfh)).statusCode,200);
+           const health=await get('/health',DIRECT,DIRECT);
+           assert.equal(health.statusCode,200);assert.equal(health.headers['x-smart24-host-mode'],'confirmed-alias');
+           console.log('PASS safe official host and Cloudtype alias redirect; health remains available');
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          PYHOST
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/robots.txt
           curl --fail --show-error --dump-header /tmp/smart24-favicon.headers --output /tmp/smart24-favicon.bin http://127.0.0.1:3000/favicon.ico

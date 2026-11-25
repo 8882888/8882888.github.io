@@ -17,6 +17,7 @@ const localServiceEvidenceForPath=createLocalServiceEnhancer(path.join(ROOT,'dat
 const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');
 const {removeRetiredHomepageCopy}=require('./lib/homepage-copy');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
+const {canonicalHostDecision}=require('./lib/canonical-host.cjs');
 const serviceKeywordEntry=require('./lib/service-keyword-entry');
 const {normalizeSeoHead}=require('./lib/seo-head-guard.cjs');
 const keywordExpansion=require('./lib/keyword-card-expansion');
@@ -3253,6 +3254,14 @@ if(/^\/fare(?:\/index\.html|\/)?$/.test(pathname)&&
  res.setHeader('X-Robots-Tag','noindex, follow');
 }
 res._smartPath=pathname;
+// Redirect only an explicitly confirmed Cloudtype public alias; never redirect
+// the official host, ambiguous proxy headers, API calls or health probes.
+const hostDecision=canonicalHostDecision(req,u,pathname);
+if(pathname==='/health')res.setHeader('X-Smart24-Host-Mode',hostDecision.mode);
+if(hostDecision.location){
+ res.writeHead(301,{location:hostDecision.location,'cache-control':'no-store, max-age=0'});
+ return res.end();
+}
 // Isolated, explicitly noindex regional drafts; preserve existing /daeri/ and /taksong/ pages.
 if(pathname==='/local-service'||pathname.startsWith('/local-service/')){
  return localServiceRegionHandler(req,res);
