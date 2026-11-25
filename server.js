@@ -1599,7 +1599,6 @@ function innovationCityPanel(r,kind){
 }
 // Reuse one deduplicated regional chooser for all 17 provinces.
 function regionalNationwideSubareaChooser(r,kind){return nationwideExplorer.chooser(r,kind,{owners:sitemapOwnerByPath})}
-const regionalEvidenceJourneys=require('./lib/regional-evidence-journeys.cjs').createRegionalEvidenceJourneys({reviewedRides,publishedCases:publishedCaseEntries,regionByFullName,servicePath,owners:sitemapOwnerByPath,esc});
 function regionalPublicEvidence(region,kind,verified,history){
  const published=publishedCaseEntries.filter(ride=>ride.service===kind&&tripMatchesRegion(ride,region))
   .map(ride=>({ride:{...ride,date:ride.rideDate},url:ride.path,archive:false}));
@@ -2323,6 +2322,7 @@ function vehicleTopicsHub(){
  });
 }
 const publishedCaseEntries=loadPublishedCases(ROOT);
+const regionalEvidenceJourneys=require('./lib/regional-evidence-journeys.cjs').createRegionalEvidenceJourneys({reviewedRides,publishedCases:publishedCaseEntries,regionByFullName,servicePath,owners:sitemapOwnerByPath,esc});
 const publishedCaseByPath=new Map(publishedCaseEntries.map(ride=>[ride.path,ride]));
 function nationalRideReviewLead(kind){
  const rides=publishedCaseEntries.filter(ride=>ride.service===kind).slice(0,4);
