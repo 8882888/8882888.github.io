@@ -48,6 +48,32 @@ test('Original dated two completed long-distance rides and source blog posts sur
  assert.ok(html.includes('현재 확정 견적이 아닙니다'));
  assert.ok(html.includes('기사 복귀'));
 });
+test('Approved completed rides have distinct current and reverse quote links using only published location fields',()=>{
+ const records=JSON.parse(read('data/public-reviewed-rides-202610.json'));
+ const {identifier,loadPublishedCases}=require('../lib/published-case-feed');
+ const published=new Map(loadPublishedCases(root).map(x=>[x.id,x]));
+ const owners=JSON.parse(read('data/sitemap-url-owners.json'));
+ const block=html.match(/<section id="national-long-distance-records">[\s\S]*?<\/section>/)?.[0]||'';
+ assert.ok(html.indexOf(block)>html.indexOf('<main>'),'avoid white header text on white record section');
+ assert.ok(block.includes('반대 방향은 별도 견적 안내이며 실제 운행완료 사례가 아닙니다'));
+ const cases=[...block.matchAll(/<li data-case="([a-f0-9]{16})">([\s\S]*?)<\/li>/g)];
+ assert.equal(cases.length,2);assert.equal(new Set(cases.map(x=>x[1])).size,2);
+ for(const [,id,body] of cases){
+  const record=records.find(x=>identifier(x)===id&&x.verified===true&&x.status==='completed'&&x.service==='daeri');
+  assert.ok(record,'public approved source '+id);
+  assert.equal(published.get(id)?.service,'daeri');
+  assert.equal(owners['/reviews/verified/'+id+'/'],'/sitemap-published.xml');
+  assert.ok(body.includes('href="/reviews/verified/'+id+'/"'));
+  assert.ok(body.includes(record.date));assert.ok(body.includes(record.fare));
+  const urls=[...body.matchAll(/href="(\/fare\/\?[^"]+)"/g)].map(m=>new URL(m[1].replaceAll('&amp;','&'),'https://jeongukdaeri.kr'));
+  assert.equal(urls.length,2);
+  for(const [i,[from,to]] of [[record.departure,record.destination],[record.destination,record.departure]].entries()){
+   assert.equal(urls[i].searchParams.get('service'),'daeri');
+   assert.equal(urls[i].searchParams.get('from'),from);
+   assert.equal(urls[i].searchParams.get('to'),to);
+  }
+ }
+});
 test('Nationwide conversion guide contains 17 original region links and 12 route-specific daeri fare links',()=>{
  const regions=html.match(/<section id="national-long-daeri-regions-20261124">([\s\S]*?)<\/section>/)?.[1]||'';
  const corridors=html.match(/<section id="national-long-daeri-corridors-20261124">([\s\S]*?)<\/section>/)?.[1]||'';
@@ -105,6 +131,8 @@ test('Real HTTP responds with updated metadata, single WebPage, distinct route p
   assert.ok(body.includes('<title>'+title+'</title>'));
   assert.ok(body.includes('content="'+desc+'"'));
   assert.ok(body.includes('17개 시·도'));
+  assert.ok(body.includes('data-case="beaadac165d9d73c"')&&body.includes('data-case="df8a51b8d91f2c0a"'));
+  assert.ok(body.includes('반대 방향은 별도 견적 안내이며 실제 운행완료 사례가 아닙니다'));
   assert.ok(body.includes('전국 장거리대리운전 시외 구간 12개'));
   assert.ok(body.includes('https://open.kakao.com/o/sGV88r7h'));
   const docs=[...body.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)]
