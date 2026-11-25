@@ -203,6 +203,7 @@ for(const r of regions){const parentPath=r.parent_slug?pathBySlug.get(r.parent_s
 function servicePath(r,kind){return '/'+kind+'/'+pathBySlug.get(r.slug)+'/'}
 const sourceGuidanceBridge=createOriginalGuidanceBridge({daeri:naverFocusTwentiethDaeri100,taksong:naverFocusTwentiethTaksong100,regionByFullName,servicePath,esc});
 const nationwideExplorer=createNationwideLocalityExplorer({regions,bySlug,childrenByParent,servicePath,escapeHtml:esc});
+const LOCALITY_EXPLORER_REVISION='sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'lib/nationwide-locality-explorer.js'))).digest('hex').slice(0,16);
 const nationwideTruckTaksong=require('./lib/nationwide-truck-taksong.cjs').create({regions,servicePath,esc,nationwideExplorer});
 const regionalCommercialVehicles=require('./lib/regional-commercial-truck-bus-taksong.cjs').create({regions,regionByFullName,servicePath,esc,nationwideExplorer});
 function resolveRegionalCardKeyword(query){
@@ -3649,7 +3650,7 @@ if(searchIntent){
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=cyclingBidirectionalTarget||exactCycle||mountain||touristPlaceTarget||usedCarBuyerTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||busVehicleTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ let target=cyclingBidirectionalTarget||exactCycle||mountain||touristPlaceTarget||usedCarBuyerTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||busVehicleTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
@@ -3662,6 +3663,14 @@ if(searchIntent){
    '장거리대리운전':'/service/long-distance-daeri/','전국장거리대리운전':'/service/long-distance-daeri/','시외대리운전':'/service/long-distance-daeri/','전국시외대리운전':'/service/long-distance-daeri/','장거리대리운전예약':'/service/long-distance-daeri/','장거리대리운전요금':'/service/long-distance-daeri/','심야장거리대리운전':'/service/long-distance-daeri/','지방장거리대리운전':'/service/long-distance-daeri/','장거리대리요금':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
    '일일기사':'/service/daily-driver/'
   }[normalized])||nationwideExplorer.resolveServiceBooking(searchIntent)||(named&&named.url);
+ // A specialized regional resolver may already select the same canonical page.
+ // Retain that page, but do not let it swallow an exact long-distance or
+ // regional booking/quote intent. Distinct mountain, facility, and corridor
+ // landing pages retain their established precedence.
+ const exactAdministrativeIntent=nationwideExplorer.resolve(searchIntent);
+ if(exactAdministrativeIntent&&/^(?:장거리|시외|지역)/.test(exactAdministrativeIntent.term)&&target===exactAdministrativeIntent.canonical){
+  target=exactAdministrativeIntent.url;
+ }
  if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
 }
 if(pathname==='/keyword-search/'||pathname==='/keyword-search'){
@@ -3795,10 +3804,18 @@ if(pathname==='/api/region-card-preview'){
    return respond(res,200,JSON.stringify({status:'not_found',query,locality:query,service:requested,region:null,cards:[],candidates:[],source:'선택한 서비스와 검색어가 일치하지 않습니다.'}),'application/json; charset=utf-8');
   }
   const contact=kind==='taksong'&&national.region.full_name==='제주특별자치도'?'1877-5245':PHONE;
-  const image=nationwideExplorer.imageUrl(query,kind);
+  // Preserve existing purpose-specific artwork when the expanded legal alias
+  // resolves a category that previously used the themed preview fallback.
+  const categoryTopic=national.category?keywordExpansion.resolve(query):null;
+  const categoryCard=categoryTopic&&categoryTopic.kind===kind&&categoryTopic.image.startsWith('/keyword-card/')&&categoryTopic.terms.some(term=>compact(query).endsWith(compact(term)))
+   ?keywordExpansion.preview(categoryTopic,{slug:national.region.slug,label:seoRegionLabel(national.region),url:servicePath(national.region,kind),phone:contact}):null;
+  const image=categoryCard?.image||nationwideExplorer.imageUrl(query,kind);
   const data={status:'matched',query,locality:national.region.full_name,service:kind,
    region:national.region.full_name,cards:[{kind,label:query,image,previewImage:image,
-    url:national.url,phone:contact,displayKeyword:query,
+    ...(categoryCard?{keywordImage:nationwideExplorer.imageUrl(query,kind)}:{}),
+    // A regional card always opens its representative guide, not a transient
+    // quote URL or fragment. Keep the prefilled quote as a separate action.
+    url:national.canonical||national.url,quote_url:nationwideExplorer.estimateUrl(national.region,kind),phone:contact,displayKeyword:query,
     description:national.category?'지역 서비스 안내용 명함입니다. 특정 시설의 소재나 제휴 여부는 별도로 확인해 주세요.':'등록된 행정구역과 검색어가 일치하는 안내용 이미지입니다. 지역 지점·상주기사·실제 운행완료를 의미하지 않으며 예상요금과 배차는 상담 후 확인합니다.'}],
    candidates:[],source:'전국 17개 시·도 행정구역 데이터와 일치하는 검색어입니다. 요금·배차는 상담 후 확정합니다.'};
   res.setHeader('x-robots-tag','noindex,nofollow');
@@ -4026,7 +4043,7 @@ if(pathname==='/api/legal-region-index'){
 if(pathname==='/health'){
  res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
  res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy',release:'sha256-'+DEPLOY_SHA256.slice(0,16),publishedCases:{count:publishedCaseEntries.length,latestId:publishedCaseEntries[0]?.id||null,latestPublishedAt:publishedCaseEntries[0]?.publishedAt||null},trafficAnalytics:TRAFFIC_ANALYTICS_SHA256,regionalEvidence:{revision:REGIONAL_EVIDENCE_REVISION,activeRegionServicePages:regionalEvidenceJourneys.size},regionalGuideAreas:regionalIntentAreas.length,regionalGuides:regionalIntentAreas.length*4,innovationCity:{guideCount:innovationCity100.length,regionServiceGroups:innovationCity100ByRegionKind.size,uniqueRegions:new Set(innovationCity100.map(x=>x.region)).size,guideRevision:require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'data/innovation-city-100.json'))).digest('hex').slice(0,16)},keywordAutomation:{stored:keywordEngine.summary.stored,collected:keywordEngine.summary.collected,updatedAt:keywordEngine.summary.updatedAt},features:{keywordAutoLinking:true,pngBusinessCards:true,cardClickToCall:true,publicRideHistory:true,hideDepartureTime:true}}), 'application/json; charset=utf-8');
+ return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy',release:'sha256-'+DEPLOY_SHA256.slice(0,16),publishedCases:{count:publishedCaseEntries.length,latestId:publishedCaseEntries[0]?.id||null,latestPublishedAt:publishedCaseEntries[0]?.publishedAt||null},trafficAnalytics:TRAFFIC_ANALYTICS_SHA256,regionalEvidence:{revision:REGIONAL_EVIDENCE_REVISION,activeRegionServicePages:regionalEvidenceJourneys.size},localitySearch:{revision:LOCALITY_EXPLORER_REVISION,regionCount:nationwideExplorer.regionCount},regionalGuideAreas:regionalIntentAreas.length,regionalGuides:regionalIntentAreas.length*4,innovationCity:{guideCount:innovationCity100.length,regionServiceGroups:innovationCity100ByRegionKind.size,uniqueRegions:new Set(innovationCity100.map(x=>x.region)).size,guideRevision:require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'data/innovation-city-100.json'))).digest('hex').slice(0,16)},keywordAutomation:{stored:keywordEngine.summary.stored,collected:keywordEngine.summary.collected,updatedAt:keywordEngine.summary.updatedAt},features:{keywordAutoLinking:true,pngBusinessCards:true,cardClickToCall:true,publicRideHistory:true,hideDepartureTime:true}}), 'application/json; charset=utf-8');
 }
 if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
