@@ -144,6 +144,16 @@ jobs:
           python3 - <<'PYVERIFY'
           import os,time,json,urllib.request,urllib.parse
           url='https://jeongukdaeri.kr/taksong/busan/?release-check='+os.environ['DEPLOYED_COMMIT']
+          from pathlib import Path
+          source_fare=Path('fare/index.html').read_text(encoding='utf-8')
+          def consultation_source(html):
+              start=html.find('function appendUnavailableQuoteConsultation(')
+              end=html.find('function appendConsultationDetails(',start)
+              return html[start:end].strip() if start>=0 and end>start else ''
+          expected_consultation=consultation_source(source_fare)
+          fallback_hook='result.append(contact);appendUnavailableQuoteConsultation(from,to,service)}finally'
+          if not expected_consultation or fallback_hook not in source_fare:
+              raise SystemExit('Missing source outage consultation helper or error-handler binding')
           last_failed=[]
           last_error=''
           for attempt in range(24):
@@ -284,6 +294,10 @@ jobs:
                     'regional_statistics':region_stats_ok,
                     'daegu_brand_label':regional_brand_ok,
                     'mobile_fare_quote':mobile_quote_ok,
+                    'fare_outage_consultation_revision':(
+                      consultation_source(fare_page)==expected_consultation
+                      and fallback_hook in fare_page
+                      and fare_page.count('function appendUnavailableQuoteConsultation(')==1),
                     'administrative_region_links':nationwide_dynamic_ok,
                     'locality_autocomplete':locality_live_ok,
                     'regional_direct_quote':regional_direct_quote_ok,
