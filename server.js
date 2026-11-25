@@ -3804,7 +3804,12 @@ if(pathname==='/api/region-card-preview'){
    return respond(res,200,JSON.stringify({status:'not_found',query,locality:query,service:requested,region:null,cards:[],candidates:[],source:'선택한 서비스와 검색어가 일치하지 않습니다.'}),'application/json; charset=utf-8');
   }
   const contact=kind==='taksong'&&national.region.full_name==='제주특별자치도'?'1877-5245':PHONE;
-  const image=nationwideExplorer.imageUrl(query,kind);
+  // Preserve existing purpose-specific artwork when the expanded legal alias
+  // resolves a category that previously used the themed preview fallback.
+  const categoryTopic=national.category?keywordExpansion.resolve(query):null;
+  const categoryCard=categoryTopic&&categoryTopic.kind===kind&&categoryTopic.image.startsWith('/keyword-card/')&&categoryTopic.terms.some(term=>compact(query).endsWith(compact(term)))
+   ?keywordExpansion.preview(categoryTopic,{slug:national.region.slug,label:seoRegionLabel(national.region),url:servicePath(national.region,kind),phone:contact}):null;
+  const image=categoryCard?.image||nationwideExplorer.imageUrl(query,kind);
   const data={status:'matched',query,locality:national.region.full_name,service:kind,
    region:national.region.full_name,cards:[{kind,label:query,image,previewImage:image,
     // A regional card always opens its representative guide, not a transient
