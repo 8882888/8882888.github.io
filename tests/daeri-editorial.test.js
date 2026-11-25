@@ -380,12 +380,23 @@ async function get(p){
       assert.ok(originalById.has(id)&&html.includes(originalById.get(id).url),entry.path+' retains verified existing original source '+id);
    }
  }
- for(const staticRegion of ['seoul-daeri-taksong','gyeonggi-daeri-taksong','incheon-daeri-taksong','busan-daeri-taksong','daegu-daeri-taksong','gangwon-daeri-taksong','gangneung-taksong']){
+ for(const staticRegion of ['seoul-daeri-taksong','gyeonggi-daeri-taksong','incheon-daeri-taksong','busan-daeri-taksong','daegu-daeri-taksong','gangwon-daeri-taksong']){
   const resp=await fetch('http://127.0.0.1:3000/region/'+staticRegion+'/');
   assert.equal(resp.status,200,'curated region landing accessible '+staticRegion);
   const html=await resp.text();
   assert.ok(html.includes('https://jeongukdaeri.kr/region/'+staticRegion+'/'),'region landing keeps official self-canonical');
  }
+ // The older single-service Gangneung guide is intentionally consolidated,
+ // unlike the distinct combined provincial/regional editorial landing pages.
+ const legacyGangneung=await fetch('http://127.0.0.1:3000/region/gangneung-taksong/?source=editorial',{redirect:'manual'});
+ assert.equal(legacyGangneung.status,301,'legacy Gangneung guide must redirect');
+ assert.equal(legacyGangneung.headers.get('location'),'/taksong/gangwon/gangreung-si/?source=editorial');
+ const canonicalGangneung=await fetch('http://127.0.0.1:3000/taksong/gangwon/gangreung-si/');
+ assert.equal(canonicalGangneung.status,200);
+ const canonicalGangneungHtml=await canonicalGangneung.text();
+ assert.ok(canonicalGangneungHtml.includes('rel="canonical" href="https://jeongukdaeri.kr/taksong/gangwon/gangreung-si/"'));
+ assert.ok(canonicalGangneungHtml.includes('id="gangneung-customer-journey-20261125"'));
+ assert.ok(canonicalGangneungHtml.includes('tel:18114294'));
  const batch13CorePages=[{"route":"/route-taksong/","marker":"route-original-ref","ids":["224445317658","224452067282","224451230156","224430920625"],"jeju":false},{"route":"/region/","marker":"region-original-ref","ids":["224450113520","224449909441","224450005690"],"jeju":false},{"route":"/taksongdaeri/","marker":"booking-original-ref","ids":["224445451429","224452072174"],"jeju":false},{"route":"/fare/","marker":"fare-original-ref","ids":["224445451429","224452072174"],"jeju":false},{"route":"/fare/jeju/","marker":"jeju-fare-original-ref","ids":["224415828744","224408142163","224433990134"],"jeju":true}];
  for(const item of batch13CorePages){
   const resp=await fetch('http://127.0.0.1:3000'+item.route);

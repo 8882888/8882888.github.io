@@ -82,3 +82,19 @@ test('existing canonical wiring preserved and Gangneung priority description now
  assert.ok(snippet.includes(first));
  assert.ok(snippet.length<170);
 });
+
+test('Gangneung connects distinct existing customer intents without new sitemap entries or title churn',()=>{
+ const owners=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/sitemap-url-owners.json'),'utf8'));
+ for(const [kind,child] of [['daeri','long-distance'],['taksong','handover']]){
+  const html=seo.section(regions.get(gw+'강릉시'),kind);
+  assert.equal((html.match(/id="gangneung-customer-journey-20261125"/g)||[]).length,1);
+  for(const p of ['fare',child,'jumunjin-eup']){
+   const url='/'+kind+'/gangwon/gangreung-si/'+p+'/';
+   assert.ok(owners[url],'existing sitemap-owned route '+url);
+   assert.ok(html.includes('href="'+url+'"'),url);
+  }
+  assert.equal(seo.meta(regions.get(gw+'강릉시'),kind),null);
+ }
+ assert.doesNotMatch(seo.section(regions.get(gw+'속초시'),'daeri'),/gangneung-customer-journey/);
+ assert.ok(!owners['/region/gangneung-taksong/'],'retired guide must not be submitted');
+});
