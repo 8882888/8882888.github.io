@@ -48,6 +48,7 @@ jobs:
           node --test tests/canonical-host.test.cjs
           node --test tests/national-long-taksong-directed-quotes.test.cjs
           node --test tests/regional-evidence-journeys-20261125.test.cjs
+          node scripts/verify-cloudtype-regional-release.js --self-test
           node --check scripts/audit-live-priority-ctr-evidence.cjs
           python3 -m py_compile tools/audit_live_seo.py
           node tests/cycling-centers.test.js
