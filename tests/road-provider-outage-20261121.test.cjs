@@ -44,3 +44,41 @@ test('invalid provider distance cannot turn into a successful quote',async()=>{
  const x=getLookup([{body:{distanceKm:0,durationMinutes:20}}]);
  await assert.rejects(x.lookup('서울','부산',signal),/invalid distance/);
 });
+
+function consultationPanel(clipboard){
+ const nodes=[];
+ const element=tag=>({tag,style:{},children:[],handlers:{},append(...items){this.children.push(...items)},setAttribute(){},addEventListener(name,fn){this.handlers[name]=fn},focus(){this.focused=true},select(){this.selected=true}});
+ const result=element('div');
+ const ctx={document:{createElement:element},navigator:{clipboard},result};
+ vm.createContext(ctx);
+ const start=html.indexOf('function appendUnavailableQuoteConsultation('),end=html.indexOf('function appendConsultationDetails(',start);
+ assert(start>=0&&end>start);
+ vm.runInContext(html.slice(start,end)+'\nglobalThis.render=appendUnavailableQuoteConsultation;',ctx);
+ ctx.render('서울역','부산역','taksong');
+ const panel=result.children[0];
+ assert.equal(panel.id,'unavailable-quote-consultation');
+ return panel.children;
+}
+test('outage preserves route for explicit copy and Kakao consultation without automatic transmission',async()=>{
+ const writes=[];
+ const [label,request,copy,feedback,chat,note]=consultationPanel({writeText:async value=>writes.push(value)});
+ assert.equal(request.readOnly,true);
+ assert.match(request.value,/자동차탁송 요금 상담/);
+ assert.match(request.value,/출발지: 서울역/);
+ assert.match(request.value,/도착지: 부산역/);
+ assert.equal(writes.length,0);
+ assert.equal(copy.type,'button');
+ await copy.handlers.click();
+ assert.deepEqual(writes,[request.value]);
+ assert.match(feedback.textContent,/복사했습니다/);
+ assert.equal(chat.href,'https://open.kakao.com/o/sGV88r7h');
+ assert.match(note.textContent,/자동 전송되지 않습니다/);
+ assert(html.includes('result.append(contact);appendUnavailableQuoteConsultation(from,to,service)}finally'));
+});
+test('unavailable clipboard selects customer request for manual copying',async()=>{
+ const [,request,copy,feedback]=consultationPanel(undefined);
+ await copy.handlers.click();
+ assert.equal(request.focused,true);
+ assert.equal(request.selected,true);
+ assert.match(feedback.textContent,/직접 복사/);
+});
