@@ -24,6 +24,10 @@ on:
       - 'lib/canonical-host.cjs'
       - 'tests/canonical-host.test.cjs'
       - 'tests/business-company-keywords.test.js'
+      - 'service/long-distance-taksong/index.html'
+      - 'tests/national-long-taksong-directed-quotes.test.cjs'
+      - 'scripts/audit-live-priority-ctr-evidence.cjs'
+      - 'tools/audit_live_seo.py'
       - 'data/sitemap-url-owners.json'
       - '.github/workflows/smart24-server-check.yml'
   workflow_dispatch:
@@ -42,6 +46,9 @@ jobs:
         run: |
           node --check server.js
           node --test tests/canonical-host.test.cjs
+          node --test tests/national-long-taksong-directed-quotes.test.cjs
+          node --check scripts/audit-live-priority-ctr-evidence.cjs
+          python3 -m py_compile tools/audit_live_seo.py
           node tests/cycling-centers.test.js
       - name: Validate Naver Yeti noindex interpretation and sitemap audit classifications
         run: node --test tests/indexability-scope.test.mjs tests/yeti-priority-indexability.test.cjs

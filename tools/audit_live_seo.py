@@ -413,30 +413,27 @@ def run():
                 errors.append("missing expected XML/robots content or HTTP status")
             if path.endswith(".xml") and status == 200:
                 root = ET.fromstring(body)
-                locs = {node.text for node in root.iter() if node.tag.endswith("loc") and node.text}
-                if path == "/sitemap-taksong.xml":
-                    expected = {BASE + "/taksong/"} | {BASE + route for route in JOURNEY_PLANS}
-                else:
-                    expected = {BASE + "/daeri/", BASE + "/taksong/"}
-                    expected |= {BASE + route for route in CURATED_SOURCE_ROUTES}
-                    expected |= {BASE + route for route in JOURNEY_PLANS}
-                    expected |= {BASE + route for route in BLOG_HASHTAG_ARTICLES}
-                if path == "/sitemap.xml":
-                    expected |= {
-                        BASE + "/blog/archive/", BASE + "/설악산탁송/", BASE + "/지리산탁송/",
-                        BASE + "/business/rental-car/", BASE + "/business/used-car/",
-                        BASE + "/business/export-port/", BASE + "/business/auction/",
-                    }
-                # Only 59 explicitly reviewed regional guides are promoted for discovery;
-                # the 2,900 template-keyword rows are NOT mandatory sitemap targets.
-                minimum_focus_count = len(json.loads(Path("data/priority-regions.json").read_text(encoding="utf-8"))["pages"])
-                if path == '/sitemap-priority.xml' and len(locs) < minimum_focus_count:
-                    errors.append(f'priority sitemap has fewer URLs ({len(locs)}) than non-village curated targets ({minimum_focus_count})')
-                # Korean path components are percent-encoded in sitemap XML loc values.
-                expected = {BASE + quote(x[len(BASE):], safe="/%") for x in expected}
+                loc_list = [node.text for node in root.findall("{*}url/{*}loc") if node.text]
+                locs = set(loc_list)
+                owners = json.loads(Path("data/sitemap-url-owners.json").read_text(encoding="utf-8"))
+                mandatory = {"/daeri/", "/taksong/", "/blog/archive/", "/설악산탁송/", "/지리산탁송/",
+                             "/business/rental-car/", "/business/used-car/", "/business/export-port/", "/business/auction/"}
+                mandatory |= set(CURATED_SOURCE_ROUTES) | set(JOURNEY_PLANS) | set(BLOG_HASHTAG_ARTICLES)
+                unregistered = mandatory - set(owners)
+                if unregistered:
+                    errors.append("required routes absent from ownership registry: " + ", ".join(sorted(unregistered)[:6]))
+                expected = {BASE + quote(route, safe="/%") for route, owner in owners.items() if owner == path}
                 missing = expected - locs
+                extra = locs - expected
                 if missing:
                     errors.append("required canonical URLs missing: " + ", ".join(sorted(missing)[:6]))
+                if extra:
+                    errors.append("URLs outside assigned sitemap owner: " + ", ".join(sorted(extra)[:6]))
+                if len(loc_list) != len(locs):
+                    errors.append("duplicate URL in " + path)
+                minimum_focus_count = len(json.loads(Path("data/priority-regions.json").read_text(encoding="utf-8"))["pages"])
+                if path == '/sitemap-priority.xml' and len(locs) < minimum_focus_count:
+                    errors.append(f'priority sitemap has fewer URLs ({len(locs)}) than reviewed targets ({minimum_focus_count})')
                 duplicate_aliases = {BASE + "/service/daeri/", BASE + "/special/nationwide-daeri/",
                                      BASE + "/special/seoraksan-transport/", BASE + "/special/jirisan-transport/"}
                 duplicates = locs & duplicate_aliases

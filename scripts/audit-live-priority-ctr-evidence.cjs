@@ -14,7 +14,7 @@ const targets=[
  {region:'강원특별자치도 강릉시',kind:'daeri',path:'/daeri/gangwon/gangreung-si/',
   headline:'강릉대리운전 | 경포·안목·교동·주문진 예약·실제 운행기록'},
  {region:'강원특별자치도 강릉시',kind:'taksong',path:'/taksong/gangwon/gangreung-si/',
-  headline:'강릉탁송 실제 후기·요금 | 용인→강릉·경포·주문진'}
+  headline:'강릉탁송 | 강릉항·경포·주문진 차량인수·요금'}
 ];
 function ensure(ok,message){if(!ok)throw Error(message)}
 function uniqueMatch(html,re,message){
