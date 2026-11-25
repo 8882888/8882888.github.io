@@ -32,7 +32,15 @@ assert(home.includes('position:sticky!important;top:0!important'),'Homepage nav 
 assert(server.includes("serviceKeywordEntry.enhance(html,res._smartPath||'')"),'Server must inject service-specific first screen on dynamic/static routes');
 assert(server.includes("'/service/long-distance-daeri/'".replaceAll('\\',''))||server.includes("'/service/long-distance-daeri/'"),'Fallback menu missing fifth link');
 assert(long.includes('<link rel="canonical" href="https://jeongukdaeri.kr/service/long-distance-daeri/"'),'Long-distance canonical missing');
-assert(long.includes('장거리대리운전 실제 운행후기 확인')&&long.includes('기사 복귀'),'Unique long-distance content missing');
+const recordSection=long.match(/<section id="national-long-distance-records">([\s\S]*?)<\/section>/)?.[1]||'';
+assert(recordSection.includes('장거리 대리운전 실제 운행과 요금')&&long.includes('기사 복귀'),'Unique long-distance content missing');
+const {loadPublishedCases}=require('../lib/published-case-feed');
+const published=new Map(loadPublishedCases(root).map(row=>[row.path,row]));
+const recordLinks=[...recordSection.matchAll(/href="(\/reviews\/verified\/[a-f0-9]{16}\/)"[>]/g)].map(match=>match[1]);
+assert(new Set(recordLinks).size>=2,'At least two distinct published ride examples required');
+for(const route of recordLinks)assert.equal(published.get(route)?.service,'daeri','Unverified long-distance driver example '+route);
+assert(recordSection.includes('해당 운행일의 기록')&&recordSection.includes('/fare/?service=daeri'),'Historical fares must be separated from current quotes');
+assert(long.includes('national-long-daeri-corridors-20261124')&&long.includes('national-long-daeri-regions-20261124'),'National route and regional guidance missing');
 assert(long.includes('href="/reviews/history/?kind=daeri"'),'Verified ride records link missing');
 assert(!long.includes('100% 배차')&&!long.includes('확정 요금'),'Do not fabricate dispatch outcomes');
 console.log('PASS: five distinct keyword entry points, fixed menu, selected state, booking CTAs, original content and canonical');
