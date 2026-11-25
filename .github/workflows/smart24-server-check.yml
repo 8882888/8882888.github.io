@@ -222,6 +222,10 @@ jobs:
            const report=await health.json();
            const expected='sha256-'+require('node:crypto').createHash('sha256').update(require('node:fs').readFileSync('./lib/regional-evidence-journeys.cjs')).digest('hex').slice(0,16);
            assert.deepEqual(report.regionalEvidence,{revision:expected,activeRegionServicePages:plans.length*2});
+           const expectedLocality='sha256-'+require('node:crypto').createHash('sha256').update(require('node:fs').readFileSync('./lib/nationwide-locality-explorer.js')).digest('hex').slice(0,16);
+           const legalCount=new Set(Array.from({length:17},(_,i)=>require('./data/legal-regions/'+String(i+1).padStart(2,'0')+'.json').full_names).flat()).size;
+           assert.deepEqual(report.localitySearch,{revision:expectedLocality,regionCount:legalCount});
+           console.log('PASS nationwide locality deployment evidence '+expectedLocality+' regions '+legalCount);
            console.log('PASS regional content deployment evidence '+expected);
            console.log('PASS '+(plans.length*2)+' regional source-backed customer journeys');
           })().catch(e=>{console.error(e);process.exitCode=1});
