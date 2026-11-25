@@ -3650,7 +3650,7 @@ if(searchIntent){
  const named=keywordExpansion.resolve(searchIntent);
  const specificCycle=named&&['eastcoast','yeongsan','seomjin','geumgang','ocheon','nakdong','cycling','cycling-route','baekdudaegan-cycling'].includes(named.slug);
  // Distinct trekking routes always win over a generic locality match.
- const target=cyclingBidirectionalTarget||exactCycle||mountain||touristPlaceTarget||usedCarBuyerTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||busVehicleTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
+ let target=cyclingBidirectionalTarget||exactCycle||mountain||touristPlaceTarget||usedCarBuyerTarget||serviceCenterTaksong.find(normalized)||coastalLocalityService(normalized,full=>regionByFullName.get(full),servicePath)||placeTarget||workVehicleTarget||truckTarget||truckLocalityTarget||truckOtherTarget||busVehicleTarget||(specificCycle?named.url:cycle?'/special/cycling-trail-transport/':null)||
   nationwideRegionTarget(searchIntent)||regionalServiceTarget(searchIntent)||resolveRegionalKeywordVariant(searchIntent,nationwideExplorer.resolve)||
   ({
    '대리운전':'/daeri/','전국대리운전':'/daeri/','전국대리':'/daeri/',
@@ -3663,6 +3663,14 @@ if(searchIntent){
    '장거리대리운전':'/service/long-distance-daeri/','전국장거리대리운전':'/service/long-distance-daeri/','시외대리운전':'/service/long-distance-daeri/','전국시외대리운전':'/service/long-distance-daeri/','장거리대리운전예약':'/service/long-distance-daeri/','장거리대리운전요금':'/service/long-distance-daeri/','심야장거리대리운전':'/service/long-distance-daeri/','지방장거리대리운전':'/service/long-distance-daeri/','장거리대리요금':'/service/long-distance-daeri/','장거리탁송':'/service/long-distance-taksong/',
    '일일기사':'/service/daily-driver/'
   }[normalized])||nationwideExplorer.resolveServiceBooking(searchIntent)||(named&&named.url);
+ // A specialized regional resolver may already select the same canonical page.
+ // Retain that page, but do not let it swallow an exact long-distance or
+ // regional booking/quote intent. Distinct mountain, facility, and corridor
+ // landing pages retain their established precedence.
+ const exactAdministrativeIntent=nationwideExplorer.resolve(searchIntent);
+ if(exactAdministrativeIntent&&/^(?:장거리|시외|지역)/.test(exactAdministrativeIntent.term)&&target===exactAdministrativeIntent.canonical){
+  target=exactAdministrativeIntent.url;
+ }
  if(target){res.writeHead(302,{location:target.startsWith('/fare/?')?target:encodeURI(target),'cache-control':'no-store','vary':'Referer'});return res.end();}
 }
 if(pathname==='/keyword-search/'||pathname==='/keyword-search'){
