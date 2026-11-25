@@ -2323,6 +2323,8 @@ function vehicleTopicsHub(){
 }
 const publishedCaseEntries=loadPublishedCases(ROOT);
 const regionalEvidenceJourneys=require('./lib/regional-evidence-journeys.cjs').createRegionalEvidenceJourneys({reviewedRides,publishedCases:publishedCaseEntries,regionByFullName,servicePath,owners:sitemapOwnerByPath,esc});
+// A library-only regional editorial change must be independently identifiable on the live server.
+const REGIONAL_EVIDENCE_REVISION='sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'lib/regional-evidence-journeys.cjs'))).digest('hex').slice(0,16);
 const publishedCaseByPath=new Map(publishedCaseEntries.map(ride=>[ride.path,ride]));
 function nationalRideReviewLead(kind){
  const rides=publishedCaseEntries.filter(ride=>ride.service===kind).slice(0,4);
@@ -4024,7 +4026,7 @@ if(pathname==='/api/legal-region-index'){
 if(pathname==='/health'){
  res.setHeader('cache-control','no-store, max-age=0, must-revalidate');
  res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy',release:'sha256-'+DEPLOY_SHA256.slice(0,16),publishedCases:{count:publishedCaseEntries.length,latestId:publishedCaseEntries[0]?.id||null,latestPublishedAt:publishedCaseEntries[0]?.publishedAt||null},trafficAnalytics:TRAFFIC_ANALYTICS_SHA256,regionalGuideAreas:regionalIntentAreas.length,regionalGuides:regionalIntentAreas.length*4,innovationCity:{guideCount:innovationCity100.length,regionServiceGroups:innovationCity100ByRegionKind.size,uniqueRegions:new Set(innovationCity100.map(x=>x.region)).size,guideRevision:require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'data/innovation-city-100.json'))).digest('hex').slice(0,16)},keywordAutomation:{stored:keywordEngine.summary.stored,collected:keywordEngine.summary.collected,updatedAt:keywordEngine.summary.updatedAt},features:{keywordAutoLinking:true,pngBusinessCards:true,cardClickToCall:true,publicRideHistory:true,hideDepartureTime:true}}), 'application/json; charset=utf-8');
+ return respond(res,200,JSON.stringify({ok:true,regions:regions.length,source:'public legal-dong hierarchy',release:'sha256-'+DEPLOY_SHA256.slice(0,16),publishedCases:{count:publishedCaseEntries.length,latestId:publishedCaseEntries[0]?.id||null,latestPublishedAt:publishedCaseEntries[0]?.publishedAt||null},trafficAnalytics:TRAFFIC_ANALYTICS_SHA256,regionalEvidence:{revision:REGIONAL_EVIDENCE_REVISION,activeRegionServicePages:regionalEvidenceJourneys.size},regionalGuideAreas:regionalIntentAreas.length,regionalGuides:regionalIntentAreas.length*4,innovationCity:{guideCount:innovationCity100.length,regionServiceGroups:innovationCity100ByRegionKind.size,uniqueRegions:new Set(innovationCity100.map(x=>x.region)).size,guideRevision:require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'data/innovation-city-100.json'))).digest('hex').slice(0,16)},keywordAutomation:{stored:keywordEngine.summary.stored,collected:keywordEngine.summary.collected,updatedAt:keywordEngine.summary.updatedAt},features:{keywordAutoLinking:true,pngBusinessCards:true,cardClickToCall:true,publicRideHistory:true,hideDepartureTime:true}}), 'application/json; charset=utf-8');
 }
 if(pathname==='/rss.xml'||pathname==='/feed.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
