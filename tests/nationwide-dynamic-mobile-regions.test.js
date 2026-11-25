@@ -197,6 +197,8 @@ for(const [keyword,full,kind,anchor] of [
  assert.equal(matched.url,matched.canonical+anchor,keyword);
  assert.equal(explorer.suggestions(keyword,{kind:kind==='daeri'?'taksong':'daeri'})[0]?.service_url,matched.canonical,keyword);
 }
+assert.equal(explorer.resolve('광주탁송')?.region.full_name,'광주광역시','Preserve established metropolitan taksong canonical');
+assert.equal(explorer.resolve('경기광주지역탁송')?.region.full_name,'경기도 광주시','Qualified new regional intent must select Gyeonggi Gwangju');
 for(const query of ['고성장거리대리운전','중구지역탁송','광주지역대리운전','대구양도면장거리탁송']){
  assert.equal(explorer.resolve(query),null,query);
 }
