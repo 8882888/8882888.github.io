@@ -49,8 +49,13 @@ test('coastal destination advice distinguishes mountain/cycling transfer from co
  }
 });
 
-test('all 59 priority pages avoid the two copied innovation-city bulk templates',()=>{
- assert.equal(pages.length,59);
+test('all 60 priority pages avoid copied templates and preserve the verified Gapgot-ri addition',()=>{
+ assert.equal(pages.length,60);
+ assert.equal(new Set(pages.map(row=>row.region+'|'+row.kind)).size,pages.length,'Duplicate priority region/service');
+ const gapgot=pages.find(row=>row.region==='인천광역시 강화군 강화읍 갑곳리'&&row.kind==='daeri');
+ assert.ok(gapgot&&gapgot.detail.includes('선원면'),'Preserve the verified Gapgot-ri guide');
+ const rides=JSON.parse(fs.readFileSync(path.join(root,'data/public-reviewed-rides-202610.json'),'utf8'));
+ assert.ok(rides.some(row=>row.service==='daeri'&&row.verified===true&&row.status==='completed'&&row.departure.includes('갑곳리')&&row.destination.includes('선원면')),'Gapgot-ri guide must retain completed source evidence');
  const repetitive=pages.filter(row=>/일대에서 공공기관·법인차량|특히 혁신도시 공공기관·업무시설/.test(row.detail));
  assert.deepEqual(repetitive.map(row=>row.region+' '+row.kind),[]);
  const ulsan=pages.find(row=>row.region==='울산광역시 중구'&&row.kind==='daeri');

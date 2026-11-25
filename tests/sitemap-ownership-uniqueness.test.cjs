@@ -8,6 +8,7 @@ const net=require('node:net');
 
 const root=path.resolve(__dirname,'..');
 const owners=JSON.parse(fs.readFileSync(path.join(root,'data/sitemap-url-owners.json'),'utf8'));
+const {loadPublishedCases}=require('../lib/published-case-feed');
 const ns='http://www.sitemaps.org/schemas/sitemap/0.9';
 
 async function unusedPort(){
@@ -54,9 +55,10 @@ test('live sitemap output preserves all registered canonical URLs exactly once u
    emitted.push(route);
   }
  }
- assert.equal(emitted.length,4303,'all unique production-baseline URLs and current main additions must remain in feeds');
+ assert.equal(emitted.length,Object.keys(owners).length,'all registered URLs must remain in feeds');
  assert.equal(new Set(emitted).size,emitted.length,'a URL must be listed in only one feed');
  assert.deepEqual(new Set(emitted),new Set(Object.keys(owners)),'the unique URL set must be unchanged');
- assert.equal(Object.keys(owners).length,4303);
+ assert.ok(Object.keys(owners).length>=4308,'preserve the 4,303 baseline URLs and five restored cases');
+ for(const ride of loadPublishedCases(root))assert.equal(owners[ride.path],'/sitemap-published.xml','published case must have dedicated owner: '+ride.path);
  assert.equal(ns,'http://www.sitemaps.org/schemas/sitemap/0.9');
 });
