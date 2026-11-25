@@ -266,6 +266,14 @@ jobs:
             const data=await suggestion.json();
             assert.equal(data.items[0]?.full_name,full);
             assert.equal(data.items[0]?.service_url,decodeURI(canonical));
+            const preview=await get('/api/region-card-preview?q='+encodeURIComponent(full+long+'요금'));
+            assert.equal(preview.status,200);
+            const card=(await preview.json()).cards[0];
+            assert.equal(card?.url,decodeURI(canonical),full+' representative card URL');
+            const cardQuote=new URL(card.quote_url,origin);
+            assert.equal(cardQuote.pathname,'/fare/');
+            assert.equal(cardQuote.searchParams.get('from'),full);
+            assert.equal(cardQuote.searchParams.get('service'),kind);
             console.log('PASS '+levels[i]+' '+kind+' canonical, long-distance, regional, quote and autocomplete',full);
            }
           })().catch(e=>{console.error(e);process.exitCode=1});
