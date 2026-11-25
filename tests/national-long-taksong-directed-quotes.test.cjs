@@ -6,7 +6,8 @@ const html=fs.readFileSync(path.join(root,'service/long-distance-taksong/index.h
 const read=p=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
 const owners=read('data/sitemap-url-owners.json');
 const state=read('data/published-ride-case-ids.json');
-const records=[...read('data/public-reviewed-rides-202610.json'),...read('data/verified-ride-publication-queue.json')];
+// Use only the public-reviewed location fields, not the publication queue.
+const records=read('data/public-reviewed-rides-202610.json');
 const identifier=x=>crypto.createHash('sha256').update(['date','service','departure','destination','fare'].map(k=>String(x[k]||'')).join('|')).digest('hex').slice(0,16);
 test('all three directed quotes match immutable completed records; reverse is explicitly not a completed ride',()=>{
  const section=html.match(/<section id="long-taksong-directed-quote-20261125"[\s\S]*?<\/section>/)?.[0]||'';
