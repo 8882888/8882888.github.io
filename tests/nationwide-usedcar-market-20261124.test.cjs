@@ -111,3 +111,22 @@ test('Real HTTP national market search returns original booking URL and preserve
   }
  }finally{cp.kill('SIGTERM');}
 });
+
+test('All 13 existing public market entries offer distinct pickup and delivery queries; M Park retains three addresses',()=>{
+ const markets=[...section.matchAll(/<li><h3>([\s\S]*?)<\/li>/g)];
+ assert.equal(markets.length,13);
+ const expected=[["서울특별시 성동구 용답동"],["인천광역시 서구 염곡로 149","인천광역시 서구 봉수대로 158","인천광역시 서구 염곡로 52"],["경기도 수원시 권선구 권선로 308-5"],["대구광역시 서구 문화로 37"],["부산광역시 사하구 하신중앙로54번길 13"],["부산광역시 기장군 장안읍 반룡산단3로 95"],["경상남도 창원시 마산회원구 무역로 79"],["경상남도 사천시 축동면 사천대로 2216"],["경상북도 구미시 야은로 137"],["경상북도 안동시 풍산읍 유통단지길 87"],["경상북도 포항시 남구 희망대로 648"],["전라남도 순천시 서면 백강로 596"],["전라남도 순천시 이수로 50-2"]];
+ for(const [i,match] of markets.entries()){
+  const queries=[...match[1].matchAll(/href="(\/fare\/\?service=taksong&amp;[^"]+)"/g)].map(x=>new URL(x[1].replaceAll('&amp;','&'),'https://jeongukdaeri.kr'));
+  assert.equal(queries.length,expected[i].length*2);
+  for(const [j,addr] of expected[i].entries()){
+   assert.equal(queries[2*j].searchParams.get('from'),addr);
+   assert.equal(queries[2*j].searchParams.has('to'),false);
+   assert.equal(queries[2*j+1].searchParams.get('to'),addr);
+   assert.equal(queries[2*j+1].searchParams.has('from'),false);
+   assert.equal(queries[2*j].searchParams.get('service'),'taksong');
+   assert.equal(queries[2*j+1].searchParams.get('service'),'taksong');
+  }
+ }
+ assert.ok(section.includes('입고·출고 양방향 안내는 실제 완료 후기가 아닙니다'));
+});

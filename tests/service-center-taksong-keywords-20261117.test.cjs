@@ -84,3 +84,17 @@ test('existing canonical search entrypoints link to distinct car and truck cente
   }
  }finally{child.kill()}
 });
+
+test('Existing service-center brand pages are directly discoverable without new sitemap URLs',()=>{
+ const fs=require('node:fs');
+ const html=fs.readFileSync(path.join(root,'service/taksong/index.html'),'utf8');
+ const owners=require('../data/sitemap-url-owners.json');
+ const block=html.match(/<div id="service-center-brand-direct-links-20261125">[\s\S]*?<\/div>/)?.[0]||'';
+ const links=[...block.matchAll(/href="(\/taksong\/type\/[a-f0-9]+\/)"/g)].map(x=>x[1]);
+ const names=["블루핸즈탁송","기아오토큐탁송","르노코리아서비스센터탁송","쉐보레서비스센터탁송","제네시스서비스센터탁송","KG모빌리티서비스센터탁송","벤츠서비스센터탁송","BMW서비스센터탁송","포르쉐서비스센터탁송","아우디서비스센터탁송","포드서비스센터탁송","도요타서비스센터탁송","렉서스서비스센터탁송","볼보서비스센터탁송","폭스바겐서비스센터탁송","랜드로버서비스센터탁송","재규어서비스센터탁송","혼다서비스센터탁송","닛산서비스센터탁송","미니서비스센터탁송","테슬라서비스센터탁송","캐딜락서비스센터탁송","링컨서비스센터탁송","마세라티서비스센터탁송","벤틀리서비스센터탁송","롤스로이스서비스센터탁송"];
+ assert.deepEqual(links,names.map(brandPage));assert.equal(new Set(links).size,26);
+ for(const url of links)assert.ok(owners[url],'registered existing URL '+url);
+ assert.ok(block.includes('/taksong/types/#commercial-truck-service-centers'));
+ assert.ok(block.includes('제조사 공식 서비스센터나 제휴업체 명단이 아닙니다'));
+ assert.ok(block.includes('https://open.kakao.com/o/sGV88r7h'));
+});
