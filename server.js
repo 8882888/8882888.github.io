@@ -3799,7 +3799,9 @@ if(pathname==='/api/region-card-preview'){
   const image=nationwideExplorer.imageUrl(query,kind);
   const data={status:'matched',query,locality:national.region.full_name,service:kind,
    region:national.region.full_name,cards:[{kind,label:query,image,previewImage:image,
-    url:national.url,phone:contact,displayKeyword:query,
+    // A regional card always opens its representative guide, not a transient
+    // quote URL or fragment. Keep the prefilled quote as a separate action.
+    url:national.canonical||national.url,quote_url:nationwideExplorer.estimateUrl(national.region,kind),phone:contact,displayKeyword:query,
     description:national.category?'지역 서비스 안내용 명함입니다. 특정 시설의 소재나 제휴 여부는 별도로 확인해 주세요.':'등록된 행정구역과 검색어가 일치하는 안내용 이미지입니다. 지역 지점·상주기사·실제 운행완료를 의미하지 않으며 예상요금과 배차는 상담 후 확인합니다.'}],
    candidates:[],source:'전국 17개 시·도 행정구역 데이터와 일치하는 검색어입니다. 요금·배차는 상담 후 확정합니다.'};
   res.setHeader('x-robots-tag','noindex,nofollow');
