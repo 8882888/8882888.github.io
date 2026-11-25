@@ -13,15 +13,15 @@ for(const p of plans)for(const [full,url] of [[p.fromRegion,p.fromPath],[p.toReg
 }
 const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const options={reviewedRides,publishedCases,regionByFullName,owners,esc,servicePath:r=>servicePaths.get(r.full_name)};
-test('Six distinct city pages connect to three existing published approved records, with accurate origin and destination roles',()=>{
+test('Ten distinct regional pages connect to five existing published approved records, with accurate origin and destination roles',()=>{
  const journeys=createRegionalEvidenceJourneys(options);
- assert.equal(journeys.size,6);
+ assert.equal(journeys.size,10);
  const notes=new Set();
  for(const p of plans){
-  const id=identifier({...p,service:'taksong'});
+  const id=identifier(p);
   assert.ok(publishedCases.some(x=>x.id===id),id);
   for(const [full,role,other] of [[p.fromRegion,'출발',p.toPath],[p.toRegion,'도착',p.fromPath]]){
-   const r=regionByFullName.get(full),html=journeys.render(r,'taksong');
+   const r=regionByFullName.get(full),html=journeys.render(r,p.service);
    assert.ok(html.includes('이 지역 '+role+' 기록'),full);
    assert.ok(html.includes('/reviews/verified/'+id+'/'));
    assert.ok(html.includes('href="'+other+'"'));
@@ -29,11 +29,12 @@ test('Six distinct city pages connect to three existing published approved recor
    const q=html.match(/href="(\/fare\/\?[^"]+)"/)?.[1];
    const url=new URL(q.replaceAll('&amp;','&'),'https://jeongukdaeri.kr');
    assert.equal(url.searchParams.get('from'),p.departure);assert.equal(url.searchParams.get('to'),p.destination);
-   assert.equal(journeys.render(r,'daeri'),'');
+   assert.equal(journeys.render(r,p.service==='daeri'?'taksong':'daeri'),'');
+   assert.equal(url.searchParams.get('service'),p.service);
    notes.add(html.match(/<\/time>[\s\S]*?<\/p><p>(.*?)<\/p>/)?.[1]);
   }
  }
- assert.equal(notes.size,6);
+ assert.equal(notes.size,10);
  assert.equal(journeys.render({full_name:'경기도 용인시 기흥구'},'taksong'),'');
  const incomplete=createRegionalEvidenceJourneys({...options,publishedCases:[]});
  assert.equal(incomplete.size,0);

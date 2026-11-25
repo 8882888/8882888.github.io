@@ -209,7 +209,7 @@ jobs:
             assert.ok(section.includes('href="'+other+'"'),route);
             assert.ok(section.includes(p.fare),route);
            }
-           console.log('PASS six regional source-backed customer journeys');
+           console.log('PASS ten regional source-backed customer journeys');
           })().catch(e=>{console.error(e);process.exitCode=1});
           PYREGIONJOURNEY
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/
