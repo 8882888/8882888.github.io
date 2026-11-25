@@ -45,7 +45,7 @@ def has_review_near_top(sections):
     # Direct answer, source-linked ride summary and booking may precede the evidence section; unrelated
     # SEO blocks, or a review pushed down the page, are still rejected.
     review_section="busan-taksong-real-review-first-20261104"
-    permitted_prefix=("regional-direct-answer","regional-taksong-review-first-20261113","regional-booking-first")
+    permitted_prefix=("regional-direct-answer","regional-source-directed-journey-20261125","regional-taksong-review-first-20261113","regional-booking-first")
     try:
         position=sections.index(review_section)
     except ValueError:
@@ -66,6 +66,12 @@ def audit(route):
         raise AssertionError(f"{route}: H1 is not review-first: {p.h1!r}")
     if not has_review_near_top(p.sections):
         raise AssertionError(f"{route}: verified review missing from top content: {p.sections[:5]!r}")
+    # The new evidence-first section may precede the legacy review block only
+    # when it links to the actual published Donghae -> Busan arrival record.
+    if route=="/taksong/busan/" and "regional-source-directed-journey-20261125" in p.sections:
+        source_section=re.search(r'<section id="regional-source-directed-journey-20261125"[^>]*>(.*?)</section>',text,re.S)
+        if not source_section or not all(marker in source_section.group(1) for marker in ('/reviews/verified/480cf66b7b224b95/','이 지역 도착 기록','140,000원','동해시')):
+            raise AssertionError(f"{route}: new source-directed review does not match the published arrival record")
     if not p.tags:raise AssertionError(f"{route}: local hashtag paragraph missing")
     tags=p.tags.split()
     if len(tags)!=30 or len(set(tags))!=30 or any(t not in tags for t in REQUIRED_TAGS):
