@@ -13,11 +13,13 @@ for(const p of plans)for(const [full,url] of [[p.fromRegion,p.fromPath],[p.toReg
 }
 const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const options={reviewedRides,publishedCases,regionByFullName,owners,esc,servicePath:r=>servicePaths.get(r.full_name)};
-test('Sixteen distinct regional pages connect to eight existing published approved records, with accurate origin and destination roles',()=>{
+test('Twenty-six distinct regional pages connect to thirteen existing published approved records, with accurate origin and destination roles',()=>{
  const journeys=createRegionalEvidenceJourneys(options);
- assert.equal(plans.length,8);
- assert.equal(journeys.size,16);
+ assert.equal(plans.length,13);
+ assert.equal(journeys.size,26);
  const notes=new Set();
+ assert.equal(new Set(plans.flatMap(p=>[p.service+'|'+p.fromRegion,p.service+'|'+p.toRegion])).size,26);
+ assert.equal(new Set(plans.map(identifier)).size,13);
  for(const p of plans){
   const id=identifier(p);
   assert.ok(publishedCases.some(x=>x.id===id),id);
@@ -35,7 +37,7 @@ test('Sixteen distinct regional pages connect to eight existing published approv
    notes.add(html.match(/<\/time>[\s\S]*?<\/p><p>(.*?)<\/p>/)?.[1]);
   }
  }
- assert.equal(notes.size,16);
+ assert.equal(notes.size,26);
  assert.equal(journeys.render({full_name:'경기도 용인시 기흥구'},'taksong'),'');
  const incomplete=createRegionalEvidenceJourneys({...options,publishedCases:[]});
  assert.equal(incomplete.size,0);
@@ -46,11 +48,11 @@ test('Missing sitemap ownership, mismatched published facts and unverified sourc
  const r=regionByFullName.get(p.fromRegion);
  const withoutOwner={...owners};delete withoutOwner[recordPath];
  const missing=createRegionalEvidenceJourneys({...options,owners:withoutOwner});
- assert.equal(missing.size,14);assert.equal(missing.render(r,p.service),'');
+ assert.equal(missing.size,24);assert.equal(missing.render(r,p.service),'');
  const changed=createRegionalEvidenceJourneys({...options,publishedCases:publishedCases.map(x=>x.id===id?{...x,fare:'1원'}:x)});
- assert.equal(changed.size,14);assert.equal(changed.render(r,p.service),'');
+ assert.equal(changed.size,24);assert.equal(changed.render(r,p.service),'');
  const unverified=createRegionalEvidenceJourneys({...options,reviewedRides:reviewedRides.map(x=>identifier(x)===id?{...x,verified:false}:x)});
- assert.equal(unverified.size,14);assert.equal(unverified.render(r,p.service),'');
+ assert.equal(unverified.size,24);assert.equal(unverified.render(r,p.service),'');
  const bugang=plans.find(x=>x.fromRegion.includes('부강면'));
  assert.ok(!createRegionalEvidenceJourneys(options).render(regionByFullName.get(bugang.fromRegion),bugang.service).includes('(직할)'));
 });
