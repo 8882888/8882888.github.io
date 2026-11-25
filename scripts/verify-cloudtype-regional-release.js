@@ -55,6 +55,18 @@ const meta=html=>html.match(/<meta\b[^>]*name=["']description["'][^>]*content=["
     }
     console.log('PASS Cloudtype server.js release and four updated province snippets');
     console.log('PASS Cloudtype regional content release',expectedRegional,'active pages',expectedRegionPages);
+    if(strict){
+     const {identifier}=require('../lib/published-case-feed');
+     for(const p of require(regionalModule).plans){
+      const route='/reviews/verified/'+identifier(p)+'/';
+      const review=await fetch(official+route+'?release-verification='+Date.now(),{redirect:'manual',signal:AbortSignal.timeout(16000),headers:{'Cache-Control':'no-cache'}});
+      if(review.status!==200||/noindex/i.test(review.headers.get('x-robots-tag')||''))throw Error(route+' review response or robots mismatch');
+      const body=await review.text();
+      const section=body.match(/<section id="verified-review-region-links-20261126"[\s\S]*?<\/section>/)?.[0]||'';
+      if(!body.includes('rel="canonical" href="'+official+route+'"')||!section.includes('href="'+p.fromPath+'"')||!section.includes('href="'+p.toPath+'"')||!section.includes(p.departure+' 출발 기록')||!section.includes(p.destination+' 도착 기록'))throw Error(route+' review reciprocal link proof mismatch');
+     }
+     console.log('PASS Cloudtype reciprocal published review links',require(regionalModule).plans.length);
+    }
     console.log('PASS Cloudtype nationwide locality search',expectedLocality,'loaded regions',expectedLocalities);
     return;
    }
