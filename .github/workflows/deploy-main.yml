@@ -225,6 +225,26 @@ jobs:
                     and 'name="from" value="부산광역시"' in page
                     and 'name="auto" value="1"' in page
                     and 'smart24_explicit_quote_submit' in page)
+                  # Compare the real calculator script with the deployed source.
+                  # server.js may not change when fare/index.html changes.
+                  import hashlib
+                  from pathlib import Path
+                  def quote_script_digest(html):
+                      start=html.find("const worker='https://white-voice-6eab.k337711.workers.dev/route';")
+                      end=html.find('</script>',start)
+                      if start<0 or end<0:
+                          return None
+                      script=html[start:end].replace('\r\n','\n').strip()
+                      if 'function appendUnavailableQuoteConsultation(' not in script or 'appendUnavailableQuoteConsultation(from,to,service)}finally' not in script:
+                          return None
+                      return hashlib.sha256(script.encode('utf-8')).hexdigest()
+                  expected_fare_script=quote_script_digest(Path('fare/index.html').read_text(encoding='utf-8'))
+                  live_fare_script=quote_script_digest(fare_page)
+                  fare_consultation_ok=bool(expected_fare_script and expected_fare_script==live_fare_script)
+                  if fare_consultation_ok:
+                      print('PASS live fare calculator and outage consultation source sha256='+live_fare_script,flush=True)
+                  else:
+                      print('Fare source mismatch: expected=%s live=%s' % (expected_fare_script,live_fare_script),flush=True)
                   mobile_quote_ok=(
                     'id="homepage-mobile-first-20261107"' in home
                     and 'id="homepage-fare-form"' in home
@@ -284,6 +304,7 @@ jobs:
                     'regional_statistics':region_stats_ok,
                     'daegu_brand_label':regional_brand_ok,
                     'mobile_fare_quote':mobile_quote_ok,
+                    'fare_consultation_source':fare_consultation_ok,
                     'administrative_region_links':nationwide_dynamic_ok,
                     'locality_autocomplete':locality_live_ok,
                     'regional_direct_quote':regional_direct_quote_ok,
