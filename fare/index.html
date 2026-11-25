@@ -85,6 +85,32 @@ async function lookupRoad(from,to,signal){
 }
 const preset=new URLSearchParams(location.search);for(const id of ['from','to']){const value=preset.get(id);if(value&&value.length<=150)document.getElementById(id).value=value}if(['daeri','taksong'].includes(preset.get('service')))document.getElementById('service').value=preset.get('service');
 
+// When the external provider cannot return a real road distance, preserve the
+// customer's inputs for a consultation. Never send the address automatically.
+function appendUnavailableQuoteConsultation(from,to,service){
+ const panel=document.createElement('div');panel.id='unavailable-quote-consultation';
+ const label=document.createElement('label');label.htmlFor='unavailable-quote-request';label.textContent='상담 요청 내용 (복사해서 전달)';
+ const request=document.createElement('textarea');request.id=label.htmlFor;request.readOnly=true;request.rows=4;
+ request.style.cssText='width:100%;padding:12px;font:inherit;border:1px solid #a8b8ca;border-radius:8px;resize:vertical';
+ request.value=[service==='daeri'?'대리운전 요금 상담':'자동차탁송 요금 상담','출발지: '+from,'도착지: '+to,'희망 날짜·시간 및 차종: 상담 시 전달'].join('\n');
+ const feedback=document.createElement('small');feedback.setAttribute('role','status');
+ const copy=document.createElement('button');copy.type='button';copy.className='btn';copy.textContent='상담 내용 복사';
+ copy.addEventListener('click',async()=>{
+  try{
+   if(!navigator.clipboard?.writeText)throw Error('clipboard unavailable');
+   await navigator.clipboard.writeText(request.value);
+   feedback.textContent='복사했습니다. 카카오톡 상담창에 직접 붙여넣어 주세요.';
+  }catch(_){
+   request.focus();request.select();
+   feedback.textContent='상담 내용을 선택했습니다. 직접 복사해 주세요.';
+  }
+ });
+ const chat=document.createElement('a');chat.href='https://open.kakao.com/o/sGV88r7h';chat.target='_blank';chat.rel='noopener noreferrer';
+ chat.className='btn';chat.textContent='카카오톡 요금·배차 상담';chat.style.cssText='background:#fee500;color:#171717';
+ const note=document.createElement('small');note.textContent='현재 견적이나 예약이 확정된 것이 아닙니다. 입력 내용은 자동 전송되지 않습니다.';
+ panel.append(label,request,copy,feedback,chat,note);result.append(panel);
+}
+
 function appendConsultationDetails(from,to,service){
  const isTaksong=service==='taksong';
  const details=document.createElement('details');
@@ -127,7 +153,7 @@ if(from.normalize('NFKC').replace(/\s/g,'').toLowerCase()===to.normalize('NFKC')
 }
 const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
 try{const data=await lookupRoad(from,to,controller.signal);const km=Number(data.distanceKm),mins=Number(data.durationMinutes);const {band,isSokcho,isIncheon,remoteApplied}=RoadFare.roadQuote(km,service,from,to);result.replaceChildren();result.dataset.quoteState='success';if(window.smart24QuoteOutcome)window.smart24QuoteOutcome(service,'success');const heading=document.createElement('strong');heading.textContent=from+' → '+to;result.append(heading,document.createElement('br'));result.append('도로거리 약 '+Math.round(km).toLocaleString('ko-KR')+'km');if(Number.isFinite(mins)&&mins>0)result.append(' · 예상 '+Math.round(mins)+'분');result.append(document.createElement('br'));const price=document.createElement('div');price.className='price';price.textContent=(service==='daeri'?'대리운전':'자동차탁송')+' 예상 참고요금 '+band.map(n=>n.toLocaleString('ko-KR')+'원').join(' ~ ');result.append(price);const note=document.createElement('small');note.textContent=isSokcho&&isIncheon?'속초 출발·인천 도착 지역 참고 사례를 우선 적용했습니다. 실제 배차요금은 조건에 따라 달라집니다.':remoteApplied?'기사 수급이 어려울 수 있는 지역으로 기본 참고요금에 20%를 가산한 추정치입니다. 실제 배차 가능 여부와 최종요금은 상담 후 확인해 주세요.':service==='daeri'?'대리운전 참고요금은 탁송 기준 대비 약 30% 가산한 추정치입니다. 시간대·기사 수급·복귀 조건에 따라 달라집니다.':'탁송 참고요금은 거리별 추정치입니다.';result.append(note);const call=document.createElement('a');call.href='tel:18114294';call.className='btn result-call';call.textContent='☎ 이 구간 요금·배차 전화상담 1811-4294';result.append(call);const contactNote=document.createElement('small');contactNote.className='result-contact-note';contactNote.textContent='상담 시 '+from+' 출발, '+to+' 도착, '+(service==='daeri'?'대리운전':'자동차탁송')+' 이용이라고 알려주세요. 날짜·시간·차종·기사 수급에 따라 최종 견적은 달라집니다.';result.append(contactNote);
-}catch(err){result.replaceChildren();const timedOut=err&&err.name==='AbortError';result.dataset.quoteState=timedOut?'timeout':'error';if(window.smart24QuoteOutcome)window.smart24QuoteOutcome(service,timedOut?'timeout':'error');const failedRoute=document.createElement('strong');failedRoute.textContent=from+' → '+to+' ('+(service==='daeri'?'대리운전':'자동차탁송')+')';result.append(failedRoute,document.createElement('br'),timedOut?'도로거리 조회가 지연되어 12초 후 종료했습니다.':err?.kind==='provider-config'?'도로거리 제공 서비스의 연결 설정 또는 이용 한도 문제로 지금은 자동 계산을 할 수 없습니다.':'현재 자동 도로거리 조회가 완료되지 않았습니다.',document.createElement('br'),'정확한 주차장·도로명주소를 확인한 뒤 다시 조회하거나 전화로 확인해 주세요. 확인되지 않은 거리나 요금은 표시하지 않습니다.',document.createElement('br'));const retry=document.createElement('button');retry.type='button';retry.className='btn quote-retry';retry.textContent='같은 구간 다시 조회';retry.addEventListener('click',()=>{document.getElementById('to').focus();form.requestSubmit()});result.append(retry,document.createElement('br'));const contact=document.createElement('a');contact.href='tel:18114294';contact.className='btn result-call';contact.textContent='☎ 이 구간 요금·배차 전화상담 1811-4294';result.append(contact)}finally{clearTimeout(timer);submit.disabled=false}appendConsultationDetails(from,to,service);appendRouteHistory(from,to,service)});
+}catch(err){result.replaceChildren();const timedOut=err&&err.name==='AbortError';result.dataset.quoteState=timedOut?'timeout':'error';if(window.smart24QuoteOutcome)window.smart24QuoteOutcome(service,timedOut?'timeout':'error');const failedRoute=document.createElement('strong');failedRoute.textContent=from+' → '+to+' ('+(service==='daeri'?'대리운전':'자동차탁송')+')';result.append(failedRoute,document.createElement('br'),timedOut?'도로거리 조회가 지연되어 12초 후 종료했습니다.':err?.kind==='provider-config'?'도로거리 제공 서비스의 연결 설정 또는 이용 한도 문제로 지금은 자동 계산을 할 수 없습니다.':'현재 자동 도로거리 조회가 완료되지 않았습니다.',document.createElement('br'),'정확한 주차장·도로명주소를 확인한 뒤 다시 조회하거나 전화로 확인해 주세요. 확인되지 않은 거리나 요금은 표시하지 않습니다.',document.createElement('br'));const retry=document.createElement('button');retry.type='button';retry.className='btn quote-retry';retry.textContent='같은 구간 다시 조회';retry.addEventListener('click',()=>{document.getElementById('to').focus();form.requestSubmit()});result.append(retry,document.createElement('br'));const contact=document.createElement('a');contact.href='tel:18114294';contact.className='btn result-call';contact.textContent='☎ 이 구간 요금·배차 전화상담 1811-4294';result.append(contact);appendUnavailableQuoteConsultation(from,to,service)}finally{clearTimeout(timer);submit.disabled=false}appendConsultationDetails(from,to,service);appendRouteHistory(from,to,service)});
 // The home quote button is an explicit customer request. Perform one quote after
 // its GET navigation only when a same-tab, short-lived submit marker exists.
 // Link previews, crawlers, copied URLs and ordinary regional preset links only fill fields.
