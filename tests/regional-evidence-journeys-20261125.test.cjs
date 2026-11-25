@@ -9,11 +9,11 @@ const regionByFullName=new Map();
 const servicePaths=new Map();
 const legal=new Set(Array.from({length:17},(_,i)=>read('data/legal-regions/'+String(i+1).padStart(2,'0')+'.json').full_names).flat());
 for(const p of plans)for(const [full,url] of [[p.fromRegion,p.fromPath],[p.toRegion,p.toPath]]){
- assert.ok(legal.has(full),full);regionByFullName.set(full,{full_name:full,name:full.split(' ').at(-1)});servicePaths.set(full,url);
+ assert.ok(legal.has(full),full);regionByFullName.set(full,{full_name:full,name:full.split(' ').at(-1)});servicePaths.set(p.service+'|'+full,url);
 }
 const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const publicationQueue=read('data/verified-ride-publication-queue.json');
-const options={reviewedRides,publicationQueue,publishedCases,regionByFullName,owners,esc,servicePath:r=>servicePaths.get(r.full_name)};
+const options={reviewedRides,publicationQueue,publishedCases,regionByFullName,owners,esc,servicePath:(r,kind)=>servicePaths.get(kind+'|'+r.full_name)};
 test('Forty-four distinct regional pages connect to twenty-two existing published approved records, with accurate origin and destination roles',()=>{
  const journeys=createRegionalEvidenceJourneys(options);
  assert.equal(plans.length,22);
@@ -33,7 +33,13 @@ test('Forty-four distinct regional pages connect to twenty-two existing publishe
    const q=html.match(/href="(\/fare\/\?[^"]+)"/)?.[1];
    const url=new URL(q.replaceAll('&amp;','&'),'https://jeongukdaeri.kr');
    assert.equal(url.searchParams.get('from'),p.departure);assert.equal(url.searchParams.get('to'),p.destination);
-   assert.equal(journeys.render(r,p.service==='daeri'?'taksong':'daeri'),'');
+   const opposite=p.service==='daeri'?'taksong':'daeri';
+   const otherService=journeys.render(r,opposite);
+   const otherPlan=plans.find(x=>x.service===opposite&&[x.fromRegion,x.toRegion].includes(full));
+   if(otherPlan){
+    assert.ok(otherService.includes('/reviews/verified/'+identifier(otherPlan)+'/'),full+' independent opposite service');
+    assert.ok(!otherService.includes('/reviews/verified/'+id+'/'),full+' no cross-service attribution');
+   }else assert.equal(otherService,'',full);
    assert.equal(url.searchParams.get('service'),p.service);
    notes.add(html.match(/<\/time>[\s\S]*?<\/p><p>(.*?)<\/p>/)?.[1]);
   }
