@@ -71,3 +71,11 @@ test('Old evidence remains and inbound scrapyard route supports original busines
  assert.equal((read('robots.txt').match(/^Sitemap:/gm)||[]).length,8);
  assert.ok(read('package.json').includes('tests/auction-buyer-specialist-seo-20261124.test.cjs'));
 });
+
+test('Auction first-view booking shortcuts preserve original section and fare destinations',()=>{
+ const nav=auction.match(/<nav id="auction-booking-jumps-20261125"[\s\S]*?<\/nav>/)?.[0]||'';
+ for(const id of ['auction-three-business-customers-20261124','auction-step-by-step-20261117','auction-to-exporter-b2b-20261123']){
+  assert.ok(nav.includes('href="#'+id+'"'));assert.equal(auction.split('id="'+id+'"').length,2);
+ }
+ assert.ok(nav.includes('href="/fare/?service=taksong"'));
+});
