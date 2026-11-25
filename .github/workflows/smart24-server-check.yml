@@ -163,6 +163,30 @@ jobs:
            console.log('PASS safe official host and Cloudtype alias redirect; health remains available');
           })().catch(e=>{console.error(e);process.exitCode=1});
           PYHOST
+          node --test tests/gangwon-seven-local-seo-20261124.test.cjs
+          node - <<'PYGANGNEUNG'
+          const assert=require('node:assert/strict');
+          const base='http://127.0.0.1:3000';
+          (async()=>{
+           for(const route of ['/region/gangneung-taksong','/region/gangneung-taksong/','/region/gangneung-taksong/index.html','/taksong/gangwon/gangneung-si','/taksong/gangwon/gangneung-si/']){
+            const r=await fetch(base+route+'?source=legacy',{redirect:'manual'});
+            assert.equal(r.status,301,route);
+            assert.equal(r.headers.get('location'),'/taksong/gangwon/gangreung-si/?source=legacy',route);
+           }
+           for(const [kind,child] of [['daeri','long-distance'],['taksong','handover']]){
+            const route='/'+kind+'/gangwon/gangreung-si/';
+            const r=await fetch(base+route),html=await r.text();
+            assert.equal(r.status,200);assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'));
+            assert.ok(html.includes('id="gangneung-customer-journey-20261125"'));
+            for(const p of ['fare',child,'jumunjin-eup']){
+             assert.ok(html.includes('href="'+route+p+'/"'));
+             const detail=await fetch(base+route+p+'/',{redirect:'manual'});
+             assert.equal(detail.status,200,route+p);
+            }
+           }
+           console.log('PASS Gangneung legacy URL consolidation and canonical booking journeys');
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          PYGANGNEUNG
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/robots.txt
           curl --fail --show-error --dump-header /tmp/smart24-favicon.headers --output /tmp/smart24-favicon.bin http://127.0.0.1:3000/favicon.ico

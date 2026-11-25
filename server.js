@@ -3388,9 +3388,14 @@ if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){
 }
 // Publish the public IndexNow ownership key at the root on Cloudtype.
 if(pathname==='/770f921af32e749f64c1d447c607ea42.txt')return respond(res,200,fs.readFileSync(path.join(ROOT,'770f921af32e749f64c1d447c607ea42.txt'),'utf8'),'text/plain; charset=utf-8');
+// Consolidate the old general Gangneung transport guide with the richer
+// existing regional service page; keep the original file in the repository.
+if(/^\/region\/gangneung-taksong(?:\/index\.html|\/)?$/.test(pathname)){
+ res.writeHead(301,{location:'/taksong/gangwon/gangreung-si/'+u.search});return res.end();
+}
 // Redirect legacy Gangneung spelling to the existing canonical regional pages.
 if(/^\/(?:taksong|daeri)\/gangwon\/gangneung-si\/?$/.test(pathname)){
- res.writeHead(301,{location:pathname.replace('gangneung-si','gangreung-si')+u.search});return res.end();
+ res.writeHead(301,{location:pathname.replace('gangneung-si','gangreung-si').replace(/\/?$/,'/')+u.search});return res.end();
 }
 // Consolidate default-document URLs without changing query parameters.
 // Redirect these public aliases to the same URLs listed in the sitemaps.
