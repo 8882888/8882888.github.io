@@ -1598,7 +1598,7 @@ function innovationCityPanel(r,kind){
   '<p><small>지역 내 지점·상주기사·특정 기관과의 제휴를 의미하지 않으며, 실제 배차와 요금은 상담 후 확인합니다.</small></p></section>';
 }
 // Reuse one deduplicated regional chooser for all 17 provinces.
-function regionalNationwideSubareaChooser(r,kind){return nationwideExplorer.chooser(r,kind)}
+function regionalNationwideSubareaChooser(r,kind){return nationwideExplorer.chooser(r,kind,{owners:sitemapOwnerByPath})}
 function regionalPublicEvidence(region,kind,verified,history){
  const published=publishedCaseEntries.filter(ride=>ride.service===kind&&tripMatchesRegion(ride,region))
   .map(ride=>({ride:{...ride,date:ride.rideDate},url:ride.path,archive:false}));
@@ -1616,7 +1616,8 @@ function regionalPublicEvidence(region,kind,verified,history){
   url,date:ride.date,departure:ride.departure,destination:ride.destination,fare:ride.fare,
   tollIncluded:ride.tollIncluded===true,
   source:archive?'기존 완료 운행기록':'사용자 확인 공개 운행',
-  origin:archive?matchingHistoryRegion({...ride,rawDestination:''},region,regions):tripMatchesRegion({...ride,destination:''},region)
+  origin:archive?matchingHistoryRegion({...ride,rawDestination:''},region,regions):tripMatchesRegion({...ride,destination:''},region),
+  destinationMatch:archive?matchingHistoryRegion({...ride,rawDeparture:''},region,regions):tripMatchesRegion({...ride,departure:''},region)
  }));
 }
 function regionalDecisionPanel(r,kind,evidence){
@@ -1629,7 +1630,7 @@ function regionalDecisionPanel(r,kind,evidence){
   .filter(x=>x&&x.name&&x.name!=='(직할)'&&x.name!=='직할'&&x.level!=='리')
   .map(x=>[x.full_name||x.name,x])).values()].slice(0,8);
  const distinct=evidence.slice(0,3);
- const tripItems=distinct.length?'<div style="overflow-x:auto"><table><caption>실제 운행 구간·운행일·당시 요금</caption><thead><tr><th scope="col">구간</th><th scope="col">운행일</th><th scope="col">당시 요금</th></tr></thead><tbody>'+distinct.map(x=>'<tr><td><a href="'+esc(x.url)+'">'+esc(x.departure+' → '+x.destination)+'</a></td><td><time datetime="'+esc(x.date)+'">'+esc(x.date)+'</time></td><td>'+esc(x.fare||'미기록')+'</td></tr>').join('')+'</tbody></table></div>':
+ const tripItems=distinct.length?'<div style="overflow-x:auto"><table><caption>실제 운행 구간·운행일·당시 요금</caption><thead><tr><th scope="col">구간</th><th scope="col">운행일</th><th scope="col">당시 요금</th><th scope="col">이 지역과의 관계</th></tr></thead><tbody>'+distinct.map(x=>'<tr><td><a href="'+esc(x.url)+'">'+esc(x.departure+' → '+x.destination)+'</a></td><td><time datetime="'+esc(x.date)+'">'+esc(x.date)+'</time></td><td>'+esc(x.fare||'미기록')+'</td><td>'+esc(x.origin&&x.destinationMatch?'출발·도착':x.origin?'출발':x.destinationMatch?'도착':'지역 연결 기록')+(x.url.startsWith('/reviews/verified/')&&sitemapOwnerByPath[x.url]?'<br><a href="'+esc(rideFareUrl({...x,service:kind}))+'">현재 예상요금</a>':'')+'</td></tr>').join('')+'</tbody></table></div>':
   '<p>이 지역에 연결된 공개 운행기록을 찾지 못했습니다.</p>';
  const nationwideSubareaChoices=regionalNationwideSubareaChooser(r,kind);
  // The full, unique mobile selector replaces the old first-eight repeated text links.
@@ -2034,7 +2035,7 @@ async function servicePage(r,kind){
    '<p>'+esc(name)+'에서 '+(kind==='taksong'?'자동차탁송을 이용하려면 차량 인수 장소와 목적지, 차종, 주행 가능 상태 및 희망 인계 시각을':'대리운전을 이용하려면 출발지와 목적지, 희망 출발 시각 및 경유·대기 여부를')+' 알려주세요. '+esc(regionalAnswerContext)+' 도로거리와 시간대, 기사 접근·복귀 여건에 따라 예상요금과 배차 가능 여부가 달라집니다. 최종 금액과 실제 기사 배정은 상담으로 확인합니다.</p>'+
    (kind==='daeri'?regionalRideLead:'')+
    '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">지역 예상요금 조회</a> · <a href="/reviews/history/?region='+encodeURIComponent(r.slug)+'&amp;kind='+kind+'">실제 운행기록 검색</a> · <a href="/'+kind+'/">전국 '+(kind==='taksong'?'자동차탁송':'대리운전')+' 안내</a> · <a href="tel:18114294">예약 상담 1811-4294</a></p></section>':'';
- const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+gangwonLocalSeo.section(r,kind)+gijangDeepSeo.section(r,kind)+haeundaeLocalSeo.section(r,kind)+reviewFirstSummary+busanReviewLead+southeastLocalSeo.section(r,kind,{hasVerifiedRide:publicEvidence.length>0})+southeastFiveSeo.section(r,kind,{hasEvidence:southeastHasEvidence})+priorityOriginalSourceMarkup(r.full_name,kind)+prioritySearchQuestionMarkup(r.full_name,kind)+'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+innovationCityPanel(r,kind)+innovationCity100Panel(r,kind)+regionalDecisionPanel(r,kind,publicEvidence)+nationwideExplorer.localServiceMenu(r,kind)+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)&&r.full_name!=='부산광역시 기장군'?blogKeywordGuide:companySection+blogKeywordGuide))+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'&&!compactLocalTemplate?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+(compactLocalTemplate?'':keywordEngine.regionSection(r,kind))+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
+ const rendered=layout(searchTitle,searchDesc,regionalAnswerFirst+regionalEvidenceJourneys.render(r,kind)+gangwonLocalSeo.section(r,kind)+gijangDeepSeo.section(r,kind)+haeundaeLocalSeo.section(r,kind)+reviewFirstSummary+busanReviewLead+southeastLocalSeo.section(r,kind,{hasVerifiedRide:publicEvidence.length>0})+southeastFiveSeo.section(r,kind,{hasEvidence:southeastHasEvidence})+priorityOriginalSourceMarkup(r.full_name,kind)+prioritySearchQuestionMarkup(r.full_name,kind)+'<script type="application/ld+json">'+(jejuSearchPage?jejuPageSchema:imageData)+'</script>'+innovationCityPanel(r,kind)+innovationCity100Panel(r,kind)+regionalDecisionPanel(r,kind,publicEvidence)+nationwideExplorer.localServiceMenu(r,kind)+ganghwaReviewLead+ganghwaArchiveTable+regionHistoryAllLink+(busanReviewPage||ganghwaReviewPage?'':nationwideVerifiedFirst)+visibleCard+(jejuSearchPage?jejuContact:'')+(compactLocalTemplate?'':(priorityOriginalsByKey.has(kind+'|'+r.full_name)&&r.full_name!=='부산광역시 기장군'?blogKeywordGuide:companySection+blogKeywordGuide))+priorityKeywordGuide+body.replace('</section>','</section>'+jejuLead+gangwonArchiveLead)+(kind==='taksong'&&!compactLocalTemplate?'<section><h2>'+esc(name)+' 자동차 정비·관리 업체 차량탁송</h2><p>공업사·모터스·정비소 입고와 출고, 자동차검사소 방문, 디테일링·손세차·광택·유리막코팅 업체 방문, 썬팅·블랙박스·내비게이션·PPF·랩핑 시공업체 방문을 위한 운행 가능한 차량의 이동을 상담합니다. 해당 정비·검사·시공을 직접 제공하거나 특정 업체와 제휴한다는 의미는 아닙니다.</p><p>차량 인수 장소, 업체 주소, 예약 시각, 차종, 차량 키 인계 방법을 알려주세요. 운행할 수 없는 차량은 별도 견인이 필요할 수 있습니다.</p><p><a href="/fare/?service=taksong">자동차탁송 예상요금 조회</a> · <a href="/taksong/">전국 자동차탁송 안내</a></p></section>':'')+verifiedScrapyardSection(r,kind)+verifiedRepairShopSection(r,kind)+(compactLocalTemplate?'':keywordEngine.regionSection(r,kind))+(kind==='taksong'&&r.name==='제주특별자치도'?'<section><h2>서울·대구 출발 제주탁송 예상요금</h2><p>아반떼급·월~토·목포항 경유·제주항 인수 기준 계산 예시: 서울역 출발 약 275,000원, 대구시청 출발 약 220,000~250,000원. 2026년 10월 25일 조회 기준 참고금액이며, 제주항 이후 이동과 주유·통행·대기 등 비용은 상담으로 확인합니다.</p><p><a class="cta" href="/fare/jeju/">육지 탁송료 + 차량 선적비 합산 계산 →</a></p></section>':''),pageUrl,imageUrl);
  // The shared site footer and regional template use the national phone. Change only the Jeju taksong response;
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Show useful local service information and a phone CTA before a generic promotional card.
@@ -2321,6 +2322,7 @@ function vehicleTopicsHub(){
  });
 }
 const publishedCaseEntries=loadPublishedCases(ROOT);
+const regionalEvidenceJourneys=require('./lib/regional-evidence-journeys.cjs').createRegionalEvidenceJourneys({reviewedRides,publishedCases:publishedCaseEntries,regionByFullName,servicePath,owners:sitemapOwnerByPath,esc});
 const publishedCaseByPath=new Map(publishedCaseEntries.map(ride=>[ride.path,ride]));
 function nationalRideReviewLead(kind){
  const rides=publishedCaseEntries.filter(ride=>ride.service===kind).slice(0,4);
@@ -2378,14 +2380,14 @@ function customerVisibleRegions(items){return items.filter(x=>x&&x.name&&x.name!
 function regionServiceLinks(items,kind){items=customerVisibleRegions(items);const label=kind==='taksong'?'탁송':'대리운전';return '<ul class="region-service-links">'+items.map(r=>'<li><a href="'+servicePath(r,kind)+'">'+esc(seoRegionLabel(r)+label)+'</a></li>').join('')+'</ul>'}
 function hierarchyServiceLinks(r,kind){
  const label=kind==='taksong'?'탁송':'대리운전';
- const parent=r.parent_slug?bySlug.get(r.parent_slug):null;
- const children=(childrenByParent.get(r.slug)||[]).filter(x=>x.name&&x.name!=='(직할)'&&x.name!=='직할');
- if(!parent&&!children.length)return '';
- const up=parent?'<p><a href="'+esc(servicePath(parent,kind))+'">'+esc(parent.full_name)+' '+label+' 안내</a></p>':'';
- const down=children.length?'<details><summary>하위 행정구역 '+children.length+'곳</summary><ul>'+
-  children.map(child=>'<li><a href="'+esc(servicePath(child,kind))+'">'+esc(child.name)+' '+label+'</a></li>').join('')+
-  '</ul></details>':'';
- return '<nav aria-label="상위·하위 행정구역">'+up+down+'</nav>';
+ // The full child selector already appears above the ride table; do not
+ // duplicate hundreds of child links. Keep actual parent and the closest
+ // sitemap-owned ancestor, skipping the internal Sejong (직할) grouping.
+ const ancestors=regionAncestors(r).slice(0,-1).reverse().filter(x=>!['(직할)','직할'].includes(x.name));
+ const parent=ancestors[0],registered=ancestors.find(x=>sitemapOwnerByPath[servicePath(x,kind)]);
+ const rows=[...new Map([parent,registered].filter(Boolean).map(x=>[x.slug,x])).values()];
+ if(!rows.length)return '';
+ return '<nav aria-label="상위 행정구역 안내"><p>'+rows.map(x=>'<a href="'+esc(servicePath(x,kind))+'">'+esc(x.full_name)+' '+label+' 안내</a>').join(' · ')+'</p></nav>';
 }
 
 function homepageTaksongIntentLinks(){
