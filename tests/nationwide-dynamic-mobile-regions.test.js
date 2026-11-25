@@ -16,7 +16,7 @@ for(let i=1;i<=17;i++){
   assert(!byFull.has(full),'Nationwide duplicate full locality: '+full);
   const parts=full.split(' '),parentName=parts.slice(0,-1).join(' '),parent=byFull.get(parentName);
   if(parts.length>1)assert(parent,'Parent not found for '+full);
-  const r={name:parts.at(-1),level:parts.length>1?parts.at(-1).slice(-1):'시도',full_name:full,slug:'test-'+regions.length,parent_slug:parent?.slug||null};
+  const r={name:parts.at(-1),level:parts.length===1?'시도':/리$/.test(parts.at(-1))?'리':/읍$/.test(parts.at(-1))?'읍':/면$/.test(parts.at(-1))?'면':/구$/.test(parts.at(-1))?'구':/군$/.test(parts.at(-1))?'군':/시$/.test(parts.at(-1))?'시':'동',full_name:full,slug:'test-'+regions.length,parent_slug:parent?.slug||null};
   regions.push(r);byFull.set(full,r);bySlug.set(r.slug,r);
   if(parent){const kids=childrenByParent.get(parent.slug)||[];kids.push(r);childrenByParent.set(parent.slug,kids)}
  }
@@ -185,6 +185,8 @@ const levelsChecked=new Set(regions.filter(r=>r.name!=='(직할)').map(r=>r.leve
 assert.deepEqual([...levelsChecked].sort(),['시도','시','군','구','읍','면','동','리'].sort());
 for(const [keyword,full,kind,anchor] of [
  ['경기도장거리대리운전','경기도','daeri','#local-long-distance'],
+ ['제주장거리탁송','제주특별자치도','taksong','#local-long-distance'],
+ ['제주시장거리탁송','제주특별자치도 제주시','taksong','#local-long-distance'],
  ['오산장거리탁송','경기도 오산시','taksong','#local-long-distance'],
  ['서울강남지역대리운전','서울특별시 강남구','daeri','#local-service-booking'],
  ['강화군양도면지역탁송','인천광역시 강화군 양도면','taksong','#local-service-booking']
