@@ -2875,6 +2875,9 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    html=html.replace(/<\/h1>/i,heading=>heading+nationalRideReviewLead('taksong'));
   const publishedRide=publishedCaseByPath.get(res._smartPath);
   if(publishedRide){
+   const regionLinks=regionalEvidenceJourneys.renderReviewLinks(publishedRide.path);
+   if(regionLinks&&!html.includes('id="verified-review-region-links-20261126"'))
+    html=html.replace(/<section id="related-service">/,section=>regionLinks+section);
    const quoteUrl=esc(rideFareUrl(publishedRide));
    html=html.replace('<a href="/fare/">현재 예상요금 조회','<a href="'+quoteUrl+'">현재 예상요금 조회');
    html=html.replace(/<section id="record-facts">[\s\S]*?<\/dl>/,facts=>facts+

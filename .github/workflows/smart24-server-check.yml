@@ -215,6 +215,20 @@ jobs:
             assert.ok(section.includes('href="'+other+'"'),route);
             assert.ok(section.includes(p.fare),route);
            }
+           const {identifier}=require('./lib/published-case-feed');
+           for(const p of plans){
+            const route='/reviews/verified/'+identifier(p)+'/';
+            const response=await fetch('http://127.0.0.1:3000'+route,{redirect:'manual',signal:AbortSignal.timeout(20000)});
+            assert.equal(response.status,200,route);
+            assert.doesNotMatch(response.headers.get('x-robots-tag')||'',/noindex/i,route);
+            const html=await response.text();
+            assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),route);
+            const section=html.match(/<section id="verified-review-region-links-20261126"[\s\S]*?<\/section>/)?.[0]||'';
+            assert.ok(section.includes('href="'+p.fromPath+'"')&&section.includes('href="'+p.toPath+'"'),route);
+            assert.ok(section.includes(p.departure+' 출발 기록')&&section.includes(p.destination+' 도착 기록'),route);
+            assert.equal(html.split('id="verified-review-region-links-20261126"').length,2,route);
+           }
+           console.log('PASS '+plans.length+' published review pages with verified reciprocal region links');
            const health=await fetch('http://127.0.0.1:3000/health',{signal:AbortSignal.timeout(20000)});
            assert.equal(health.status,200);
            assert.match(health.headers.get('cache-control')||'',/no-store/);
