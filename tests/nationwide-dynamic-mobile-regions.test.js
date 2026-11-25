@@ -156,3 +156,20 @@ assert(server.includes("location:target.startsWith('/fare/?')?target:encodeURI(t
 const history=JSON.parse(read('data/ride-history.json'));
 assert.equal(history.length,2591,'The original 2591 completed ride records must stay intact');
 console.log('PASS 17 provinces, 20,562 complete localities, mobile chooser, service intents, no ambiguous matching or invented prices');
+
+ // Existing legal children remain available; sitemap-owned pages sort first.
+ const ownerFixture={};
+ for(const full of provinces){
+  const province=byFull.get(full),kids=explorer.childrenFor(province);
+  const last=kids.at(-1);
+  for(const kind of ['daeri','taksong']){
+   const url='/'+kind+'/'+last.slug+'/';ownerFixture[url]='/sitemap-priority.xml';
+   const html=explorer.chooser(province,kind,{owners:ownerFixture});
+   assert.equal(html.split('class="nationwide-child-region"').length-1,kids.length);
+   assert.equal(html.split('href="/fare/?service=').length-1,kids.length);
+   assert.ok(html.includes('기존 사이트맵 등록 지역 1곳을 먼저 표시합니다'));
+   assert.ok(html.indexOf('href="'+url+'"')<html.indexOf('href="/'+kind+'/'+kids[0].slug+'/"')||kids.length===1);
+   assert.ok(html.includes('네이버 색인 완료 수가 아닙니다'));
+  }
+ }
+ console.log('PASS sitemap-owned priority navigation for all 17 provinces and both services');

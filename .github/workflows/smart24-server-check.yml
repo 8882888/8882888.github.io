@@ -47,6 +47,7 @@ jobs:
           node --check server.js
           node --test tests/canonical-host.test.cjs
           node --test tests/national-long-taksong-directed-quotes.test.cjs
+          node --test tests/regional-evidence-journeys-20261125.test.cjs
           node --check scripts/audit-live-priority-ctr-evidence.cjs
           python3 -m py_compile tools/audit_live_seo.py
           node tests/cycling-centers.test.js
@@ -194,6 +195,23 @@ jobs:
            console.log('PASS Gangneung legacy URL consolidation and canonical booking journeys');
           })().catch(e=>{console.error(e);process.exitCode=1});
           PYGANGNEUNG
+          node - <<'PYREGIONJOURNEY'
+          const assert=require('node:assert/strict');
+          const {plans}=require('./lib/regional-evidence-journeys.cjs');
+          (async()=>{
+           for(const p of plans)for(const [route,role,other] of [[p.fromPath,'출발',p.toPath],[p.toPath,'도착',p.fromPath]]){
+            const r=await fetch('http://127.0.0.1:3000'+route,{redirect:'manual',signal:AbortSignal.timeout(20000)});
+            assert.equal(r.status,200,route);
+            const html=await r.text();
+            assert.ok(html.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),route);
+            const section=html.match(/<section id="regional-source-directed-journey-20261125"[\s\S]*?<\/section>/)?.[0]||'';
+            assert.ok(section.includes('이 지역 '+role+' 기록'),route);
+            assert.ok(section.includes('href="'+other+'"'),route);
+            assert.ok(section.includes(p.fare),route);
+           }
+           console.log('PASS six regional source-backed customer journeys');
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          PYREGIONJOURNEY
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/
           curl --fail --show-error --output /dev/null http://127.0.0.1:3000/robots.txt
           curl --fail --show-error --dump-header /tmp/smart24-favicon.headers --output /tmp/smart24-favicon.bin http://127.0.0.1:3000/favicon.ico
