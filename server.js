@@ -3812,6 +3812,7 @@ if(pathname==='/api/region-card-preview'){
   const image=categoryCard?.image||nationwideExplorer.imageUrl(query,kind);
   const data={status:'matched',query,locality:national.region.full_name,service:kind,
    region:national.region.full_name,cards:[{kind,label:query,image,previewImage:image,
+    ...(categoryCard?{keywordImage:nationwideExplorer.imageUrl(query,kind)}:{}),
     // A regional card always opens its representative guide, not a transient
     // quote URL or fragment. Keep the prefilled quote as a separate action.
     url:national.canonical||national.url,quote_url:nationwideExplorer.estimateUrl(national.region,kind),phone:contact,displayKeyword:query,
