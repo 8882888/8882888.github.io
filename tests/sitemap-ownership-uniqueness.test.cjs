@@ -54,9 +54,9 @@ test('live sitemap output preserves all registered canonical URLs exactly once u
    emitted.push(route);
   }
  }
- assert.equal(emitted.length,4237,'all unique production-baseline URLs and current main additions must remain in feeds');
+ assert.equal(emitted.length,4238,'all unique production-baseline URLs and current main additions must remain in feeds');
  assert.equal(new Set(emitted).size,emitted.length,'a URL must be listed in only one feed');
  assert.deepEqual(new Set(emitted),new Set(Object.keys(owners)),'the unique URL set must be unchanged');
- assert.equal(Object.keys(owners).length,4237);
+ assert.equal(Object.keys(owners).length,4238);
  assert.equal(ns,'http://www.sitemaps.org/schemas/sitemap/0.9');
 });

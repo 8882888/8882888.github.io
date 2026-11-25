@@ -4315,6 +4315,7 @@ if(pathname==='/sitemap-daeri.xml'||pathname==='/sitemap-taksong.xml'){const ser
  // Filter before the 500-entry limit: excluded noindex villages must not
  // waste sitemap slots, and the next useful district/municipality stays visible.
  const discoveryRegions=[...new Map([...provinceHubs,...firstFocusRegions,...balancedRegions,...unmatchedRegions]
+  .filter(r=>sitemapOwnerByPath[servicePath(r,service)]===pathname)
   .filter(sitemapRegionIndexable).map(r=>[r.slug,r])).values()]
   .slice(0,Math.max(0,500-uniqueBaseRoutes.length));
  // Do not submit generated business-card illustrations for separate image crawling.
