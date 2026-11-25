@@ -2323,7 +2323,7 @@ function vehicleTopicsHub(){
  });
 }
 const publishedCaseEntries=loadPublishedCases(ROOT);
-const regionalEvidenceJourneys=require('./lib/regional-evidence-journeys.cjs').createRegionalEvidenceJourneys({reviewedRides,publishedCases:publishedCaseEntries,regionByFullName,servicePath,owners:sitemapOwnerByPath,esc});
+const regionalEvidenceJourneys=require('./lib/regional-evidence-journeys.cjs').createRegionalEvidenceJourneys({reviewedRides,publicationQueue:load('data/verified-ride-publication-queue.json'),publishedCases:publishedCaseEntries,regionByFullName,servicePath,owners:sitemapOwnerByPath,esc});
 // A library-only regional editorial change must be independently identifiable on the live server.
 const REGIONAL_EVIDENCE_REVISION='sha256-'+require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'lib/regional-evidence-journeys.cjs'))).digest('hex').slice(0,16);
 const publishedCaseByPath=new Map(publishedCaseEntries.map(ride=>[ride.path,ride]));
