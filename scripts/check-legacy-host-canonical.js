@@ -9,7 +9,7 @@ const paths=['/','/special/24-hour-service/'];
 const canonical=html=>(html.match(/<link\b[^>]*\brel=["']canonical["'][^>]*\bhref=["']([^"']+)/i)||[])[1]||'';
 async function get(url){
  const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(16000),headers:{'User-Agent':'Smart24-Legacy-Canonical-ReadOnly/1.0'}});
- return {status:r.status,location:r.headers.get('location'),html:r.status===200?await r.text():''};
+ return {status:r.status,location:r.headers.get('location'),hostMode:r.headers.get('x-smart24-host-mode'),html:r.status===200?await r.text():''};
 }
 (async()=>{
  let failed=false;
@@ -57,6 +57,11 @@ async function get(url){
   }catch(e){return {alias:alias.name,url,status:'UNREACHABLE',error:String(e.message)}}
  })));
  for(const result of results)console.log('ALIAS_PROBE '+JSON.stringify(result));
+ // Check what the application actually receives without exposing raw proxy headers.
+ for(const base of [official,aliases[2].base]){
+  try{const r=await get(base+'/health');console.log('HOST_MODE '+JSON.stringify({base,http:r.status,mode:r.hostMode||'not-deployed'}))}
+  catch(e){console.log('HOST_MODE '+JSON.stringify({base,status:'UNREACHABLE',error:String(e.message)}))}
+ }
  // Do not mark an existing release healthy from alias HTTP status alone.
 
  if(failed)process.exitCode=1;

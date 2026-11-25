@@ -160,12 +160,16 @@ check('Nationwide B2B portal, canonical and five industry handoff links',async()
   assert.ok(detail.body.includes('tel:18114294'),route+' contact missing');
   assert.ok(detail.body.includes('rel="canonical" href="https://jeongukdaeri.kr'+route+'"'),route+' canonical');
  }
+ // A canonical URL belongs to exactly one sitemap. All six B2B pages
+ // are registered in the priority feed, never duplicated in the main feed.
+ const owners=require('../data/sitemap-url-owners.json');
  for(const sitemap of ['/sitemap-priority.xml','/sitemap.xml']){
   const xml=await get(sitemap);
   assert.equal(xml.status,200,sitemap);
   for(const route of ['/business/',...industries.map(v=>'/business/'+v+'/')]){
+   assert.equal(owners[route],'/sitemap-priority.xml','Unexpected business owner '+route);
    const loc='<loc>https://jeongukdaeri.kr'+route+'</loc>';
-   assert.equal(xml.body.split(loc).length-1,1,sitemap+' duplicate/missing '+route);
+   assert.equal(xml.body.split(loc).length-1,sitemap===owners[route]?1:0,sitemap+' incorrect ownership '+route);
   }
  }
  assert.ok(hub.body.includes('기사 수급'),'must state dispatch limitations');
