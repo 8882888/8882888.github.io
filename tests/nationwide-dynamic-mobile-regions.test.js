@@ -60,12 +60,19 @@ for(const region of regions){
   assert.equal(detail?.region,region,'Incorrect locality for '+keyword);
   assert.equal(detail.kind,kind,keyword);
   assert.equal(detail.url,'/'+kind+'/'+region.slug+'/',keyword);
-  if(['읍','면','동','리'].includes(region.level)){
+  if(['시도','시','군','구','읍','면','동','리'].includes(region.level)){
    const longTerm=kind==='daeri'?'장거리대리운전':'장거리탁송';
    const longKeyword=region.full_name+' '+longTerm;
    assert.equal(explorer.resolve(longKeyword+' 예약').url,detail.canonical+'#local-long-distance',longKeyword);
    assert.equal(explorer.resolve(longKeyword+' 요금').url,explorer.estimateUrl(region,kind),longKeyword);
    assert(menu.includes('id="local-long-distance"'),longKeyword);
+  }
+  const regionalTerm=kind==='daeri'?'지역대리운전':'지역탁송';
+  for(const suffix of [regionalTerm,regionalTerm+'예약']){
+   assert.equal(explorer.resolve(region.full_name+suffix)?.url,detail.canonical+'#local-service-booking',region.full_name+suffix);
+  }
+  for(const suffix of [regionalTerm+'요금',regionalTerm+'비용견적',service+'요금',service+'비용',service+'견적']){
+   assert.equal(explorer.resolve(region.full_name+suffix)?.url,explorer.estimateUrl(region,kind),region.full_name+suffix);
   }
   const price=explorer.resolve(region.full_name+estimate);
   assert.equal(price?.region,region,keyword);
@@ -173,3 +180,25 @@ console.log('PASS 17 provinces, 20,562 complete localities, mobile chooser, serv
   }
  }
  console.log('PASS sitemap-owned priority navigation for all 17 provinces and both services');
+
+const levelsChecked=new Set(regions.filter(r=>r.name!=='(직할)').map(r=>r.level));
+assert.deepEqual([...levelsChecked].sort(),['시도','시','군','구','읍','면','동','리'].sort());
+for(const [keyword,full,kind,anchor] of [
+ ['경기도장거리대리운전','경기도','daeri','#local-long-distance'],
+ ['오산장거리탁송','경기도 오산시','taksong','#local-long-distance'],
+ ['서울강남지역대리운전','서울특별시 강남구','daeri','#local-service-booking'],
+ ['강화군양도면지역탁송','인천광역시 강화군 양도면','taksong','#local-service-booking']
+]){
+ const matched=explorer.resolve(keyword);
+ assert.equal(matched?.region.full_name,full,keyword);
+ assert.equal(matched.kind,kind,keyword);
+ assert.equal(matched.url,matched.canonical+anchor,keyword);
+ assert.equal(explorer.suggestions(keyword,{kind:kind==='daeri'?'taksong':'daeri'})[0]?.service_url,matched.canonical,keyword);
+}
+for(const query of ['고성장거리대리운전','중구지역탁송','광주지역대리운전','대구양도면장거리탁송']){
+ assert.equal(explorer.resolve(query),null,query);
+}
+const ambiguousSuggestions=explorer.suggestions('중구지역대리운전',{kind:'taksong'});
+assert(ambiguousSuggestions.length>1);
+assert(ambiguousSuggestions.every(item=>item.service_url.startsWith('/daeri/')));
+console.log('PASS all eight administrative levels: long-distance and regional booking/quote intents, safe abbreviations and homonyms');
