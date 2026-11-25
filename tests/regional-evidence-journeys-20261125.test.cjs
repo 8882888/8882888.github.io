@@ -56,3 +56,19 @@ test('Missing sitemap ownership, mismatched published facts and unverified sourc
  const bugang=plans.find(x=>x.fromRegion.includes('부강면'));
  assert.ok(!createRegionalEvidenceJourneys(options).render(regionByFullName.get(bugang.fromRegion),bugang.service).includes('(직할)'));
 });
+
+test('Published reviews link back to both verified service regions without broadening source facts',()=>{
+ const journeys=createRegionalEvidenceJourneys(options);
+ assert.equal(journeys.reviewCount,13);
+ for(const p of plans){
+  const route='/reviews/verified/'+identifier(p)+'/',html=journeys.renderReviewLinks(route);
+  assert.ok(html.includes('id="verified-review-region-links-20261126"'));
+  assert.ok(html.includes('href="'+p.fromPath+'"')&&html.includes('href="'+p.toPath+'"'));
+  assert.ok(html.includes(p.departure+' 출발 기록')&&html.includes(p.destination+' 도착 기록'));
+  assert.ok(!html.includes('(직할)'));
+  const missing={...owners};delete missing[p.toPath];
+  assert.equal(createRegionalEvidenceJourneys({...options,owners:missing}).renderReviewLinks(route),'');
+ }
+ assert.equal(journeys.renderReviewLinks('/reviews/verified/not-published/'),'');
+ assert.equal(createRegionalEvidenceJourneys({...options,publishedCases:[]}).reviewCount,0);
+});
