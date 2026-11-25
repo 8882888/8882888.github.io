@@ -80,3 +80,26 @@ test('Canonical URLs, archives and original official discovery remain unchanged'
  assert.equal((robots.match(/^Sitemap:/gm)||[]).length,8);
  assert.ok(pkg.scripts['check:seo'].includes('gangnam-corporate-exportyard-20261124.test.cjs'));
 });
+
+test('Corporate payment navigation and golf booking discovery lead to existing, distinct service intents',()=>{
+ const golf=read('service/golf/index.html');
+ const owners=JSON.parse(read('data/sitemap-url-owners.json'));
+ const nav=corporate.match(/<nav id="corporate-first-action-20261105"[\s\S]*?<\/nav>/)?.[0]||'';
+ for(const id of ['corporate-postpaid-guide-20261105','corporate-monthly-statements-20261105']){
+  assert.ok(nav.includes('href="#'+id+'"'));assert.equal(corporate.split('id="'+id+'"').length,2);
+ }
+ assert.ok(nav.includes('후불 이용은 계약 및 심사·협의 후 가능 여부가 결정됩니다'));
+ const visual=golf.match(/<section id="golf-visual-and-callback-1811"[\s\S]*?<\/section>/)?.[0]||'';
+ for(const id of ['national-golf-permit-directory','golf-driver-comparison-8','golf-sourced-cases']){
+  assert.ok(visual.includes('href="#'+id+'"'));assert.equal(golf.split('id="'+id+'"').length,2);
+ }
+ const routes=golf.match(/<div id="golf-customer-route-choice-20261125"[\s\S]*?<\/div>/)?.[0]||'';
+ for(const href of ['/daeri/gyeonggi/goyang-si/','/daeri/busan/gijang-gun/','/daeri/seoul/gangnam-gu/dogok-dong/']){
+  assert.ok(owners[href]);assert.ok(routes.includes('href="'+href+'"'));
+ }
+ assert.ok(routes.includes('반대 방향의 운행 완료나 해당 시설과의 제휴를 뜻하지 않습니다'));
+ assert.ok(routes.includes('href="/fare/?service=daeri"'));assert.ok(routes.includes('href="/service/daily-driver/"'));
+ assert.ok(golf.includes('이 목록만으로 현재 영업 여부를 판단하지 마세요'));
+ for(const s of ['224451280349','224445462278','250,000원','식대 별도'])assert.ok(golf.includes(s));
+ assert.ok(golf.includes('href="https://jeongukdaeri.kr/service/golf/"'));
+});
