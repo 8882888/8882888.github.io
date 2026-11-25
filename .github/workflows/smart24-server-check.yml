@@ -128,6 +128,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          trap 'echo "::error::HTTP smoke check failed at shell line $LINENO"' ERR
           PORT=3000 node server.js > /tmp/smart24-server.log 2>&1 &
           pid=$!
           trap 'kill "$pid" 2>/dev/null || true' EXIT
@@ -243,9 +244,11 @@ jobs:
           # Verify a paginated keyword directory links to real regional destinations.
           curl --fail --show-error --output /tmp/smart24-keywords.html 'http://127.0.0.1:3000/keywords/taksong/?page=2'
           grep -q 'href="/taksong/' /tmp/smart24-keywords.html
-          grep -q '/keywords/taksong/?page=2' /tmp/smart24-keywords.html
-          # Check the first dynamic region page and its clickable PNG card.
-          region_path=$(node -e "const s=require('fs').readFileSync('/tmp/smart24-sitemap.xml','utf8');const m=s.match(/\\/region\\/area-[0-9]+\\//);if(!m)process.exit(1);process.stdout.write(m[0])")
+          grep -q '페이지 2 /' /tmp/smart24-keywords.html
+          grep -q 'href="https://jeongukdaeri.kr/keywords/taksong/?page=2"' /tmp/smart24-keywords.html
+          echo 'PASS paginated keyword directory and canonical'
+          # Canonical region cards now belong to the priority feed, not sitemap.xml.
+          region_path=$(node -e "const fs=require('fs');const owners=require('./data/sitemap-url-owners.json');const xml=fs.readFileSync('/tmp/smart24-priority-sitemap.xml','utf8');const paths=Object.keys(owners).filter(p=>p.startsWith('/region/area-')&&owners[p]==='/sitemap-priority.xml');if(!paths.length||paths.some(p=>!xml.includes('<loc>https://jeongukdaeri.kr'+p+'</loc>')))throw Error('Priority sitemap missing registered region card');process.stdout.write(paths[0])")
           test -n "$region_path"
           curl --fail --show-error --output /tmp/smart24-region.html "http://127.0.0.1:3000$region_path"
           grep -q 'href="tel:18114294"' /tmp/smart24-region.html

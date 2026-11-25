@@ -153,6 +153,14 @@ def render_case(x, records=None, published=None):
             "<p>아래 기록은 같은 지역 표기가 포함된 별도 운행 사례입니다. 같은 기사·동일 경로·연속 운행을 의미하지 않습니다.</p>"
     else:
         related_html = "<p>같은 서비스의 공개 기록 중 공통 지역 표기가 명확히 확인되는 사례가 없어 임의로 연결하지 않았습니다.</p>"
+    # Preserve the specifically reviewed locality bridge on the existing case.
+    # Only the exact verified ride identity may receive this link.
+    locality_bridge = (
+        '<p><a href="/daeri/incheon/ganghwa-gun/ganghwa-eup/gapgot-ri/">강화읍 갑곳리 출발 대리운전 안내</a></p>'
+        if slug == "a5da235af0d8d2b5" and x["service"] == "daeri"
+        and x["departure"] == "강화갑곳리" and x["destination"] == "선원면"
+        else ""
+    )
     body = ('<article><h1>'+esc(title)+'</h1><p><strong>기존 운행완료 자료 기반 사례</strong></p>'
         + visual +
         '<section id="record-facts"><h2>기록으로 확인되는 운행 정보</h2><dl>'+detail+'</dl>'
@@ -168,7 +176,7 @@ def render_case(x, records=None, published=None):
         +esc(x["fare"])+'은 과거 해당 건의 기록요금입니다. 현재 요금표나 다른 구간의 고정요금으로 사용할 수 없습니다. '
         '현재 비용은 출발지와 도착지의 정확한 위치, 차량 조건, 희망 시간과 인수·인계 조건을 확인한 뒤 별도로 상담합니다.</p></section>'
         '<section id="related-cases"><h2>같은 지역 표기가 포함된 다른 공개 운행기록</h2>'+related_html+'</section>'
-        '<section id="related-service"><h2>'+esc(service_text)+' 및 지역별 안내</h2><p><a href="'+service_path+'">'
+        '<section id="related-service"><h2>'+esc(service_text)+' 및 지역별 안내</h2>'+locality_bridge+'<p><a href="'+service_path+'">'
         +esc(service_text)+' 전국 안내</a> · <a href="/region/">행정구역별 지역 안내</a> · '
         '<a href="/coverage/">전국 서비스 지역 찾기</a> · <a href="/fare/">현재 예상요금 조회</a></p>'
         '<p><a href="tel:18114294">상담 1811-4294</a> · '
