@@ -9,7 +9,7 @@ const byPath=new Map(pages.map(x=>[x.path,x]));
 const home=read('index.html');
 const long=read('service/long-distance-daeri/index.html');
 const server=read('server.js');
-for(const route of ['/','/taksong/','/service/long-distance-daeri/']){
+for(const route of ['/','/taksong/']){
  const page=byPath.get(route);
  assert(page&&/운행(?:기록·)?후기|운행기록·후기/.test(page.title),'Verified ride records or reviews must be visible in service search title: '+route);
  assert(page.description.includes('운행'),'Review title needs context in its search description: '+route);
@@ -21,7 +21,17 @@ assert.equal((home.match(/<title>(.*?)<\/title>/)||[])[1],byPath.get('/').title,
 assert(home.includes('id="homepage-verified-reviews-first-20261106"'),'Review-first homepage section missing');
 assert(home.includes('href="/reviews/history/?kind=daeri"')&&home.includes('href="/reviews/history/?kind=taksong"'),'Review-first links must route to actual evidence');
 assert(home.includes('과거 요금은 현재 확정 견적이 아닙니다'),'Never present historical fares as guaranteed');
-assert(long.includes('장거리대리운전 실제 운행후기 확인'),'Long-distance title must say records are for confirmation');
+const longSeo=byPath.get('/service/long-distance-daeri/');
+assert.match(longSeo.title,/장거리대리운전.*편도예약.*요금조회/,'Intercity driver title must preserve current booking intent');
+assert.equal(long.match(/<title>(.*?)<\/title>/)?.[1],longSeo.title,'Static and runtime titles must agree');
+const recordSection=long.match(/<section id="national-long-distance-records">([\s\S]*?)<\/section>/)?.[1]||'';
+assert(recordSection.includes('장거리 대리운전 실제 운행과 요금'),'Visible verified intercity records missing');
+const {loadPublishedCases}=require('../lib/published-case-feed');
+const published=new Map(loadPublishedCases(root).map(row=>[row.path,row]));
+const links=[...recordSection.matchAll(/href="(\/reviews\/verified\/[a-f0-9]{16}\/)"/g)].map(match=>match[1]);
+assert(new Set(links).size>=2,'At least two distinct published ride examples required');
+for(const route of links)assert.equal(published.get(route)?.service,'daeri','Unverified long-distance driver example '+route);
+assert(recordSection.includes('해당 운행일의 기록')&&recordSection.includes('/fare/?service=daeri'),'Past fares and current quotes must remain distinct');
 assert(long.includes('href="/reviews/history/?kind=daeri"'),'Long-distance actual records must remain accessible');
 assert(server.includes('verifiedTaksongProof.length'),'Taksong completed cases need evidence filter');
 assert(server.includes("x.verified===true&&x.status==='completed'"),'Long-distance completed cases must be verified');
