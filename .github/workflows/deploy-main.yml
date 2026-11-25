@@ -130,6 +130,13 @@ jobs:
           allStages: false
           file: .cloudtype/app.yaml
 
+      # Check the exact runtime source and regional evidence module before accepting a rollout.
+      - name: Set up Node for production release verification
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Require latest server and regional evidence in production
+        run: node scripts/verify-cloudtype-regional-release.js --strict
       - name: Verify deployed regional service revision
         env:
           DEPLOYED_COMMIT: ${{ github.sha }}
