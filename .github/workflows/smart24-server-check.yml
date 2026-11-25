@@ -209,6 +209,14 @@ jobs:
             assert.ok(section.includes('href="'+other+'"'),route);
             assert.ok(section.includes(p.fare),route);
            }
+           const health=await fetch('http://127.0.0.1:3000/health',{signal:AbortSignal.timeout(20000)});
+           assert.equal(health.status,200);
+           assert.match(health.headers.get('cache-control')||'',/no-store/);
+           assert.match(health.headers.get('x-robots-tag')||'',/noindex/);
+           const report=await health.json();
+           const expected='sha256-'+require('node:crypto').createHash('sha256').update(require('node:fs').readFileSync('./lib/regional-evidence-journeys.cjs')).digest('hex').slice(0,16);
+           assert.deepEqual(report.regionalEvidence,{revision:expected,activeRegionServicePages:plans.length*2});
+           console.log('PASS regional content deployment evidence '+expected);
            console.log('PASS '+(plans.length*2)+' regional source-backed customer journeys');
           })().catch(e=>{console.error(e);process.exitCode=1});
           PYREGIONJOURNEY
