@@ -218,6 +218,7 @@ function resolveRegionalCardKeyword(query){
 }
 
 
+const localityEvidenceGuide=require('./lib/locality-evidence-guide-20261127.cjs').create({rows:naverFocus2900,regions,servicePath,esc});
 function naverFocus50Guide(r,kind){
  const info=focus50ByKey.get(kind+'|'+r.full_name);
  if(!info)return '';
@@ -241,7 +242,7 @@ function naverFocus50Guide(r,kind){
  // Keep this customer guide editorial and use the exact region-id search below.
  return '<section id="naver-focus50-local-guide" aria-label="'+esc(name+' '+kindLabel)+' 지역 상황별 실제 이용 안내">'+
   '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+
-  '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+
+  '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+localityEvidenceGuide.render(r,kind)+
   '<h3>예약 전에 필요한 정보</h3>'+bookingChoice+'<p>지역 지점 설치나 기사 상주, 예약 확정 또는 완료 운행을 뜻하지 않습니다.</p>'+
   '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name+' 출발 '+kindLabel)+' 예상요금</a> · '+
   '<a href="/fare/?service='+kind+'&amp;to='+encodeURIComponent(name)+'">'+esc(name+' 도착 '+kindLabel)+' 예상요금</a> · '+
