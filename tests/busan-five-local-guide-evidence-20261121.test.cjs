@@ -468,6 +468,7 @@ test('all 2900 source guides render exact administrative region searches and cor
   const html=render({full_name:row.region,slug},row.kind);
   assert.ok(html.includes('region='+slug+'"'),row.keyword);
   assert.ok(html.includes('kind='+row.kind+'&amp;region='),row.keyword);
+  assert.ok(html.includes('href="/recruit/'+row.kind+'/"'),row.keyword);
   assert.ok(html.includes(esc(row.pickup))&&html.includes(esc(row.handover)),row.keyword);
   assert.ok(html.includes('from='+encodeURIComponent(row.region)),row.keyword);
   assert.ok(html.includes('to='+encodeURIComponent(row.region)),row.keyword);
@@ -578,4 +579,38 @@ test('15 paired-locality guides retain exact identity and independently useful s
  }
  assert.equal(edited.length,15);
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(edited.map(r=>r[k])).size,15);
+});
+
+test('recruitment search uses only existing national or validated provincial destinations, and guides link to matching application pages',()=>{
+ const vm=require('node:vm');
+ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=server.indexOf('function recruitmentIntent('),end=server.indexOf('function recruitmentPage(',start);
+ assert.ok(start>=0&&end>start);
+ const province={full_name:'부산광역시',level:'시도',slug:'busan'};
+ const district={full_name:'부산광역시 해운대구',level:'구',slug:'haeundae-gu'};
+ const regionByFullName=new Map([[province.full_name,province]]);
+ const nationwideExplorer={resolve(q){
+  const match=q.match(/^(부산|부산해운대구)(대리운전|탁송)$/);
+  return match?{kind:match[2]==='탁송'?'taksong':'daeri',region:match[1]==='부산'?province:district}:null;
+ }};
+ const resolve=vm.runInNewContext(server.slice(start,end)+';recruitmentIntent',{regionByFullName,nationwideExplorer});
+ for(const q of ['대리기사모집','전국 대리운전기사 모집','대리기사등록'])assert.equal(resolve(q),'/recruit/daeri/',q);
+ for(const q of ['탁송기사모집','전국 자동차탁송기사 모집','화물차탁송기사모집','특장차탁송기사 지원','로드탁송기사구인'])assert.equal(resolve(q),'/recruit/taksong/',q);
+ assert.equal(resolve('부산대리기사모집'),'/recruit/daeri/busan/');
+ assert.equal(resolve('부산해운대구탁송기사모집'),'/recruit/taksong/busan/');
+ for(const q of ['부산대리운전','부산탁송','가짜지역탁송기사모집','서울에서부산탁송기사모집','부산탁송기사'])assert.equal(resolve(q),null,q);
+ assert.ok(server.includes('const recruitTarget=recruitmentIntent(searchIntent);'));
+ assert.ok(server.includes('id="recruit-taksong-vehicle-experience"'));
+ assert.ok(server.includes('id="recruit-daeri-work-types"'));
+ assert.ok(server.includes('id="recruit-registration-questions"'));
+ const source=JSON.parse(fs.readFileSync(path.join(root,'data/seo-pages.json'),'utf8'));
+ for(const kind of ['daeri','taksong']){
+  const rule=source.pages.find(x=>x.path==='/recruit/'+kind+'/');
+  assert.ok(rule.title.startsWith(kind==='daeri'?'대리기사모집':'탁송기사모집'));
+  assert.ok(rule.description.includes('1811-4294'));
+ }
+ const heavy=fs.readFileSync(path.join(root,'service/heavy-truck-taksong/index.html'),'utf8');
+ assert.ok(heavy.includes('id="heavy-truck-driver-recruitment-20261126"'));
+ assert.ok(heavy.includes('href="/recruit/taksong/"'));
+ assert.ok(heavy.includes('확정 채용·수입·배차를 보장하지 않습니다.'));
 });
