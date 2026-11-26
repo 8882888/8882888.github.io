@@ -223,6 +223,15 @@ function naverFocus50Guide(r,kind){
   :[['골프장 대리운전','/service/golf/'],['법인카드·법인 대리운전','/service/corporate/'],['일일기사·왕복 대기','/service/daily-driver/']];
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
  const intro='<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
+ // Offer the existing companion service only for the exact same official locality.
+ // The opposite-service topic is a source guide, never a new trip or verified facility.
+ const otherKind=kind==='taksong'?'daeri':'taksong';
+ const otherLabel=otherKind==='taksong'?'차량탁송':'대리운전';
+ const companion=focus50ByKey.get(otherKind+'|'+name);
+ const companionLink=companion&&companion.region===name&&companion.kind===otherKind?
+  '<p>'+esc(kindLabel)+'과 다른 이용 형태: <a href="'+esc(servicePath(r,otherKind))+'">'+esc(companion.keyword+' · '+companion.topic)+'</a></p>':'';
+ const bookingChoice='<p>'+esc(name)+'에서 '+(kind==='taksong'?'차량만 보내는 경우에는 인수·인계 담당자와 키 전달 권한을 확인합니다. 고객도 함께 이동해야 한다면 대리운전 조건을 먼저 상담하세요.':'고객이 차량과 함께 이동할 경우 최종 하차지와 경유 순서를 정합니다. 차량만 다른 지역으로 보내려면 차량탁송 조건을 먼저 상담하세요.')+' 실제 주소와 이용 시간으로 견적과 기사 수급을 확인합니다.</p>'+companionLink;
+
  // The same regional response already renders exact, reviewed source mappings
  // and verified ride matches separately. A short locality substring in a blog
  // title cannot disambiguate homonymous dong/ri or establish a completed ride.
@@ -230,8 +239,9 @@ function naverFocus50Guide(r,kind){
  return '<section id="naver-focus50-local-guide" aria-label="'+esc(name+' '+kindLabel)+' 지역 상황별 실제 이용 안내">'+
   '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+
   '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+
-  '<h3>예약 전에 필요한 정보</h3><p>'+esc(name)+'의 실제 출발·도착 주소, 시간과 차량 위치를 확인한 뒤 견적 및 기사 수급을 상담합니다. 지역 지점 설치나 기사 상주, 예약 확정 또는 완료 운행을 뜻하지 않습니다.</p>'+
-  '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(info.keyword)+' 예상요금</a> · '+
+  '<h3>예약 전에 필요한 정보</h3>'+bookingChoice+'<p>지역 지점 설치나 기사 상주, 예약 확정 또는 완료 운행을 뜻하지 않습니다.</p>'+
+  '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name+' 출발 '+kindLabel)+' 예상요금</a> · '+
+  '<a href="/fare/?service='+kind+'&amp;to='+encodeURIComponent(name)+'">'+esc(name+' 도착 '+kindLabel)+' 예상요금</a> · '+
   '<a href="/reviews/history/?kind='+kind+'&amp;region='+encodeURIComponent(r.slug)+'">이 행정구역의 실제 운행기록 검색</a> · '+
   '<a href="tel:18114294">상담 1811-4294</a></p>'+
   '<nav aria-label="'+esc(info.keyword)+' 관련 이용 방식"><p>'+
@@ -1643,7 +1653,7 @@ function regionalDecisionPanel(r,kind,evidence){
   '<p>'+esc(instructions)+' <strong>현재 요금과 배차 가능 여부는 상담 후 확정</strong>됩니다.</p>'+
   '<nav aria-label="빠른 예약 메뉴" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px">'+
   '<a href="'+fare+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#0755a3;color:#fff;font-weight:800;text-decoration:none">출발지 예상요금 조회</a>'+
-  '<a href="/reviews/history/?kind='+kind+'&amp;q='+from+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">'+(kind==='taksong'?'실제 탁송기록 보기':'완료 운행기록 참고')+'</a>'+
+  '<a href="/reviews/history/?kind='+kind+'&amp;region='+encodeURIComponent(r.slug)+'" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#e6f0fc;color:#123a6c;font-weight:800;text-decoration:none">'+(kind==='taksong'?'실제 탁송기록 보기':'완료 운행기록 참고')+'</a>'+
   '<a href="tel:18114294" style="display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px;border-radius:9px;background:#ffe082;color:#182638;font-weight:800;text-decoration:none">전화 상담 1811-4294</a></nav>'+
   directQuoteForm+nationwideSubareaChoices+
   '<h3>지역 대표 완료 운행</h3>'+tripItems+

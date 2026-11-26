@@ -265,6 +265,17 @@ if(sourceDossiers.length!==2900||pendingDossiers.length!==output.totals.needsRev
  sourceCandidateSummary.pendingWithSourceCandidate+sourceCandidateSummary.pendingWithoutSourceCandidate!==pendingDossiers.length)
  throw Error('Nationwide source dossier accounting mismatch');
 console.log('NATIONWIDE_ORIGINAL_EVIDENCE_CROSSWALK '+JSON.stringify(sourceCandidateSummary));
+// Track shared customer-navigation coverage independently of editorial quality.
+const sharedNavigationCoverage={
+ sourceGuides:sourceDossiers.length,
+ pendingGuides:pendingDossiers.length,
+ pendingWithExactCompanion:pendingDossiers.filter(x=>x.companionGuide).length,
+ pendingWithoutExactCompanion:pendingDossiers.filter(x=>!x.companionGuide).length,
+ scope:'shared guide renderer: outbound and inbound quote presets, exact locality ride search, exact same-locality companion service where present',
+ editorialImprovementClaim:false,
+ deploymentVerified:false
+};
+console.log('NATIONWIDE_SHARED_NAVIGATION_COVERAGE '+JSON.stringify(sharedNavigationCoverage));
 const nationalAudit={
  generatedAt:output.generatedAt,
  scope:'all 17 legal provinces, all source-defined region/service guides and both services; editorial only',
@@ -276,6 +287,7 @@ const nationalAudit={
  missingProvinceRecords:missingProvince.slice(0,20),
  nationalReviewQueueCount:nationwideQueue.length,
  originalEvidenceCrosswalk:sourceCandidateSummary,
+ sharedNavigationCoverage,
  originalEvidenceQueue:pendingDossiers,
  balancedQueue:nationwideQueue,
  records:nationalEntries,

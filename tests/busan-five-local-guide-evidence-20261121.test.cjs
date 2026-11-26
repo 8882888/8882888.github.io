@@ -455,7 +455,7 @@ test('all 2900 source guides render exact administrative region searches and cor
  const start=server.indexOf('function naverFocus50Guide('),end=server.indexOf('function naverFocus50Hub(',start);
  assert.ok(start>=0&&end>start);
  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
- const render=vm.runInNewContext(server.slice(start,end)+';naverFocus50Guide',{focus50ByKey:keys,esc});
+ const render=vm.runInNewContext(server.slice(start,end)+';naverFocus50Guide',{focus50ByKey:keys,esc,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/'});
  const particle=/(절차|게이트|출입구|위치|장소|방법|여부|시간|구역|담당자|권한|조건|주소|승인|상태|차종|구분|출구|입구|층|차고지|주차장|수령인|일정|서류|등록|방식|정산|계획|연락처|인계자|인수자|차량|목적지|출발지|인수지|보관지|제약|요건|동선|경로|차선|운행|인수|인계)(을|를)(?=\s|[,.])/g;
  for(const [i,row] of rows.entries()){
   for(const field of ['topic','pickup','handover']){
@@ -470,6 +470,16 @@ test('all 2900 source guides render exact administrative region searches and cor
   assert.ok(html.includes('kind='+row.kind+'&amp;region='),row.keyword);
   assert.ok(html.includes(esc(row.pickup))&&html.includes(esc(row.handover)),row.keyword);
   assert.ok(html.includes('from='+encodeURIComponent(row.region)),row.keyword);
+  assert.ok(html.includes('to='+encodeURIComponent(row.region)),row.keyword);
+  const otherKind=row.kind==='taksong'?'daeri':'taksong';
+  const companion=keys.get(otherKind+'|'+row.region);
+  const otherPath='/'+otherKind+'/'+slug+'/';
+  if(companion){
+   assert.ok(html.includes('href="'+otherPath+'"'),row.keyword);
+   assert.ok(html.includes(esc(companion.keyword+' · '+companion.topic)),row.keyword);
+  }else assert.ok(!html.includes('href="'+otherPath+'"'),row.keyword);
+  assert.ok(html.includes(row.kind==='taksong'?'키 전달 권한':'최종 하차지와 경유 순서'),row.keyword);
+
   if(row.related)assert.ok(html.includes('href="'+row.related+'"'),row.keyword);
   else assert.ok(html.includes(row.kind==='taksong'?'href="/service/long-distance-taksong/"':'href="/service/corporate/"'),row.keyword);
   assert.doesNotMatch(html,/verified-post-links|blog\.naver\.com/);
