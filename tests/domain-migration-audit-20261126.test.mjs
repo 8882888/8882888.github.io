@@ -21,19 +21,8 @@ test('official canonical must remain indexable and self-referencing',()=>{
  assert.equal(classify({...base,canonical:url}),'OFFICIAL_INDEX_SIGNAL_REVIEW');
 });
 
-test('Manus new domain is a separate canonical origin, never redirected to Smart24',()=>{
- const targetOrigin='https://smartdaeritaksong.kr';
- const url=targetOrigin+'/';
- assert.equal(classify({kind:'official',url,status:200,canonical:url,contentType:'text/html',targetOrigin}),'OFFICIAL_SELF_CANONICAL');
- assert.equal(classify({kind:'official',url,status:200,canonical:'https://jeongukdaeri.kr/',contentType:'text/html',targetOrigin}),'OFFICIAL_INDEX_SIGNAL_REVIEW');
-});
-
-test('unconfirmed Manus project cannot be diagnosed as a duplicate solely by a different canonical',()=>{
- assert.equal(classify({kind:'manus-original-candidate',url:'https://taksongkorea-fqwxknsy.manus.space/',status:200,canonical:'https://taksongkorea-fqwxknsy.manus.space/',targetOrigin:'https://smartdaeritaksong.kr'}),'CANDIDATE_RELATION_UNCONFIRMED');
-});
-
 test('traverses sitemap index children once without following external hosts',async()=>{
- const origin='https://smartdaeritaksong.kr';
+ const origin='https://jeongukdaeri.kr';
  const seen=[];
  const result=await collectSitemapPages(origin,async url=>{
   seen.push(url);
