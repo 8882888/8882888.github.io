@@ -81,3 +81,20 @@ test('diagnose locality-name-only duplication without granting editorial or inde
  console.log('Shared booking guidance groups (not proof of unique content):',JSON.stringify([...intents.entries()].sort((a,b)=>b[1]-a[1])));
  // Exact normalized matches are a lower bound, not a full near-duplicate or live HTML audit.
 });
+
+test('first ten duplicate pages contain distinct source-backed local booking advice',()=>{
+ const targets=[['서울특별시 은평구 불광동','불광역','pts.map.naver.com'],['부산광역시 남구 용당동','신선대부두','busanpa.com'],['강원특별자치도 양양군 현남면','인구항','tour.yangyang.go.kr'],['전북특별자치도 무주군 무주읍','반딧불장터','tour.muju.go.kr'],['경상남도 김해시 내동','연지공원','access.visitkorea.or.kr']];
+ const advice=new Set();
+ for(const [name,landmark,domain] of targets){
+  const region=regions.find(r=>r.full_name===name);assert(region);
+  for(const kind of ['daeri','taksong']){
+   assert(g.targets.has(kind+'|'+name));
+   const html=g.render(region,kind);
+   const match=html.match(/지역별 차량 위치와 이용 조건<\/h4><p>(.*?)<\/p>/);
+   assert(match,name+' '+kind);assert(match[1].includes(landmark),name+' '+kind);
+   assert(html.includes(domain));advice.add(match[1]);
+  }
+ }
+ assert.equal(advice.size,10);
+ console.log('Source-backed first batch: 10 distinct regional service paragraphs; original duplicate baseline remains unchanged.');
+});
