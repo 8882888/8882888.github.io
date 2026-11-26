@@ -32,4 +32,7 @@ for(const term of ['전국탁송','24시탁송','대리비','대리비견적','�
 }
 assert(home.includes('<meta property="og:image:type" content="image/png">'),'OG image must be PNG');
 assert(home.includes('"encodingFormat":"image/png"'),'Homepage image JSON-LD must match actual PNG response');
+assert(home.includes('<h1>전국대리운전 · 전국자동차탁송 '),'The user-requested broad national designated-driver intent leads the visible H1');
+assert(home.includes('href="/daeri/">전국대리운전 지역별 예약·요금 안내</a>'),'First-screen customer-intent link points to the existing service canonical');
+assert(home.indexOf('<!-- HOMEPAGE_VERIFIED_DAERI -->')>0&&home.indexOf('<!-- HOMEPAGE_VERIFIED_DAERI -->')<home.indexOf('<!-- HOMEPAGE_VERIFIED_TAKSONG -->'),'Real designated-driver examples precede transport examples');
 console.log('PASS: source-backed 2,591 ride proof, concise national service title and one-tap quote/phone');
