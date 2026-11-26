@@ -706,3 +706,21 @@ test('28 Daegu, Incheon, Gangwon and Chungcheong paired locality guides retain i
  }
  for(const field of fields)assert.equal(seen[field].size,28);
 });
+
+test('22 southern and Jeju paired locality guides retain identity and differentiated customer instructions',()=>{
+ const fields=['topic','pickup','handover'];
+ const rows=Object.fromEntries(['taksong','daeri'].map(kind=>[kind,JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-eleventh-'+kind+'-50.json'),'utf8')).priority]));
+ const pairs=[[839,'중화산동2가'],[840,'나운동'],[841,'영등동'],[842,'학동'],[843,'중동'],[844,'양덕동'],[845,'옥계동'],[846,'합성동'],[847,'고현동'],[849,'이도이동'],[850,'강정동']];
+ const seen=Object.fromEntries(fields.map(k=>[k,new Set()]));
+ for(const [id,local] of pairs){
+  const t=rows.taksong.find(r=>r.id===id),d=rows.daeri.find(r=>r.id===id+50);
+  assert.ok(t&&d,local);assert.equal(t.region,d.region);assert.equal(t.kind,'taksong');assert.equal(d.kind,'daeri');assert.equal(t.region.split(' ').at(-1),local);
+  for(const row of [t,d]){
+   assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75,row.keyword);
+   assert.ok(row.related,row.keyword);
+   for(const field of fields){assert.ok(row[field].includes(local),row.keyword);assert.ok(!seen[field].has(row[field]),row.keyword);seen[field].add(row[field]);}
+   assert.doesNotMatch(fields.map(k=>row[k]).join(' '),/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  }
+ }
+ for(const field of fields)assert.equal(seen[field].size,22);
+});
