@@ -20,3 +20,10 @@ test('official canonical must remain indexable and self-referencing',()=>{
  assert.equal(classify({...base,blockedHeader:true}),'OFFICIAL_INDEX_SIGNAL_REVIEW');
  assert.equal(classify({...base,canonical:url}),'OFFICIAL_INDEX_SIGNAL_REVIEW');
 });
+
+test('Manus new domain is a separate canonical origin, never redirected to Smart24',()=>{
+ const targetOrigin='https://smartdaeritaksong.kr';
+ const url=targetOrigin+'/';
+ assert.equal(classify({kind:'official',url,status:200,canonical:url,contentType:'text/html',targetOrigin}),'OFFICIAL_SELF_CANONICAL');
+ assert.equal(classify({kind:'official',url,status:200,canonical:'https://jeongukdaeri.kr/',contentType:'text/html',targetOrigin}),'OFFICIAL_INDEX_SIGNAL_REVIEW');
+});
