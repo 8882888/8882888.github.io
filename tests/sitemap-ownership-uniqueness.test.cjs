@@ -42,12 +42,32 @@ test('live sitemap output preserves all registered canonical URLs exactly once u
   try{await get(base+'/health');ready=true;break}catch(error){lastError=error;await new Promise(resolve=>setTimeout(resolve,250))}
  }
  assert.ok(ready,'server did not become ready: '+lastError);
- const index=await get(base+'/sitemap-all.xml');
+ async function verifyRevalidation(feedPath){
+  const url=base+feedPath;
+  const headers={'X-Smart24-Monitor':'github-health-probe','User-Agent':'Smart24-Sitemap-Regression/1.0'};
+  const initial=await fetch(url,{headers,signal:AbortSignal.timeout(15000)});
+  assert.equal(initial.status,200,feedPath);
+  const tag=initial.headers.get('etag');
+  assert.match(tag||'',/^W\/"[a-f0-9]{64}"$/,feedPath+' final XML ETag');
+  const xml=await initial.text();
+  assert(xml.length>0);
+  const again=await fetch(url,{headers:{...headers,'If-None-Match':tag},signal:AbortSignal.timeout(15000)});
+  assert.equal(again.status,304,feedPath+' unchanged feed');
+  assert.equal(again.headers.get('etag'),tag);
+  assert.equal(await again.text(),'');
+  if(feedPath==='/sitemap-all.xml'){
+   const changed=await fetch(url,{headers:{...headers,'If-None-Match':'"different"'},signal:AbortSignal.timeout(15000)});
+   assert.equal(changed.status,200);
+   assert.equal(await changed.text(),xml);
+  }
+  return xml;
+ }
+ const index=await verifyRevalidation('/sitemap-all.xml');
  const feedPaths=locs(index,'sitemap').map(value=>new URL(value).pathname);
  assert.equal(feedPaths.length,20,'integrated index lists only URL-set feeds with owned URLs');
  const emitted=[];
  for(const feedPath of feedPaths){
-  const xml=await get(base+feedPath);
+  const xml=await verifyRevalidation(feedPath);
   assert.match(xml,/<urlset\b/,'expected a URL-set at '+feedPath);
   for(const value of locs(xml,'url')){
    const route=decodeURIComponent(new URL(value).pathname);

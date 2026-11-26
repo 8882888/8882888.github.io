@@ -37,6 +37,9 @@ const sitemapOwnershipFeeds=new Set([
  '/sitemap-localities-county.xml','/sitemap-localities-district.xml',
  ...Array.from({length:6},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')
 ]);
+// These XML feeds use startup-loaded source data. Cache only the final filtered XML for a bounded set of known paths, and invalidate if the raw XML changes.
+const knownSitemapPaths=new Set([...sitemapOwnershipFeeds,'/sitemap-all.xml','/sitemap-history.xml']);
+const finalSitemapXmlCache=new Map();
 const {fingerprintCuratedRegionSources}=require('./lib/curated-region-sources-fingerprint');
 const CURATED_REGION_FINGERPRINT=fingerprintCuratedRegionSources(ROOT);
 const baseRegions=load('data/regions.json').regions||[];
@@ -3006,8 +3009,14 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
  // Explicit no-store on deployment diagnostics must survive the common HTML response writer.
  if((isHtml||type.startsWith('text/plain;'))&&!res.getHeader('cache-control'))headers['cache-control']='no-cache, max-age=0, must-revalidate';
  // XML sitemaps must never be served from a stale intermediary cache after rollout.
+ const sitemapPath=res._smartPath||'';
+ const knownSitemap=status===200&&type.startsWith('application/xml;')&&knownSitemapPaths.has(sitemapPath);
  if(type.startsWith('application/xml;')){
-  body=String(body).replace(/<url>\s*<loc>([^<]+)<\/loc>[\s\S]*?<\/url>/g,(entry,loc)=>{
+  const rawXml=String(body);
+  const cached=knownSitemap?finalSitemapXmlCache.get(sitemapPath):null;
+  if(cached&&cached.raw===rawXml)body=cached.filtered;
+  else {
+  body=rawXml.replace(/<url>\s*<loc>([^<]+)<\/loc>[\s\S]*?<\/url>/g,(entry,loc)=>{
    const route=decodeURIComponent(new URL(loc.replace(/&amp;/g,'&')).pathname);
    if(sitemapOwnershipFeeds.has(res._smartPath||'')){
     const owner=sitemapOwnerByPath[route];
@@ -3027,11 +3036,13 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    }
    return entry;
   });
+  if(knownSitemap)finalSitemapXmlCache.set(sitemapPath,{raw:rawXml,filtered:body});
+  }
   headers['cache-control']='no-store, max-age=0, must-revalidate';
   headers['surrogate-control']='no-store';
   headers['x-smart24-sitemap-format']='focused-html-only-202611';
  }
- const isDiscoveryFeed=status===200&&['/rss.xml','/feed.xml','/sitemap-published.xml','/sitemap-priority.xml','/sitemap-taksong.xml','/sitemap-daeri.xml','/sitemap-gyeongnam-guides.xml','/sitemap-chungnam-port-guides.xml'].includes(res._smartPath);
+ const isDiscoveryFeed=knownSitemap||(status===200&&['/rss.xml','/feed.xml'].includes(sitemapPath));
  if(isDiscoveryFeed){
   // An unchanged discovery feed can be revalidated without downloading it again.
   const hash=require('node:crypto').createHash('sha256').update(body).digest('hex');
