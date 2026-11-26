@@ -476,3 +476,22 @@ test('all 2900 source guides render exact administrative region searches and cor
  }
  assert.equal(render({full_name:'없는 행정구역',slug:'missing'},'daeri'),'');
 });
+
+test('all 2900 original regional guides have explicit related service links, including 17 restored contextual links',()=>{
+ const dir=path.join(root,'data');
+ const files=fs.readdirSync(dir).filter(f=>/^naver-regional-focus-.*\.json$/.test(f)&&!f.includes('candidates'));
+ const rows=files.flatMap(f=>JSON.parse(fs.readFileSync(path.join(dir,f),'utf8')).priority);
+ assert.equal(files.length,33);assert.equal(rows.length,2900);
+ assert.equal(new Set(rows.map(row=>row.kind+'|'+row.region)).size,2900);
+ for(const row of rows)assert.match(row.related,/^\/(?:service|business|fare|route-taksong|special|daeri|taksong)\/[a-z0-9\-/]*$/,row.keyword);
+ const originalBatch=JSON.parse(fs.readFileSync(path.join(dir,'naver-regional-focus-50.json'),'utf8')).priority;
+ const targets=[[18,"/service/taksong-purpose/"],[19,"/service/long-distance-taksong/"],[20,"/service/long-distance-taksong/"],[21,"/service/heavy-truck-taksong/"],[23,"/business/rental-car/"],[24,"/service/taksong-purpose/"],[25,"/service/taksong/"],[27,"/service/taksong-purpose/"],[28,"/service/long-distance-taksong/"],[30,"/service/long-distance-taksong/"],[32,"/service/long-distance-taksong/"],[34,"/service/taksong-purpose/"],[36,"/service/taksong-purpose/"],[38,"/service/heavy-truck-taksong/"],[39,"/service/taksong/"],[40,"/fare/jeju/"],[46,"/service/long-distance-daeri/"]];
+ const edited=targets.map(([id,related])=>{
+  const row=originalBatch.find(r=>r.id===id);assert.ok(row,id);assert.equal(row.related,related);
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75,row.keyword);
+  const locality=row.region.split(' ').at(-1);assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality),row.keyword);
+  return row;
+ });
+ for(const field of ['topic','pickup','handover'])assert.equal(new Set(edited.map(r=>r[field])).size,17);
+ assert.ok(edited.find(r=>r.id===40).handover.includes('1877-5245'));
+});
