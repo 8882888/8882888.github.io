@@ -68,7 +68,13 @@ test('diagnose locality-name-only duplication without granting editorial or inde
  const affected=repeated.reduce((n,group)=>n+group.length,0);
  assert.equal([...groups.values()].reduce((n,group)=>n+group.length,0),1918);
  console.log('Normalized original-copy audit:',JSON.stringify({pages:selected.length,distinctGroups:groups.size,duplicateGroups:repeated.length,affectedPages:affected,largestGroup:repeated[0]?.length||0}));
- for(const group of repeated.slice(0,20))console.log('Repeated source-copy group:',group.length,group.slice(0,5).map(r=>r.kind+'|'+r.region).join('; '));
+ const byProvince={},byService={};
+ for(const group of repeated)for(const row of group){const province=row.region.split(' ')[0];byProvince[province]=(byProvince[province]||0)+1;byService[row.kind]=(byService[row.kind]||0)+1;}
+ assert.equal(Object.values(byProvince).reduce((a,b)=>a+b,0),affected);
+ assert.equal(Object.values(byService).reduce((a,b)=>a+b,0),affected);
+ console.log('Duplicate affected by province:',JSON.stringify(byProvince));
+ console.log('Duplicate affected by service:',JSON.stringify(byService));
+ for(const [i,group] of repeated.entries())console.log('Editorial remediation queue:',JSON.stringify({group:i+1,size:group.length,items:group.map(r=>({kind:r.kind,region:r.region,keyword:r.keyword}))}));
  // The added booking text is shared service guidance, not local evidence.
  const intents=new Map();
  for(const row of selected){const key=row.kind+'|'+JSON.stringify(intentGuide(row));intents.set(key,(intents.get(key)||0)+1);}
