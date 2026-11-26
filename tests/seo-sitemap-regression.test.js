@@ -288,8 +288,8 @@ test('primary taksong and recruitment titles retain the approved search intent',
  const pages=JSON.parse(fs.readFileSync(path.join(root,'data/seo-pages.json'),'utf8')).pages;
  const titles=new Map(pages.map(p=>[p.path,p.title]));
  assert.equal(titles.get('/taksong/'),'전국 자동차탁송 요금·실제 운행후기 | 전국대리운전');
- assert.equal(titles.get('/recruit/taksong/'),'탁송기사모집｜전국 로드탁송기사 지원·등록 안내');
- assert.equal(titles.get('/recruit/daeri/'),'대리운전기사모집｜전국 대리기사 지원·등록 안내');
+ assert.equal(titles.get('/recruit/taksong/'),'탁송기사모집 · 자동차탁송기사 지원 | 전국 스마트24');
+ assert.equal(titles.get('/recruit/daeri/'),'대리기사모집 · 대리운전기사 지원 | 전국 스마트24');
  assert.ok(server.includes("r.full_name==='울산광역시'?'울산탁송｜자동차탁송·빠른배차·예약배차'"),'Ulsan title override must remain');
  assert.ok(server.includes("r.full_name==='세종특별자치시'?'세종탁송｜장거리 차량탁송·거리조회·예약'"),'Sejong title override must remain');
 });
