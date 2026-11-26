@@ -134,17 +134,11 @@ jobs:
           node --check lib/regional-html-cache.cjs
           node --check tests/keyword-entrypoint-cache.test.cjs
           node --test tests/keyword-entrypoint-cache.test.cjs
-      - name: Validate safe 17-province Pages mirror before nationwide production rollout
+      - name: Validate local backup safety and prohibit all retired Pages publishing
         run: |
           python3 -m py_compile tools/build_compact_pages_backup.py tests/test_compact_pages_backup.py
           python3 tests/test_compact_pages_backup.py
-          python3 - <<'PY'
-          from pathlib import Path
-          yml=Path('.github/workflows/pages.yml').read_text(encoding='utf-8')
-          assert 'path: _pages_mirror' in yml, 'Pages must only upload bounded static artifact'
-          assert 'path: .' not in yml, 'Never expose entire ride/source repository via Pages'
-          print('PASS bounded Pages artifact contract')
-          PY
+          node --test tests/retired-pages-workflow-20261127.test.cjs
       - name: Check JavaScript syntax
         run: |
           node --check server.js
