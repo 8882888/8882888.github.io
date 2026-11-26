@@ -1,0 +1,46 @@
+name: Domain migration consolidation audit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/audit-domain-migration-20261126.mjs'
+      - 'tests/domain-migration-audit-20261126.test.mjs'
+      - '.github/workflows/domain-migration-audit-20261126.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit-domain-migration-20261126.mjs'
+      - 'tests/domain-migration-audit-20261126.test.mjs'
+      - '.github/workflows/domain-migration-audit-20261126.yml'
+permissions:
+  contents: read
+jobs:
+  domain-diagnostics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test strict host migration classification
+        run: node --test tests/domain-migration-audit-20261126.test.mjs
+      - name: Inspect live HTTP and DNS without following redirects
+        id: audit
+        continue-on-error: true
+        run: |
+          node scripts/audit-domain-migration-20261126.mjs > domain-migration-report.json
+      - name: Print diagnostic results
+        if: always()
+        run: |
+          if [ -f domain-migration-report.json ]; then cat domain-migration-report.json; else echo 'Audit did not run; inspect fixture failure.'; fi
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: domain-migration-report
+          path: domain-migration-report.json
+          if-no-files-found: warn
+      - name: Distinguish unresolved migration issues from a passing audit
+        if: steps.audit.outcome == 'failure'
+        run: exit 1
