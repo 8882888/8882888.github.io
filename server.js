@@ -247,6 +247,7 @@ function naverFocus50Guide(r,kind){
   '<nav aria-label="'+esc(info.keyword)+' 관련 이용 방식"><p>'+
    related.map(([title,url])=>'<a href="'+url+'">'+esc(title)+'</a>').join(' · ')+
    (info.related?' · <a href="'+info.related+'">'+esc(kindLabel)+' 관련 서비스 상세 안내</a>':'')+
+   ' · <a href="/recruit/'+kind+'/">'+(kind==='taksong'?'탁송기사모집':'대리기사모집')+' 지원 안내</a>'+
    '</p></nav></section>';
 }
 function naverFocus50Hub(kind){
@@ -2810,6 +2811,21 @@ function routeKeywordSearchPage(from,to,kind,page=1){
  const body='<section><h2>출발지에서 전국 지역으로 '+service+'</h2><form action="/route-search/" method="get"><label>출발지 <input name="from" maxlength="80" required value="'+esc(from)+'" placeholder="예: 대구, 부산, 기장군"></label> <label>도착지 <input name="to" maxlength="80" value="'+esc(to)+'" placeholder="비우면 전국 지역 전체"></label> <label>서비스 <select name="service"><option value="taksong"'+(kind==='taksong'?' selected':'')+'>탁송</option><option value="daeri"'+(kind==='daeri'?' selected':'')+'>대리운전</option></select></label> <button type="submit">구간 찾기</button></form><p>시·도, 시·군·구, 읍·면·동·리 출발·도착 조합입니다. 구간을 선택하면 해당 구간의 예약 안내로 연결되고 요금계산기에서 주소를 확인할 수 있습니다. 실제 운행 사례나 확정 요금이 아니며 배차 가능 여부는 상담으로 확인합니다.</p><ul>'+examples.map(([a,b])=>'<li><a href="'+esc('/route-search/?'+new URLSearchParams({from:a,to:b,service:kind}))+'">'+esc(a+'에서 '+(b||'전국 지역')+' '+service)+'</a></li>').join('')+'</ul></section>'+choices+nav+(rows?'<section><h2>'+esc(originLabel)+' 출발 '+service+' 구간</h2><ul>'+rows+'</ul></section>':'')+nav;
  return layout('전국 '+service+' 출발·도착 구간 찾기','지역별 출발지와 도착지를 조합해 예상요금을 조회하세요.',body,'https://'+host+'/route-search/',null);
 }
+// Recruitment searches are separate from customer booking searches.
+// Reuse the two national and 34 existing provincial canonical pages only.
+function recruitmentIntent(raw){
+ const key=String(raw||'').normalize('NFKC').replace(/[\s·]/g,'');
+ if(!key||key.length>100)return null;
+ const m=key.match(/^(.*?)(자동차탁송기사|로드탁송기사|화물차탁송기사|특장차탁송기사|대리운전기사|탁송기사|대리기사)(모집|지원|등록|구인)$/);
+ if(!m)return null;
+ const kind=m[2].startsWith('대리')?'daeri':'taksong',hub='/recruit/'+kind+'/';
+ const place=m[1].replace(/^전국/,'');
+ if(!place)return hub;
+ const exact=nationwideExplorer.resolve(place+(kind==='daeri'?'대리운전':'탁송'));
+ if(!exact||exact.kind!==kind||!exact.region)return null;
+ const province=regionByFullName.get(exact.region.full_name.split(' ')[0]);
+ return province&&province.level==='시도'?hub+province.slug+'/':null;
+}
 function recruitmentPage(kind,region){
  const isT=kind==='taksong',label=isT?'탁송기사':'대리운전기사',area=region?region.full_name:'전국',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const url='/recruit/'+kind+'/'+(region?region.slug+'/':'');
@@ -2818,8 +2834,10 @@ function recruitmentPage(kind,region){
  const provinces=regions.filter(r=>r.level==='시도').slice(0,20);
  const regionLinks=!region?'<section><h2>지역별 기사 모집 안내</h2><ul>'+provinces.map(r=>'<li><a href="/recruit/'+kind+'/'+r.slug+'/">'+esc(r.full_name)+' '+label+' 모집</a></li>').join('')+'</ul></section>':'<section><h2>'+esc(area)+' 서비스 및 기사 지원 안내</h2><p>해당 지역의 운행 조건과 서비스 범위를 확인한 뒤 기사 등록·배차 가능 여부를 상담하세요.</p><ul><li><a href="'+servicePath(region,kind)+'">'+esc(area)+' '+(isT?'자동차탁송':'대리운전')+' 지역 안내</a></li><li><a href="/recruit/'+kind+'/">전국 '+label+' 모집 안내</a></li><li><a href="/fare/?service='+kind+'">출발·도착 예상요금 안내</a></li></ul></section>';
  const jobFocus=isT?'<section><h2>탁송기사 지원 시 안내할 사항</h2><p>차량을 인수하고 목적지에서 인계하는 로드탁송 업무를 희망하는 경우, 가능한 차종과 지역·거리, 이동 및 복귀 가능 시간, 차량 키와 인수·인계 확인 경험 등을 알려주세요. 현재 가능한 업무·등록 및 보험 적용 조건은 상담으로 확인하며 근무 조건이나 수입을 보장하지 않습니다.</p></section>':'<section><h2>대리운전기사 지원 시 안내할 사항</h2><p>대리운전 지원 상담 시 주 운행 지역, 야간·주말 등 가능한 시간, 운전 경력과 장거리 운행 가능 여부를 알려주세요. 배차 운영 방식, 등록 및 보험 적용 조건은 상담을 통해 확인합니다. 특정 시간의 일감이나 수입을 보장하지 않습니다.</p></section>';
+ const supportFocus=isT?'<section id="recruit-taksong-vehicle-experience"><h2>자동차탁송기사모집 · 화물차·특장차 기사 지원</h2><p>승용차·SUV 등 일반 차량과 화물차·특장차는 운전 자격과 인수·인계 조건이 다릅니다. 화물차·대형차 지원자는 운전 가능한 등록 차종, 해당 면허, 실제 운전 경험과 희망 운행 지역을 알려주세요. 특수차는 별도 자격·보험 확인 후 상담합니다.</p><p><a href="/service/heavy-truck-taksong/">화물차·특장차 66종 차량 이동 안내</a> · <a href="/service/long-distance-taksong/">장거리 로드탁송 이용 안내</a></p></section>':'<section id="recruit-daeri-work-types"><h2>대리기사모집 · 일반·장거리·법인·골프장 운행 지원</h2><p>일반 시내 대리운전과 장거리·골프장·법인 운행은 일정, 출발지 접근과 기사 복귀 조건이 다릅니다. 희망 지역과 운행 가능 시간대, 경험을 알려주세요. 등록 및 실제 업무 배정 조건은 상담 후 확인합니다.</p><p><a href="/service/long-distance-daeri/">장거리 대리운전 안내</a> · <a href="/service/golf/">골프장 대리운전 안내</a> · <a href="/service/corporate/">법인 대리운전 안내</a></p></section>';
+ const registration='<section id="recruit-registration-questions"><h2>기사 지원 상담 절차</h2><ol><li>대표번호 1811-4294로 지원 희망 서비스와 지역을 알려주세요.</li><li>운행 가능 시간, 차종·면허 및 운전 경력을 확인합니다.</li><li>등록에 필요한 서류와 보험 적용, 정산 및 실제 업무 조건을 담당자에게 확인합니다.</li></ol><p>개인정보나 면허증 사진을 공개 게시판에 올리지 마세요. 등록 가능 여부, 계약 형태 및 비용·수입은 개별 상담으로 확인하며 확정 채용이나 일감 보장을 의미하지 않습니다.</p></section>';
  const pageSchema=JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:seoRules.get(url)?.title||title,url:base+url,description:seoRules.get(url)?.description||desc,isPartOf:{'@type':'WebSite',name:BRAND,url:base+'/'}}).replace(/</g,'\\u003c');
- const body='<script type="application/ld+json">'+pageSchema+'</script><section aria-label="기사모집 빠른 지원" style="background:#102e50;color:#fff;padding:20px;border-radius:12px;margin:8px 0 16px"><h1 style="color:#fff;margin:0 0 8px">'+(isT?'탁송기사모집':'대리기사모집')+' · '+esc(area)+'</h1><p style="color:#e9f4ff;margin:0 0 12px">'+esc(area)+' 기사 지원 안내 · 운행 지역·등록 조건 상담</p><a href="tel:18114294" style="display:inline-flex;align-items:center;min-height:52px;padding:10px 18px;border-radius:9px;background:#ffdc55;color:#142b43;font-weight:900;text-decoration:none">기사 지원 전화 1811-4294</a></section><figure><a href="tel:18114294"><img src="/assets/smart24-business-card-inline-v2.png" alt="'+esc(area+' '+(isT?'탁송기사모집':'대리기사모집')+' 상담 명함 1811-4294')+'" width="1200" height="800" loading="eager" fetchpriority="high" style="width:100%;height:auto;max-width:720px"></a><figcaption>기사 모집 상담 1811-4294</figcaption></figure><p>'+esc(desc)+'</p><section><h2>지원 및 상담</h2><p>전국에서 '+label+' 지원 상담을 받고 있습니다. 실제 배차 가능 지역, 운행 시간, 기사 등록 절차 및 필요한 확인 사항은 전화로 안내합니다. 특정 지역의 상시 배차나 수입을 보장하지 않습니다.</p><p><a href="tel:18114294">기사 지원 상담 1811-4294</a></p></section><section><h2>지원 전 확인할 사항</h2><p>주로 운행할 지역, 운행 가능한 요일과 시간, 장거리 이동 가능 여부, 운전 경력 등을 상담 시 알려주세요. 보험·등록 및 업무 조건은 상담 과정에서 확인합니다.</p></section>'+jobFocus+regionLinks+'<section><h2>관련 안내</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a> · <a href="/'+kind+'/">'+(isT?'탁송':'대리운전')+' 서비스 안내</a></p></section>';
+ const body='<script type="application/ld+json">'+pageSchema+'</script><section aria-label="기사모집 빠른 지원" style="background:#102e50;color:#fff;padding:20px;border-radius:12px;margin:8px 0 16px"><h1 style="color:#fff;margin:0 0 8px">'+(isT?'탁송기사모집':'대리기사모집')+' · '+esc(area)+'</h1><p style="color:#e9f4ff;margin:0 0 12px">'+esc(area)+' 기사 지원 안내 · 운행 지역·등록 조건 상담</p><a href="tel:18114294" style="display:inline-flex;align-items:center;min-height:52px;padding:10px 18px;border-radius:9px;background:#ffdc55;color:#142b43;font-weight:900;text-decoration:none">기사 지원 전화 1811-4294</a></section><figure><a href="tel:18114294"><img src="/assets/smart24-business-card-inline-v2.png" alt="'+esc(area+' '+(isT?'탁송기사모집':'대리기사모집')+' 상담 명함 1811-4294')+'" width="1200" height="800" loading="eager" fetchpriority="high" style="width:100%;height:auto;max-width:720px"></a><figcaption>기사 모집 상담 1811-4294</figcaption></figure><p>'+esc(desc)+'</p><section><h2>지원 및 상담</h2><p>전국에서 '+label+' 지원 상담을 받고 있습니다. 실제 배차 가능 지역, 운행 시간, 기사 등록 절차 및 필요한 확인 사항은 전화로 안내합니다. 특정 지역의 상시 배차나 수입을 보장하지 않습니다.</p><p><a href="tel:18114294">기사 지원 상담 1811-4294</a></p></section><section><h2>지원 전 확인할 사항</h2><p>주로 운행할 지역, 운행 가능한 요일과 시간, 장거리 이동 가능 여부, 운전 경력 등을 상담 시 알려주세요. 보험·등록 및 업무 조건은 상담 과정에서 확인합니다.</p></section>'+jobFocus+supportFocus+registration+regionLinks+'<section><h2>관련 안내</h2><p><a href="/recruit/taksong/">전국 탁송기사 모집</a> · <a href="/recruit/daeri/">전국 대리운전기사 모집</a> · <a href="/'+kind+'/">'+(isT?'탁송':'대리운전')+' 서비스 안내</a></p></section>';
  return layout(title,desc,body,base+url,base+'/assets/smart24-business-card-inline-v2.png');
 }
 
@@ -3555,6 +3573,9 @@ if(directionalTarget){
 }
 if(searchIntent){
  const normalized=compact(searchIntent).toLowerCase();
+ const recruitTarget=recruitmentIntent(searchIntent);
+ if(recruitTarget){res.writeHead(302,{location:recruitTarget,'cache-control':'no-store'});return res.end();}
+
  const place=normalized.match(/^(?:전국)?(.+?)(?:대리운전|대리)$/);
  const placeTarget=place&&placeSearchTargets.get(place[1]);
  const truck=normalized.match(/^(?:전국)?(?:화물차)?([0-9]+(?:\.[0-9]+)?톤)(?:화물차)?(윙바디)?(?:차량|자동차)?탁송$/);
