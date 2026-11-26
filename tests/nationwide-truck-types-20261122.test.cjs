@@ -130,3 +130,54 @@ test('bounded region guidance does not invent thousands of dong/village landing 
  assert.ok(server.includes('nationwideTruckTaksong.resolveGeneral(searchIntent)'));
  assert.ok(!fs.readFileSync(path.join(root,'robots.txt'),'utf8').includes('truck-type-'));
 });
+
+test('expanded nationwide special-truck taxonomy preserves base types and resolves all declared specialty weight queries',()=>{
+ const extra=require('../data/special-truck-types-20261126.json');
+ assert.equal(guide.allTypes.length,48);
+ assert.equal(guide.allWeights.length,36);
+ assert.equal(new Set(guide.allTypes.map(t=>t.slug)).size,48);
+ assert.equal(new Set(guide.allWeights).size,36);
+ assert.equal(guide.types.length,26);
+ const sourceKeys=new Set(extra.sources.map(x=>x.key));
+ assert.equal(sourceKeys.size,extra.sources.length);
+ for(const t of extra.types){
+  for(const source of t.sources)assert.ok(sourceKeys.has(source),source);
+  assert.ok(t.description.length>=35&&t.note.length>=10,t.slug);
+  for(const alias of t.aliases){
+   assert.equal(guide.resolveGeneral(alias+'탁송'),HEAVY+'#truck-type-'+t.slug,alias);
+   assert.equal(guide.resolve('부산'+alias+'탁송'),target('부산광역시'),alias);
+   for(const weight of t.weights){
+    const q=weight+'톤'+alias+'탁송';
+    assert.equal(guide.resolveGeneral(q),HEAVY+'#truck-type-'+t.slug,q);
+    assert.equal(guide.resolve('부산'+q),target('부산광역시'),q);
+   }
+  }
+ }
+ assert.equal(guide.resolveGeneral('추레라탁송'),HEAVY+'#truck-type-tractor');
+ assert.equal(guide.resolveGeneral('추레라헤드탁송'),HEAVY+'#truck-type-tractor-head');
+ assert.equal(guide.resolveGeneral('25톤탱크로리탁송'),HEAVY+'#truck-type-tanker');
+ assert.equal(guide.resolveGeneral('1톤준설차탁송'),HEAVY+'#truck-type-dredger');
+ assert.equal(guide.resolveGeneral('3.5톤스크린차탁송'),HEAVY+'#truck-type-screen');
+ assert.equal(guide.resolveGeneral('1톤푸드차량탁송'),HEAVY+'#truck-type-foodtruck');
+ assert.equal(guide.resolveGeneral('군용차탁송'),HEAVY+'#truck-type-military');
+ assert.equal(guide.resolve('충청남도당진시석문면장고항리5톤준설차탁송'),target('충청남도 당진시 석문면 장고항리'));
+ assert.equal(guide.resolve('서울1톤준설차임대'),null);
+ assert.equal(guide.resolveGeneral('25톤탱크로리위험물운송'),null);
+ assert.equal(guide.resolve('서울에서부산까지5톤준설차탁송'),null);
+ assert.equal(guide.resolveGeneral('푸드트럭대여'),null);
+ const html=fs.readFileSync(path.join(root,'service/heavy-truck-taksong/index.html'),'utf8');
+ const expanded=guide.expandedSection();
+ for(const t of extra.types){
+  assert.ok(html.includes('id="truck-type-'+t.slug+'"'),t.slug);
+  assert.ok(expanded.includes('id="truck-type-'+t.slug+'"'),t.slug);
+  for(const w of t.weights)assert.ok(html.includes(w+'톤'+t.name+'탁송'),t.name);
+ }
+ for(const w of guide.allWeights)assert.ok(html.includes(w+'톤화물차탁송'),w);
+ const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
+ assert.equal(new Set(ids).size,ids.length);
+ assert.ok(html.includes('1톤·3.5톤은 고객 문의 톤급으로 별도 제원 확인'));
+ assert.ok(html.includes('비무장 일반 도로 운행용 차량'));
+ assert.ok(html.includes('탱크 용량, 작업 높이와 차량 적재톤수'));
+ assert.ok(html.includes('제휴')&&html.includes('제작사'));
+ assert.ok(html.includes('https://jeongukdaeri.kr/service/heavy-truck-taksong/'));
+});
