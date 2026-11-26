@@ -203,3 +203,30 @@ test('five sixth-round Busan and Daegu guides retain identities and distinct loc
  }
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
 });
+
+test('five seventh-round Busan and Daegu guides preserve local identities and distinct service guidance',()=>{
+ const targets=[
+ ['eleventh-taksong-50',812,'부산덕천동자동차탁송','부산광역시 북구 덕천동','taksong',['덕천역','주차권','열쇠','수령인','통행료']],
+ ['eleventh-taksong-50',813,'부산민락동탁송업체','부산광역시 수영구 민락동','taksong',['민락수변공원','광안리','반출 동의','수령인','복귀']],
+ ['fourteenth-taksong-100',1315,'부산미음동차량탁송','부산광역시 강서구 미음동','taksong',['미음산업단지','출입 허가','반출','출고 서류','인계']],
+ ['eighth-100',571,'대구침산동법인카드대리운전','대구광역시 북구 침산동','daeri',['침산네거리','법인카드','이용 승인','영수증','복귀']],
+ ['eleventh-daeri-50',865,'대구태전동대리운전회사','대구광역시 북구 태전동','daeri',['태전역','칠곡','주차권','하차','복귀']]
+ ];
+ const records=[];
+ for(const [batch,id,keyword,region,kind,terms] of targets){
+  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+batch+'.json'),'utf8')).priority;
+  assert.equal(rows.length,Number(batch.split('-').at(-1)));
+  assert.equal(new Set(rows.map(r=>r.id)).size,rows.length);
+  const row=rows.find(r=>r.id===id);
+  assert.ok(row,id);assert.equal(row.keyword,keyword);assert.equal(row.region,region);assert.equal(row.kind,kind);
+  assert.ok(row.related.startsWith('/'));
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75);
+  const locality=region.split(' ').at(-1);
+  assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality));
+  const whole=[row.topic,row.pickup,row.handover].join(' ');
+  for(const term of terms)assert.ok(whole.includes(term),keyword+' missing '+term);
+  assert.doesNotMatch(whole,/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  records.push(row);
+ }
+ for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
+});
