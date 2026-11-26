@@ -495,3 +495,22 @@ test('all 2900 original regional guides have explicit related service links, inc
  for(const field of ['topic','pickup','handover'])assert.equal(new Set(edited.map(r=>r[field])).size,17);
  assert.ok(edited.find(r=>r.id===40).handover.includes('1877-5245'));
 });
+
+test('29 nationwide local guides retain exact identities and distinct source-based guidance across 16 provinces',()=>{
+ const targets=[["fourteenth-taksong-100",1304,"서울특별시 송파구 신천동","서울신천동탁송회사","taksong","/service/taksong/"],["fourteenth-taksong-100",1327,"대구광역시 동구 신암동","대구신암동자동차탁송","taksong","/service/long-distance-taksong/"],["fourteenth-taksong-100",1339,"경기도 수원시 권선구 세류동","수원세류동탁송회사","taksong","/service/long-distance-taksong/"],["fourteenth-taksong-100",1357,"강원특별자치도 강릉시 성산면","강릉성산면자동차탁송","taksong","/service/long-distance-taksong/"],["fourteenth-taksong-100",1364,"충청북도 청주시 흥덕구 송절동","청주송절동탁송회사","taksong","/service/taksong/"],["fourteenth-taksong-100",1369,"충청남도 천안시 동남구 원성동","천안원성동탁송회사","taksong","/service/taksong/"],["fourteenth-taksong-100",1372,"전북특별자치도 전주시 완산구 서신동","전주서신동자동차탁송","taksong","/service/taksong/"],["fourteenth-taksong-100",1376,"전라남도 여수시 국동","여수국동탁송","taksong","/service/long-distance-taksong/"],["fourteenth-taksong-100",1382,"경상북도 포항시 남구 효자동","포항효자동자동차탁송","taksong","/service/taksong/"],["fourteenth-taksong-100",1387,"경상남도 창원시 의창구 사림동","창원사림동자동차탁송","taksong","/service/long-distance-taksong/"],["fourteenth-taksong-100",1391,"제주특별자치도 제주시 건입동","제주건입동탁송","taksong","/business/export-port/"],["fourteenth-taksong-100",1395,"울산광역시 중구 태화동","울산태화동차량탁송","taksong","/service/long-distance-taksong/"],["fourteenth-taksong-100",1397,"광주광역시 서구 농성동","광주농성동자동차탁송","taksong","/service/taksong/"],["tenth-100",707,"부산광역시 해운대구 반여동","부산반여동자동차탁송","taksong","/service/taksong/"],["tenth-100",709,"부산광역시 강서구 대저2동","부산대저2동차량탁송","taksong","/business/rental-car/"],["tenth-100",757,"부산광역시 해운대구 반여동","부산반여동대리운전회사","daeri","/service/corporate/"],["ninth-100",667,"대구광역시 수성구 만촌동","대구만촌동법인카드대리운전","daeri","/service/corporate/"],["ninth-100",669,"대구광역시 달서구 죽전동","대구죽전동법인카드대리운전","daeri","/service/corporate/"],["fourteenth-daeri-100",1409,"서울특별시 관악구 신림동","서울신림동대리운전회사","daeri","/daeri/"],["fourteenth-daeri-100",1427,"대구광역시 동구 신암동","대구신암동대리운전회사","daeri","/daeri/"],["fourteenth-daeri-100",1439,"경기도 수원시 권선구 세류동","수원세류동대리운전업체","daeri","/daeri/"],["fourteenth-daeri-100",1441,"경기도 성남시 분당구 이매동","성남이매동대리운전","daeri","/daeri/"],["fourteenth-daeri-100",1457,"강원특별자치도 강릉시 성산면","강릉성산면대리운전","daeri","/service/daily-driver/"],["fourteenth-daeri-100",1464,"충청북도 청주시 흥덕구 송절동","청주송절동법인카드대리운전","daeri","/service/corporate/"],["fourteenth-daeri-100",1482,"경상북도 포항시 남구 효자동","포항효자동대리운전업체","daeri","/daeri/"],["fourteenth-daeri-100",1487,"경상남도 창원시 의창구 사림동","창원사림동대리운전회사","daeri","/daeri/"],["fourteenth-daeri-100",1491,"제주특별자치도 제주시 건입동","제주건입동법인대리운전","daeri","/service/corporate/"],["fifteenth-daeri-100",1628,"인천광역시 계양구 평동","인천계양구평동예약대리운전","daeri","/daeri/"],["fifteenth-daeri-100",1640,"대전광역시 유성구 노은동","대전유성구노은동대리업체","daeri","/daeri/"]];
+ const records=[];
+ for(const [batch,id,region,keyword,kind,related] of targets){
+  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+batch+'.json'),'utf8')).priority;
+  assert.equal(rows.length,Number(batch.split('-').at(-1)));
+  const row=rows.find(r=>r.id===id);assert.ok(row,id);
+  assert.equal(row.region,region);assert.equal(row.keyword,keyword);assert.equal(row.kind,kind);assert.equal(row.related,related);
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75,keyword);
+  const locality=region.split(' ').at(-1);
+  assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality),keyword);
+  assert.doesNotMatch([row.topic,row.pickup,row.handover].join(' '),/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  records.push(row);
+ }
+ assert.equal(records.length,29);
+ assert.equal(new Set(records.map(r=>r.region.split(' ')[0])).size,16);
+ for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,29);
+});
