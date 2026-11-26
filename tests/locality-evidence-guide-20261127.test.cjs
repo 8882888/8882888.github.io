@@ -82,8 +82,8 @@ test('diagnose locality-name-only duplication without granting editorial or inde
  // Exact normalized matches are a lower bound, not a full near-duplicate or live HTML audit.
 });
 
-test('first ten duplicate pages contain distinct source-backed local booking advice',()=>{
- const targets=[['서울특별시 은평구 불광동','불광역','pts.map.naver.com'],['부산광역시 남구 용당동','신선대부두','busanpa.com'],['강원특별자치도 양양군 현남면','인구항','tour.yangyang.go.kr'],['전북특별자치도 무주군 무주읍','반딧불장터','tour.muju.go.kr'],['경상남도 김해시 내동','연지공원','access.visitkorea.or.kr']];
+test('first twenty duplicate pages contain distinct source-backed local booking advice',()=>{
+ const targets=[['서울특별시 은평구 불광동','불광역','pts.map.naver.com'],['부산광역시 남구 용당동','신선대부두','busanpa.com'],['강원특별자치도 양양군 현남면','인구항','tour.yangyang.go.kr'],['전북특별자치도 무주군 무주읍','반딧불장터','tour.muju.go.kr'],['경상남도 김해시 내동','연지공원','access.visitkorea.or.kr'],['대구광역시 서구 내당동','내당역','data.go.kr'],['광주광역시 북구 양산동','양산저수지','gwangju.go.kr'],['울산광역시 동구 방어동','방어진항','donggu.ulsan.kr'],['경기도 이천시 부발읍','부발역','pts.map.naver.com'],['경기도 군포시 당동','군포역','bustrain.kr']];
  const advice=new Set();
  for(const [name,landmark,domain] of targets){
   const region=regions.find(r=>r.full_name===name);assert(region);
@@ -95,6 +95,6 @@ test('first ten duplicate pages contain distinct source-backed local booking adv
    assert(html.includes(domain));advice.add(match[1]);
   }
  }
- assert.equal(advice.size,10);
- console.log('Source-backed first batch: 10 distinct regional service paragraphs; original duplicate baseline remains unchanged.');
+ assert.equal(advice.size,20);
+ console.log('Source-backed first two batches: 20 distinct regional service paragraphs; original duplicate baseline remains unchanged.');
 });
