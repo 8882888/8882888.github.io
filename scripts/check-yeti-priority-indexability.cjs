@@ -90,7 +90,7 @@ async function checkOne(route,fetchImpl=fetch,base=BASE){
  let response;
  try{
   response=await fetchImpl(url,{redirect:'manual',signal:AbortSignal.timeout(20000),
-   headers:{'user-agent':YETI,'accept':'text/html,application/xhtml+xml'}});
+   headers:{'user-agent':YETI,'x-smart24-monitor':'github-health-probe','accept':'text/html,application/xhtml+xml'}});
  }catch(error){return {route,url,status:0,issues:['fetch_failure'],detail:String(error).slice(0,220)};}
  const issues=[],status=response.status,contentType=response.headers.get('content-type')||'';
  if(status!==200)issues.push('http_'+status);

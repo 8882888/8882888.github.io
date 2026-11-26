@@ -24,6 +24,7 @@ test('proper Yeti agent, canonical and rendered title/H1 pass',async()=>{
  };
  const result=await checkOne('/taksong/busan/gijang-gun/',fake);
  assert.equal(seen.options.headers['user-agent'],YETI);
+ assert.equal(seen.options.headers['x-smart24-monitor'],'github-health-probe');
  assert.equal(seen.options.redirect,'manual');
  assert.deepEqual(result.issues,[]);
  assert.equal(result.canonical,url);

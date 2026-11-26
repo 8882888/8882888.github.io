@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {compareOfficial,searchComparison,delta} from '../scripts/report-naver-official-scorecard.mjs';
+import {compareOfficial,searchComparison,delta,fromDatedOwnerReport} from '../scripts/report-naver-official-scorecard.mjs';
 const baseline={officialIndexBaseline:{indexed:14,collectionLimited:1,excluded:0,observedAt:'2026-11-05'}};
 const searchBase={source:'owner',period:'최근 30일',last_updated:'2026-11-05',totals:{clicks:69,impressions_approx:1800,ctr_percent:3.8}};
 test('no current owner data means no invented Naver index gains',()=>{
@@ -54,4 +54,15 @@ test('full sitemap audit separates the 10k first milestone from technical URL co
  assert.match(source,/duplicate_meta_description_across_urls/);
  assert.match(source,/descriptionDuplicateGroups/);
  assert.match(source,/descriptionMultipleTags/);
+});
+
+test('dated Nov 25 owner diagnosis feeds actual scorecard, preserves displayed CTR and approximate totals',()=>{
+ const s=JSON.parse(readFileSync(new URL('../data/naver-search-advisor-baseline-20261125.json',import.meta.url),'utf8'));
+ const x=fromDatedOwnerReport(s);
+ assert.deepEqual([x.indexed,x.collectionLimited,x.excluded,x.seoIssues],[14,0,0,0]);
+ assert.equal(x.observedAt,'2026-11-25');
+ assert.equal(x.crawl.completed,null);
+ assert.equal(searchComparison(searchBase,x).current.ctrPercent,2.2);
+ assert.equal(searchComparison(searchBase,x).current.approximate,true);
+ assert.equal(compareOfficial({officialIndexBaseline:{indexed:null,observedAt:null}},x).indexDelta,null);
 });
