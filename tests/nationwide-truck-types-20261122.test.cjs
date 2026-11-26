@@ -209,7 +209,7 @@ test('commercial truck reference photos have distinct descriptive alt text, lice
  assert.ok(start>=0&&end>start);
  const gallery=html.slice(start,end);
  const photos=[...gallery.matchAll(/<figure>([\s\S]*?)<\/figure>/g)].map(m=>m[1]);
- assert.equal(photos.length,5);
+ assert.equal(photos.length,8);
  const alts=new Set(),srcs=new Set();
  for(const photo of photos){
   const img=photo.match(/<img\b[^>]+>/)?.[0];assert.ok(img);
@@ -224,7 +224,7 @@ test('commercial truck reference photos have distinct descriptive alt text, lice
   const id=photo.match(/href="#(truck-type-[^"]+)"/)?.[1];
   assert.ok(id&&html.includes('id="'+id+'"'));
  }
- assert.equal(alts.size,5);assert.equal(srcs.size,5);
+ assert.equal(alts.size,8);assert.equal(srcs.size,8);
  assert.ok(gallery.includes('고객 운행 사진이 아니며'));
  assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1);
  assert.equal((html.match(/<link rel="canonical"/g)||[]).length,1);
@@ -236,4 +236,22 @@ test('commercial truck reference photos have distinct descriptive alt text, lice
  assert.ok(html.includes('id="heavy-truck-booking-questions-20261126"'));
  assert.ok(html.includes('25톤 카고와 25톤 탱크로리는 요금이 같나요?'));
  assert.ok(html.includes('25톤 카고 탱크로리'));
+});
+
+test('water tanker, oil tanker and armroll photos are credited as overseas examples and distinct quote guidance remains available',()=>{
+ const html=fs.readFileSync(path.join(root,'service/heavy-truck-taksong/index.html'),'utf8');
+ const gallery=html.slice(html.indexOf('<section id="heavy-truck-reference-photos-20261126"'),html.indexOf('</section>',html.indexOf('<section id="heavy-truck-reference-photos-20261126"')));
+ const overseas=[...gallery.matchAll(/<figure>([\s\S]*?)<\/figure>/g)].map(x=>x[1]).filter(x=>x.includes('해외 차종 참고 사진'));
+ assert.equal(overseas.length,3);
+ for(const [slug,country,author] of [['water-tanker','홍콩','LN9267'],['oil-tanker','필리핀','Captainmorlypogi1959'],['armroll','스위스','JoachimKohler-HB']]){
+  const p=overseas.find(x=>x.includes('href="#truck-type-'+slug+'"'));
+  assert.ok(p&&p.includes(country)&&p.includes(author)&&p.includes('국내 운행 증빙 아님'),slug);
+ }
+ const start=html.indexOf('id="heavy-truck-special-quote-20261126"');
+ assert.ok(start>=0);
+ const quote=html.slice(start,html.indexOf('</section>',start));
+ assert.ok(quote.includes('화물차 종류별 전화 상담 준비사항'));
+ assert.ok(quote.includes('일반 승용차 예상요금은 특수차량 확정요금으로 적용되지 않습니다'));
+ assert.ok(quote.includes('tel:18114294'));
+ for(const m of quote.matchAll(/href="#([^"]+)"/g))assert.ok(html.includes('id="'+m[1]+'"'),m[1]);
 });
