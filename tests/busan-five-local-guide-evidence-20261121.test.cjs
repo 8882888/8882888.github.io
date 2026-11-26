@@ -724,3 +724,21 @@ test('22 southern and Jeju paired locality guides retain identity and differenti
  }
  for(const field of fields)assert.equal(seen[field].size,22);
 });
+
+test('22 Seoul twelfth-batch paired guides preserve locality identity and separate practical service instructions',()=>{
+ const fields=['topic','pickup','handover'];
+ const rows=Object.fromEntries(['taksong','daeri'].map(kind=>[kind,JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-twelfth-'+kind+'-100.json'),'utf8')).priority]));
+ const pairs=[[902,'세곡동'],[903,'논현동'],[904,'우면동'],[905,'신원동'],[906,'거여동'],[907,'삼전동'],[908,'신길동'],[909,'대림동'],[910,'가산동'],[911,'목동'],[912,'행당동']];
+ const seen=Object.fromEntries(fields.map(k=>[k,new Set()]));
+ for(const [id,local] of pairs){
+  const t=rows.taksong.find(r=>r.id===id),d=rows.daeri.find(r=>r.id===id+100);
+  assert.ok(t&&d,local);assert.equal(t.region,d.region);assert.equal(t.kind,'taksong');assert.equal(d.kind,'daeri');assert.equal(t.region.split(' ').at(-1),local);
+  for(const row of [t,d]){
+   assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75,row.keyword);
+   assert.ok(row.related,row.keyword);
+   for(const field of fields){assert.ok(row[field].includes(local),row.keyword);assert.ok(!seen[field].has(row[field]),row.keyword);seen[field].add(row[field]);}
+   assert.doesNotMatch(fields.map(k=>row[k]).join(' '),/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  }
+ }
+ for(const field of fields)assert.equal(seen[field].size,22);
+});
