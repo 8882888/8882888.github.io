@@ -257,3 +257,95 @@ test('five eighth-round Busan and Daegu guides preserve existing identities and 
  }
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
 });
+
+test('five ninth-round Busan and Daegu transport guides preserve identities, links and distinct service advice',()=>{
+ const targets=[
+  [
+    "ninth-100",
+    613,
+    "부산전포동탁송",
+    "부산광역시 부산진구 전포동",
+    "/service/long-distance-taksong/",
+    [
+      "전포카페거리",
+      "골목",
+      "주차권",
+      "수령인",
+      "통행료"
+    ]
+  ],
+  [
+    "ninth-100",
+    614,
+    "부산하단동자동차탁송",
+    "부산광역시 사하구 하단동",
+    "/service/long-distance-taksong/",
+    [
+      "하단오거리",
+      "동아대",
+      "반출 승인",
+      "반납",
+      "복귀"
+    ]
+  ],
+  [
+    "ninth-100",
+    615,
+    "부산화명동탁송업체",
+    "부산광역시 북구 화명동",
+    "/service/long-distance-taksong/",
+    [
+      "화명역",
+      "화명생태공원",
+      "방문 등록",
+      "입고 접수",
+      "수령인"
+    ]
+  ],
+  [
+    "fourteenth-taksong-100",
+    1323,
+    "대구욱수동탁송업체",
+    "대구광역시 수성구 욱수동",
+    "/service/taksong/",
+    [
+      "대구스타디움",
+      "통행 제한",
+      "소유자 승인",
+      "수령인",
+      "복귀"
+    ]
+  ],
+  [
+    "fourteenth-taksong-100",
+    1326,
+    "대구감삼동탁송",
+    "대구광역시 달서구 감삼동",
+    "/service/taksong/",
+    [
+      "감삼역",
+      "반출 허가",
+      "대리운전과 달리",
+      "검수",
+      "입고 접수"
+    ]
+  ]
+];
+ const records=[];
+ for(const [batch,id,keyword,region,related,terms] of targets){
+  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+batch+'.json'),'utf8')).priority;
+  assert.equal(rows.length,Number(batch.split('-').at(-1)));
+  assert.equal(new Set(rows.map(r=>r.id)).size,rows.length);
+  const row=rows.find(r=>r.id===id);
+  assert.ok(row,id);assert.equal(row.keyword,keyword);assert.equal(row.region,region);assert.equal(row.kind,'taksong');
+  assert.equal(row.related,related);
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75);
+  const locality=region.split(' ').at(-1);
+  assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality));
+  const whole=[row.topic,row.pickup,row.handover].join(' ');
+  for(const term of terms)assert.ok(whole.includes(term),keyword+' missing '+term);
+  assert.doesNotMatch(whole,/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  records.push(row);
+ }
+ for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
+});
