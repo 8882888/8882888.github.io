@@ -21,6 +21,17 @@ test('local pre-rendered national service pages retain distinct title, canonical
    await delay(200);
   }
   assert(ok,'Node service pre-render boot');
+  const homeResponse=await fetch(base+'/',{headers:{'user-agent':'Yeti/1.1','x-smart24-monitor':'github-health-probe'},signal:AbortSignal.timeout(15000)});
+  assert.equal(homeResponse.status,200);
+  const home=await homeResponse.text();
+  assert(home.includes('<h1>전국대리운전 · 전국자동차탁송 '));
+  const first=home.indexOf('id="national-daeri-completed-cases"'),second=home.indexOf('id="national-taksong-completed-cases"');
+  assert(first>=0&&second>first,'Server-rendered completed designated-driver records precede transport records');
+  const firstSection=home.slice(first,home.indexOf('</section>',first));
+  assert(firstSection.includes('<time datetime=')&&firstSection.includes('당시 요금'),'Source-derived ride facts and prior fares are visible');
+  assert(home.includes('href="/daeri/">전국대리운전 지역별 예약·요금 안내</a>'));
+  assert(home.includes('href="https://jeongukdaeri.kr/"'),'Homepage canonical preserved');
+
   for(const kind of ['taksong','daeri']){
    for(let repeat=0;repeat<2;repeat++){
     const response=await fetch(base+'/'+kind+'/',{headers:{'user-agent':'Yeti/1.1'},signal:AbortSignal.timeout(5000)});
