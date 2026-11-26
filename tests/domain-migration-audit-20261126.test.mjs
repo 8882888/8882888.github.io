@@ -27,3 +27,7 @@ test('Manus new domain is a separate canonical origin, never redirected to Smart
  assert.equal(classify({kind:'official',url,status:200,canonical:url,contentType:'text/html',targetOrigin}),'OFFICIAL_SELF_CANONICAL');
  assert.equal(classify({kind:'official',url,status:200,canonical:'https://jeongukdaeri.kr/',contentType:'text/html',targetOrigin}),'OFFICIAL_INDEX_SIGNAL_REVIEW');
 });
+
+test('unconfirmed Manus project cannot be diagnosed as a duplicate solely by a different canonical',()=>{
+ assert.equal(classify({kind:'manus-original-candidate',url:'https://taksongkorea-fqwxknsy.manus.space/',status:200,canonical:'https://taksongkorea-fqwxknsy.manus.space/',targetOrigin:'https://smartdaeritaksong.kr'}),'CANDIDATE_RELATION_UNCONFIRMED');
+});
