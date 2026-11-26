@@ -133,10 +133,10 @@ test('bounded region guidance does not invent thousands of dong/village landing 
 
 test('expanded nationwide special-truck taxonomy preserves base types and resolves all declared specialty weight queries',()=>{
  const extra=require('../data/special-truck-types-20261126.json');
- assert.equal(guide.allTypes.length,48);
- assert.equal(guide.allWeights.length,36);
- assert.equal(new Set(guide.allTypes.map(t=>t.slug)).size,48);
- assert.equal(new Set(guide.allWeights).size,36);
+ assert.equal(guide.allTypes.length,66);
+ assert.equal(guide.allWeights.length,42);
+ assert.equal(new Set(guide.allTypes.map(t=>t.slug)).size,66);
+ assert.equal(new Set(guide.allWeights).size,42);
  assert.equal(guide.types.length,26);
  const sourceKeys=new Set(extra.sources.map(x=>x.key));
  assert.equal(sourceKeys.size,extra.sources.length);
@@ -180,4 +180,24 @@ test('expanded nationwide special-truck taxonomy preserves base types and resolv
  assert.ok(html.includes('탱크 용량, 작업 높이와 차량 적재톤수'));
  assert.ok(html.includes('제휴')&&html.includes('제작사'));
  assert.ok(html.includes('https://jeongukdaeri.kr/service/heavy-truck-taksong/'));
+});
+
+test('water trucks, cargo, tankers and armroll spelling variants retain precise type anchors across weight classes',()=>{
+ const examples=[
+ ['1톤물차탁송','water-tanker'],['16톤물차탁송','water-tanker'],['25톤물차탁송','water-tanker'],
+ ['7.5톤살수차탁송','sprinkler'],['8.5톤살수차탁송','sprinkler'],['16톤살수차탁송','sprinkler'],
+ ['25톤탱크로리탁송','tanker'],['11.5톤탱크롤리탁송','tanker'],
+ ['25톤카고탁송','cargo'],['14.5톤카고탁송','cargo'],
+ ['25톤암롤탁송','armroll'],['25톤암롯탁송','armroll'],['11.5톤압롤탁송','armroll'],
+ ['25톤암롤살수차탁송','armroll-water'],['25.5톤덤프트럭탁송','dump']
+ ];
+ for(const [query,slug] of examples){
+  assert.equal(guide.resolveGeneral(query),HEAVY+'#truck-type-'+slug,query);
+  assert.equal(guide.resolve('부산'+query),target('부산광역시'),query);
+ }
+ const html=fs.readFileSync(path.join(root,'service/heavy-truck-taksong/index.html'),'utf8');
+ for(const [query] of examples.filter(([q])=>!q.includes('탱크롤리')&&!q.includes('11.5톤압롤')))assert.ok(html.includes(query),query);
+ assert.ok(html.includes('2.5~25톤')&&html.includes('5·7.5·8.5·14·16톤'));
+ assert.ok(guide.expandedSection().includes('66종'));
+ assert.ok(guide.expandedSection().includes('42개 톤급'));
 });
