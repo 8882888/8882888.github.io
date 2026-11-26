@@ -11,7 +11,18 @@ test('complete exact existing backlog, not an arbitrary top-N or blanket index e
  assert.equal(rows.length,2900);
  assert.equal(g.targets.size,1918);
  assert.equal(g.plans.size,1918);
- assert.equal(new Set([...g.plans.values()].map(x=>x.region.full_name.split(' ')[0])).size,17);
+ const allProvinces=new Set(rows.map(x=>x.region.split(' ')[0]));
+ const selectedProvinces=new Set(rows.filter(x=>g.targets.has(x.kind+'|'+x.region)).map(x=>x.region.split(' ')[0]));
+ const renderedProvinces=new Set([...g.plans.values()].map(x=>x.region.full_name.split(' ')[0]));
+ assert.deepEqual([...renderedProvinces].sort(),[...selectedProvinces].sort());
+ assert.equal(selectedProvinces.size,16,'current flagged cohort spans 16 provinces; investigate any change');
+ for(const province of allProvinces){
+  const source=rows.filter(x=>x.region.split(' ')[0]===province);
+  const selected=source.filter(x=>g.targets.has(x.kind+'|'+x.region));
+  assert.equal([...g.plans.values()].filter(x=>x.region.full_name.split(' ')[0]===province).length,selected.length,province);
+  console.log('Locality coverage:',province,selected.length,'of',source.length);
+ }
+ console.log('Source provinces without flagged rows:',[...allProvinces].filter(x=>!selectedProvinces.has(x)).join(', ')||'none');
  for(const row of rows){
   const p=g.plans.get(row.kind+'|'+row.region);
   const r=regions.find(x=>x.full_name===row.region);
