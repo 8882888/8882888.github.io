@@ -548,3 +548,24 @@ test('68 archive-candidate region and service guides retain their exact original
  assert.equal(edited.length,68);
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(edited.map(r=>r[k])).size,68);
 });
+
+test('15 paired-locality guides retain exact identity and independently useful service guidance',()=>{
+ const targets=[["ninth-100",617,667,"대구광역시 수성구 만촌동","대구만촌동탁송","taksong","/service/long-distance-taksong/"],["ninth-100",663,613,"부산광역시 부산진구 전포동","부산전포동대리운전업체","daeri","/service/corporate/"],["tenth-100",751,701,"서울특별시 강남구 압구정동","강남압구정동프리미엄대리운전","daeri","/service/corporate/"],["tenth-100",752,702,"서울특별시 강남구 개포동","강남개포동법인대리운전","daeri","/service/corporate/"],["tenth-100",753,703,"서울특별시 서초구 잠원동","서초잠원동대리운전","daeri","/service/corporate/"],["tenth-100",754,704,"서울특별시 송파구 석촌동","송파석촌동대리운전업체","daeri","/service/corporate/"],["tenth-100",755,705,"서울특별시 마포구 공덕동","마포공덕동법인카드대리운전","daeri","/service/corporate/"],["tenth-100",756,706,"서울특별시 성동구 성수동2가","성동성수동2가법인대리운전","daeri","/service/corporate/"],["tenth-100",760,710,"부산광역시 남구 용호동","부산용호동대리운전업체","daeri","/service/corporate/"],["tenth-100",764,714,"대구광역시 달성군 옥포읍","대구옥포읍법인카드대리운전","daeri","/service/corporate/"],["tenth-100",765,715,"인천광역시 연수구 동춘동","인천동춘동대리운전업체","daeri","/service/corporate/"],["tenth-100",766,716,"인천광역시 서해구 청라동","인천청라동법인대리운전","daeri","/service/corporate/"],["tenth-100",769,719,"경기도 수원시 영통구 이의동","수원광교이의동법인카드대리운전","daeri","/service/corporate/"],["tenth-100",770,720,"경기도 성남시 분당구 삼평동","판교삼평동법인대리운전","daeri","/service/corporate/"],["tenth-100",774,724,"경기도 평택시 포승읍","평택포승읍법인대리운전","daeri","/service/corporate/"]];
+ const edited=[];
+ for(const [batch,id,companionId,region,keyword,kind,related] of targets){
+  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+batch+'.json'),'utf8')).priority;
+  const row=rows.find(r=>r.id===id),companion=rows.find(r=>r.id===companionId);
+  assert.ok(row&&companion,id);
+  assert.equal(row.region,region);assert.equal(companion.region,region);
+  assert.equal(row.keyword,keyword);assert.equal(row.kind,kind);assert.equal(row.related,related);
+  assert.notEqual(row.kind,companion.kind);
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75,keyword);
+  const locality=region.split(' ').at(-1);
+  assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality),keyword);
+  for(const field of ['topic','pickup','handover'])assert.notEqual(row[field],companion[field]);
+  assert.doesNotMatch([row.topic,row.pickup,row.handover].join(' '),/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  edited.push(row);
+ }
+ assert.equal(edited.length,15);
+ for(const k of ['topic','pickup','handover'])assert.equal(new Set(edited.map(r=>r[k])).size,15);
+});
