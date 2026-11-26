@@ -3,24 +3,30 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '25 22 * * *'
-  push:
+  workflow_run:
+    workflows: ['Deploy to Cloudtype']
+    types: [completed]
     branches: [main]
+  pull_request:
     paths:
-      - server.js
-      - index.html
-      - data/seo-pages.json
-      - tools/check_live_taksong_deploy.py
-      - .github/workflows/official-production-audit.yml
+      - 'tools/check_live_taksong_deploy.py'
+      - '.github/workflows/official-production-audit.yml'
+      - 'tests/production-audit-sequencing-20261127.test.cjs'
 
 permissions:
   contents: read
 
 jobs:
   verify-official-site:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+      - name: Guard release sequencing
+        run: node --test tests/production-audit-sequencing-20261127.test.cjs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -40,12 +46,12 @@ jobs:
           node --test tests/service-search-intent-split-20261123.test.cjs
           node tests/taksong-priority-seo-links.test.js
       - name: Compare live Cloudtype deployment with GitHub files
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           mkdir -p audit
-          # Cloudtype and GitHub backup deploy independently. Give webhook-based
-          # production builds time to finish before declaring the deployment stale.
-          sleep 45
+          # Automatic audits begin only after the matching Cloudtype deployment succeeds.
+          # Scheduled/manual audits still detect genuinely stale deployments.
           set +e
           code=1
           for attempt in 1 2 3; do
@@ -90,7 +96,7 @@ jobs:
           fi
           exit "$code"
       - name: Keep production audit report
-        if: always()
+        if: always() && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: official-production-seo-audit

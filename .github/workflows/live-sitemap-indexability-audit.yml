@@ -6,12 +6,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/live-sitemap-indexability-audit.yml'
-  workflow_run:
-    workflows: ['Deploy to Cloudtype']
-    types: [completed]
-    branches: [main]
+  # Full production crawl is expensive on the existing 512 MB server.
+  # Daily/manual runs retain exhaustive checks without concurrent release fan-out.
+  # The existing post-deploy priority crawl and release verification stay enabled.
   schedule:
-    - cron: '17 1 * * 1'
+    - cron: '17 1 * * *'
 
 permissions:
   contents: read
@@ -22,14 +21,13 @@ concurrency:
 
 jobs:
   audit:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 100
     steps:
       - name: Check out repository at release SHA
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.sha }}
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -48,8 +46,8 @@ jobs:
         continue-on-error: true
         env:
           SEO_AUDIT_ORIGIN: https://jeongukdaeri.kr
-          SEO_AUDIT_CONCURRENCY: '2'
-          SEO_AUDIT_PAUSE_MS: '450'
+          SEO_AUDIT_CONCURRENCY: '1'
+          SEO_AUDIT_PAUSE_MS: '650'
           SEO_AUDIT_REPORT_DIR: reports
         run: node scripts/audit-live-sitemap-indexability-20261121.mjs
       - name: Write summary
