@@ -68,3 +68,30 @@ test('five additional Busan locality guides preserve existing identities and ser
  }
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
 });
+
+test('five second-round Busan guides preserve identities and distinct local service advice',()=>{
+ const targets=[
+ ['tenth-100',711,'부산철마면탁송','부산광역시 기장군 철마면','taksong',['반출','열쇠','주행','수령인','통행료']],
+ ['tenth-100',761,'부산철마면골프장대리운전','부산광역시 기장군 철마면','daeri',['라운딩','클럽하우스','식사','하차','복귀']],
+ ['seventh-100',407,'부산정관읍탁송업체','부산광역시 기장군 정관읍','taksong',['아파트','방문차량 등록','반출 승인','수령인']],
+ ['eighth-100',516,'부산대연동탁송회사','부산광역시 남구 대연동','taksong',['경성대','대연역','주차권','수령인','입고 승인']],
+ ['eighth-100',517,'부산연산동탁송','부산광역시 연제구 연산동','taksong',['연산역','시청','정산','이동 승인','수령 장소']]
+ ];
+ const records=[];
+ for(const [batch,id,keyword,region,kind,terms] of targets){
+  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+batch+'.json'),'utf8')).priority;
+  assert.equal(rows.length,100);
+  assert.equal(new Set(rows.map(r=>r.id)).size,100);
+  const row=rows.find(r=>r.id===id);
+  assert.ok(row,id);assert.equal(row.keyword,keyword);assert.equal(row.region,region);assert.equal(row.kind,kind);
+  assert.ok(row.related.startsWith('/'));
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75);
+  const locality=region.split(' ').at(-1);
+  assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality));
+  const whole=[row.topic,row.pickup,row.handover].join(' ');
+  for(const term of terms)assert.ok(whole.includes(term),keyword+' missing '+term);
+  assert.doesNotMatch(whole,/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  records.push(row);
+ }
+ for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
+});
