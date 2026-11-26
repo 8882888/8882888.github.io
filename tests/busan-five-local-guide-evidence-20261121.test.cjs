@@ -470,7 +470,8 @@ test('all 2900 source guides render exact administrative region searches and cor
   assert.ok(html.includes('kind='+row.kind+'&amp;region='),row.keyword);
   assert.ok(html.includes(esc(row.pickup))&&html.includes(esc(row.handover)),row.keyword);
   assert.ok(html.includes('from='+encodeURIComponent(row.region)),row.keyword);
-  assert.ok(html.includes('href="'+row.related+'"'),row.keyword);
+  if(row.related)assert.ok(html.includes('href="'+row.related+'"'),row.keyword);
+  else assert.ok(html.includes(row.kind==='taksong'?'href="/service/long-distance-taksong/"':'href="/service/corporate/"'),row.keyword);
   assert.doesNotMatch(html,/verified-post-links|blog\.naver\.com/);
  }
  assert.equal(render({full_name:'없는 행정구역',slug:'missing'},'daeri'),'');
