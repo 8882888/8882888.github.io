@@ -195,6 +195,76 @@ while(nationalGroups.some(group=>group.pending.length)){
   if(next)nationwideQueue.push(next);
  }
 }
+// Cross-reference the entire backlog with preserved original sources, without
+// turning a candidate match into an editorial approval or a completed ride.
+const {matchingHistoryRegion}= (await import('../lib/regional-history-evidence.js')).default;
+const officialRegions=legalProvinceFiles.flatMap(filename=>{
+ const registry=JSON.parse(fs.readFileSync(path.join(dir,'legal-regions',filename),'utf8'));
+ return registry.full_names.map(full_name=>{
+  const parts=full_name.split(' '),name=parts.at(-1);
+  return {full_name,name,level:parts.length===1?'시도':/리$/.test(name)?'리':/읍$/.test(name)?'읍':/면$/.test(name)?'면':/구$/.test(name)?'구':/군$/.test(name)?'군':/시$/.test(name)?'시':'동'};
+ });
+});
+const officialByName=new Map(officialRegions.map(r=>[r.full_name,r]));
+const archiveFiles=fs.readdirSync(dir).filter(f=>/^regional-review-links-batch-\d{3}-\d+\.json$/.test(f)).sort();
+const archiveRefs=archiveFiles.flatMap(f=>JSON.parse(fs.readFileSync(path.join(dir,f),'utf8')).items);
+const archiveRaw=JSON.parse(fs.readFileSync(path.join(dir,'ride-history.json'),'utf8'));
+if(archiveRefs.length!==2591||new Set(archiveRefs.map(r=>r.id)).size!==2591)
+ throw Error('Original archival references must remain exactly 2591 unique records');
+const exactArchiveByKey=new Map();
+let rejectedArchiveRefs=0;
+for(const ref of archiveRefs){
+ const id=/^excel-(\d{4})$/.exec(ref.id);
+ const original=id&&archiveRaw[Number(id[1])-1];
+ const region=officialByName.get(ref.region);
+ if(!original||!region||!['daeri','taksong'].includes(ref.service)||ref.source!=='ride-history.json'||
+    ref.url!=='/reviews/history/'+ref.id+'/'||original.date!==ref.date||
+    !matchingHistoryRegion({rawDeparture:original.departure,rawDestination:original.destination},region,officialRegions)){
+  rejectedArchiveRefs++;continue;
+ }
+ const key=ref.service+'|'+ref.region, entries=exactArchiveByKey.get(key)||[];
+ entries.push({id:ref.id,url:ref.url,date:ref.date,scope:'classified-archive-location-not-completion'});
+ exactArchiveByKey.set(key,entries);
+}
+const guideKey=new Map(judged.map(r=>[r.kind+'|'+r.region,r]));
+const sourceDossiers=nationalEntries.map(entry=>{
+ const key=entry.kind+'|'+entry.region,region=officialByName.get(entry.region);
+ if(!region)throw Error('Unknown original locality '+entry.region);
+ // The original blog title must explicitly name the locality AND just one service.
+ // No short-name substring, parent-only match, or mixed service article qualifies.
+ const titleCandidates=published.filter(p=>{
+  if(!publishedById.has(String(p.id)))return false;
+  const title=String(p.title||'');
+  const taksong=/탁송|차량이동/.test(title),daeri=/대리운전|일일기사/.test(title);
+  if(taksong===daeri||(entry.kind==='taksong'?!taksong:!daeri))return false;
+  const qualified=title.replace(/\s+/g,'').includes(entry.region.replace(/\s+/g,''));
+  return qualified&&matchingHistoryRegion({rawDeparture:title,rawDestination:''},region,officialRegions);
+ }).map(p=>({id:String(p.id),url:p.url,scope:'qualified-title-candidate-not-verified-trip'}));
+ const archiveCandidates=exactArchiveByKey.get(key)||[];
+ const paired=guideKey.get((entry.kind==='daeri'?'taksong':'daeri')+'|'+entry.region);
+ const own=guideKey.get(key);
+ return {...entry,archiveCandidates,titleCandidates,
+  existingReviewedSources:own.originalSources,
+  companionGuide:paired?{id:paired.id,kind:paired.kind,source:paired.source,position:paired.position,topic:paired.topic,scope:'same locality other service; validate before reuse'}:null,
+  ownTopic:own.topic,
+  hasSourceCandidate:Boolean(archiveCandidates.length||titleCandidates.length||own.originalSources.length),
+  editorialStatus:entry.issues.length?'review-required':'passes-existing-heuristic-only'};
+});
+const dossierByKey=new Map(sourceDossiers.map(x=>[x.kind+'|'+x.region,x]));
+const pendingDossiers=nationwideQueue.map(x=>dossierByKey.get(x.kind+'|'+x.region));
+const sourceCandidateSummary={
+ total:sourceDossiers.length,pending:pendingDossiers.length,archiveReferences:archiveRefs.length,
+ exactArchiveReferences:archiveRefs.length-rejectedArchiveRefs,archiveReferencesExcluded:rejectedArchiveRefs,
+ publishedTitles:publishedById.size,
+ withSourceCandidate:sourceDossiers.filter(x=>x.hasSourceCandidate).length,
+ pendingWithSourceCandidate:pendingDossiers.filter(x=>x.hasSourceCandidate).length,
+ pendingWithoutSourceCandidate:pendingDossiers.filter(x=>!x.hasSourceCandidate).length,
+ pendingWithCompanion:pendingDossiers.filter(x=>x.companionGuide).length
+};
+if(sourceDossiers.length!==2900||pendingDossiers.length!==output.totals.needsReview||
+ sourceCandidateSummary.pendingWithSourceCandidate+sourceCandidateSummary.pendingWithoutSourceCandidate!==pendingDossiers.length)
+ throw Error('Nationwide source dossier accounting mismatch');
+console.log('NATIONWIDE_ORIGINAL_EVIDENCE_CROSSWALK '+JSON.stringify(sourceCandidateSummary));
 const nationalAudit={
  generatedAt:output.generatedAt,
  scope:'all 17 legal provinces, all source-defined region/service guides and both services; editorial only',
@@ -205,6 +275,8 @@ const nationalAudit={
  missingProvinceCount:missingProvince.length,
  missingProvinceRecords:missingProvince.slice(0,20),
  nationalReviewQueueCount:nationwideQueue.length,
+ originalEvidenceCrosswalk:sourceCandidateSummary,
+ originalEvidenceQueue:pendingDossiers,
  balancedQueue:nationwideQueue,
  records:nationalEntries,
  naverRealIndexed:null,naverRealImpressions:null,naverRealClicks:null,naverRealCtr:null,
@@ -215,10 +287,10 @@ if(nationalEntries.length!==output.totals.reviewed||
  provinceBreakdown.reduce((sum,x)=>sum+x.total,0)+missingProvince.length!==output.totals.reviewed)
  throw Error('Nationwide source review does not reconcile with the 2,900-record original audit');
 fs.writeFileSync('ai-index-nationwide-coverage.json',JSON.stringify(nationalAudit,null,2)+'\n');
-const nationalCsvHeaders=['province','kind','region','keyword','score','reviewPriority','issues','evidenceTier','source','position','nextAction'];
+const nationalCsvHeaders=['province','kind','region','keyword','score','reviewPriority','issues','evidenceTier','source','position','nextAction','archiveCandidateIds','publishedTitleCandidateIds','companionSource'];
 fs.writeFileSync('ai-index-nationwide-queue.csv',
- nationalCsvHeaders.join(',')+'\n'+nationwideQueue.map(item=>
-  nationalCsvHeaders.map(key=>csvSafeNational(key==='issues'?item.issues.join('; '):item[key])).join(',')
+ nationalCsvHeaders.join(',')+'\n'+pendingDossiers.map(item=>
+  nationalCsvHeaders.map(key=>csvSafeNational(key==='issues'?item.issues.join('; '):key==='archiveCandidateIds'?item.archiveCandidates.map(x=>x.id).join('; '):key==='publishedTitleCandidateIds'?item.titleCandidates.map(x=>x.id).join('; '):key==='companionSource'?item.companionGuide?.source:item[key])).join(',')
  ).join('\n')+'\n');
 function csvSafeNational(value){return '"'+String(value??'').replace(/"/g,'""').replace(/[\r\n]/g,' ')+'"'}
 const nationalMd=[
