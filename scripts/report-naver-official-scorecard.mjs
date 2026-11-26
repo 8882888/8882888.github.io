@@ -45,7 +45,8 @@ export function searchComparison(baseline,snapshot){
     status:'UNVERIFIED_OR_INCOMPARABLE_WINDOW'};
  const now=snapshot.search;
  if(!count(now.clicks)||!count(now.impressions))throw Error('Invalid current Naver search counts');
- const currentCtrPercent=now.impressions>0
+ const currentCtrPercent=Number.isFinite(now.displayedAverageCtrPercent)
+  ?now.displayedAverageCtrPercent:now.impressions>0
   ?Math.round(10000*now.clicks/now.impressions)/100:null;
  const ctrDeltaPercentagePoints=currentCtrPercent!==null
   ?Math.round((currentCtrPercent-(prior.ctrPercent||0))*100)/100:null;
@@ -58,9 +59,15 @@ export function searchComparison(baseline,snapshot){
 }
 const baseline=read('data/naver-searchadvisor-official-baseline.json');
 const searchBase=baseline.searchClicksBaselineOwnerReported??read(baseline.searchClicksBaselineFile);
+export function fromDatedOwnerReport(s){
+ if(!s)return null;
+ if(s.sourceType!=='owner_reported_naver_searchadvisor'||s.site!=='https://jeongukdaeri.kr'||s.scope!=='WEB_SEARCH_ONLY'||s.devices!=='PC + Mobile'||s.diagnosis?.source!=='사이트 진단 > 진단 현황 > 색인된 페이지'||s.diagnosis.updatedAt!==s.updatedAt)throw Error('Unrecognized dated owner report');
+ return {sourceType:s.sourceType,observedAt:s.diagnosis.updatedAt,indexed:s.diagnosis.indexed,collectionLimited:s.diagnosis.collectionLimited,excluded:s.diagnosis.excluded,seoIssues:s.diagnosis.seoIssues,search:{period:s.window,updatedAt:s.updatedAt,clicks:s.siteMetrics.clicksApprox,impressions:s.siteMetrics.impressionsApprox,displayedAverageCtrPercent:s.siteMetrics.displayedAverageCtrPercent,approximate:true},crawl:s.crawl};
+}
+const datedOwnerReport=optional('data/naver-search-advisor-baseline-20261125.json');
 const supplied=process.env.NAVER_SEARCHADVISOR_SNAPSHOT_FILE
  ?JSON.parse(fs.readFileSync(process.env.NAVER_SEARCHADVISOR_SNAPSHOT_FILE,'utf8'))
- :baseline.latestOfficialSnapshot;
+ :baseline.latestOfficialSnapshot??fromDatedOwnerReport(datedOwnerReport);
 const official=compareOfficial(baseline,supplied);
 const search=searchComparison(searchBase,supplied);
 const technical=optional('seo-priority-live-report.json')?.summary??null;
@@ -73,7 +80,7 @@ const report={generatedAt:new Date().toISOString(),site:baseline.site,
  actionPriority:technical&&(
   technical.collectionLimitations>0||technical.excludedOrCanonical>0||
   technical.siteMapProblems>0||technical.sourceOrCrawlerProblems>0
- )?'REPAIR_TECHNICAL_CRAWL_ERRORS':'REVIEW_DUPLICATE_AND_THIN_PRIORITY_REGION_CONTENT__VERIFY_OFFICIAL_DIAGNOSIS'
+ )?'REPAIR_TECHNICAL_CRAWL_ERRORS':official.current?.indexed===14?'TRACE_ACTUAL_YETI_DISCOVERY_AND_OWNER_URL_INSPECTION__INDEX_GROWTH_UNPROVEN':'REVIEW_DUPLICATE_AND_THIN_PRIORITY_REGION_CONTENT__VERIFY_OFFICIAL_DIAGNOSIS'
 };
 const safe=x=>x===null||x===undefined?'미확인':String(x);
 const md=[
@@ -88,8 +95,8 @@ const md=[
  '| 정상 색인 | '+safe(official.baseline.indexed)+' | '+safe(official.current?.indexed)+' | '+safe(official.indexDelta)+' |',
  '| 수집제한 | '+safe(official.baseline.collectionLimited)+' | '+safe(official.current?.collectionLimited)+' | '+safe(official.collectionLimitedDelta)+' |',
  '| 색인제외 | '+safe(official.baseline.excluded)+' | '+safe(official.current?.excluded)+' | '+safe(official.excludedDelta)+' |',
- '| 검색 클릭 (30일) | '+safe(search.baseline.clicks)+' | '+safe(search.current?.clicks)+' | '+safe(search.clickDelta)+' |',
- '| 노출 (30일·기준 근사치) | 약 '+safe(search.baseline.impressionsApprox)+' | '+safe(search.current?.impressions)+' | '+safe(search.impressionsDeltaApprox)+' |',
+ '| 검색 클릭 (30일) | '+safe(search.baseline.clicks)+' | '+(search.current?.approximate?'약 ':'')+safe(search.current?.clicks)+' | '+safe(search.clickDelta)+' |',
+ '| 노출 (30일·기준 근사치) | 약 '+safe(search.baseline.impressionsApprox)+' | '+(search.current?.approximate?'약 ':'')+safe(search.current?.impressions)+' | '+safe(search.impressionsDeltaApprox)+' |',
  '| CTR (30일) | '+safe(search.baseline.ctrPercent)+'% | '+safe(search.current?.ctrPercent)+'% | '+(search.ctrDeltaPercentagePoints===undefined?'미확인':safe(search.ctrDeltaPercentagePoints))+'%p |',
  '',
  '**출처 제한:** URL TOP 표의 14개 표시 행은 공식 색인 14개라는 뜻이 아닙니다. 날짜가 확인되지 않은 과거 색인 주장도 공식 비교값에서 제외합니다. 클릭·노출 기준은 '+search.baseline.date+'의 사용자 제공 자료. 검색 클릭은 전화 상담 수가 아닙니다.',

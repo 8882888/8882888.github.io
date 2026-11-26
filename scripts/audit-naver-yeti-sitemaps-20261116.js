@@ -33,7 +33,7 @@ const sampled=(list,n)=>{
  return [...indexes].sort((a,b)=>a-b).map(i=>list[i]);
 };
 async function request(route){
- const r=await fetch(normalize(route),{signal:AbortSignal.timeout(17000),redirect:'manual',headers:{'User-Agent':UA,'Cache-Control':'no-cache','Accept':'text/html,application/xhtml+xml,application/xml,text/xml;q=0.9,*/*;q=0.8'}});
+ const r=await fetch(normalize(route),{signal:AbortSignal.timeout(17000),redirect:'manual',headers:{'User-Agent':UA,'X-Smart24-Monitor':'github-health-probe','Cache-Control':'no-cache','Accept':'text/html,application/xhtml+xml,application/xml,text/xml;q=0.9,*/*;q=0.8'}});
  return {status:r.status,headers:r.headers,body:await r.text()};
 }
 const issues=[];
