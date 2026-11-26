@@ -95,3 +95,30 @@ test('five second-round Busan guides preserve identities and distinct local serv
  }
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
 });
+
+test('five third-round Busan daeri guides retain identities and distinct local booking advice',()=>{
+ const targets=[
+ ['next-50',81,'부산기장군골프장대리운전','부산광역시 기장군',['골프장','클럽하우스','식사','차량','일일기사']],
+ ['seventh-100',457,'부산정관읍대리운전회사','부산광역시 기장군 정관읍',['신도시','게이트','하차','복귀']],
+ ['nineteenth-daeri-100',2417,'부산기장군기장읍교리대리업체','부산광역시 기장군 기장읍 교리',['주택가','골목','동승','결제','복귀']],
+ ['eighth-100',563,'부산녹산동법인카드대리운전','부산광역시 강서구 녹산동',['산업단지','보안시설','법인카드','증빙','반납']],
+ ['eighth-100',564,'부산온천동대리운전회사','부산광역시 동래구 온천동',['온천장','숙박시설','주차권','하차','심야']]
+ ];
+ const records=[];
+ for(const [batch,id,keyword,region,terms] of targets){
+  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+batch+'.json'),'utf8')).priority;
+  assert.equal(rows.length,Number(batch.split('-').at(-1)));
+  assert.equal(new Set(rows.map(r=>r.id)).size,rows.length);
+  const row=rows.find(r=>r.id===id);
+  assert.ok(row,id);assert.equal(row.keyword,keyword);assert.equal(row.region,region);assert.equal(row.kind,'daeri');
+  assert.ok(row.related.startsWith('/'));
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75);
+  const locality=region.split(' ').at(-1);
+  assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality));
+  const whole=[row.topic,row.pickup,row.handover].join(' ');
+  for(const term of terms)assert.ok(whole.includes(term),keyword+' missing '+term);
+  assert.doesNotMatch(whole,/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  records.push(row);
+ }
+ for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
+});
