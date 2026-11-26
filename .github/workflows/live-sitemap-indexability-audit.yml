@@ -61,7 +61,7 @@ jobs:
           const lines = [
             '# Live sitemap technical indexability',
             '',
-            'This audit does not represent actual Naver indexing or ranking.',
+            'Yeti User-Agent compatibility audit only; not verified Naver IP, actual indexing or ranking.',
             '',
             '- Generated: ' + generatedAt,
             '- Release verification: ${{ steps.release.outcome }}',

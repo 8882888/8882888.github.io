@@ -8,6 +8,8 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import yetiChecks from './check-yeti-priority-indexability.cjs';
+const {YETI,attribute,noindex,xRobotsIndexAgents}=yetiChecks;
 
 const origin = new URL(process.env.SEO_AUDIT_ORIGIN || 'https://jeongukdaeri.kr');
 const concurrency = Math.max(1, Math.min(8, Number(process.env.SEO_AUDIT_CONCURRENCY || 3)));
@@ -29,8 +31,8 @@ const normal = raw => {
     return u.href;
   } catch { return null; }
 };
-const sameHost = url => { try { return new URL(url).host === origin.host; } catch { return false; } };
-const report = { generatedAt: new Date().toISOString(), origin: origin.origin, source: 'public technical crawl; not Naver Search Advisor', roots, sitemaps: [], errors: [], pages: [], summary: {} };
+const sameHost = url => { try { return new URL(url).origin === origin.origin; } catch { return false; } };
+const report = { generatedAt: new Date().toISOString(), origin: origin.origin, source: 'public Yeti User-Agent compatibility crawl; not verified Naver IP or Search Advisor', roots, sitemaps: [], errors: [], pages: [], summary: {} };
 
 // AbortSignal.timeout also covers slow response bodies read by callers.
 async function get(url, method = 'GET') {
@@ -39,7 +41,7 @@ async function get(url, method = 'GET') {
     try {
       const response = await fetch(url, {
         method, redirect: 'follow', signal: AbortSignal.timeout(16000),
-        headers: { 'user-agent': 'Smart24-SEO-Technical-Audit/1.0' }
+        headers: { 'user-agent': YETI, 'x-smart24-monitor': 'github-health-probe' }
       });
       if (![429, 502, 503, 504].includes(response.status) || attempt === 2) return response;
       await response.body?.cancel();
@@ -70,7 +72,11 @@ async function collectSitemap(input) {
       return;
     }
     const children = blocks(text, 'sitemap').map(loc).filter(Boolean);
-    for (const child of children) await collectSitemap(child);
+    for (const child of children) {
+      const target = normal(decode(child));
+      if (!target || !sameHost(target)) { report.errors.push({url,reason:'external_or_invalid_sitemap',value:child}); continue; }
+      await collectSitemap(target);
+    }
     const entries = blocks(text, 'url').map(loc).filter(Boolean);
     sitemap.items = entries.length;
     for (const raw of entries) {
@@ -90,9 +96,10 @@ async function audit(url, appearances) {
     const res = await get(url);
     const type = res.headers.get('content-type') || '';
     const html = type.includes('html') ? (await res.text()).slice(0, 250000) : '';
-    const rawCanonical = attr(canonicalTag(html), 'href');
+    const canonicalTags = [...html.matchAll(/<link\b[^>]*>/gi)].map(x=>x[0]).filter(t=>attribute(t,'rel').toLowerCase().split(/\s+/).includes('canonical'));
+    const rawCanonical = canonicalTags.length===1 ? attribute(canonicalTags[0], 'href') : '';
     const canonical = rawCanonical ? normal(rawCanonical) : '';
-    const metaRobots = attr(tag(html, 'robots'), 'content');
+    const metaRobots = [...html.matchAll(/<meta\b[^>]*>/gi)].map(x=>x[0]).filter(t=>/^(robots|yeti)$/i.test(attribute(t,'name'))).map(t=>attribute(t,'content')).join(',');
     const xRobots = res.headers.get('x-robots-tag') || '';
     const title = match(html, /<title\b[^>]*>([\s\S]*?)<\/title>/i);
     const h1 = match(html, /<h1\b[^>]*>([\s\S]*?)<\/h1>/i).replace(/<[^>]+>/g, '').trim();
@@ -102,9 +109,10 @@ async function audit(url, appearances) {
     if (res.status !== 200) reasons.push('non_200');
     if (res.url !== url) reasons.push('redirect');
     if (!html) reasons.push('not_html');
-    if (/\bnoindex\b/i.test(metaRobots + ',' + xRobots)) reasons.push('noindex');
+    if (noindex(metaRobots) || xRobotsIndexAgents(xRobots).some(a=>a==='robots'||a==='yeti')) reasons.push('noindex');
     if (/\bnofollow\b/i.test(metaRobots + ',' + xRobots)) warnings.push('nofollow');
-    if (!canonical) warnings.push('missing_canonical');
+    if (canonicalTags.length>1) reasons.push('multiple_canonical');
+    else if (!canonical) warnings.push('missing_canonical');
     else if (canonical !== url) reasons.push('canonical_mismatch');
     if (!title) warnings.push('missing_title');
     if (!h1) warnings.push('missing_h1');
@@ -113,6 +121,24 @@ async function audit(url, appearances) {
     return { url, status: res.status, finalUrl: res.url, appearances, title, h1, description, canonical, metaRobots, xRobots, reasons, warnings, technicalCandidate: reasons.length === 0 };
   } catch (e) { return { url, appearances, technicalCandidate: false, reasons: ['fetch_failed'], warnings: [], error: String(e) }; }
 }
+// The official site deliberately allows all crawlers. Detect unexpected
+// changes to this known policy rather than guessing arbitrary robots semantics.
+try {
+  const res=await get(new URL('/robots.txt',origin).href);
+  const body=await res.text();
+  const declared=body.split(/\r?\n/).map(line=>line.split('#')[0].trim()).filter(line=>/^sitemap:/i.test(line)).map(line=>line.replace(/^sitemap:\s*/i,'').trim());
+  const restrictions=body.split(/\r?\n/).map(line=>line.split('#')[0].trim()).filter(line=>/^disallow:\s*\S/i.test(line));
+  report.robots={status:res.status,finalUrl:res.url,declared,restrictions};
+  if(res.status!==200||res.url!==new URL('/robots.txt',origin).href||!/^user-agent:\s*\*\s*$/mi.test(body)||restrictions.length)
+    report.errors.push({url:new URL('/robots.txt',origin).href,reason:'unexpected_live_robots_policy',status:res.status,restrictions});
+  for(const item of declared){
+    const target=normal(item);
+    if(!target||!sameHost(target))report.errors.push({url:'/robots.txt',reason:'foreign_or_invalid_declared_sitemap',value:item});
+    else if(!roots.includes(new URL(target).pathname))roots.push(new URL(target).pathname);
+  }
+  for(const root of roots)if(!declared.some(item=>normal(item)===new URL(root,origin).href))
+    report.errors.push({url:'/robots.txt',reason:'missing_declared_sitemap',value:root});
+}catch(e){report.errors.push({url:'/robots.txt',reason:'robots_fetch_failed',detail:String(e)});}
 for (const root of roots) await collectSitemap(new URL(root, origin).href);
 const work = [...urls];
 await fs.mkdir(reportDir, { recursive: true });
@@ -184,4 +210,7 @@ if (report.errors.length) console.error('Sitemap errors:', report.errors.slice(0
 if (report.summary.completeness !== 'complete') {
   console.error('INCOMPLETE AUDIT: sitemap roots failed, page requests failed, or no URLs were discovered. Do not interpret a zero count as a clean indexability result.');
   process.exitCode = 1;
+} else if (report.summary.needsReview>0) {
+  console.error('TECHNICAL BLOCKERS: inspect per-URL report; completed crawl is not a clean crawl.');
+  process.exitCode=1;
 }
