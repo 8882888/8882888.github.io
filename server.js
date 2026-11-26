@@ -2841,15 +2841,15 @@ function recruitmentLocalGuidance(region,kind){
  const name=kind==='taksong'?'탁송기사모집':'대리기사모집',label=kind==='taksong'?'차량탁송':'대리운전';
  const links=row.areas.map(a=>{
   const local=regionByFullName.get(row.province+' '+a);
-  return '<a href="'+esc(servicePath(local,kind))+'">'+esc(a+' '+label+' 이용 안내')+'</a>';
+  return '<a href="'+esc(servicePath(local,kind))+'">'+esc(a.replace(/^\(직할\) /,'')+' '+label+' 이용 안내')+'</a>';
  }).join(' · ');
- return '<section id="recruit-province-local-guidance-20261126"><h2>'+esc(row.province+' '+name+' · '+row.areas.join('·')+' 운행 준비')+'</h2><p>'+esc(row[kind])+'</p><p>아래 지역 링크는 실제 고객 이용 조건을 참고할 수 있는 기존 서비스 안내이며, 모집 지점이나 해당 지역의 일감 보장을 의미하지 않습니다.</p><p>'+links+'</p><p><a href="tel:18114294">희망 운행 지역 및 기사 지원 상담 1811-4294</a></p></section>';
+ return '<section id="recruit-province-local-guidance-20261126"><h2>'+esc(row.province+' '+name+' · '+row.areas.map(a=>a.replace(/^\(직할\) /,'')).join('·')+' 운행 준비')+'</h2><p>'+esc(row[kind])+'</p><p>아래 지역 링크는 실제 고객 이용 조건을 참고할 수 있는 기존 서비스 안내이며, 모집 지점이나 해당 지역의 일감 보장을 의미하지 않습니다.</p><p>'+links+'</p><p><a href="tel:18114294">희망 운행 지역 및 기사 지원 상담 1811-4294</a></p></section>';
 }
 function recruitmentPage(kind,region){
  const isT=kind==='taksong',label=isT?'탁송기사':'대리운전기사',area=region?region.full_name:'전국',base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const url='/recruit/'+kind+'/'+(region?region.slug+'/':'');
  const title=region?area+' '+(isT?'탁송기사모집 · 자동차탁송기사 지원':'대리기사모집 · 대리운전기사 지원'):isT?'탁송기사모집 | 전국 자동차탁송기사 지원·등록 상담 스마트24':'대리기사모집 | 전국 대리운전기사 지원·등록 상담 스마트24';
- const desc=region?area+' '+(isT?'탁송기사모집':'대리기사모집')+'. '+recruitProvinceByName.get(area).areas.join('·')+' 등 희망 지역, '+(isT?'운전 가능 차종·면허':'운행 시간·경력')+' 및 등록 상담 1811-4294.':isT?'전국 탁송기사 모집 안내. 차량 인수·인계 및 운행지역·기사 등록 조건 상담. 1811-4294.':'전국 대리기사 모집 안내. 운행 시간·지역·경력과 기사 등록 조건 상담. 1811-4294.';
+ const desc=region?area+' '+(isT?'탁송기사모집':'대리기사모집')+'. '+recruitProvinceByName.get(area).areas.map(a=>a.replace(/^\(직할\) /,'')).join('·')+' 등 희망 지역, '+(isT?'운전 가능 차종·면허':'운행 시간·경력')+' 및 등록 상담 1811-4294.':isT?'전국 탁송기사 모집 안내. 차량 인수·인계 및 운행지역·기사 등록 조건 상담. 1811-4294.':'전국 대리기사 모집 안내. 운행 시간·지역·경력과 기사 등록 조건 상담. 1811-4294.';
  const provinces=regions.filter(r=>r.level==='시도').slice(0,20);
  const regionLinks=!region?'<section><h2>지역별 기사 모집 안내</h2><ul>'+provinces.map(r=>'<li><a href="/recruit/'+kind+'/'+r.slug+'/">'+esc(r.full_name)+' '+(isT?'탁송기사모집':'대리기사모집')+'</a></li>').join('')+'</ul></section>':'<section><h2>'+esc(area)+' 서비스 및 기사 지원 안내</h2><p>해당 지역의 운행 조건과 서비스 범위를 확인한 뒤 기사 등록·배차 가능 여부를 상담하세요.</p><ul><li><a href="'+servicePath(region,kind)+'">'+esc(area)+' '+(isT?'자동차탁송':'대리운전')+' 지역 안내</a></li><li><a href="/recruit/'+kind+'/">전국 '+label+' 모집 안내</a></li><li><a href="/fare/?service='+kind+'">출발·도착 예상요금 안내</a></li></ul></section>';
  const jobFocus=isT?'<section><h2>탁송기사 지원 시 안내할 사항</h2><p>차량을 인수하고 목적지에서 인계하는 로드탁송 업무를 희망하는 경우, 가능한 차종과 지역·거리, 이동 및 복귀 가능 시간, 차량 키와 인수·인계 확인 경험 등을 알려주세요. 현재 가능한 업무·등록 및 보험 적용 조건은 상담으로 확인하며 근무 조건이나 수입을 보장하지 않습니다.</p></section>':'<section><h2>대리운전기사 지원 시 안내할 사항</h2><p>대리운전 지원 상담 시 주 운행 지역, 야간·주말 등 가능한 시간, 운전 경력과 장거리 운행 가능 여부를 알려주세요. 배차 운영 방식, 등록 및 보험 적용 조건은 상담을 통해 확인합니다. 특정 시간의 일감이나 수입을 보장하지 않습니다.</p></section>';
