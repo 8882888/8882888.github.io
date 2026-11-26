@@ -584,7 +584,7 @@ test('15 paired-locality guides retain exact identity and independently useful s
 test('recruitment search uses only existing national or validated provincial destinations, and guides link to matching application pages',()=>{
  const vm=require('node:vm');
  const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
- const start=server.indexOf('function recruitmentIntent('),end=server.indexOf('function recruitmentPage(',start);
+ const start=server.indexOf('function recruitmentIntent('),end=server.indexOf('const recruitProvinceRows=',start);
  assert.ok(start>=0&&end>start);
  const province={full_name:'부산광역시',level:'시도',slug:'busan'};
  const district={full_name:'부산광역시 해운대구',level:'구',slug:'haeundae-gu'};
@@ -613,4 +613,38 @@ test('recruitment search uses only existing national or validated provincial des
  assert.ok(heavy.includes('id="heavy-truck-driver-recruitment-20261126"'));
  assert.ok(heavy.includes('href="/recruit/taksong/"'));
  assert.ok(heavy.includes('확정 채용·수입·배차를 보장하지 않습니다.'));
+});
+
+test('all 34 existing provincial recruitment pages have distinct application guidance grounded in legal areas',()=>{
+ const vm=require('node:vm');
+ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const data=JSON.parse(fs.readFileSync(path.join(root,'data/recruitment-province-guidance-20261126.json'),'utf8'));
+ const legal=fs.readdirSync(path.join(root,'data/legal-regions')).filter(x=>/^\d{2}\.json$/.test(x)).flatMap(file=>JSON.parse(fs.readFileSync(path.join(root,'data/legal-regions',file),'utf8')).full_names);
+ const legalSet=new Set(legal);
+ const regions=data.rows.map((x,i)=>({full_name:x.province,level:'시도',slug:'province-'+i}));
+ const regionByFullName=new Map(regions.map(x=>[x.full_name,x]));
+ for(const row of data.rows)for(const area of row.areas){
+  const name=row.province+' '+area;
+  assert.ok(legalSet.has(name),'Unknown legal locality '+name);
+  regionByFullName.set(name,{full_name:name,slug:'area-'+regionByFullName.size});
+ }
+ const start=server.indexOf('const recruitProvinceRows='),end=server.indexOf('function recruitmentPage(',start);
+ const render=vm.runInNewContext(server.slice(start,end)+';recruitmentLocalGuidance',{
+  load:()=>data,regions,regionByFullName,esc:x=>String(x),servicePath:(r,k)=>'/'+k+'/'+r.slug+'/'
+ });
+ const textValues=new Set();
+ for(const r of regions)for(const kind of ['daeri','taksong']){
+  const row=data.rows.find(x=>x.province===r.full_name),html=render(r,kind);
+  assert.ok(html.includes(row[kind])&&html.includes(r.full_name));
+  assert.ok(html.includes(kind==='daeri'?'대리기사모집':'탁송기사모집'));
+  assert.ok(row[kind].length>=65);
+  assert.ok(!textValues.has(row[kind]));textValues.add(row[kind]);
+  for(const a of row.areas)assert.ok(html.includes('/'+kind+'/'+regionByFullName.get(r.full_name+' '+a).slug+'/'));
+  assert.ok(html.includes('일감 보장을 의미하지 않습니다'));
+  assert.ok(html.includes('tel:18114294'));
+ }
+ assert.equal(textValues.size,34);
+ assert.equal(render(null,'taksong'),'');
+ assert.equal(render({full_name:'가짜지역',level:'시도'},'daeri'),'');
+ assert.ok(server.includes('supportFocus+recruitmentLocalGuidance(region,kind)+registration'));
 });
