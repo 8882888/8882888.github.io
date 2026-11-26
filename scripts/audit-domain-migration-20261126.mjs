@@ -14,9 +14,9 @@ export function classify({kind,status,location,url,canonical,robots,blockedHeade
  const target=official+p;
  if(kind==='official'){
   if(status!==200)return 'OFFICIAL_HTTP_ERROR';
-  if(p==='/robots.txt')return /Disallow:\\s*\\/\\s*(?:\\r?\\n|$)/i.test(body)?'OFFICIAL_ROBOTS_REVIEW':'OFFICIAL_ROBOTS_AVAILABLE';
-  if(p==='/sitemap.xml')return /<(urlset|sitemapindex)\\b/i.test(body)?'OFFICIAL_SITEMAP_AVAILABLE':'OFFICIAL_SITEMAP_INVALID';
-  if(!/text\\/html/i.test(contentType)||canonical!==target||/\\b(noindex|none)\\b/i.test(robots||'')||blockedHeader)return 'OFFICIAL_INDEX_SIGNAL_REVIEW';
+  if(p==='/robots.txt')return /Disallow:\s*\/\s*(?:\r?\n|$)/i.test(body)?'OFFICIAL_ROBOTS_REVIEW':'OFFICIAL_ROBOTS_AVAILABLE';
+  if(p==='/sitemap.xml')return /<(urlset|sitemapindex)\b/i.test(body)?'OFFICIAL_SITEMAP_AVAILABLE':'OFFICIAL_SITEMAP_INVALID';
+  if(!/text\/html/i.test(contentType)||canonical!==target||/\b(noindex|none)\b/i.test(robots||'')||blockedHeader)return 'OFFICIAL_INDEX_SIGNAL_REVIEW';
   return 'OFFICIAL_SELF_CANONICAL';
  }
  if([301,308].includes(status)&&location===target)return 'PERMANENT_REDIRECT';
@@ -35,13 +35,13 @@ async function probe(h,p){
  try{
   const res=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(12000),headers:{'User-Agent':'Smart24-Domain-Migration-ReadOnly/1.0','Cache-Control':'no-cache'}});
   const body=await res.text();
-  const canonical=[...body.matchAll(/<link\\b[^>]*>/gi)].map(m=>m[0]).filter(t=>attr(t,'rel').toLowerCase().split(/\\s+/).includes('canonical')).map(t=>attr(t,'href'));
-  const robots=[...body.matchAll(/<meta\\b[^>]*>/gi)].map(m=>m[0]).filter(t=>/^(robots|yeti)$/i.test(attr(t,'name'))).map(t=>attr(t,'content')).join(',');
+  const canonical=[...body.matchAll(/<link\b[^>]*>/gi)].map(m=>m[0]).filter(t=>attr(t,'rel').toLowerCase().split(/\s+/).includes('canonical')).map(t=>attr(t,'href'));
+  const robots=[...body.matchAll(/<meta\b[^>]*>/gi)].map(m=>m[0]).filter(t=>/^(robots|yeti)$/i.test(attr(t,'name'))).map(t=>attr(t,'content')).join(',');
   const x=res.headers.get('x-robots-tag')||'';
-  const blockedHeader=x.split(/,|\\n/).some(t=>/^\\s*(?:(?:yeti|robots):\\s*)?(?:noindex|none)(?:\\s|$)/i.test(t));
+  const blockedHeader=x.split(/,|\n/).some(t=>/^\s*(?:(?:yeti|robots):\s*)?(?:noindex|none)(?:\s|$)/i.test(t));
   const location=res.headers.get('location')?new URL(res.headers.get('location'),url).href:null;
   const raw={kind:h.kind,url,status:res.status,location,canonical:canonical.length===1?canonical[0]:null,robots,blockedHeader,contentType:res.headers.get('content-type')||''};
-  return {...raw,result:classify({...raw,body}),...(p==='/robots.txt'?{robotsRules:body.split(/\\r?\\n/).filter(l=>/^(User-agent|Allow|Disallow|Sitemap):/i.test(l)).slice(0,30)}:{})};
+  return {...raw,result:classify({...raw,body}),...(p==='/robots.txt'?{robotsRules:body.split(/\r?\n/).filter(l=>/^(User-agent|Allow|Disallow|Sitemap):/i.test(l)).slice(0,30)}:{})};
  }catch(e){return {kind:h.kind,url,result:'UNREACHABLE_UNVERIFIED',error:String(e.message)}}
 }
 async function dns(host){

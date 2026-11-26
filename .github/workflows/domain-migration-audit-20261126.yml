@@ -32,7 +32,8 @@ jobs:
           node scripts/audit-domain-migration-20261126.mjs > domain-migration-report.json
       - name: Print diagnostic results
         if: always()
-        run: cat domain-migration-report.json
+        run: |
+          if [ -f domain-migration-report.json ]; then cat domain-migration-report.json; else echo 'Audit did not run; inspect fixture failure.'; fi
       - name: Preserve evidence
         if: always()
         uses: actions/upload-artifact@v4
