@@ -76,3 +76,20 @@ test('Homepage and broad national hubs remain untouched in centrally audited SEO
  assert.equal(new Set(priority.map(p=>p.path)).size,16);
  assert.equal(baseline.ctrExperiment.controlPaths.includes('/'),true);
 });
+
+test('Nov 25 owner supplied diagnosis is separate from TOP table and crawl graphs',()=>{
+ const s=JSON.parse(read('data/naver-search-advisor-baseline-20261125.json'));
+ assert.equal(s.sourceType,'owner_reported_naver_searchadvisor');
+ assert.equal(s.updatedAt,'2026-11-25');
+ assert.equal(s.diagnosis.updatedAt,'2026-11-25');
+ assert.deepEqual([s.diagnosis.indexed,s.diagnosis.collectionLimited,s.diagnosis.excluded,s.diagnosis.seoIssues],[14,0,0,0]);
+ assert.equal(s.diagnosis.indexedUrls,null);
+ assert.equal(s.crawl.updatedAt,'2026-11-26');
+ assert.equal(s.crawl.completed,null);assert.equal(s.crawl.limited,null);
+ assert.deepEqual([s.siteMetrics.clicksRawLabel,s.siteMetrics.impressionsRawLabel,s.siteMetrics.displayedAverageCtrPercent],['1.5백','6.7천',2.2]);
+ assert.equal(s.topQueries.length,10);assert.equal(s.topDocuments.length,10);
+ const g=s.topDocuments.find(p=>p.path==='/daeri/gangwon/gangreung-si/');
+ assert.deepEqual([g.clicks,g.impressions,g.ctrPercent],[2,2054,0.1]);
+ assert.equal(s.priorityReview.paths[0],g.path);
+ assert.equal(s.priorityReview.technicalCrawlabilityIsNotOfficialIndexing,true);
+});

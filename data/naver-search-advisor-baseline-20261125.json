@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "sourceType": "owner_reported_naver_searchadvisor",
+  "source": "2026-11-26 사용자가 직접 전달한 NAVER Search Advisor 사이트 진단·수집 현황·콘텐츠 노출/클릭 화면 텍스트",
+  "site": "https://jeongukdaeri.kr",
+  "reportedAt": "2026-11-26",
+  "updatedAt": "2026-11-25",
+  "window": "최근 30일",
+  "devices": "PC + Mobile",
+  "scope": "WEB_SEARCH_ONLY",
+  "siteMetrics": {
+    "clicksApprox": 150,
+    "impressionsApprox": 6700,
+    "displayedAverageCtrPercent": 2.2,
+    "clicksRawLabel": "1.5백",
+    "impressionsRawLabel": "6.7천",
+    "previousMonthComparisons": {
+      "clicksPercentShown": 14600,
+      "impressionsPercentShown": 24618.5,
+      "averageCtrChangeAsDisplayed": "-1.5%"
+    }
+  },
+  "diagnosis": {
+    "updatedAt": "2026-11-25",
+    "window": "최근 90일",
+    "indexed": 14,
+    "collectionLimited": 0,
+    "excluded": 0,
+    "seoIssues": 0,
+    "source": "사이트 진단 > 진단 현황 > 색인된 페이지",
+    "indexedUrls": null
+  },
+  "crawl": {
+    "updatedAt": "2026-11-26",
+    "completed": null,
+    "limited": null,
+    "downloadSize": null,
+    "downloadTime": null,
+    "note": "제공된 화면에는 그래프 canvas만 있고 수치가 없다."
+  },
+  "topQueries": [
+    {
+      "query": "설악산탁송",
+      "clicks": 44,
+      "impressions": 107,
+      "ctrPercent": 41.1
+    },
+    {
+      "query": "지리산탁송",
+      "clicks": 9,
+      "impressions": 37,
+      "ctrPercent": 24.3
+    },
+    {
+      "query": "소공원탁송",
+      "clicks": 5,
+      "impressions": 16,
+      "ctrPercent": 31.2
+    },
+    {
+      "query": "영산강길종주탁송",
+      "clicks": 4,
+      "impressions": 19,
+      "ctrPercent": 21.1
+    },
+    {
+      "query": "백담사탁송",
+      "clicks": 3,
+      "impressions": 5,
+      "ctrPercent": 60
+    },
+    {
+      "query": "한계령탁송",
+      "clicks": 3,
+      "impressions": 5,
+      "ctrPercent": 60
+    },
+    {
+      "query": "자동차 탁송 비용 조회",
+      "clicks": 2,
+      "impressions": 57,
+      "ctrPercent": 3.5
+    },
+    {
+      "query": "오색탁송",
+      "clicks": 2,
+      "impressions": 17,
+      "ctrPercent": 11.8
+    },
+    {
+      "query": "섬진강길종주탁송",
+      "clicks": 2,
+      "impressions": 10,
+      "ctrPercent": 20
+    },
+    {
+      "query": "번개탁송대리운전골프대리",
+      "clicks": 2,
+      "impressions": 6,
+      "ctrPercent": 33.3
+    }
+  ],
+  "topDocuments": [
+    {
+      "path": "/",
+      "clicks": 77,
+      "impressions": 1255,
+      "ctrPercent": 6.1
+    },
+    {
+      "path": "/route-taksong/",
+      "clicks": 18,
+      "impressions": 590,
+      "ctrPercent": 3.1
+    },
+    {
+      "path": "/daeri/",
+      "clicks": 15,
+      "impressions": 700,
+      "ctrPercent": 2.1
+    },
+    {
+      "path": "/taksong/",
+      "clicks": 15,
+      "impressions": 576,
+      "ctrPercent": 2.6
+    },
+    {
+      "path": "/service/taksong/",
+      "clicks": 8,
+      "impressions": 611,
+      "ctrPercent": 1.3
+    },
+    {
+      "path": "/service/long-distance-taksong/",
+      "clicks": 4,
+      "impressions": 102,
+      "ctrPercent": 3.9
+    },
+    {
+      "path": "/taksong/gangwon/gangreung-si/",
+      "clicks": 3,
+      "impressions": 454,
+      "ctrPercent": 0.7
+    },
+    {
+      "path": "/daeri/gangwon/gangreung-si/",
+      "clicks": 2,
+      "impressions": 2054,
+      "ctrPercent": 0.1
+    },
+    {
+      "path": "/service/corporate/",
+      "clicks": 2,
+      "impressions": 242,
+      "ctrPercent": 0.8
+    },
+    {
+      "path": "/service/long-distance-daeri/",
+      "clicks": 2,
+      "impressions": 67,
+      "ctrPercent": 3
+    }
+  ],
+  "limitations": [
+    "사용자 제공 공식 화면 텍스트이며 ChatGPT 직접 로그인 검증은 아님",
+    "11월 16일 URL TOP 표 14행과 달리 11월 25일 진단 화면에는 색인 14개가 직접 명시됨",
+    "TOP 30 중 첫 10개만 전달됨; 누락된 항목은 0이 아님",
+    "검색어와 웹문서 표는 별개; 검색어별 URL, 평균 순위, 실제 재수집 날짜는 미확인",
+    "최근 30일 롤링 기간이 겹치므로 SEO 작업의 인과 효과로 해석하지 않음",
+    "사이트 총합은 반올림된 표시값이며 CTR은 공식 표시값 보존"
+  ],
+  "priorityReview": {
+    "paths": [
+      "/daeri/gangwon/gangreung-si/",
+      "/service/taksong/",
+      "/taksong/gangwon/gangreung-si/",
+      "/service/corporate/"
+    ],
+    "firstPathReason": "2054 노출, 2 클릭, 0.1% CTR; 실제 검색어·노출 위치·URL 검사와 기존 배포 제목 재수집 여부를 먼저 확인",
+    "preserveHighPerformingMountainRoutes": true,
+    "changePolicy": "기존 제목의 반복 수정 금지; 새 검색 증거 확인 뒤 필요할 때 제한적으로 수정",
+    "historicalSnapshot": "data/naver-search-advisor-baseline-20261123.json",
+    "technicalCrawlabilityIsNotOfficialIndexing": true
+  }
+}
