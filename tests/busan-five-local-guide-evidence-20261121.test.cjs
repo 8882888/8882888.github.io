@@ -440,3 +440,39 @@ test('five tenth-round Busan and Daegu guides preserve identities, links and dif
  }
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
 });
+
+test('all 2900 source guides render exact administrative region searches and corrected objective particles',()=>{
+ const vm=require('node:vm');
+ const dir=path.join(root,'data');
+ const files=fs.readdirSync(dir).filter(f=>/^naver-regional-focus-.*\.json$/.test(f)&&!f.includes('candidates'));
+ assert.equal(files.length,33);
+ const rows=files.flatMap(f=>JSON.parse(fs.readFileSync(path.join(dir,f),'utf8')).priority);
+ assert.equal(rows.length,2900);
+ const keys=new Map(rows.map(r=>[r.kind+'|'+r.region,r]));
+ assert.equal(keys.size,2900);
+ assert.equal(new Set(rows.map(r=>r.keyword)).size,2900);
+ const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=server.indexOf('function naverFocus50Guide('),end=server.indexOf('function naverFocus50Hub(',start);
+ assert.ok(start>=0&&end>start);
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ const render=vm.runInNewContext(server.slice(start,end)+';naverFocus50Guide',{focus50ByKey:keys,esc});
+ const particle=/(절차|게이트|출입구|위치|장소|방법|여부|시간|구역|담당자|권한|조건|주소|승인|상태|차종|구분|출구|입구|층|차고지|주차장|수령인|일정|서류|등록|방식|정산|계획|연락처|인계자|인수자|차량|목적지|출발지|인수지|보관지|제약|요건|동선|경로|차선|운행|인수|인계)(을|를)(?=\s|[,.])/g;
+ for(const [i,row] of rows.entries()){
+  for(const field of ['topic','pickup','handover']){
+   for(const [,word,actual] of row[field].matchAll(particle)){
+    const expected=(word.charCodeAt(word.length-1)-44032)%28?'을':'를';
+    assert.equal(actual,expected,row.keyword+' '+word);
+   }
+  }
+  const slug='test-region-'+i;
+  const html=render({full_name:row.region,slug},row.kind);
+  assert.ok(html.includes('region='+slug+'"'),row.keyword);
+  assert.ok(html.includes('kind='+row.kind+'&amp;region='),row.keyword);
+  assert.ok(html.includes(esc(row.pickup))&&html.includes(esc(row.handover)),row.keyword);
+  assert.ok(html.includes('from='+encodeURIComponent(row.region)),row.keyword);
+  if(row.related)assert.ok(html.includes('href="'+row.related+'"'),row.keyword);
+  else assert.ok(html.includes(row.kind==='taksong'?'href="/service/long-distance-taksong/"':'href="/service/corporate/"'),row.keyword);
+  assert.doesNotMatch(html,/verified-post-links|blog\.naver\.com/);
+ }
+ assert.equal(render({full_name:'없는 행정구역',slug:'missing'},'daeri'),'');
+});

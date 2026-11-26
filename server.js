@@ -223,27 +223,20 @@ function naverFocus50Guide(r,kind){
   :[['골프장 대리운전','/service/golf/'],['법인카드·법인 대리운전','/service/corporate/'],['일일기사·왕복 대기','/service/daily-driver/']];
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
  const intro='<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
- // Prioritize real published review sources over generated regional card illustrations.
- // Never present an editorial locality as a completed trip without a matching source.
- const placeToken=(r.level==='시도'?shortPlace(r.name):r.name).replace(/(특별자치시|특별시|광역시|특별자치도)$/,'');
- const servicePattern=kind==='taksong'?/(?:탁송|차량이동)/:/(?:대리운전|일일기사)/;
- const sourcePosts=placeToken.length>=2?publishedBlogPosts.filter(p=>
-  p.title.includes(placeToken)&&servicePattern.test(p.title)&&/(?:운행완료|운행후기|탁송후기|대리운전후기|배차완료)/.test(p.title)
- ).slice(0,3):[];
- const focusVisual=sourcePosts.length?
-  '<section aria-label="기존 공개 운행후기 원문" class="verified-post-links"><h3>해당 지역명이 포함된 기존 공개 운행후기</h3><ul>'+
-  sourcePosts.map(p=>'<li><a href="'+esc(p.url)+'" rel="noopener noreferrer" target="_blank">'+esc(p.title)+'</a></li>').join('')+
-  '</ul><p>지역명 및 서비스가 제목에 포함된 기존 블로그 글입니다. 실제 운행구간과 요금은 원문에서 확인하세요.</p></section>':'';
+ // The same regional response already renders exact, reviewed source mappings
+ // and verified ride matches separately. A short locality substring in a blog
+ // title cannot disambiguate homonymous dong/ri or establish a completed ride.
+ // Keep this customer guide editorial and use the exact region-id search below.
  return '<section id="naver-focus50-local-guide" aria-label="'+esc(name+' '+kindLabel)+' 지역 상황별 실제 이용 안내">'+
-  '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+focusVisual+
+  '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+
   '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+
   '<h3>예약 전에 필요한 정보</h3><p>'+esc(name)+'의 실제 출발·도착 주소, 시간과 차량 위치를 확인한 뒤 견적 및 기사 수급을 상담합니다. 지역 지점 설치나 기사 상주, 예약 확정 또는 완료 운행을 뜻하지 않습니다.</p>'+
   '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(info.keyword)+' 예상요금</a> · '+
-  '<a href="/reviews/history/?kind='+kind+'&amp;q='+encodeURIComponent(name)+'">이 지역과 일치하는 실제 운행기록 검색</a> · '+
+  '<a href="/reviews/history/?kind='+kind+'&amp;region='+encodeURIComponent(r.slug)+'">이 행정구역의 실제 운행기록 검색</a> · '+
   '<a href="tel:18114294">상담 1811-4294</a></p>'+
   '<nav aria-label="'+esc(info.keyword)+' 관련 이용 방식"><p>'+
    related.map(([title,url])=>'<a href="'+url+'">'+esc(title)+'</a>').join(' · ')+
-   (info.related?' · <a href="'+info.related+'">'+esc(info.topic)+' 전문 서비스 안내</a>':'')+
+   (info.related?' · <a href="'+info.related+'">'+esc(kindLabel)+' 관련 서비스 상세 안내</a>':'')+
    '</p></nav></section>';
 }
 function naverFocus50Hub(kind){
