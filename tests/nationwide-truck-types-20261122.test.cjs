@@ -201,3 +201,39 @@ test('water trucks, cargo, tankers and armroll spelling variants retain precise 
  assert.ok(guide.expandedSection().includes('66종'));
  assert.ok(guide.expandedSection().includes('42개 톤급'));
 });
+
+test('commercial truck reference photos have distinct descriptive alt text, license credits and usable booking navigation',()=>{
+ const html=fs.readFileSync(path.join(root,'service/heavy-truck-taksong/index.html'),'utf8');
+ const start=html.indexOf('<section id="heavy-truck-reference-photos-20261126"');
+ const end=html.indexOf('</section>',start);
+ assert.ok(start>=0&&end>start);
+ const gallery=html.slice(start,end);
+ const photos=[...gallery.matchAll(/<figure>([\s\S]*?)<\/figure>/g)].map(m=>m[1]);
+ assert.equal(photos.length,5);
+ const alts=new Set(),srcs=new Set();
+ for(const photo of photos){
+  const img=photo.match(/<img\b[^>]+>/)?.[0];assert.ok(img);
+  const src=img.match(/src="([^"]+)"/)?.[1],alt=img.match(/alt="([^"]+)"/)?.[1];
+  assert.ok(src&&/^https:\/\/(?:thumb|upload)\.wikimedia\.org\/wikipedia\/commons\//.test(src));
+  assert.ok(alt&&alt.length>10);alts.add(alt);srcs.add(src);
+  assert.match(img,/width="960" height="(?:640|720)"/);
+  assert.ok(img.includes('loading="lazy"')&&img.includes('decoding="async"'));
+  assert.match(photo,/commons\.wikimedia\.org\/wiki\/File:/);
+  assert.match(photo,/creativecommons\.org\/licenses\/by-sa\/(?:3\.0|4\.0)\//);
+  assert.ok(photo.includes('사진 내용 변경 없음'));
+  const id=photo.match(/href="#(truck-type-[^"]+)"/)?.[1];
+  assert.ok(id&&html.includes('id="'+id+'"'));
+ }
+ assert.equal(alts.size,5);assert.equal(srcs.size,5);
+ assert.ok(gallery.includes('고객 운행 사진이 아니며'));
+ assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1);
+ assert.equal((html.match(/<link rel="canonical"/g)||[]).length,1);
+ assert.ok(html.includes('property="og:image" content="'+[...srcs][0]+'"'));
+ assert.ok(html.indexOf('id="truck-booking-first-20261126"')<start);
+ const lead=html.slice(html.indexOf('id="truck-booking-first-20261126"'),start);
+ assert.ok(lead.includes('tel:18114294')&&lead.includes('/region/?service=taksong'));
+ for(const m of lead.matchAll(/href="#([^"]+)"/g))assert.ok(html.includes('id="'+m[1]+'"'),m[1]);
+ assert.ok(html.includes('id="heavy-truck-booking-questions-20261126"'));
+ assert.ok(html.includes('25톤 카고와 25톤 탱크로리는 요금이 같나요?'));
+ assert.ok(html.includes('25톤 카고 탱크로리'));
+});
