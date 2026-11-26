@@ -1,13 +1,10 @@
 {
   "asOf": "2026-11-16",
-  "referenceDomain": "smartdaeritaksong.kr",
   "destinationDomain": "jeongukdaeri.kr",
-  "referenceStatus": "User-supplied 48 reference paths across two submissions; public HTTP verification is separate from Naver indexing.",
+  "referenceStatus": "Existing internal service-topic navigation inventory; external comparison retired.",
   "notes": [
-    "Reference content must not be copied.",
-    "The last supplied URL included appended Korean text; '/airport-delivery/incheon' is treated as an intended path pending verification.",
     "Only existing source-backed Smart24 pages are linked. No fake reviews or fare guarantees.",
-    "A reference path can map to an existing broader canonical Smart24 guide; do not claim a unique new indexed page for every reference URL.",
+    "Preserve existing internal service paths and reviewed priority sitemap membership.",
     "Detailed locality and pension examples are navigation-only by default, not promoted into priority sitemap without independent value and verified editorial evidence."
   ],
   "entries": [
