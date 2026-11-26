@@ -21,7 +21,7 @@ PAGES = {
     "/taksong/ulsan/": "울산탁송",
     "/taksong/sejong/": "세종탁송",
     "/recruit/taksong/": "탁송기사모집",
-    "/recruit/daeri/": "대리운전기사모집",
+    "/recruit/daeri/": "대리기사모집",
     "/coverage/": "전국 17개 시·도",
     "/reviews/history/excel-0013/": "자동차탁송",
     "/reviews/history/excel-0031/": "자동차탁송",

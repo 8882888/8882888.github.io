@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {classify} from '../scripts/audit-domain-migration-20261126.mjs';
+import {classify,collectSitemapPages} from '../scripts/audit-domain-migration-20261126.mjs';
 const url='https://8882888.github.io/daeri/';
 const target='https://jeongukdaeri.kr/daeri/';
 test('old site duplicate 200 is an unresolved migration defect even if canonical is correct',()=>{
@@ -30,4 +30,18 @@ test('Manus new domain is a separate canonical origin, never redirected to Smart
 
 test('unconfirmed Manus project cannot be diagnosed as a duplicate solely by a different canonical',()=>{
  assert.equal(classify({kind:'manus-original-candidate',url:'https://taksongkorea-fqwxknsy.manus.space/',status:200,canonical:'https://taksongkorea-fqwxknsy.manus.space/',targetOrigin:'https://smartdaeritaksong.kr'}),'CANDIDATE_RELATION_UNCONFIRMED');
+});
+
+test('traverses sitemap index children once without following external hosts',async()=>{
+ const origin='https://smartdaeritaksong.kr';
+ const seen=[];
+ const result=await collectSitemapPages(origin,async url=>{
+  seen.push(url);
+  if(url.endsWith('/sitemap.xml'))return '<sitemapindex><sitemap><loc>'+origin+'/a.xml</loc></sitemap><sitemap><loc>'+origin+'/a.xml</loc></sitemap><sitemap><loc>https://example.com/b.xml</loc></sitemap></sitemapindex>';
+  return '<urlset><url><loc>'+origin+'/daeri/</loc></url><url><loc>'+origin+'/orders/private</loc></url></urlset>';
+ });
+ assert.equal(result.mapsVisited,2);
+ assert.deepEqual(result.pages,['/daeri/']);
+ assert.equal(result.issues.length,1);
+ assert.deepEqual(seen,[origin+'/sitemap.xml',origin+'/a.xml']);
 });

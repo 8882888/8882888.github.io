@@ -52,6 +52,16 @@ class ProductionReleaseProofTests(unittest.TestCase):
         self.assertEqual(fetch_mock.call_count, 2)
         sleep.assert_called_once_with(3)
 
+    def test_approved_recruitment_title_and_canonical_remain_required(self):
+        path = "/recruit/daeri/"
+        url = "https://jeongukdaeri.kr" + path
+        title = "대리기사모집 · 대리운전기사 지원 | 전국 스마트24"
+        body = f'<title>{title}</title><link rel="canonical" href="{url}"><meta name="robots" content="index,follow">'
+        verify = AUDIT["verify"]
+        self.assertEqual(verify((path, 200, url, {}, body, None)), (path, []))
+        self.assertTrue(verify((path, 200, url, {}, body.replace(title, "일반 대리운전"), None))[1])
+        self.assertTrue(verify((path, 200, url, {}, body.replace("index,follow", "noindex"), None))[1])
+
 
 if __name__ == "__main__":
     unittest.main()
