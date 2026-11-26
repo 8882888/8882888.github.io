@@ -149,3 +149,30 @@ test('five fourth-round Busan guides preserve identities and practical service-s
  }
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
 });
+
+test('five fifth-round Busan guides preserve original identities and distinct consultation guidance',()=>{
+ const targets=[
+ ['twentieth-taksong-100',2516,'부산기장군기장읍내리중고차매매탁송','부산광역시 기장군 기장읍 내리','taksong',['중고차','반출 승인','구매자','서류','이전등록']],
+ ['twentieth-taksong-100',2517,'부산기장군일광읍원리자동차탁송','부산광역시 기장군 일광읍 원리','taksong',['열쇠','인수 승인','수령인','부재','복귀']],
+ ['eleventh-daeri-50',858,'부산송정동대리운전업체','부산광역시 해운대구 송정동','daeri',['송정해수욕장','공영주차장','숙소','하차','복귀']],
+ ['eleventh-daeri-50',860,'부산화전동법인대리운전','부산광역시 강서구 화전동','daeri',['산업단지','이용 승인','법인카드','반납','복귀']],
+ ['eleventh-daeri-50',862,'부산덕천동대리운전회사','부산광역시 북구 덕천동','daeri',['덕천역','주차권','동승','하차','복귀']]
+ ];
+ const records=[];
+ for(const [batch,id,keyword,region,kind,terms] of targets){
+  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+batch+'.json'),'utf8')).priority;
+  assert.equal(rows.length,Number(batch.split('-').at(-1)));
+  assert.equal(new Set(rows.map(r=>r.id)).size,rows.length);
+  const row=rows.find(r=>r.id===id);
+  assert.ok(row,id);assert.equal(row.keyword,keyword);assert.equal(row.region,region);assert.equal(row.kind,kind);
+  assert.ok(row.related.startsWith('/'));
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75);
+  const locality=region.split(' ').at(-1);
+  assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality));
+  const whole=[row.topic,row.pickup,row.handover].join(' ');
+  for(const term of terms)assert.ok(whole.includes(term),keyword+' missing '+term);
+  assert.doesNotMatch(whole,/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  records.push(row);
+ }
+ for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,5);
+});
