@@ -1,0 +1,37 @@
+name: Verify Naver single URL protocol and retry rejected homepage once
+on:
+  pull_request:
+    paths:
+      - 'scripts/indexnow-notify.js'
+      - 'tests/indexnow-targeting.test.js'
+      - '.github/workflows/naver-homepage-422-recovery-20261127.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/naver-homepage-422-recovery-20261127.yml'
+permissions:
+  contents: read
+concurrency:
+  group: naver-homepage-422-recovery-20261127
+  cancel-in-progress: false
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify documented GET and POST request shapes and targeting
+        run: |
+          node --check scripts/indexnow-notify.js
+          node tests/indexnow-targeting.test.js
+      - name: Confirm live canonical homepage and ownership before single recovery submission
+        if: github.event_name == 'push'
+        env:
+          INDEXNOW_CHANGED_FILES: index.html
+          INDEXNOW_URLS: /
+        run: node scripts/indexnow-notify.js

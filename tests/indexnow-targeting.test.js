@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const {changedPaths,priorityPaths,blogHashtagPaths,sitemapWindow,batchUrls}=require('../scripts/indexnow-notify');
+const {changedPaths,priorityPaths,blogHashtagPaths,sitemapWindow,batchUrls,notificationRequest}=require('../scripts/indexnow-notify');
 assert(sitemapWindow.focusCount>=2900,'All curated locality SEO guides must be included in priority sitemap size guard');
 assert.equal(sitemapWindow.maximumCount,sitemapWindow.focusCount+500,'IndexNow ceiling must scale with the guide count');
 assert(sitemapWindow.minimumCount<=sitemapWindow.focusCount,'Curated priority entries must fit within the overall regional focus');
@@ -160,3 +160,19 @@ const notifyWorkflow=fs.readFileSync(path.join(__dirname,'../.github/workflows/i
 assert.match(notifyWorkflow,/fetch-depth: 0/);
 assert(notifyWorkflow.includes('INDEXNOW_DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}'));
 assert.doesNotMatch(notifyWorkflow,/ref: ${{ github.event.workflow_run.head_sha/);
+
+// One URL uses the documented Naver GET shape with default root key location.
+const one=notificationRequest(['https://jeongukdaeri.kr/']);
+assert.equal(one.options.method,'GET');
+assert.equal(new URL(one.url).origin,'https://searchadvisor.naver.com');
+assert.equal(new URL(one.url).searchParams.get('url'),'https://jeongukdaeri.kr/');
+assert.match(new URL(one.url).searchParams.get('key'),/^[a-z0-9]{8,128}$/i);
+assert.equal(new URL(one.url).searchParams.has('keyLocation'),false);
+assert.equal(one.options.body,undefined);
+const korean='https://jeongukdaeri.kr/'+encodeURIComponent('설악산탁송')+'/';
+assert.equal(new URL(notificationRequest([korean]).url).searchParams.get('url'),korean);
+const multi=notificationRequest(['https://jeongukdaeri.kr/','https://jeongukdaeri.kr/daeri/']);
+assert.equal(multi.options.method,'POST');
+assert.equal(JSON.parse(multi.options.body).host,'jeongukdaeri.kr');
+assert.deepEqual(JSON.parse(multi.options.body).urlList,['https://jeongukdaeri.kr/','https://jeongukdaeri.kr/daeri/']);
+for(const bad of ['http://jeongukdaeri.kr/','https://www.jeongukdaeri.kr/','https://other.example/','https://jeongukdaeri.kr/?q=1'])assert.throws(()=>notificationRequest([bad]),/Invalid official canonical URL/);

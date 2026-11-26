@@ -47,6 +47,24 @@ function batchUrls(urls,size=10){
  for(let i=0;i<urls.length;i+=size)batches.push(urls.slice(i,i+size));
  return batches;
 }
+// Naver documents GET for one URL and JSON POST for multiple URLs.
+function notificationRequest(batch){
+ if(!Array.isArray(batch)||batch.length<1||batch.length>10)throw Error('Invalid IndexNow batch');
+ for(const value of batch){
+  const u=new URL(value);
+  if(u.origin!=='https://jeongukdaeri.kr'||u.username||u.password||u.search||u.hash||u.href!==value)
+   throw Error('Invalid official canonical URL: '+value);
+ }
+ const endpoint=new URL('https://searchadvisor.naver.com/indexnow');
+ const headers={'user-agent':'Smart24-IndexNow-Notifier/2.0'};
+ const options={headers,signal:AbortSignal.timeout(20000),redirect:'manual'};
+ if(batch.length===1){
+  endpoint.searchParams.set('url',batch[0]);
+  endpoint.searchParams.set('key',key);
+  return {url:endpoint.href,options:{...options,method:'GET'}};
+ }
+ return {url:endpoint.href,options:{...options,method:'POST',headers:{...headers,'content-type':'application/json; charset=utf-8'},body:JSON.stringify({host:'jeongukdaeri.kr',key,keyLocation:'https://jeongukdaeri.kr/'+key+'.txt',urlList:batch})}};
+}
 async function get(rel){
  return fetch(new URL(rel,base),{
   headers:{'user-agent':'Smart24-IndexNow-Notifier/2.0','cache-control':'no-cache'},
@@ -288,11 +306,8 @@ async function main(){
  const batches=batchUrls(urls,10);
  for(let i=0;i<batches.length;i++){
   const batch=batches[i];
-  const response=await fetch('https://searchadvisor.naver.com/indexnow',{
-   method:'POST',headers:{'content-type':'application/json; charset=utf-8','user-agent':'Smart24-IndexNow-Notifier/2.0'},
-   body:JSON.stringify({host:'jeongukdaeri.kr',key,keyLocation:'https://jeongukdaeri.kr/'+key+'.txt',urlList:batch}),
-   signal:AbortSignal.timeout(20000)
-  });
+  const request=notificationRequest(batch);
+  const response=await fetch(request.url,request.options);
   const message=(await response.text()).slice(0,300);
   console.log('Naver IndexNow response HTTP '+response.status+'; batch '+(i+1)+'/'+batches.length+' submitted '+batch.length+' changed URLs: '+batch.join(' ')+(message?' ; '+message:''));
   if(![200,202].includes(response.status))throw Error('Naver IndexNow refused batch '+(i+1)+' of '+batches.length);
@@ -301,4 +316,4 @@ async function main(){
  console.log('Submission acknowledgement only; '+urls.length+' URLs sent in '+batches.length+' batches. Real crawler requests, URL indexing and ranking are unconfirmed.');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
-module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,batchUrls,sitemapWindow:{focusCount,sparseVillageAllowance,minimumCount,maximumCount,requiredPaths}};
+module.exports={priorityPaths,blogHashtagPaths,changedPaths,filesInRevision,verify,batchUrls,notificationRequest,sitemapWindow:{focusCount,sparseVillageAllowance,minimumCount,maximumCount,requiredPaths}};
