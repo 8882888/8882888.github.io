@@ -202,33 +202,30 @@ test('water trucks, cargo, tankers and armroll spelling variants retain precise 
  assert.ok(guide.expandedSection().includes('42개 톤급'));
 });
 
-test('commercial truck reference photos have distinct descriptive alt text, license credits and usable booking navigation',()=>{
+test('truck references retain eight source credits without embedding unreviewed vehicle plates',()=>{
  const html=fs.readFileSync(path.join(root,'service/heavy-truck-taksong/index.html'),'utf8');
  const start=html.indexOf('<section id="heavy-truck-reference-photos-20261126"');
  const end=html.indexOf('</section>',start);
  assert.ok(start>=0&&end>start);
  const gallery=html.slice(start,end);
- const photos=[...gallery.matchAll(/<figure>([\s\S]*?)<\/figure>/g)].map(m=>m[1]);
- assert.equal(photos.length,8);
- const alts=new Set(),srcs=new Set();
- for(const photo of photos){
-  const img=photo.match(/<img\b[^>]+>/)?.[0];assert.ok(img);
-  const src=img.match(/src="([^"]+)"/)?.[1],alt=img.match(/alt="([^"]+)"/)?.[1];
-  assert.ok(src&&/^https:\/\/(?:thumb|upload)\.wikimedia\.org\/wikipedia\/commons\//.test(src));
-  assert.ok(alt&&alt.length>10);alts.add(alt);srcs.add(src);
-  assert.match(img,/width="960" height="(?:640|720)"/);
-  assert.ok(img.includes('loading="lazy"')&&img.includes('decoding="async"'));
-  assert.match(photo,/commons\.wikimedia\.org\/wiki\/File:/);
-  assert.match(photo,/creativecommons\.org\/licenses\/by-sa\/(?:3\.0|4\.0)\//);
-  assert.ok(photo.includes('사진 내용 변경 없음'));
-  const id=photo.match(/href="#(truck-type-[^"]+)"/)?.[1];
+ const cards=[...gallery.matchAll(/<article class="heavy-reference-card">([\s\S]*?)<\/article>/g)].map(m=>m[1]);
+ assert.equal(cards.length,8);
+ const refs=new Set();
+ for(const card of cards){
+  const ref=card.match(/href="(https:\/\/commons\.wikimedia\.org\/wiki\/File:[^"]+)"/)?.[1];
+  assert.ok(ref);refs.add(ref);
+  assert.match(card,/creativecommons\.org\/licenses\/by-sa\/(?:3\.0|4\.0)\//);
+  assert.ok(card.includes('원본은 외부 출처에서 확인'));
+  const id=card.match(/href="#(truck-type-[^"]+)"/)?.[1];
   assert.ok(id&&html.includes('id="'+id+'"'));
  }
- assert.equal(alts.size,8);assert.equal(srcs.size,8);
- assert.ok(gallery.includes('고객 운행 사진이 아니며'));
+ assert.equal(refs.size,8);
+ assert.doesNotMatch(gallery,/<img\b/);
+ assert.doesNotMatch(html,/<img\b[^>]*src="https?:/);
+ assert.ok(gallery.includes('전국탁송1811-4294'));
  assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1);
  assert.equal((html.match(/<link rel="canonical"/g)||[]).length,1);
- assert.ok(html.includes('property="og:image" content="'+[...srcs][0]+'"'));
+ assert.ok(html.includes('property="og:image" content="https://jeongukdaeri.kr/assets/service-taksong-visual.svg"'));
  assert.ok(html.indexOf('id="truck-booking-first-20261126"')<start);
  const lead=html.slice(html.indexOf('id="truck-booking-first-20261126"'),start);
  assert.ok(lead.includes('tel:18114294')&&lead.includes('/region/?service=taksong'));
@@ -237,11 +234,28 @@ test('commercial truck reference photos have distinct descriptive alt text, lice
  assert.ok(html.includes('25톤 카고와 25톤 탱크로리는 요금이 같나요?'));
  assert.ok(html.includes('25톤 카고 탱크로리'));
 });
-
+test('heavy truck page has matching breadcrumb and service metadata without invented reviews or pricing',()=>{
+ const html=fs.readFileSync(path.join(root,'service/heavy-truck-taksong/index.html'),'utf8');
+ const blocks=[...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+ assert.equal(blocks.length,1);
+ const graph=JSON.parse(blocks[0][1])['@graph'];
+ const url='https://jeongukdaeri.kr/service/heavy-truck-taksong/';
+ assert.deepEqual(graph.map(x=>x['@type']),['WebPage','BreadcrumbList','Service']);
+ assert.equal(graph[0].url,url);assert.equal(graph[2].url,url);
+ assert.equal(graph[2].provider.telephone,'1811-4294');
+ assert.equal(graph[0].mainEntity['@id'],graph[2]['@id']);
+ assert.equal(graph[0].breadcrumb['@id'],graph[1]['@id']);
+ assert.deepEqual(graph[1].itemListElement.map(x=>x.position),[1,2,3]);
+ assert.deepEqual(graph[1].itemListElement.map(x=>x.item),['https://jeongukdaeri.kr/','https://jeongukdaeri.kr/taksong/',url]);
+ assert.ok(html.includes('aria-current="page">화물차·특장차탁송'));
+ assert.doesNotMatch(blocks[0][1],/"(?:aggregateRating|review|offers|price)"/);
+ assert.ok(html.includes('id="heavy-truck-pickup-purpose-20261126"'));
+ assert.ok(html.includes('중고 화물차 매매·경매 및 정비 입출고'));
+});
 test('water tanker, oil tanker and armroll photos are credited as overseas examples and distinct quote guidance remains available',()=>{
  const html=fs.readFileSync(path.join(root,'service/heavy-truck-taksong/index.html'),'utf8');
  const gallery=html.slice(html.indexOf('<section id="heavy-truck-reference-photos-20261126"'),html.indexOf('</section>',html.indexOf('<section id="heavy-truck-reference-photos-20261126"')));
- const overseas=[...gallery.matchAll(/<figure>([\s\S]*?)<\/figure>/g)].map(x=>x[1]).filter(x=>x.includes('해외 차종 참고 사진'));
+ const overseas=[...gallery.matchAll(/<article class="heavy-reference-card">([\s\S]*?)<\/article>/g)].map(x=>x[1]).filter(x=>x.includes('해외 차종 참고 사진'));
  assert.equal(overseas.length,3);
  for(const [slug,country,author] of [['water-tanker','홍콩','LN9267'],['oil-tanker','필리핀','Captainmorlypogi1959'],['armroll','스위스','JoachimKohler-HB']]){
   const p=overseas.find(x=>x.includes('href="#truck-type-'+slug+'"'));
