@@ -1,319 +1,40 @@
-name: Deploy Smart24 nationwide website to GitHub Pages
-
+name: Retired GitHub Pages configuration check
 on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/pages.yml'
+      - 'tests/retired-pages-workflow-20261127.test.cjs'
   push:
     branches: [main]
-  workflow_dispatch:
-
+    paths:
+      - '.github/workflows/pages.yml'
+      - 'tests/retired-pages-workflow-20261127.test.cjs'
 permissions:
-  actions: read
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
-  build:
-    # Production is hosted exclusively on Cloudtype.
-    if: ${{ false }}
+  guard:
     runs-on: ubuntu-latest
-    env:
-      SITE_URL: https://jeongukdaeri.kr
+    timeout-minutes: 3
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-      - name: Restore official legal-dong CSV cache
-        uses: actions/cache@v4
-        with:
-          path: data/official_legal_dong.csv
-          key: official-legal-dong-v1-${{ runner.os }}
-      - name: Download and import nationwide regions when official data is available
-        shell: bash
-        run: |
-          mkdir -p data
-          URL='https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000003687312&fileDetailSn=1'
-          TMP_FILE="$(mktemp)"
-          if curl --fail --location --connect-timeout 10 --max-time 35 --retry 1 "$URL" --output "$TMP_FILE" && [ "$(wc -c < "$TMP_FILE")" -gt 100000 ]; then
-            if head -c 300 "$TMP_FILE" | grep -Eiq '<!doctype html|<html|<error|<?xml'; then
-              rm -f "$TMP_FILE"
-              echo "::warning::Region download returned markup instead of a CSV; preserving cached official data."
-            else
-              mv "$TMP_FILE" data/official_legal_dong.csv
-            fi
-          else
-            rm -f "$TMP_FILE"
-            echo "::warning::Official region download unavailable; keeping existing verified pages and homepage."
-          fi
-          if [ -f data/official_legal_dong.csv ] && [ "$(wc -c < data/official_legal_dong.csv)" -gt 100000 ]; then
-            if python tools/import_official_regions.py; then
-              echo "Official nationwide region data imported successfully."
-            else
-              echo "::warning::Official region import failed validation; retaining existing region data and continuing deployment."
-            fi
-          else
-            echo "::warning::Skipping region import because official CSV is unavailable."
-          fi
-      - name: Report region import coverage
-        shell: bash
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          data = json.loads(Path('data/regions.json').read_text(encoding='utf-8'))
-          regions = data.get('regions', [])
-          provinces = {r.get('slug', '').split('/')[0] for r in regions if r.get('slug')}
-          print(f"Region records: {len(regions)}; province groups: {len(provinces)}")
-          if len(regions) < 1000 or len(provinces) < 15:
-              print("::warning::Nationwide region generation is NOT complete. Deploying the verified pilot only.")
-          else:
-              print("Official region coverage threshold met; site build and sitemap validation still required.")
-          PY
-      - name: Validate original SEO source before building noindex Pages backup
-        run: node tools/check_core_seo.js
-      - name: Generate 100,000 SEO keyword targets
-        run: python tools/generate_seo_keywords.py
-      - name: Protect curated pages from the static backup generator
-        run: python tests/static-generator-preservation.test.py
-      - name: Verify nationwide original review prioritization
-        run: python tests/test_nationwide_review_first.py
-      - name: Verify 300 nationwide review-first regional targets
-        run: node tests/nationwide-review-first-300.test.js
-      - name: Verify all confirmed nationwide ride stories
-        run: node tests/nationwide-verified-story-23.test.js
-      - name: Verify first 500 five-service regional review pages
-        run: node tests/review-first-500-services.test.js
-      - name: Verify 102810 official nationwide service combinations
-        run: node tests/nationwide-review-first-102810.test.js
-      - name: Generate regional pages if verified region data exists
-        shell: bash
-        run: |
-          if [ -f data/regions.json ]; then
-            python tools/generate_pages.py
-          else
-            echo "::warning::No verified region data; preserving committed homepage and service pages."
-          fi
-      - name: Configure canonical URLs for backup artifact
-        run: python tools/configure_site.py
-      - name: Stop GitHub Pages mirror from claiming the Cloudtype domain
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          assert not Path('CNAME').exists(), 'GitHub Pages backup cannot publish a custom-domain CNAME'
-          print('PASS: Pages backup has no CNAME; official site remains Cloudtype-managed')
-          PY
-      - name: Guard official Smart24 canonical domain before publishing
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          from html.parser import HTMLParser
-          from urllib.parse import urlsplit
-          class CanonicalParser(HTMLParser):
-              def __init__(self):
-                  super().__init__()
-                  self.urls = []
-              def handle_starttag(self, tag, attrs):
-                  if tag != 'link':
-                      return
-                  data = dict(attrs)
-                  if 'canonical' in data.get('rel', '').lower().split():
-                      self.urls.append(data.get('href', ''))
-          paths = [Path('index.html'), Path('region/index.html')]
-          paths += sorted(Path('region').rglob('index.html'))
-          failures = []
-          for path in paths:
-              parser = CanonicalParser()
-              parser.feed(path.read_text(encoding='utf-8'))
-              if len(parser.urls) != 1:
-                  failures.append(f'{path}: expected one canonical, got {len(parser.urls)}')
-                  continue
-              url = urlsplit(parser.urls[0])
-              if url.scheme != 'https' or url.netloc != 'jeongukdaeri.kr':
-                  failures.append(f'{path}: nonofficial canonical {parser.urls[0]}')
-          if failures:
-              raise SystemExit('Canonical host check failed:\\n' + '\\n'.join(failures[:20]))
-          print(f'PASS: {len(paths)} pages canonicalize to https://jeongukdaeri.kr')
-          PY
-      - name: Audit duplicate titles and low-information region pages
-        run: python tools/audit_seo_quality.py
-      - name: Validate generated pages when sitemap exists
-        shell: bash
-        run: |
-          test -f index.html || exit 1
-          python tools/validate_site.py
-      - name: Verify region expansion and key landing pages before publishing
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import xml.etree.ElementTree as ET
-          for path in ['index.html', 'region/index.html', 'region/gangneung-taksong/index.html', 'assets/regions/gangneung-taksong-card.svg', 'assets/smart24-business-card.svg']:
-              if not Path(path).is_file():
-                  raise SystemExit('Missing required deployment file: ' + path)
-          assert not Path('CNAME').exists(), 'GitHub Pages mirror must not claim the Cloudtype primary domain'
-          root = ET.parse('sitemap.xml').getroot()
-          assert root.tag.endswith('sitemapindex') or root.tag.endswith('urlset')
-          print('PASS: no conflicting Pages custom domain; regional landing page, business card, sitemap')
-          PY
-      - name: Check generated page count and sitemap coverage
-        shell: bash
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          import xml.etree.ElementTree as ET
-          regions=json.loads(Path('data/regions.json').read_text(encoding='utf-8')).get('regions',[])
-          pages=sum(1 for _ in Path('region').rglob('index.html'))
-          root=ET.parse('sitemap.xml').getroot()
-          maps=[e.text for e in root.iter() if e.tag.endswith('loc') and e.text]
-          print(f'Region records: {len(regions)}; generated region pages: {pages}; sitemap references: {len(maps)}')
-          if pages < len(regions):
-              raise SystemExit('Region page coverage lower than source data; refusing incomplete deployment')
-          if len(regions) < 1000:
-              print('::warning::Nationwide official legal-dong import incomplete; regional coverage is partial')
-          PY
-      - name: Audit nationwide generation before deploy
-        shell: bash
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from urllib.parse import urlsplit, unquote
-          import xml.etree.ElementTree as ET
-          data=json.loads(Path('data/regions.json').read_text(encoding='utf-8'))
-          regions=data.get('regions', [])
-          slugs=[r['slug'].strip('/') for r in regions]
-          if len(slugs)!=len(set(slugs)):
-              raise SystemExit('Duplicate region slugs')
-          if not regions:
-              raise SystemExit('No regions found')
-          missing=[slug for slug in slugs if not (Path('region')/slug/'index.html').exists()]
-          if missing:
-              raise SystemExit('Missing region pages: '+', '.join(missing[:10]))
-          provinces={slug.split('/')[0] for slug in slugs}
-          sitemap_files=sorted(Path('.').glob('sitemap-*.xml'))
-          indexed=set()
-          for sitemap in sitemap_files:
-              for el in ET.parse(sitemap).iter():
-                  if el.tag.endswith('loc') and el.text:
-                      indexed.add(unquote(urlsplit(el.text).path).rstrip('/')+'/')
-          unindexed=[slug for slug in slugs if '/region/'+slug+'/' not in indexed]
-          if unindexed:
-              raise SystemExit('Region pages absent from sitemaps: '+', '.join(unindexed[:10]))
-          report={'region_records':len(regions),'province_groups':len(provinces),'region_pages_checked':len(slugs),'sitemap_files':len(sitemap_files),'source':data.get('source','partial local dataset'),'full_official_coverage':bool(data.get('source')) and len(regions)>=1000 and len(provinces)>=15}
-          Path('deployment-audit.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-          print(json.dumps(report,ensure_ascii=False))
-          if not report['full_official_coverage']:
-              print('::warning::This build is NOT complete nationwide official legal-dong coverage')
-          PY
-      - name: Protect Smart24 branding and core files
-        run: python tools/check_smart24_invariants.py
-      - name: Set up Node.js for real startup tests
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install production image dependencies for dynamic regional cards
-        run: npm install --omit=dev --no-audit --no-fund
-      - name: Validate 630-source SEO links and production settings
-        run: |
-          node --check server.js
-          node --test tests/traffic-analytics-regression.test.js
-          node tests/naver-regional-focus-twenty-first-200.test.js
-          node tests/innovation-city-100.test.js
-          node tests/region-full-index.test.js
-          node tests/innovation-search-focus.test.js
-          node tests/search-intent-discovery.test.js
-          node tests/food-district-discovery.test.js
-          node tests/homepage-competitor-structure.test.js
-          node tests/taksong-trust-first.test.js
-          node tests/taksong-priority-seo-links.test.js
-          node tests/naver-search-baseline.test.js
-          node tests/homepage-top-services.test.js
-          node tests/five-keyword-landing-20261106.test.js
-          node tests/kstyle-five-primary-services-20261106.test.js
-          node tests/nationwide-daeri-24h-taksong-keywords.test.js
-          node tests/review-first-search-titles-20261106.test.js
-          node tests/night-taksong-intent-alias-and-proof.test.js
-          node tests/homepage-service-first-20261106.test.js
-          node tools/check_cloudtype_100_point_release.js
-          node tests/cycling-keyword-intents-20261106.test.js
-          node tests/homepage-conversion-regression.test.js
-          node tests/blog-regional-hashtags.test.js
-          node tests/regional-history-ambiguity.test.js
-          node tools/smoke_production_server.js
-          python -m py_compile tools/audit_live_seo.py
-      - name: Prevent Github Pages backup from competing with the official search index
-        run: |
-          python tools/mark_github_pages_mirror_noindex.py
-          python - <<'PY'
-          from pathlib import Path
-          page=Path('index.html').read_text(encoding='utf-8')
-          assert page.count('<meta name="robots" content="noindex,follow">')==1
-          assert 'rel="canonical" href="https://jeongukdaeri.kr/"' in page
-          print('PASS: mirror has noindex and points at official homepage')
-          PY
-      - name: Stage bounded public-only Pages mirror for current official province groups
-        run: |
-          python tests/test_compact_pages_backup.py
-          python tools/build_compact_pages_backup.py
-          test -f _pages_mirror/index.html
-          test -f _pages_mirror/robots.txt
-          test ! -e _pages_mirror/data
-          test ! -e _pages_mirror/.github
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Upload only bounded public-only nationwide Pages backup
-        uses: actions/upload-pages-artifact@v3
-        with:
-          name: github-pages-${{ github.run_attempt }}
-          path: _pages_mirror
-
-  # A separate deploy job lets the Actions artifact become visible before
-  # deploy-pages resolves its metadata. A per-attempt name prevents reruns
-  # from accumulating duplicate artifacts named "github-pages".
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Confirm current attempt Pages artifact is visible
-        shell: bash
+      - name: Verify retired publishing workflow cannot deploy
+        run: node --test tests/retired-pages-workflow-20261127.test.cjs
+      - name: Read actual Pages configuration and public legacy status
+        if: github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
-          ARTIFACT_NAME: github-pages-${{ github.run_attempt }}
-        run: |
-          set -euo pipefail
-          for attempt in $(seq 1 12); do
-            if gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" --jq '.artifacts[].name' | grep -Fqx "$ARTIFACT_NAME"; then
-              echo "PASS: Pages artifact $ARTIFACT_NAME is visible (attempt $attempt)"
-              exit 0
-            fi
-            echo "Waiting for Pages artifact metadata (attempt $attempt)"
-            sleep 5
-          done
-          echo "::error::Pages artifact $ARTIFACT_NAME is not visible; refusing a false successful deploy"
-          exit 1
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github-pages-${{ github.run_attempt }}
-      - name: Verify GitHub Pages deployment result (not Cloudtype)
         shell: bash
-        env:
-          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           set -euo pipefail
-          test -n "$PAGES_URL"
-          echo "GitHub Pages deployed to: $PAGES_URL"
-          # The live custom domain may be served by Cloudtype instead.
-          # Do not fail a successful GitHub Pages deployment on Cloudtype routing.
-          echo "PASS: GitHub Pages deployment action succeeded; Cloudtype checks are separate."
+          configured="$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.has_pages')"
+          status="$(curl -sS --max-time 20 -o /dev/null -w '%{http_code}' https://8882888.github.io/)"
+          echo "GitHub Pages configured: $configured; legacy public HTTP: $status"
+          echo "Pages configured: $configured; legacy HTTP: $status" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$configured" != false ] || [ "$status" != 404 ]; then
+            echo "::error::Legacy Pages is not confirmed disabled. Repository owner must disable Pages in Settings > Pages. No deployment or settings change was made."
+            exit 1
+          fi
