@@ -52,6 +52,35 @@ async function dns(host){
  for(const [key,fn] of [['A',resolve4],['AAAA',resolve6],['CNAME',resolveCname]])try{output[key]=await fn(host)}catch(e){output[key]={error:e.code||e.message}}
  return output;
 }
+
+// Bounded same-origin sitemap traversal. Never follow an external host or redirect.
+export async function collectSitemapPages(origin, read, {maxMaps=12,maxDepth=2}={}){
+ const queue=[{url:origin+'/sitemap.xml',depth:0}],seen=new Set(),pages=new Set(),issues=[];
+ while(queue.length&&seen.size<maxMaps){
+  const {url,depth}=queue.shift();
+  if(seen.has(url))continue;
+  seen.add(url);
+  try{
+   const xml=await read(url);
+   const index=/<sitemapindex\b/i.test(xml);
+   if(!index&&!/<urlset\b/i.test(xml))throw Error('invalid sitemap root');
+   const locs=[...xml.matchAll(/<loc>([^<]+)<\/loc>/gi)];
+   if(!locs.length)throw Error('empty sitemap');
+   for(const m of locs){
+    let u;try{u=new URL(m[1].trim().replace(/&amp;/g,'&'))}catch{issues.push('invalid loc in '+url);continue}
+    if(u.origin!==origin||u.username||u.password||u.hash){issues.push('off-origin or invalid loc in '+url);continue}
+    if(index){
+     if(u.search){issues.push('unexpected sitemap query in '+url);continue}
+     if(depth>=maxDepth){issues.push('depth limit at '+u.pathname);continue}
+     if(!seen.has(u.href)&&!queue.some(x=>x.url===u.href))queue.push({url:u.href,depth:depth+1});
+    }else if(u.pathname!=='/'&&!u.search&&!/^\/(?:api|orders)(?:\/|$)/.test(u.pathname))pages.add(u.pathname);
+   }
+  }catch(e){issues.push(url+': '+String(e.message))}
+ }
+ if(queue.length)issues.push('map limit reached; '+queue.length+' pending');
+ return {mapsVisited:seen.size,pages:[...pages],issues};
+}
+
 async function main(){
  const records=[];
  for(const p of paths)records.push(...await Promise.all(hosts.map(h=>probe(h,p))));
@@ -61,22 +90,21 @@ async function main(){
  const manusYeti=[];
  for(const p of ['/','/robots.txt','/sitemap.xml'])manusYeti.push(await probe(manusHosts[0],p,yeti));
  let samplePaths=[];let sampleError=null;
- try{
-  const response=await fetch(manusOfficial+'/sitemap.xml',{signal:AbortSignal.timeout(12000),redirect:'manual',headers:{'User-Agent':yeti,'X-Smart24-Monitor':'github-health-probe'}});
-  if(response.status!==200)throw Error('sitemap HTTP '+response.status);
-  const xml=await response.text();
-  if(!/<urlset\b/i.test(xml))throw Error('sitemap is not a direct URL set; no recursive requests performed');
-  const locs=[...new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map(m=>m[1].trim().replace(/&amp;/g,'&')))];
-  const local=locs.map(v=>{try{return new URL(v)}catch{return null}}).filter(u=>u&&u.origin===manusOfficial&&u.pathname!=='/'&&!u.search&&!u.hash&&!/^\/(?:api|orders)(?:\/|$)/.test(u.pathname));
-  const positions=[...new Set(Array.from({length:Math.min(6,local.length)},(_,i)=>Math.floor(i*(local.length-1)/Math.max(1,Math.min(6,local.length)-1))))];
-  samplePaths=positions.map(i=>local[i].pathname);
-  for(const p of samplePaths){manusYeti.push(await probe(manusHosts[0],p,yeti));manusRecords.push(await probe(manusHosts[0],p));}
- }catch(e){sampleError=String(e.message)}
+ const traversal=await collectSitemapPages(manusOfficial,async url=>{
+  const response=await fetch(url,{signal:AbortSignal.timeout(12000),redirect:'manual',headers:{'User-Agent':yeti,'X-Smart24-Monitor':'github-health-probe'}});
+  if(response.status!==200)throw Error('HTTP '+response.status);
+  return response.text();
+ });
+ const local=traversal.pages;
+ const positions=[...new Set(Array.from({length:Math.min(6,local.length)},(_,i)=>Math.floor(i*(local.length-1)/Math.max(1,Math.min(6,local.length)-1))))];
+ samplePaths=positions.map(i=>local[i]);
+ if(traversal.issues.length||!samplePaths.length)sampleError=traversal.issues.join('; ')||'No eligible page paths';
+ for(const p of samplePaths){manusYeti.push(await probe(manusHosts[0],p,yeti));manusRecords.push(await probe(manusHosts[0],p));}
  const dnsRecords=await Promise.all([...new Set([...hosts,...manusHosts].map(h=>new URL(h.base).hostname))].map(dns));
  const totals={};for(const row of records)totals[row.result]=(totals[row.result]||0)+1;
- const report={at:new Date().toISOString(),scope:'HTTP/DNS public read-only; NOT Naver index count',manus:'Separate official domain; original Manus host is an unconfirmed candidate, not a proven previous binding',totals,dns:dnsRecords,records,manusRecords,manusYeti,samplePaths,sampleError};
+ const report={at:new Date().toISOString(),scope:'HTTP/DNS public read-only; NOT Naver index count',manus:'Separate official domain; original Manus host is an unconfirmed candidate, not a proven previous binding',totals,dns:dnsRecords,records,manusRecords,manusYeti,samplePaths,sampleError,manusSitemapTraversal:{mapsVisited:traversal.mapsVisited,eligiblePaths:local.length,issues:traversal.issues}};
  console.log(JSON.stringify(report,null,2));
  // Explicitly distinguish open technical issues from an unavailable alias.
- if([...records,...manusRecords,...manusYeti].some(r=>/^(OFFICIAL_.*(?:ERROR|REVIEW|INVALID)|DUPLICATE_200|TEMPORARY_REDIRECT|WRONG_REDIRECT|ALIAS_SITEMAP_SERVED)/.test(r.result)))process.exitCode=1;
+ if(sampleError||[...records,...manusRecords,...manusYeti].some(r=>/^(OFFICIAL_.*(?:ERROR|REVIEW|INVALID)|DUPLICATE_200|TEMPORARY_REDIRECT|WRONG_REDIRECT|ALIAS_SITEMAP_SERVED)/.test(r.result)))process.exitCode=1;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)main().catch(e=>{console.error(e);process.exitCode=1});
