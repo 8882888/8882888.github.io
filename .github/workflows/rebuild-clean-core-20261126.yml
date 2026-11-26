@@ -1,0 +1,19 @@
+name: Clean core rebuild isolated verification
+on:
+  pull_request:
+    paths:
+      - 'rebuild/**'
+      - 'tests/rebuild-clean-core-20261126.test.cjs'
+      - '.github/workflows/rebuild-clean-core-20261126.yml'
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/rebuild-clean-core-20261126.test.cjs
