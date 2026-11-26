@@ -648,3 +648,24 @@ test('all 34 existing provincial recruitment pages have distinct application gui
  assert.equal(render({full_name:'가짜지역',level:'시도'},'daeri'),'');
  assert.ok(server.includes('supportFocus+recruitmentLocalGuidance(region,kind)+registration'));
 });
+
+test('sixteen paired Dogok, Ilwon, Naegok, Ogeum, Jayang, Deungchon, Sangdo and Dadae guides retain original identities and distinct instructions',()=>{
+ const daeri=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-eleventh-daeri-50.json'),'utf8')).priority;
+ const taksong=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-eleventh-taksong-50.json'),'utf8')).priority;
+ const ids=[801,802,803,804,805,806,807,811];
+ const fields=['topic','pickup','handover'];
+ assert.equal(daeri.length,50);assert.equal(taksong.length,50);
+ const seen=Object.fromEntries(fields.map(k=>[k,new Set()]));
+ for(const id of ids){
+  const a=taksong.find(r=>r.id===id),b=daeri.find(r=>r.id===id+50);
+  assert.ok(a&&b,id);assert.equal(a.region,b.region);assert.equal(a.kind,'taksong');assert.equal(b.kind,'daeri');
+  for(const row of [a,b]){
+   const local=row.region.split(' ').at(-1);
+   assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75,row.keyword);
+   assert.ok(row.related,row.keyword);
+   for(const field of fields){assert.ok(row[field].includes(local),row.keyword);assert.ok(!seen[field].has(row[field]),row.keyword);seen[field].add(row[field]);}
+   assert.doesNotMatch(fields.map(k=>row[k]).join(' '),/\d{1,3}(?:,\d{3})*원|\d{1,4}만원|배차\s*완료|운행\s*완료|100%\s*(?:보장|배차)|무조건\s*배차/);
+  }
+ }
+ for(const field of fields)assert.equal(seen[field].size,16);
+});
