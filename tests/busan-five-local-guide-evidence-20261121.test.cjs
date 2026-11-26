@@ -514,3 +514,19 @@ test('29 nationwide local guides retain exact identities and distinct source-bas
  assert.equal(new Set(records.map(r=>r.region.split(' ')[0])).size,16);
  for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,29);
 });
+
+test('additional 19 source-locality guides preserve exact original identity and service links',()=>{
+ const targets=[["tenth-100",701,"서울특별시 강남구 압구정동","강남압구정동탁송","taksong","/service/taksong/"],["tenth-100",702,"서울특별시 강남구 개포동","강남개포동자동차탁송","taksong","/service/taksong/"],["tenth-100",703,"서울특별시 서초구 잠원동","서초잠원동탁송업체","taksong","/service/taksong/"],["tenth-100",704,"서울특별시 송파구 석촌동","송파석촌동차량탁송","taksong","/service/taksong/"],["tenth-100",705,"서울특별시 마포구 공덕동","마포공덕동탁송회사","taksong","/service/taksong/"],["tenth-100",706,"서울특별시 성동구 성수동2가","성동성수동2가탁송","taksong","/service/taksong/"],["tenth-100",708,"부산광역시 금정구 구서동","부산구서동탁송업체","taksong","/service/taksong/"],["tenth-100",710,"부산광역시 남구 용호동","부산용호동탁송회사","taksong","/service/taksong/"],["tenth-100",712,"대구광역시 수성구 지산동","대구지산동자동차탁송","taksong","/service/taksong/"],["tenth-100",714,"대구광역시 달성군 옥포읍","대구옥포읍차량탁송","taksong","/service/taksong/"],["tenth-100",715,"인천광역시 연수구 동춘동","인천동춘동탁송회사","taksong","/service/taksong/"],["tenth-100",716,"인천광역시 서해구 청라동","인천청라동탁송","taksong","/service/taksong/"],["tenth-100",719,"경기도 수원시 영통구 이의동","수원광교이의동차량탁송","taksong","/service/taksong/"],["tenth-100",720,"경기도 성남시 분당구 삼평동","판교삼평동탁송회사","taksong","/service/taksong/"],["tenth-100",724,"경기도 평택시 포승읍","평택포승읍차량탁송","taksong","/service/taksong/"],["tenth-100",758,"부산광역시 금정구 구서동","부산구서동법인대리운전","daeri","/service/corporate/"],["tenth-100",759,"부산광역시 강서구 대저2동","부산대저2동법인카드대리운전","daeri","/service/corporate/"],["tenth-100",762,"대구광역시 수성구 지산동","대구지산동대리운전회사","daeri","/service/corporate/"],["ninth-100",670,"대구광역시 달성군 현풍읍","대구현풍읍법인카드대리운전","daeri","/service/corporate/"]];
+ const records=[];
+ for(const [batch,id,region,keyword,kind,related] of targets){
+  const rows=JSON.parse(fs.readFileSync(path.join(root,'data/naver-regional-focus-'+batch+'.json'),'utf8')).priority;
+  const row=rows.find(r=>r.id===id);assert.ok(row,id);
+  assert.equal(row.region,region);assert.equal(row.keyword,keyword);assert.equal(row.kind,kind);assert.equal(row.related,related);
+  assert.ok(row.topic.length>=13&&row.pickup.length>=80&&row.handover.length>=75,keyword);
+  const locality=region.split(' ').at(-1);
+  assert.ok(row.pickup.includes(locality)&&row.handover.includes(locality),keyword);
+  records.push(row);
+ }
+ assert.equal(records.length,19);
+ for(const k of ['topic','pickup','handover'])assert.equal(new Set(records.map(r=>r[k])).size,19);
+});
