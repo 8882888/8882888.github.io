@@ -953,7 +953,14 @@ function tripMatchesRegion(x,r){
 
 function ridePriorityRegionLinks(x){
  // Only independently confirmed public rides link back to matching regional service pages.
- const matches=priorityRegionalPages.filter(p=>p.kind===x.service).map(p=>regionByFullName.get(p.region)).filter(r=>r&&tripMatchesRegion(x,r)).slice(0,6);
+ if(!['daeri','taksong'].includes(x.service))return '';
+ const original=priorityRegionalPages.filter(p=>p.kind===x.service).map(p=>regionByFullName.get(p.region)).filter(r=>r&&tripMatchesRegion(x,r)).slice(0,6);
+ // Preserve the original reviewed hub links and add only source-matched focus
+ // localities already owned by the sitemap, never homonyms or proposed routes.
+ const focus=[...metroLongDistanceFocus.keys()].map(name=>regionByFullName.get(name))
+  .filter(r=>r&&sitemapOwnerByPath[servicePath(r,x.service)]&&tripMatchesRegion(x,r))
+  .sort((a,b)=>b.full_name.split(' ').length-a.full_name.split(' ').length).slice(0,6);
+ const matches=[...new Map([...focus,...original].map(r=>[servicePath(r,x.service),r])).values()];
  if(!matches.length)return '';
  const label=x.service==='taksong'?'자동차탁송':'대리운전';
  return '<section><h2>이 운행기록과 관련된 지역별 '+label+' 안내</h2><ul>'+matches.map(r=>'<li><a href="'+servicePath(r,x.service)+'">'+esc(seoRegionLabel(r)+label)+' 지역 안내</a></li>').join('')+'</ul><p>지역 안내는 예약 조건과 기사 접근을 설명하며 실제 완료 기록은 이 운행 페이지의 확인된 내용에 한정됩니다.</p></section>';
