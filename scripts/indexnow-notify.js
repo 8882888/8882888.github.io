@@ -112,6 +112,22 @@ function changedPaths(files,manual='',options={}){
    {cwd:root,encoding:'utf8',timeout:10000}))}
   catch(e){throw Error('Cannot inspect '+side+' deployed source records for '+filename+'; refusing unrelated IndexNow notification')}
  };
+ // A newly advertised canonical locality is a deliberate discovery change.
+ // Select only new priority sitemap owners, not owner transfers, deleted URLs,
+ // or old entries. All selected URLs still require the live sitemap and HTML checks.
+ const registry='data/sitemap-url-owners.json';
+ const newlyAdvertised=[];
+ if(input.has(registry)){
+  const before=getSnapshot(registry,'before'),after=getSnapshot(registry,'after');
+  if(!before||!after||Array.isArray(before)||Array.isArray(after)||typeof before!=='object'||typeof after!=='object')throw Error('Invalid sitemap ownership snapshots');
+  for(const [route,owner] of Object.entries(after)){
+   if(Object.hasOwn(before,route)||owner!=='/sitemap-priority.xml')continue;
+   if(!/^\/(?:daeri|taksong)\/[a-z0-9-]+(?:\/[a-z0-9-]+)*\/$/.test(route))continue;
+   if(/\/(?:fare|handover|long-distance)\/$/.test(route))continue;
+   newlyAdvertised.push(route);
+  }
+  if(newlyAdvertised.length>100)throw Error('More than 100 newly advertised priority locality URLs; split reviewed releases');
+ }
  const modifiedRows=(filename,keyFn)=>{
   const old=getSnapshot(filename,'before'),now=getSnapshot(filename,'after');
   if(!Array.isArray(old.pages||old.articles)||!Array.isArray(now.pages||now.articles))
@@ -182,7 +198,7 @@ function changedPaths(files,manual='',options={}){
  if(input.has('blog/posts.json'))include(['/blog/','/blog/archive/']);
  if([...input].some(p=>/^(data\/ride-history\.json|data\/public-reviewed-rides-202610\.json)$/.test(p)))include(['/reviews/history/','/reviews/taksong/']);
  if(selected.size>10)throw Error('More than ten genuine changed URLs; batch explicitly after deployment, never truncate');
- return [...selected];
+ return [...new Set([...selected,...newlyAdvertised])];
 }
 function filesInRevision(){
  const override=process.env.INDEXNOW_CHANGED_FILES;
