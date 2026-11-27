@@ -98,3 +98,46 @@ test('first twenty duplicate pages contain distinct source-backed local booking 
  assert.equal(advice.size,20);
  console.log('Source-backed first two batches: 20 distinct regional service paragraphs; original duplicate baseline remains unchanged.');
 });
+
+test('bulk remediation covers every one of the 858 duplicate pages with real archive matching and no invented evidence',()=>{
+ const {matchingHistoryRegion,publicPlace}=require('../lib/regional-history-evidence');
+ const vm=require('node:vm');
+ const archive=JSON.parse(fs.readFileSync(path.join(dir,'ride-history.json'),'utf8'));
+ const canonical=JSON.parse(fs.readFileSync(path.join(dir,'seo-history-duplicates.json'),'utf8')).canonicalById;
+ const start=source.indexOf('function completedRidePublicPlace(raw)');
+ const end=source.indexOf('const historicalRideById=',start);
+ assert(start>=0&&end>start);
+ const rides=vm.runInNewContext(source.slice(start,end)+';historicalRides',{rides:archive,publicPlace});
+ assert.equal(rides.length,2591);
+ const realRegions=regions.map(r=>{
+  const parts=r.full_name.split(' '),name=parts.at(-1);
+  return {...r,name,level:parts.length===1?'시도':/리$/.test(name)?'리':/읍$/.test(name)?'읍':/면$/.test(name)?'면':/구$/.test(name)?'구':/군$/.test(name)?'군':/시$/.test(name)?'시':'동'};
+ });
+ const eligible=rides.filter(x=>(!canonical[x.id]||canonical[x.id]===x.id)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개');
+ const counts={processed:0,archiveMatched:0,curatedParagraph:0,both:0,neither:0,archiveLinks:0};
+ const lookup=(r,kind)=>eligible.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,realRegions)).filter((x,i,a)=>a.findIndex(y=>y.date===x.date&&y.departure===x.departure&&y.destination===x.destination&&y.fare===x.fare)===i).slice(0,20);
+ const batch=create({rows,regions:realRegions,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),historyFor:lookup});
+ assert.equal(batch.targets.size,1918);assert.equal(batch.duplicates.size,858);
+ for(const row of rows){
+  const r=realRegions.find(x=>x.full_name===row.region);
+  const html=batch.render(r,row.kind),selected=batch.duplicates.has(row.kind+'|'+row.region);
+  assert.equal(html.includes('class="locality-batch-evidence"'),selected);
+  if(!selected)continue;
+  counts.processed++;
+  const records=lookup(r,row.kind).slice(0,3);
+  const curated=html.includes('지역별 차량 위치와 이용 조건');
+  if(records.length)counts.archiveMatched++;
+  if(curated)counts.curatedParagraph++;
+  if(records.length&&curated)counts.both++;
+  if(!records.length&&!curated)counts.neither++;
+  counts.archiveLinks+=records.length;
+  for(const record of records)assert(html.includes('/reviews/history/'+record.id+'/'));
+  if(!records.length)assert(html.includes('이 안내에 연결된 공개 완료 운행기록이 없습니다.'));
+  assert.equal((html.match(/href="\/reviews\/history\/excel-\d+\/"/g)||[]).length,records.length);
+ }
+ assert.equal(counts.processed,858);
+ assert.equal(counts.curatedParagraph,32);
+ assert.equal(counts.neither,counts.processed-counts.archiveMatched-counts.curatedParagraph+counts.both);
+ assert.match(source,/historyFor:\(r,kind\)=>cachedRegionalRideLookups\(r,kind\)\.regionalBatchMatches/);
+ console.log('BULK_858_EVIDENCE_AUDIT',JSON.stringify(counts));
+});
