@@ -126,6 +126,17 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
   assert.equal(html.includes('class="locality-batch-evidence"'),selected);
   if(!selected)continue;
   counts.processed++;
+  const nav=html.match(/<nav[^>]*class="locality-batch-navigation">([\s\S]*?)<\/nav>/);
+  assert(nav,row.region+' missing service navigation');
+  assert(nav[1].includes('href="/'+row.kind+'/"'));
+  assert(nav[1].includes('상위 지역 안내는 해당 세부 지역의 운행 실적이나 고유자료를 뜻하지 않습니다.'));
+  const hrefs=[...nav[1].matchAll(/href="([^"]+)"/g)].map(x=>x[1]);
+  assert.equal(new Set(hrefs).size,hrefs.length);
+  for(const href of hrefs.slice(1)){
+   const ancestor=realRegions.find(x=>href==='/'+row.kind+'/'+x.slug+'/');
+   assert(ancestor&&row.region.startsWith(ancestor.full_name+' '),row.region+' invalid ancestor '+href);
+   assert(rows.some(x=>x.kind===row.kind&&x.region===ancestor.full_name));
+  }
   const records=lookup(r,row.kind).slice(0,3);
   const curated=html.includes('지역별 차량 위치와 이용 조건');
   if(records.length)counts.archiveMatched++;
@@ -140,6 +151,7 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
   assert.equal((html.match(/href="\/reviews\/history\/excel-\d+\/"/g)||[]).length,records.length);
  }
  assert.equal(counts.processed,858);
+ console.log('BULK_858_NAVIGATION_AUDIT',JSON.stringify({processed:counts.processed,serviceHubLinked:counts.processed,invalidAncestorLinks:0}));
  assert.equal(counts.curatedParagraph,32);
  assert.equal(counts.neither,counts.processed-counts.archiveMatched-counts.curatedParagraph+counts.both);
  assert.match(source,/historyFor:\(r,kind\)=>cachedRegionalRideLookups\(r,kind\)\.regionalBatchMatches/);
