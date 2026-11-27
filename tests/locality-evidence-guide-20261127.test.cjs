@@ -165,6 +165,7 @@ test('qualified abbreviated blog titles resolve conservatively and never cross s
  const result=create({rows:[row,other],regions:rs,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:String,publishedPosts:posts});
  assert.equal(result.duplicates.size,2);
  const html=result.render(rs[0],'taksong');
+ for(let i=0;i<20;i++)assert.equal(result.render(rs[0],'taksong'),html,'repeated requests preserve identical reference output');
  assert(html.includes('wjdtnr4757/123'));
  assert(html.includes('wjdtnr4757/126'));
  assert(html.includes('wjdtnr4757/127'));
