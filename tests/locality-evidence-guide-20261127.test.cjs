@@ -158,6 +158,7 @@ test('qualified abbreviated blog titles resolve conservatively and never cross s
  {title:'서울 강남 역삼 자동차탁송 안내',url:'https://blog.naver.com/wjdtnr4757/123'},
  {title:'서울 강남 역삼 대리운전 안내',url:'https://blog.naver.com/wjdtnr4757/124'},
  {title:'역삼동 탁송 안내',url:'https://blog.naver.com/wjdtnr4757/125'},
+ {title:'출발지 서울 강남 역삼 자동차탁송 안내',url:'https://blog.naver.com/wjdtnr4757/127'},
  {title:'강남 역삼동탁송 안내',url:'https://blog.naver.com/wjdtnr4757/126'},
  {title:'서울 강남 역삼 자동차탁송 안내',url:'https://example.com/123'}
  ];
@@ -166,6 +167,7 @@ test('qualified abbreviated blog titles resolve conservatively and never cross s
  const html=result.render(rs[0],'taksong');
  assert(html.includes('wjdtnr4757/123'));
  assert(html.includes('wjdtnr4757/126'));
+ assert(html.includes('wjdtnr4757/127'));
  assert(!html.includes('wjdtnr4757/124'));
  assert(!html.includes('wjdtnr4757/125'));
  assert(!html.includes('example.com/123'));
