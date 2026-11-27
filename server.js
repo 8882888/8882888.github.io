@@ -226,7 +226,8 @@ function naverFocus50Guide(r,kind){
   ?[['장거리 차량탁송','/service/long-distance-taksong/'],['중고차·매매차량 인수','/business/used-car/'],['정비·서비스센터 차량 인계','/service/taksong-purpose/']]
   :[['골프장 대리운전','/service/golf/'],['법인카드·법인 대리운전','/service/corporate/'],['일일기사·왕복 대기','/service/daily-driver/']];
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
- const intro='<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
+ // Preserve original editorial data on disk; do not publish repeated source-copy paragraphs in the duplicate cohort.
+ const intro=localityEvidenceGuide.duplicates.has(kind+'|'+r.full_name)?'':'<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
  // Offer the existing companion service only for the exact same official locality.
  // The opposite-service topic is a source guide, never a new trip or verified facility.
  const otherKind=kind==='taksong'?'daeri':'taksong';
