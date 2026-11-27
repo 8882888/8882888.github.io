@@ -184,55 +184,15 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
-  road-distance-provider:
-    name: External driving-distance provider (separate from website health)
+  # Customer-only quota policy: never call the live routing provider from CI, scheduled monitoring, or AI tests.
+  # Simulate success and outage responses locally without network access.
+  road-distance-mock:
+    name: Customer-only distance API policy (offline mock tests)
     runs-on: ubuntu-latest
-    timeout-minutes: 4
     steps:
-      - name: Verify real driving-distance API response
-        shell: bash
-        run: |
-          python - <<'PY'
-          import json
-          from urllib.parse import urlencode
-          from urllib.request import Request, urlopen
-          from urllib.error import HTTPError
-          endpoint = 'https://white-voice-6eab.k337711.workers.dev/route'
-          query = urlencode({'from': '서울역', 'to': '부산역'})
-          url = endpoint + '?' + query
-          try:
-              with urlopen(Request(url, headers={'User-Agent': 'Smart24-Production-Health/1.0', 'Origin': 'https://jeongukdaeri.kr'}), timeout=20) as response:
-                  status = response.status
-                  content_type = response.headers.get('Content-Type', '')
-                  allowed_origin = response.headers.get('Access-Control-Allow-Origin', '')
-                  payload = response.read(50000).decode('utf-8', errors='replace')
-              print('Distance API HTTP status:', status)
-              print('Distance API content type:', content_type)
-              print('Distance API allowed origin:', allowed_origin or '(missing)')
-              if allowed_origin not in ('https://jeongukdaeri.kr', '*'):
-                  raise SystemExit('Distance API browser CORS origin not allowed')
-              try:
-                  data = json.loads(payload)
-              except ValueError:
-                  print('Distance API returned non-JSON body (first 200 chars):', payload[:200])
-                  raise SystemExit('Distance API JSON validation failed')
-              distance = data.get('distanceKm')
-              duration = data.get('durationMinutes')
-              print('Distance API distanceKm:', distance)
-              print('Distance API durationMinutes:', duration)
-              if not isinstance(distance, (int, float)) or distance <= 0:
-                  print('Distance API response fields:', sorted(data.keys()))
-                  raise SystemExit('Distance API missing positive distanceKm')
-              if not isinstance(duration, (int, float)) or duration <= 0:
-                  raise SystemExit('Distance API missing positive durationMinutes')
-              print('PASS: Live driving-distance API returned valid distance and duration')
-          except HTTPError as exc:
-              print('Distance API HTTP failure:', exc.code)
-              print('CORS allow origin:', exc.headers.get('Access-Control-Allow-Origin', '(missing)'))
-              print('Response content type:', exc.headers.get('Content-Type', '(missing)'))
-              print('Response preview:', exc.read(500).decode('utf-8', errors='replace')[:300])
-              raise
-          except Exception as exc:
-              print('Distance API verification failed:', type(exc).__name__, str(exc)[:300])
-              raise
-          PY
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test distance handling without consuming customer quota
+        run: node --test tests/road-provider-outage-20261121.test.cjs
