@@ -218,7 +218,7 @@ function resolveRegionalCardKeyword(query){
 }
 
 
-const localityEvidenceGuide=require('./lib/locality-evidence-guide-20261127.cjs').create({rows:naverFocus2900,regions,servicePath,esc});
+const localityEvidenceGuide=require('./lib/locality-evidence-guide-20261127.cjs').create({rows:naverFocus2900,regions,servicePath,esc,historyFor:(r,kind)=>cachedRegionalRideLookups(r,kind).regionalBatchMatches});
 function naverFocus50Guide(r,kind){
  const info=focus50ByKey.get(kind+'|'+r.full_name);
  if(!info)return '';
