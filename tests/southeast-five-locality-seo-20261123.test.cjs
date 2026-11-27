@@ -111,3 +111,33 @@ test('Metro and innovation focus: all 49 legal localities and 388 directed servi
  assert.equal(links,388);
  assert.equal(context.render({full_name:'unrelated'},'daeri'),'');
 });
+
+test('Priority locality directory links all 98 existing service routes and reports missing sitemap ownership without inventing indexing',async()=>{
+ const {regionsFromLegal}=await import('../scripts/dynamic-url-inventory.mjs');
+ const regionByFullName=new Map(regionsFromLegal(root).map(r=>[r.full_name,r]));
+ const owners=JSON.parse(fs.readFileSync(path.join(root,'data/sitemap-url-owners.json'),'utf8'));
+ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=source.indexOf('const metroLongDistanceFocus=new Map('),end=source.indexOf('function regionalDecisionPanel(',start);
+ const vm=require('node:vm');
+ const context={regionByFullName,servicePath:(r,k)=>'/'+k+'/'+r.path+'/',esc:x=>String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;')};
+ vm.createContext(context);
+ vm.runInContext(source.slice(start,end)+'\nthis.focus=metroLongDistanceFocus;this.directory=metroLongDistanceDirectory;',context);
+ assert.equal(context.focus.size,49);
+ const missing=[];
+ for(const kind of ['daeri','taksong']){
+  const targets=[...context.focus.keys()].map(name=>{
+   const r=regionByFullName.get(name);assert.ok(r,name);
+   const url=context.servicePath(r,kind);
+   if(!owners[url])missing.push({region:name,kind,url});
+   return {r,url};
+  });
+  const extract=html=>[...html.matchAll(/href="([^"]+)"/g)].map(x=>x[1]);
+  assert.deepEqual(extract(context.directory(kind)).sort(),targets.map(x=>x.url).sort());
+  for(const province of new Set(targets.map(x=>x.r.province))){
+   assert.deepEqual(extract(context.directory(kind,province)).sort(),targets.filter(x=>x.r.province===province).map(x=>x.url).sort());
+  }
+ }
+ assert.ok(source.includes('metroLongDistanceDirectory(kind,r.full_name)'));
+ assert.ok(source.includes('+nationalDriverGuide+metroLongDistanceDirectory(kind)+'));
+ console.log('PRIORITY_LOCALITY_SITEMAP '+JSON.stringify({total:98,owned:98-missing.length,missing}));
+});
