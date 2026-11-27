@@ -142,3 +142,27 @@ test('Priority locality directory links all 98 existing service routes and repor
  console.log('PRIORITY_LOCALITY_SITEMAP '+JSON.stringify({total:98,owned:98-missing.length,missing}));
  assert.deepEqual(missing,[],'All priority service routes must have exactly one existing sitemap owner');
 });
+
+test('Priority locality review panel preserves older canonical public rides and distinguishes exact endpoints from broader regional guidance',()=>{
+ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=source.indexOf('const metroLongDistanceFocus=new Map('),end=source.indexOf('function regionalDecisionPanel(',start);
+ const vm=require('node:vm');
+ const parent={full_name:'광주광역시 서구',slug:'parent'};
+ const ctx={esc:x=>String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;'),servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',regionByFullName:new Map([[parent.full_name,parent]])};
+ vm.createContext(ctx);
+ vm.runInContext(source.slice(start,end)+'\nthis.render=metroLongDistancePanel;',ctx);
+ const area={full_name:'광주광역시 서구 치평동',slug:'local'};
+ const record={url:'/reviews/0123456789abcdef/',date:'2026-11-14',departure:'광주 서구 치평동',destination:'전주',fare:'80,000원',origin:true,destinationMatch:false};
+ const arrival={...record,url:'/reviews/history/excel-1/',departure:'전주',destination:'광주 서구 치평동',origin:false,destinationMatch:true};
+ const html=ctx.render(area,'taksong',[record,record,arrival,{...record,url:'/reviews/history/invalid/',origin:false}]);
+ assert.equal((html.match(/href="\/reviews\/0123456789abcdef\/"/g)||[]).length,1);
+ assert.ok(html.includes('이 지역 출발')&&html.includes('이 지역 도착'));
+ assert.ok(html.includes(arrival.url));
+ assert.ok(!html.includes('이 지역의 출발·도착이 확인된 공개 완료 운행기록은 현재'));
+ assert.ok(!html.includes('href="/taksong/parent/"'));
+ const empty=ctx.render(area,'daeri',[{...record,origin:false,destinationMatch:false},{...record,destination:'지역 비공개'},{...record,url:'https://example.org/reviews/123/'}]);
+ assert.ok(empty.includes('현재 이 안내에서 확인되지 않습니다'));
+ assert.ok(empty.includes('href="/daeri/parent/"'));
+ assert.ok(empty.includes('상위 행정구역 안내이며 이 동·읍·면의 운행 실적을 뜻하지 않습니다'));
+ assert.ok(!empty.includes(record.url));
+});
