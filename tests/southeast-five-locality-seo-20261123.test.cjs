@@ -79,7 +79,7 @@ test('New editorial contains no invented completed trips, quoted historical fare
  assert.equal(targets.length,5);
 });
 
-test('Metro and innovation focus: all 49 legal localities and 388 directed service quote links',()=>{
+test('Metro and innovation focus: all 60 legal localities and 476 directed service quote links',()=>{
  const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
  const start=source.indexOf('const metroLongDistanceFocus=new Map(');
  const end=source.indexOf('function regionalDecisionPanel(',start);
@@ -89,7 +89,7 @@ test('Metro and innovation focus: all 49 legal localities and 388 directed servi
  vm.createContext(context);
  vm.runInContext(source.slice(start,end)+'\nthis.focus=metroLongDistanceFocus;this.render=metroLongDistancePanel;',context);
  const legal=new Set(fs.readdirSync(path.join(root,'data/legal-regions')).filter(x=>/^\d{2}\.json$/.test(x)).flatMap(file=>JSON.parse(fs.readFileSync(path.join(root,'data/legal-regions',file),'utf8')).full_names));
- assert.equal(context.focus.size,49);
+ assert.equal(context.focus.size,60);
  let links=0;
  for(const [name,row] of context.focus){
   assert.ok(legal.has(name),name);
@@ -108,11 +108,11 @@ test('Metro and innovation focus: all 49 legal localities and 388 directed servi
    links+=urls.length;
   }
  }
- assert.equal(links,388);
+ assert.equal(links,476);
  assert.equal(context.render({full_name:'unrelated'},'daeri'),'');
 });
 
-test('Priority locality directory links all 98 existing service routes and reports missing sitemap ownership without inventing indexing',async()=>{
+test('Priority locality directory links all 120 existing service routes and reports missing sitemap ownership without inventing indexing',async()=>{
  const {regionsFromLegal}=await import('../scripts/dynamic-url-inventory.mjs');
  const regionByFullName=new Map(regionsFromLegal(root).map(r=>[r.full_name,r]));
  const owners=JSON.parse(fs.readFileSync(path.join(root,'data/sitemap-url-owners.json'),'utf8'));
@@ -122,7 +122,7 @@ test('Priority locality directory links all 98 existing service routes and repor
  const context={regionByFullName,servicePath:(r,k)=>'/'+k+'/'+r.path+'/',esc:x=>String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;')};
  vm.createContext(context);
  vm.runInContext(source.slice(start,end)+'\nthis.focus=metroLongDistanceFocus;this.directory=metroLongDistanceDirectory;',context);
- assert.equal(context.focus.size,49);
+ assert.equal(context.focus.size,60);
  const missing=[];
  for(const kind of ['daeri','taksong']){
   const targets=[...context.focus.keys()].map(name=>{
@@ -139,7 +139,7 @@ test('Priority locality directory links all 98 existing service routes and repor
  }
  assert.ok(source.includes('metroLongDistanceDirectory(kind,r.full_name)'));
  assert.ok(source.includes('+nationalDriverGuide+metroLongDistanceDirectory(kind)+'));
- console.log('PRIORITY_LOCALITY_SITEMAP '+JSON.stringify({total:98,owned:98-missing.length,missing}));
+ console.log('PRIORITY_LOCALITY_SITEMAP '+JSON.stringify({total:120,owned:120-missing.length,missing}));
  assert.deepEqual(missing,[],'All priority service routes must have exactly one existing sitemap owner');
 });
 
@@ -215,4 +215,17 @@ test('Published case focus backlinks distinguish real source endpoints, preserve
  assert.equal(context.render({...ride,service:'mixed'}),'');
  assert.equal(context.render({...ride,departure:'지역 비공개',destination:'지역 비공개'}),'');
  assert.ok(source.includes('publishedFocusRegionLinks(publishedRide,html)'));
+});
+
+test('Second evidence-priority batch has 11 exact legal localities, completed source records and both canonical service owners',async()=>{
+ const {regionsFromLegal}=await import('../scripts/dynamic-url-inventory.mjs');
+ const regions=new Map(regionsFromLegal(root).map(r=>[r.full_name,r]));
+ const owners=JSON.parse(fs.readFileSync(path.join(root,'data/sitemap-url-owners.json'),'utf8'));
+ const queue=JSON.parse(fs.readFileSync(path.join(root,'data/verified-ride-publication-queue.json'),'utf8'));
+ const names=['인천광역시 서해구 연희동','강원특별자치도 양양군 서면','경기도 화성시 만세구 남양읍','경기도 화성시 만세구 향남읍','경기도 용인시 처인구 양지읍','강원특별자치도 고성군 간성읍','경상북도 영덕군 영덕읍','경상북도 안동시 옥동','경기도 화성시 동탄구 방교동','경상북도 안동시 수하동','경상북도 청송군 진보면'];
+ for(const name of names){
+  const r=regions.get(name);assert.ok(r,name+' exact legal region');
+  assert.ok(queue.some(x=>x.verified===true&&x.status==='completed'&&[x.departure,x.destination].includes(name)),name+' exact existing completed source endpoint; not publication proof');
+  for(const kind of ['daeri','taksong'])assert.ok(owners['/'+kind+'/'+r.path+'/'],name+' '+kind+' canonical owner');
+ }
 });
