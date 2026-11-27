@@ -221,6 +221,13 @@ test('all 858 repeated guides show traceable local parking, transit, or address 
   const data=evidence[row.region] || {};
   const reference=references[row.region];
   assert(html.includes('class="locality-source-evidence"'),row.region);
+  assert(html.includes('class="locality-booking-context"'),row.region);
+  assert(html.includes('이 지역 출발 예상요금'),row.region);
+  assert(html.includes('이 지역 도착 예상요금'),row.region);
+  assert(html.includes('참고 지점은 실제 배차 실적이나 기사 대기 장소를 의미하지 않습니다.'),row.region);
+  const landmark=data.parking?.[0]?.name||data.bus?.name||reference?.name;
+  assert(landmark&&html.includes(landmark),row.region);
+
   assert(html.includes(encodeURIComponent(row.region)),row.region);
   assert.equal(Number(Boolean(data.parking))+Number(Boolean(data.bus))+Number(Boolean(reference)),1,row.region);
   if(data.parking){
