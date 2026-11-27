@@ -64,7 +64,7 @@ test('live sitemap output preserves all registered canonical URLs exactly once u
  }
  const index=await verifyRevalidation('/sitemap-all.xml');
  const feedPaths=locs(index,'sitemap').map(value=>new URL(value).pathname);
- assert.equal(feedPaths.length,20,'integrated index lists only URL-set feeds with owned URLs');
+ assert.equal(feedPaths.length,21,'integrated index lists only URL-set feeds with owned URLs');
  const emitted=[];
  for(const feedPath of feedPaths){
   const xml=await verifyRevalidation(feedPath);

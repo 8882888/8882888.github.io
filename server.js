@@ -33,7 +33,7 @@ const sitemapOwnershipFeeds=new Set([
  '/sitemap-priority.xml','/sitemap.xml','/sitemap-reviewed-routes.xml','/sitemap-focused-regions.xml',
  '/sitemap-verified-regions.xml','/sitemap-regional-guides.xml','/sitemap-gyeongnam-guides.xml',
  '/sitemap-chungnam-port-guides.xml','/sitemap-published.xml','/sitemap-taksong.xml','/sitemap-daeri.xml',
- '/sitemap-coast.xml','/sitemap-localities-province.xml','/sitemap-localities-city.xml',
+ '/sitemap-coast.xml','/sitemap-locality-evidence.xml','/sitemap-localities-province.xml','/sitemap-localities-city.xml',
  '/sitemap-localities-county.xml','/sitemap-localities-district.xml',
  ...Array.from({length:6},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')
 ]);
@@ -218,6 +218,7 @@ function resolveRegionalCardKeyword(query){
 }
 
 
+const {localitySearchDescription}=require('./lib/locality-source-evidence.cjs');
 const localityEvidenceGuide=require('./lib/locality-evidence-guide-20261127.cjs').create({rows:naverFocus2900,regions,servicePath,esc,historyFor:(r,kind)=>cachedRegionalRideLookups(r,kind).regionalBatchMatches,publishedPosts:publishedBlogPosts});
 function naverFocus50Guide(r,kind){
  const info=focus50ByKey.get(kind+'|'+r.full_name);
@@ -1802,6 +1803,7 @@ async function servicePage(r,kind){
  const concisePrioritySentence=r.full_name==='울산광역시'&&kind==='taksong'?'지역별 인수·인계 위치와 출고 시각, 기사 복귀를 확인합니다':priorityFirstSentence;
  const focusedDesc=priorityMeta
   ?concisePriorityMetaDescription(keyword,priorityMeta.topic,concisePrioritySentence,PHONE)
+  :localityEvidenceGuide.duplicates.has(kind+'|'+r.full_name)?localitySearchDescription(r.full_name,kind,PHONE)
   :focus50Info?focus50Info.keyword+' · '+focus50Info.topic+'. '+focus50Info.pickup+' 예상요금·배차는 상담 후 확인합니다. '+PHONE+'.'
   :name+' '+(kind==='taksong'?'자동차탁송':'대리운전')+' 예상요금·예약 안내. '+(provinceSpecificGuide?provinceSpecificGuide+' ':'')+(kind==='taksong'?'차량 인수·인계 장소, 차종, 이동 시간과 기사 접근·복귀 여건을 확인합니다.':'출발·도착지, 동승·경유·대기 여부와 기사 복귀 여건을 확인합니다.')+' 최종요금과 배차 가능 여부는 상담 후 안내합니다. '+PHONE+'.'+riContext;
 
@@ -1856,7 +1858,7 @@ async function servicePage(r,kind){
  description:r.full_name==='부산광역시'?(kind==='taksong'?'부산탁송 예약과 예상요금, 구·군별 차량 인수·인계 안내. 부산항·감만동·해운대·기장 자동차탁송·입출고 상담과 실제 운행기록을 확인합니다.':'부산광역시 부산대리운전. 해운대·기장·서면 출발 장거리대리운전, 법인·심야 예상요금과 예약 상담 1811-4294.'):(kind==='taksong'?'기장군탁송·기장탁송. 기장읍·정관읍·일광읍·장안읍·철마면 차량 인수와 장거리탁송 상담 1811-4294.':'기장군대리운전·기장대리운전. 정관·일광·장안·철마·기장읍 출발 장거리·골프장 예약 1811-4294.')
  }:null;
  const searchTitle=busanHubMeta?.title||(gangwonProvinceDaeri?'강원도대리운전 | 18개 시군 관광지·호텔·펜션·골프장·장거리 예약':gangwonLocalMeta?.title||gijangDeepMeta?.title||haeundaeLocalMeta?.title||southeastLocalMeta?.title||southeastMeta?.title||regionalRequestedTitle||gangneungSearchTitle||sokchoSearchMeta?.title||gangnamFocusedSearchMeta?.title||gangnamCEOSearchMeta?.title||gangnamPremiumSearchMeta?.title||iksanCitySearchMeta?.title||gyeongnamSearchMeta?.title||jeonnamGwangjuSearchMeta?.title||jeonbukSearchMeta?.title||gyeongbukDaeguSearchMeta?.title||chungnamDaejeonSearchMeta?.title||chungbukInnovationSearchMeta?.title||gyeonggiSouthHwaseoSearchMeta?.title||gyeonggi27SearchMeta?.title||chungnamSearchMeta?.title||chungcheongSearchMeta?.title||iksanSearchMeta?.title||(innovationFocus?innovationFocus.keyword+'｜요금·예약·'+(kind==='taksong'?'차량 인수·인계':'출발 위치 안내'):ganghwaReviewPage?'강화군 대리운전 | 실제 운행요금·강화읍·화도면 예약':jejuSearchPage?'제주도탁송 후기｜차량선적·기존 운행정보 확인':busanReviewPage?busanServiceTitle:gijangTaksongPage?'기장군탁송 | 부산 기장읍·정관읍·일광읍 차량 인수·요금 안내':kind==='taksong'?taksongReviewTitle:daeriReviewTitle));
- const rawSearchDesc=priorityMeta&&innovationFocus?focusedDesc:innovationFocus?innovationFocus.keyword+'. '+innovationFocus.pickup+' 출발 위치와 목적지, 희망 시각을 확인해 요금·배차를 상담합니다. 확인된 실제 운행정보만 후기에 연결합니다. 상담 '+PHONE+'.':ganghwaReviewPage?'강화군 대리운전 실제 요금: 남문주차장→불은면 25,000원. 강화읍·길상면·화도면 출발 예상요금과 예약 상담 1811-4294.':jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':busanReviewPage?'부산탁송 예약과 예상요금, 구·군별 차량 인수·인계 안내. 부산항·감만동·해운대·기장 자동차탁송·입출고 상담과 실제 운행기록을 확인합니다.':gijangTaksongPage?'부산 기장군탁송·기장탁송 차량 인수·인계 안내. 기장읍·정관읍·일광읍 차량 인수 위치, 장안읍·철마면 출고 탁송과 예상요금·예약상담 1811-4294.':priorityMeta?focusedDesc:kind==='taksong'?(verifiedTitleTrip?keyword+' 기존 완료구간 '+verifiedTitleTrip.departure+'→'+verifiedTitleTrip.destination+'. ':'확인된 해당 지역 운행완료 후기는 아직 연결되지 않았습니다. ')+focusedDesc:(verifiedDaeriTitleTrip?keyword+' 기존 완료구간 '+verifiedDaeriTitleTrip.departure+'→'+verifiedDaeriTitleTrip.destination+'. ':'해당 지역에 확인된 완료 대리운전 후기가 없다면 일반 안내와 구분합니다. ')+focusedDesc;
+ const rawSearchDesc=priorityMeta&&innovationFocus?focusedDesc:innovationFocus?innovationFocus.keyword+'. '+innovationFocus.pickup+' 출발 위치와 목적지, 희망 시각을 확인해 요금·배차를 상담합니다. 확인된 실제 운행정보만 후기에 연결합니다. 상담 '+PHONE+'.':ganghwaReviewPage?'강화군 대리운전 실제 요금: 남문주차장→불은면 25,000원. 강화읍·길상면·화도면 출발 예상요금과 예약 상담 1811-4294.':jejuSearchPage?'제주도탁송, 목포항·제주항 차량선적과 항만 인계, 7~8월 실제 운행후기 안내. 제주탁송 대표 상담 1877-5245.':busanReviewPage?'부산탁송 예약과 예상요금, 구·군별 차량 인수·인계 안내. 부산항·감만동·해운대·기장 자동차탁송·입출고 상담과 실제 운행기록을 확인합니다.':gijangTaksongPage?'부산 기장군탁송·기장탁송 차량 인수·인계 안내. 기장읍·정관읍·일광읍 차량 인수 위치, 장안읍·철마면 출고 탁송과 예상요금·예약상담 1811-4294.':priorityMeta||localityEvidenceGuide.duplicates.has(kind+'|'+r.full_name)?focusedDesc:kind==='taksong'?(verifiedTitleTrip?keyword+' 기존 완료구간 '+verifiedTitleTrip.departure+'→'+verifiedTitleTrip.destination+'. ':'확인된 해당 지역 운행완료 후기는 아직 연결되지 않았습니다. ')+focusedDesc:(verifiedDaeriTitleTrip?keyword+' 기존 완료구간 '+verifiedDaeriTitleTrip.departure+'→'+verifiedDaeriTitleTrip.destination+'. ':'해당 지역에 확인된 완료 대리운전 후기가 없다면 일반 안내와 구분합니다. ')+focusedDesc;
  const gangneungSearchDesc=r.full_name==='강원특별자치도 강릉시'
   ?(kind==='daeri'
    ?'강릉대리운전. 경포·안목·교동·주문진 대리운전·법인·장거리 상담. 경포해변·안목해변의 음식점과 카페 출발 예약 1811-4294.'
@@ -3434,7 +3436,7 @@ if(pathname==='/health/seo.json'){
   }catch{pages[key]={error:'source unavailable'}}
  }
  res.setHeader('x-robots-tag','noindex, nofollow');
- return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,naver_focus_region_count:naverFocus2900.length,curated_region_file_count:CURATED_REGION_FINGERPRINT.count,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','business/index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json','data/naver-regional-focus-twelfth-taksong-100.json','lib/service-keyword-entry.js'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]).concat([['data/naver-regional-focus-*.json',CURATED_REGION_FINGERPRINT.sha256]]))}),'application/json; charset=utf-8');
+ return respond(res,200,JSON.stringify({scope:'deployed file content, not search-engine index',pages,seo_meta:{home:seoRules.get('/'),taksong:seoRules.get('/taksong/'),daeri:seoRules.get('/daeri/'),region:seoRules.get('/region/')},blog_source_count:publishedBlogPosts.length,priority_region_count:priorityRegionalPages.length,naver_focus_region_count:naverFocus2900.length,curated_region_file_count:CURATED_REGION_FINGERPRINT.count,curated_source_groups:priorityBlogLinksByKey.size,curated_source_links:[...priorityBlogLinksByKey.values()].reduce((n,e)=>n+e.ids.length,0),deployment_hashes:Object.fromEntries(['server.js','index.html','business/index.html','data/seo-pages.json','data/priority-blog-links.json','lib/regional-history-evidence.js','data/priority-regions.json','data/region-journey-links.json','data/naver-regional-focus-twelfth-taksong-100.json','lib/service-keyword-entry.js','lib/locality-source-evidence.cjs','data/locality-source-evidence-20261127.json'].map(file=>[file,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,file))).digest('hex')]).concat([['data/naver-regional-focus-*.json',CURATED_REGION_FINGERPRINT.sha256]]))}),'application/json; charset=utf-8');
 }
 // Human-readable Cloudtype deployment proof. This page is deliberately not indexable.
 if(pathname==='/health/seo-report/'||pathname==='/health/seo-report'){
@@ -4266,6 +4268,16 @@ if(pathname==='/sitemap-coast.xml'){
   keywordEngine.coastal.urls.map(p=>'<url><loc>'+esc(new URL(p,base).href)+'</loc></url>').join('')+'</urlset>';
  return respond(res,200,xml,'application/xml; charset=utf-8');
 }
+if(pathname==='/sitemap-locality-evidence.xml'){
+ const cached=sitemapCache.get(pathname);
+ if(cached)return respond(res,200,cached,'application/xml; charset=utf-8');
+ const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
+ const routes=Object.keys(sitemapOwnerByPath).filter(route=>sitemapOwnerByPath[route]===pathname);
+ const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
+  routes.map(route=>'<url><loc>'+esc(new URL(route,base).href)+'</loc></url>').join('')+'</urlset>';
+ sitemapCache.set(pathname,xml);
+ return respond(res,200,xml,'application/xml; charset=utf-8');
+}
 if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
  const base='https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr');
  const rootSitemaps=pathname==='/sitemap-all.xml'
@@ -4273,6 +4285,7 @@ if(pathname==='/sitemap-history.xml'||pathname==='/sitemap-all.xml'){
    // Do not promote thousands of formulaic 읍/면/동/리 locality pages in
    // the public sitemap index. Keep routes and old shard URLs functional;
    // retain province/city/county/district for broad navigation.
+   '/sitemap-locality-evidence.xml',
    ...['city','county','district'].map(key=>'/sitemap-localities-'+key+'.xml'),
    ...Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml')]
   :Array.from({length:Math.ceil(indexableHistoricalRides.length/500)},(_,i)=>'/sitemap-history-'+(i+1)+'.xml');

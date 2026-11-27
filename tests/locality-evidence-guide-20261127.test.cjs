@@ -209,3 +209,50 @@ test('two additional long-distance locality guides cite official parking locatio
  const region=regions.find(r=>r.full_name===name);assert(region);assert(g.duplicates.has('daeri|'+name));const html=g.render(region,'daeri');assert(html.includes(place));assert(html.includes(domain));assert(html.includes('지역별 차량 위치와 이용 조건'));
  }
 });
+
+test('all 858 repeated guides show traceable local parking, transit, or address information',()=>{
+ const evidence=require('../data/locality-source-evidence-20261127.json');
+ const references=require('../data/locality-address-references-20261127.json');
+ const byName=new Map(regions.map(r=>[r.full_name,r]));
+ const coverage={parking:0,bus:0,address:0,dispatch:0};
+ for(const row of rows){
+  if(!g.duplicates.has(row.kind+'|'+row.region))continue;
+  const html=g.render(byName.get(row.region),row.kind);
+  const data=evidence[row.region] || {};
+  const reference=references[row.region];
+  assert(html.includes('class="locality-source-evidence"'),row.region);
+  assert(html.includes(encodeURIComponent(row.region)),row.region);
+  assert.equal(Number(Boolean(data.parking))+Number(Boolean(data.bus))+Number(Boolean(reference)),1,row.region);
+  if(data.parking){
+   coverage.parking++;
+   assert(html.includes('class="locality-public-parking"'),row.region);
+   for(const place of data.parking){
+    assert(place.area===row.region||place.area.startsWith(row.region+' '),row.region);
+    assert(place.spaces>0);
+    assert.match(place.date,/^\d{4}-\d{2}-\d{2}$/);
+   }
+  }
+  if(data.bus){
+   coverage.bus++;
+   assert(html.includes('class="locality-public-transit"'),row.region);
+   const stop=data.bus;
+   if(stop.area!==row.region){
+    assert.equal(stop.area,row.region.split(' ').slice(0,-1).join(' '));
+    assert(stop.name.replaceAll(' ','').startsWith(row.region.split(' ').at(-1)));
+    assert(html.includes('상위 행정구역에서 마을 이름으로 확인한 정류장'));
+   }
+   assert(Number.isFinite(stop.lat)&&Number.isFinite(stop.lon));
+  }
+  if(reference){
+   coverage.address++;
+   assert(html.includes('class="locality-address-reference"'),row.region);
+   assert.equal(new URL(reference.source).protocol,'https:');
+   assert(['시설','도로'].includes(reference.type));
+  }
+  const count=data.completed?.[row.kind];
+  assert.equal(html.includes('class="locality-dispatch-summary"'),Boolean(count));
+  if(count){coverage.dispatch++;assert(Number.isInteger(count)&&count>=5);}
+ }
+ assert.deepEqual(coverage,{parking:502,bus:287,address:69,dispatch:6});
+ console.log('BULK_858_PUBLIC_SOURCES',JSON.stringify(coverage));
+});
