@@ -191,3 +191,28 @@ test('Legacy public ride backlinks preserve reviewed hubs and add only matching 
  assert.equal(context.render({service:'taksong',matches:[focus.full_name]},'taksong'),'');
  assert.equal(context.render({service:'mixed',matches:[focus.full_name]}),'');
 });
+
+test('Published case focus backlinks distinguish real source endpoints, preserve existing links, and require sitemap ownership',()=>{
+ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=source.indexOf('function publishedFocusRegionLinks('),end=source.indexOf('function tripLine(',start);
+ const vm=require('node:vm');
+ const a={full_name:'광주광역시 서구 치평동',slug:'chipyeong'},b={full_name:'전라남도 목포시 옥암동',slug:'okam'},c={full_name:'경기도 광주시',slug:'unrelated'},d={full_name:'전북특별자치도 익산시 부송동',slug:'unowned'};
+ const candidates=[a,b,c,d],path='/reviews/verified/0123456789abcdef/';
+ const context={esc:String,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',
+  metroLongDistanceFocus:new Map(candidates.map(r=>[r.full_name,[]])),
+  regionByFullName:new Map(candidates.map(r=>[r.full_name,r])),
+  sitemapOwnerByPath:{[path]:'/sitemap-published.xml','/taksong/chipyeong/':'/sitemap-priority.xml','/taksong/okam/':'/sitemap-priority.xml','/taksong/unrelated/':'/sitemap-priority.xml'},
+  tripMatchesRegion:(ride,r)=>[ride.departure,ride.destination].some(place=>place.split('|').includes(r.full_name))};
+ vm.createContext(context);
+ vm.runInContext(source.slice(start,end)+'\nthis.render=publishedFocusRegionLinks;',context);
+ const ride={path,service:'taksong',departure:a.full_name+'|'+d.full_name,destination:b.full_name};
+ const html=context.render(ride);
+ assert.deepEqual([...html.matchAll(/href="([^"]+)"/g)].map(x=>x[1]),['/taksong/chipyeong/','/taksong/okam/']);
+ assert.ok(html.includes(a.full_name+' 자동차탁송 출발 지역 안내'));
+ assert.ok(html.includes(b.full_name+' 자동차탁송 도착 지역 안내'));
+ assert.ok(!context.render(ride,'<a href="https://jeongukdaeri.kr/taksong/chipyeong/">기존</a>').includes('/taksong/chipyeong/'));
+ assert.equal(context.render({...ride,path:'/reviews/verified/not-published/'}),'');
+ assert.equal(context.render({...ride,service:'mixed'}),'');
+ assert.equal(context.render({...ride,departure:'지역 비공개',destination:'지역 비공개'}),'');
+ assert.ok(source.includes('publishedFocusRegionLinks(publishedRide,html)'));
+});
