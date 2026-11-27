@@ -235,7 +235,7 @@ def load_focus_names():
     if marker not in source:
         raise ValueError("Focus registry missing; refusing unreviewed publication ordering")
     rows, end = json.JSONDecoder().raw_decode(source.split(marker, 1)[1])
-    if not isinstance(rows, list) or not all(isinstance(r, list) and len(r) >= 7
+    if not isinstance(rows, list) or not all(isinstance(r, list) and len(r) >= 6
                                               and isinstance(r[0], str) for r in rows):
         raise ValueError("Invalid focus registry")
     names = {row[0] for row in rows}
