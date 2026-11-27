@@ -965,6 +965,27 @@ function ridePriorityRegionLinks(x){
  const label=x.service==='taksong'?'자동차탁송':'대리운전';
  return '<section><h2>이 운행기록과 관련된 지역별 '+label+' 안내</h2><ul>'+matches.map(r=>'<li><a href="'+servicePath(r,x.service)+'">'+esc(seoRegionLabel(r)+label)+' 지역 안내</a></li>').join('')+'</ul><p>지역 안내는 예약 조건과 기사 접근을 설명하며 실제 완료 기록은 이 운행 페이지의 확인된 내용에 한정됩니다.</p></section>';
 }
+// The saved public case HTML uses a different rendering path than legacy rides.
+function publishedFocusRegionLinks(ride,existingHtml=''){
+ if(!ride||!['daeri','taksong'].includes(ride.service)||!sitemapOwnerByPath[ride.path])return '';
+ const kind=ride.service,label=kind==='daeri'?'대리운전':'자동차탁송';
+ const existing=new Set([...existingHtml.matchAll(/href=["']([^"']+)["']/g)].map(m=>m[1]));
+ const candidates=[...metroLongDistanceFocus.keys()].map(name=>regionByFullName.get(name))
+  .filter(Boolean).sort((a,b)=>b.full_name.split(' ').length-a.full_name.split(' ').length);
+ const selected=[];
+ for(const r of candidates){
+  const url=servicePath(r,kind);
+  if(!sitemapOwnerByPath[url]||existing.has(url)||existing.has('https://jeongukdaeri.kr'+url))continue;
+  const origin=tripMatchesRegion({departure:ride.departure,destination:''},r);
+  const destination=tripMatchesRegion({departure:'',destination:ride.destination},r);
+  if(!origin&&!destination)continue;
+  existing.add(url);
+  selected.push({r,url,role:origin&&destination?'출발·도착':origin?'출발':'도착'});
+  if(selected.length===6)break;
+ }
+ if(!selected.length)return '';
+ return '<section id="published-focus-region-links-20261128"><h2>공개 운행기록과 연결되는 중점지역 '+label+' 안내</h2><ul>'+selected.map(({r,url,role})=>'<li><a href="'+esc(url)+'">'+esc(r.full_name.replace(/\s*\(직할\)\s*/g,' ')+' '+label+' '+role+' 지역 안내')+'</a></li>').join('')+'</ul><p>공개된 출발·도착 지명과 일치하는 지역만 연결합니다. 당시 요금은 현재 견적이나 역방향 완료 운행을 뜻하지 않습니다.</p></section>';
+}
 function tripLine(x){return '<li>'+esc([x.date,x.departure+' → '+x.destination,x.fare].filter(Boolean).join(' · '))+' · '+esc(x.service||'운행')+' 완료</li>'}
 const clean=s=>String(s||'').trim().slice(0,80);
 const compact=s=>String(s||'').replace(/\s+/g,'').toLowerCase();
@@ -2972,6 +2993,9 @@ function respond(res,status,body,type='text/html; charset=utf-8'){
    const regionLinks=regionalEvidenceJourneys.renderReviewLinks(publishedRide.path);
    if(regionLinks&&!html.includes('id="verified-review-region-links-20261126"'))
     html=html.replace(/<section id="related-service">/,section=>regionLinks+section);
+   const focusLinks=publishedFocusRegionLinks(publishedRide,html);
+   if(focusLinks&&!html.includes('id="published-focus-region-links-20261128"'))
+    html=html.replace(/<section id="related-service">/,section=>focusLinks+section);
    const quoteUrl=esc(rideFareUrl(publishedRide));
    html=html.replace('<a href="/fare/">현재 예상요금 조회','<a href="'+quoteUrl+'">현재 예상요금 조회');
    html=html.replace(/<section id="record-facts">[\s\S]*?<\/dl>/,facts=>facts+
