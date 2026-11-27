@@ -22,7 +22,8 @@ function rideEvidence(html){
   const matched=html.match(new RegExp('<section id="'+id+'"[^>]*>([\\s\\S]*?)<\\/section>'));
   return matched?matched[1]:null;
  });
- const historyIds=[...html.matchAll(/href="\/reviews\/history\/([^"/?#]+)\/"/g)].map(m=>m[1]);
+ // Compare distinct record identifiers, not how often an existing record is linked.
+ const historyIds=[...new Set([...html.matchAll(/href="\/reviews\/history\/([^"/?#]+)\/"/g)].map(m=>m[1]))].sort();
  const count=html.match(/공개된 실제 완료 운행\s+(\d+)건/);
  return JSON.stringify({pieces,historyIds,completedVisible:count?Number(count[1]):null});
 }

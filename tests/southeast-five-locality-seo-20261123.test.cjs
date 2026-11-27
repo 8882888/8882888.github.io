@@ -19,11 +19,12 @@ const attr=(html,re)=>html.match(re)?.[1]||'';
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
 test('Five original southeast localities retain ten separate service-intent SEO pages and exact canonical URLs',{timeout:170000},async()=>{
- const child=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port),PUBLIC_HOST:'jeongukdaeri.kr'},stdio:'ignore'});
+ const child=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port),PUBLIC_HOST:'jeongukdaeri.kr'},stdio:['ignore','ignore','pipe']});
+ let startupError='';child.stderr.on('data',chunk=>{startupError=(startupError+chunk.toString()).slice(-6000)});
  try{
   let ready=false;
   for(let i=0;i<115;i++){
-   if(child.exitCode!==null)throw Error('Server exited during locality SEO test');
+   if(child.exitCode!==null)throw Error('Server exited during locality SEO test: '+startupError);
    try{const r=await fetch(base+'/health',{signal:AbortSignal.timeout(1200)});if(r.ok){ready=true;break;}}catch{}
    await wait(250);
   }
@@ -76,4 +77,37 @@ test('New editorial contains no invented completed trips, quoted historical fare
  assert(!/제주탁송 전용|1877-5245|100% 배차|기사 상주 보장/.test(source));
  assert(!/\d+[,.]?\d*\s*만원/.test(source),'Never invent or transplant old fare examples');
  assert.equal(targets.length,5);
+});
+
+test('Metro and innovation focus: all 49 legal localities and 388 directed service quote links',()=>{
+ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=source.indexOf('const metroLongDistanceFocus=new Map(');
+ const end=source.indexOf('function regionalDecisionPanel(',start);
+ assert.ok(start>=0&&end>start);
+ const vm=require('node:vm');
+ const context={esc:x=>String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;'),servicePath:(r,k)=>'/'+k+'/'+r.slug+'/'};
+ vm.createContext(context);
+ vm.runInContext(source.slice(start,end)+'\nthis.focus=metroLongDistanceFocus;this.render=metroLongDistancePanel;',context);
+ const legal=new Set(fs.readdirSync(path.join(root,'data/legal-regions')).filter(x=>/^\d{2}\.json$/.test(x)).flatMap(file=>JSON.parse(fs.readFileSync(path.join(root,'data/legal-regions',file),'utf8')).full_names));
+ assert.equal(context.focus.size,49);
+ let links=0;
+ for(const [name,row] of context.focus){
+  assert.ok(legal.has(name),name);
+  for(const city of row.slice(5))assert.ok(legal.has(city),city);
+  for(const kind of ['daeri','taksong']){
+   const html=context.render({full_name:name,slug:'test'},kind);
+   assert.ok(html.includes('id="metro-innovation-long-distance-20261127"'));
+   assert.ok(html.includes(kind==='daeri'?'장거리대리운전':'장거리탁송'));
+   assert.ok(html.includes('예약 견적 예시'));
+   assert.ok(html.includes('/reviews/history/?kind='+kind));
+   const urls=[...html.matchAll(/href="(\/fare\/\?[^"]+)"/g)].map(m=>new URL(m[1].replaceAll('&amp;','&'),'https://jeongukdaeri.kr'));
+   assert.equal(urls.length,(row.length-5)*2);
+   for(const city of row.slice(5)){
+    for(const [from,to] of [[name,city],[city,name]])assert.ok(urls.some(u=>u.searchParams.get('service')===kind&&u.searchParams.get('from')===from&&u.searchParams.get('to')===to));
+   }
+   links+=urls.length;
+  }
+ }
+ assert.equal(links,388);
+ assert.equal(context.render({full_name:'unrelated'},'daeri'),'');
 });

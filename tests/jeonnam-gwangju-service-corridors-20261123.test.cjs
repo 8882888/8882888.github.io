@@ -167,8 +167,14 @@ test('20261124 focused: Gwangju, Seo-gu and Chipyeong each have distinct service
 
 
 test('20261124 HTTP: live Node renders new Gwangju and Chipyeong guide into all six existing canonical routes',async()=>{
- const base='http://127.0.0.1:39756';
- const cp=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:'39756',PUBLIC_HOST:'jeongukdaeri.kr'},stdio:['ignore','pipe','pipe']});
+ // Allocate an available ephemeral port instead of colliding with parallel SEO tests.
+ const probe=require('node:net').createServer();
+ const port=await new Promise((resolve,reject)=>{
+  probe.once('error',reject);
+  probe.listen(0,'127.0.0.1',()=>{const n=probe.address().port;probe.close(err=>err?reject(err):resolve(n));});
+ });
+ const base='http://127.0.0.1:'+port;
+ const cp=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port),PUBLIC_HOST:'jeongukdaeri.kr'},stdio:['ignore','pipe','pipe']});
  let diagnostics='';
  for(const stream of [cp.stdout,cp.stderr])stream.on('data',chunk=>{diagnostics=(diagnostics+String(chunk)).slice(-12000)});
  let spawnError=null;
