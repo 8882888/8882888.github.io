@@ -154,7 +154,7 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
  }
  assert.equal(counts.processed,858);
  console.log('BULK_858_NAVIGATION_AUDIT',JSON.stringify({processed:counts.processed,serviceHubLinked:counts.processed,invalidAncestorLinks:0}));
- assert.equal(counts.curatedParagraph,32);
+ assert.equal(counts.curatedParagraph,34);
  assert.equal(counts.neither,counts.processed-counts.archiveMatched-counts.curatedParagraph+counts.both);
  assert.match(source,/historyFor:\(r,kind\)=>cachedRegionalRideLookups\(r,kind\)\.regionalBatchMatches/);
  console.log('BULK_858_EVIDENCE_AUDIT',JSON.stringify(counts));
@@ -203,3 +203,9 @@ test('qualified abbreviated blog titles resolve conservatively and never cross s
  assert(!g.render(rs[0],'daeri').includes(url));
  assert(!g.render(rs[0],'taksong').includes('/999'));
  });
+
+test('two additional long-distance locality guides cite official parking location sources',()=>{
+ for(const [name,place,domain] of [['대구광역시 수성구 상동','수성못공영주차장','suseong.kr'],['광주광역시 서구 금호동','금호동 764','seogufmc.or.kr']]){
+ const region=regions.find(r=>r.full_name===name);assert(region);assert(g.duplicates.has('daeri|'+name));const html=g.render(region,'daeri');assert(html.includes(place));assert(html.includes(domain));assert(html.includes('지역별 차량 위치와 이용 조건'));
+ }
+});
