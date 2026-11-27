@@ -166,3 +166,28 @@ test('Priority locality review panel preserves older canonical public rides and 
  assert.ok(empty.includes('상위 행정구역 안내이며 이 동·읍·면의 운행 실적을 뜻하지 않습니다'));
  assert.ok(!empty.includes(record.url));
 });
+
+test('Legacy public ride backlinks preserve reviewed hubs and add only matching sitemap-owned focus localities',()=>{
+ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=source.indexOf('function ridePriorityRegionLinks(x){'),end=source.indexOf('function tripLine(',start);
+ const vm=require('node:vm');
+ const original={full_name:'광주광역시',slug:'gwangju'};
+ const focus={full_name:'광주광역시 서구 치평동',slug:'chipyeong'};
+ const unrelated={full_name:'경기도 광주시',slug:'other'};
+ const missing={full_name:'전북특별자치도 익산시 부송동',slug:'busong'};
+ const names=[original,focus,unrelated,missing];
+ const servicePath=(r,k)=>'/'+k+'/'+r.slug+'/';
+ const context={esc:String,seoRegionLabel:r=>r.full_name,servicePath,
+  priorityRegionalPages:[{kind:'daeri',region:original.full_name},{kind:'daeri',region:focus.full_name}],
+  regionByFullName:new Map(names.map(r=>[r.full_name,r])),
+  metroLongDistanceFocus:new Map(names.slice(1).map(r=>[r.full_name,[]])),
+  sitemapOwnerByPath:{'/daeri/chipyeong/':'/sitemap-priority.xml','/daeri/other/':'/sitemap-priority.xml'},
+  tripMatchesRegion:(ride,r)=>ride.matches.includes(r.full_name)};
+ vm.createContext(context);
+ vm.runInContext(source.slice(start,end)+'\nthis.render=ridePriorityRegionLinks;',context);
+ const result=context.render({service:'daeri',matches:[original.full_name,focus.full_name,missing.full_name]});
+ const links=[...result.matchAll(/href="([^"]+)"/g)].map(x=>x[1]);
+ assert.deepEqual(links,['/daeri/chipyeong/','/daeri/gwangju/']);
+ assert.equal(context.render({service:'taksong',matches:[focus.full_name]},'taksong'),'');
+ assert.equal(context.render({service:'mixed',matches:[focus.full_name]}),'');
+});
