@@ -23,6 +23,13 @@ test('six Gijang legal localities, both existing services, no additional indexed
   assert.match(html,new RegExp('/fare/\\?service='+kind));
   assert.match(html,/기장군 기존 완료 운행기록 검색/);
   assert.match(html,/tel:18114294/);
+  assert.match(html,/class="gijang-bidirectional-quote"/);
+  for(const city of ['울산광역시','경상남도 양산시','경상남도 김해시','대구광역시','서울특별시']){
+   const prefix='/fare/?service='+kind+'&amp;from=';
+   assert.ok(html.includes(prefix+encodeURIComponent(name)+'&amp;to='+encodeURIComponent(city)));
+   assert.ok(html.includes(prefix+encodeURIComponent(city)+'&amp;to='+encodeURIComponent(name)));
+  }
+
   assert.match(html,/예시이며 실제 완료 운행/);
   assert.match(html,/구간은 예약 문의를 돕는 이동 예시/);
   assert.doesNotMatch(html,/현재 \d+만원|주행거리 \d+km|상주기사 보장|즉시 배차 보장|완료했습니다/);
