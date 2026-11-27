@@ -3,7 +3,7 @@
 // All sitemap URLs are checked, including recursively linked sitemap indexes.
 import {writeFileSync,renameSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink,blockedMetaIndexAgents,blockedXRobotsIndexAgents} from './indexability-scope.mjs';
+import {focusLinkObservation,focusLinkCoverage,reviewLinkCoverage,regionalGuideCoverage,hasDirectRideRecordLink,blockedMetaIndexAgents,blockedXRobotsIndexAgents} from './indexability-scope.mjs';
 import {fetchWithRetry} from './indexability-retry.mjs';
 const origin=(process.argv[2]||'https://jeongukdaeri.kr').replace(/\/$/,'');
 const transportOrigin=process.env.AUDIT_TRANSPORT_ORIGIN||origin;
@@ -74,6 +74,7 @@ async function worker(){
  while(true){
   const i=current++;if(i>=list.length)return;
   const item=list[i];let status=0,finalUrl='',canonical='',robots='',title='',bodyHash='',hasRideLink=false,fetchAttempts=0,problem=[],otherBotNoindex=[];
+  let focusObservation={};
   let metaDescription='',metaLength=0,metaCount=0,ogDescriptionLength=0,jsonldBlocks=0,jsonldTypes=[],metadataWarnings=[];
   try{
    const fetched=await fetchWithRetry(item.url,get);fetchAttempts=fetched.attempts;
@@ -131,6 +132,7 @@ async function worker(){
       catch(e){metadataWarnings.push('jsonld_page_url_invalid')}}
     }
     hasRideLink=hasDirectRideRecordLink(html);
+    focusObservation=focusLinkObservation(item.url,html);
     const visible=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
     if(visible.length>150)bodyHash=createHash('sha256').update(visible).digest('hex').slice(0,20);
     const cm=html.match(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*\bhref=["']([^"']+)["']/i)
@@ -151,7 +153,7 @@ async function worker(){
    }
   }catch(e){fetchAttempts=e?.retryAttempts||fetchAttempts||1;
    problem.push((e?.name==='AbortError'||e?.name==='TimeoutError')?'timeout':'fetch_error:'+String(e).slice(0,100))}
-  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,fetchAttempts,
+  results[i]={...item,status,finalUrl,canonical,robots,title,bodyHash,hasRideLink,fetchAttempts,...focusObservation,
    description:metaDescription,descriptionLength:metaLength,descriptionTags:metaCount,ogDescriptionLength,
    jsonldBlocks,jsonldTypes,metadataWarnings:[...new Set(metadataWarnings)],
    otherBotNoindex:[...new Set(otherBotNoindex)],problems:problem};
@@ -197,7 +199,7 @@ const counts={discovered:inventory.length,checked:results.length,scope:transport
  transientRecoveredAfterRetry:results.filter(r=>r.fetchAttempts>1&&r.status===200).length,
  otherSearchBotsExcluded:results.filter(r=>r.otherBotNoindex.length).length,
  persistentRequestErrors:results.filter(r=>r.problems.some(p=>p==='timeout'||p.startsWith('fetch_error'))).length,
- ...regionalCoverage,...guideCoverage,passed:results.filter(r=>r.problems.length===0).length,
+ ...regionalCoverage,...guideCoverage,...focusLinkCoverage(results),passed:results.filter(r=>r.problems.length===0).length,
  issues:results.filter(r=>r.problems.length>0).length,sitemapErrors,crawlerDiagnostics,
  byType:Object.fromEntries([...new Set(results.flatMap(r=>r.problems))].sort().map(k=>[k,results.filter(r=>r.problems.includes(k)).length]))};
 const csv=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
@@ -241,6 +243,10 @@ const lines=[
  'First Naver confirmed-index milestone target: 10,000; actual index count is not accessible from this HTTP audit.',
  'Long-term Naver index target: 50,000–100,000; never infer it from technical URL counts.',
  'Technically clean URLs: '+counts.technicallyClean+' (HTTP/indexability checks only; not an index count).',
+ 'Focus panels observed: '+counts.focusServicePagesObserved+' | With direct ride link: '+counts.focusPagesWithPanelRideLink+' | Without: '+counts.focusPagesWithoutPanelRideLink,
+ 'Focus quote link count: '+counts.focusQuoteLinksObserved+' (links only, never requested).',
+ 'Focus ride link pairs: '+counts.focusRideLinkPairs+' | Target audited: '+counts.focusRidePairsWithAuditedTarget+' | Reciprocal: '+counts.focusRidePairsWithReciprocalLink+' | Target not audited: '+counts.focusRidePairsTargetNotAudited,
+ 'Missing reciprocal links and unaudited targets are editorial observations, not proven broken links or missing Naver indexing.',
  'Recruitment, vehicle-type, travel and activity guides are excluded from locality evidence-link counts.',
  'No ride-record link does not establish a broken page. Do not invent rides, prices, or reviews.',
  'Sitemap discovery and technical HTTP validity do not prove Naver indexing.',
