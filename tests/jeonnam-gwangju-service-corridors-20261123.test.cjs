@@ -168,15 +168,19 @@ test('20261124 focused: Gwangju, Seo-gu and Chipyeong each have distinct service
 
 test('20261124 HTTP: live Node renders new Gwangju and Chipyeong guide into all six existing canonical routes',async()=>{
  const base='http://127.0.0.1:39756';
- const cp=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:'39756',PUBLIC_HOST:'jeongukdaeri.kr'},stdio:'ignore'});
+ const cp=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:'39756',PUBLIC_HOST:'jeongukdaeri.kr'},stdio:['ignore','pipe','pipe']});
+ let diagnostics='';
+ for(const stream of [cp.stdout,cp.stderr])stream.on('data',chunk=>{diagnostics=(diagnostics+String(chunk)).slice(-12000)});
+ let spawnError=null;
+ cp.on('error',error=>{spawnError=error});
  try{
   let started=false;
   for(let attempt=0;attempt<120;attempt++){
-   if(cp.exitCode!==null)throw Error('Gwangju verification server terminated');
+   if(spawnError||cp.exitCode!==null||cp.signalCode!==null)throw Error('Gwangju verification server terminated: '+(spawnError||cp.exitCode||cp.signalCode)+'\n'+diagnostics);
    try{const res=await fetch(base+'/health',{signal:AbortSignal.timeout(1200)});if(res.ok){started=true;break}}catch{}
    await new Promise(resolve=>setTimeout(resolve,160));
   }
-  assert(started,'Gwangju HTTP check server failed to start');
+  assert(started,'Gwangju HTTP check server failed to start\n'+diagnostics);
   for(const [suffix,kind] of [
    ['gwangju/','daeri'],['gwangju/','taksong'],
    ['gwangju/seo-gu/','daeri'],['gwangju/seo-gu/','taksong'],

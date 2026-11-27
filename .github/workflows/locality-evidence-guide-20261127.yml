@@ -1,0 +1,20 @@
+name: Review nationwide 1918 locality guidance coverage
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'lib/locality-evidence-guide-20261127.cjs'
+      - 'tests/locality-evidence-guide-20261127.test.cjs'
+      - '.github/workflows/locality-evidence-guide-20261127.yml'
+permissions:
+  contents: read
+jobs:
+  source-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check server.js && node --test tests/locality-evidence-guide-20261127.test.cjs
