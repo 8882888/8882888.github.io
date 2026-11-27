@@ -147,3 +147,27 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
  console.log('PUBLISHED_ORIGINAL_COVERAGE',JSON.stringify({posts:publishedPosts.length,originalMatched,additionalOriginalCoverage,combined:counts.processed-counts.neither+additionalOriginalCoverage,remaining:counts.neither-additionalOriginalCoverage}));
  assert.match(source,/publishedPosts:publishedBlogPosts/);
 });
+
+
+test('qualified abbreviated blog titles resolve conservatively and never cross service types',()=>{
+ const region='서울특별시 강남구 역삼동';
+ const row={kind:'taksong',region,keyword:'역삼동탁송',topic:'차량 이동 안내',pickup:'인수',handover:'인계',related:'/service/taksong/'};
+ const other={...row,region:'서울특별시 강남구 논현동',keyword:'논현동탁송'};
+ const rs=[region,other.region,'인천광역시 남동구 논현동'].map((full_name,i)=>({full_name,slug:'alias-'+i}));
+ const posts=[
+ {title:'서울 강남 역삼 자동차탁송 안내',url:'https://blog.naver.com/wjdtnr4757/123'},
+ {title:'서울 강남 역삼 대리운전 안내',url:'https://blog.naver.com/wjdtnr4757/124'},
+ {title:'역삼동 탁송 안내',url:'https://blog.naver.com/wjdtnr4757/125'},
+ {title:'강남 역삼동탁송 안내',url:'https://blog.naver.com/wjdtnr4757/126'},
+ {title:'서울 강남 역삼 자동차탁송 안내',url:'https://example.com/123'}
+ ];
+ const result=create({rows:[row,other],regions:rs,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:String,publishedPosts:posts});
+ assert.equal(result.duplicates.size,2);
+ const html=result.render(rs[0],'taksong');
+ assert(html.includes('wjdtnr4757/123'));
+ assert(html.includes('wjdtnr4757/126'));
+ assert(!html.includes('wjdtnr4757/124'));
+ assert(!html.includes('wjdtnr4757/125'));
+ assert(!html.includes('example.com/123'));
+ assert(!result.render(rs[1],'taksong').includes('wjdtnr4757/123'));
+});
