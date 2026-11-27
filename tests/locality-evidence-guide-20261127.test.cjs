@@ -115,8 +115,10 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
  });
  const eligible=rides.filter(x=>(!canonical[x.id]||canonical[x.id]===x.id)&&x.departure!=='지역 비공개'&&x.destination!=='지역 비공개');
  const counts={processed:0,archiveMatched:0,curatedParagraph:0,both:0,neither:0,archiveLinks:0};
+ const publishedPosts=JSON.parse(fs.readFileSync(path.join(root,'blog/posts.json'),'utf8'));
+ let originalMatched=0,additionalOriginalCoverage=0;
  const lookup=(r,kind)=>eligible.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,realRegions)).filter((x,i,a)=>a.findIndex(y=>y.date===x.date&&y.departure===x.departure&&y.destination===x.destination&&y.fare===x.fare)===i).slice(0,20);
- const batch=create({rows,regions:realRegions,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),historyFor:lookup});
+ const batch=create({rows,regions:realRegions,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),historyFor:lookup,publishedPosts});
  assert.equal(batch.targets.size,1918);assert.equal(batch.duplicates.size,858);
  for(const row of rows){
   const r=realRegions.find(x=>x.full_name===row.region);
@@ -130,6 +132,8 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
   if(curated)counts.curatedParagraph++;
   if(records.length&&curated)counts.both++;
   if(!records.length&&!curated)counts.neither++;
+  const originals=html.includes('class="locality-original-articles"');
+  if(originals){originalMatched++;if(!records.length&&!curated)additionalOriginalCoverage++;}
   counts.archiveLinks+=records.length;
   for(const record of records)assert(html.includes('/reviews/history/'+record.id+'/'));
   if(!records.length)assert(html.includes('이 안내에 연결된 공개 완료 운행기록이 없습니다.'));
@@ -140,4 +144,6 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
  assert.equal(counts.neither,counts.processed-counts.archiveMatched-counts.curatedParagraph+counts.both);
  assert.match(source,/historyFor:\(r,kind\)=>cachedRegionalRideLookups\(r,kind\)\.regionalBatchMatches/);
  console.log('BULK_858_EVIDENCE_AUDIT',JSON.stringify(counts));
+ console.log('PUBLISHED_ORIGINAL_COVERAGE',JSON.stringify({posts:publishedPosts.length,originalMatched,additionalOriginalCoverage,combined:counts.processed-counts.neither+additionalOriginalCoverage,remaining:counts.neither-additionalOriginalCoverage}));
+ assert.match(source,/publishedPosts:publishedBlogPosts/);
 });
