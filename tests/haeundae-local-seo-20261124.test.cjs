@@ -33,6 +33,14 @@ test('Haeundae focus is limited to 9 existing legal neighborhoods, both services
   assert.match(html,/\/fare\/\?service=(daeri|taksong)/);
   assert.match(html,/완료 운행기록 검색/);
   assert.match(html,/tel:18114294/);
+  assert.match(html,/class="haeundae-long-distance-corridors"/);
+  for(const city of ['서울특별시','경기도','인천광역시','대구광역시','울산광역시','경상남도 창원시','경상남도 김해시','경상남도 양산시','경상북도 경주시','대전광역시','광주광역시','전북특별자치도 전주시','전라남도 목포시']){
+   const prefix='/fare/?service='+kind+'&amp;from=';
+   assert.ok(html.includes(prefix+encodeURIComponent(name)+'&amp;to='+encodeURIComponent(city)));
+   assert.ok(html.includes(prefix+encodeURIComponent(city)+'&amp;to='+encodeURIComponent(name)));
+  }
+  if(m)assert.ok(m.title.includes(kind==='taksong'?'장거리탁송':'장거리대리운전'));
+
   assert.doesNotMatch(html,/실제 운행을 완료했습니다|즉시배차 보장|고정요금 \d+/);
   assert.equal((html.match(/<section\b/g)||[]).length,1);
   assert.equal((html.match(/<\/section>/g)||[]).length,1);
