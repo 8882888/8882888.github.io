@@ -1,0 +1,40 @@
+name: Naver IndexNow verified priority sitemap additions (2026-11-28)
+on:
+  pull_request:
+    paths:
+      - 'scripts/indexnow-notify.js'
+      - 'tests/indexnow-targeting.test.js'
+      - '.github/workflows/indexnow-priority-sitemap-delta-20261128.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/indexnow-priority-sitemap-delta-20261128.yml'
+permissions:
+  contents: read
+concurrency:
+  group: smart24-indexnow-priority
+  cancel-in-progress: false
+jobs:
+  validate-and-notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate exact previously deployed sitemap additions without requests
+        env:
+          INDEXNOW_DEPLOY_SHA: accbd4b00e3b769b1becaefc8200c6c9e9259683
+        run: |
+          node --check scripts/indexnow-notify.js
+          node tests/indexnow-targeting.test.js
+          node -e "const a=require('./scripts/indexnow-notify');const t=a.changedPaths(['data/sitemap-url-owners.json']);if(t.length!==67||new Set(t).size!==67)throw Error('Expected exactly 67 unique missed additions');console.log('Reviewed canonical URLs:',t.length,'batches:',a.batchUrls(t).map(x=>x.length).join(','))"
+      - name: Notify only the 67 missed additions from the previously deployed revision
+        if: github.event_name == 'push' && github.run_attempt == 1
+        env:
+          INDEXNOW_DEPLOY_SHA: accbd4b00e3b769b1becaefc8200c6c9e9259683
+          INDEXNOW_CHANGED_FILES: data/sitemap-url-owners.json
+        run: node scripts/indexnow-notify.js
