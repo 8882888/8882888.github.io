@@ -79,6 +79,17 @@ def audit(route):
     for post_id in SOURCE_IDS:
         if f"https://blog.naver.com/wjdtnr4757/{post_id}" not in text:
             raise AssertionError(f"{route}: original Naver review missing {post_id}")
+    if route=="/region/busan-daeri-taksong/":
+        match=re.search(r'<section id="busan-verified-rides-20261127"[^>]*>(.*?)</section>',text,re.S)
+        if not match:
+            raise AssertionError("Busan completed ride evidence missing")
+        evidence=match.group(1)
+        if len(re.findall(r"<tbody>.*?</tbody>",evidence,re.S))!=2 or len(re.findall(r"<tr><td>",evidence))!=20:
+            raise AssertionError("Busan evidence must contain exactly 20 data rows")
+        for marker in ("355.3km","304.8km","286.9km","170,000원","160,000원","120,000원","접수일","광안리","서면","기장군"):
+            if marker not in evidence:
+                raise AssertionError("Busan evidence marker missing: "+marker)
+        print("PASS Busan 20 completed ride rows and four locality guides",flush=True)
     print(f"PASS {route}: review-first title/H1/section, 3 verified originals, 30 unique Busan tags",flush=True)
 
 if __name__=="__main__":
