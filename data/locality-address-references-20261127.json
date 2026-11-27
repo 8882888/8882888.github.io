@@ -1,0 +1,177 @@
+{
+  "강원특별자치도 강릉시 학동": {
+    "name": "월호평길",
+    "type": "도로",
+    "source": "https://dorojuso.kr/4215012300103110000000001/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84-%EA%B0%95%EB%A6%89%EC%8B%9C-%EC%9B%94%ED%98%B8%ED%8F%89%EA%B8%B8-117-%ED%95%99%EB%8F%99"
+  },
+  "강원특별자치도 동해시 내동": {
+    "name": "내동길",
+    "type": "도로",
+    "source": "https://findby.co.kr/details/25822-511704463037-st-652b14698c641f9e388fa711"
+  },
+  "강원특별자치도 동해시 이도동": {
+    "name": "이원길",
+    "type": "도로",
+    "source": "https://fshh.purpleo.co.kr/view/24042"
+  },
+  "강원특별자치도 삼척시 도계읍 점리": {
+    "name": "점리마을회관",
+    "type": "시설",
+    "source": "https://m.wonsns.com/a/dv.php?idx=1485118"
+  },
+  "강원특별자치도 삼척시 정상동": {
+    "name": "정상공원",
+    "type": "시설",
+    "source": "https://statnorth.kr/parks/%EA%B0%95%EC%9B%90/%EC%82%BC%EC%B2%99%EC%8B%9C/%EC%A0%95%EC%83%81%EA%B3%B5%EC%9B%90-8c2f4cf20618"
+  },
+  "강원특별자치도 양구군 동면": {
+    "name": "동면 행정복지센터",
+    "type": "시설",
+    "source": "https://www.jiwon24.kr/gangwon-state-yanggu-gun-dong-myeon/"
+  },
+  "강원특별자치도 양구군 동면 후곡리": {
+    "name": "후곡약수터",
+    "type": "시설",
+    "source": "https://state.gwd.go.kr/upload/report/kw_nws_data/kw_mgr_5072_20240503131145.pdf"
+  },
+  "경기도 가평군 북면 목동리": {
+    "name": "미·영연방 관광안보공원",
+    "type": "시설",
+    "source": "https://gp.go.kr/portal/selectGosiData.do?key=2148&not_ancmt_mgt_no=56927&not_ancmt_se_code=01"
+  },
+  "경기도 과천시 관문동": {
+    "name": "관문체육공원",
+    "type": "시설",
+    "source": "https://www.gcuc.or.kr/fmcs/228"
+  },
+  "경기도 김포시 고촌읍 태리": {
+    "name": "캐슬앤파밀리에시티1단지 정류장",
+    "type": "시설",
+    "source": "https://adbus.guc.or.kr/html/info/busstop_info?1=1&area=2&pg=4"
+  },
+  "경기도 시흥시 화정동": {
+    "name": "능곡로",
+    "type": "도로",
+    "source": "https://findby.co.kr/details/14992-413903199063-st-652c09c8f27008be2c4e714a"
+  },
+  "경상남도 거창군 가조면 기리": {
+    "name": "기리 625-3 주차장",
+    "type": "시설",
+    "source": "https://bby.gccl.go.kr/record/appendixDownload.do?key=a628f62750f45960b83f5e57ac892f8c8b8375e4159398061125de83af68a0050dafd075f1763f1c"
+  },
+  "경상남도 거창군 거창읍 학리": {
+    "name": "학동마을회관",
+    "type": "시설",
+    "source": "https://findby.co.kr/details/50125-488804841137-st-652b0e518c641f9e388c888b"
+  },
+  "경상남도 거창군 마리면 율리": {
+    "name": "상율1길",
+    "type": "도로",
+    "source": "https://findby.co.kr/details/50105-488804841311-st-652b10fc8c641f9e388dfe9e"
+  },
+  "경상북도 경산시 압량읍 내리": {
+    "name": "내리마을회관",
+    "type": "시설",
+    "source": "https://jusoga.com/b/4729036030102570000036691/%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84-%EA%B2%BD%EC%82%B0%EC%8B%9C-%EC%95%95%EB%9F%89%EC%9D%8D-%EB%82%B4%EB%A6%AC%EA%B8%B826%EA%B8%B8-13-2"
+  },
+  "경상북도 경산시 진량읍 북리": {
+    "name": "봉황길",
+    "type": "도로",
+    "source": "https://findby.co.kr/details/38450-472904721501-st-652b08b88c641f9e3888a8dc"
+  },
+  "경상북도 경산시 하양읍 교리": {
+    "name": "하양향교",
+    "type": "시설",
+    "source": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=3413701070000&pageNo=1_1_2_0"
+  },
+  "대구광역시 달성군 구지읍": {
+    "name": "구지읍 행정복지센터",
+    "type": "시설",
+    "source": "https://www.dalseong.daegu.kr/nonggong/index.do?menu_id=00001392"
+  },
+  "대구광역시 중구 도원동": {
+    "name": "태평로",
+    "type": "도로",
+    "source": "https://jusoga.com/%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C/%EC%A4%91%EA%B5%AC/%EB%8F%84%EC%9B%90%EB%8F%99"
+  },
+  "대구광역시 중구 전동": {
+    "name": "경상감영길",
+    "type": "도로",
+    "source": "https://findby.co.kr/details/41918-271104223003-st-652bc0ab8c641f9e38b20300"
+  },
+  "서울특별시 중구 남학동": {
+    "name": "중부세무서",
+    "type": "시설",
+    "source": "https://findby.co.kr/details/04627-111403101011-st-652c0c7cf27008be2c56518e"
+  },
+  "서울특별시 중구 초동": {
+    "name": "을지로12길",
+    "type": "도로",
+    "source": "https://findby.co.kr/details/04550-111404103233-st-652c0cc3f27008be2c572acf"
+  },
+  "인천광역시 검단구 금곡동": {
+    "name": "검단1지구 금곡공원",
+    "type": "시설",
+    "source": "https://www.geomdan.go.kr/dong/locinfo/park/parkDetail.do?dong=geomdan&loc_seq=37291&order=day2&pgno=1"
+  },
+  "인천광역시 계양구 평동": {
+    "name": "벌말로565번길",
+    "type": "도로",
+    "source": "https://jusoga.com/%EC%9D%B8%EC%B2%9C%EA%B4%91%EC%97%AD%EC%8B%9C/%EA%B3%84%EC%96%91%EA%B5%AC/%ED%8F%89%EB%8F%99"
+  },
+  "전라남도 강진군 강진읍 목리": {
+    "name": "목리마을회관",
+    "type": "시설",
+    "source": "https://findby.co.kr/search/%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C/%EB%A7%88%EC%9D%84%ED%9A%8C%EA%B4%80"
+  },
+  "전라남도 강진군 작천면 평리": {
+    "name": "평리 정류장",
+    "type": "시설",
+    "source": "https://www.jnvsl.go.kr/jnvsl/269/subview.do"
+  },
+  "제주특별자치도 제주시 우도면 서광리": {
+    "name": "서광리마을회관",
+    "type": "시설",
+    "source": "https://bangjae.jeju.go.kr/ctrltower/state/trf.htm"
+  },
+  "제주특별자치도 제주시 조천읍 교래리": {
+    "name": "교래리 종합복지회관",
+    "type": "시설",
+    "source": "https://xn--om2bq6zxub6a256g.com/location"
+  },
+  "제주특별자치도 제주시 한경면 청수리": {
+    "name": "제주평화박물관",
+    "type": "시설",
+    "source": "https://cheongsuri.kr/bbs/content.php?co_id=location"
+  },
+  "제주특별자치도 제주시 한림읍 귀덕리": {
+    "name": "귀덕3리마을회관",
+    "type": "시설",
+    "source": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01082408&bidPbancOrd=000&fileSeq=1&fileType="
+  },
+  "충청남도 공주시 탄천면 성리": {
+    "name": "중뜸길",
+    "type": "도로",
+    "source": "https://dorojuso.kr/4415032030101720000008313/%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84-%EA%B3%B5%EC%A3%BC%EC%8B%9C-%ED%83%84%EC%B2%9C%EB%A9%B4-%EC%A4%91%EB%9C%B8%EA%B8%B8-79-4"
+  },
+  "충청북도 단양군 영춘면 상리": {
+    "name": "영춘면사무소",
+    "type": "시설",
+    "source": "https://danyang.go.kr/town/276"
+  },
+  "충청북도 단양군 적성면 하리": {
+    "name": "단양적성우체국",
+    "type": "시설",
+    "source": "https://www.koreapost.go.kr/395/subIndex/2157.do"
+  },
+  "충청북도 보은군 내북면 창리": {
+    "name": "창리공동정류장",
+    "type": "시설",
+    "source": "https://gsg.purpleo.kr/article/6094"
+  },
+  "충청북도 영동군 영동읍 가리": {
+    "name": "에덴동산 기독교 묘원",
+    "type": "시설",
+    "source": "https://ydbb.yd21.go.kr/mayor/html/sub02/0208.html?file_id=153576&mode=D&no=821219f4f24f341f475cfec28ab3d617"
+  }
+}

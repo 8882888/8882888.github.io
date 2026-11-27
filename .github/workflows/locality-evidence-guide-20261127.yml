@@ -4,6 +4,9 @@ on:
     paths:
       - 'server.js'
       - 'lib/locality-evidence-guide-20261127.cjs'
+      - 'lib/locality-source-evidence.cjs'
+      - 'data/locality-source-evidence-20261127.json'
+      - 'data/locality-address-references-20261127.json'
       - 'tests/locality-evidence-guide-20261127.test.cjs'
       - '.github/workflows/locality-evidence-guide-20261127.yml'
 permissions:
