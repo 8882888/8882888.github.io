@@ -140,4 +140,5 @@ test('Priority locality directory links all 98 existing service routes and repor
  assert.ok(source.includes('metroLongDistanceDirectory(kind,r.full_name)'));
  assert.ok(source.includes('+nationalDriverGuide+metroLongDistanceDirectory(kind)+'));
  console.log('PRIORITY_LOCALITY_SITEMAP '+JSON.stringify({total:98,owned:98-missing.length,missing}));
+ assert.deepEqual(missing,[],'All priority service routes must have exactly one existing sitemap owner');
 });
