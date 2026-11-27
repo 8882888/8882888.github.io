@@ -114,3 +114,47 @@ export function naverRobotsDisallowAll(content){
  return rules.some(r=>r.key==='disallow'&&r.path==='/')
      && !rules.some(r=>r.key==='allow'&&r.path==='/');
 }
+
+
+// Measure server-rendered focus links without requesting quote endpoints.
+// Counts describe observed links, not verified journey completion or indexing.
+function internalAnchorUrls(html){
+ const visible=String(html||'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'');
+ const links=[];
+ for(const m of visible.matchAll(/<a\b[^>]*?\bhref\s*=\s*(["'])(.*?)\1/gi)){
+  try{
+   const u=new URL(m[2].replace(/&amp;/g,'&'),'https://jeongukdaeri.kr');
+   if(u.protocol==='https:'&&['jeongukdaeri.kr','www.jeongukdaeri.kr'].includes(u.hostname))links.push(u);
+  }catch{}
+ }
+ return links;
+}
+export function focusLinkObservation(url,html){
+ const pathname=new URL(url,'https://jeongukdaeri.kr').pathname;
+ const panel=String(html||'').match(/<section\b[^>]*\bid=["']metro-innovation-long-distance-20261127["'][^>]*>([\s\S]*?)<\/section>/i);
+ if(isRegionalServiceUrl(url)&&panel){
+  const links=internalAnchorUrls(panel[1]);
+  return {focusPanel:true,focusRidePaths:[...new Set(links.filter(u=>/^\/reviews\/(?:(?:verified|history)\/[a-z0-9_-]+|[a-f0-9]{16})\/$/i.test(u.pathname)&&!u.search).map(u=>u.pathname))],
+   focusQuoteCount:new Set(links.filter(u=>u.pathname==='/fare/'&&['daeri','taksong'].includes(u.searchParams.get('service'))&&u.searchParams.get('from')&&u.searchParams.get('to')&&!u.searchParams.has('auto')).map(u=>u.pathname+u.search)).size};
+ }
+ if(/^\/reviews\/(?:(?:verified|history)\/[a-z0-9_-]+|[a-f0-9]{16})\/$/i.test(pathname)){
+  return {reviewRegionPaths:[...new Set(internalAnchorUrls(html).filter(u=>isRegionalServiceUrl(u.href)&&!u.search&&!u.hash).map(u=>u.pathname))]};
+ }
+ return {};
+}
+export function focusLinkCoverage(results){
+ const pathOf=r=>new URL(r.url,'https://jeongukdaeri.kr').pathname;
+ const focus=results.filter(r=>r?.status===200&&r.focusPanel===true);
+ const reviewMap=new Map(results.filter(r=>r?.status===200&&Array.isArray(r.reviewRegionPaths)).map(r=>[pathOf(r),r]));
+ const pairs=focus.flatMap(r=>(r.focusRidePaths||[]).map(ride=>({region:pathOf(r),ride})));
+ const matched=pairs.filter(p=>reviewMap.has(p.ride));
+ const reciprocal=matched.filter(p=>reviewMap.get(p.ride).reviewRegionPaths.includes(p.region));
+ return {focusServicePagesObserved:focus.length,
+  focusPagesWithPanelRideLink:focus.filter(r=>r.focusRidePaths?.length).length,
+  focusPagesWithoutPanelRideLink:focus.filter(r=>!r.focusRidePaths?.length).length,
+  focusQuoteLinksObserved:focus.reduce((sum,r)=>sum+(r.focusQuoteCount||0),0),
+  focusRideLinkPairs:pairs.length,
+  focusRidePairsWithAuditedTarget:matched.length,
+  focusRidePairsWithReciprocalLink:reciprocal.length,
+  focusRidePairsTargetNotAudited:pairs.length-matched.length};
+}
