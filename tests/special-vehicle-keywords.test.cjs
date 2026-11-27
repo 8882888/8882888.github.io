@@ -33,15 +33,17 @@ test('all key aerial work truck and other special vehicle phrases resolve to thr
  assert.equal(resolve('1톤사다리차임대'),null);
 });
 test('aerial lift is one indexable, grounded canonical page; aliases never spawn separate SEO documents',async()=>{
- const cp=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(PORT),PUBLIC_HOST:'jeongukdaeri.kr'},stdio:'ignore'});
+ const cp=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(PORT),PUBLIC_HOST:'jeongukdaeri.kr'},stdio:['ignore','pipe','pipe']});
+ let diagnostics='';
+ for(const stream of [cp.stdout,cp.stderr])stream.on('data',chunk=>{diagnostics=(diagnostics+String(chunk)).slice(-12000)});
  try{
   let live=false;
   for(let i=0;i<100;i++){
-   if(cp.exitCode!==null)throw Error('server exited '+cp.exitCode);
+   if(cp.exitCode!==null)throw Error('server exited '+cp.exitCode+'\n'+diagnostics);
    try{if((await fetch(base+'/health',{signal:AbortSignal.timeout(1200)})).ok){live=true;break}}catch{}
    await new Promise(r=>setTimeout(r,300));
   }
-  assert.ok(live,'local Smart24 test server starts');
+  assert.ok(live,'local Smart24 test server starts\n'+diagnostics);
   const res=await fetch(base+AERIAL),html=await res.text();
   assert.equal(res.status,200);
   assert.match(html,/<h1>고소차탁송/);
