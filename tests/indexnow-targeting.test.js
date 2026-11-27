@@ -176,3 +176,14 @@ assert.equal(multi.options.method,'POST');
 assert.equal(JSON.parse(multi.options.body).host,'jeongukdaeri.kr');
 assert.deepEqual(JSON.parse(multi.options.body).urlList,['https://jeongukdaeri.kr/','https://jeongukdaeri.kr/daeri/']);
 for(const bad of ['http://jeongukdaeri.kr/','https://www.jeongukdaeri.kr/','https://other.example/','https://jeongukdaeri.kr/?q=1'])assert.throws(()=>notificationRequest([bad]),/Invalid official canonical URL/);
+
+const ownerFile='data/sitemap-url-owners.json';
+const oldOwners={'/daeri/seoul/':'/sitemap-priority.xml','/taksong/busan/':'/sitemap-taksong.xml','/daeri/daegu/':'/sitemap-priority.xml'};
+const newOwners={'/daeri/seoul/':'/sitemap-priority.xml','/taksong/busan/':'/sitemap-priority.xml','/daeri/gwangju/seo-gu/chipyeong-dong/':'/sitemap-priority.xml','/taksong/jeonbuk/iksan-si/busong-dong/':'/sitemap-priority.xml','/daeri/ulsan/':'/sitemap-daeri.xml','/daeri/seoul/fare/':'/sitemap-priority.xml','/blog/example/':'/sitemap-priority.xml'};
+const ownerOptions=(before,after)=>({previousDocuments:{[ownerFile]:before},currentDocuments:{[ownerFile]:after}});
+assert.deepEqual(changedPaths([ownerFile],'',ownerOptions(oldOwners,newOwners)),['/daeri/gwangju/seo-gu/chipyeong-dong/','/taksong/jeonbuk/iksan-si/busong-dong/'],'only newly advertised priority locality pages, not transfers, deletions or other routes');
+assert.deepEqual(changedPaths([ownerFile],'',ownerOptions(newOwners,newOwners)),[],'unchanged registry cannot re-notify');
+const sixtySeven=Object.fromEntries(Array.from({length:67},(_,i)=>['/daeri/seoul/focus-'+i+'/', '/sitemap-priority.xml']));
+assert.deepEqual(batchUrls(changedPaths([ownerFile],'',ownerOptions({},sixtySeven))).map(x=>x.length),[10,10,10,10,10,10,7]);
+assert.throws(()=>changedPaths([ownerFile],'',ownerOptions({},Object.fromEntries(Array.from({length:101},(_,i)=>['/daeri/seoul/focus-'+i+'/', '/sitemap-priority.xml'])))),/More than 100/);
+console.log('PASS: newly registered priority locality URLs are selected exactly once per deployment delta');
