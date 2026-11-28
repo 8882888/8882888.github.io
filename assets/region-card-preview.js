@@ -87,8 +87,8 @@
   {"name":"낙동강자전거길","aliases":["낙동강길종주탁송","낙동강종주탁송","낙동강자전거길","낙동강자전거길종주","낙동강자전거길탁송","낙동강자전거길종주탁송","낙동강자전거길종주탁송요금","낙동강자전거길탁송요금","낙동강자전거길코스","낙동강자전거길역코스","낙동강자전거길역코스탁송","낙동강자전거길차량회수"],"image":"/assets/cycling-routes/nakdonggang-taksong.svg","url":"/route-taksong/courses/nakdonggang/","description":"자전거 배송이 아닌 고객 자동차를 출발지 주차장에서 종주 종료지로 이동하는 차량탁송입니다.","course":{"route":"안동댐 ↔ 낙동강하굿둑","fee":"풀코스 별도 견적","note":"지정 부분 종주 구간 각 10만원.","stops":"안동댐 · 상주보 · 구미보 · 강정고령보 · 합천창녕보 · 양산 물문화관 · 낙동강하굿둑","anchor":"nakdong-owner-fares-20261128"}},
   {"name":"금강자전거길","aliases":["금강길종주탁송","금강종주탁송","금강자전거길","금강자전거길종주","금강자전거길탁송","금강자전거길종주탁송","금강자전거길종주탁송요금","금강자전거길탁송요금","금강자전거길코스","금강자전거길역코스","금강자전거길역코스탁송","금강자전거길차량회수"],"image":"/assets/cycling-routes/geumgang-taksong.svg","url":"/route-taksong/courses/geumgang/","description":"자전거 배송이 아닌 고객 자동차를 출발지 주차장에서 종주 종료지로 이동하는 차량탁송입니다.","course":{"route":"대청댐 ↔ 금강하굿둑","fee":"개별 견적","note":"실제 차량 인수·인계 주소로 요금 확인.","stops":"대청댐 · 세종보 · 공주보 · 백제보 · 익산 성당포구 · 금강하굿둑","anchor":""}},
   {"name":"오천자전거길","aliases":["오천길종주탁송","오천종주탁송","오천자전거길","오천자전거길종주","오천자전거길탁송","오천자전거길종주탁송","오천자전거길종주탁송요금","오천자전거길탁송요금","오천자전거길코스","오천자전거길역코스","오천자전거길역코스탁송","오천자전거길차량회수"],"image":"/assets/cycling-routes/ocheon-taksong.svg","url":"/route-taksong/courses/ocheon/","description":"자전거 배송이 아닌 고객 자동차를 출발지 주차장에서 종주 종료지로 이동하는 차량탁송입니다.","course":{"route":"행촌교차로 ↔ 합강공원","fee":"개별 견적","note":"실제 차량 인수·인계 주소로 요금 확인.","stops":"행촌교차로 · 괴강교 · 백로공원 · 무심천교 · 합강공원","anchor":""}},
-  {name:'설악산탁송',aliases:['설악산','설악산탁송','설악산종주','설악산종주탁송','설악산코스별탁송','오색탁송','한계령탁송','백담사탁송'],image:'/assets/seoraksan-taksong-fares.svg',url:'/설악산탁송/',description:'설악산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
-  {name:'지리산탁송',aliases:['지리산','지리산탁송','성삼재탁송','중산리탁송','대원사탁송'],image:'/assets/jirisan-taksong-fares.svg',url:'/지리산탁송/',description:'지리산 차량탁송 기존 구간별 참고요금 안내. 현재 예약요금은 상담으로 확인합니다.'},
+  {"name":"설악산탁송","aliases":["설악산","설악산탁송","설악산종주","설악산종주탁송","설악산탁송요금","설악산차량탁송","설악산코스별탁송","설악산차량회수","오색탁송","한계령탁송","백담사탁송","소공원탁송","남교리탁송"],"image":"/assets/seoraksan-taksong-fares.svg","url":"/설악산탁송/","description":"산행 출발 주차장에 맡긴 자동차를 하산지로 옮기는 차량회수 탁송입니다.","mountain":{"fares":[["오색 → 소공원","7만원"],["한계령 → 소공원","8만원"],["백담사 → 소공원","8만원"],["남교리 → 소공원","8만원"],["한계령 → 백담사","8만원"],["오색 → 백담사","8만원"]],"places":"오색공영주차장·한계령휴게소·백담사 입구·남교리·소공원 주차장","routes":"대청봉·공룡능선·천불동계곡 종주","advice":"출발 주차장과 하산 예정시간을 확인하세요. 백담사 입구와 사찰 내부는 구분하며, 새벽·주말·연휴는 사전 예약이 중요합니다."}},
+  {"name":"지리산탁송","aliases":["지리산","지리산탁송","지리산종주","지리산종주탁송","지리산탁송요금","지리산차량탁송","지리산코스별탁송","지리산차량회수","성삼재탁송","중산리탁송","대원사탁송","화엄사탁송","백무동탁송","성중종주탁송","성대종주탁송","화대종주탁송"],"image":"/assets/jirisan-taksong-fares.svg","url":"/지리산탁송/","description":"지리산 종주 출발지에 주차한 자동차를 지정한 하산지로 이동합니다.","mountain":{"fares":[["성삼재 → 중산리","12만원"],["성삼재 → 대원사","12만원"],["화엄사 → 중산리","12만원"],["화엄사 → 대원사","10만원"],["백무동 → 중산리","10만원"],["백무동 → 대원사","10만원"]],"places":"성삼재·화엄사·백무동·중산리·대원사 실제 차량 주차장","routes":"성중종주·성대종주·화대종주·화중종주·백중종주","advice":"산행 거리와 차량 이동 도로거리는 다릅니다. 하산 시간과 도착 주차장, 기사 이동 조건을 사전 협의하세요."}},
   {name:'자전거길종주탁송',aliases:['자전거종주','자전거종주탁송','자전거길종주탁송','영산강길종주탁송','영산강종주탁송','섬진강종주탁송','동해안종주탁송'],image:'/assets/cycling-routes/nationwide-taksong.svg',url:'/special/cycling-trail-transport/',description:'자전거길 종주 차량 회수 안내 이미지. 세부 코스별 요금과 배차는 별도 확인합니다.'}
  ];
  function routeVisualMatch(query,service){
@@ -97,8 +97,9 @@
   const route=verifiedRouteVisuals.find(r=>r.aliases.includes(term));
   if(!route)return null;
   return {status:'matched',region:route.name,cards:[{
-   kind:'taksong',displayKeyword:route.course?route.name+' 종주탁송':route.name+' · 기존 안내 이미지',
+   kind:'taksong',displayKeyword:route.course?route.name+' 종주탁송':route.mountain?route.name+' 코스별 요금·차량회수':route.name+' · 기존 안내 이미지',
    course:route.course||null,
+   mountain:route.mountain||null,
    image:route.image,url:route.url,description:route.description,phone:'1811-4294'
   }]};
  }
@@ -244,20 +245,23 @@
    const full=addLink(actions,original||serviceFallback,'명함 원본 보기');
    fullLink=full;
    full.hidden=true;full.target='_blank';full.rel='noopener noreferrer';
-   addLink(actions,page,card.course?'코스별 전체 안내':'지역 상세 안내');
+   addLink(actions,page,(card.course||card.mountain)?'코스별 전체 안내':'지역 상세 안내');
    // The site-wide consultation line is fixed; never trust an API card's alternate phone.
    addLink(actions,'tel:18114294','전화 1811-4294','smart24-card-phone');
    // Keep the verified mountain fare table visible independently of image or API loading.
-   if(card.url==='/설악산탁송/'){
-    const heading=node('h4','smart24-card-fare-heading','설악산 코스별 기존 탁송요금');
+   if(card.mountain){
+    const m=card.mountain;
+    const heading=node('h4','smart24-card-fare-heading',card.url==='/설악산탁송/'?'설악산 코스별 기존 탁송요금':'지리산 코스별 기존 탁송요금');
     const table=node('table','smart24-card-fare-table');
-    const caption=node('caption','', '기존 안내요금이며 현재 확정요금은 상담 후 확인합니다.');
-    table.append(caption);
+    table.append(node('caption','','기존 안내요금이며 현재 확정요금은 상담 후 확인합니다.'));
     const tbody=document.createElement('tbody');
-    const fares=[['오색 → 소공원','7만원'],['한계령 → 소공원','8만원'],['백담사 → 소공원','8만원'],['남교리 → 소공원','8만원'],['한계령 → 백담사','8만원'],['오색 → 백담사','8만원']];
-    fares.forEach(([route,fare])=>{const tr=document.createElement('tr');tr.append(node('th','',route),node('td','',fare));tbody.append(tr)});
+    m.fares.forEach(([route,fare])=>{const tr=document.createElement('tr');tr.append(node('th','',route),node('td','',fare));tbody.append(tr)});
     table.append(tbody);
-    article.append(title,picture,heading,table,description,actions);
+    const info=node('div','smart24-card-course-info');
+    info.append(node('h4','','산행 코스 안내'),node('p','',m.routes),node('h4','','차량 인수·인계 장소'),node('p','',m.places),node('h4','','예약 전 확인사항'),node('p','',m.advice),node('p','','차종·주차 위치·열쇠 전달 방법을 확인합니다. 역방향은 별도 견적입니다.'));
+    addLink(actions,page+'#mountain-route-fare-table-202611','구간별 요금표·역방향 견적');
+    addLink(actions,'https://open.kakao.com/o/sGV88r7h','카카오 상담');
+    article.append(title,picture,heading,table,info,description,actions);
    }else if(card.course){
     const c=card.course;
     const summary=node('div','smart24-card-course-info');
@@ -297,7 +301,7 @@
    const params=new URLSearchParams({q:input.value.trim()});
    if(select?.value)params.set('service',select.value);
    const p=node('p','smart24-card-full-search');
-   const courseCard=data.cards?.find(c=>c.course);
+   const courseCard=data.cards?.find(c=>c.course||c.mountain);
    addLink(p,courseCard?courseCard.url:'/region/?'+params.toString(),courseCard?'코스 전용 홈페이지 보기':'전체 지역 검색 결과 보기');
    results.append(p);
   }
