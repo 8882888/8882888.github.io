@@ -61,15 +61,19 @@ const baseline=read('data/naver-searchadvisor-official-baseline.json');
 const searchBase=baseline.searchClicksBaselineOwnerReported??read(baseline.searchClicksBaselineFile);
 export function fromDatedOwnerReport(s){
  if(!s)return null;
- if(s.sourceType!=='owner_reported_naver_searchadvisor'||s.site!=='https://jeongukdaeri.kr'||s.scope!=='WEB_SEARCH_ONLY'||s.devices!=='PC + Mobile'||s.diagnosis?.source!=='사이트 진단 > 진단 현황 > 색인된 페이지'||s.diagnosis.updatedAt!==s.updatedAt)throw Error('Unrecognized dated owner report');
+ if(s.sourceType!=='owner_reported_naver_searchadvisor'||s.site!=='https://jeongukdaeri.kr'||s.scope!=='WEB_SEARCH_ONLY'||s.devices!=='PC + Mobile'||s.diagnosis?.source!=='사이트 진단 > 진단 현황 > 색인된 페이지'||!/^\d{4}-\d{2}-\d{2}$/.test(s.diagnosis.updatedAt||'')||!/^\d{4}-\d{2}-\d{2}$/.test(s.updatedAt||'')||s.diagnosis.updatedAt>s.reportedAt||s.updatedAt>s.reportedAt)throw Error('Unrecognized dated owner report');
  return {sourceType:s.sourceType,observedAt:s.diagnosis.updatedAt,indexed:s.diagnosis.indexed,collectionLimited:s.diagnosis.collectionLimited,excluded:s.diagnosis.excluded,seoIssues:s.diagnosis.seoIssues,search:{period:s.window,updatedAt:s.updatedAt,clicks:s.siteMetrics.clicksApprox,impressions:s.siteMetrics.impressionsApprox,displayedAverageCtrPercent:s.siteMetrics.displayedAverageCtrPercent,approximate:true},crawl:s.crawl};
 }
-const datedOwnerReport=optional('data/naver-search-advisor-baseline-20261125.json');
+const previousDatedOwnerReport=optional('data/naver-search-advisor-baseline-20261125.json');
+const datedOwnerReport=optional('data/naver-search-advisor-baseline-20261127.json')??previousDatedOwnerReport;
 const supplied=process.env.NAVER_SEARCHADVISOR_SNAPSHOT_FILE
  ?JSON.parse(fs.readFileSync(process.env.NAVER_SEARCHADVISOR_SNAPSHOT_FILE,'utf8'))
  :baseline.latestOfficialSnapshot??fromDatedOwnerReport(datedOwnerReport);
-const official=compareOfficial(baseline,supplied);
-const search=searchComparison(searchBase,supplied);
+const previous=fromDatedOwnerReport(previousDatedOwnerReport);
+const comparisonBaseline=previous&&supplied?.observedAt>previous.observedAt?{...baseline,officialIndexBaseline:{indexed:previous.indexed,collectionLimited:previous.collectionLimited,excluded:previous.excluded,observedAt:previous.observedAt}}:baseline;
+const official=compareOfficial(comparisonBaseline,supplied);
+const recentSearchBase=previous&&supplied?.search?.updatedAt>previous.search.updatedAt?{source:'Previous dated owner report',period:previous.search.period,last_updated:previous.search.updatedAt,totals:{clicks:previous.search.clicks,impressions_approx:previous.search.impressions,ctr_percent:previous.search.displayedAverageCtrPercent}}:searchBase;
+const search=searchComparison(recentSearchBase,supplied);
 const technical=optional('seo-priority-live-report.json')?.summary??null;
 const quality=optional('ai-index-quality-review.json')?.totals??null;
 const report={generatedAt:new Date().toISOString(),site:baseline.site,
@@ -88,7 +92,8 @@ const md=[
  '',
  '- 생성: '+report.generatedAt,
  '- 웹사이트: '+baseline.site,
- '- 현재 최신 공식 데이터: '+(official.current?'사이트 소유자 보고 '+official.current.observedAt:'미제공 — 증감 산정 금지'),
+ '- 현재 최신 공식 진단: '+(official.current?'사이트 소유자 보고 '+official.current.observedAt:'미제공 — 증감 산정 금지'),
+ '- 검색 노출/클릭 업데이트: '+safe(search.current?.updatedAt),
  '',
  '| 지표 | 기존 공식 또는 사용자 제공 기준 | 최신 확인값 | 변화 |',
  '|---|---:|---:|---:|',

@@ -66,3 +66,22 @@ test('dated Nov 25 owner diagnosis feeds actual scorecard, preserves displayed C
  assert.equal(searchComparison(searchBase,x).current.approximate,true);
  assert.equal(compareOfficial({officialIndexBaseline:{indexed:null,observedAt:null}},x).indexDelta,null);
 });
+
+test('Nov 27 search and Nov 26 diagnosis retain independent dates and unchanged 14 indexed',()=>{
+ const prior=fromDatedOwnerReport(JSON.parse(readFileSync(new URL('../data/naver-search-advisor-baseline-20261125.json',import.meta.url),'utf8')));
+ const raw=JSON.parse(readFileSync(new URL('../data/naver-search-advisor-baseline-20261127.json',import.meta.url),'utf8'));
+ const current=fromDatedOwnerReport(raw);
+ assert.equal(current.observedAt,'2026-11-26');
+ assert.equal(current.search.updatedAt,'2026-11-27');
+ assert.equal(current.crawl.updatedAt,'2026-11-28');
+ assert.equal(current.crawl.completed,null);
+ const result=compareOfficial({officialIndexBaseline:prior},current);
+ assert.equal(result.status,'OFFICIAL_UNCHANGED');
+ assert.equal(result.indexDelta,0);
+ const comparison=searchComparison({period:prior.search.period,last_updated:prior.search.updatedAt,totals:{clicks:150,impressions_approx:6700,ctr_percent:2.2}},current);
+ assert.equal(comparison.impressionsDeltaApprox,800);
+ assert.equal(comparison.clickDelta,0);
+ assert.equal(comparison.ctrDeltaPercentagePoints,-0.2);
+ assert.equal(raw.topDocuments.find(x=>x.path==='/daeri/gangwon/gangreung-si/').impressions,2184);
+ assert.throws(()=>fromDatedOwnerReport({...raw,diagnosis:{...raw.diagnosis,updatedAt:'2026-11-29'}}));
+});
