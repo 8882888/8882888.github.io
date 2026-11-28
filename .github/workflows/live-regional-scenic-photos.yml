@@ -1,0 +1,38 @@
+name: Verify actual regional scenic photo loading
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/audit_live_regional_scenic_photos.cjs'
+      - '.github/workflows/live-regional-scenic-photos.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '25 21 * * *'
+permissions:
+  contents: read
+jobs:
+  scenic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated Chromium tooling
+        run: |
+          mkdir -p /tmp/smart24-scenic
+          cd /tmp/smart24-scenic
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@1.56.1
+          npx playwright install chromium
+      - name: Check all 17 published province photographs and mobile display
+        env:
+          NODE_PATH: /tmp/smart24-scenic/node_modules
+        run: node tools/audit_live_regional_scenic_photos.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regional-scenic-live-report
+          path: artifacts/regional-scenic-live/
+          retention-days: 14
