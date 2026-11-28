@@ -229,3 +229,39 @@ test('Second evidence-priority batch has 11 exact legal localities, completed so
   for(const kind of ['daeri','taksong'])assert.ok(owners['/'+kind+'/'+r.path+'/'],name+' '+kind+' canonical owner');
  }
 });
+
+test('Municipal focus discovery links only exact owned descendants and preserves service separation',async()=>{
+ const {regionsFromLegal}=await import('../scripts/dynamic-url-inventory.mjs');
+ const regionByFullName=new Map(regionsFromLegal(root).map(r=>[r.full_name,r]));
+ const owners=JSON.parse(fs.readFileSync(path.join(root,'data/sitemap-url-owners.json'),'utf8'));
+ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=source.indexOf('const metroLongDistanceFocus=new Map('),end=source.indexOf('function regionalDecisionPanel(',start);
+ const vm=require('node:vm'),servicePath=(r,k)=>'/'+k+'/'+r.path+'/';
+ const ctx={regionByFullName,sitemapOwnerByPath:owners,servicePath,esc:x=>String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;')};
+ vm.createContext(ctx);
+ vm.runInContext(source.slice(start,end)+'\nthis.focus=metroLongDistanceFocus;this.render=municipalFocusDiscovery;',ctx);
+ const extract=html=>[...html.matchAll(/href="([^"]+)"/g)].map(x=>x[1]);
+ let hubs=0,links=0;
+ const parents=new Set([...ctx.focus.keys()].flatMap(name=>{
+  const parts=name.split(' ');return parts.slice(1,-1).map((_,i)=>parts.slice(0,i+2).join(' '));
+ }));
+ for(const name of parents){
+  const parent=regionByFullName.get(name);
+  if(!parent||!['시','군','구'].includes(parent.level))continue;
+  for(const kind of ['daeri','taksong']){
+   const expected=owners[servicePath(parent,kind)]?[...ctx.focus.keys()].filter(n=>n.startsWith(name+' ')).map(n=>servicePath(regionByFullName.get(n),kind)).filter(url=>owners[url]):[];
+   const html=ctx.render(parent,kind);
+   assert.deepEqual(extract(html).sort(),[...new Set(expected)].sort(),name+' '+kind);
+   if(expected.length){hubs++;links+=expected.length;assert.equal((html.match(/id="municipal-focus-discovery-20261128"/g)||[]).length,1);}
+  }
+ }
+ const andong=regionByFullName.get('경상북도 안동시');
+ const html=ctx.render(andong,'taksong');
+ assert.ok(html.includes('안동 옥동')&&html.includes('안동 수하동'));
+ assert.ok(!html.includes('울산 옥동'));
+ assert.equal(ctx.render(andong,'mixed'),'');
+ assert.equal(ctx.render(regionByFullName.get('경상북도'),'taksong'),'');
+ assert.ok(source.includes(':municipalFocusDiscovery(r,kind))+regionalDecisionPanel'));
+ assert.ok(hubs>0&&links>=hubs);
+ console.log('MUNICIPAL_FOCUS_DISCOVERY '+JSON.stringify({hubs,links}));
+});
