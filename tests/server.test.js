@@ -305,6 +305,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('<figure')&&html.indexOf('id="regional-taksong-quick-start"')>=0&& (html.indexOf('id="priority-verified-rides"')<0 || html.indexOf('id="regional-taksong-quick-start"')<html.indexOf('id="priority-verified-rides"')),
     'regional picture and customer choices come ahead of long evidence listings: '+loc);
   }
+  for(const [loc,region] of [['/taksong/busan/','부산광역시'],['/daeri/daegu/','대구광역시'],['/taksong/seoul/gangnam-gu/','서울특별시 강남구']]){
+   const response=await get(loc),html=await response.text();
+   assert.equal(response.status,200,loc);
+   const panel=html.match(/<section id="regional-dual-fare-20261128"[\s\S]*?<\/section>/)?.[0];
+   assert.ok(panel,loc+' fee panel');
+   assert.ok(panel.includes(region)&&panel.includes('예약 전 안내사항'));
+   for(const kind of ['daeri','taksong'])assert.ok(panel.includes('/fare/?service='+kind+'&amp;from='+encodeURIComponent(region)),loc+' '+kind);
+   assert.ok(html.includes('class="regional-responsive-card"'),loc+' image');
+   assert.ok(html.indexOf('class="regional-responsive-card"')<html.indexOf('id="regional-dual-fare-20261128"'),loc+' image before panel');
+  }
   assert.ok(seoHome.includes('id="southeast-priority-regions"')&&
    seoHome.includes('href="/taksong/ulsan/"')&&
    seoHome.includes('href="https://blog.naver.com/wjdtnr4757/224441226524"'),
@@ -1368,6 +1378,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.equal(data.status,'matched','abbreviated locality not resolved: '+keyword);
    assert.equal(data.region,expected,'wrong same-name locality: '+keyword);
    assert.equal(data.cards[0].kind,kind,'wrong service for local search: '+keyword);
+   assert.equal(data.cards[0].regionName,expected,'verified locality for dual estimates: '+keyword);
   }
   const duplicateDistrict=await getPreview('동구탁송');
   assert.equal(duplicateDistrict.status,'ambiguous','same-name Dong-gu must not auto-choose a province');
