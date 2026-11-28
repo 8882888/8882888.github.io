@@ -68,7 +68,9 @@ test('owner supplied full and partial cycling fares remain separate from complet
  for(const page of [hub,detail]) {
   assert.ok(page.includes('풀코스 라이딩 약 320km, 자동차탁송 약 17만원'));
   assert.ok(page.includes('낙동강 300km 이상 풀코스 금액은 별도 견적'));
-  assert.ok(page.includes('라이딩 약 110km 기준으로 자동차탁송 10만원'));
+  assert.ok(page.includes('각각 자동차탁송 10만원 안내입니다'));
+  assert.ok(page.includes('영산강 133km, 섬진강 149km'));
+  assert.ok(!page.includes('라이딩 약 110km'));
  }
  for(const page of [east,nak,yeong,seom]) assert.ok(page.includes('2026년 11월 28일 운영자 안내 기준'));
  assert.ok(east.includes('약 17만원 (라이딩 약 320km)'));
@@ -77,8 +79,10 @@ test('owner supplied full and partial cycling fares remain separate from complet
  assert.ok(east.includes('기존 경포대→통일전망대 8만~9만원은 과거 안내요금'));
  assert.ok(nak.includes('풀코스 별도 견적'));
  assert.ok(nak.includes('>10만원</td>'));
- assert.ok(yeong.includes('약 110km 차량회수 탁송 10만원'));
- assert.ok(seom.includes('약 110km 차량회수 탁송 10만원'));
+ assert.ok(yeong.includes('영산강자전거길 양방향 차량회수 탁송 10만원'));
+ assert.ok(yeong.includes('<p>133km</p>'));
+ assert.ok(seom.includes('섬진강자전거길 양방향 차량회수 탁송 10만원'));
+ assert.ok(seom.includes('<p>149km</p>'));
  assert.ok(seom.includes('섬진강댐 출발은 서로 다른 인수 지점'));
  assert.ok(hub.includes('섬진강 생활체육공원 → 배알도'));
 });
@@ -116,6 +120,8 @@ test('Original colorful course design preserves fare data, 55 real center cards 
   assert.ok(block.includes('/assets/cycling-routes/'+slug+'-taksong.svg'));
   assert.ok(html.includes('id="smart24-course-menu-20261128"'));
   assert.ok(html.includes('aria-current="page"'));
+  for(const i of [2,3,4,6,13])assert.ok(html.includes('href="/route-taksong/#national-cycle-bidirectional-'+i+'"'));
+  assert.ok(html.includes('href="/special/cycling-trail-transport/#baekdu-cycling-priority-20261128"'));
   assert.ok(html.includes('class="course-hero-summary"'));
   assert.ok(html.includes('id="smart24-course-handover-20261128"'));
   const section=html.match(/<section id="smart24-course-centers-20261128"[\s\S]*?<\/section>/)?.[0]||'';
