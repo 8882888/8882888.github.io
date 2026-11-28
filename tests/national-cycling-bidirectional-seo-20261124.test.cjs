@@ -147,6 +147,12 @@ test('Actual HTTP: national cycling info, booking, reverse search and 8 course p
    assert.equal((body.match(/<h1\b/g)||[]).length,1,url);
   }
   const inputs=[
+   ['섬진강자전거길','/route-taksong/courses/seomjin/'],
+   ['영산강자전거길','/route-taksong/courses/yeongsan/'],
+   ['동해안자전거길','/route-taksong/courses/eastcoast/'],
+   ['낙동강자전거길','/route-taksong/courses/nakdonggang/'],
+   ['금강자전거길','/route-taksong/courses/geumgang/'],
+   ['오천자전거길','/route-taksong/courses/ocheon/'],
    ['전국자전거길종주','/route-taksong/'],
    ['전국자전거길종주탁송요금','/route-taksong/'],
    ['동해안자전거길풀코스탁송요금','/route-taksong/courses/eastcoast/'],
