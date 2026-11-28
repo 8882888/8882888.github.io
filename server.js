@@ -219,7 +219,7 @@ function resolveRegionalCardKeyword(query){
 }
 
 
-const {localitySearchDescription,renderLocalitySources}=require('./lib/locality-source-evidence.cjs');
+const {localitySearchDescription}=require('./lib/locality-source-evidence.cjs');
 const localityEvidenceGuide=require('./lib/locality-evidence-guide-20261127.cjs').create({rows:naverFocus2900,regions,servicePath,esc,historyFor:(r,kind)=>cachedRegionalRideLookups(r,kind).regionalBatchMatches,publishedPosts:publishedBlogPosts});
 function naverFocus50Guide(r,kind){
  const info=focus50ByKey.get(kind+'|'+r.full_name);
@@ -229,8 +229,7 @@ function naverFocus50Guide(r,kind){
   :[['골프장 대리운전','/service/golf/'],['법인카드·법인 대리운전','/service/corporate/'],['일일기사·왕복 대기','/service/daily-driver/']];
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
  // Preserve original editorial data on disk; do not publish repeated source-copy paragraphs in the duplicate cohort.
- const intro=localityEvidenceGuide.duplicates.has(kind+'|'+r.full_name)?'':'<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
- const reviewedSource=info.localEvidenceReviewed&&!localityEvidenceGuide.duplicates.has(kind+'|'+r.full_name)?renderLocalitySources(r.full_name,kind,esc):'';
+ const intro=localityEvidenceGuide.suppressed.has(kind+'|'+r.full_name)?'':'<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
  // Offer the existing companion service only for the exact same official locality.
  // The opposite-service topic is a source guide, never a new trip or verified facility.
  const otherKind=kind==='taksong'?'daeri':'taksong';
@@ -246,7 +245,7 @@ function naverFocus50Guide(r,kind){
  // Keep this customer guide editorial and use the exact region-id search below.
  return '<section id="naver-focus50-local-guide" aria-label="'+esc(name+' '+kindLabel)+' 지역 상황별 실제 이용 안내">'+
   '<h2>'+esc(info.keyword)+' · '+esc(info.topic)+'</h2>'+
-  '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+reviewedSource+localityEvidenceGuide.render(r,kind)+
+  '<h3>이 지역에서 차량 위치를 확인할 때</h3>'+intro+localityEvidenceGuide.render(r,kind)+
   '<h3>예약 전에 필요한 정보</h3>'+bookingChoice+'<p>지역 지점 설치나 기사 상주, 예약 확정 또는 완료 운행을 뜻하지 않습니다.</p>'+
   '<p><a href="/fare/?service='+kind+'&amp;from='+encodeURIComponent(name)+'">'+esc(name+' 출발 '+kindLabel)+' 예상요금</a> · '+
   '<a href="/fare/?service='+kind+'&amp;to='+encodeURIComponent(name)+'">'+esc(name+' 도착 '+kindLabel)+' 예상요금</a> · '+
