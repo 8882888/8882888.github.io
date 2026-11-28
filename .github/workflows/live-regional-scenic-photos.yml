@@ -5,6 +5,10 @@ on:
     paths:
       - 'tools/audit_live_regional_scenic_photos.cjs'
       - '.github/workflows/live-regional-scenic-photos.yml'
+  workflow_run:
+    workflows: ['Deploy to Cloudtype']
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: '25 21 * * *'
@@ -12,10 +16,13 @@ permissions:
   contents: read
 jobs:
   scenic:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -26,9 +33,10 @@ jobs:
           npm init -y >/dev/null
           npm install --no-audit --no-fund playwright@1.56.1
           npx playwright install chromium
-      - name: Check all 17 published province photographs and mobile display
+      - name: Check published regional photographs and mobile display
         env:
           NODE_PATH: /tmp/smart24-scenic/node_modules
+          SMART24_SCENIC_PROVINCES_ONLY: ${{ github.event_name == 'pull_request' && '1' || '0' }}
         run: node tools/audit_live_regional_scenic_photos.cjs
       - uses: actions/upload-artifact@v4
         if: always()
