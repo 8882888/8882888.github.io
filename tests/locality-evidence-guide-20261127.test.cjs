@@ -9,9 +9,15 @@ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
 const g=create({rows,regions,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')});
 test('complete exact existing backlog, not an arbitrary top-N or blanket index expansion',()=>{
  assert.equal(rows.length,2900);
- assert.equal(g.targets.size,1863,'verified current source backlog');
+ assert.equal(g.targets.size,1857,'verified current source backlog after six reviewed rewrites');
+ const originalRows=require('../data/locality-remediation-originals-20261128.json');
+ assert.equal(originalRows.length,6);
+ for(const row of originalRows){const k=row.kind+'|'+row.region;assert(!g.targets.has(k));assert(g.evidenceKeys.has(k));assert(!g.suppressed.has(k));assert(rows.find(x=>x.kind+'|'+x.region===k)?.localEvidenceReviewed);}
+ assert.equal(g.duplicates.size,846);
+ assert.equal(g.evidenceKeys.size,858);
+ assert.equal(g.suppressed.size,852);
  assert.deepEqual([...g.targets.keys()].sort(),[...reviewTargets(rows).keys()].sort());
- assert.equal(g.plans.size,g.targets.size);
+ assert.deepEqual([...g.plans.keys()].sort(),[...new Set([...g.targets.keys(),...g.evidenceKeys])].sort());
  const allProvinces=new Set(rows.map(x=>x.region.split(' ')[0]));
  const selectedProvinces=new Set(rows.filter(x=>g.targets.has(x.kind+'|'+x.region)).map(x=>x.region.split(' ')[0]));
  const renderedProvinces=new Set([...g.plans.values()].map(x=>x.region.full_name.split(' ')[0]));
@@ -19,7 +25,7 @@ test('complete exact existing backlog, not an arbitrary top-N or blanket index e
  assert.equal(selectedProvinces.size,16,'current flagged cohort spans 16 provinces; investigate any change');
  for(const province of allProvinces){
   const source=rows.filter(x=>x.region.split(' ')[0]===province);
-  const selected=source.filter(x=>g.targets.has(x.kind+'|'+x.region));
+  const selected=source.filter(x=>g.plans.has(x.kind+'|'+x.region));
   assert.equal([...g.plans.values()].filter(x=>x.region.full_name.split(' ')[0]===province).length,selected.length,province);
   console.log('Locality coverage:',province,selected.length,'of',source.length);
  }
@@ -120,10 +126,10 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
  let originalMatched=0,additionalOriginalCoverage=0,reviewedMatched=0,reviewedAdditional=0;
  const lookup=(r,kind)=>eligible.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,realRegions)).filter((x,i,a)=>a.findIndex(y=>y.date===x.date&&y.departure===x.departure&&y.destination===x.destination&&y.fare===x.fare)===i).slice(0,20);
  const batch=create({rows,regions:realRegions,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),historyFor:lookup,publishedPosts});
- assert.equal(batch.targets.size,g.targets.size);assert.equal(batch.duplicates.size,858);
+ assert.equal(batch.targets.size,g.targets.size);assert.equal(batch.evidenceKeys.size,858);
  for(const row of rows){
   const r=realRegions.find(x=>x.full_name===row.region);
-  const html=batch.render(r,row.kind),selected=batch.duplicates.has(row.kind+'|'+row.region);
+  const html=batch.render(r,row.kind),selected=batch.evidenceKeys.has(row.kind+'|'+row.region);
   assert.equal(html.includes('class="locality-batch-evidence"'),selected);
   if(!selected)continue;
   counts.processed++;
@@ -217,7 +223,7 @@ test('all 858 repeated guides show traceable local parking, transit, or address 
  const byName=new Map(regions.map(r=>[r.full_name,r]));
  const coverage={parking:0,bus:0,address:0,dispatch:0};
  for(const row of rows){
-  if(!g.duplicates.has(row.kind+'|'+row.region))continue;
+  if(!g.evidenceKeys.has(row.kind+'|'+row.region))continue;
   const html=g.render(byName.get(row.region),row.kind);
   const data=evidence[row.region] || {};
   const reference=references[row.region];

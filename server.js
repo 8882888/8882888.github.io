@@ -229,7 +229,7 @@ function naverFocus50Guide(r,kind){
   :[['골프장 대리운전','/service/golf/'],['법인카드·법인 대리운전','/service/corporate/'],['일일기사·왕복 대기','/service/daily-driver/']];
  const name=r.full_name,kindLabel=kind==='taksong'?'차량탁송':'대리운전';
  // Preserve original editorial data on disk; do not publish repeated source-copy paragraphs in the duplicate cohort.
- const intro=localityEvidenceGuide.duplicates.has(kind+'|'+r.full_name)?'':'<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
+ const intro=localityEvidenceGuide.suppressed.has(kind+'|'+r.full_name)?'':'<p>'+esc(info.pickup)+'</p><p>'+esc(info.handover)+'</p>';
  // Offer the existing companion service only for the exact same official locality.
  // The opposite-service topic is a source guide, never a new trip or verified facility.
  const otherKind=kind==='taksong'?'daeri':'taksong';

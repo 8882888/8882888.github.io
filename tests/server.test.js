@@ -1001,6 +1001,16 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('href="/'+kind+'/#reservation-guide"'));
    assert.ok(html.includes('href="/reviews/history/?kind='+kind+'"'));
   }
+  for(const kind of ['daeri','taksong']){
+   for(const [regionPath,landmark,date] of [['seoul/gwangjin-gu/guui-dong','구의1동 공영주차장','2024-08-19'],['seoul/jungrang-gu/muk-dong','화랑대역','2021-07-30'],['busan/geumjeong-gu/geumsa-dong','금사동제1공영주차장','2024-11-22']]){
+    const response=await get('/'+kind+'/'+regionPath+'/');
+    assert.equal(response.status,200);
+    const html=await response.text();
+    const guide=html.match(/<section id="naver-focus50-local-guide"[\s\S]*?<\/section>/)?.[0]||'';
+    assert.ok(guide.includes(landmark)&&guide.includes(date)&&guide.includes('전국주차장정보표준데이터 보존본'),'reviewed local evidence remains visible with source/date: '+kind+'/'+regionPath);
+    assert.equal((guide.match(/class="locality-source-evidence"/g)||[]).length,1,'source evidence shown once');
+   }
+  }
   const quoteHtml=await (await get('/fare/')).text();
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=taksong"'));
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=daeri"'));
