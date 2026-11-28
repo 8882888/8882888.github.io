@@ -1004,6 +1004,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   const quoteHtml=await (await get('/fare/')).text();
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=taksong"'));
   assert.ok(quoteHtml.includes('href="/reviews/history/?kind=daeri"'));
+  const costGuide=quoteHtml.match(/<section id="fare-cost-quote-keywords-20261107"[\s\S]*?<\/section>/)?.[0]||'';
+  assert.ok(costGuide.includes('자동차 탁송 비용 조회')&&costGuide.includes('통행료·주유비·주차비'));
+  for(const route of ['/taksong/','/daeri/','/service/long-distance-taksong/','/service/taksong/','/설악산탁송/','/지리산탁송/','/route-taksong/'])assert.ok(costGuide.includes('href="'+route+'"'),'quote guide connects '+route);
   // Real route history searches accept the words customers type, not just exact place names.
   for(const phrase of ['설악산탁송','오색탁송','백담사탁송','영덕탁송','강릉탁송']){
     const page=await get('/reviews/history/?kind=taksong&q='+encodeURIComponent(phrase));
