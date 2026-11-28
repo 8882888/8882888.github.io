@@ -261,7 +261,7 @@ test('Municipal focus discovery links only exact owned descendants and preserves
  assert.ok(!html.includes('울산 옥동'));
  assert.equal(ctx.render(andong,'mixed'),'');
  assert.equal(ctx.render(regionByFullName.get('경상북도'),'taksong'),'');
- assert.ok(source.includes(':municipalFocusDiscovery(r,kind))+regionalDecisionPanel'));
+ assert.ok(source.includes(':municipalFocusDiscovery(r,kind))+routeRecoveryRegionalDiscovery(r,kind)+regionalDecisionPanel'));
  assert.ok(hubs>0&&links>=hubs);
  console.log('MUNICIPAL_FOCUS_DISCOVERY '+JSON.stringify({hubs,links}));
 });
