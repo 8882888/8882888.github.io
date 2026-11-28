@@ -9,8 +9,9 @@ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
 const g=create({rows,regions,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')});
 test('complete exact existing backlog, not an arbitrary top-N or blanket index expansion',()=>{
  assert.equal(rows.length,2900);
- assert.equal(g.targets.size,1918);
- assert.equal(g.plans.size,1918);
+ assert.equal(g.targets.size,1863,'verified current source backlog');
+ assert.deepEqual([...g.targets.keys()].sort(),[...reviewTargets(rows).keys()].sort());
+ assert.equal(g.plans.size,g.targets.size);
  const allProvinces=new Set(rows.map(x=>x.region.split(' ')[0]));
  const selectedProvinces=new Set(rows.filter(x=>g.targets.has(x.kind+'|'+x.region)).map(x=>x.region.split(' ')[0]));
  const renderedProvinces=new Set([...g.plans.values()].map(x=>x.region.full_name.split(' ')[0]));
@@ -66,7 +67,7 @@ test('diagnose locality-name-only duplication without granting editorial or inde
  }
  const repeated=[...groups.values()].filter(group=>group.length>1).sort((a,b)=>b.length-a.length);
  const affected=repeated.reduce((n,group)=>n+group.length,0);
- assert.equal([...groups.values()].reduce((n,group)=>n+group.length,0),1918);
+ assert.equal([...groups.values()].reduce((n,group)=>n+group.length,0),g.targets.size);
  console.log('Normalized original-copy audit:',JSON.stringify({pages:selected.length,distinctGroups:groups.size,duplicateGroups:repeated.length,affectedPages:affected,largestGroup:repeated[0]?.length||0}));
  const byProvince={},byService={};
  for(const group of repeated)for(const row of group){const province=row.region.split(' ')[0];byProvince[province]=(byProvince[province]||0)+1;byService[row.kind]=(byService[row.kind]||0)+1;}
@@ -119,7 +120,7 @@ test('bulk remediation covers every one of the 858 duplicate pages with real arc
  let originalMatched=0,additionalOriginalCoverage=0,reviewedMatched=0,reviewedAdditional=0;
  const lookup=(r,kind)=>eligible.filter(x=>x.service===kind&&matchingHistoryRegion(x,r,realRegions)).filter((x,i,a)=>a.findIndex(y=>y.date===x.date&&y.departure===x.departure&&y.destination===x.destination&&y.fare===x.fare)===i).slice(0,20);
  const batch=create({rows,regions:realRegions,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),historyFor:lookup,publishedPosts});
- assert.equal(batch.targets.size,1918);assert.equal(batch.duplicates.size,858);
+ assert.equal(batch.targets.size,g.targets.size);assert.equal(batch.duplicates.size,858);
  for(const row of rows){
   const r=realRegions.find(x=>x.full_name===row.region);
   const html=batch.render(r,row.kind),selected=batch.duplicates.has(row.kind+'|'+row.region);

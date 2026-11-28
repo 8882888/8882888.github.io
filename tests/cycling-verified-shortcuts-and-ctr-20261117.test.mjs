@@ -68,7 +68,9 @@ test('owner supplied full and partial cycling fares remain separate from complet
  for(const page of [hub,detail]) {
   assert.ok(page.includes('풀코스 라이딩 약 320km, 자동차탁송 약 17만원'));
   assert.ok(page.includes('낙동강 300km 이상 풀코스 금액은 별도 견적'));
-  assert.ok(page.includes('라이딩 약 110km 기준으로 자동차탁송 10만원'));
+  assert.ok(page.includes('각각 자동차탁송 10만원 안내입니다'));
+  assert.ok(page.includes('영산강 133km, 섬진강 149km'));
+  assert.ok(!page.includes('라이딩 약 110km'));
  }
  for(const page of [east,nak,yeong,seom]) assert.ok(page.includes('2026년 11월 28일 운영자 안내 기준'));
  assert.ok(east.includes('약 17만원 (라이딩 약 320km)'));
@@ -77,8 +79,10 @@ test('owner supplied full and partial cycling fares remain separate from complet
  assert.ok(east.includes('기존 경포대→통일전망대 8만~9만원은 과거 안내요금'));
  assert.ok(nak.includes('풀코스 별도 견적'));
  assert.ok(nak.includes('>10만원</td>'));
- assert.ok(yeong.includes('약 110km 차량회수 탁송 10만원'));
- assert.ok(seom.includes('약 110km 차량회수 탁송 10만원'));
+ assert.ok(yeong.includes('영산강자전거길 양방향 차량회수 탁송 10만원'));
+ assert.ok(yeong.includes('<p>133km</p>'));
+ assert.ok(seom.includes('섬진강자전거길 양방향 차량회수 탁송 10만원'));
+ assert.ok(seom.includes('<p>149km</p>'));
  assert.ok(seom.includes('섬진강댐 출발은 서로 다른 인수 지점'));
  assert.ok(hub.includes('섬진강 생활체육공원 → 배알도'));
 });
@@ -101,4 +105,38 @@ test('corrected operator rates are explicit in both directions, no starting-pric
  check(pages[3],'안동댐','상주보','10만원');
  check(pages[4],'담양댐','목포 영산강하굿둑','10만원');
  check(pages[5],'임실 섬진강생활체육공원','광양 배알도수변공원','10만원');
+});
+
+
+test('Original colorful course design preserves fare data, 55 real center cards and mobile actions',()=>{
+ const directory=read('route-taksong/index.html');
+ const block=directory.match(/<section id="smart24-cycle-visual-directory-20261128"[\s\S]*?<\/section>/)?.[0]||'';
+ assert.equal((block.match(/class="cycle-rich-card"/g)||[]).length,6);
+ const data=JSON.parse(read('data/cycling-certification-centers.json')).centers;
+ let total=0;
+ for(const [slug,course] of [['seomjin','섬진강'],['yeongsan','영산강'],['eastcoast','동해안'],['nakdonggang','낙동강'],['geumgang','금강'],['ocheon','오천']]){
+  const html=read('route-taksong/courses/'+slug+'/index.html');
+  assert.ok(block.includes('/route-taksong/courses/'+slug+'/'));
+  assert.ok(block.includes('/assets/cycling-routes/'+slug+'-taksong.svg'));
+  assert.ok(html.includes('id="smart24-course-menu-20261128"'));
+  assert.ok(html.includes('aria-current="page"'));
+  for(const i of [2,3,4,6,13])assert.ok(html.includes('href="/route-taksong/#national-cycle-bidirectional-'+i+'"'));
+  assert.ok(html.includes('href="/special/cycling-trail-transport/#baekdu-cycling-priority-20261128"'));
+  assert.ok(html.includes('class="course-hero-summary"'));
+  assert.ok(html.includes('id="smart24-course-handover-20261128"'));
+  const section=html.match(/<section id="smart24-course-centers-20261128"[\s\S]*?<\/section>/)?.[0]||'';
+  const stops=data.filter(c=>slug==='eastcoast'?c.course.startsWith(course):c.course===course);
+  assert.equal((section.match(/class="course-stop"/g)||[]).length,stops.length);
+  for(const c of stops){
+   assert.ok(section.includes(c.name));
+   assert.ok(section.includes('/route-taksong/centers/?from='+c.id));
+   assert.ok(section.includes('/route-taksong/centers/?to='+c.id));
+  }
+  total+=stops.length;
+  assert.equal((html.match(/<h1\b/g)||[]).length,1);
+  assert.ok(html.includes('name="robots" content="index,follow'));
+  assert.ok(html.includes('class="cycle-course-mobile-call" href="tel:18114294"'));
+  assert.ok(!html.includes('10만원부터'));
+ }
+ assert.equal(total,55);
 });
