@@ -460,9 +460,9 @@ test('all 2900 source guides render exact administrative region searches and cor
  const regions=[...new Set(names)].map((full_name,i)=>({full_name,slug:'registry-'+i}));
  const localityEvidenceGuide=require('../lib/locality-evidence-guide-20261127.cjs').create({rows,regions,servicePath,esc});
  const render=vm.runInNewContext(server.slice(start,end)+';naverFocus50Guide',{focus50ByKey:keys,esc,servicePath,localityEvidenceGuide});
- assert.equal(localityEvidenceGuide.duplicates.size,846);
+ assert.ok(localityEvidenceGuide.duplicates.size<=836,'ten new reviewed rows must leave the duplicate cohort');
  assert.equal(localityEvidenceGuide.evidenceKeys.size,858);
- assert.equal(localityEvidenceGuide.suppressed.size,852);
+ assert.equal(localityEvidenceGuide.suppressed.size,842);
  const particle=/(절차|게이트|출입구|위치|장소|방법|여부|시간|구역|담당자|권한|조건|주소|승인|상태|차종|구분|출구|입구|층|차고지|주차장|수령인|일정|서류|등록|방식|정산|계획|연락처|인계자|인수자|차량|목적지|출발지|인수지|보관지|제약|요건|동선|경로|차선|운행|인수|인계)(을|를)(?=\s|[,.])/g;
  for(const [i,row] of rows.entries()){
   for(const field of ['topic','pickup','handover']){

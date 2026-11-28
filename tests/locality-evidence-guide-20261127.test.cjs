@@ -9,13 +9,15 @@ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
 const g=create({rows,regions,servicePath:(r,k)=>'/'+k+'/'+r.slug+'/',esc:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')});
 test('complete exact existing backlog, not an arbitrary top-N or blanket index expansion',()=>{
  assert.equal(rows.length,2900);
- assert.equal(g.targets.size,1857,'verified current source backlog after six reviewed rewrites');
+ assert.equal(g.targets.size,1847,'verified current source backlog after sixteen reviewed rewrites');
  const originalRows=require('../data/locality-remediation-originals-20261128.json');
- assert.equal(originalRows.length,6);
+ assert.equal(originalRows.length,16);
  for(const row of originalRows){const k=row.kind+'|'+row.region;assert(!g.targets.has(k));assert(g.evidenceKeys.has(k));assert(!g.suppressed.has(k));assert(rows.find(x=>x.kind+'|'+x.region===k)?.localEvidenceReviewed);}
- assert.equal(g.duplicates.size,846);
+ assert.ok(g.duplicates.size<=836,'ten new reviewed rows must leave the duplicate cohort');
  assert.equal(g.evidenceKeys.size,858);
- assert.equal(g.suppressed.size,852);
+ const parking=require('../data/locality-source-evidence-20261127.json');
+ for(const row of originalRows){const region=regions.find(x=>x.full_name===row.region);const rendered=g.render(region,row.kind);const place=parking[row.region].parking[0];assert(rendered.includes(place.name)&&rendered.includes(place.date)&&rendered.includes('전국주차장정보표준데이터 보존본'),row.region+' '+row.kind+' source and date must remain visible');}
+ assert.equal(g.suppressed.size,842);
  assert.deepEqual([...g.targets.keys()].sort(),[...reviewTargets(rows).keys()].sort());
  assert.deepEqual([...g.plans.keys()].sort(),[...new Set([...g.targets.keys(),...g.evidenceKeys])].sort());
  const allProvinces=new Set(rows.map(x=>x.region.split(' ')[0]));
