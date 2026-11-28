@@ -148,6 +148,11 @@ test('Actual HTTP: national cycling info, booking, reverse search and 8 course p
   }
   const inputs=[
    ['전국자전거길종주','/route-taksong/'],
+   ['전국자전거길종주탁송요금','/route-taksong/'],
+   ['동해안자전거길풀코스탁송요금','/route-taksong/courses/eastcoast/'],
+   ['낙동강자전거길풀코스탁송요금','/route-taksong/courses/nakdonggang/'],
+   ['영산강자전거길탁송요금','/route-taksong/courses/yeongsan/'],
+   ['섬진강자전거길탁송요금','/route-taksong/courses/seomjin/'],
    ['국토종주역코스','/special/national-cycling-tour/'],
    ['국토종주자전거길종주','/special/national-cycling-tour/'],
    ['영산강하굿둑담양댐탁송','/route-taksong/courses/yeongsan/'],
@@ -206,4 +211,32 @@ test('Jirisan all six original fare rows keep historic prices and distinct forwa
  assert.ok(section.includes('역방향은 별도 견적'));
  assert.ok(html.includes('href="https://jeongukdaeri.kr/지리산탁송/"'));
  assert.ok(section.includes('224453077687'));
+});
+
+test('Four original outdoor fare pages crosslink their existing fee anchors; Seorak six prices and reverse estimates preserved',()=>{
+ const pages=[
+  ['설악산탁송/index.html','/설악산탁송/#mountain-route-fare-table-202611'],
+  ['지리산탁송/index.html','/지리산탁송/#mountain-route-fare-table-202611'],
+  ['route-taksong/index.html','/route-taksong/#cycling-visible-fare-table-20261103'],
+  ['special/cycling-trail-transport/index.html','/special/cycling-trail-transport/#cycling-owner-fares-20261128']
+ ];
+ for(const [p,self] of pages){
+  const html=read(p),nav=html.match(/<nav id="outdoor-fare-discovery-20261128"[\s\S]*?<\/nav>/)?.[0]||'';
+  assert.ok(nav,p);
+  for(const [,link] of pages)if(link!==self)assert.ok(nav.includes('href="'+link+'"'),p+' '+link);
+  assert.equal((html.match(/<h1\b/g)||[]).length,1,p);
+  assert.ok(html.includes('name="robots" content="index,follow'),p);
+ }
+ const seorak=read(pages[0][0]).match(/<section id="mountain-route-fare-table-202611"[\s\S]*?<\/section>/)?.[0]||'';
+ const pairs=[['오색','소공원','7만원'],['한계령','소공원','8만원'],['백담사','소공원','8만원'],['남교리','소공원','8만원'],['한계령','백담사','8만원'],['오색','백담사','8만원']];
+ const rows=[...seorak.matchAll(/<tr><td[^>]*>([\s\S]*?)<\/tr>/g)].map(m=>m[1]);
+ assert.equal(rows.length,6);
+ for(const [i,[a,b,fee]] of pairs.entries()){
+  assert.ok(rows[i].includes(a+' → '+b)&&rows[i].includes('<strong>'+fee+'</strong>'));
+  const urls=[...rows[i].matchAll(/href="(\/fare\/\?service=taksong&amp;from=[^"]+)"/g)].map(m=>new URL(m[1].replaceAll('&amp;','&'),'https://jeongukdaeri.kr').searchParams);
+  assert.equal(urls.length,2);
+  assert.equal(urls[0].get('from'),a);assert.equal(urls[0].get('to'),b);
+  assert.equal(urls[1].get('from'),b);assert.equal(urls[1].get('to'),a);
+  assert.ok(rows[i].includes('역방향 별도 견적'));
+ }
 });
