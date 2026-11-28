@@ -325,6 +325,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    const scenicRow=scenery.lookup(region);
    const scenicPanel=html.match(/<section id="regional-scenic-photo-20261128"[\s\S]*?<\/section>/)?.[0];
    assert.ok(scenicPanel&&scenicPanel.includes('<img')&&scenicPanel.includes(scenicRow.province)&&scenicPanel.includes('사진 원본 및 출처'),loc+' reviewed scenic image');
+   if(loc==='/taksong/busan/')assert.ok(html.indexOf('id="busan-taksong-real-review-first-20261104"')>=0&&html.indexOf('id="busan-taksong-real-review-first-20261104"')<html.indexOf('id="regional-dual-fare-20261128"'),'verified Busan review precedes new panels');
    assert.ok(panel.includes(region)&&panel.includes('예약 전 안내사항'));
    for(const kind of ['daeri','taksong'])assert.ok(panel.includes('/fare/?service='+kind+'&amp;from='+encodeURIComponent(region)),loc+' '+kind);
    assert.ok(html.includes('class="regional-responsive-card"'),loc+' image');
