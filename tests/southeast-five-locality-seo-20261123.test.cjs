@@ -261,7 +261,34 @@ test('Municipal focus discovery links only exact owned descendants and preserves
  assert.ok(!html.includes('울산 옥동'));
  assert.equal(ctx.render(andong,'mixed'),'');
  assert.equal(ctx.render(regionByFullName.get('경상북도'),'taksong'),'');
- assert.ok(source.includes(':municipalFocusDiscovery(r,kind))+regionalDecisionPanel'));
+ assert.ok(source.includes(':municipalFocusDiscovery(r,kind))+routeRecoveryRegionalDiscovery(r,kind)+regionalDecisionPanel'));
  assert.ok(hubs>0&&links>=hubs);
  console.log('MUNICIPAL_FOCUS_DISCOVERY '+JSON.stringify({hubs,links}));
+});
+
+test('Regional recovery discovery uses 14 exact owned taksong pages and five existing course canonicals',async()=>{
+ const {regionsFromLegal}=await import('../scripts/dynamic-url-inventory.mjs');
+ const regionByFullName=new Map(regionsFromLegal(root).map(r=>[r.full_name,r]));
+ const owners=JSON.parse(fs.readFileSync(path.join(root,'data/sitemap-url-owners.json'),'utf8'));
+ const source=fs.readFileSync(path.join(root,'server.js'),'utf8');
+ const start=source.indexOf('const routeRecoveryRegionGuides=new Map('),end=source.indexOf('function regionalDecisionPanel(',start);
+ const vm=require('node:vm'),servicePath=(r,k)=>'/'+k+'/'+r.path+'/';
+ const ctx={sitemapOwnerByPath:owners,servicePath,esc:String};
+ vm.createContext(ctx);
+ vm.runInContext(source.slice(start,end)+'\nthis.guides=routeRecoveryRegionGuides;this.render=routeRecoveryRegionalDiscovery;',ctx);
+ assert.equal(ctx.guides.size,14);
+ const targets=new Set();
+ for(const [name,row] of ctx.guides){
+  const r=regionByFullName.get(name);
+  assert.ok(r,name);assert.ok(owners[servicePath(r,'taksong')],name+' service owner');
+  assert.ok(owners[row[1]],row[1]+' guide owner');
+  const html=ctx.render(r,'taksong');
+  assert.ok(html.includes('href="'+row[1]+'"')&&html.includes(row[3])&&html.includes('실제 완료 운행이나 고정요금을 뜻하지 않습니다'));
+  assert.equal(ctx.render(r,'daeri'),'');
+  assert.equal(ctx.render({...r,full_name:name+' 다른 지역'},'taksong'),'');
+  targets.add(row[1]);
+ }
+ assert.equal(targets.size,5);
+ assert.ok(source.includes('+routeRecoveryRegionalDiscovery(r,kind)+regionalDecisionPanel'));
+ console.log('REGIONAL_ROUTE_RECOVERY_DISCOVERY '+JSON.stringify({regionalPages:14,canonicalGuides:targets.size,links:14}));
 });
