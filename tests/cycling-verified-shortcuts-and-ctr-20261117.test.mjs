@@ -56,3 +56,28 @@ test('course fare directory keeps four historical rates and separate forward and
  assert.ok(detail.includes('href="/route-taksong/#cycling-visible-fare-table-20261103"'));
  assert.ok(hub.indexOf('id="cycling-visible-fare-table-20261103"')<hub.indexOf('id="priority-cycle-discovery-20261128"'));
 });
+
+
+test('owner supplied full and partial cycling fares remain separate from completed rides and old rates',()=>{
+ const hub=read('route-taksong/index.html');
+ const east=read('route-taksong/courses/eastcoast/index.html');
+ const nak=read('route-taksong/courses/nakdonggang/index.html');
+ const yeong=read('route-taksong/courses/yeongsan/index.html');
+ const seom=read('route-taksong/courses/seomjin/index.html');
+ const detail=read('special/cycling-trail-transport/index.html');
+ for(const page of [hub,detail]) {
+  assert.ok(page.includes('풀코스 라이딩 약 320km, 자동차탁송 약 17만원'));
+  assert.ok(page.includes('낙동강 300km 이상 풀코스 금액은 별도 견적'));
+  assert.ok(page.includes('라이딩 약 110km 기준으로 자동차탁송 10만원'));
+ }
+ for(const page of [east,nak,yeong,seom]) assert.ok(page.includes('2026년 11월 28일 운영자 안내 기준'));
+ assert.ok(east.includes('약 17만원 (라이딩 약 320km)'));
+ assert.ok(east.includes('기본 10만원부터'));
+ assert.ok(east.includes('기존 경포대→통일전망대 8만~9만원은 과거 안내요금'));
+ assert.ok(nak.includes('풀코스 별도 견적'));
+ assert.ok(nak.includes('기본 10만원부터'));
+ assert.ok(yeong.includes('약 110km 차량회수 탁송 10만원'));
+ assert.ok(seom.includes('약 110km 차량회수 탁송 10만원'));
+ assert.ok(seom.includes('섬진강댐 출발은 서로 다른 인수 지점'));
+ assert.ok(hub.includes('섬진강 생활체육공원 → 배알도'));
+});
