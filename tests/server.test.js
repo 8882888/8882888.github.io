@@ -597,6 +597,10 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
     assert.ok(taksongHubHtml.includes('href="'+route+'"'),'taksong hub must link outdoor handover guide '+route);
   }
   assert.ok(taksongHubHtml.includes('id="taksong-outdoor-handover"'),'taksong hub must include practical outdoor handover guidance');
+  const outdoorSection=taksongHubHtml.match(/<section id="taksong-outdoor-handover"[\s\S]*?<\/section>/)?.[0]||'';
+  for(const course of ['/route-taksong/courses/yeongsan/','/route-taksong/courses/seomjin/','/route-taksong/courses/eastcoast/','/route-taksong/courses/nakdonggang/','/special/national-cycling-tour/']){
+   assert.ok(outdoorSection.includes('href="'+course+'"'),'taksong hub directly links canonical course '+course);
+  }
   assert.ok(taksongHubHtml.includes('id="taksong-service-center-handover"'),'taksong hub must provide service center handover guidance');
   assert.ok(taksongHubHtml.includes('href="/service/taksong-purpose/"'),'service center guidance must link to delivery purpose');
   assert.ok(taksongHubHtml.includes('href="/business/rental-car/"'),'service center guidance must link rental and accident replacement cars');
