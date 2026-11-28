@@ -72,12 +72,33 @@ test('owner supplied full and partial cycling fares remain separate from complet
  }
  for(const page of [east,nak,yeong,seom]) assert.ok(page.includes('2026년 11월 28일 운영자 안내 기준'));
  assert.ok(east.includes('약 17만원 (라이딩 약 320km)'));
- assert.ok(east.includes('기본 10만원부터'));
+ assert.ok(east.includes('경포대 → 고성 통일전망대</th>')&&east.includes('통일전망대 → 강릉 경포대</th>'));
+ assert.ok(east.includes('>8만원</td>')&&east.includes('>10만원</td>'));
  assert.ok(east.includes('기존 경포대→통일전망대 8만~9만원은 과거 안내요금'));
  assert.ok(nak.includes('풀코스 별도 견적'));
- assert.ok(nak.includes('기본 10만원부터'));
+ assert.ok(nak.includes('>10만원</td>'));
  assert.ok(yeong.includes('약 110km 차량회수 탁송 10만원'));
  assert.ok(seom.includes('약 110km 차량회수 탁송 10만원'));
  assert.ok(seom.includes('섬진강댐 출발은 서로 다른 인수 지점'));
  assert.ok(hub.includes('섬진강 생활체육공원 → 배알도'));
+});
+
+test('corrected operator rates are explicit in both directions, no starting-price wording',()=>{
+ const hub=read('route-taksong/index.html'),detail=read('special/cycling-trail-transport/index.html');
+ const pages=[hub,detail,...['eastcoast','nakdonggang','yeongsan','seomjin'].map(x=>read('route-taksong/courses/'+x+'/index.html'))];
+ for(const html of pages)assert.ok(!html.includes('10만원부터'));
+ assert.ok(hub.includes('정방향 8만원 · 역방향 8만원'));
+ assert.ok(hub.includes('정방향 약 17만원 · 역방향 약 17만원'));
+ const check=(html,a,b,fee)=>{
+  for(const [from,to] of [[a,b],[b,a]]) {
+   const row=[...html.matchAll(/<tr><th scope="row"[^>]*>([^<]+)<\/th><td[^>]*>([^<]+)<\/td>/g)].find(m=>m[1]===from+' → '+to);
+   assert.ok(row,from+' → '+to);
+   assert.equal(row[2],fee);
+  }
+ };
+ check(pages[2],'강릉 경포대','고성 통일전망대','8만원');
+ check(pages[2],'울진 은어다리','영덕 해맞이공원','10만원');
+ check(pages[3],'안동댐','상주보','10만원');
+ check(pages[4],'담양댐','목포 영산강하굿둑','10만원');
+ check(pages[5],'임실 섬진강생활체육공원','광양 배알도수변공원','10만원');
 });
