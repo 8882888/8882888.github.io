@@ -1722,6 +1722,14 @@ function routeRecoveryRegionalDiscovery(r,kind){
  if(!row||!sitemapOwnerByPath[servicePath(r,kind)]||!sitemapOwnerByPath[row[1]])return '';
  return '<section id="route-recovery-regional-discovery-20261128"><h2>'+esc(row[2]+' · '+r.full_name+' 차량 인수·인계')+'</h2><p>'+esc(row[3])+' 산행·라이딩 진행 방향과 자동차 이동 방향은 별도로 정하며, 실제 완료 운행이나 고정요금을 뜻하지 않습니다.</p><p><a href="'+esc(row[1])+'">'+esc(row[2]+' 코스별 차량회수 안내')+'</a>'+(row[4]?' · <a href="'+esc(row[1]+'#'+row[4])+'">'+esc(r.full_name+' 주요 지점별 인수·인계')+'</a>':'')+'</p></section>';
 }
+function regionalDualFarePanel(r,kind,evidence){
+ const full=esc(r.full_name),from=encodeURIComponent(r.full_name);
+ const fee=service=>'/fare/?service='+service+'&amp;from='+from;
+ const row=evidence[0];
+ const sample=row?'<p style="margin:12px 0 0"><strong>확인된 '+(kind==='daeri'?'대리운전':'자동차탁송')+' 과거 운행요금:</strong> <a href="'+esc(row.url)+'">'+esc(row.departure+' → '+row.destination)+'</a> · '+esc(row.date)+' · '+esc(row.fare||'요금 미기록')+' (당시 기록, 현재 견적 아님)</p>':'';
+ const card=(service,title,notice,background)=>'<div style="min-width:0;border:1px solid #cbdde8;border-radius:12px;background:#fff;padding:14px"><h3 style="margin:0 0 8px;color:#173c54">'+full+' '+title+'</h3><p style="margin:0 0 10px">'+notice+'</p><a href="'+fee(service)+'" style="display:block;min-height:44px;box-sizing:border-box;text-align:center;padding:10px;background:'+background+';color:white;font-weight:800;border-radius:9px;text-decoration:none">'+title+' 예상요금 조회</a><p style="margin:8px 0 0"><a href="'+servicePath(r,service)+'">'+full+' '+(service==='daeri'?'대리운전':'자동차탁송')+' 상세 안내</a></p></div>';
+ return '<section id="regional-dual-fare-20261128" aria-label="'+full+' 대리요금 및 탁송요금 안내" style="border:1px solid #b9d6e4;border-radius:16px;background:#eef6fa;padding:16px;margin:12px 0"><h2 style="margin:0 0 10px">'+full+' 지역 안내·대리요금·탁송요금</h2><p>출발지는 선택한 지역입니다. 실제 차량 주차 위치와 도착 주소를 입력하면 도로거리 기반 예상요금을 조회할 수 있습니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px">'+card('daeri','대리요금','고객 동승, 출발 시각, 경유·대기 및 기사 복귀 조건 확인.','#126a60')+card('taksong','탁송요금','차량 단독 이동, 차종, 차량 상태, 키 인계 및 인수·인계 시간 확인.','#14558a')+'</div><p style="margin:12px 0 0"><strong>예약 전 안내사항:</strong> 출발지·도착지·희망시간·차종·연락 가능 번호를 준비하세요. 현재 확정요금과 기사 배정은 상담 후 확인합니다.</p>'+sample+'<p style="margin:12px 0 0"><a href="tel:18114294">전화 1811-4294</a> · <a href="https://open.kakao.com/o/sGV88r7h">카카오 상담</a></p></section>';
+}
 function regionalDecisionPanel(r,kind,evidence){
  const label=seoRegionLabel(r),service=kind==='daeri'?'대리운전':'자동차탁송';
  const from=encodeURIComponent(r.full_name),fare='/fare/?service='+kind+'&amp;from='+from;
@@ -2147,7 +2155,8 @@ async function servicePage(r,kind){
  // do not edit any saved trip records, other provinces, or original Naver post titles.
  // Show useful local service information and a phone CTA before a generic promotional card.
  // Keep the regional card close to the first guide and let it fit mobile widths.
- const imageAfterContent=visibleCard?placeRegionalCardAfterIntro(rendered,visibleCard,visibleCard.replace('loading="eager" fetchpriority="high"',(priorityMeta||r.level==='시도')?'loading="eager" fetchpriority="high"':'loading="lazy" decoding="async"')):rendered;
+ const dualFare=regionalDualFarePanel(r,kind,publicEvidence);
+ const imageAfterContent=visibleCard?placeRegionalCardAfterIntro(rendered,visibleCard,visibleCard.replace('loading="eager" fetchpriority="high"',(priorityMeta||r.level==='시도')?'loading="eager" fetchpriority="high"':'loading="lazy" decoding="async"')+dualFare):rendered.replace('<main>','<main>'+dualFare);
  // Keep the regional OG thumbnail fully described and dimensioned for crawlers.
  const mobileCardMeta=regionImagePath?'<meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="800"><meta property="og:image:alt" content="'+esc(displayBrand)+' 지역별 차량 서비스 명함 이미지">':'';
  const imageWithMetadata=mobileCardMeta?imageAfterContent.replace('</head>',mobileCardMeta+'</head>'):imageAfterContent;
@@ -3324,7 +3333,7 @@ function directionalServiceTarget(query,resolve,defaultService='taksong'){
 }
 const liveCardLabel=(r,kind)=>seoRegionLabel(r)+(kind==='daeri'?'대리운전':'탁송');
 const liveCardPublicData=(r,kind)=>({
- kind,label:liveCardLabel(r,kind),
+ kind,label:liveCardLabel(r,kind),regionName:r.full_name,
  image:cardPngPath(r.slug,kind),
  previewImage:cardPreviewWebpPath(r.slug,kind),
  url:servicePath(r,kind),
@@ -4025,7 +4034,7 @@ if(pathname==='/api/region-card-preview'){
    ?keywordExpansion.preview(categoryTopic,{slug:national.region.slug,label:seoRegionLabel(national.region),url:servicePath(national.region,kind),phone:contact}):null;
   const image=categoryCard?.image||nationwideExplorer.imageUrl(query,kind);
   const data={status:'matched',query,locality:national.region.full_name,service:kind,
-   region:national.region.full_name,cards:[{kind,label:query,image,previewImage:image,
+   region:national.region.full_name,cards:[{kind,label:query,image,previewImage:image,regionName:national.region.full_name,
     ...(categoryCard?{keywordImage:nationwideExplorer.imageUrl(query,kind)}:{}),
     // A regional card always opens its representative guide, not a transient
     // quote URL or fragment. Keep the prefilled quote as a separate action.
@@ -4079,6 +4088,7 @@ if(pathname==='/api/region-card-preview'){
    if(['daeri-cost-quote','taksong-cost-quote'].includes(topic.slug))card.displayKeyword=query+' · 예상 참고요금 조회';
    else if(!/탁송$/.test(compact(query)))card.displayKeyword=query+' · 코스·차량회수 안내';
   }
+  if(region||themedRegion)card.regionName=(region||themedRegion).full_name;
   const exact=exactRegionalKeywordCard(region||themedRegion,card.kind,query);
   if(exact)Object.assign(card,exact);
  }
@@ -4218,7 +4228,7 @@ if(pathname==='/region/'){
  const regionDirectorySchema=JSON.stringify({'@context':'https://schema.org','@type':'CollectionPage',name:'전국 지역별 자동차탁송·대리운전 검색',url:'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/',description:'전국 행정구역별 자동차탁송·대리운전 안내와 상담'}).replace(/</g,'\\u003c');
  if(rawQuery||requestedService)res.setHeader('X-Robots-Tag','noindex, follow');
  const countNote=rawQuery?(matches.length===0?(keywordExpansion.resolve(rawQuery)?'코스·서비스 키워드에 맞는 이미지를 아래에 자동 표시합니다.':'일치하는 행정구역이 없습니다. 지역명을 다시 확인하거나 서비스 키워드를 입력해 주세요.'):'검색 일치 최대 100개 지역을 표시합니다. 정확히 일치하는 지역의 명함은 자동으로 열립니다.'):'지역명·산행 코스·자전거길·대리운전·탁송 서비스별 이미지를 자동 펼침으로 확인할 수 있습니다.';
- return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section aria-label="전국 지역 검색"><p>부산대리운전·부산렌트카탁송·영산강길종주탁송·설악산탁송·골프장대리운전 등 키워드마다 해당 지역·코스·서비스의 이미지를 자동 표시합니다. 이미지를 누르거나 확대 링크로 크게 볼 수 있습니다.</p>'+form+'<div class="region-card-live" data-card-preview-output hidden aria-label="지역별 실시간 명함 미리보기"></div><p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/').replace('</head>','<link rel="stylesheet" href="/assets/region-card-preview.css?v=20261103-keyword3"></head>').replace('</body>','<script src="/assets/region-card-preview.js?v=20261109-v7-text-only" defer></script></body>'),'/region/'));
+ return respond(res,200,applySeo(layout('전국 대리운전·탁송 지역 검색','전국 '+regions.length+'개 지역 검색', '<script type="application/ld+json">'+regionDirectorySchema+'</script><section aria-label="전국 지역 검색"><p>부산대리운전·부산렌트카탁송·영산강길종주탁송·설악산탁송·골프장대리운전 등 키워드마다 해당 지역·코스·서비스의 이미지를 자동 표시합니다. 이미지를 누르거나 확대 링크로 크게 볼 수 있습니다.</p>'+form+'<div class="region-card-live" data-card-preview-output hidden aria-label="지역별 실시간 명함 미리보기"></div><p>'+countNote+'</p>'+links+'</section>'+regionOriginalGuide+regionDirectOriginalLinks+landmarkLinks,'https://'+(process.env.PUBLIC_HOST||'jeongukdaeri.kr')+'/region/').replace('</head>','<link rel="stylesheet" href="/assets/region-card-preview.css?v=20261128-locality-guide-v15"></head>').replace('</body>','<script src="/assets/region-card-preview.js?v=20261128-locality-guide-v15" defer></script></body>'),'/region/'));
 }
 const placeMatch=pathname.match(new RegExp('^/place/(place-[a-f0-9]+)/?$'));if(placeMatch){const item=landmarkBySlug.get(placeMatch[1]);return item?respond(res,200,landmarkPage(item)):respond(res,404,'장소 정보를 찾을 수 없습니다.')}
  // Serve current v7 WebP regional cards while retaining old v5/v6 URLs for compatibility.
