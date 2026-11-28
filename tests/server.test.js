@@ -315,6 +315,18 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(visualPolicy.isSafeVisual(scenery.photoUrl(row)));
    assert.ok(visualPolicy.stripPersonVehicleImages(scenery.render({full_name:row.province})).includes('<img'));
   }
+  assert.equal(scenery.municipalRecords.length,9);
+  assert.equal(new Set(scenery.municipalRecords.map(r=>r.locality)).size,9);
+  for(const row of scenery.municipalRecords){
+   assert.equal(scenery.lookup(row.locality),row);
+   assert.equal(scenery.lookup(row.locality+' 테스트동'),row);
+   assert.equal(scenery.lookup(row.province).locality,undefined);
+   assert.ok(visualPolicy.isSafeVisual(scenery.photoUrl(row)));
+   const rendered=visualPolicy.stripPersonVehicleImages(scenery.render({full_name:row.locality}));
+   assert.ok(rendered.includes('<img')&&rendered.includes(row.locality)&&rendered.includes(row.place));
+  }
+  assert.equal(scenery.lookup('강원도 강릉시').locality,'강원특별자치도 강릉시');
+  assert.equal(scenery.lookup('경상남도 포항시').locality,undefined);
   assert.ok(!visualPolicy.isSafeVisual('https://commons.wikimedia.org/wiki/Special:FilePath/Unreviewed.jpg?width=960'));
   assert.equal(scenery.lookup('없는지역'),undefined);
   for(const [loc,region] of [['/taksong/busan/','부산광역시'],['/daeri/daegu/','대구광역시'],['/taksong/seoul/gangnam-gu/','서울특별시 강남구']]){
