@@ -1,7 +1,7 @@
 'use strict';
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const rows=[...require('../data/regional-scenic-photos-20261128.json'),...require('../data/municipal-scenic-photos-20261128.json')];
+const rows=[...require('../data/regional-scenic-photos-20261128.json'),...(process.env.SMART24_SCENIC_PROVINCES_ONLY==='1'?[]:require('../data/municipal-scenic-photos-20261128.json'))];
 const BASE='https://jeongukdaeri.kr';
 const OUT=path.join(process.cwd(),'artifacts','regional-scenic-live');
 fs.mkdirSync(OUT,{recursive:true});
