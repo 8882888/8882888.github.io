@@ -315,8 +315,8 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(visualPolicy.isSafeVisual(scenery.photoUrl(row)));
    assert.ok(visualPolicy.stripPersonVehicleImages(scenery.render({full_name:row.province})).includes('<img'));
   }
-  assert.equal(scenery.municipalRecords.length,29);
-  assert.equal(new Set(scenery.municipalRecords.map(r=>r.locality)).size,29);
+  assert.equal(scenery.municipalRecords.length,39);
+  assert.equal(new Set(scenery.municipalRecords.map(r=>r.locality)).size,39);
   for(const row of scenery.municipalRecords){
    assert.equal(scenery.lookup(row.locality),row);
    assert.equal(scenery.lookup(row.locality+' 테스트동'),row);
@@ -333,6 +333,9 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
   assert.equal(scenery.lookup('충청남도 천안시 동남구').locality,'충청남도 천안시');
   assert.equal(scenery.lookup('충청북도 청주시 상당구').locality,'충청북도 청주시');
   assert.equal(scenery.lookup('충청남도 태안군 안면읍').locality,'충청남도 태안군');
+  assert.equal(scenery.lookup('전라북도 전주시 완산구').locality,'전북특별자치도 전주시');
+  assert.equal(scenery.lookup('전북특별자치도 무주군').place,'덕유산 향적봉에서 바라본 풍경');
+  assert.equal(scenery.lookup('전라남도 구례군 산동면').locality,'전라남도 구례군');
   assert.ok(scenery.render({full_name:'충청남도 당진시'}).includes('원 제공기관 자료'));
   assert.ok(!visualPolicy.isSafeVisual('https://commons.wikimedia.org/wiki/Special:FilePath/Unreviewed.jpg?width=960'));
   assert.equal(scenery.lookup('없는지역'),undefined);
