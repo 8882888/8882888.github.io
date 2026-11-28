@@ -3755,6 +3755,19 @@ if(searchIntent){
   }[normalized])||null;
  // Bidirectional course search resolves only exact, human-reviewed rider intent to existing canonical guides.
  const cyclingBidirectionalTarget=({
+  '전국자전거길종주탁송요금':'/route-taksong/',
+  '전국자전거길코스별탁송요금':'/route-taksong/',
+  '자전거길종주탁송요금':'/route-taksong/',
+  '국토종주자전거길탁송요금':'/special/national-cycling-tour/',
+  '동해안자전거길탁송요금':'/route-taksong/courses/eastcoast/',
+  '동해안자전거길풀코스탁송요금':'/route-taksong/courses/eastcoast/',
+  '경포대통일전망대탁송요금':'/route-taksong/courses/eastcoast/',
+  '통일전망대경포대탁송요금':'/route-taksong/courses/eastcoast/',
+  '낙동강자전거길탁송요금':'/route-taksong/courses/nakdonggang/',
+  '낙동강자전거길풀코스탁송요금':'/route-taksong/courses/nakdonggang/',
+  '영산강자전거길탁송요금':'/route-taksong/courses/yeongsan/',
+  '섬진강자전거길탁송요금':'/route-taksong/courses/seomjin/',
+  '백두대간자전거길탁송요금':'/special/cycling-trail-transport/',
   '전국자전거길종주':'/route-taksong/',
   '전국자전거길종주코스':'/route-taksong/',
   '전국자전거길역코스':'/route-taksong/',
