@@ -9,7 +9,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from publish_verified_case import SOURCE, QUEUE, STATE, OUT, complete, identifier, distinctive_case_title, load_focus_names, focus_pairs, select_case_batch
+from publish_verified_case import SOURCE, QUEUE, STATE, OUT, complete, identifier, distinctive_case_title, load_focus_names, focus_pairs, select_case_batch, PRIORITY_CASE_IDS
 
 class VerifiedCaseTitleIntegrity(unittest.TestCase):
     @classmethod
@@ -113,6 +113,37 @@ class FocusPublicationOrder(unittest.TestCase):
         self.assertEqual(focus_pairs(invalid, {name}), set())
         self.assertEqual(select_case_batch([old, again, partial, invalid, newest], state, {name}, limit=1),
                          [(identifier(newest), newest)])
+
+    def test_priority_ids_share_two_slots_and_keep_service_alternation(self):
+        prior = self.ride("taksong", "2026-11-01", "prior")
+        d = self.ride("daeri", "2026-11-02", "priority driver")
+        t = self.ride("taksong", "2026-11-03", "priority transport")
+        third = self.ride("daeri", "2026-11-04", "extra priority")
+        newest = [self.ride("daeri", "2026-11-20", "new driver"),
+                  self.ride("taksong", "2026-11-19", "new transport"),
+                  self.ride("daeri", "2026-11-18", "new driver 2")]
+        invalid = dict(self.ride("daeri", "2026-11-21", "invalid"), verified=False)
+        state = [{"id": identifier(prior), "service": "taksong"}]
+        records = [prior, d, t, third, invalid, *newest]
+        ids = (identifier(invalid), identifier(prior), identifier(d), identifier(t), identifier(third))
+        self.assertEqual([r for _, r in select_case_batch(records, state, set(), priority_ids=ids)],
+                         [d, t, *newest])
+        self.assertEqual(len(state), 1)
+
+    def test_gangneung_reviewed_exact_source_priority(self):
+        records = json.loads(SOURCE.read_text(encoding="utf-8"))
+        if QUEUE.exists():
+            records += json.loads(QUEUE.read_text(encoding="utf-8"))
+        state = json.loads(STATE.read_text(encoding="utf-8"))
+        eligible = {identifier(r): r for r in records if complete(r)}
+        self.assertEqual(PRIORITY_CASE_IDS, ("3af441153b9bd30b", "55ad961680c15221"))
+        self.assertEqual(eligible[PRIORITY_CASE_IDS[0]]["departure"], "강원특별자치도 강릉시 주문진읍")
+        self.assertEqual(eligible[PRIORITY_CASE_IDS[0]]["destination"], "강원특별자치도 강릉시 사천면")
+        self.assertEqual(eligible[PRIORITY_CASE_IDS[1]]["departure"], "강원특별자치도 강릉시 안현동")
+        self.assertEqual(eligible[PRIORITY_CASE_IDS[1]]["destination"], "강원특별자치도 고성군 현내면")
+        pending = set(PRIORITY_CASE_IDS) - {p["id"] for p in state}
+        selected = select_case_batch(records, state, load_focus_names())
+        self.assertTrue(pending <= {key for key, _ in selected})
 
     def test_current_source_registry_and_dry_run_coverage(self):
         names = load_focus_names()

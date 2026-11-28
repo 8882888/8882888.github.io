@@ -17,6 +17,11 @@ OUT = ROOT / "reviews" / "verified"
 DIRECTORY = OUT / "index.html"
 BATCH_SIZE = 5
 
+# One-time editorial preference: owner-reported Search Advisor 2026-11-27,
+# Gangneung daeri 3/2184 clicks (0.1%); taksong 3/510 (0.6%).
+# Exact verified queue records only, not a claim of official index status.
+PRIORITY_CASE_IDS = ("3af441153b9bd30b", "55ad961680c15221")
+
 def esc(s):
     return html.escape(str(s), quote=True)
 
@@ -253,9 +258,10 @@ def focus_pairs(ride, names):
             if ride[key] in names}
 
 
-def select_case_batch(records, published, focus_names, limit=BATCH_SIZE):
+def select_case_batch(records, published, focus_names, limit=BATCH_SIZE, priority_ids=PRIORITY_CASE_IDS):
     """Keep service alternation and the five-case cap; use at most two slots
-    for previously uncovered exact focus/service pairs in saved public cases.
+    for explicitly reviewed IDs or previously uncovered exact focus/service pairs.
+    Priorities consume the same two slots, not additional publications.
     Other slots retain the existing newest-first ordering.
     """
     used = {p["id"] for p in published}
@@ -272,10 +278,18 @@ def select_case_batch(records, published, focus_names, limit=BATCH_SIZE):
         pool = [r for r in candidates if r["service"] != previous] or candidates
         selected = pool[0]
         if focus_slots:
-            best = max(pool, key=lambda r: len(focus_pairs(r, focus_names) - covered))
-            if focus_pairs(best, focus_names) - covered:
-                selected = best
+            # The pool already excludes previously published and unverified
+            # records and respects alternating service when possible.
+            priority = next((r for key in priority_ids for r in pool
+                             if identifier(r) == key), None)
+            if priority is not None:
+                selected = priority
                 focus_slots -= 1
+            else:
+                best = max(pool, key=lambda r: len(focus_pairs(r, focus_names) - covered))
+                if focus_pairs(best, focus_names) - covered:
+                    selected = best
+                    focus_slots -= 1
         batch.append((identifier(selected), selected))
         candidates = [r for r in candidates if identifier(r) != identifier(selected)]
         covered.update(focus_pairs(selected, focus_names))
