@@ -34,9 +34,17 @@ fs.mkdirSync(OUT,{recursive:true});
     await img.scrollIntoViewIfNeeded();
     await page.waitForFunction(()=>{const i=document.querySelector('#regional-scenic-photo-20261128 img');return i&&i.complete&&i.naturalWidth>0},null,{timeout:20000});
     const dims=await img.evaluate(i=>({width:i.naturalWidth,height:i.naturalHeight,displayWidth:i.getBoundingClientRect().width,left:i.getBoundingClientRect().left,right:i.getBoundingClientRect().right,src:i.currentSrc}));
-    assert.ok(dims.width>=320&&dims.height>=180,'actual decoded photograph dimensions');
+    entry.dimensions=dims;
+    // Two reviewed panoramic originals are intentionally very wide. Confirm the
+    // actual decoded thumbnail preserves their documented source proportions.
+    // Do not relax normal-photo thresholds or the zero-size/broken-image checks.
+    const panoramic={'Countryandcitydaegu.jpg':[960,122],'Hahoe Folk Village Panorama.jpg':[960,134]}[row.file];
+    if(panoramic){
+     assert.ok(dims.width>=panoramic[0]&&dims.height>=panoramic[1],'panorama decoded thumbnail minimum dimensions '+JSON.stringify(dims));
+     assert.ok(Math.abs(dims.height/dims.width-panoramic[1]/panoramic[0])<0.003,'panorama original aspect ratio '+JSON.stringify(dims));
+    }else assert.ok(dims.width>=320&&dims.height>=180,'actual decoded photograph dimensions '+JSON.stringify(dims));
     assert.ok(dims.left>=-2&&dims.right<=392&&dims.displayWidth>0,'mobile image within viewport');
-    entry.dimensions=dims;entry.passed=true;
+    entry.passed=true;
     console.log('PASS '+row.province+' '+dims.width+'x'+dims.height+' '+target.pathname);
    }catch(error){entry.error=String(error.message||error);console.error('FAIL '+row.province+' '+entry.error);}
    finally{results.push(entry);await context.close();}
