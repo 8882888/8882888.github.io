@@ -15,6 +15,8 @@ PATHS = [
     "/daeri/gangwon/gangreung-si/", "/taksong/gangwon/gangreung-si/",
     "/route-taksong/", "/route-taksong/centers/",
     "/route-taksong/courses/nakdonggang/", "/route-taksong/courses/eastcoast/",
+    "/route-taksong/courses/yeongsan/", "/route-taksong/courses/seomjin/",
+    "/fare/", "/service/long-distance-daeri/",
     "/special/national-cycling-tour/", "/special/cycling-trail-transport/",
     "/service/corporate/", "/service/taksong/", "/service/long-distance-taksong/",
 ]
@@ -24,10 +26,16 @@ class Metadata(HTMLParser):
         self.canonicals = []
         self.robots = []
         self.descriptions = []
+        self.h1_count = 0
+        self.links = set()
         self.title = ""
         self.in_title = False
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
+        if tag == "h1":
+            self.h1_count += 1
+        if tag == "a" and a.get("href"):
+            self.links.add(a["href"])
         if tag == "title":
             self.in_title = True
         if tag == "link" and "canonical" in (a.get("rel") or "").lower().split():
@@ -63,7 +71,8 @@ def inspect(path):
             parser.feed(response.read(2_000_000).decode("utf-8", errors="replace"))
         result.update(title=parser.title.strip(), canonicals=parser.canonicals,
                       description_count=len(parser.descriptions),
-                      robots=parser.robots)
+                      robots=parser.robots, h1_count=parser.h1_count,
+                      description=parser.descriptions[0] if len(parser.descriptions) == 1 else None)
         issues = []
         if result["http_status"] != 200:
             issues.append("non_200")
@@ -80,6 +89,15 @@ def inspect(path):
             issues.append("missing_title")
         if len(parser.descriptions) != 1 or not parser.descriptions[0].strip():
             issues.append("missing_or_duplicate_description")
+        if parser.h1_count != 1:
+            issues.append("missing_or_multiple_h1")
+        if path == "/taksong/":
+            direct = ["/route-taksong/courses/yeongsan/", "/route-taksong/courses/seomjin/",
+                      "/route-taksong/courses/eastcoast/", "/route-taksong/courses/nakdonggang/",
+                      "/special/national-cycling-tour/"]
+            result["missing_direct_course_links"] = [p for p in direct if p not in parser.links]
+            if result["missing_direct_course_links"]:
+                issues.append("missing_direct_course_links")
         result["issues"] = issues
         result["technical_status"] = "REVIEW" if issues else "PASS"
     except urllib.error.HTTPError as error:
@@ -92,6 +110,16 @@ def inspect(path):
 def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
         rows = list(pool.map(inspect, PATHS))
+    for key in ("title", "description"):
+        groups = {}
+        for row in rows:
+            if row.get(key):
+                groups.setdefault(row[key].strip(), []).append(row)
+        for group in groups.values():
+            if len(group) > 1:
+                for row in group:
+                    row.setdefault("issues", []).append("duplicate_" + key + "_in_priority_sample")
+                    row["technical_status"] = "REVIEW"
     report = {"scope": "public HTTP/HTML technical diagnostic only",
               "commit": os.environ.get("GITHUB_SHA"),
               "naver_official_status": "NOT_INSPECTED",
