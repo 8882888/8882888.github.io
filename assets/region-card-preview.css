@@ -56,3 +56,12 @@
  .smart24-card-dialog-image{max-height:calc(94vh - 90px)}
 }
 @media(max-width:360px){.smart24-card-actions{grid-template-columns:1fr}.smart24-card-actions .smart24-card-phone{grid-column:auto}}
+
+/* Dual service decision panel, visible with confirmed locality images. */
+.smart24-dual-fare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:10px;margin:10px 0}
+.smart24-dual-fare-option{min-width:0;background:#f5fafc;border:1px solid #c6dce8;border-radius:12px;padding:12px}
+.smart24-dual-fare-option h4{margin:0 0 7px;color:#16465b;font-size:18px}
+.smart24-dual-fare-option p{margin:0 0 9px;font-size:14px}
+.smart24-dual-fare-option a{display:flex;align-items:center;justify-content:center;min-height:44px;background:#14558a;color:white;text-decoration:none;font-weight:800;border-radius:8px;padding:8px}
+.smart24-dual-fare-option:first-child a{background:#126a60}
+.smart24-dual-fare-option a:focus-visible{outline:3px solid #f2aa28;outline-offset:2px}

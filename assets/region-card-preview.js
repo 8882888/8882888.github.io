@@ -71,7 +71,7 @@
   const kinds=service==='daeri'?['daeri']:service==='taksong'?['taksong']:
    compact.includes('대리운전')?['daeri']:compact.includes('탁송')?['taksong']:['daeri','taksong'];
   return {status:'matched',region:city.name,cards:kinds.map(kind=>({
-   kind,displayKeyword:/대리운전$|탁송$/.test(compact)?compact:city.name+(kind==='daeri'?'대리운전':'탁송'),
+   kind,regionName:city.aliases.at(-1),displayKeyword:/대리운전$|탁송$/.test(compact)?compact:city.name+(kind==='daeri'?'대리운전':'탁송'),
    keywordImage:'/keyword-card/exact/area-'+city.id+'-'+kind+'.svg?q='+encodeURIComponent(/대리운전$|탁송$/.test(compact)?compact:city.name+(kind==='daeri'?'대리운전':'탁송')),
    image:'/card/area-'+city.id+'-'+kind+'-brand-v7.png',
    url:'/'+kind+'/'+city.slug+'/',
@@ -274,6 +274,19 @@
     addLink(actions,page+'#smart24-course-handover-20261128','차량 인수·인계 안내');
     addLink(actions,'https://open.kakao.com/o/sGV88r7h','카카오 상담');
     article.append(title,picture,summary,description,actions);
+   }else if(card.regionName){
+    const info=node('div','smart24-card-course-info');
+    info.append(node('h4','smart24-card-fare-heading',card.regionName+' 안내사항·대리요금·탁송요금'),node('p','','실제 차량 위치, 도착지, 이용 시간, 차종을 확인합니다. 현재 요금과 배차는 상담 후 확정됩니다.'));
+    const choices=node('div','smart24-dual-fare-grid');
+    for(const [kind,label,notice] of [['daeri','대리요금','고객 동승·심야·장거리·경유 및 대기'],['taksong','탁송요금','차량 단독 이동·인수 및 인계·키 전달']]){
+     const box=node('div','smart24-dual-fare-option');
+     box.append(node('h4','',label),node('p','',notice));
+     addLink(box,'/fare/?'+new URLSearchParams({service:kind,from:card.regionName}).toString(),label+' 예상요금 조회');
+     choices.append(box);
+    }
+    info.append(choices,node('p','','정확한 출발·도착 주소를 입력하면 도로거리 기반 예상요금을 확인할 수 있습니다.'));
+    addLink(actions,'https://open.kakao.com/o/sGV88r7h','카카오 상담');
+    article.append(title,picture,info,description,actions);
    }else article.append(title,picture,description,actions);
    tryNext();
    return article;
