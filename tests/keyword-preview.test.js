@@ -46,8 +46,8 @@ assert.ok(!html.includes('#dynamic-service-card-search-20261103{display:none!imp
 assert.ok(client.includes('function localKeywordSvg(raw,kind)'),'typed keyword SVG builder must exist');
 assert.ok(client.includes('-brand-v7.png')&&!client.includes('-brand-v6.png'),
  'instant region previews should use the cache-busting photo-free v7 image');
-assert.ok(html.includes('region-card-preview.js?v=20261128-outdoor-guide-v14'),
- 'homepage must load the current outdoor-guide-v14 image preview client instead of an old cached script');
+assert.ok(html.includes('region-card-preview.js?v=20261128-locality-guide-v15'),
+ 'homepage must load the current locality-guide-v15 image preview client instead of an old cached script');
 assert.ok(client.includes("showDraft(query,inferred||select?.value||'taksong')"),'keyword should show immediately');
 assert.ok(client.includes('picture.append(fallback)')&&client.includes('if(!fallback.isConnected)return;')&&client.includes('tryNext();'),'image failures must preserve the immediately visible exact-keyword SVG until a verified image loads');
 assert.ok(client.includes("const href=picture.getAttribute('href');")&&client.includes('if(zoom&&href)'),
@@ -180,6 +180,15 @@ for(const [keyword,path,fee,place] of [
  assert.ok(findElement(output,x=>x.tag==='p'&&x.textContent.includes('역방향은 별도 견적')));
 }
 
+for(const [keyword,region] of [['부산대리운전','부산광역시'],['대구탁송','대구광역시'],['인천탁송','인천광역시'],['강원도탁송','강원특별자치도']]){
+ input.value=keyword;input.events.input();
+ for(const kind of ['daeri','taksong']){
+  const expected='/fare/?'+new URLSearchParams({service:kind,from:region}).toString();
+  assert.ok(findElement(output,x=>x.tag==='a'&&x.href===expected),keyword+' dual fare: '+kind);
+ }
+ assert.ok(findElement(output,x=>x.tag==='h4'&&x.textContent.includes('안내사항·대리요금·탁송요금')));
+ assert.ok(findElement(output,x=>x.tag==='svg'));
+}
 console.log('PASS keyword image preview bindings, fallback and JavaScript syntax');
 
 // Explicit keyword links must never strand users on a missing region/kind selection.
