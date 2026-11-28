@@ -1002,7 +1002,7 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('href="/reviews/history/?kind='+kind+'"'));
   }
   for(const kind of ['daeri','taksong']){
-   for(const [regionPath,landmark,date] of [['seoul/gwangjin-gu/guui-dong','구의1동 공영주차장','2024-08-19'],['seoul/jungrang-gu/muk-dong','화랑대역','2021-07-30'],['busan/geumjeong-gu/geumsa-dong','금사동제1공영주차장','2024-11-22'],['seoul/geumcheon-gu/siheung-dong','남부여성발전센터','2021-07-30'],['seoul/gangbuk-gu/ui-dong','교통광장','2024-10-25'],['seoul/gangseo-gu/gayang-dong','영보빌딩','2021-07-30'],['busan/sasang-gu/gwaebeop-dong','파라곤호텔주변','2024-11-08']]){
+   for(const [regionPath,landmark,date] of [['seoul/gwangjin-gu/guui-dong','구의1동 공영주차장','2024-08-19'],['seoul/jungrang-gu/muk-dong','화랑대역','2021-07-30'],['busan/geumjeong-gu/geumsa-dong','금사동제1공영주차장','2024-11-22'],['seoul/geumcheon-gu/siheung-dong','남부여성발전센터','2021-07-30'],['seoul/gangbuk-gu/ui-dong','교통광장','2024-10-25'],['seoul/gangseo-gu/gayang-dong','영보빌딩','2021-07-30'],['busan/sasang-gu/gwaebeop-dong','파라곤호텔주변','2024-11-08'],['gyeonggi/anyang-si/dongan-gu/gwanyang-dong','평촌지하 주차장','2024-12-26'],['gyeonggi/osan-si/sucheong-dong','오산대역환승주차장','2020-02-12'],['gyeonggi/guri-si/gyomun-dong','제2공영노외주차장','2024-10-17']]){
     const response=await get('/'+kind+'/'+regionPath+'/');
     assert.equal(response.status,200);
     const html=await response.text();
