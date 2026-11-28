@@ -228,26 +228,70 @@ def write_index(published, records):
     DIRECTORY.write_text(shell("자동차탁송·대리운전 실제 후기 | 운행구간과 당시 요금","실제 완료된 자동차탁송·대리운전의 출발지, 도착지, 운행일과 당시 요금을 확인하세요. 구간별 후기와 현재 예상요금 조회도 제공합니다.",body,
                  "https://jeongukdaeri.kr/reviews/verified/"),encoding="utf-8")
 
+def load_focus_names():
+    """Use the current source registry, never match partial or ambiguous names."""
+    source = (ROOT / "server.js").read_text(encoding="utf-8")
+    marker = "const metroLongDistanceFocus=new Map("
+    if marker not in source:
+        raise ValueError("Focus registry missing; refusing unreviewed publication ordering")
+    rows, end = json.JSONDecoder().raw_decode(source.split(marker, 1)[1])
+    if not isinstance(rows, list) or not all(isinstance(r, list) and len(r) >= 6
+                                              and isinstance(r[0], str) for r in rows):
+        raise ValueError("Invalid focus registry")
+    names = {row[0] for row in rows}
+    legal = {name for file in (ROOT / "data" / "legal-regions").glob("[0-9][0-9].json")
+             for name in json.loads(file.read_text(encoding="utf-8"))["full_names"]}
+    if len(names) != len(rows) or not names or not names <= legal:
+        raise ValueError("Focus registry does not match exact legal region names")
+    return names
+
+
+def focus_pairs(ride, names):
+    if not complete(ride):
+        return set()
+    return {(ride["service"], ride[key]) for key in ("departure", "destination")
+            if ride[key] in names}
+
+
+def select_case_batch(records, published, focus_names, limit=BATCH_SIZE):
+    """Keep service alternation and the five-case cap; use at most two slots
+    for previously uncovered exact focus/service pairs in saved public cases.
+    Other slots retain the existing newest-first ordering.
+    """
+    used = {p["id"] for p in published}
+    candidates = {identifier(r): r for r in records if complete(r) and identifier(r) not in used}
+    candidates = sorted(candidates.values(), key=lambda x: x["date"], reverse=True)
+    covered = set().union(*(focus_pairs(r, focus_names) for r in records
+                            if identifier(r) in used))
+    batch = []
+    previous = published[-1]["service"] if published else None
+    focus_slots = 2
+    for _ in range(min(limit, BATCH_SIZE)):
+        if not candidates:
+            break
+        pool = [r for r in candidates if r["service"] != previous] or candidates
+        selected = pool[0]
+        if focus_slots:
+            best = max(pool, key=lambda r: len(focus_pairs(r, focus_names) - covered))
+            if focus_pairs(best, focus_names) - covered:
+                selected = best
+                focus_slots -= 1
+        batch.append((identifier(selected), selected))
+        candidates = [r for r in candidates if identifier(r) != identifier(selected)]
+        covered.update(focus_pairs(selected, focus_names))
+        previous = selected["service"]
+    return batch
+
+
 def main():
     records=json.loads(SOURCE.read_text(encoding="utf-8"))
     if QUEUE.exists():
         records.extend(json.loads(QUEUE.read_text(encoding="utf-8")))
     published=json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else []
-    used={p["id"] for p in published}
-    candidates=[r for r in records if complete(r) and identifier(r) not in used]
-    candidates.sort(key=lambda x:x["date"],reverse=True)
-    batch = []
-    for _ in range(BATCH_SIZE):
-        if not candidates:
-            break
-        # Alternate services when both queues have eligible cases.
-        previous = published[-1]["service"] if published else None
-        selected = next((ride for ride in candidates if ride["service"] != previous), candidates[0])
-        key = identifier(selected)
-        candidates = [ride for ride in candidates if identifier(ride) != key]
+    batch = select_case_batch(records, published, load_focus_names())
+    for key, selected in batch:
         published.append({"id": key, "service": selected["service"],
                           "published_at": datetime.now(timezone.utc).isoformat()})
-        batch.append((key, selected))
 
     for key, selected in batch:
         page = OUT / key / "index.html"
