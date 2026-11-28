@@ -25,14 +25,16 @@ const pairs=[
  ['한계령','백담사','8만원'],['오색','백담사','8만원']
 ];
 assert.equal((tbody.match(/<tr>/g)||[]).length,6,'All six original fare rows must remain');
-assert.equal((tbody.match(/class="seoraksan-quick-quote-20261107"/g)||[]).length,6,
- 'Each route must offer a one-tap current quote link');
+assert.equal((tbody.match(/class="seoraksan-quick-quote-20261107"/g)||[]).length,12,
+ 'Each route must offer a one-tap forward and reverse quote link');
 for(const [from,to,historicPrice] of pairs){
  const row='<tr><td style="border-bottom:1px solid #d6e2ec;padding:10px">'+from+' → '+to;
  assert(tbody.includes(row),'Missing source-backed route '+from+' → '+to);
  assert(tbody.includes('>'+historicPrice+'</strong>'),'Missing existing historic price '+historicPrice);
  const url='/fare/?service=taksong&amp;from='+encodeURIComponent(from)+'&amp;to='+encodeURIComponent(to);
  assert(tbody.includes('href="'+url+'"'),'Route link must prefill both actual mountain locations '+from+' → '+to);
+ const reverse='/fare/?service=taksong&amp;from='+encodeURIComponent(to)+'&amp;to='+encodeURIComponent(from);
+ assert(tbody.includes('href="'+reverse+'"'),'Reverse quote link must swap endpoints '+to+' → '+from);
 }
 assert(html.includes('id="seoraksan-mobile-booking-20261107"')&&
  html.includes('href="#mountain-route-fare-table-202611">6개 코스 요금표</a>')&&
