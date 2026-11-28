@@ -16,7 +16,7 @@ const cases=[
  {q:'부산기장군탁송업체',region:'부산광역시 기장군',kind:'taksong',image:'svg',screen:'mobile'},
  {q:'평택5톤탁송',region:'경기도 평택시',kind:'taksong',image:'svg',screen:'mobile'},
  {q:'설악산탁송',region:'설악산탁송',kind:'taksong',image:'svg',screen:'mobile'},
- {q:'영산강길종주탁송',region:'영산강길종주탁송',kind:'taksong',image:'svg',screen:'mobile'},
+ {q:'영산강길종주탁송',region:'영산강자전거길',kind:'taksong',image:'svg',screen:'mobile'},
  {q:'제주도대리운전',region:'제주특별자치도',regionAliases:['제주도'],kind:'daeri',image:'svg',screen:'mobile'}
 ];
 const results=[];
@@ -73,6 +73,13 @@ try{
    await page.locator('dialog.smart24-card-dialog .smart24-card-dialog-close').click();
    assert.equal(await page.locator('dialog.smart24-card-dialog[open]').count(),0);
    const original=await panel.locator('a.smart24-card-picture-link').getAttribute('href');
+   if(caseData.q==='영산강길종주탁송'){
+    assert.ok(label.includes('영산강자전거길')&&label.includes('종주탁송'),'canonical Yeongsan course label');
+    assert.ok(imageStatus.src.includes('/assets/cycling-routes/yeongsan-taksong.svg'),'Yeongsan-specific poster');
+    assert.ok(await panel.locator('a[href="/route-taksong/courses/yeongsan/"]').count()>0,'Yeongsan-specific course link');
+    const visibleText=await panel.textContent();
+    assert.ok(visibleText.includes('10만원')&&visibleText.includes('담양댐')&&visibleText.includes('영산강하굿둑'),'verified fare and course endpoints');
+   }
    entry.image=imageStatus.src.replace(BASE,'');
    entry.original=original;
    entry.visible_label=label;
