@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage,blockedMetaIndexAgents,blockedXRobotsIndexAgents,naverRobotsDisallowAll} from '../scripts/indexability-scope.mjs';
+import {focusLinkObservation,focusLinkCoverage,isRegionalServiceUrl,isRegionalIntentGuideUrl,hasDirectRideRecordLink,regionalGuideCoverage,reviewLinkCoverage,blockedMetaIndexAgents,blockedXRobotsIndexAgents,naverRobotsDisallowAll} from '../scripts/indexability-scope.mjs';
 test('actual nationwide region/service canonical pages count as locality landings',()=>{
  for(const route of ['/taksong/busan/','/daeri/sejong/','/taksong/busan/gijang-gun/',
  '/daeri/gangwon/wonju-si/','/taksong/sejong/jikhal/naseong-dong/'])
@@ -90,4 +90,30 @@ test('Yeti robots.txt rules ignore disallow set only for Googlebot',()=>{
  ];
  for(const [robots,blocked] of cases)
   assert.equal(naverRobotsDisallowAll(robots),blocked,robots);
+});
+
+test('focus evidence and reciprocal link metrics count only rendered in-scope links, not quote calls or archive search',()=>{
+ const region='/taksong/gyeongbuk/andong-si/ok-dong/',ride='/reviews/verified/0123456789abcdef/',outside='/reviews/history/excel-0010/';
+ const focusHtml='<a href="/reviews/history/excel-0099/">unrelated outer section</a>'+
+ '<section id="metro-innovation-long-distance-20261127"><a href="'+ride+'">record</a>'+
+ '<a href="'+ride+'">duplicate</a><a href="'+outside+'">archive record</a>'+
+ '<a href="/reviews/history/?kind=taksong">search</a>'+
+ '<a href="https://example.org/reviews/verified/1234567890abcdef/">external</a>'+
+ '<a href="/fare/?service=taksong&amp;from=안동&amp;to=서울">quote</a>'+
+ '<a href="/fare/?service=taksong&amp;from=서울&amp;to=안동">reverse quote</a>'+
+ '<a href="/fare/?service=taksong&amp;from=서울&amp;to=안동&amp;auto=1">not counted</a>'+
+ '<script>const fake=\'<a href="/reviews/history/excel-1234/">fake</a>\';</script></section>';
+ const observed=focusLinkObservation(region,focusHtml);
+ assert.deepEqual(observed,{focusPanel:true,focusRidePaths:[ride,outside],focusQuoteCount:2});
+ const backlink=focusLinkObservation(ride,'<a href="'+region+'">regional service</a><a href="'+region+'?auto=1">not canonical</a>');
+ assert.deepEqual(backlink,{reviewRegionPaths:[region]});
+ const noEvidence='/daeri/gyeongbuk/andong-si/ok-dong/';
+ const summary=focusLinkCoverage([
+  {url:region,status:200,...observed},
+  {url:noEvidence,status:200,...focusLinkObservation(noEvidence,'<section id="metro-innovation-long-distance-20261127">No public record</section>')},
+  {url:ride,status:200,...backlink},
+  {url:outside,status:404,reviewRegionPaths:[region]},
+  {url:'/taksong/',status:200,...focusLinkObservation('/taksong/',focusHtml)}
+ ]);
+ assert.deepEqual(summary,{focusServicePagesObserved:2,focusPagesWithPanelRideLink:1,focusPagesWithoutPanelRideLink:1,focusQuoteLinksObserved:2,focusRideLinkPairs:2,focusRidePairsWithAuditedTarget:1,focusRidePairsWithReciprocalLink:1,focusRidePairsTargetNotAudited:1});
 });
