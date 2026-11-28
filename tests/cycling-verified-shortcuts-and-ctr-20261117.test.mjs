@@ -102,3 +102,35 @@ test('corrected operator rates are explicit in both directions, no starting-pric
  check(pages[4],'담양댐','목포 영산강하굿둑','10만원');
  check(pages[5],'임실 섬진강생활체육공원','광양 배알도수변공원','10만원');
 });
+
+
+test('Original colorful course design preserves fare data, 55 real center cards and mobile actions',()=>{
+ const directory=read('route-taksong/index.html');
+ const block=directory.match(/<section id="smart24-cycle-visual-directory-20261128"[\s\S]*?<\/section>/)?.[0]||'';
+ assert.equal((block.match(/class="cycle-rich-card"/g)||[]).length,6);
+ const data=JSON.parse(read('data/cycling-certification-centers.json')).centers;
+ let total=0;
+ for(const [slug,course] of [['seomjin','섬진강'],['yeongsan','영산강'],['eastcoast','동해안'],['nakdonggang','낙동강'],['geumgang','금강'],['ocheon','오천']]){
+  const html=read('route-taksong/courses/'+slug+'/index.html');
+  assert.ok(block.includes('/route-taksong/courses/'+slug+'/'));
+  assert.ok(block.includes('/assets/cycling-routes/'+slug+'-taksong.svg'));
+  assert.ok(html.includes('id="smart24-course-menu-20261128"'));
+  assert.ok(html.includes('aria-current="page"'));
+  assert.ok(html.includes('class="course-hero-summary"'));
+  assert.ok(html.includes('id="smart24-course-handover-20261128"'));
+  const section=html.match(/<section id="smart24-course-centers-20261128"[\s\S]*?<\/section>/)?.[0]||'';
+  const stops=data.filter(c=>slug==='eastcoast'?c.course.startsWith(course):c.course===course);
+  assert.equal((section.match(/class="course-stop"/g)||[]).length,stops.length);
+  for(const c of stops){
+   assert.ok(section.includes(c.name));
+   assert.ok(section.includes('/route-taksong/centers/?from='+c.id));
+   assert.ok(section.includes('/route-taksong/centers/?to='+c.id));
+  }
+  total+=stops.length;
+  assert.equal((html.match(/<h1\b/g)||[]).length,1);
+  assert.ok(html.includes('name="robots" content="index,follow'));
+  assert.ok(html.includes('class="cycle-course-mobile-call" href="tel:18114294"'));
+  assert.ok(!html.includes('10만원부터'));
+ }
+ assert.equal(total,55);
+});
