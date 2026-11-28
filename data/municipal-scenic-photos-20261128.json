@@ -289,5 +289,105 @@
     "license": "CC BY-SA 3.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
     "source": "https://commons.wikimedia.org/wiki/File:Chungju_Lake.jpg"
+  },
+  {
+    "province": "전북특별자치도",
+    "locality": "전북특별자치도 전주시",
+    "place": "전주 한옥마을",
+    "file": "20240727 Jeonju Hanok Village 001.jpg",
+    "author": "Jjw",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:20240727_Jeonju_Hanok_Village_001.jpg"
+  },
+  {
+    "province": "전북특별자치도",
+    "locality": "전북특별자치도 군산시",
+    "place": "군산 선유도",
+    "file": "군산시 선유도(AMJ).jpg",
+    "author": "칼빈500",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:%EA%B5%B0%EC%82%B0%EC%8B%9C_%EC%84%A0%EC%9C%A0%EB%8F%84(AMJ).jpg"
+  },
+  {
+    "province": "전북특별자치도",
+    "locality": "전북특별자치도 익산시",
+    "place": "익산 미륵사지 석탑",
+    "file": "Mireuksaji Stone Pagoda Front View 20250224 (01).jpg",
+    "author": "LandAndTree",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Mireuksaji_Stone_Pagoda_Front_View_20250224_(01).jpg"
+  },
+  {
+    "province": "전북특별자치도",
+    "locality": "전북특별자치도 남원시",
+    "place": "남원 광한루 야경",
+    "file": "Gwanghallu Pavilion at Night- Namwon.jpg",
+    "author": "Macbest1982",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Gwanghallu_Pavilion_at_Night-_Namwon.jpg"
+  },
+  {
+    "province": "전북특별자치도",
+    "locality": "전북특별자치도 무주군",
+    "place": "덕유산 향적봉에서 바라본 풍경",
+    "file": "Deogyusan from Hyangjeok Peak.jpg",
+    "author": "Yoo Chung",
+    "license": "CC BY-SA 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5/",
+    "source": "https://commons.wikimedia.org/wiki/File:Deogyusan_from_Hyangjeok_Peak.jpg"
+  },
+  {
+    "province": "전라남도",
+    "locality": "전라남도 순천시",
+    "place": "순천만국가정원",
+    "file": "Suncheon Bay National Garden- Part I - SuncheonBNG2909.jpg",
+    "author": "lumoplank",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Suncheon_Bay_National_Garden-_Part_I_-_SuncheonBNG2909.jpg"
+  },
+  {
+    "province": "전라남도",
+    "locality": "전라남도 광양시",
+    "place": "광양 매화마을",
+    "file": "Gwangyang Maehwa Festival in Spring - 4403554912.jpg",
+    "author": "Korea.net / 해외문화홍보원",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Gwangyang_Maehwa_Festival_in_Spring_-_4403554912.jpg"
+  },
+  {
+    "province": "전라남도",
+    "locality": "전라남도 나주시",
+    "place": "나주 영산나루마을",
+    "file": "Yeongsan Naru Village (4464235798).jpg",
+    "author": "Korea.net / 해외문화홍보원",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Yeongsan_Naru_Village_(4464235798).jpg"
+  },
+  {
+    "province": "전라남도",
+    "locality": "전라남도 담양군",
+    "place": "담양 죽녹원",
+    "file": "Juknokwon.jpg",
+    "author": "Beatlehoon",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Juknokwon.jpg"
+  },
+  {
+    "province": "전라남도",
+    "locality": "전라남도 구례군",
+    "place": "지리산 노고단",
+    "file": "Nogodan at Jirisan, Korea 03.JPG",
+    "author": "Eggmoon",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Nogodan_at_Jirisan%2C_Korea_03.JPG"
   }
 ]
