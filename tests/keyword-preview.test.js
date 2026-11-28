@@ -46,8 +46,8 @@ assert.ok(!html.includes('#dynamic-service-card-search-20261103{display:none!imp
 assert.ok(client.includes('function localKeywordSvg(raw,kind)'),'typed keyword SVG builder must exist');
 assert.ok(client.includes('-brand-v7.png')&&!client.includes('-brand-v6.png'),
  'instant region previews should use the cache-busting photo-free v7 image');
-assert.ok(html.includes('region-card-preview.js?v=20261112-mobile-v12'),
- 'homepage must load the current mobile-v12 image preview client instead of an old cached script');
+assert.ok(html.includes('region-card-preview.js?v=20261128-outdoor-guide-v14'),
+ 'homepage must load the current outdoor-guide-v14 image preview client instead of an old cached script');
 assert.ok(client.includes("showDraft(query,inferred||select?.value||'taksong')"),'keyword should show immediately');
 assert.ok(client.includes('picture.append(fallback)')&&client.includes('if(!fallback.isConnected)return;')&&client.includes('tryNext();'),'image failures must preserve the immediately visible exact-keyword SVG until a verified image loads');
 assert.ok(client.includes("const href=picture.getAttribute('href');")&&client.includes('if(zoom&&href)'),
@@ -139,6 +139,47 @@ for(const [keyword,kind,expectedArea] of [
  }
 
 }
+
+for(const [keyword,slug,fee,station] of [
+ ['섬진강자전거길','seomjin','양방향 각 10만원','장군목'],
+ ['섬진강자전거길종주탁송','seomjin','양방향 각 10만원','배알도'],
+ ['영산강자전거길','yeongsan','양방향 각 10만원','담양댐'],
+ ['동해안자전거길','eastcoast','풀코스 약 17만원','통일전망대'],
+ ['낙동강자전거길','nakdonggang','풀코스 별도 견적','안동댐'],
+ ['금강자전거길','geumgang','개별 견적','대청댐'],
+ ['오천자전거길','ocheon','개별 견적','합강공원']
+]){
+ select.value='daeri';input.value=keyword;input.events.input();
+ assert.equal(output.hidden,false,keyword);
+ assert.equal(select.value,'taksong',keyword);
+ const heading=findElement(output,x=>x.tag==='h3'&&x.textContent===keyword.replace(/종주탁송$/,'')+' 종주탁송');
+ assert.ok(heading,keyword+' direct course heading');
+ assert.ok(findElement(output,x=>x.tag==='td'&&x.textContent===fee),keyword+' fee visible immediately');
+ assert.ok(findElement(output,x=>x.tag==='p'&&x.textContent.includes(station)),keyword+' station visible');
+ assert.ok(findElement(output,x=>x.tag==='a'&&x.href==='/route-taksong/courses/'+slug+'/'),keyword+' canonical course');
+ assert.ok(findElement(output,x=>x.tag==='a'&&x.href==='/route-taksong/courses/'+slug+'/#smart24-course-centers-20261128'));
+ assert.ok(findElement(output,x=>x.tag==='svg'),keyword+' local visible image fallback');
+ assert.ok(client.includes('/assets/cycling-routes/'+slug+'-taksong.svg'));
+}
+
+
+for(const [keyword,path,fee,place] of [
+ ['설악산탁송','/설악산탁송/','7만원','오색공영주차장'],
+ ['설악산탁송요금','/설악산탁송/','8만원','소공원'],
+ ['지리산탁송','/지리산탁송/','12만원','성삼재'],
+ ['지리산종주탁송','/지리산탁송/','10만원','대원사']
+]){
+ select.value='daeri';input.value=keyword;input.events.input();
+ assert.equal(output.hidden,false,keyword);assert.equal(select.value,'taksong');
+ const tbody=findElement(output,x=>x.tag==='tbody');
+ assert.ok(tbody);assert.equal(tbody.children.length,6,keyword+' original six fares');
+ assert.ok(findElement(output,x=>x.tag==='td'&&x.textContent===fee));
+ assert.ok(findElement(output,x=>x.tag==='p'&&x.textContent.includes(place)));
+ assert.ok(findElement(output,x=>x.tag==='svg'));
+ assert.ok(findElement(output,x=>x.tag==='a'&&x.href===path+'#mountain-route-fare-table-202611'));
+ assert.ok(findElement(output,x=>x.tag==='p'&&x.textContent.includes('역방향은 별도 견적')));
+}
+
 console.log('PASS keyword image preview bindings, fallback and JavaScript syntax');
 
 // Explicit keyword links must never strand users on a missing region/kind selection.
