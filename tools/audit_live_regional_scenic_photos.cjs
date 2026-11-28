@@ -1,7 +1,7 @@
 'use strict';
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const rows=require('../data/regional-scenic-photos-20261128.json');
+const rows=[...require('../data/regional-scenic-photos-20261128.json'),...require('../data/municipal-scenic-photos-20261128.json')];
 const BASE='https://jeongukdaeri.kr';
 const OUT=path.join(process.cwd(),'artifacts','regional-scenic-live');
 fs.mkdirSync(OUT,{recursive:true});
@@ -10,13 +10,14 @@ fs.mkdirSync(OUT,{recursive:true});
  const results=[];
  try{
   for(const row of rows){
-   const entry={province:row.province,place:row.place,passed:false};
+   const scope=row.locality||row.province;
+   const entry={province:row.province,locality:scope,place:row.place,passed:false};
    const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
    try{
-    const lookup=await context.request.get(BASE+'/api/locality-suggest?'+new URLSearchParams({q:row.province+'탁송',service:'taksong'}),{timeout:20000});
+    const lookup=await context.request.get(BASE+'/api/locality-suggest?'+new URLSearchParams({q:scope+'탁송',service:'taksong'}),{timeout:20000});
     assert.ok(lookup.ok(),'locality lookup HTTP');
     const data=await lookup.json();
-    const item=data.items.find(x=>x.full_name===row.province);
+    const item=data.items.find(x=>x.full_name===scope);
     assert.ok(item,'exact province match');
     const target=new URL(item.service_url,BASE);
     assert.equal(target.origin,BASE);
@@ -29,7 +30,7 @@ fs.mkdirSync(OUT,{recursive:true});
     const img=panel.locator('img');
     assert.equal(await img.count(),1);
     const text=await panel.textContent();
-    for(const expected of [row.province,row.place,row.author,row.license])assert.ok(text.includes(expected),'missing attribution '+expected);
+    for(const expected of [scope,row.place,row.author,row.license])assert.ok(text.includes(expected),'missing attribution '+expected);
     assert.ok(await panel.locator('a').evaluateAll((els,source)=>els.some(x=>x.href===source),row.source),'original source link');
     await img.scrollIntoViewIfNeeded();
     await page.waitForFunction(()=>{const i=document.querySelector('#regional-scenic-photo-20261128 img');return i&&i.complete&&i.naturalWidth>0},null,{timeout:20000});
@@ -45,14 +46,14 @@ fs.mkdirSync(OUT,{recursive:true});
     }else assert.ok(dims.width>=320&&dims.height>=180,'actual decoded photograph dimensions '+JSON.stringify(dims));
     assert.ok(dims.left>=-2&&dims.right<=392&&dims.displayWidth>0,'mobile image within viewport');
     entry.passed=true;
-    console.log('PASS '+row.province+' '+dims.width+'x'+dims.height+' '+target.pathname);
-   }catch(error){entry.error=String(error.message||error);console.error('FAIL '+row.province+' '+entry.error);}
+    console.log('PASS '+scope+' '+dims.width+'x'+dims.height+' '+target.pathname);
+   }catch(error){entry.error=String(error.message||error);console.error('FAIL '+scope+' '+entry.error);}
    finally{results.push(entry);await context.close();}
   }
  }finally{await browser.close();}
  const passed=results.filter(x=>x.passed).length;
  fs.writeFileSync(path.join(OUT,'report.json'),JSON.stringify({checked:results.length,passed,failed:results.length-passed,results},null,2));
  console.log('SCENIC LIVE '+passed+'/'+results.length);
- if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'## Actual mobile scenic image decoding\n\n'+passed+'/'+results.length+' representative province photographs passed.\n');
+ if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'## Actual mobile scenic image decoding\n\n'+passed+'/'+results.length+' representative province and municipal photographs passed.\n');
  if(passed!==rows.length)process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1});
