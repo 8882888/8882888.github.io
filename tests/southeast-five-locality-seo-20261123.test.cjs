@@ -266,7 +266,7 @@ test('Municipal focus discovery links only exact owned descendants and preserves
  console.log('MUNICIPAL_FOCUS_DISCOVERY '+JSON.stringify({hubs,links}));
 });
 
-test('Regional recovery discovery uses 14 exact owned taksong pages and five existing course canonicals',async()=>{
+test('Regional recovery discovery uses 26 exact owned taksong pages and eight existing course canonicals',async()=>{
  const {regionsFromLegal}=await import('../scripts/dynamic-url-inventory.mjs');
  const regionByFullName=new Map(regionsFromLegal(root).map(r=>[r.full_name,r]));
  const owners=JSON.parse(fs.readFileSync(path.join(root,'data/sitemap-url-owners.json'),'utf8'));
@@ -276,7 +276,7 @@ test('Regional recovery discovery uses 14 exact owned taksong pages and five exi
  const ctx={sitemapOwnerByPath:owners,servicePath,esc:String};
  vm.createContext(ctx);
  vm.runInContext(source.slice(start,end)+'\nthis.guides=routeRecoveryRegionGuides;this.render=routeRecoveryRegionalDiscovery;',ctx);
- assert.equal(ctx.guides.size,14);
+ assert.equal(ctx.guides.size,26);
  const targets=new Set();
  for(const [name,row] of ctx.guides){
   const r=regionByFullName.get(name);
@@ -286,9 +286,19 @@ test('Regional recovery discovery uses 14 exact owned taksong pages and five exi
   assert.ok(html.includes('href="'+row[1]+'"')&&html.includes(row[3])&&html.includes('실제 완료 운행이나 고정요금을 뜻하지 않습니다'));
   assert.equal(ctx.render(r,'daeri'),'');
   assert.equal(ctx.render({...r,full_name:name+' 다른 지역'},'taksong'),'');
+  if(row[4]){const course=fs.readFileSync(path.join(root,row[1],'index.html'),'utf8');assert.ok(course.includes('id="'+row[4]+'"'),name+' real fragment');assert.ok(html.includes('href="'+row[1]+'#'+row[4]+'"'),name+' direct discovery');}
   targets.add(row[1]);
  }
- assert.equal(targets.size,5);
+ assert.equal(targets.size,8);
  assert.ok(source.includes('+routeRecoveryRegionalDiscovery(r,kind)+regionalDecisionPanel'));
- console.log('REGIONAL_ROUTE_RECOVERY_DISCOVERY '+JSON.stringify({regionalPages:14,canonicalGuides:targets.size,links:14}));
+ console.log('REGIONAL_ROUTE_RECOVERY_DISCOVERY '+JSON.stringify({regionalPages:26,canonicalGuides:targets.size,links:26}));
+});
+
+// Evidence availability is not publication or index proof. Never derive a completed cycling trip from regional matches.
+test('New regional cycling connections retain scoped booking guidance and real owner paths',async()=>{
+ const {regionsFromLegal}=await import('../scripts/dynamic-url-inventory.mjs');
+ const byName=new Map(regionsFromLegal(root).map(r=>[r.full_name,r]));
+ const owners=JSON.parse(fs.readFileSync(path.join(root,'data/sitemap-url-owners.json'),'utf8'));
+ const rows=[["경상북도 안동시","gyeongbuk/andong-si"],["경상북도 상주시","gyeongbuk/sangju-si"],["경상북도 구미시","gyeongbuk/gumi-si"],["경상북도 칠곡군","gyeongbuk/chilgok-gun"],["대구광역시 달성군","daegu/dalseong-gun"],["경상남도 창녕군","gyeongnam/changnyeong-gun"],["경상남도 함안군","gyeongnam/haman-gun"],["경상남도 양산시","gyeongnam/yangsan-si"],["부산광역시 사하구","busan/saha-gu"],["충청북도 영동군","chungbuk/yeongdong-gun"],["경상북도 김천시","gyeongbuk/gimcheon-si"],["충청북도 충주시","chungbuk/chungju-si"]];
+ for(const [name,route] of rows){assert.equal(byName.get(name)?.path,route,name);assert.ok(owners['/taksong/'+route+'/'],name);}
 });
