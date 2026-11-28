@@ -46,8 +46,8 @@ assert.ok(!html.includes('#dynamic-service-card-search-20261103{display:none!imp
 assert.ok(client.includes('function localKeywordSvg(raw,kind)'),'typed keyword SVG builder must exist');
 assert.ok(client.includes('-brand-v7.png')&&!client.includes('-brand-v6.png'),
  'instant region previews should use the cache-busting photo-free v7 image');
-assert.ok(html.includes('region-card-preview.js?v=20261128-cycling-guide-v13'),
- 'homepage must load the current cycling-guide-v13 image preview client instead of an old cached script');
+assert.ok(html.includes('region-card-preview.js?v=20261128-outdoor-guide-v14'),
+ 'homepage must load the current outdoor-guide-v14 image preview client instead of an old cached script');
 assert.ok(client.includes("showDraft(query,inferred||select?.value||'taksong')"),'keyword should show immediately');
 assert.ok(client.includes('picture.append(fallback)')&&client.includes('if(!fallback.isConnected)return;')&&client.includes('tryNext();'),'image failures must preserve the immediately visible exact-keyword SVG until a verified image loads');
 assert.ok(client.includes("const href=picture.getAttribute('href');")&&client.includes('if(zoom&&href)'),
@@ -160,6 +160,24 @@ for(const [keyword,slug,fee,station] of [
  assert.ok(findElement(output,x=>x.tag==='a'&&x.href==='/route-taksong/courses/'+slug+'/#smart24-course-centers-20261128'));
  assert.ok(findElement(output,x=>x.tag==='svg'),keyword+' local visible image fallback');
  assert.ok(client.includes('/assets/cycling-routes/'+slug+'-taksong.svg'));
+}
+
+
+for(const [keyword,path,fee,place] of [
+ ['설악산탁송','/설악산탁송/','7만원','오색공영주차장'],
+ ['설악산탁송요금','/설악산탁송/','8만원','소공원'],
+ ['지리산탁송','/지리산탁송/','12만원','성삼재'],
+ ['지리산종주탁송','/지리산탁송/','10만원','대원사']
+]){
+ select.value='daeri';input.value=keyword;input.events.input();
+ assert.equal(output.hidden,false,keyword);assert.equal(select.value,'taksong');
+ const tbody=findElement(output,x=>x.tag==='tbody');
+ assert.ok(tbody);assert.equal(tbody.children.length,6,keyword+' original six fares');
+ assert.ok(findElement(output,x=>x.tag==='td'&&x.textContent===fee));
+ assert.ok(findElement(output,x=>x.tag==='p'&&x.textContent.includes(place)));
+ assert.ok(findElement(output,x=>x.tag==='svg'));
+ assert.ok(findElement(output,x=>x.tag==='a'&&x.href===path+'#mountain-route-fare-table-202611'));
+ assert.ok(findElement(output,x=>x.tag==='p'&&x.textContent.includes('역방향은 별도 견적')));
 }
 
 console.log('PASS keyword image preview bindings, fallback and JavaScript syntax');
