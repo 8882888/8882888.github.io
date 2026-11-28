@@ -305,11 +305,26 @@ async function get(p){return fetch('http://127.0.0.1:'+port+p)}
    assert.ok(html.includes('<figure')&&html.indexOf('id="regional-taksong-quick-start"')>=0&& (html.indexOf('id="priority-verified-rides"')<0 || html.indexOf('id="regional-taksong-quick-start"')<html.indexOf('id="priority-verified-rides"')),
     'regional picture and customer choices come ahead of long evidence listings: '+loc);
   }
+  const scenery=require('../lib/regional-scenic-photos.cjs');
+  const visualPolicy=require('../lib/visual-policy');
+  assert.equal(scenery.records.length,17);
+  assert.equal(new Set(scenery.records.map(r=>r.province)).size,17);
+  for(const row of scenery.records){
+   assert.ok(row.author&&row.licenseUrl&&row.source);
+   assert.equal(scenery.lookup(row.province+' 테스트구'),row);
+   assert.ok(visualPolicy.isSafeVisual(scenery.photoUrl(row)));
+   assert.ok(visualPolicy.stripPersonVehicleImages(scenery.render({full_name:row.province})).includes('<img'));
+  }
+  assert.ok(!visualPolicy.isSafeVisual('https://commons.wikimedia.org/wiki/Special:FilePath/Unreviewed.jpg?width=960'));
+  assert.equal(scenery.lookup('없는지역'),undefined);
   for(const [loc,region] of [['/taksong/busan/','부산광역시'],['/daeri/daegu/','대구광역시'],['/taksong/seoul/gangnam-gu/','서울특별시 강남구']]){
    const response=await get(loc),html=await response.text();
    assert.equal(response.status,200,loc);
    const panel=html.match(/<section id="regional-dual-fare-20261128"[\s\S]*?<\/section>/)?.[0];
    assert.ok(panel,loc+' fee panel');
+   const scenicRow=scenery.lookup(region);
+   const scenicPanel=html.match(/<section id="regional-scenic-photo-20261128"[\s\S]*?<\/section>/)?.[0];
+   assert.ok(scenicPanel&&scenicPanel.includes('<img')&&scenicPanel.includes(scenicRow.province)&&scenicPanel.includes('사진 원본 및 출처'),loc+' reviewed scenic image');
    assert.ok(panel.includes(region)&&panel.includes('예약 전 안내사항'));
    for(const kind of ['daeri','taksong'])assert.ok(panel.includes('/fare/?service='+kind+'&amp;from='+encodeURIComponent(region)),loc+' '+kind);
    assert.ok(html.includes('class="regional-responsive-card"'),loc+' image');
