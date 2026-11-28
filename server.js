@@ -15,6 +15,7 @@ const localServiceRegionHandler=createLocalServiceEngine(path.join(ROOT,'data/sm
 const {createEnhancer:createLocalServiceEnhancer}=require('./data/smart24-region-automation/lib/enhance');
 const localServiceEvidenceForPath=createLocalServiceEnhancer(path.join(ROOT,'data/smart24-region-automation/data/regions.json'),path.join(ROOT,'data/smart24-region-automation/data/trips.json'));
 const {stripPersonVehicleImages,isSafeVisual}=require('./lib/visual-policy');
+const regionalScenicPhotos=require('./lib/regional-scenic-photos.cjs');
 const {removeRetiredHomepageCopy}=require('./lib/homepage-copy');
 const {observeCrawlerRequest}=require('./lib/crawler-observability');
 const {canonicalHostDecision}=require('./lib/canonical-host.cjs');
@@ -2156,7 +2157,14 @@ async function servicePage(r,kind){
  // Show useful local service information and a phone CTA before a generic promotional card.
  // Keep the regional card close to the first guide and let it fit mobile widths.
  const dualFare=regionalDualFarePanel(r,kind,publicEvidence);
- const imageAfterContent=visibleCard?placeRegionalCardAfterIntro(rendered,visibleCard,visibleCard.replace('loading="eager" fetchpriority="high"',(priorityMeta||r.level==='시도')?'loading="eager" fetchpriority="high"':'loading="lazy" decoding="async"')+dualFare):rendered.replace('<main>','<main>'+dualFare);
+ const regionalScenery=regionalScenicPhotos.render(r);
+ const cardWithNewPanels=visibleCard?visibleCard.replace('loading="eager" fetchpriority="high"',(priorityMeta||r.level==='시도')?'loading="eager" fetchpriority="high"':'loading="lazy" decoding="async"')+dualFare+regionalScenery:dualFare+regionalScenery;
+ // Keep the verified Busan review-first section within the permitted leading content.
+ const reviewAnchor=rendered.indexOf('id="busan-taksong-real-review-first-20261104"');
+ const reviewEnd=reviewAnchor>=0?rendered.indexOf('</section>',reviewAnchor):-1;
+ const imageAfterContent=reviewEnd>=0
+  ?(visibleCard?rendered.replace(visibleCard,''):rendered).replace(/(<section\b[^>]*\bid="busan-taksong-real-review-first-20261104"[^>]*>[\s\S]*?<\/section>)/,match=>match+cardWithNewPanels)
+  :(visibleCard?placeRegionalCardAfterIntro(rendered,visibleCard,cardWithNewPanels):rendered.replace('<main>','<main>'+cardWithNewPanels));
  // Keep the regional OG thumbnail fully described and dimensioned for crawlers.
  const mobileCardMeta=regionImagePath?'<meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="800"><meta property="og:image:alt" content="'+esc(displayBrand)+' 지역별 차량 서비스 명함 이미지">':'';
  const imageWithMetadata=mobileCardMeta?imageAfterContent.replace('</head>',mobileCardMeta+'</head>'):imageAfterContent;
